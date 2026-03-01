@@ -16,6 +16,8 @@ enum class Tag {
 	kPlayerBullet,
 	kEnemyBullet,
 	kWall,
+	kGround,
+	kGoal,
 	kNone
 };
 
@@ -91,7 +93,17 @@ struct ColliderState {
 	/// <summary>
 	/// 初期化
 	/// </summary>
-	void Initialize();
+	/// <param name="hitBoxScale">ヒットボックスのスケール</param>
+	/// <param name="gameObject">ゲームオブジェクト</param>
+	/// <param name="worldMatrix">ワールド行列</param>
+	/// <param name="tag">タグ</param>
+	void Initialize(Vector3& hitBoxScale,GameObject& gameObject, Matrix4x4& worldMatrix, Tag tag = Tag::kNone);
+};
+
+//動かせるのか動かせないのか
+enum class BodyType {
+	kStatic,
+	kDynamic
 };
 
 //Collider
@@ -99,12 +111,14 @@ struct ColliderState {
 //obb: 当たり判定の形
 //isTrigger: 押し戻ししない
 //isEnabled: 無効化用
+//bodyType: 動かせるか動かせないのか
 //onCollision: 衝突したときに呼ばれる
 struct Collider {
 	ColliderState* owner;
 	OBB obb;
 	bool isTrigger;
 	bool isEnabled;
+	BodyType bodyType;
 	std::function<void(ColliderState* other)>onCollision;
 
 	/// <summary>
@@ -119,6 +133,13 @@ struct Collider {
 	/// </summary>
 	/// <returns>コライダー</returns>
 	Collider& CreateObb();
+
+	/// <summary>
+	/// BodyTypeのセッター
+	/// </summary>
+	/// <param name="bodyType">BodyType</param>
+	/// <returns>コライダー</returns>
+	Collider& SetBodyType(BodyType bodyType);
 
 	/// <summary>
 	/// isTriggerのセッター

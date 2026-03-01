@@ -49,7 +49,7 @@ void GameObjectList::LoadModel() {
 	//カメラ
 	core_->GetModelManager()->LoadModel("camera", "cube", "cube.obj");
 	//地面
-	core_->GetModelManager()->LoadModel("ground", "cube", "cube.obj");
+	core_->GetModelManager()->LoadModel("ground", "ground", "ground.gltf");
 	//フィールド
 	core_->GetModelManager()->LoadModel("field", "terrain", "terrain.obj");
 	//平面

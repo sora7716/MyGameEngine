@@ -41,7 +41,7 @@ void GameScene::Initialize(const SceneContext& sceneContext) {
 	//プレイヤー
 	player_ = std::make_unique<Player>();
 	player_->Initialize(sceneContext_.input, sceneContext_.spriteCommon, sceneContext_.object3dCommon, gameCamera_->GetCamera(), "player");
-	player_->SetPosition({ 25.0f,0.0f,25.0f });
+	player_->SetPosition({ 0.0f,0.0f,-25.0f });
 
 	//enemy_ = std::make_unique<Enemy>();
 	//enemy_->Initialize(sceneContext_.object3dCommon,camera_,"enemy");
@@ -60,9 +60,17 @@ void GameScene::Initialize(const SceneContext& sceneContext) {
 	score_->Initialize(sceneContext_.object2dCommon);
 
 	//衝突判定
+	//プレイヤー
 	colliderManager_->AddCollider(&player_->GetCollider());
-	for (int32_t i = 0; i < 2; i++) {
+
+	//壁
+	for (int32_t i = 0; i < static_cast<int32_t>(field_->GetWallDescs().size()); i++) {
 		colliderManager_->AddCollider(&field_->GetWallDescs()[i].collider);
+	}
+
+	//地面
+	for (int32_t i = 0; i < static_cast<int32_t>(field_->GetGroundDesc().size()); i++) {
+		colliderManager_->AddCollider(&field_->GetGroundDesc()[i].collider);
 	}
 	//colliderManager_->AddCollider(&enemy_->GetCollider());
 }
@@ -132,6 +140,11 @@ void GameScene::Update() {
 	//	//sceneContext_.sceneManager->ChangeScene("Result");
 	//}
 
+	//終了フラグが経ったら
+	if (player_->IsGoal()) {
+		sceneContext_.sceneManager->ChangeScene("Result");
+	}
+
 	//シーンのインタフェースの初期化
 	IScene::Update();
 #ifdef USE_IMGUI
@@ -142,22 +155,27 @@ void GameScene::Update() {
 	debugCamera_->Debug();
 	ImGui::End();
 
+	//フィールド
+	ImGui::Begin("field");
+	field_->Debug();
+	ImGui::End();
+
 	//グローバル変数の更新
 	//GlobalVariables::GetInstance()->Update();
 
 	//プレイヤー
-	//ImGui::Begin("player");
-	//player_->Debug();
-	//ImGui::End();
+	ImGui::Begin("player");
+	player_->Debug();
+	ImGui::End();
 
 	//ImGui::Begin("enemy");
 	//enemy_->Debug();
 	//ImGui::End();
 
-	////ゲームカメラ
-	//ImGui::Begin("gameCamera");
-	//gameCamera_->Debug();
-	//ImGui::End();
+	//ゲームカメラ
+	ImGui::Begin("gameCamera");
+	gameCamera_->Debug();
+	ImGui::End();
 
 	//敵
 	//ImGui::Begin("enemy");

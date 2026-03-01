@@ -8,8 +8,8 @@ class Object3dCommon;
 class Object3d;
 class Camera;
 
-//壁に必要な情報
-struct WallDesc {
+//フィールドに必要な情報の塊
+struct FieldObjectDesc {
 	GameObject gameObject;
 	Vector3 hitBoxScale;
 	ColliderState colliderState;
@@ -17,11 +17,11 @@ struct WallDesc {
 };
 
 //壁に必要な情報のまとまり
-struct WallGroup {
-	std::vector<WallDesc>wallDescs;
+struct FieldGroup {
+	std::vector<FieldObjectDesc>fieldDescs;
 	RenderObject renderObject;
 	std::string modelName;
-	int32_t wallCount;
+	int32_t objectCount;
 };
 
 /// <summary>
@@ -57,6 +57,11 @@ public://メンバ関数
 	void Draw();
 
 	/// <summary>
+	/// デバッグ
+	/// </summary>
+	void Debug();
+
+	/// <summary>
 	/// 衝突したとき
 	/// </summary>
 	/// <param name="colliderState">コライダーの状態</param>
@@ -69,13 +74,42 @@ public://メンバ関数
 	void SetCamera(Camera* camera);
 
 	/// <summary>
+    /// 地面に必要な情報のゲッター
+    /// </summary>
+    /// <returns>地面に必要な情報</returns>
+	std::vector<FieldObjectDesc>& GetGroundDesc();
+
+	/// <summary>
 	/// 壁に必要な情報のゲッター
 	/// </summary>
-	/// <returns>我部に必要な情報</returns>
-	std::vector<WallDesc>& GetWallDescs();
+	/// <returns>壁に必要な情報</returns>
+	std::vector<FieldObjectDesc>& GetWallDescs();
+private://メンバ関数
+	/// <summary>
+	/// 壁の生成
+	/// </summary>
+	void CreateWall();
+
+	/// <summary>
+	/// 壁の更新
+	/// </summary>
+	void UpdateWall();
+
+	/// <summary>
+	/// 壁の描画
+	/// </summary>
+	void DrawWall();
 private://メンバ変数
+	//オブジェクト3dの共通部分
+	Object3dCommon* object3dCommon_ = nullptr;
+	//カメラ
+	Camera* camera_ = nullptr;
+	
 	//壁に必要な情報のグループ
-	WallGroup wallGroup_ = {};
+	FieldGroup wallGroup_ = {};
+
+	//地面
+	FieldGroup ground_ = {};
 };
 
 

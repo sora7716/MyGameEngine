@@ -32,6 +32,6 @@ public://メンバ関数
 	static Vector3 ApplyPendulumForce(Pendulum& pendulum, const Vector3& ballPos);
 public://定数
 	//重力加速度
-	static inline const float kGravity = -9.8f;
+	static inline const float kGravity = -20.0f;
 };
 

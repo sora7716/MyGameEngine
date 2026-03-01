@@ -124,13 +124,19 @@ public://メンバ関数
 	bool IsAlive();
 
 	/// <summary>
+	/// ゴールしたかのフラグのゲッター
+	/// </summary>
+	/// <returns>ゴールしたかのフラグ</returns>
+	bool IsGoal();
+
+	/// <summary>
 	/// コライダーのゲッター
 	/// </summary>
 	/// <returns>コライダー</returns>
 	Collider& GetCollider();
 private://定数
 	//カメラの移動速度
-	static inline const float kMoveSpeed = 4.0f;
+	static inline const float kMoveSpeed = 8.0f;
 	//ジャンプするときの初速
 	static inline const float kJumpSpeed = 10.0f;
 	//HPの最大値
@@ -230,5 +236,8 @@ private://メンバ変数
 	//衝突
 	ColliderState colliderState_ = {};
 	Collider collider_ = {};
+
+	//ゴールしたら
+	bool isGoal_ = false;
 };
 

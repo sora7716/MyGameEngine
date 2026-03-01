@@ -58,6 +58,7 @@ void Player::Initialize(Input* input, SpriteCommon* spriteCommon, Object3dCommon
 	collider_.owner = &colliderState_;
 	collider_.isTrigger = false;
 	collider_.isEnabled = true;
+	collider_.bodyType = BodyType::kDynamic;
 
 	collider_.onCollision = [this](ColliderState* other) {this->OnCollision(other); };
 
@@ -132,7 +133,7 @@ void Player::Update() {
 	//gameObject_.transformData.translate.x = std::clamp(gameObject_.transformData.translate.x, 11.0f, 26.0f);
 	//gameObject_.transformData.translate.z = std::clamp(gameObject_.transformData.translate.z, 3.0f, 29.0f);
 	//下に行き過ぎないように制限
-	gameObject_.transformData.translate.y = std::max(gameObject_.transformData.translate.y, 0.0f);
+	//gameObject_.transformData.translate.y = std::max(gameObject_.transformData.translate.y, 0.0f);
 	//地面にいるかどうか
 	if (gameObject_.transformData.translate.y <= 0.0f) {
 		gameObject_.isOnGround = true;
@@ -191,10 +192,10 @@ void Player::Debug() {
 #ifdef USE_IMGUI
 	//ImGui::DragFloat3("direction", &gameObject_.direction.x, 0.1f);
 	//ImGui::DragFloat3("acceleration", &gameObject_.acceleration.x, 0.1f);
-	//ImGui::DragFloat3("velocity", &gameObject_.velocity.x, 0.1f);
 	//ImGui::DragFloat3("rotate", &gameObject_.transformData.rotate.x, 0.1f);
-	//ImGui::DragFloat3("trasnalate", &gameObject_.transformData.translate.x, 0.1f);
 	//ImGui::Checkbox("isMovingToAnchor", &isMovingToAnchor_);
+	ImGui::DragFloat3("trasnalate", &gameObject_.transformData.translate.x, 0.1f);
+	ImGui::DragFloat3("velocity", &gameObject_.velocity.x, 0.1f);
 	ImGui::ColorEdit4("color", &rimLight_.color.x);
 	ImGui::DragFloat("power", &rimLight_.power, 0.1f);
 	ImGui::DragFloat("outLinePower", &rimLight_.outLinePower, 0.1f);
@@ -209,6 +210,8 @@ void Player::OnCollision(ColliderState* other) {
 	if (other->tag == Tag::kEnemy) {
 		//攻撃を受ける
 		Damage();
+	} else if (other->tag == Tag::kGoal) {
+		isGoal_ = true;
 	}
 }
 
@@ -261,6 +264,11 @@ Bullet* Player::GetBullet()const {
 //生存フラグのゲッター
 bool Player::IsAlive() {
 	return gameObject_.isAlive;
+}
+
+//ゴールしたかのフラグのゲッター
+bool Player::IsGoal() {
+	return isGoal_;
 }
 
 Collider& Player::GetCollider() {

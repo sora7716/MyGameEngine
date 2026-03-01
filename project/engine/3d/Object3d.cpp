@@ -56,6 +56,7 @@ void Object3d::Initialize(Object3dCommon* object3dCommon, Camera* camera, uint32
 	camera_ = camera;
 	//カメラをセット
 	object3dCommon_->CreateCameraResource(camera_->GetTranslate());
+	object3dCommon_->SetCameraForGPU(camera->GetTranslate());
 
 	//マテリアルの初期化
 	material_.color = { 1.0f,1.0f,1.0f,1.0f };

@@ -6,8 +6,8 @@
 void GameCamera::Initialize(Camera* camera) {
 	//カメラとオフセットの記録
 	camera_ = camera;
-	offset_ = {0.0f,12.5f,-14.0f};
-	rotate_ = { 0.7f,0.0f,0.0f };
+	offset_ = {0.0f,3.0f,-15.0f};
+	rotate_ = { 0.2f,0.0f,0.0f };
 }
 
 //更新

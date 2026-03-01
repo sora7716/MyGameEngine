@@ -42,14 +42,14 @@ RenderObject&& RenderObject::Build() {
 }
 
 //コライダーの状態の初期化
-void ColliderState::Initialize() {
-	scalePtr = nullptr;
-	rotatePtr = nullptr;
-	translatePtr = nullptr;
-	velocityPtr = nullptr;
-	worldMatrixPtr = nullptr;
-	isOnGroundPtr = nullptr;
-	tag = Tag::kNone;
+void ColliderState::Initialize(Vector3& hitBoxScale, GameObject& gameObject, Matrix4x4& worldMatrix, Tag tag) {
+	scalePtr = &hitBoxScale;
+	rotatePtr = &gameObject.transformData.rotate;
+	translatePtr = &gameObject.transformData.translate;
+	velocityPtr = &gameObject.velocity;
+	worldMatrixPtr = &worldMatrix;
+	isOnGroundPtr = &gameObject.isOnGround;
+	this->tag = tag;
 }
 
 //コライダーのownerのセッター
@@ -59,6 +59,12 @@ Collider& Collider::SetOwner(ColliderState* colliderState) {
 }
 
 Collider& Collider::CreateObb() {
+	return *this;
+}
+
+//コライダーのBodyTypeのセッター
+Collider& Collider::SetBodyType(BodyType bodyType) {
+	this->bodyType = bodyType;
 	return *this;
 }
 

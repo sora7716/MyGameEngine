@@ -46,6 +46,7 @@ void Field::Draw() {
 
 //デバッグ
 void Field::Debug() {
+#ifdef USE_IMGUI
 	//for (int32_t i = 0; i < groundGroup_.objectCount; i++) {
 	//	ImGui::SeparatorText(("ground " + std::to_string(i)).c_str());
 	//	ImGui::PushID(i);
@@ -61,6 +62,7 @@ void Field::Debug() {
 		ImGui::DragFloat3("hitBox.scale", &wallGroup_.fieldDescs[i].hitBoxScale.x, 0.1f);
 		ImGui::PopID();
 	}
+#endif // USE_IMGUI
 }
 
 //衝突したとき

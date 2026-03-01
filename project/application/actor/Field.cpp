@@ -22,66 +22,8 @@ void Field::Initialize(Object3dCommon* object3dCommon, Camera* camera) {
 	//壁の初期化
 	CreateWall();
 
-	//モデル名
-	ground_.modelName = "ground";
-
-	//壁の数
-	ground_.objectCount = 7;
-	ground_.fieldDescs.resize(ground_.objectCount);
-
-	//レンダーオブジェクトの初期化
-	ground_.renderObject = ground_.renderObject
-		.Create()
-		.InitializeMaterial()
-		.Build();
-	ground_.renderObject.object3d->Initialize(object3dCommon_, camera_, ground_.objectCount);
-	ground_.renderObject.object3d->SetModel(ground_.modelName);
-	ground_.renderObject.hitBox->Initialize(object3dCommon_->GetWireframeObject3dCommon(), camera_, ModelType::kCube, ground_.objectCount);
-
-	//FieldDescの初期化
-	for (int32_t i = 0; i < ground_.objectCount; i++) {
-		//ヒットボックスの大きさを設定
-		ground_.fieldDescs[i].hitBoxScale = Vector3::MakeAllOne();
-		//ゲームオブジェクトの初期化
-		ground_.fieldDescs[i].gameObject.Initialize();
-
-		//コライダーの状態の初期化
-		ground_.fieldDescs[i].colliderState.Initialize(ground_.fieldDescs[i].hitBoxScale, ground_.fieldDescs[i].gameObject, ground_.renderObject.object3d->GetWorldMatrix(i), Tag::kGround);
-
-		if (i == 6) {
-			ground_.fieldDescs[i].colliderState.tag = Tag::kGoal;
-		}
-
-		//コライダーの初期化
-		ground_.fieldDescs[i].collider = ground_.fieldDescs[i].collider
-			.SetOwner(&ground_.fieldDescs[i].colliderState)
-			.SetIsTrigger(false)
-			.SetIsEnebled(true)
-			.SetOnCollision([this](ColliderState* other) {this->OnCollision(other); })
-			.Build();
-	}
-
-	ground_.fieldDescs[0].gameObject.transformData = { {20.0f,1.0f,30.0f},{},{0.0f,-2.0f,0.0f} };
-	ground_.fieldDescs[0].hitBoxScale = { 20.0f,1.0f,30.0f };
-
-	ground_.fieldDescs[1].gameObject.transformData = { {20.0f,1.0f,20.0f},{},{0.0f,-2.0f,55.0f} };
-	ground_.fieldDescs[1].hitBoxScale = { 20.0f,1.0f,20.0f };
-
-	ground_.fieldDescs[2].gameObject.transformData = { {5.0f,1.0f,5.0f},{12.0f,0.0f,0.0f},{-8.5f,0.0f,85.0f} };
-	ground_.fieldDescs[2].hitBoxScale = { 5.0f,1.0f,5.0f };
-
-	ground_.fieldDescs[3].gameObject.transformData = { {7.0f,1.0f,5.0f},{-0.3f,0.8f,0.0f},{10.0f,-2.0f,85.0f} };
-	ground_.fieldDescs[3].hitBoxScale = { 7.0f,1.0f,5.0f };
-
-	ground_.fieldDescs[4].gameObject.transformData = { { 8.0f,1.0f,6.0f},{0.1f,0.0f,0.0f},{0.0f,-2.0f,101.0f} };
-	ground_.fieldDescs[4].hitBoxScale = { 8.0f,1.0f,6.0f };
-
-	ground_.fieldDescs[5].gameObject.transformData = { {10.0f,1.0f,9.0f},{0.0f,2.0f,0.0f},{15.0f,-2.0f,120.0f} };
-	ground_.fieldDescs[5].hitBoxScale = { 10.0f,1.0f,9.0f };
-
-	ground_.fieldDescs[6].gameObject.transformData = { {10.0f,1.0f,9.0f},{},{15.0f,-2.0f,145.0f} };
-	ground_.fieldDescs[6].hitBoxScale = { 10.0f,1.0f,9.0f };
-
+	//地面
+	CreateGround();
 }
 
 //更新
@@ -90,33 +32,33 @@ void Field::Update() {
 	UpdateWall();
 
 	//地面
-	for (int32_t i = 0; i < ground_.objectCount; i++) {
-		ground_.renderObject.object3d->SetTransformData(i, ground_.fieldDescs[i].gameObject.transformData);
-		ground_.renderObject.hitBox->SetScale(i, ground_.fieldDescs[i].hitBoxScale);
-		ground_.renderObject.hitBox->SetRotate(i, ground_.fieldDescs[i].gameObject.transformData.rotate);
-		ground_.renderObject.hitBox->SetTranslate(i, ground_.renderObject.object3d->GetWorldPos(i));
-	}
-	ground_.renderObject.object3d->Update();
-	ground_.renderObject.hitBox->Update();
+	UpdateGround();
 }
 
 //描画
 void Field::Draw() {
 	//壁
-	//DrawWall();
+	DrawWall();
 
 	//地面
-	ground_.renderObject.object3d->Draw();
-	ground_.renderObject.hitBox->Draw();
+	DrawGround();
 }
 
 //デバッグ
 void Field::Debug() {
-	for (int32_t i = 0; i < ground_.objectCount; i++) {
-		ImGui::SeparatorText(("ground " + std::to_string(i)).c_str());
+	//for (int32_t i = 0; i < groundGroup_.objectCount; i++) {
+	//	ImGui::SeparatorText(("ground " + std::to_string(i)).c_str());
+	//	ImGui::PushID(i);
+	//	ImGuiManager::DragTransform(groundGroup_.fieldDescs[i].gameObject.transformData);
+	//	ImGui::DragFloat3("hitBox.scale", &groundGroup_.fieldDescs[i].hitBoxScale.x, 0.1f);
+	//	ImGui::PopID();
+	//}
+
+	for (int32_t i = 0; i < wallGroup_.objectCount; i++) {
+		ImGui::SeparatorText(("wall " + std::to_string(i)).c_str());
 		ImGui::PushID(i);
-		ImGuiManager::DragTransform(ground_.fieldDescs[i].gameObject.transformData);
-		ImGui::DragFloat3("hitBox.scale", &ground_.fieldDescs[i].hitBoxScale.x, 0.1f);
+		ImGuiManager::DragTransform(wallGroup_.fieldDescs[i].gameObject.transformData);
+		ImGui::DragFloat3("hitBox.scale", &wallGroup_.fieldDescs[i].hitBoxScale.x, 0.1f);
 		ImGui::PopID();
 	}
 }
@@ -133,13 +75,13 @@ void Field::SetCamera(Camera* camera) {
 	wallGroup_.renderObject.hitBox->SetCamera(camera);
 
 	//地面
-	ground_.renderObject.object3d->SetCamera(camera);
-	ground_.renderObject.hitBox->SetCamera(camera);
+	groundGroup_.renderObject.object3d->SetCamera(camera);
+	groundGroup_.renderObject.hitBox->SetCamera(camera);
 }
 
 //地面に必要な情報のゲッター
 std::vector<FieldObjectDesc>& Field::GetGroundDesc() {
-	return ground_.fieldDescs;
+	return groundGroup_.fieldDescs;
 }
 
 //壁に必要な情報のゲッター
@@ -150,7 +92,7 @@ std::vector<FieldObjectDesc>& Field::GetWallDescs() {
 //壁の生成
 void Field::CreateWall() {
 	//壁の数
-	wallGroup_.objectCount = 1;
+	wallGroup_.objectCount = 12;
 	wallGroup_.fieldDescs.resize(wallGroup_.objectCount);
 	wallGroup_.modelName = "wall";
 	//レンダーオブジェクトの初期化
@@ -181,9 +123,41 @@ void Field::CreateWall() {
 			.Build();
 	}
 
-	//壁の位置を指定
-	wallGroup_.fieldDescs[0].gameObject.transformData.translate = { 20.0f,0.0f,25.0f };
-	//wallGroup_.wallDescs[1].gameObject.transformData.translate = { 18.0f,0.0f,25.0f };
+	wallGroup_.fieldDescs[0].gameObject.transformData = { {20.0f,4.0f,3.5f},{},{0.0f,3.0f,25.0f} };
+	wallGroup_.fieldDescs[0].hitBoxScale = { 20.0f,4.0f,3.5f };
+
+	wallGroup_.fieldDescs[1].gameObject.transformData = { {20.0f,3.0f,5.0f},{},{0.0f,2.0f,16.0f} };
+	wallGroup_.fieldDescs[1].hitBoxScale = { 20.0f,3.0f,5.0f };
+
+	wallGroup_.fieldDescs[2].gameObject.transformData = { {1.0f,1.0f,1.0f},{},{0.0f,3.0f,-16.0f} };
+	wallGroup_.fieldDescs[2].hitBoxScale = { 1.0f,1.0f,1.0f };
+
+	wallGroup_.fieldDescs[3].gameObject.transformData = { {1.0f,1.0f,1.0f},{},{0.0f,3.0f,-14.0f} };
+	wallGroup_.fieldDescs[3].hitBoxScale = { 1.0f,1.0f,1.0f };
+
+	wallGroup_.fieldDescs[4].gameObject.transformData = { {3.0f,0.2f,5.0f},{-0.3f,-5.5f,0.0f},{6.0f,6.0f,0.0f} };
+	wallGroup_.fieldDescs[4].hitBoxScale = { 3.0f,0.2f,5.0f };
+
+	wallGroup_.fieldDescs[5].gameObject.transformData = { {5.0f,0.5f,1.0f},{-0.8f,-0.7f,0.5f},{8.9f,4.4f,9.8f} };
+	wallGroup_.fieldDescs[5].hitBoxScale = { 5.0f,0.5f,1.0f };
+
+	wallGroup_.fieldDescs[6].gameObject.transformData = { {5.0f,1.0f,1.0f},{0.0f,-0.6f,0.0f},{0.6f,1.0f,-5.7f} };
+	wallGroup_.fieldDescs[6].hitBoxScale = { 5.0f,1.0f,1.0f };
+
+	wallGroup_.fieldDescs[7].gameObject.transformData = { {1.0f,3.5f,1.0f},{0.0f,0.0f,0.0f},{0.0f,4.9f,-12.0f} };
+	wallGroup_.fieldDescs[7].hitBoxScale = { 1.0f,3.5f,1.0f };
+
+	wallGroup_.fieldDescs[8].gameObject.transformData = { {20.0f,5.0f,1.0f},{0.0f,0.0f,0.0f},{0.0f,4.0f,63.0f} };
+	wallGroup_.fieldDescs[8].hitBoxScale = { 20.0f,5.0f,1.0f };
+
+	wallGroup_.fieldDescs[9].gameObject.transformData = { {20.0f,0.5f,10.0f},{0.3f,0.0f,0.0f},{0.0f,11.0f,61.0f} };
+	wallGroup_.fieldDescs[9].hitBoxScale = { 20.0f,0.5f,10.0f };
+
+	wallGroup_.fieldDescs[10].gameObject.transformData = { { 1.0f,1.0f,1.0f },{0.0f,0.0f,0.0f},{-7.8f,8.4f,47.5f} };
+	wallGroup_.fieldDescs[10].hitBoxScale = { 1.0f,1.0f,1.0f };
+
+	wallGroup_.fieldDescs[11].gameObject.transformData = { { 10.0f,0.1f,5.0f },{0.0f,1.5f,0.6f},{0.0f,5.0f,45.5f} };
+	wallGroup_.fieldDescs[11].hitBoxScale = { 10.0f,0.1f,5.0f };
 }
 
 //壁の更新
@@ -202,4 +176,88 @@ void Field::UpdateWall() {
 void Field::DrawWall() {
 	wallGroup_.renderObject.object3d->Draw();
 	wallGroup_.renderObject.hitBox->Draw();
+}
+
+//地面の生成
+void Field::CreateGround() {
+	//モデル名
+	groundGroup_.modelName = "ground";
+
+	//壁の数
+	groundGroup_.objectCount = 7;
+	groundGroup_.fieldDescs.resize(groundGroup_.objectCount);
+
+	//レンダーオブジェクトの初期化
+	groundGroup_
+		.renderObject = groundGroup_.renderObject
+		.Create()
+		.InitializeMaterial()
+		.Build();
+	groundGroup_.renderObject.object3d->Initialize(object3dCommon_, camera_, groundGroup_.objectCount);
+	groundGroup_.renderObject.object3d->SetModel(groundGroup_.modelName);
+	groundGroup_.renderObject.hitBox->Initialize(object3dCommon_->GetWireframeObject3dCommon(), camera_, ModelType::kCube, groundGroup_.objectCount);
+
+	//FieldDescの初期化
+	for (int32_t i = 0; i < groundGroup_.objectCount; i++) {
+		//ヒットボックスの大きさを設定
+		groundGroup_.fieldDescs[i].hitBoxScale = Vector3::MakeAllOne();
+		//ゲームオブジェクトの初期化
+		groundGroup_.fieldDescs[i].gameObject.Initialize();
+
+		//コライダーの状態の初期化
+		groundGroup_.fieldDescs[i].colliderState.Initialize(groundGroup_.fieldDescs[i].hitBoxScale, groundGroup_.fieldDescs[i].gameObject, groundGroup_.renderObject.object3d->GetWorldMatrix(i), Tag::kGround);
+
+		if (i == 6) {
+			groundGroup_.fieldDescs[i].colliderState.tag = Tag::kGoal;
+		}
+
+		//コライダーの初期化
+		groundGroup_.fieldDescs[i].collider = groundGroup_.fieldDescs[i].collider
+			.SetOwner(&groundGroup_.fieldDescs[i].colliderState)
+			.SetIsTrigger(false)
+			.SetIsEnebled(true)
+			.SetOnCollision([this](ColliderState* other) {this->OnCollision(other); })
+			.Build();
+	}
+
+	groundGroup_.fieldDescs[0].gameObject.transformData = { {20.0f,1.0f,30.0f},{},{0.0f,-2.0f,0.0f} };
+	groundGroup_.fieldDescs[0].hitBoxScale = { 20.0f,1.0f,30.0f };
+
+	groundGroup_.fieldDescs[1].gameObject.transformData = { {20.0f,1.0f,20.0f},{},{0.0f,-2.0f,55.0f} };
+	groundGroup_.fieldDescs[1].hitBoxScale = { 20.0f,1.0f,20.0f };
+
+	groundGroup_.fieldDescs[2].gameObject.transformData = { {5.0f,1.0f,5.0f},{12.0f,0.0f,0.0f},{-8.5f,0.0f,85.0f} };
+	groundGroup_.fieldDescs[2].hitBoxScale = { 5.0f,1.0f,5.0f };
+
+	groundGroup_.fieldDescs[3].gameObject.transformData = { {7.0f,1.0f,5.0f},{-0.3f,0.8f,0.0f},{10.0f,-2.0f,85.0f} };
+	groundGroup_.fieldDescs[3].hitBoxScale = { 7.0f,1.0f,5.0f };
+
+	groundGroup_.fieldDescs[4].gameObject.transformData = { { 8.0f,1.0f,6.0f},{0.1f,0.0f,0.0f},{0.0f,-2.0f,101.0f} };
+	groundGroup_.fieldDescs[4].hitBoxScale = { 8.0f,1.0f,6.0f };
+
+	groundGroup_.fieldDescs[5].gameObject.transformData = { {10.0f,1.0f,9.0f},{0.0f,2.0f,0.0f},{15.0f,-2.0f,120.0f} };
+	groundGroup_.fieldDescs[5].hitBoxScale = { 10.0f,1.0f,9.0f };
+
+	groundGroup_.fieldDescs[6].gameObject.transformData = { {10.0f,1.0f,9.0f},{},{15.0f,-2.0f,145.0f} };
+	groundGroup_.fieldDescs[6].hitBoxScale = { 10.0f,1.0f,9.0f };
+}
+
+//地面の更新
+void Field::UpdateGround() {
+	//地面
+	for (int32_t i = 0; i < groundGroup_.objectCount; i++) {
+		groundGroup_.renderObject.object3d->SetTransformData(i, groundGroup_.fieldDescs[i].gameObject.transformData);
+		groundGroup_.renderObject.hitBox->SetScale(i, groundGroup_.fieldDescs[i].hitBoxScale);
+		groundGroup_.renderObject.hitBox->SetRotate(i, groundGroup_.fieldDescs[i].gameObject.transformData.rotate);
+		groundGroup_.renderObject.hitBox->SetTranslate(i, groundGroup_.renderObject.object3d->GetWorldPos(i));
+	}
+	groundGroup_.renderObject.object3d->Update();
+	groundGroup_.renderObject.hitBox->Update();
+}
+
+//地面の描画
+void Field::DrawGround() {
+	//地面
+	groundGroup_.renderObject.object3d->Draw();
+	groundGroup_.renderObject.hitBox->Draw();
 }

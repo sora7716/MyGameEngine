@@ -99,17 +99,32 @@ private://メンバ関数
 	/// 壁の描画
 	/// </summary>
 	void DrawWall();
+
+	/// <summary>
+	/// 地面の生成
+	/// </summary>
+	void CreateGround();
+
+	/// <summary>
+	/// 地面の更新
+	/// </summary>
+	void UpdateGround();
+
+	/// <summary>
+	/// 地面の描画
+	/// </summary>
+	void DrawGround();
 private://メンバ変数
 	//オブジェクト3dの共通部分
 	Object3dCommon* object3dCommon_ = nullptr;
 	//カメラ
 	Camera* camera_ = nullptr;
 	
-	//壁に必要な情報のグループ
+	//壁
 	FieldGroup wallGroup_ = {};
 
 	//地面
-	FieldGroup ground_ = {};
+	FieldGroup groundGroup_ = {};
 };
 
 

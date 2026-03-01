@@ -138,7 +138,7 @@ private://定数
 	//カメラの移動速度
 	static inline const float kMoveSpeed = 8.0f;
 	//ジャンプするときの初速
-	static inline const float kJumpSpeed = 10.0f;
+	static inline const float kJumpSpeed = 15.0f;
 	//HPの最大値
 	static inline const int32_t kMaxHpCount = 10;
 	//ダメージのクールタイムの最大値

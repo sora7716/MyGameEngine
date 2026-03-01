@@ -36,7 +36,7 @@ void GameScene::Initialize(const SceneContext& sceneContext) {
 
 	//追従カメラ
 	gameCamera_ = std::make_unique<GameCamera>();
-	gameCamera_->Initialize(camera_);
+	gameCamera_->Initialize(sceneContext_.input,camera_);
 
 	//プレイヤー
 	player_ = std::make_unique<Player>();

@@ -1,22 +1,56 @@
 #include "GameCamera.h"
-#include "engine/camera/Camera.h"
-#include "engine/debug/ImGuiManager.h"
+#include "Camera.h"
+#include "ImGuiManager.h"
+#include "func/Rendering.h"
+#include "func/Math.h"
+#include "Input.h"
 
 //初期化
-void GameCamera::Initialize(Camera* camera) {
-	//カメラとオフセットの記録
+void GameCamera::Initialize(Input* input, Camera* camera) {
+	//入力の記録
+	input_ = input;
+	//カメラの記録
 	camera_ = camera;
-	offset_ = {0.0f,3.0f,-15.0f};
-	rotate_ = { 0.2f,0.0f,0.0f };
 }
 
 //更新
 void GameCamera::Update() {
-	//カメラの位置をオフセット分離す
-	camera_->SetTranslate(targetPos_ + offset_);
+	//オフセットを設定
+	offset_ = { 0.0f,2.0f,-15.0f };
+	//カメラの回転
+	if (input_->IsXboxPadConnected(xBoxPadNumber_)) {
+		float rx = input_->GetXboxPadRighttStick(xBoxPadNumber_).y;
+		float ry = input_->GetXboxPadRighttStick(xBoxPadNumber_).x;
 
+		// デッドゾーン
+		if (std::fabs(rx) < 0.15f) {
+			rx = 0.0f;
+		}
+		if (std::fabs(ry) < 0.15f) {
+			ry = 0.0f;
+		}
+
+		// 回転更新（dtも掛けるのが理想）
+		rotate_.y += ry * kRotateSpeed * Math::kDeltaTime * -1.0f;
+		rotate_.x += rx * kRotateSpeed * Math::kDeltaTime * -1.0f;
+
+		//X軸制限（0〜90度）
+		float minX = -10.0f*Math::kRad;
+		float maxX = 60.0f * Math::kRad;
+
+		rotate_.x = std::clamp(rotate_.x, minX, maxX);
+	}
 	//カメラの回転を設定
 	camera_->SetRotate(rotate_);
+
+	//カメラの角度から回転行列を求める
+	Matrix4x4 rotMat = Rendering::MakeRotateXYZMatrix(rotate_);
+
+	//オフセットをカメラの回転に合わせて回転させる
+	offset_ = Math::TransformNormal(offset_, rotMat);
+
+	//カメラの位置をオフセット分離す
+	camera_->SetTranslate(targetPos_ + offset_);
 
 	//カメラの更新
 	camera_->Update();

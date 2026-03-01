@@ -152,7 +152,7 @@ void Player::Update() {
 	HeadlightUpdate();
 
 	//視点
-	LookDirection();
+	//LookDirection();
 
 	//トランスフォームを設定
 	renderObject_.object3d->SetTransformData(0, gameObject_.transformData);
@@ -183,8 +183,8 @@ void Player::Draw() {
 	//ヒットボックスの描画
 	renderObject_.hitBox->Draw();
 	//HP
-	hpBar_->Draw();
-	hpOutLine_->Draw();
+	//hpBar_->Draw();
+	//hpOutLine_->Draw();
 }
 
 //デバッグ用
@@ -309,7 +309,16 @@ void Player::Move() {
 		}
 	}
 
-	//カメラを移動させる
+	//カメラの角度をもとに回転行列を求める
+	Matrix4x4 rotMat = Rendering::MakeRotateXYZMatrix(camera_->GetRotate());
+
+	//カメラの向いてる方向を正にする(XとZ軸限定)
+	Vector3 moveDirXZ = Math::TransformNormal(Vector3(gameObject_.direction.x, 0.0f, gameObject_.direction.z), rotMat);
+
+	//Y軸のそのまま
+	gameObject_.direction = { moveDirXZ.x,gameObject_.direction.y,moveDirXZ.z };
+
+	//移動させる
 	gameObject_.velocity.x = gameObject_.direction.Normalize().x * kMoveSpeed;
 	gameObject_.velocity.z = gameObject_.direction.Normalize().z * kMoveSpeed;
 }

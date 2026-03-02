@@ -16,7 +16,7 @@ public://メンバ変数
 	/// <summary>
 	/// デストラクタ
 	/// </summary>
-	~IEnemyState() = default;
+	virtual~IEnemyState() = default;
 
 	/// <summary>
 	/// 敵のセッター
@@ -33,6 +33,28 @@ protected://メンバ変数
 };
 
 /// <summary>
+/// スポーン
+/// </summary>
+class EnemeyStateSpawn :public IEnemyState {
+public://メンバ関数
+	/// <summary>
+	/// 実行
+	/// </summary>
+	void Exce()override;
+};
+
+/// <summary>
+/// 待機
+/// </summary>
+class EnemeyStateIdol :public IEnemyState {
+public://メンバ関数
+	/// <summary>
+	/// 実行
+	/// </summary>
+	void Exce()override;
+};
+
+/// <summary>
 /// 追従
 /// </summary>
 class EnemyStateChase :public IEnemyState {
@@ -43,14 +65,14 @@ public://メンバ関数
 	void Exce()override;
 };
 
-/// <summary>
-/// 攻撃
-/// </summary>
-class EnemeyStateAttack :public IEnemyState {
-public://メンバ関数
-	/// <summary>
-	/// 実行
-	/// </summary>
-	void Exce()override;
-};
-
+///// <summary>
+///// 攻撃
+///// </summary>
+//class EnemeyStateAttack :public IEnemyState {
+//public://メンバ関数
+//	/// <summary>
+//	/// 実行
+//	/// </summary>
+//	void Exce()override;
+//};
+//

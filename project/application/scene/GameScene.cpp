@@ -101,6 +101,7 @@ void GameScene::Update() {
 	//敵
 	//enemyManager_->Update(player_->GetWorldPos());
 
+	enemy_->SetTarget(player_->GetWorldPos());
 	enemy_->Update();
 
 	//フィールド

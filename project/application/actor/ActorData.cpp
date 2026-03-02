@@ -8,7 +8,7 @@ void GameObject::Initialize() {
 	velocity = {};
 	acceleration = {};
 	direction = {};
-	isAlive = true;
+	isAlive = false;
 	isOnGround = false;
 }
 

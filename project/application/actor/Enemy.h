@@ -64,21 +64,6 @@ public://メンバ関数
 	void OnCollision(int32_t index, ColliderState* other);
 
 	/// <summary>
-	/// 待機
-	/// </summary>
-	void Idol();
-
-	/// <summary>
-	/// 追従
-	/// </summary>
-	void Chase();
-
-	/// <summary>
-	/// 攻撃
-	/// </summary>
-	void Attack();
-
-	/// <summary>
 	/// カメラのセッター
 	/// </summary>
 	/// <param name="camera">カメラ</param>
@@ -97,22 +82,30 @@ public://メンバ関数
 	void SetMoveSpeed(float moveSpeed);
 
 	/// <summary>
-	/// 弾の発射速度のセッター
-	/// </summary>
-	/// <param name="bulletShotSpeed">弾の発射速度</param>
-	void SetBulletShotSpeed(float bulletShotSpeed);
-
-	/// <summary>
-	/// 弾のゲッター
-	/// </summary>
-	/// <returns>弾</returns>
-	Bullet* GetBullet()const;
-
-	/// <summary>
 	/// エンティティのゲッター
 	/// </summary>
 	/// <returns>エンティティ</returns>
 	std::vector<Entity>& GetEntity();
+public://敵の行動
+	/// <summary>
+	/// 待機
+	/// </summary>
+	void Idol();
+
+	/// <summary>
+	/// 敵の生成
+	/// </summary>
+	void Spawn();
+
+	/// <summary>
+	/// 追従
+	/// </summary>
+	void Chase();
+
+	/// <summary>
+	/// 攻撃
+	/// </summary>
+	void Attack();
 private://メンバ関数
 	/// <summary>
 	/// ターゲットの方向を向く
@@ -125,29 +118,29 @@ private://メンバ関数
 	void Behavior();
 
 	/// <summary>
-    /// 速度と加速度を位置に適応
-    /// </summary>
+	/// 速度と加速度を位置に適応
+	/// </summary>
 	void IntegrateMotion();
+
+	/// <summary>
+	/// ステートの切り替え
+	/// </summary>
+	/// <param name="next">次のステート</param>
+	void ChangeState(IEnemyState* next);
 private://定数
 	//待機時の回転速度
 	static inline const float kIdolRotSpeed = 0.5f;
-	//弾を撃つタイマーのリミット
-	static inline const float kBulletShotTimerLimit = 2.0f;
 	//攻撃タイマーのリミット
 	static inline const float kAttackTimerLimit = 5.0f;
-	//弾の数
-	static inline const uint32_t kBulletCount = 20;
-	//弾の大きさ
-	static inline const float kBulletSize = 0.25f;
 	//生存エリアのサイズ
 	static inline const float kAliveAreaSize = 100.0f;
 	//HPの最大値
 	static inline const int32_t kMaxHpCout = 5;
 private://メンバ変数
+	//敵の最初のスポーンテーブル
+	std::vector<Vector3>enemySpawnTable_;
 	//移動速度
-	float moveSpeed_ = 0.1f;
-	//弾の速度
-	float bulletShotSpeed_ = -8.0f;
+	float moveSpeed_ = 0.05f;
 
 	//エンティティ
 	EntityGroup entityGroup_ = {};
@@ -157,12 +150,13 @@ private://メンバ変数
 	Vector3 targetPos_ = {};
 
 	//敵の状態
-	std::unique_ptr <IEnemyState> enemyState_ = nullptr;
+	std::unique_ptr <IEnemyState> spawn_ = nullptr;
+	std::unique_ptr <IEnemyState> idol_ = nullptr;
+	std::unique_ptr <IEnemyState> chase_ = nullptr;
+	IEnemyState* currentState_ = nullptr;
 
-	//弾
-	std::unique_ptr<Bullet> bullet_ = nullptr;
-	//弾を撃つタイマー
-	float bulletShotTimer_ = 0.0f;
+	float spawnTimer_ = 0.0f;
+
 	//攻撃フラグ
 	bool isAttacking_ = false;
 	//攻撃タイマー
@@ -175,14 +169,5 @@ private://メンバ変数
 	//行動が変化するエリア
 	std::unique_ptr <WireframeObject3d> attackArea = nullptr;
 	float attackAreaRadius_ = 0.0f;
-
-	//ヒットポイント
-	//int32_t hp_ = kMaxHpCout;
-	//std::unique_ptr<Object3d> hpBar_ = nullptr;
-	//float hpBarPosX_ = 0.0f;
-	//float hpBarWidth_ = 2.0f;
-	//TransformData hpBarTransform_ = { {1.0f,1.0f,1.0f}, {},{} };
-	//std::unique_ptr <Object3d> hpOutLine_ = nullptr;
-	//TransformData hpOutLineTransform_ = { {1.0f,1.0f,1.0f}, {},{} };
 };
 

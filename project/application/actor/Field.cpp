@@ -171,7 +171,7 @@ void Field::UpdateWall() {
 		wallGroup_.renderObject.object3d->SetTransformData(i, wallGroup_.entity[i].gameObject.transformData);
 		wallGroup_.renderObject.hitBox->SetScale(i, wallGroup_.entity[i].hitBoxScale);
 		wallGroup_.renderObject.hitBox->SetRotate(i, wallGroup_.entity[i].gameObject.transformData.rotate);
-		wallGroup_.renderObject.hitBox->SetTranslate(i, wallGroup_.renderObject.object3d->GetWorldPos(i));
+		wallGroup_.renderObject.hitBox->SetTranslate(i, wallGroup_.entity[i].gameObject.transformData.translate);
 	}
 	wallGroup_.renderObject.object3d->Update();
 	wallGroup_.renderObject.hitBox->Update();
@@ -257,7 +257,7 @@ void Field::UpdateGround() {
 		groundGroup_.renderObject.object3d->SetTransformData(i, groundGroup_.entity[i].gameObject.transformData);
 		groundGroup_.renderObject.hitBox->SetScale(i, groundGroup_.entity[i].hitBoxScale);
 		groundGroup_.renderObject.hitBox->SetRotate(i, groundGroup_.entity[i].gameObject.transformData.rotate);
-		groundGroup_.renderObject.hitBox->SetTranslate(i, groundGroup_.renderObject.object3d->GetWorldPos(i));
+		groundGroup_.renderObject.hitBox->SetTranslate(i, groundGroup_.entity[i].gameObject.transformData.translate);
 	}
 	groundGroup_.renderObject.object3d->Update();
 	groundGroup_.renderObject.hitBox->Update();

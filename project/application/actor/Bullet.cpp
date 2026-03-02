@@ -75,7 +75,7 @@ void Bullet::Update() {
 			bulletData.renderObject.object3d->Update();
 
 			//ヒットボックスの更新
-			bulletData.renderObject.hitBox->SetTranslate(0,bulletData.renderObject.object3d->GetWorldPos(0));
+			bulletData.renderObject.hitBox->SetTranslate(0, bulletData.gameObject.transformData.translate);
 			bulletData.renderObject.hitBox->SetRotate(0,bulletData.gameObject.transformData.rotate);
 			bulletData.renderObject.hitBox->SetScale(0,hitBoxScale_);
 			bulletData.renderObject.hitBox->Update();

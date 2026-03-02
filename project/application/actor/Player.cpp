@@ -167,7 +167,7 @@ void Player::Update() {
 	renderObject_.object3d->Update();
 
 	//ヒットボックスの更新
-	renderObject_.hitBox->SetTranslate(0, renderObject_.object3d->GetWorldPos(0));
+	renderObject_.hitBox->SetTranslate(0, GetWorldPos());
 	renderObject_.hitBox->SetRotate(0, gameObject_.transformData.rotate);
 	renderObject_.hitBox->SetScale(0, hitBoxScale_);
 	renderObject_.hitBox->Update();
@@ -216,7 +216,7 @@ void Player::OnCollision(ColliderState* other) {
 	if (other->tag == Tag::kEnemy) {
 		//攻撃を受ける
 		//Damage();
-		if (other->translatePtr->y < renderObject_.object3d->GetWorldPos(0).y - gameObject_.transformData.scale.y) {
+		if (other->translatePtr->y < GetWorldPos().y - gameObject_.transformData.scale.y) {
 			gameObject_.velocity.y = 5.0f;
 		} else {
 			gameObject_.isAlive = false;
@@ -337,7 +337,7 @@ void Player::Move() {
 //攻撃
 void Player::Attack() {
 	//弾の発射
-	bullet_->SetShootingPosition(renderObject_.object3d->GetWorldPos(0));
+	bullet_->SetShootingPosition(GetWorldPos());
 	bullet_->SetSourceWorldMatrix(renderObject_.object3d->GetWorldMatrix(0));
 	bullet_->Fire(input_->TriggerXboxPad(xBoxPadNumber_, XboxInput::kRT));
 	bullet_->Update();
@@ -396,7 +396,7 @@ void Player::Dead() {
 void Player::HeadlightUpdate() {
 	//ライトの位置をプレイヤーの前に設定
 	Vector3 headlightOffset = { 0.0f, 0.0f, 0.5f };
-	headlight_.position = renderObject_.object3d->GetWorldPos(0) + headlightOffset;
+	headlight_.position = GetWorldPos() + headlightOffset;
 	// ローカル空間での“前”の向き
 	Vector3 localForward = { 0.0f, 0.0f, 1.0f };
 

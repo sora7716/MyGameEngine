@@ -271,7 +271,7 @@ Model* Object3d::GetModel() {
 }
 
 //ワールドマトリックスのゲッター
-Matrix4x4& Object3d::GetWorldMatrix(uint32_t index) {
+Matrix4x4& Object3d::GetWorldMatrix(uint32_t index){
 	return wvpData_[index].world;
 }
 

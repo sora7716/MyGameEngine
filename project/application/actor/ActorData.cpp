@@ -42,12 +42,11 @@ RenderObject&& RenderObject::Build() {
 }
 
 //コライダーの状態の初期化
-void ColliderState::Initialize(Vector3& hitBoxScale, GameObject& gameObject, Matrix4x4& worldMatrix, Tag tag) {
+void ColliderState::Initialize(Vector3& hitBoxScale, GameObject& gameObject,Tag tag) {
 	scalePtr = &hitBoxScale;
 	rotatePtr = &gameObject.transformData.rotate;
 	translatePtr = &gameObject.transformData.translate;
 	velocityPtr = &gameObject.velocity;
-	worldMatrixPtr = &worldMatrix;
 	isOnGroundPtr = &gameObject.isOnGround;
 	this->tag = tag;
 }

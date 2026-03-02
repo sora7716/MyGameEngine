@@ -85,7 +85,6 @@ struct BulletData {
 //rotatePtr: 回転のポインタ
 //translatePtr: 平行移動のポインタ
 //velocityPtr: 速度のポインタ
-//worldMatrixPtr: ワールド行列のポインタ
 //isOnGroundPtr: 地面にいるかのフラグのポインタ
 //tag: オブジェクトのタグ
 struct ColliderState {
@@ -93,7 +92,6 @@ struct ColliderState {
 	Vector3* rotatePtr;
 	Vector3* translatePtr;
 	Vector3* velocityPtr;
-	Matrix4x4* worldMatrixPtr;
 	bool* isOnGroundPtr;
 	Tag tag;
 
@@ -102,9 +100,8 @@ struct ColliderState {
 	/// </summary>
 	/// <param name="hitBoxScale">ヒットボックスのスケール</param>
 	/// <param name="gameObject">ゲームオブジェクト</param>
-	/// <param name="worldMatrix">ワールド行列</param>
 	/// <param name="tag">タグ</param>
-	void Initialize(Vector3& hitBoxScale, GameObject& gameObject, Matrix4x4& worldMatrix, Tag tag = Tag::kNone);
+	void Initialize(Vector3& hitBoxScale, GameObject& gameObject, Tag tag = Tag::kNone);
 };
 
 //動かせるのか動かせないのか

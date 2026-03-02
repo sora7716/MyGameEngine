@@ -58,9 +58,7 @@ void ColliderManager::SyncCollider() {
 		collider->obb.size = *collider->owner->scalePtr;
 		collider->obb.rotate = *collider->owner->rotatePtr;
 		Rendering::MakeOBBRotateMatrix(collider->obb.orientations, collider->obb.rotate);
-		Matrix4x4 worldMat = *collider->owner->worldMatrixPtr;
-		Vector3 worldPos = { worldMat.m[3][0],worldMat.m[3][1],worldMat.m[3][2] };
-		collider->obb.center = worldPos;
+		collider->obb.center = *collider->owner->translatePtr;
 	}
 }
 
@@ -172,5 +170,5 @@ void ColliderManager::Resolve(ColliderState& self, const ColliderState& other, H
 bool ColliderManager::IsLayerCollidable(const Collider* self, const Collider* other) {
 	return
 		(self->maskLayer & static_cast<uint32_t>(other->layer)) != 0 &&
-		(other->maskLayer & static_cast<uint32_t>(other->layer)) != 0;
+		(other->maskLayer & static_cast<uint32_t>(self->layer)) != 0;
 }

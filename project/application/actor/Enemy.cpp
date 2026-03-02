@@ -48,7 +48,7 @@ void Enemy::Initialize(Object3dCommon* object3dCommon, Camera* camera, const std
 		//ヒットボックスのスケール
 		entityGroup_.entity[i].hitBoxScale = Vector3::MakeAllOne();
 		//コライダーの状態の初期化
-		entityGroup_.entity[i].colliderState.Initialize(entityGroup_.entity[i].hitBoxScale, entityGroup_.entity[i].gameObject, entityGroup_.renderObject.object3d->GetWorldMatrix(i), Tag::kEnemy);
+		entityGroup_.entity[i].colliderState.Initialize(entityGroup_.entity[i].hitBoxScale, entityGroup_.entity[i].gameObject, Tag::kEnemy);
 
 		//コライダーの初期化
 		entityGroup_.entity[i].collider = entityGroup_.entity[i].collider
@@ -57,7 +57,7 @@ void Enemy::Initialize(Object3dCommon* object3dCommon, Camera* camera, const std
 			.SetIsEnebled(true)
 			.SetBodyType(BodyType::kDynamic)
 			.SetLayer(Layer::kEnemy)
-			.SetMaskLayer(ToBits(Layer::kWall) | ToBits(Layer::kGround) | ToBits(Layer::kEnemy))
+			.SetMaskLayer(ToBits(Layer::kWall) | ToBits(Layer::kGround))
 			.SetOnCollision([this, i](ColliderState* other) {this->OnCollision(i, other); })
 			.Build();
 	}
@@ -118,7 +118,11 @@ void Enemy::Initialize(Object3dCommon* object3dCommon, Camera* camera, const std
 	//hpOutLineTransform_.scale = { hpBarWidth_,0.2f,1.0f };
 }
 
+//更新
 void Enemy::Update() {
+	//加速度と速度を適応
+	IntegrateMotion();
+
 	int32_t aliveCount = 0;
 
 	for (int32_t i = 0; i < entityGroup_.objectCount; i++) {
@@ -146,18 +150,11 @@ void Enemy::Update() {
 	entityGroup_.renderObject.object3d->Update();
 	entityGroup_.renderObject.hitBox->Update();
 
-	//生存してなかったら衝突判定を消す
-	for (int32_t i = 0; i < entityGroup_.objectCount; ++i) {
-		bool alive = entityGroup_.entity[i].gameObject.isAlive;
-		entityGroup_.entity[i].collider.SetIsEnebled(alive); // 実行時に効く設計ならこれで確定
-	}
-
 	// 描画に使う数を保存（メンバにして Draw で使う）
 	aliveCount_ = aliveCount;
-
-	IntegrateMotion();
 	bullet_->Update();
 }
+
 //デバッグ
 void Enemy::Debug() {
 #ifdef _DEBUG
@@ -176,6 +173,9 @@ void Enemy::Debug() {
 		ImGui::SeparatorText(("enemy " + std::to_string(i)).c_str());
 		ImGui::DragFloat3("hitBox.scale", &entityGroup_.entity[i].hitBoxScale.x, 0.1f);
 		ImGuiManager::DragTransform(entityGroup_.entity[i].gameObject.transformData);
+		ImGui::DragFloat3("velocity", &entityGroup_.entity[i].gameObject.velocity.x, 0.1f);
+		ImGui::DragFloat3("acceleration", &entityGroup_.entity[i].gameObject.acceleration.x, 0.1f);
+		ImGui::Checkbox("isAlive", &entityGroup_.entity[i].gameObject.isAlive);
 		ImGui::PopID();
 	}
 #endif // _DEBUG
@@ -221,16 +221,16 @@ void Enemy::Reset() {
 //衝突したら
 void Enemy::OnCollision(int32_t index, ColliderState* other) {
 	if (other->tag == Tag::kPlayer) {
-		entityGroup_.entity[index].gameObject.isAlive = false;
-		//hp_--;
-		////描画のHPにも適応
-		//hpBarTransform_.scale.x -= hpBarWidth_ / kMaxHpCout;
-		//hpBarPosX_ -= hpBarWidth_ / kMaxHpCout;
-		//if (hp_ <= 0) {
-		//	gameObject_.isAlive = false;
-		//	//スコアを加算
-		//	Score::AddScore(30);
-		//}
+		//上から踏まれたら
+		if (other->translatePtr->y > entityGroup_.entity[index].gameObject.transformData.translate.y + entityGroup_.entity[index].gameObject.transformData.scale.y) {
+			//敵が倒させる
+			entityGroup_.entity[index].gameObject.isAlive = false;
+			entityGroup_.entity[index].gameObject.velocity = {};
+			entityGroup_.entity[index].gameObject.acceleration = {};
+			entityGroup_.entity[index].collider.SetIsEnebled(false);
+			//スコアの加算
+			Score::AddScore(30);
+		}
 	}
 }
 

@@ -51,7 +51,6 @@ void Player::Initialize(Input* input, SpriteCommon* spriteCommon, Object3dCommon
 	colliderState_.rotatePtr = &gameObject_.transformData.rotate;
 	colliderState_.translatePtr = &gameObject_.transformData.translate;
 	colliderState_.velocityPtr = &gameObject_.velocity;
-	colliderState_.worldMatrixPtr = &renderObject_.object3d->GetWorldMatrix(0);
 	colliderState_.isOnGroundPtr = &gameObject_.isOnGround;
 
 	//衝突

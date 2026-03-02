@@ -114,7 +114,7 @@ void Field::CreateWall() {
 		wallGroup_.entity[i].gameObject.Initialize();
 
 		//コライダーの状態の初期化
-		wallGroup_.entity[i].colliderState.Initialize(wallGroup_.entity[i].hitBoxScale, wallGroup_.entity[i].gameObject, wallGroup_.renderObject.object3d->GetWorldMatrix(i), Tag::kWall);
+		wallGroup_.entity[i].colliderState.Initialize(wallGroup_.entity[i].hitBoxScale, wallGroup_.entity[i].gameObject, Tag::kWall);
 
 		//コライダーの初期化
 		wallGroup_.entity[i].collider = wallGroup_.entity[i].collider
@@ -123,7 +123,7 @@ void Field::CreateWall() {
 			.SetIsEnebled(true)
 			.SetBodyType(BodyType::kStatic)
 			.SetLayer(Layer::kWall)
-			.SetMaskLayer(ToBits(Layer::kWall)|ToBits(Layer::kGround)| ToBits(Layer::kEnemy)| ToBits(Layer::kPlayer))
+			.SetMaskLayer(ToBits(Layer::kWall) | ToBits(Layer::kGround) | ToBits(Layer::kEnemy) | ToBits(Layer::kPlayer))
 			.SetOnCollision([this](ColliderState* other) {this->OnCollision(other); })
 			.Build();
 	}
@@ -210,7 +210,7 @@ void Field::CreateGround() {
 		groundGroup_.entity[i].gameObject.Initialize();
 
 		//コライダーの状態の初期化
-		groundGroup_.entity[i].colliderState.Initialize(groundGroup_.entity[i].hitBoxScale, groundGroup_.entity[i].gameObject, groundGroup_.renderObject.object3d->GetWorldMatrix(i), Tag::kGround);
+		groundGroup_.entity[i].colliderState.Initialize(groundGroup_.entity[i].hitBoxScale, groundGroup_.entity[i].gameObject, Tag::kGround);
 
 		if (i == 6) {
 			groundGroup_.entity[i].colliderState.tag = Tag::kGoal;

@@ -89,12 +89,6 @@ public://メンバ関数
 	void SetTarget(const Vector3& targetPos);
 
 	/// <summary>
-	/// 平行移動のセッター
-	/// </summary>
-	/// <param name="translate">平行移動</param>
-	void SetTranslate(const Vector3& translate);
-
-	/// <summary>
 	/// 移動速度のセッター
 	/// </summary>
 	/// <param name="moveSpeed">移動速度</param>
@@ -107,24 +101,16 @@ public://メンバ関数
 	void SetBulletShotSpeed(float bulletShotSpeed);
 
 	/// <summary>
-	/// 生存フラグのセッター
-	/// </summary>
-	/// <param name="isAlive">生存フラグ</param>
-	void SetIsAlive(bool isAlive);
-
-	/// <summary>
 	/// 弾のゲッター
 	/// </summary>
 	/// <returns>弾</returns>
 	Bullet* GetBullet()const;
 
 	/// <summary>
-	/// 生存フラグのゲッター
+	/// エンティティのゲッター
 	/// </summary>
-	/// <returns></returns>
-	bool IsAlive();
-
-	Collider& GetCollider();
+	/// <returns>エンティティ</returns>
+	std::vector<Entity>& GetEntity();
 private://メンバ関数
 	/// <summary>
 	/// ターゲットの方向を向く
@@ -155,11 +141,9 @@ private://メンバ変数
 	float moveSpeed_ = 0.1f;
 	//弾の速度
 	float bulletShotSpeed_ = -8.0f;
-	//ゲームオブジェクト
-	GameObject gameObject_ = {};
-	RenderObject renderObject_ = {};
-	ColliderState colliderState_ = {};
-	Collider collider_ = {};
+
+	//エンティティ
+	EntityGroup entityGroup_ = {};
 
 	//ターゲットの位置
 	Vector3 targetPos_ = {};
@@ -184,16 +168,13 @@ private://メンバ変数
 	std::unique_ptr <WireframeObject3d> attackArea = nullptr;
 	float attackAreaRadius_ = 0.0f;
 
-	//ヒットボックス
-	Vector3 hitBoxScale_ = { 1.0f,1.0f,1.0f };
-
 	//ヒットポイント
-	int32_t hp_ = kMaxHpCout;
-	std::unique_ptr<Object3d> hpBar_ = nullptr;
-	float hpBarPosX_ = 0.0f;
-	float hpBarWidth_ = 2.0f;
-	TransformData hpBarTransform_ = { {1.0f,1.0f,1.0f}, {},{} };
-	std::unique_ptr <Object3d> hpOutLine_ = nullptr;
-	TransformData hpOutLineTransform_ = { {1.0f,1.0f,1.0f}, {},{} };
+	//int32_t hp_ = kMaxHpCout;
+	//std::unique_ptr<Object3d> hpBar_ = nullptr;
+	//float hpBarPosX_ = 0.0f;
+	//float hpBarWidth_ = 2.0f;
+	//TransformData hpBarTransform_ = { {1.0f,1.0f,1.0f}, {},{} };
+	//std::unique_ptr <Object3d> hpOutLine_ = nullptr;
+	//TransformData hpOutLineTransform_ = { {1.0f,1.0f,1.0f}, {},{} };
 };
 

@@ -13,8 +13,6 @@ class WireframeObject3d;
 enum class Tag {
 	kPlayer,
 	kEnemy,
-	kPlayerBullet,
-	kEnemyBullet,
 	kWall,
 	kGround,
 	kGoal,
@@ -158,4 +156,20 @@ struct Collider {
 	Collider& SetOnCollision(std::function<void(ColliderState* other)>onCollision);
 
 	Collider&& Build();
+};
+
+//実体
+struct Entity {
+	GameObject gameObject;
+	Vector3 hitBoxScale;
+	ColliderState colliderState;
+	Collider collider;
+};
+
+//実体の塊
+struct EntityGroup {
+	std::vector<Entity>entity;
+	RenderObject renderObject;
+	std::string modelName;
+	int32_t objectCount;
 };

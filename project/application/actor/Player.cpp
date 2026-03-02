@@ -215,7 +215,7 @@ void Player::Debug() {
 void Player::OnCollision(ColliderState* other) {
 	if (other->tag == Tag::kEnemy) {
 		//攻撃を受ける
-		Damage();
+		//Damage();
 	} else if (other->tag == Tag::kGoal) {
 		isGoal_ = true;
 	}

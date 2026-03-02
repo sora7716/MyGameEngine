@@ -43,9 +43,9 @@ void GameScene::Initialize(const SceneContext& sceneContext) {
 	player_->Initialize(sceneContext_.input, sceneContext_.spriteCommon, sceneContext_.object3dCommon, gameCamera_->GetCamera(), "player");
 	player_->SetPosition({ 0.0f,0.0f,-25.0f });
 
-	//enemy_ = std::make_unique<Enemy>();
-	//enemy_->Initialize(sceneContext_.object3dCommon,camera_,"enemy");
-	//enemy_->SetTranslate({ 22.0f,0.0f,25.0f });
+	enemy_ = std::make_unique<Enemy>();
+	enemy_->Initialize(sceneContext_.object3dCommon, camera_, "enemy");
+	//enemy_->SetTranslate({ 0.0f,1.0f,-20.0f });
 
 	//フィールド
 	field_ = std::make_unique<Field>();
@@ -72,7 +72,11 @@ void GameScene::Initialize(const SceneContext& sceneContext) {
 	for (int32_t i = 0; i < static_cast<int32_t>(field_->GetGroundDesc().size()); i++) {
 		colliderManager_->AddCollider(&field_->GetGroundDesc()[i].collider);
 	}
-	//colliderManager_->AddCollider(&enemy_->GetCollider());
+
+	//敵
+	for (int32_t i = 0; i < static_cast<int32_t>(enemy_->GetEntity().size()); i++) {
+		colliderManager_->AddCollider(&enemy_->GetEntity()[i].collider);
+	}
 }
 
 //更新
@@ -84,8 +88,8 @@ void GameScene::Update() {
 	//カメラの設定
 	player_->SetCamera(camera_);
 	field_->SetCamera(camera_);
+	enemy_->SetCamera(camera_);
 	//enemyManager_->SetCamera(camera_);
-	//enemy_->SetCamera(camera_);
 
 	Vector3 prePlayerPos = player_->GetTransformData().translate;
 
@@ -97,7 +101,7 @@ void GameScene::Update() {
 	//敵
 	//enemyManager_->Update(player_->GetWorldPos());
 
-	//enemy_->Update();
+	enemy_->Update();
 
 	//フィールド
 	field_->Update();
@@ -177,9 +181,9 @@ void GameScene::Update() {
 	ImGui::End();
 
 	//敵
-	//ImGui::Begin("enemy");
-	//enemyManager_->Debug();
-	//ImGui::End();
+	ImGui::Begin("enemy");
+	enemy_->Debug();
+	ImGui::End();
 
 	//スコア
 	//ImGui::Text("score:%d", Score::score);
@@ -207,7 +211,7 @@ void GameScene::Draw() {
 	//プレイヤー
 	player_->Draw();
 
-	//enemy_->Draw();
+	enemy_->Draw();
 
 	//マップチップ
 	field_->Draw();

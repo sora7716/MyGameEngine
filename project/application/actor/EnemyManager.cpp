@@ -46,11 +46,11 @@ void EnemyManager::Update(const Vector3& target) {
 
 	//敵の行動処理
 	for (Enemy* enemy : enemies_) {
-		if (enemy->IsAlive()) {
-			enemy->SetCamera(camera_);
-			enemy->SetTarget(target);
-			enemy->Update();
-		}
+		//if (enemy->IsAlive()) {
+		//	enemy->SetCamera(camera_);
+		//	enemy->SetTarget(target);
+		//	enemy->Update();
+		//}
 	}
 }
 
@@ -66,9 +66,9 @@ void EnemyManager::Debug() {
 //描画
 void EnemyManager::Draw() {
 	for (Enemy* enemy : enemies_) {
-		if (enemy->IsAlive()) {
-			enemy->Draw();
-		}
+		//if (enemy->IsAlive()) {
+		//	enemy->Draw();
+		//}
 	}
 }
 
@@ -108,7 +108,7 @@ void EnemyManager::SetSpawnParams(Enemy* enemy) {
 	Vector3 spawnAreaMax = { spawnAreaCenter_.x + spawnAreaRadius_,0.0f,spawnAreaCenter_.z + spawnAreaRadius_ };
 	std::uniform_real_distribution<float>distributionPositionX(spawnAreaMin.x, spawnAreaMax.x);
 	std::uniform_real_distribution<float>distributionPositionZ(spawnAreaMin.z, spawnAreaMax.z);
-	enemy->SetTranslate({ distributionPositionX(randomEngine_),0.0f,distributionPositionZ(randomEngine_) });
+	//enemy->SetTranslate({ distributionPositionX(randomEngine_),0.0f,distributionPositionZ(randomEngine_) });
 
 	//移動速度をランダム
 	std::uniform_real_distribution<float>distributionMoveSpeed(0.1f, 0.15f);
@@ -128,10 +128,10 @@ void EnemyManager::Spawn() {
 		spawnTimer_ = 0;
 		//敵のスポーンのパラメータを設定
 		for (Enemy* enemy : enemies_) {
-			if (!enemy->IsAlive()) {
-				SetSpawnParams(enemy);
-				break;
-			}
+			//if (!enemy->IsAlive()) {
+			//	SetSpawnParams(enemy);
+			//	break;
+			//}
 		}
 
 		//spawnIntervalを少し減らす

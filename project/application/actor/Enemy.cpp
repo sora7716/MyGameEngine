@@ -20,24 +20,42 @@ Enemy::~Enemy() {
 
 //初期化
 void Enemy::Initialize(Object3dCommon* object3dCommon, Camera* camera, const std::string& modelName) {
-	//3Dモデルの生成と初期化
-	renderObject_.object3d = std::make_unique<Object3d>();
-	renderObject_.object3d->Initialize(object3dCommon, camera, 1, Transform3dMode::kNormal);
-	renderObject_.object3d->SetModel(modelName);
-	gameObject_.transformData.scale = Vector3::MakeAllOne() / 2.0f;
-	gameObject_.isAlive = true;
+	//オブジェクトの数
+	entityGroup_.objectCount = 1;
+	//エンティティの配列の大きさを決める
+	entityGroup_.entity.resize(entityGroup_.objectCount);
+	//モデル名
+	entityGroup_.modelName = modelName;
+	//レンダーオブジェクトの初期化
+	entityGroup_.renderObject = entityGroup_.renderObject
+		.Create()
+		.InitializeMaterial()
+		.Build();
+	//3dオブジェクトの初期化
+	entityGroup_.renderObject.object3d->Initialize(object3dCommon, camera, entityGroup_.objectCount);
+	entityGroup_.renderObject.object3d->SetModel(entityGroup_.modelName);
 
-	colliderState_.scalePtr = &gameObject_.transformData.scale;
-	colliderState_.rotatePtr = &gameObject_.transformData.rotate;
-	colliderState_.translatePtr = &gameObject_.transformData.translate;
-	colliderState_.velocityPtr = &gameObject_.velocity;
-	colliderState_.worldMatrixPtr = &renderObject_.object3d->GetWorldMatrix(0);
-	colliderState_.isOnGroundPtr = &gameObject_.isOnGround;
+	//ヒットボックス
+	entityGroup_.renderObject.hitBox->Initialize(object3dCommon->GetWireframeObject3dCommon(), camera, ModelType::kCube, entityGroup_.objectCount);
 
-	collider_.owner = &colliderState_;
-	collider_.isTrigger = true;
-	collider_.isEnabled = true;
-	collider_.onCollision = [this](ColliderState* other) {this->OnCollision(other); };
+	//エンティティ初期化
+	for (int32_t i = 0; i < entityGroup_.objectCount; i++) {
+		//ゲームオブジェクトの初期化
+		entityGroup_.entity[i].gameObject.Initialize();
+		//ヒットボックスのスケール
+		entityGroup_.entity[i].hitBoxScale = Vector3::MakeAllOne();
+		//コライダーの状態の初期化
+		entityGroup_.entity[i].colliderState.Initialize(entityGroup_.entity[i].hitBoxScale, entityGroup_.entity[i].gameObject, entityGroup_.renderObject.object3d->GetWorldMatrix(i), Tag::kEnemy);
+
+		//コライダーの初期化
+		entityGroup_.entity[i].collider = entityGroup_.entity[i].collider
+			.SetOwner(&entityGroup_.entity[i].colliderState)
+			.SetIsTrigger(false)
+			.SetIsEnebled(true)
+			.SetBodyType(BodyType::kStatic)
+			.SetOnCollision([this](ColliderState* other) {this->OnCollision(other); })
+			.Build();
+	}
 
 	//弾の生成と初期化
 	bullet_ = std::make_unique<Bullet>();
@@ -62,44 +80,47 @@ void Enemy::Initialize(Object3dCommon* object3dCommon, Camera* camera, const std
 	attackArea->SetTranslate(0, targetPos_);
 	attackArea->Update();
 
-	renderObject_.hitBox = std::make_unique<WireframeObject3d>();
-	renderObject_.hitBox->Initialize(object3dCommon->GetWireframeObject3dCommon(), camera, ModelType::kCube);
-	hitBoxScale_ = { 1.5f,1.5f,1.5f };
-
 	//HP
-	hpBar_ = std::make_unique<Object3d>();
-	hpBar_->Initialize(object3dCommon, camera, 1, Transform3dMode::kBilboard);
-	hpBar_->SetModel("hpBar");
-	hpBar_->SetTexture("playerHpBar.png");
-	hpBarTransform_.scale = { hpBarWidth_,0.2f,1.0f };
-	Material hpMaterial;
-	hpMaterial.color = Vector4::MakeRedColor();
-	hpMaterial.enableLighting = false;
-	hpBar_->GetModel()->SetMaterial(hpMaterial);
+	//hpBar_ = std::make_unique<Object3d>();
+	//hpBar_->Initialize(object3dCommon, camera, 1, Transform3dMode::kBilboard);
+	//hpBar_->SetModel("hpBar");
+	//hpBar_->SetTexture("playerHpBar.png");
+	//hpBarTransform_.scale = { hpBarWidth_,0.2f,1.0f };
+	//Material hpMaterial;
+	//hpMaterial.color = Vector4::MakeRedColor();
+	//hpMaterial.enableLighting = false;
+	//hpBar_->GetModel()->SetMaterial(hpMaterial);
 
-	Material hpOutLineMaterial;
-	hpOutLineMaterial.color = Vector4::MakeWhiteColor();
-	hpOutLineMaterial.enableLighting = false;
+	//Material hpOutLineMaterial;
+	//hpOutLineMaterial.color = Vector4::MakeWhiteColor();
+	//hpOutLineMaterial.enableLighting = false;
 
-	hpOutLine_ = std::make_unique<Object3d>();
-	hpOutLine_->Initialize(object3dCommon, camera, 1, Transform3dMode::kBilboard);
-	hpOutLine_->SetModel("hpOutLine");
-	hpOutLine_->SetTexture("playerHpOutLine.png");
-	hpOutLine_->GetModel()->SetMaterial(hpOutLineMaterial);
-	hpOutLineTransform_.scale = { hpBarWidth_,0.2f,1.0f };
+	//hpOutLine_ = std::make_unique<Object3d>();
+	//hpOutLine_->Initialize(object3dCommon, camera, 1, Transform3dMode::kBilboard);
+	//hpOutLine_->SetModel("hpOutLine");
+	//hpOutLine_->SetTexture("playerHpOutLine.png");
+	//hpOutLine_->GetModel()->SetMaterial(hpOutLineMaterial);
+	//hpOutLineTransform_.scale = { hpBarWidth_,0.2f,1.0f };
 }
 
 //更新
 void Enemy::Update() {
 	//オブジェクト3Dの更新
-	renderObject_.object3d->SetTransformData(0, gameObject_.transformData);
-	renderObject_.object3d->Update();
+	for (int32_t i = 0; i < entityGroup_.objectCount; i++) {
+		entityGroup_.renderObject.object3d->SetTransformData(i, entityGroup_.entity[i].gameObject.transformData);
+		entityGroup_.renderObject.object3d->Update();
+		//ワイヤーフレームの更新
+		// //球
+		sphere_->SetRadius(i, sphereRadius_);
+		sphere_->SetTranslate(i, entityGroup_.entity[i].gameObject.transformData.translate);
+		sphere_->Update();
 
-	//ワイヤーフレームの更新
-	//球
-	sphere_->SetRadius(0, sphereRadius_);
-	sphere_->SetTranslate(0, gameObject_.transformData.translate);
-	sphere_->Update();
+		//ヒットボックス
+		entityGroup_.renderObject.hitBox->SetTranslate(0, entityGroup_.renderObject.object3d->GetWorldPos(i));
+		entityGroup_.renderObject.hitBox->SetRotate(0, entityGroup_.entity[i].gameObject.transformData.rotate);
+		entityGroup_.renderObject.hitBox->SetScale(0, entityGroup_.entity[i].hitBoxScale);
+		entityGroup_.renderObject.hitBox->Update();
+	}
 
 	//このエリアに敵が入ったら動きが変わる
 	attackArea->SetRadius(0, attackAreaRadius_);
@@ -112,20 +133,14 @@ void Enemy::Update() {
 	//弾の更新
 	bullet_->Update();
 
-	//ヒットボックス
-	renderObject_.hitBox->SetTranslate(0, renderObject_.object3d->GetWorldPos(0));
-	renderObject_.hitBox->SetRotate(0, gameObject_.transformData.rotate);
-	renderObject_.hitBox->SetScale(0, hitBoxScale_);
-	renderObject_.hitBox->Update();
-
 	//HP
-	Vector3 worldPos = renderObject_.object3d->GetWorldPos(0);
-	hpOutLineTransform_.translate = { worldPos.x,worldPos.y + 2.0f,worldPos.z };
-	hpOutLine_->SetTransformData(0, hpOutLineTransform_);
-	hpOutLine_->Update();
-	hpBarTransform_.translate = { worldPos.x + hpBarPosX_,worldPos.y + 2.0f,worldPos.z };
-	hpBar_->SetTransformData(0, hpBarTransform_);
-	hpBar_->Update();
+	//Vector3 worldPos = renderObject_.object3d->GetWorldPos(0);
+	//hpOutLineTransform_.translate = { worldPos.x,worldPos.y + 2.0f,worldPos.z };
+	//hpOutLine_->SetTransformData(0, hpOutLineTransform_);
+	//hpOutLine_->Update();
+	//hpBarTransform_.translate = { worldPos.x + hpBarPosX_,worldPos.y + 2.0f,worldPos.z };
+	//hpBar_->SetTransformData(0, hpBarTransform_);
+	//hpBar_->Update();
 }
 
 //デバッグ
@@ -133,27 +148,34 @@ void Enemy::Debug() {
 #ifdef _DEBUG
 	//ImGuiManager::GetInstance()->DragTransform(gameObject_.transformData);
 	//ImGui::DragFloat3("hitBox.scale", &hitBoxScale_.x, 0.1f);
-	ImGui::Text("hp:%d", hp_);
-	ImGui::DragFloat3("hp.translate", &hpBarTransform_.translate.x, 0.1f);
-	ImGui::DragFloat3("hp.scale", &hpBarTransform_.scale.x, 0.1f);
-	ImGui::DragFloat("hp.posX", &hpBarPosX_, 0.1f);
-	ImGui::DragFloat3("hpOutLine.translate", &hpOutLineTransform_.translate.x, 0.1f);
-	ImGui::DragFloat3("hpOutLine.scale", &hpOutLineTransform_.scale.x, 0.1f);
-	ImGui::DragFloat3("hitBox.scale", &hitBoxScale_.x, 0.1f);
-	ImGui::Checkbox("collider.isTrigger", &collider_.isTrigger);
+	//ImGui::Text("hp:%d", hp_);
+	//ImGui::DragFloat3("hp.translate", &hpBarTransform_.translate.x, 0.1f);
+	//ImGui::DragFloat3("hp.scale", &hpBarTransform_.scale.x, 0.1f);
+	//ImGui::DragFloat("hp.posX", &hpBarPosX_, 0.1f);
+	//ImGui::DragFloat3("hpOutLine.translate", &hpOutLineTransform_.translate.x, 0.1f);
+	//ImGui::DragFloat3("hpOutLine.scale", &hpOutLineTransform_.scale.x, 0.1f);
+	//ImGui::DragFloat3("hitBox.scale", &hitBoxScale_.x, 0.1f);
+	//ImGui::Checkbox("collider.isTrigger", &collider_.isTrigger);
+	for (int32_t i = 0; i < entityGroup_.objectCount; i++) {
+		ImGui::PushID(i);
+		ImGui::SeparatorText(("enemy " + std::to_string(i)).c_str());
+		ImGui::DragFloat3("hitBox.scale", &entityGroup_.entity[i].hitBoxScale.x, 0.1f);
+		ImGuiManager::DragTransform(entityGroup_.entity[i].gameObject.transformData);
+		ImGui::PopID();
+	}
 #endif // _DEBUG
 }
 
 //描画
 void Enemy::Draw() {
 	//敵の描画
-	renderObject_.object3d->Draw();
+	entityGroup_.renderObject.object3d->Draw();
+
+	//ヒットボックスの描画
+	entityGroup_.renderObject.hitBox->Draw();
 
 	//弾の描画
 	bullet_->Draw();
-
-	//ヒットボックスの描画
-	renderObject_.hitBox->Draw();
 
 	//ワイヤーフレームの描画
 	//sphere_->Draw();
@@ -162,99 +184,103 @@ void Enemy::Draw() {
 	//attackArea->Draw();
 
 	//HP
-	hpBar_->Draw();
-	hpOutLine_->Draw();
+	//hpBar_->Draw();
+	//hpOutLine_->Draw();
 }
 
 //リセット
 void Enemy::Reset() {
-	gameObject_.transformData.scale = Vector3::MakeAllOne() / 2.0f;
-	gameObject_.isAlive = true;
-
+	for (int32_t i = 0; i < entityGroup_.objectCount; i++) {
+		entityGroup_.entity[i].gameObject.transformData.scale = Vector3::MakeAllOne() / 2.0f;
+		entityGroup_.entity[i].gameObject.isAlive = true;
+	}
 	//HP
-	hp_ = kMaxHpCout;
-	hpBarTransform_.scale = { hpBarWidth_,0.2f,1.0f };
-	hpBarTransform_.translate = {};
-	hpOutLineTransform_.scale = { hpBarWidth_,0.2f,1.0f };
-	hpOutLineTransform_.translate = {};
-	hpBarPosX_ = 0.0f;
+	//hp_ = kMaxHpCout;
+	//hpBarTransform_.scale = { hpBarWidth_,0.2f,1.0f };
+	//hpBarTransform_.translate = {};
+	//hpOutLineTransform_.scale = { hpBarWidth_,0.2f,1.0f };
+	//hpOutLineTransform_.translate = {};
+	//hpBarPosX_ = 0.0f;
 }
 
 //衝突したら
 void Enemy::OnCollision(ColliderState* other) {
 	if (other->tag == Tag::kPlayer) {
-		hp_--;
-		//描画のHPにも適応
-		hpBarTransform_.scale.x -= hpBarWidth_ / kMaxHpCout;
-		hpBarPosX_ -= hpBarWidth_ / kMaxHpCout;
-		if (hp_ <= 0) {
-			gameObject_.isAlive = false;
-			//スコアを加算
-			Score::AddScore(30);
-		}
+		//hp_--;
+		////描画のHPにも適応
+		//hpBarTransform_.scale.x -= hpBarWidth_ / kMaxHpCout;
+		//hpBarPosX_ -= hpBarWidth_ / kMaxHpCout;
+		//if (hp_ <= 0) {
+		//	gameObject_.isAlive = false;
+		//	//スコアを加算
+		//	Score::AddScore(30);
+		//}
 	}
 }
 
 //待機
 void Enemy::Idol() {
-	gameObject_.transformData.rotate.y += kIdolRotSpeed;
+	for (int32_t i = 0; i < entityGroup_.objectCount; i++) {
+		entityGroup_.entity[i].gameObject.transformData.rotate.y += kIdolRotSpeed;
+	}
 }
 
 //追従
 void Enemy::Chase() {
-	//ターゲットの方向を向く
-	EnemyToTarget();
+	for (int32_t i = 0; i < entityGroup_.objectCount; i++) {
+		//ターゲットの方向を向く
+		EnemyToTarget();
 
-	//カメラの角度をもとに回転行列を求める
-	Matrix4x4 rotMat = Rendering::MakeRotateXYZMatrix(gameObject_.transformData.rotate);
-	Vector3 moveDir = { 0.0f,0.0f,-1.0f };
-	//カメラの向いてる方向を正にする(XとZ軸限定)
-	moveDir = Math::TransformNormal(moveDir, rotMat);
-	//カメラを移動させる
-	gameObject_.transformData.translate += moveDir.Normalize() * moveSpeed_;
+		//カメラの角度をもとに回転行列を求める
+		Matrix4x4 rotMat = Rendering::MakeRotateXYZMatrix(entityGroup_.entity[i].gameObject.transformData.rotate);
+		Vector3 moveDir = { 0.0f,0.0f,-1.0f };
+		//カメラの向いてる方向を正にする(XとZ軸限定)
+		moveDir = Math::TransformNormal(moveDir, rotMat);
+		//カメラを移動させる
+		entityGroup_.entity[i].gameObject.transformData.translate += moveDir.Normalize() * moveSpeed_;
+	}
 }
 
 //攻撃
 void Enemy::Attack() {
-	//ターゲットの方向を見る
-	EnemyToTarget();
+	for (int32_t i = 0; i < entityGroup_.objectCount; i++) {
+		//ターゲットの方向を見る
+		EnemyToTarget();
 
-	//攻撃する時間を計測
-	if (bulletShotTimer_ < kBulletShotTimerLimit) {
-		bulletShotTimer_ += Math::kDeltaTime;
-	} else {
-		bulletShotTimer_ = 0.0f;
-		//攻撃フラグを立てる
-		isAttacking_ = true;
+		//攻撃する時間を計測
+		if (bulletShotTimer_ < kBulletShotTimerLimit) {
+			bulletShotTimer_ += Math::kDeltaTime;
+		} else {
+			bulletShotTimer_ = 0.0f;
+			//攻撃フラグを立てる
+			isAttacking_ = true;
+		}
+
+		//弾の発射
+		bullet_->SetShootingPosition(entityGroup_.renderObject.object3d->GetWorldPos(i));
+		bullet_->SetSourceWorldMatrix(entityGroup_.renderObject.object3d->GetWorldMatrix(i));
+		bullet_->Fire(isAttacking_);
+
+		//攻撃フラグを折る
+		isAttacking_ = false;
 	}
-
-	//弾の発射
-	bullet_->SetShootingPosition(renderObject_.object3d->GetWorldPos(0));
-	bullet_->SetSourceWorldMatrix(renderObject_.object3d->GetWorldMatrix(0));
-	bullet_->Fire(isAttacking_);
-
-	//攻撃フラグを折る
-	isAttacking_ = false;
 }
 
 //カメラのセッター
 void Enemy::SetCamera(Camera* camera) {
-	renderObject_.object3d->SetCamera(camera);
+	for (int32_t i = 0; i < entityGroup_.objectCount; i++) {
+		entityGroup_.renderObject.object3d->SetCamera(camera);
+		entityGroup_.renderObject.hitBox->SetCamera(camera);
+	}
 	sphere_->SetCamera(camera);
 	attackArea->SetCamera(camera);
-	renderObject_.hitBox->SetCamera(camera);
-	hpBar_->SetCamera(camera);
-	hpOutLine_->SetCamera(camera);
+	//hpBar_->SetCamera(camera);
+	//hpOutLine_->SetCamera(camera);
 }
 
 //ターゲットの位置
 void Enemy::SetTarget(const Vector3& targetPos) {
 	targetPos_ = targetPos;
-}
-
-//平行移動のセッター
-void Enemy::SetTranslate(const Vector3& translate) {
-	gameObject_.transformData.translate = translate;
 }
 
 //移動速度のセッター
@@ -267,31 +293,24 @@ void Enemy::SetBulletShotSpeed(float bulletShotSpeed) {
 	bulletShotSpeed_ = bulletShotSpeed;
 }
 
-//生存フラグのセッター
-void Enemy::SetIsAlive(bool isAlive) {
-	gameObject_.isAlive = isAlive;
-}
-
 //弾のゲッター
 Bullet* Enemy::GetBullet() const {
 	return bullet_.get();
 }
 
-//生存フラグのゲッター
-bool Enemy::IsAlive() {
-	return gameObject_.isAlive;
-}
-
-Collider& Enemy::GetCollider() {
-	return collider_;
+//エンティティのゲッター
+std::vector<Entity>& Enemy::GetEntity() {
+	return entityGroup_.entity;
 }
 
 //ターゲットの方向を向く
 void Enemy::EnemyToTarget() {
-	//プレイヤーの向きに合わせる
-	Vector3 dir = (renderObject_.object3d->GetWorldPos(0) - targetPos_).Normalize();
-	float yaw = std::atan2(dir.x, dir.z);
-	gameObject_.transformData.rotate.y = yaw;
+	for (int32_t i = 0; i < entityGroup_.objectCount; i++) {
+		//プレイヤーの向きに合わせる
+		Vector3 dir = (entityGroup_.renderObject.object3d->GetWorldPos(i) - targetPos_).Normalize();
+		float yaw = std::atan2(dir.x, dir.z);
+		entityGroup_.entity[i].gameObject.transformData.rotate.y = yaw;
+	}
 }
 
 //敵の振る舞い

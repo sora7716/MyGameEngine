@@ -65,6 +65,6 @@ private://メンバ変数
 	//スコアの表示
 	std::unique_ptr<Score>score_ = nullptr;
 
-	//std::unique_ptr<Enemy>enemy_ = nullptr;
+	std::unique_ptr<Enemy>enemy_ = nullptr;
 };
 

@@ -8,22 +8,6 @@ class Object3dCommon;
 class Object3d;
 class Camera;
 
-//フィールドに必要な情報の塊
-struct FieldObjectDesc {
-	GameObject gameObject;
-	Vector3 hitBoxScale;
-	ColliderState colliderState;
-	Collider collider;
-};
-
-//壁に必要な情報のまとまり
-struct FieldGroup {
-	std::vector<FieldObjectDesc>fieldDescs;
-	RenderObject renderObject;
-	std::string modelName;
-	int32_t objectCount;
-};
-
 /// <summary>
 /// フィールド
 /// </summary>
@@ -77,13 +61,13 @@ public://メンバ関数
     /// 地面に必要な情報のゲッター
     /// </summary>
     /// <returns>地面に必要な情報</returns>
-	std::vector<FieldObjectDesc>& GetGroundDesc();
+	std::vector<Entity>& GetGroundDesc();
 
 	/// <summary>
 	/// 壁に必要な情報のゲッター
 	/// </summary>
 	/// <returns>壁に必要な情報</returns>
-	std::vector<FieldObjectDesc>& GetWallDescs();
+	std::vector<Entity>& GetWallDescs();
 private://メンバ関数
 	/// <summary>
 	/// 壁の生成
@@ -121,10 +105,10 @@ private://メンバ変数
 	Camera* camera_ = nullptr;
 	
 	//壁
-	FieldGroup wallGroup_ = {};
+	EntityGroup wallGroup_ = {};
 
 	//地面
-	FieldGroup groundGroup_ = {};
+	EntityGroup groundGroup_ = {};
 };
 
 

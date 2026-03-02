@@ -92,12 +92,12 @@ void ColliderManager::CheckCollision() {
 
 			//Triggerが絡むなら押し出しをしない
 			if (pairA->isTrigger || pairB->isTrigger) {
-				return;
+				continue;
 			}
 
 			//Static同士何もしない
 			if (pairA->bodyType == BodyType::kStatic && pairB->bodyType == BodyType::kStatic) {
-				return;
+				continue;
 			}
 			//Dynamicのときだけ押す
 			if (pairA->bodyType == BodyType::kDynamic && pairB->bodyType == BodyType::kStatic) {

@@ -1,12 +1,13 @@
 #define NOMINMAX
 #include "Enemy.h"
-#include "engine/3d/Object3d.h"
-#include "engine/3d/Object3dCommon.h"
-#include "engine/debug/ImGuiManager.h"
-#include "engine/math/func/Math.h"
-#include "engine/math/func/Rendering.h"
-#include "engine/debug/WireframeObject3d.h"
-#include "engine/math//func/Collision.h"
+#include "Object3d.h"
+#include "Object3dCommon.h"
+#include "ImGuiManager.h"
+#include "func/Math.h"
+#include "func/Rendering.h"
+#include "WireframeObject3d.h"
+#include "func/Collision.h"
+#include "func/Physics.h"
 #include "Bullet.h"
 #include "Score.h"
 
@@ -52,10 +53,14 @@ void Enemy::Initialize(Object3dCommon* object3dCommon, Camera* camera, const std
 			.SetOwner(&entityGroup_.entity[i].colliderState)
 			.SetIsTrigger(false)
 			.SetIsEnebled(true)
-			.SetBodyType(BodyType::kStatic)
+			.SetBodyType(BodyType::kDynamic)
 			.SetOnCollision([this](ColliderState* other) {this->OnCollision(other); })
 			.Build();
 	}
+
+	//敵の位置
+	entityGroup_.entity[0].gameObject.transformData.translate = { 0.0f,4.0f,-20.0f };
+	entityGroup_.entity[0].gameObject.acceleration.y = Physics::kGravity;
 
 	//弾の生成と初期化
 	bullet_ = std::make_unique<Bullet>();
@@ -121,6 +126,9 @@ void Enemy::Update() {
 		entityGroup_.renderObject.hitBox->SetScale(0, entityGroup_.entity[i].hitBoxScale);
 		entityGroup_.renderObject.hitBox->Update();
 	}
+
+	//速度と加速度を適応
+	IntegrateMotion();
 
 	//このエリアに敵が入ったら動きが変わる
 	attackArea->SetRadius(0, attackAreaRadius_);
@@ -346,4 +354,14 @@ void Enemy::Behavior() {
 	//敵の状態
 	enemyState_->SetEnemy(this);
 	enemyState_->Exce();
+}
+
+//速度と加速度を位置に適応
+void Enemy::IntegrateMotion() {
+	for (int32_t i = 0; i < entityGroup_.objectCount; i++) {
+		//加速度を適応
+		entityGroup_.entity[i].gameObject.velocity += entityGroup_.entity[i].gameObject.acceleration * Math::kDeltaTime;
+		//速度を適応
+		entityGroup_.entity[i].gameObject.transformData.translate += entityGroup_.entity[i].gameObject.velocity * Math::kDeltaTime;
+	}
 }

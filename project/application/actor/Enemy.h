@@ -121,6 +121,11 @@ private://メンバ関数
 	/// 敵の振る舞い
 	/// </summary>
 	void Behavior();
+
+	/// <summary>
+    /// 速度と加速度を位置に適応
+    /// </summary>
+	void IntegrateMotion();
 private://定数
 	//待機時の回転速度
 	static inline const float kIdolRotSpeed = 0.5f;

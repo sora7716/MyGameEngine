@@ -134,7 +134,7 @@ void Player::Update() {
 	//gameObject_.transformData.translate.z = std::clamp(gameObject_.transformData.translate.z, 3.0f, 29.0f);
 	//下に行き過ぎないように制限
 	//gameObject_.transformData.translate.y = std::max(gameObject_.transformData.translate.y, 0.0f);
-	
+
 	//プレイヤーが落ちたら
 	if (gameObject_.transformData.translate.y < -10.0f) {
 		gameObject_.isAlive = false;
@@ -216,6 +216,9 @@ void Player::OnCollision(ColliderState* other) {
 	if (other->tag == Tag::kEnemy) {
 		//攻撃を受ける
 		//Damage();
+		if (other->translatePtr->y < gameObject_.transformData.translate.y) {
+			//gameObject_.velocity.y = 5.0f;
+		}
 	} else if (other->tag == Tag::kGoal) {
 		isGoal_ = true;
 	}

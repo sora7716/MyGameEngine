@@ -69,8 +69,10 @@ void Model::Draw(uint32_t objectCount) {
 	directXBase_->GetCommandList()->SetGraphicsRootConstantBufferView(7, rimLightResource_->GetGPUVirtualAddress());
 	//SRVのDescriptorTableの先頭を設定
 	directXBase_->GetCommandList()->SetGraphicsRootDescriptorTable(2, modelCommon_->GetTextureManager()->GetSRVHandleGPU(modelData_.material.textureFilePath));
-	//描画
-	directXBase_->GetCommandList()->DrawIndexedInstanced(UINT(modelData_.vertices.size()), objectCount, 0, 0, 0);
+	if (objectCount > 0) {
+		//描画
+		directXBase_->GetCommandList()->DrawIndexedInstanced(UINT(modelData_.vertices.size()), objectCount, 0, 0, 0);
+	}
 }
 
 //uv変換

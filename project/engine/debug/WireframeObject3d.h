@@ -56,6 +56,12 @@ public://メンバ関数
 	/// 描画
 	/// </summary>
 	void Draw();
+	
+	/// <summary>
+	/// 描画
+	/// </summary>
+	/// <param name="objectCount">オブジェクトカウント</param>
+	void Draw(int32_t objectCount);
 
 	/// <summary>
 	/// モデルのセッター

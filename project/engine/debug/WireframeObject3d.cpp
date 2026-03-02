@@ -161,6 +161,34 @@ void WireframeObject3d::Draw() {
 #endif // _DEBUG
 }
 
+//描画
+void WireframeObject3d::Draw(int32_t objectCount) {
+#ifdef _DEBUG
+	//3Dオブジェクトの共通部分
+	wireframeObject3dCommon_->DrawSetting();
+
+	//PSOの設定
+	auto pso = wireframeObject3dCommon_->GetGraphicsPipelineStates()[static_cast<int32_t>(blendMode_)].Get();
+	//グラフィックスパイプラインをセットするコマンド
+	directXBase_->GetCommandList()->SetPipelineState(pso);
+
+	//座標変換行列SRVの場所を設定
+	directXBase_->GetCommandList()->SetGraphicsRootDescriptorTable(1, srvManager_->GetGPUDescriptorHandle(srvIndex_));
+
+	//平光源CBufferの場所を設定
+	directXBase_->GetCommandList()->SetGraphicsRootConstantBufferView(3, wireframeObject3dCommon_->GetDirectionalLightResource()->GetGPUVirtualAddress());
+	//点光源のStructuredBufferの場所を設定
+	directXBase_->GetCommandList()->SetGraphicsRootDescriptorTable(5, wireframeObject3dCommon_->GetSRVManager()->GetGPUDescriptorHandle(wireframeObject3dCommon_->GetSrvIndexPoint()));
+	//スポットライトのStructuredBufferを設定
+	directXBase_->GetCommandList()->SetGraphicsRootDescriptorTable(6, wireframeObject3dCommon_->GetSRVManager()->GetGPUDescriptorHandle(wireframeObject3dCommon_->GetSrvIndexSpot()));
+
+	//3Dモデルが割り当てられていれば描画
+	if (model_) {
+		model_->Draw(static_cast<uint32_t>(objectCount));
+	}
+#endif // _DEBUG
+}
+
 //モデルのセッター
 void WireframeObject3d::SetModel(const std::string& name) {
 	model_ = wireframeObject3dCommon_->GetModelManager()->FindModel(name);

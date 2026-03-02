@@ -105,6 +105,31 @@ void Object3d::Draw() {
 	}
 }
 
+void Object3d::Draw(int32_t instanceCount) {
+	//3Dオブジェクトの共通部分
+	object3dCommon_->DrawSetting();
+
+	//PSOの設定
+	auto pso = object3dCommon_->GetGraphicsPipelineStates()[static_cast<int32_t>(blendMode_)].Get();
+	//グラフィックスパイプラインをセットするコマンド
+	directXBase_->GetCommandList()->SetPipelineState(pso);
+
+	//座標変換行列SRVの場所を設定
+	directXBase_->GetCommandList()->SetGraphicsRootDescriptorTable(1, srvManager_->GetGPUDescriptorHandle(srvIndex_));
+
+	//平光源CBufferの場所を設定
+	directXBase_->GetCommandList()->SetGraphicsRootConstantBufferView(3, object3dCommon_->GetDirectionalLightResource()->GetGPUVirtualAddress());
+	//点光源のStructuredBufferの場所を設定
+	directXBase_->GetCommandList()->SetGraphicsRootDescriptorTable(5, object3dCommon_->GetSRVManager()->GetGPUDescriptorHandle(object3dCommon_->GetSrvIndexPoint()));
+	//スポットライトのStructuredBufferを設定
+	directXBase_->GetCommandList()->SetGraphicsRootDescriptorTable(6, object3dCommon_->GetSRVManager()->GetGPUDescriptorHandle(object3dCommon_->GetSrvIndexSpot()));
+
+	//3Dモデルが割り当てられていれば描画
+	if (model_) {
+		model_->Draw(instanceCount);
+	}
+}
+
 //親子付け
 void Object3d::Compose(const WorldTransform* parent) {
 	worldTransform_->Compose(parent);

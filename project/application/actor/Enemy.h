@@ -1,5 +1,6 @@
 #pragma once
 #include <string>
+#include <vector>
 #include "ActorData.h"
 #include "RenderingData.h"
 #include "EnemyState.h"
@@ -58,8 +59,9 @@ public://メンバ関数
 	/// <summary>
 	/// 衝突したら
 	/// </summary>
-	/// <param name="other">ColliderState</param>
-	void OnCollision(ColliderState* other);
+	/// <param name="index">何番目が当たったのか</param>
+	/// <param name="other">誰と当たったのか</param>
+	void OnCollision(int32_t index, ColliderState* other);
 
 	/// <summary>
 	/// 待機
@@ -149,6 +151,7 @@ private://メンバ変数
 
 	//エンティティ
 	EntityGroup entityGroup_ = {};
+	int32_t aliveCount_ = 0;
 
 	//ターゲットの位置
 	Vector3 targetPos_ = {};

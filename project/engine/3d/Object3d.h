@@ -49,6 +49,12 @@ public://メンバ関数
 	/// 描画
 	/// </summary>
 	void Draw();
+	
+	/// <summary>
+	/// 描画
+	/// </summary>
+	/// <param name="instanceCount">インスタンス数</param>
+	void Draw(int32_t instanceCount);
 
 	/// <summary>
 	/// 親子付け

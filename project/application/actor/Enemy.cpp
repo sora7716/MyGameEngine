@@ -22,7 +22,9 @@ Enemy::~Enemy() {
 //初期化
 void Enemy::Initialize(Object3dCommon* object3dCommon, Camera* camera, const std::string& modelName) {
 	//オブジェクトの数
-	entityGroup_.objectCount = 1;
+	entityGroup_.objectCount = 3;
+	//インスタンス数
+	//instance_.reserve(100);
 	//エンティティの配列の大きさを決める
 	entityGroup_.entity.resize(entityGroup_.objectCount);
 	//モデル名
@@ -46,7 +48,7 @@ void Enemy::Initialize(Object3dCommon* object3dCommon, Camera* camera, const std
 		//ヒットボックスのスケール
 		entityGroup_.entity[i].hitBoxScale = Vector3::MakeAllOne();
 		//コライダーの状態の初期化
-		entityGroup_.entity[i].colliderState.Initialize(entityGroup_.entity[i].hitBoxScale, entityGroup_.entity[i].gameObject, entityGroup_.renderObject.object3d->GetWorldMatrix(i),Tag::kEnemy);
+		entityGroup_.entity[i].colliderState.Initialize(entityGroup_.entity[i].hitBoxScale, entityGroup_.entity[i].gameObject, entityGroup_.renderObject.object3d->GetWorldMatrix(i), Tag::kEnemy);
 
 		//コライダーの初期化
 		entityGroup_.entity[i].collider = entityGroup_.entity[i].collider
@@ -56,13 +58,19 @@ void Enemy::Initialize(Object3dCommon* object3dCommon, Camera* camera, const std
 			.SetBodyType(BodyType::kDynamic)
 			.SetLayer(Layer::kEnemy)
 			.SetMaskLayer(ToBits(Layer::kWall) | ToBits(Layer::kGround) | ToBits(Layer::kEnemy))
-			.SetOnCollision([this](ColliderState* other) {this->OnCollision(other); })
+			.SetOnCollision([this, i](ColliderState* other) {this->OnCollision(i, other); })
 			.Build();
 	}
 
 	//敵の位置
 	entityGroup_.entity[0].gameObject.transformData.translate = { 0.0f,4.0f,-20.0f };
 	entityGroup_.entity[0].gameObject.acceleration.y = Physics::kGravity;
+	//敵の位置
+	entityGroup_.entity[1].gameObject.transformData.translate = { 5.0f,4.0f,-20.0f };
+	entityGroup_.entity[1].gameObject.acceleration.y = Physics::kGravity;
+	//敵の位置
+	entityGroup_.entity[2].gameObject.transformData.translate = { -5.0f,4.0f,-20.0f };
+	entityGroup_.entity[2].gameObject.acceleration.y = Physics::kGravity;
 
 	//弾の生成と初期化
 	bullet_ = std::make_unique<Bullet>();
@@ -110,49 +118,46 @@ void Enemy::Initialize(Object3dCommon* object3dCommon, Camera* camera, const std
 	//hpOutLineTransform_.scale = { hpBarWidth_,0.2f,1.0f };
 }
 
-//更新
 void Enemy::Update() {
-	//オブジェクト3Dの更新
-	for (int32_t i = 0; i < entityGroup_.objectCount; i++) {
-		entityGroup_.renderObject.object3d->SetTransformData(i, entityGroup_.entity[i].gameObject.transformData);
-		entityGroup_.renderObject.object3d->Update();
-		//ワイヤーフレームの更新
-		// //球
-		sphere_->SetRadius(i, sphereRadius_);
-		sphere_->SetTranslate(i, entityGroup_.entity[i].gameObject.transformData.translate);
-		sphere_->Update();
+	int32_t aliveCount = 0;
 
-		//ヒットボックス
-		entityGroup_.renderObject.hitBox->SetTranslate(0, entityGroup_.renderObject.object3d->GetWorldPos(i));
-		entityGroup_.renderObject.hitBox->SetRotate(0, entityGroup_.entity[i].gameObject.transformData.rotate);
-		entityGroup_.renderObject.hitBox->SetScale(0, entityGroup_.entity[i].hitBoxScale);
-		entityGroup_.renderObject.hitBox->Update();
+	for (int32_t i = 0; i < entityGroup_.objectCount; i++) {
+		// 物理は死体にも必要ならここは分岐調整
+		// IntegrateMotion() を先にやるなら、ここでは transform を使うだけでもOK
+
+		if (!entityGroup_.entity[i].gameObject.isAlive) {
+			continue; // ← 死んでたら描画枠に入れない
+		}
+
+		// 生存だけを 0..aliveCount-1 に詰める
+		entityGroup_.renderObject.object3d->SetTransformData(
+			aliveCount,
+			entityGroup_.entity[i].gameObject.transformData
+		);
+
+		// ヒットボックスも同じ index にする（デバッグ表示目的なら）
+		entityGroup_.renderObject.hitBox->SetTranslate(aliveCount, entityGroup_.entity[i].gameObject.transformData.translate);
+		entityGroup_.renderObject.hitBox->SetRotate(aliveCount, entityGroup_.entity[i].gameObject.transformData.rotate);
+		entityGroup_.renderObject.hitBox->SetScale(aliveCount, entityGroup_.entity[i].hitBoxScale);
+
+		++aliveCount;
 	}
 
-	//速度と加速度を適応
+	entityGroup_.renderObject.object3d->Update();
+	entityGroup_.renderObject.hitBox->Update();
+
+	//生存してなかったら衝突判定を消す
+	for (int32_t i = 0; i < entityGroup_.objectCount; ++i) {
+		bool alive = entityGroup_.entity[i].gameObject.isAlive;
+		entityGroup_.entity[i].collider.SetIsEnebled(alive); // 実行時に効く設計ならこれで確定
+	}
+
+	// 描画に使う数を保存（メンバにして Draw で使う）
+	aliveCount_ = aliveCount;
+
 	IntegrateMotion();
-
-	//このエリアに敵が入ったら動きが変わる
-	attackArea->SetRadius(0, attackAreaRadius_);
-	attackArea->SetTranslate(0, targetPos_);
-	attackArea->Update();
-
-	//振る舞い
-	//Behavior();
-
-	//弾の更新
 	bullet_->Update();
-
-	//HP
-	//Vector3 worldPos = renderObject_.object3d->GetWorldPos(0);
-	//hpOutLineTransform_.translate = { worldPos.x,worldPos.y + 2.0f,worldPos.z };
-	//hpOutLine_->SetTransformData(0, hpOutLineTransform_);
-	//hpOutLine_->Update();
-	//hpBarTransform_.translate = { worldPos.x + hpBarPosX_,worldPos.y + 2.0f,worldPos.z };
-	//hpBar_->SetTransformData(0, hpBarTransform_);
-	//hpBar_->Update();
 }
-
 //デバッグ
 void Enemy::Debug() {
 #ifdef _DEBUG
@@ -179,10 +184,10 @@ void Enemy::Debug() {
 //描画
 void Enemy::Draw() {
 	//敵の描画
-	entityGroup_.renderObject.object3d->Draw();
+	entityGroup_.renderObject.object3d->Draw(aliveCount_);
 
 	//ヒットボックスの描画
-	entityGroup_.renderObject.hitBox->Draw();
+	entityGroup_.renderObject.hitBox->Draw(aliveCount_);
 
 	//弾の描画
 	bullet_->Draw();
@@ -214,8 +219,9 @@ void Enemy::Reset() {
 }
 
 //衝突したら
-void Enemy::OnCollision(ColliderState* other) {
+void Enemy::OnCollision(int32_t index, ColliderState* other) {
 	if (other->tag == Tag::kPlayer) {
+		entityGroup_.entity[index].gameObject.isAlive = false;
 		//hp_--;
 		////描画のHPにも適応
 		//hpBarTransform_.scale.x -= hpBarWidth_ / kMaxHpCout;
@@ -361,6 +367,10 @@ void Enemy::Behavior() {
 //速度と加速度を位置に適応
 void Enemy::IntegrateMotion() {
 	for (int32_t i = 0; i < entityGroup_.objectCount; i++) {
+		//生存してなければ
+		if (!entityGroup_.entity[i].gameObject.isAlive) {
+			continue;
+		}
 		//加速度を適応
 		entityGroup_.entity[i].gameObject.velocity += entityGroup_.entity[i].gameObject.acceleration * Math::kDeltaTime;
 		//速度を適応

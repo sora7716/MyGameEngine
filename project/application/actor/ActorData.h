@@ -19,6 +19,15 @@ enum class Tag {
 	kNone
 };
 
+//レイヤー
+enum class Layer : uint32_t {
+	kNone = 0,
+	kPlayer = 1 << 0,
+	kEnemy = 1 << 1,
+	kWall = 1 << 2,
+	kGround = 1 << 3
+};
+
 //ゲームオブジェクト
 struct GameObject {
 	TransformData transformData;
@@ -95,7 +104,7 @@ struct ColliderState {
 	/// <param name="gameObject">ゲームオブジェクト</param>
 	/// <param name="worldMatrix">ワールド行列</param>
 	/// <param name="tag">タグ</param>
-	void Initialize(Vector3& hitBoxScale,GameObject& gameObject, Matrix4x4& worldMatrix, Tag tag = Tag::kNone);
+	void Initialize(Vector3& hitBoxScale, GameObject& gameObject, Matrix4x4& worldMatrix, Tag tag = Tag::kNone);
 };
 
 //動かせるのか動かせないのか
@@ -109,6 +118,8 @@ enum class BodyType {
 //obb: 当たり判定の形
 //isTrigger: 押し戻ししない
 //isEnabled: 無効化用
+//layer: 自分の所属レイヤー
+//maskLayer: 当たりたい相手(複数)
 //bodyType: 動かせるか動かせないのか
 //onCollision: 衝突したときに呼ばれる
 struct Collider {
@@ -116,6 +127,8 @@ struct Collider {
 	OBB obb;
 	bool isTrigger;
 	bool isEnabled;
+	Layer layer;
+	uint32_t maskLayer;
 	BodyType bodyType;
 	std::function<void(ColliderState* other)>onCollision;
 
@@ -153,8 +166,32 @@ struct Collider {
 	/// <returns>コライダー</returns>
 	Collider& SetIsEnebled(bool isEnabled);
 
+
+	/// <summary>
+	/// レイヤーのセッター
+	/// </summary>
+	/// <param name="layer">レイヤー</param>
+	/// <returns>コライダー</returns>
+	Collider& SetLayer(Layer layer);
+
+	/// <summary>
+	/// マスクレイヤーのセッター
+	/// </summary>
+	/// <param name="maskLayer">マスクレイヤー</param>
+	/// <returns>コライダー</returns>
+	Collider& SetMaskLayer(uint32_t maskLayer);
+
+	/// <summary>
+	/// onCollisionのセッター
+	/// </summary>
+	/// <param name="onCollision">衝突したときの判定</param>
+	/// <returns>コライダー</returns>
 	Collider& SetOnCollision(std::function<void(ColliderState* other)>onCollision);
 
+	/// <summary>
+	/// 作成
+	/// </summary>
+	/// <returns>右辺値のコライダー</returns>
 	Collider&& Build();
 };
 
@@ -173,3 +210,6 @@ struct EntityGroup {
 	std::string modelName;
 	int32_t objectCount;
 };
+
+//Bitに変換
+uint32_t ToBits(Layer layer);

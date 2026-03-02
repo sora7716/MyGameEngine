@@ -80,6 +80,18 @@ Collider& Collider::SetIsEnebled(bool isEnabled) {
 	return *this;
 }
 
+//コライダーのレイヤーのセッター
+Collider& Collider::SetLayer(Layer layer) {
+	this->layer = layer;
+	return *this;
+}
+
+//コライダーのマスクレイヤーのセッター
+Collider& Collider::SetMaskLayer(uint32_t maskLayer) {
+	this->maskLayer = maskLayer;
+	return *this;
+}
+
 Collider& Collider::SetOnCollision(std::function<void(ColliderState* other)> onCollision) {
 	this->onCollision = onCollision;
 	return *this;
@@ -87,4 +99,8 @@ Collider& Collider::SetOnCollision(std::function<void(ColliderState* other)> onC
 
 Collider&& Collider::Build() {
 	return std::move(*this);
+}
+
+uint32_t ToBits(Layer layer) {
+	return static_cast<uint32_t>(layer);
 }

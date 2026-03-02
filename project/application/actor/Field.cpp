@@ -122,6 +122,8 @@ void Field::CreateWall() {
 			.SetIsTrigger(false)
 			.SetIsEnebled(true)
 			.SetBodyType(BodyType::kStatic)
+			.SetLayer(Layer::kWall)
+			.SetMaskLayer(ToBits(Layer::kWall)|ToBits(Layer::kGround)| ToBits(Layer::kEnemy)| ToBits(Layer::kPlayer))
 			.SetOnCollision([this](ColliderState* other) {this->OnCollision(other); })
 			.Build();
 	}
@@ -220,6 +222,8 @@ void Field::CreateGround() {
 			.SetIsTrigger(false)
 			.SetIsEnebled(true)
 			.SetBodyType(BodyType::kStatic)
+			.SetLayer(Layer::kGround)
+			.SetMaskLayer(ToBits(Layer::kWall) | ToBits(Layer::kGround) | ToBits(Layer::kEnemy) | ToBits(Layer::kPlayer))
 			.SetOnCollision([this](ColliderState* other) {this->OnCollision(other); })
 			.Build();
 	}

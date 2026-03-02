@@ -59,7 +59,8 @@ void Player::Initialize(Input* input, SpriteCommon* spriteCommon, Object3dCommon
 	collider_.isTrigger = false;
 	collider_.isEnabled = true;
 	collider_.bodyType = BodyType::kDynamic;
-
+	collider_.layer = Layer::kPlayer;
+	collider_.maskLayer = ToBits(Layer::kWall) | ToBits(Layer::kGround) | ToBits(Layer::kPlayer);
 	collider_.onCollision = [this](ColliderState* other) {this->OnCollision(other); };
 
 	//マテリアルの初期化
@@ -216,8 +217,10 @@ void Player::OnCollision(ColliderState* other) {
 	if (other->tag == Tag::kEnemy) {
 		//攻撃を受ける
 		//Damage();
-		if (other->translatePtr->y < gameObject_.transformData.translate.y) {
-			//gameObject_.velocity.y = 5.0f;
+		if (other->translatePtr->y < renderObject_.object3d->GetWorldPos(0).y - gameObject_.transformData.scale.y) {
+			gameObject_.velocity.y = 5.0f;
+		} else {
+			gameObject_.isAlive = false;
 		}
 	} else if (other->tag == Tag::kGoal) {
 		isGoal_ = true;

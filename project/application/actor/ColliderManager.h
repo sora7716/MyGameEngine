@@ -52,9 +52,18 @@ private://メンバ関数
 	/// <summary>
 	/// 押し出し
 	/// </summary>
-	/// <param name="gameObject">ゲームオブジェクト</param>
-	/// <param name="hitInfo">衝突情報</param>
+	/// <param name="self">対象</param>
+	/// <param name="other">それ以外</param>
+	/// <param name="hit">衝突したかの情報</param>
 	void Resolve(ColliderState& self, const ColliderState& other, HitInfo hit);
+
+	/// <summary>
+    /// Layerを使った衝突判定
+    /// </summary>
+    /// <param name="self">対象</param>
+    /// <param name="other">それ以外</param>
+	/// <returns>Layerを使った衝突判定</returns>
+	bool IsLayerCollidable(const Collider* self, const Collider* other);
 private://メンバ変数
 	std::vector<Collider*>colliders_;
 };

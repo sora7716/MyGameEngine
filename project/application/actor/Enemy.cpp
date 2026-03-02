@@ -46,7 +46,7 @@ void Enemy::Initialize(Object3dCommon* object3dCommon, Camera* camera, const std
 		//ヒットボックスのスケール
 		entityGroup_.entity[i].hitBoxScale = Vector3::MakeAllOne();
 		//コライダーの状態の初期化
-		entityGroup_.entity[i].colliderState.Initialize(entityGroup_.entity[i].hitBoxScale, entityGroup_.entity[i].gameObject, entityGroup_.renderObject.object3d->GetWorldMatrix(i), Tag::kEnemy);
+		entityGroup_.entity[i].colliderState.Initialize(entityGroup_.entity[i].hitBoxScale, entityGroup_.entity[i].gameObject, entityGroup_.renderObject.object3d->GetWorldMatrix(i),Tag::kEnemy);
 
 		//コライダーの初期化
 		entityGroup_.entity[i].collider = entityGroup_.entity[i].collider
@@ -54,6 +54,8 @@ void Enemy::Initialize(Object3dCommon* object3dCommon, Camera* camera, const std
 			.SetIsTrigger(false)
 			.SetIsEnebled(true)
 			.SetBodyType(BodyType::kDynamic)
+			.SetLayer(Layer::kEnemy)
+			.SetMaskLayer(ToBits(Layer::kWall) | ToBits(Layer::kGround) | ToBits(Layer::kEnemy))
 			.SetOnCollision([this](ColliderState* other) {this->OnCollision(other); })
 			.Build();
 	}

@@ -83,11 +83,18 @@ void ColliderManager::CheckCollision() {
 				continue;
 			}
 
+			//衝突した時に行う判定
 			if (pairA->onCollision) {
 				pairA->onCollision(pairB->owner);
 			}
+
 			if (pairB->onCollision) {
 				pairB->onCollision(pairA->owner);
+			}
+
+			//Layer/Mask判定
+			if (!IsLayerCollidable(pairA, pairB)) {
+				continue;
 			}
 
 			//Triggerが絡むなら押し出しをしない
@@ -101,8 +108,8 @@ void ColliderManager::CheckCollision() {
 			}
 			//Dynamicのときだけ押す
 			if (pairA->bodyType == BodyType::kDynamic && pairB->bodyType == BodyType::kStatic) {
-				Resolve(*pairA->owner,*pairB->owner,hitInfo);
-			}else if (pairA->bodyType == BodyType::kStatic && pairB->bodyType == BodyType::kDynamic) {
+				Resolve(*pairA->owner, *pairB->owner, hitInfo);
+			} else if (pairA->bodyType == BodyType::kStatic && pairB->bodyType == BodyType::kDynamic) {
 				Resolve(*pairB->owner, *pairA->owner, hitInfo);
 			} else {
 				//両方Dynamicはとりあえず片方だけ押す
@@ -159,4 +166,11 @@ void ColliderManager::Resolve(ColliderState& self, const ColliderState& other, H
 	*self.velocityPtr = vel;
 	//地面の上にいるか
 	*self.isOnGroundPtr = isOnGround;
+}
+
+//Layerを使った衝突判定
+bool ColliderManager::IsLayerCollidable(const Collider* self, const Collider* other) {
+	return
+		(self->maskLayer & static_cast<uint32_t>(other->layer)) != 0 &&
+		(other->maskLayer & static_cast<uint32_t>(other->layer)) != 0;
 }

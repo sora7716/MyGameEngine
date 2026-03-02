@@ -36,7 +36,7 @@ void GameScene::Initialize(const SceneContext& sceneContext) {
 
 	//追従カメラ
 	gameCamera_ = std::make_unique<GameCamera>();
-	gameCamera_->Initialize(sceneContext_.input,camera_);
+	gameCamera_->Initialize(sceneContext_.input, camera_);
 
 	//プレイヤー
 	player_ = std::make_unique<Player>();
@@ -135,13 +135,12 @@ void GameScene::Update() {
 	//	}
 	//}
 
-	////プレイヤーが死んだら
-	//if (!player_->IsAlive()) {
-	//	//sceneContext_.sceneManager->ChangeScene("Result");
-	//}
-
-	//終了フラグが経ったら
+	//シーンの切り替え
 	if (player_->IsGoal()) {
+		//プレイヤーがゴールしたら
+		sceneContext_.sceneManager->ChangeScene("Result");
+	} else if (!player_->IsAlive()) {
+		//プレイヤーが死んだら
 		sceneContext_.sceneManager->ChangeScene("Result");
 	}
 

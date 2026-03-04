@@ -76,6 +76,29 @@ Matrix4x4 Rendering::MakeRotateXYZMatrix(const Vector3& radian) {
 	return MakeRotateXMatrix(radian.x) * MakeRotateYMatrix(radian.y) * MakeRotateZMatrix(radian.z);
 }
 
+//任意軸回転
+Matrix4x4 Rendering::MakeRotateAxisAngle(const Vector3& axis, float angle) {
+	Matrix4x4 result = Matrix4x4::Identity4x4();
+	//単位ベクトル
+	Vector3 n = axis.Normalize();
+	//cos
+	float cos = std::cos(angle);
+	//sin
+	float sin = std::sin(angle);
+
+	result.m[0][0] = std::pow(n.x, 2.0f) * (1.0f - cos) + cos;
+	result.m[0][1] = n.x * n.y * (1.0f - cos) + n.z * sin;
+	result.m[0][2] = n.x * n.z * (1.0f - cos) - n.y * sin;
+	result.m[1][0] = n.x * n.y * (1.0f - cos) - n.z * sin;
+	result.m[1][1] = std::pow(n.y, 2.0f) * (1.0f - cos) + cos;
+	result.m[1][2] = n.y * n.z * (1.0f - cos) + n.x * sin;
+	result.m[2][0] = n.x * n.z * (1 - cos) + n.y * sin;
+	result.m[2][1] = n.y * n.z * (1.0f - cos) - n.x * sin;
+	result.m[2][2] = std::pow(n.z, 2.0f) * (1.0f - cos) + cos;
+
+	return result;
+}
+
 // OBB用の回転行列
 void Rendering::MakeOBBRotateMatrix(Vector3* orientations, const Vector3& rotate) {
 	Matrix4x4 rotateMatrix = MakeRotateXYZMatrix(rotate);
@@ -224,6 +247,7 @@ TransformData Rendering::DecomposeMatrix(const Matrix4x4& mat) {
 	return result;
 }
 
+//fromからtoの方向へ向く回転行列
 Matrix4x4 Rendering::DirectionToDirection(const Vector3& from, const Vector3& to) {
 	Matrix4x4 result = Matrix4x4::Identity4x4();
 	Vector3 u = from.Normalize();

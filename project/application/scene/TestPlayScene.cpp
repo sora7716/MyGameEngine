@@ -21,7 +21,7 @@ void TestPlayScene::Initialize(const SceneContext& sceneContext) {
 	camera_ = sceneContext_.cameraManager->FindCamera("testPlayCamera");
 
 	object3d_ = std::make_unique<Object3d>();
-	object3d_->Initialize(sceneContext_.object3dCommon,camera_);
+	object3d_->Initialize(sceneContext_.object3dCommon, camera_);
 	object3d_->SetModel("sphere");
 	transformData_.scale = Vector3::MakeAllOne();
 }
@@ -31,7 +31,7 @@ void TestPlayScene::Update() {
 	//シーンのインタフェースの初期化
 	IScene::Update();
 
-	object3d_->SetTransformData(0,transformData_);
+	object3d_->SetTransformData(0, transformData_);
 	object3d_->Update();
 #ifdef USE_IMGUI
 	//ImGuiの受付開始
@@ -45,6 +45,17 @@ void TestPlayScene::Update() {
 	ImGui::Begin("object3d");
 	ImGuiManager::DragTransform(transformData_);
 	ImGui::End();
+
+	for (int32_t i = 0; i < 4; i++) {
+		for (int32_t j = 0; j < 4; j++) {
+
+			ImGui::Text("%5.3f", rotateMatrix.m[i][j]);
+
+			if (j < 3) {
+				ImGui::SameLine();
+			}
+		}
+	}
 
 	//ImGuiの受付終了
 	sceneContext_.imguiManager->End();

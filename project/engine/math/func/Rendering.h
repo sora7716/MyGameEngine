@@ -57,12 +57,19 @@ public://メンバ関数
 	static Matrix4x4 MakeRotateXYZMatrix(const Vector3& radian);
 
 	/// <summary>
+	/// 任意軸回転
+	/// </summary>
+	/// <param name="axis">3軸</param>
+	/// <param name="angle">角度</param>
+	/// <returns>任意軸回転</returns>
+	static Matrix4x4 MakeRotateAxisAngle(const Vector3& axis, float angle);
+
+	/// <summary>
 	/// OBB用の回転行列
 	/// </summary>
 	/// <param name="orientations">回転行列から抽出するやつ</param>
 	/// <param name="rotate">回転する値</param>
 	static void MakeOBBRotateMatrix(Vector3* orientations, const Vector3& rotate);
-
 
 	/// <summary>
 	/// OBB用のワールド行列

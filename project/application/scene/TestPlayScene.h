@@ -1,6 +1,7 @@
 #pragma once
 #include "IScene.h"
 #include "RenderingData.h"
+#include "func/Rendering.h"
 //前方宣言
 class Object3d;
 
@@ -46,4 +47,8 @@ private://メンバ変数
 	//オブジェクト3d
 	std::unique_ptr<Object3d>object3d_ = nullptr;
 	TransformData transformData_ = {};
+
+	Vector3 axis = Vector3::MakeAllOne().Normalize();
+	float angle = 0.44f;
+	Matrix4x4 rotateMatrix = Rendering::MakeRotateAxisAngle(axis, angle);
 };

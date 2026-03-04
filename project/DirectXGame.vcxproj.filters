@@ -288,6 +288,9 @@
     <ClCompile Include="application\actor\ColliderManager.cpp">
       <Filter>application\actor</Filter>
     </ClCompile>
+    <ClCompile Include="engine\math\Quaternion.cpp">
+      <Filter>engine\math</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="engine\math\Matrix4x4.h">
@@ -529,6 +532,9 @@
     </ClInclude>
     <ClInclude Include="application\actor\ColliderManager.h">
       <Filter>application\actor</Filter>
+    </ClInclude>
+    <ClInclude Include="engine\math\Quaternion.h">
+      <Filter>engine\math</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

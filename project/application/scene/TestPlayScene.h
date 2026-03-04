@@ -1,6 +1,6 @@
 #pragma once
 #include "IScene.h"
-#include "RenderingData.h"
+#include "Quaternion.h"
 #include "func/Rendering.h"
 //前方宣言
 class Object3d;
@@ -51,4 +51,14 @@ private://メンバ変数
 	Vector3 axis = Vector3::MakeAllOne().Normalize();
 	float angle = 0.44f;
 	Matrix4x4 rotateMatrix = Rendering::MakeRotateAxisAngle(axis, angle);
+
+	Quaternion q1 = { 2.0f,3.0f,4.0f,1.0f };
+	Quaternion q2 = { 1.0f,3.0f,5.0f,2.0f };
+	Quaternion identity = Quaternion::IdentityQuaternion();
+	Quaternion conj = q1.Conjugate();
+	Quaternion inv = q1.Inverse();
+	Quaternion normal = q1.Normalize();
+	Quaternion mul1 = q1 * q2;
+	Quaternion mul2 = q2 * q1;
+	float norm = q1.Norm();
 };

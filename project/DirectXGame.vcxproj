@@ -71,6 +71,7 @@
     <ClCompile Include="engine\math\func\Physics.cpp" />
     <ClCompile Include="engine\math\func\Rendering.cpp" />
     <ClCompile Include="engine\math\Matrix4x4.cpp" />
+    <ClCompile Include="engine\math\Quaternion.cpp" />
     <ClCompile Include="engine\math\Vector2.cpp" />
     <ClCompile Include="engine\math\Vector3.cpp" />
     <ClCompile Include="engine\math\Vector4.cpp" />
@@ -150,6 +151,7 @@
     <ClInclude Include="engine\math\Matrix3x3.h" />
     <ClInclude Include="engine\math\Matrix4x4.h" />
     <ClInclude Include="engine\math\PhysicsData.h" />
+    <ClInclude Include="engine\math\Quaternion.h" />
     <ClInclude Include="engine\math\RenderingData.h" />
     <ClInclude Include="engine\math\Vector2.h" />
     <ClInclude Include="engine\math\Vector3.h" />

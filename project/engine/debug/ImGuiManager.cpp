@@ -86,6 +86,33 @@ void ImGuiManager::CheckBoxToInt(const std::string& label, int32_t& frag) {
 	frag = static_cast<int32_t>(checkBox);
 }
 
+//4x4の行列を表示する
+void ImGuiManager::ScreenMatrix4x4(const Matrix4x4& matrix, const char* label) {
+	ImGui::SeparatorText(label);
+	for (int32_t i = 0; i < 4; i++) {
+		for (int32_t j = 0; j < 4; j++) {
+
+			ImGui::Text("%5.3f", matrix.m[i][j]);
+
+			if (j < 3) {
+				ImGui::SameLine();
+			}
+		}
+	}
+}
+
+//クオータニオンの表示
+void ImGuiManager::ScreenQuaternion(const Quaternion& quaternion, const char* label) {
+	ImGui::SeparatorText(label);
+	ImGui::Text("%5.3f,%5.3f,%5.3f,%5.3f", quaternion.x, quaternion.y, quaternion.z, quaternion.w);
+}
+
+//浮動小数の表示
+void ImGuiManager::ScreenFloat(float num, const char* label) {
+	ImGui::SeparatorText(label);
+	ImGui::Text("%5.3f", num);
+}
+
 //コンストラクタ
 ImGuiManager::ImGuiManager(ConstructorKey) {
 }

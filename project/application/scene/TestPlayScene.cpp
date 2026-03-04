@@ -46,17 +46,15 @@ void TestPlayScene::Update() {
 	ImGuiManager::DragTransform(transformData_);
 	ImGui::End();
 
-	for (int32_t i = 0; i < 4; i++) {
-		for (int32_t j = 0; j < 4; j++) {
+	ImGuiManager::ScreenMatrix4x4(rotateMatrix, "rotateAxisAngle");
 
-			ImGui::Text("%5.3f", rotateMatrix.m[i][j]);
-
-			if (j < 3) {
-				ImGui::SameLine();
-			}
-		}
-	}
-
+	ImGuiManager::ScreenQuaternion(identity, "Identity");
+	ImGuiManager::ScreenQuaternion(conj, "Conjugate");
+	ImGuiManager::ScreenQuaternion(inv, "Inverse");
+	ImGuiManager::ScreenQuaternion(normal, "Normalize");
+	ImGuiManager::ScreenQuaternion(mul1, "Multiply(q1,q2)");
+	ImGuiManager::ScreenQuaternion(mul2, "Multiply(q2,q1)");
+	ImGuiManager::ScreenFloat(norm, "Norm");
 	//ImGuiの受付終了
 	sceneContext_.imguiManager->End();
 #endif // USE_IMGUI

@@ -1,5 +1,6 @@
 #pragma once
-#include "engine/math/RenderingData.h"
+#include "RenderingData.h"
+#include "Quaternion.h"
 #ifdef USE_IMGUI
 #include "imgui/imgui.h"
 #include "imgui/imgui_impl_dx12.h"
@@ -27,7 +28,7 @@ public://メンバ関数
 	/// <param name="winApi">ウィンドウズアプリケーション</param>
 	/// <param name="directXBase">DirectXの基盤部分</param>
 	/// <param name="srvManager">SRVマネージャー</param>
-	void Initialize(WinApi* winApi,DirectXBase* directXBase,SRVManager*srvManager);
+	void Initialize(WinApi* winApi, DirectXBase* directXBase, SRVManager* srvManager);
 
 	/// <summary>
 	/// ImGuiの受付開始
@@ -55,7 +56,28 @@ public://メンバ関数
 	/// </summary>
 	/// <param name="label">ラベル</param>
 	/// <param name="frag">フラグ</param>
-	static void CheckBoxToInt(const std::string& label,int32_t& frag);
+	static void CheckBoxToInt(const std::string& label, int32_t& frag);
+
+	/// <summary>
+	/// 4x4の行列を表示する
+	/// </summary>
+	/// <param name="matrix">行列</param>
+	/// <param name="label">ラベル</param>
+	static void ScreenMatrix4x4(const Matrix4x4& matrix, const char* label);
+
+	/// <summary>
+	/// クオータニオンの表示
+	/// </summary>
+	/// <param name="quaternion">クオータニオン</param>
+	/// <param name="label">ラベル</param>
+	static void ScreenQuaternion(const Quaternion& quaternion, const char* label);
+
+	/// <summary>
+	/// 浮動小数の表示
+	/// </summary>
+	/// <param name="num">浮動小数</param>
+	/// <param name="label">ラベル</param>
+	static void ScreenFloat(float num, const char* label);
 public://PrassKey
 	class ConstructorKey {
 	private:

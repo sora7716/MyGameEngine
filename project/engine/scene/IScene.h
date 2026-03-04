@@ -8,6 +8,7 @@
 class AbstractSceneFactory;
 class DebugCamera;
 class ColliderManager;
+class DirectXBase;
 
 /// <summary>
 /// シーンのインターフェース

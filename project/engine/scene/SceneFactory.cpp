@@ -1,7 +1,8 @@
 #include "SceneFactory.h"
-#include "application/scene/TitleScene.h"
-#include "application/scene/GameScene.h"
-#include "application/scene/ResultScene.h"
+#include "TitleScene.h"
+#include "GameScene.h"
+#include "ResultScene.h"
+#include "TestPlayScene.h"
 //デストラクタ
 SceneFactory::~SceneFactory() {
 }
@@ -16,6 +17,8 @@ IScene* SceneFactory::CreateScene(const std::string& sceneName) {
 		newScene = new GameScene();
 	} else if (sceneName == "Result") {
 		newScene = new ResultScene();
+	} else if (sceneName == "TestPlay") {
+		newScene = new TestPlayScene();
 	}
 	return newScene;
 }

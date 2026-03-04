@@ -78,4 +78,6 @@ void GameObjectList::CreateCamera() {
 	core_->GetCameraManager()->CreateCamera("gameCamera");
 	//リザルトカメラ
 	core_->GetCameraManager()->CreateCamera("resultCamera");
+	//テストプレイカメラ
+	core_->GetCameraManager()->CreateCamera("testPlayCamera");
 }

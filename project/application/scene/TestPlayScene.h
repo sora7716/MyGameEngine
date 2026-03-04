@@ -1,22 +1,23 @@
 #pragma once
-#include "engine/scene/IScene.h"
-#include "engine/math/Vector2.h"
-class Text;
+#include "IScene.h"
+#include "RenderingData.h"
+//前方宣言
+class Object3d;
 
 /// <summary>
-/// タイトルシーン
+/// テストプレイシーン
 /// </summary>
-class TitleScene :public IScene {
+class TestPlayScene :public IScene {
 public://メンバ関数
 	/// <summary>
 	/// コンストラクタ
 	/// </summary>
-	TitleScene();
+	TestPlayScene();
 
 	/// <summary>
 	/// デストラクタ
 	/// </summary>
-	~TitleScene()override;
+	~TestPlayScene()override;
 
 	/// <summary>
 	/// 初期化
@@ -42,13 +43,7 @@ private://メンバ変数
 	Camera* camera_ = nullptr;
 	//Xboxの番号
 	DWORD xBoxPadNumber_ = 0;
-	//ゲームタイトル
-	std::unique_ptr<Text>titleName_ = nullptr;
-	Vector2 titleNamePos_ = {};
-	float titleNameSize_ = 128.0f;
-
-	//スタートの開始ボタン
-	std::unique_ptr<Text>pressStart_ = nullptr;
-	Vector2 pressStartPos_ = {};
-	float pressStartSize_ = 64.0f;
+	//オブジェクト3d
+	std::unique_ptr<Object3d>object3d_ = nullptr;
+	TransformData transformData_ = {};
 };

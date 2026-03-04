@@ -27,6 +27,7 @@
     <ClCompile Include="application\actor\Score.cpp" />
     <ClCompile Include="application\scene\GameScene.cpp" />
     <ClCompile Include="application\scene\ResultScene.cpp" />
+    <ClCompile Include="application\scene\TestPlayScene.cpp" />
     <ClCompile Include="application\scene\TitleScene.cpp" />
     <ClCompile Include="engine\2d\Object2d.cpp" />
     <ClCompile Include="engine\2d\Object2dCommon.cpp" />
@@ -100,6 +101,7 @@
     <ClInclude Include="application\actor\Score.h" />
     <ClInclude Include="application\scene\GameScene.h" />
     <ClInclude Include="application\scene\ResultScene.h" />
+    <ClInclude Include="application\scene\TestPlayScene.h" />
     <ClInclude Include="application\scene\TitleScene.h" />
     <ClInclude Include="engine\2d\Object2d.h" />
     <ClInclude Include="engine\2d\Object2dCommon.h" />

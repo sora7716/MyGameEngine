@@ -154,9 +154,6 @@
       <Filter>engine\scene</Filter>
     </ClCompile>
     <ClCompile Include="engine\scene\SceneManager.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
-    <ClCompile Include="engine\scene\SceneManager.cpp">
       <Filter>engine\scene</Filter>
     </ClCompile>
     <ClCompile Include="engine\2d\SpriteCommon.cpp">
@@ -279,11 +276,17 @@
     <ClCompile Include="engine\math\func\Physics.cpp">
       <Filter>engine\math\func</Filter>
     </ClCompile>
-    <ClCompile Include="application\actor\ColliderManager.cpp">
-      <Filter>ソース ファイル</Filter>
+    <ClCompile Include="application\scene\TestPlayScene.cpp">
+      <Filter>application\scene</Filter>
+    </ClCompile>
+    <ClCompile Include="engine\scene\SceneManager.cpp">
+      <Filter>engine\scene</Filter>
     </ClCompile>
     <ClCompile Include="application\actor\ActorData.cpp">
-      <Filter>ソース ファイル</Filter>
+      <Filter>application\actor</Filter>
+    </ClCompile>
+    <ClCompile Include="application\actor\ColliderManager.cpp">
+      <Filter>application\actor</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -376,9 +379,6 @@
     </ClInclude>
     <ClInclude Include="engine\scene\AbstractSceneFactory.h">
       <Filter>engine\scene</Filter>
-    </ClInclude>
-    <ClInclude Include="engine\scene\SceneManager.h">
-      <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
     <ClInclude Include="engine\scene\SceneManager.h">
       <Filter>engine\scene</Filter>
@@ -521,8 +521,14 @@
     <ClInclude Include="engine\math\func\Physics.h">
       <Filter>engine\math\func</Filter>
     </ClInclude>
+    <ClInclude Include="application\scene\TestPlayScene.h">
+      <Filter>application\scene</Filter>
+    </ClInclude>
+    <ClInclude Include="engine\scene\SceneManager.h">
+      <Filter>engine\scene</Filter>
+    </ClInclude>
     <ClInclude Include="application\actor\ColliderManager.h">
-      <Filter>ヘッダー ファイル</Filter>
+      <Filter>application\actor</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

@@ -46,15 +46,27 @@ void TestPlayScene::Update() {
 	ImGuiManager::DragTransform(transformData_);
 	ImGui::End();
 
-	ImGuiManager::ScreenMatrix4x4(rotateMatrix, "rotateAxisAngle");
+	ImGui::Begin("MT4_01_00");
+	ImGuiManager::Matrix4x4Text(rotateMatrix, "rotateAxisAngle");
+	ImGui::End();
 
-	ImGuiManager::ScreenQuaternion(identity, "Identity");
-	ImGuiManager::ScreenQuaternion(conj, "Conjugate");
-	ImGuiManager::ScreenQuaternion(inv, "Inverse");
-	ImGuiManager::ScreenQuaternion(normal, "Normalize");
-	ImGuiManager::ScreenQuaternion(mul1, "Multiply(q1,q2)");
-	ImGuiManager::ScreenQuaternion(mul2, "Multiply(q2,q1)");
-	ImGuiManager::ScreenFloat(norm, "Norm");
+	ImGui::Begin("MT4_01_03");
+	ImGuiManager::QuaternionText(identity, "Identity");
+	ImGuiManager::QuaternionText(conj, "Conjugate");
+	ImGuiManager::QuaternionText(inv, "Inverse");
+	ImGuiManager::QuaternionText(normal, "Normalize");
+	ImGuiManager::QuaternionText(mul1, "Multiply(q1,q2)");
+	ImGuiManager::QuaternionText(mul2, "Multiply(q2,q1)");
+	ImGuiManager::FloatText(norm, "Norm");
+	ImGui::End();
+
+	ImGui::Begin("MT4_01_04");
+	ImGuiManager::QuaternionText(rotation, "rotation");
+	ImGuiManager::Matrix4x4Text(rotateMat, "rotateMatrix");
+	ImGuiManager::Vector3Text(rotateByQuaternion, "rotateByQuaternion");
+	ImGuiManager::Vector3Text(rotateByMatrix, "rotateByMatrix");
+	ImGui::End();
+
 	//ImGuiの受付終了
 	sceneContext_.imguiManager->End();
 #endif // USE_IMGUI

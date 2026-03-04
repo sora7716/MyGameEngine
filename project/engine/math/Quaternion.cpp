@@ -8,7 +8,7 @@ Quaternion Quaternion::IdentityQuaternion() {
 }
 
 //共役
-Quaternion Quaternion::Conjugate() {
+Quaternion Quaternion::Conjugate()const {
 	Quaternion result = *this;
 	result.x *= -1.0f;
 	result.y *= -1.0f;
@@ -17,12 +17,12 @@ Quaternion Quaternion::Conjugate() {
 }
 
 //ノルム
-float Quaternion::Norm() {
+float Quaternion::Norm()const {
 	return std::sqrt(std::pow(x, 2.0f) + std::pow(y, 2.0f) + std::pow(z, 2.0f) + std::pow(w, 2.0f));
 }
 
 //逆Quaternion
-Quaternion Quaternion::Inverse() {
+Quaternion Quaternion::Inverse()const {
 	//共役
 	Quaternion conjugate = this->Conjugate();
 	//ノルム
@@ -33,7 +33,7 @@ Quaternion Quaternion::Inverse() {
 }
 
 //単位Quaternion
-Quaternion Quaternion::Normalize() {
+Quaternion Quaternion::Normalize()const {
 	Quaternion normalize = *this;
 	float norm = this->Norm();
 	normalize = normalize / norm;
@@ -41,7 +41,7 @@ Quaternion Quaternion::Normalize() {
 }
 
 //乗法
-Quaternion Quaternion::operator*(const Quaternion& quoternion) {
+Quaternion Quaternion::operator*(const Quaternion& quoternion)const {
 	//クオータニオン
 	Quaternion q = *this;
 	Quaternion r = quoternion;
@@ -60,7 +60,7 @@ Quaternion Quaternion::operator*(const Quaternion& quoternion) {
 }
 
 //除算(float)
-Quaternion Quaternion::operator/(float num) {
+Quaternion Quaternion::operator/(float num)const {
 	Quaternion result;
 	result.x = x / num;
 	result.y = y / num;

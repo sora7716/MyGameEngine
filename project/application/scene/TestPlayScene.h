@@ -61,4 +61,10 @@ private://メンバ変数
 	Quaternion mul1 = q1 * q2;
 	Quaternion mul2 = q2 * q1;
 	float norm = q1.Norm();
+
+	Quaternion rotation = Rendering::MakeRotateAxisAngleQuaternion(Vector3({ 1.0f,0.4f,-0.2f }).Normalize(), 0.45f);
+	Vector3 pointY = { 2.1f,-0.9f,1.3f };
+	Matrix4x4 rotateMat = Rendering::MakeRotateMatrix(rotation);
+	Vector3 rotateByQuaternion = Rendering::RotateVector(pointY, rotation);
+	Vector3 rotateByMatrix = Rendering::Transform(pointY, rotateMat);
 };

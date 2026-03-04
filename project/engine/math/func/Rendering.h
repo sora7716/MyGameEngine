@@ -1,5 +1,6 @@
 #pragma once
 #include "engine/math/RenderingData.h"
+#include <Quaternion.h>
 
 /// <summary>
 /// レンダリング
@@ -63,6 +64,37 @@ public://メンバ関数
 	/// <param name="angle">角度</param>
 	/// <returns>任意軸回転</returns>
 	static Matrix4x4 MakeRotateAxisAngle(const Vector3& axis, float angle);
+
+	/// <summary>
+	/// fromからtoの方向へ向く回転行列
+	/// </summary>
+	/// <param name="from">今のいる位置</param>
+	/// <param name="to">向いたい位置</param>
+	/// <returns></returns>
+	static Matrix4x4 DirectionToDirection(const Vector3& from, const Vector3& to);
+
+	/// <summary>
+	/// 任意軸回転を表すQuaternionの生成
+	/// </summary>
+	/// <param name="axis">3軸</param>
+	/// <param name="angle">角度</param>
+	/// <returns>任意軸回転を表すQuaternion</returns>
+	static Quaternion MakeRotateAxisAngleQuaternion(const Vector3& axis, float angle);
+
+	/// <summary>
+	/// ベクトルをクオータニオンで回転させた結果のベクトルを求める
+	/// </summary>
+	/// <param name="vector">ベクトル</param>
+	/// <param name="quaternion">クオータニオン</param>
+	/// <returns>クオータニオンで回転させたベクトル</returns>
+	static Vector3 RotateVector(const Vector3& vector, const Quaternion& quaternion);
+
+	/// <summary>
+	/// Quaternionから回転行列を求める
+	/// </summary>
+	/// <param name="quaternion">クオータニオン</param>
+	/// <returns>回転行列</returns>
+	static Matrix4x4 MakeRotateMatrix(const Quaternion& quaternion);
 
 	/// <summary>
 	/// OBB用の回転行列
@@ -160,13 +192,5 @@ public://メンバ関数
 	/// <param name="mat">行列</param>
 	/// <returns>TransformData</returns>
 	static TransformData DecomposeMatrix(const Matrix4x4& mat);
-
-	/// <summary>
-	/// fromからtoの方向へ向く回転行列
-	/// </summary>
-	/// <param name="from">今のいる位置</param>
-	/// <param name="to">向いたい位置</param>
-	/// <returns></returns>
-	static Matrix4x4 DirectionToDirection(const Vector3& from, const Vector3& to);
 };
 

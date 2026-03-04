@@ -16,39 +16,39 @@ struct Quaternion {
 	/// 共役
 	/// </summary>
 	/// <returns></returns>
-	Quaternion Conjugate();
+	Quaternion Conjugate()const;
 
 	/// <summary>
 	/// ノルム
 	/// </summary>
 	/// <returns>ノルム</returns>
-	float Norm();
+	float Norm()const;
 
 	/// <summary>
 	/// 逆Quaternion
 	/// </summary>
 	/// <returns>逆Wuaternion</returns>
-	Quaternion Inverse();
+	Quaternion Inverse()const;
 
 	/// <summary>
 	/// 単位Quaternion
 	/// </summary>
 	/// <returns>単位Quaternion</returns>
-	Quaternion Normalize();
+	Quaternion Normalize()const;
 
 	/// <summary>
 	/// 乗算
 	/// </summary>
 	/// <param name="quoternion">クオータニオン</param>
 	/// <returns>クオータニオン</returns>
-	Quaternion operator*(const Quaternion& quoternion);
+	Quaternion operator*(const Quaternion& quoternion)const;
 
 	/// <summary>
 	/// 除算(float)
 	/// </summary>
 	/// <param name="num">浮動小数</param>
 	/// <returns>浮動小数</returns>
-	Quaternion operator/(float num);
+	Quaternion operator/(float num)const;
 };
 
 

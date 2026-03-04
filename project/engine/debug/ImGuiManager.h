@@ -7,6 +7,7 @@
 #include "imgui/imgui_impl_win32.h"
 #endif // USE_IMGUI
 #include <string>
+#include <Vector3.h>
 //前方宣言
 class DirectXBase;
 class SRVManager;
@@ -59,25 +60,32 @@ public://メンバ関数
 	static void CheckBoxToInt(const std::string& label, int32_t& frag);
 
 	/// <summary>
-	/// 4x4の行列を表示する
+	/// 4x4の行列の表示
 	/// </summary>
 	/// <param name="matrix">行列</param>
 	/// <param name="label">ラベル</param>
-	static void ScreenMatrix4x4(const Matrix4x4& matrix, const char* label);
+	static void Matrix4x4Text(const Matrix4x4& matrix, const char* label);
+
+	/// <summary>
+	/// 3次元ベクトルの表示
+	/// </summary>
+	/// <param name="vector">ベクトル</param>
+	/// <param name="label">ラベル</param>
+	static void Vector3Text(const Vector3& vector, const char* label);
 
 	/// <summary>
 	/// クオータニオンの表示
 	/// </summary>
 	/// <param name="quaternion">クオータニオン</param>
 	/// <param name="label">ラベル</param>
-	static void ScreenQuaternion(const Quaternion& quaternion, const char* label);
+	static void QuaternionText(const Quaternion& quaternion, const char* label);
 
 	/// <summary>
 	/// 浮動小数の表示
 	/// </summary>
 	/// <param name="num">浮動小数</param>
 	/// <param name="label">ラベル</param>
-	static void ScreenFloat(float num, const char* label);
+	static void FloatText(float num, const char* label);
 public://PrassKey
 	class ConstructorKey {
 	private:

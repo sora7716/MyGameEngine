@@ -6,7 +6,7 @@
 /// コンストラクタ
 /// </summary>
 Camera::Camera() {
-	transform_ = { {1.0f,1.0f,1.0f},{},{0.0f,0.0f,-10.0f} };
+	transform_ = { Vector3::MakeAllOne(),Quaternion::IdentityQuaternion(),{0.0f,0.0f,-10.0f}};
 	fovY_ = 0.45f;
 	aspectRation_ = float(WinApi::kClientWidth) / float(WinApi::kClientHeight);
 	nearClip_ = 0.1f;
@@ -27,7 +27,7 @@ void Camera::Update() {
 
 // 回転のセッター
 void Camera::SetRotate(const Vector3& rotate) {
-	transform_.rotate = rotate;
+	transform_.quaternion = { rotate.x,rotate.y,rotate.z,0.0f };
 }
 
 // 平行移動のセッター
@@ -80,9 +80,9 @@ const Matrix4x4& Camera::GetViewProjectionMatrix() const {
 }
 
 // 回転のゲッター
-const Vector3& Camera::GetRotate() const {
+const Quaternion& Camera::GetQuaternion() const {
 	// TODO: return ステートメントをここに挿入します
-	return transform_.rotate;
+	return transform_.quaternion;
 }
 
 // 平行移動のゲッター
@@ -102,6 +102,6 @@ const float Camera::GetFarClip() const {
 }
 
 //FovYのゲッター
-const float Camera::GetFovY() const{
+const float Camera::GetFovY() const {
 	return fovY_;
 }

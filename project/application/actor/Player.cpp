@@ -34,7 +34,7 @@ void Player::Initialize(Input* input, SpriteCommon* spriteCommon, Object3dCommon
 	//トランスフォームの初期化
 	gameObject_.transformData = {
 		.scale = Vector3::MakeAllOne(),
-		.rotate = {},
+		.quaternion = {},
 		.translate = {}
 	};
 	gameObject_.velocity = { 5.0f,0.0f,5.0f };
@@ -48,7 +48,7 @@ void Player::Initialize(Input* input, SpriteCommon* spriteCommon, Object3dCommon
 
 	//Colliderの状態
 	colliderState_.scalePtr = &gameObject_.transformData.scale;
-	colliderState_.rotatePtr = &gameObject_.transformData.rotate;
+	colliderState_.rotatePtr = &gameObject_.transformData.quaternion;
 	colliderState_.translatePtr = &gameObject_.transformData.translate;
 	colliderState_.velocityPtr = &gameObject_.velocity;
 	colliderState_.isOnGroundPtr = &gameObject_.isOnGround;
@@ -168,7 +168,7 @@ void Player::Update() {
 
 	//ヒットボックスの更新
 	renderObject_.hitBox->SetTranslate(0, GetWorldPos());
-	renderObject_.hitBox->SetRotate(0, gameObject_.transformData.rotate);
+	renderObject_.hitBox->SetQuaternion(0, gameObject_.transformData.quaternion);
 	renderObject_.hitBox->SetScale(0, hitBoxScale_);
 	renderObject_.hitBox->Update();
 
@@ -321,7 +321,7 @@ void Player::Move() {
 	}
 
 	//カメラの角度をもとに回転行列を求める
-	Matrix4x4 rotMat = Rendering::MakeRotateXYZMatrix(camera_->GetRotate());
+	Matrix4x4 rotMat = Rendering::MakeRotateMatrix(camera_->GetQuaternion());
 
 	//カメラの向いてる方向を正にする(XとZ軸限定)
 	Vector3 moveDirXZ = Math::TransformNormal(Vector3(gameObject_.direction.x, 0.0f, gameObject_.direction.z), rotMat);
@@ -432,13 +432,13 @@ void Player::LookDirection() {
 		// 回転速度（ラジアン/秒） 例：180度/秒
 		const float yawSpeed = Math::kPi; // PI rad/s = 180deg/s
 
-		gameObject_.transformData.rotate.y += stickX * yawSpeed * Math::kDeltaTime;
+		gameObject_.transformData.quaternion.y += stickX * yawSpeed * Math::kDeltaTime;
 	}
 
 	// 必要なら 0..2PI に丸める（巨大化防止）
 	const float twoPi = Math::kPi * 2.0f;
-	if (gameObject_.transformData.rotate.y > twoPi) gameObject_.transformData.rotate.y -= twoPi;
-	if (gameObject_.transformData.rotate.y < 0.0f)  gameObject_.transformData.rotate.y += twoPi;
+	if (gameObject_.transformData.quaternion.y > twoPi) gameObject_.transformData.quaternion.y -= twoPi;
+	if (gameObject_.transformData.quaternion.y < 0.0f)  gameObject_.transformData.quaternion.y += twoPi;
 
-	renderObject_.object3d->SetRotate(0, gameObject_.transformData.rotate);
+	renderObject_.object3d->SetQuaternion(0, gameObject_.transformData.quaternion);
 }

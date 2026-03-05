@@ -24,7 +24,7 @@ Vector3 Math::Lerp(const Vector3& v1, const Vector3& v2, float t) {
 }
 
 // 球面線形補間
-Vector3 Math::SLerp(const Vector3& v1, const Vector3& v2, float t) {
+Vector3 Math::Slerp(const Vector3& v1, const Vector3& v2, float t) {
 	Vector3 nv1 = v1; // v1 の正規化ベクトル
 	nv1 = nv1.Normalize();
 	Vector3 nv2 = v2; // v2 の正規化ベクトル
@@ -138,9 +138,9 @@ Vector3 Math::BezierS(const Vector3* points, float t) {
 	Vector3 p1 = points[1];//中点
 	Vector3 p2 = points[2];//終点
 
-	Vector3 p0p1 = SLerp(p0, p1, t);  // p0とp1の間を補間
-	Vector3 p1p2 = SLerp(p1, p2, t);  // p1とp2の間を補間
-	Vector3 p = SLerp(p0p1, p1p2, t); // 上記2つの補間結果をさらに補間
+	Vector3 p0p1 = Slerp(p0, p1, t);  // p0とp1の間を補間
+	Vector3 p1p2 = Slerp(p1, p2, t);  // p1とp2の間を補間
+	Vector3 p = Slerp(p0p1, p1p2, t); // 上記2つの補間結果をさらに補間
 	return p;
 }
 

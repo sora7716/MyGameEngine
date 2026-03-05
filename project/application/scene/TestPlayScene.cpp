@@ -24,6 +24,8 @@ void TestPlayScene::Initialize(const SceneContext& sceneContext) {
 	object3d_->Initialize(sceneContext_.object3dCommon, camera_);
 	object3d_->SetModel("sphere");
 	transformData_.scale = Vector3::MakeAllOne();
+	transformData_.quaternion = Quaternion::IdentityQuaternion();
+
 }
 
 //更新ww
@@ -65,6 +67,14 @@ void TestPlayScene::Update() {
 	ImGuiManager::Matrix4x4Text(rotateMat, "rotateMatrix");
 	ImGuiManager::Vector3Text(rotateByQuaternion, "rotateByQuaternion");
 	ImGuiManager::Vector3Text(rotateByMatrix, "rotateByMatrix");
+	ImGui::End();
+
+	ImGui::Begin("MT4_01_05");
+	ImGuiManager::QuaternionText(interpolate0, "interpolate0, Slerp(q0, q1, 0.0f)");
+	ImGuiManager::QuaternionText(interpolate1, "interpolate0, Slerp(q0, q1, 0.3f)");
+	ImGuiManager::QuaternionText(interpolate2, "interpolate0, Slerp(q0, q1, 0.5f)");
+	ImGuiManager::QuaternionText(interpolate3, "interpolate0, Slerp(q0, q1, 0.7f)");
+	ImGuiManager::QuaternionText(interpolate4, "interpolate0, Slerp(q0, q1, 1.0f)");
 	ImGui::End();
 
 	//ImGuiの受付終了

@@ -121,7 +121,7 @@ Particle ParticleEmitter::MakeNormalParticle() {
 	particle.transform.scale = { 1.0f, 1.0f, 1.0f };
 
 	//回転
-	particle.transform.rotate = { 0.0f, Math::kPi, 0.0f };
+	particle.transform.quaternion = { 0.0f, Math::kPi, 0.0f };
 
 	//位置の値をemitRange_の範囲でランダムに設定
 	std::uniform_real_distribution<float>distributionPosition(-emitter_.range, emitter_.range);

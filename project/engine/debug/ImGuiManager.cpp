@@ -72,7 +72,10 @@ void ImGuiManager::Draw() {
 void ImGuiManager::DragTransform(TransformData& transfromData) {
 #ifdef USE_IMGUI
 	ImGui::DragFloat3("scale", &transfromData.scale.x, 0.1f);
-	ImGui::DragFloat3("rotate", &transfromData.rotate.x, 0.1f);
+	//ImGui::SliderAngle("rotateX", &transfromData.quaternion.x, 0.1f);
+	//ImGui::SliderAngle("rotateY", &transfromData.quaternion.y, 0.1f);
+	//ImGui::SliderAngle("rotateZ", &transfromData.quaternion.z, 0.1f);
+	ImGui::DragFloat4("rotate", &transfromData.quaternion.x, 0.1f);
 	ImGui::DragFloat3("translate", &transfromData.translate.x, 0.1f);
 #endif // USE_IMGUI
 }

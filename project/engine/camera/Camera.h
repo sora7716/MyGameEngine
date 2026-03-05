@@ -82,10 +82,10 @@ public://メンバ関数
 	const Matrix4x4& GetViewProjectionMatrix()const;
 
 	/// <summary>
-	/// 回転のゲッター
+	/// クォータニオンのゲッター
 	/// </summary>
 	/// <returns>回転</returns>
-	const Vector3& GetRotate()const;
+	const Quaternion& GetQuaternion()const;
 
 	/// <summary>
 	/// 平行移動のゲッター

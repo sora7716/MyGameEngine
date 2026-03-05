@@ -44,7 +44,7 @@ void GameCamera::Update() {
 	camera_->SetRotate(rotate_);
 
 	//カメラの角度から回転行列を求める
-	Matrix4x4 rotMat = Rendering::MakeRotateXYZMatrix(rotate_);
+	Matrix4x4 rotMat = Rendering::MakeRotateMatrix(rotate_);
 
 	//オフセットをカメラの回転に合わせて回転させる
 	offset_ = Math::TransformNormal(offset_, rotMat);

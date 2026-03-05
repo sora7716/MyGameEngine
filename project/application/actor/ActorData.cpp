@@ -44,7 +44,7 @@ RenderObject&& RenderObject::Build() {
 //コライダーの状態の初期化
 void ColliderState::Initialize(Vector3& hitBoxScale, GameObject& gameObject,Tag tag) {
 	scalePtr = &hitBoxScale;
-	rotatePtr = &gameObject.transformData.rotate;
+	rotatePtr = &gameObject.transformData.quaternion;
 	translatePtr = &gameObject.transformData.translate;
 	velocityPtr = &gameObject.velocity;
 	isOnGroundPtr = &gameObject.isOnGround;

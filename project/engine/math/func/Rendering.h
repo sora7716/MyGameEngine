@@ -55,7 +55,7 @@ public://メンバ関数
 	/// </summary>
 	/// <param name="radian">角度</param>
 	/// <returns>回転</returns>
-	static Matrix4x4 MakeRotateXYZMatrix(const Vector3& radian);
+	static Matrix4x4 MakeRotateMatrix(const Vector3& radian);
 
 	/// <summary>
 	/// 任意軸回転
@@ -74,19 +74,19 @@ public://メンバ関数
 	static Matrix4x4 DirectionToDirection(const Vector3& from, const Vector3& to);
 
 	/// <summary>
-	/// 任意軸回転を表すQuaternionの生成
+	/// 任意軸回転を表すクォータニオンの生成
 	/// </summary>
 	/// <param name="axis">3軸</param>
 	/// <param name="angle">角度</param>
-	/// <returns>任意軸回転を表すQuaternion</returns>
+	/// <returns>任意軸回転を表すクォータニオン</returns>
 	static Quaternion MakeRotateAxisAngleQuaternion(const Vector3& axis, float angle);
 
 	/// <summary>
-	/// ベクトルをクオータニオンで回転させた結果のベクトルを求める
+	/// ベクトルをクォータニオンで回転させた結果のベクトルを求める
 	/// </summary>
 	/// <param name="vector">ベクトル</param>
-	/// <param name="quaternion">クオータニオン</param>
-	/// <returns>クオータニオンで回転させたベクトル</returns>
+	/// <param name="quaternion">クォータニオン</param>
+	/// <returns>クォータニオンで回転させたベクトル</returns>
 	static Vector3 RotateVector(const Vector3& vector, const Quaternion& quaternion);
 
 	/// <summary>
@@ -101,7 +101,7 @@ public://メンバ関数
 	/// </summary>
 	/// <param name="orientations">回転行列から抽出するやつ</param>
 	/// <param name="rotate">回転する値</param>
-	static void MakeOBBRotateMatrix(Vector3* orientations, const Vector3& rotate);
+	static void MakeOBBRotateMatrix(Vector3* orientations, const Quaternion& rotate);
 
 	/// <summary>
 	/// OBB用のワールド行列
@@ -117,6 +117,15 @@ public://メンバ関数
 	/// <param name="transform">トランスフォーム</param>
 	/// <returns>アフィン行列</returns>
 	static Matrix4x4 MakeAffineMatrix(const TransformData& transform);
+
+	/// <summary>
+	/// アフィン行列
+	/// </summary>
+	/// <param name="scale">拡縮</param>
+	/// <param name="rotate">回転</param>
+	/// <param name="translate">平行移動</param>
+	/// <returns>アフィン行列</returns>
+	static Matrix4x4 MakeAffineMatrix(const Vector3& scale, const Vector3& rotate, const Vector3& translate);
 
 	/// <summary>
 	/// STRの変換
@@ -179,6 +188,14 @@ public://メンバ関数
 	static Matrix4x4 MakeBillboardMatrix(const Matrix4x4& cameraWorldMatrix, const Vector3& rotate);
 
 	/// <summary>
+	/// ビルボード行列の作成
+	/// </summary>
+	/// <param name="cameraWorldMatrix">カメラのワールド行列</param>
+	/// <param name="quaternion">クォータニオン</param>
+	/// <returns></returns>
+	static Matrix4x4 MakeBillboardMatrix(const Matrix4x4& cameraWorldMatrix, const Quaternion& quaternion);
+
+	/// <summary>
 	/// ビルボード行列を含んだアフィン行列の作成
 	/// </summary>
 	/// <param name="cameraWorldMatrix">カメラのワールド行列</param>
@@ -192,5 +209,12 @@ public://メンバ関数
 	/// <param name="mat">行列</param>
 	/// <returns>TransformData</returns>
 	static TransformData DecomposeMatrix(const Matrix4x4& mat);
+private://メンバ関数
+	/// <summary>
+    /// 回転用のクォータニオンの作成
+    /// </summary>
+    /// <param name="quaternion">クォータニオン</param>
+    /// <returns>回転用のクォータニオン</returns>
+	static Quaternion MakeRotateQuaternion(const Quaternion& quaternion);
 };
 

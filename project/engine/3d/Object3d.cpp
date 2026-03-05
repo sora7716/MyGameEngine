@@ -34,7 +34,7 @@ void Object3d::Initialize(Object3dCommon* object3dCommon, Camera* camera, uint32
 	transforms_.resize(instanceCount);
 	for (TransformData& transform : transforms_) {
 		transform.scale = Vector3::MakeAllOne();
-		transform.rotate = {};
+		transform.quaternion = {};
 		transform.translate = {};
 	}
 	//wvpのデータ数を決定
@@ -156,9 +156,8 @@ void Object3d::SetScale(uint32_t index, const Vector3& scale) {
 	transforms_[index].scale = scale;
 }
 
-// 回転のセッター
-void Object3d::SetRotate(uint32_t index, const Vector3& rotate) {
-	transforms_[index].rotate = rotate;
+void Object3d::SetQuaternion(uint32_t index, const Quaternion& quaternion) {
+	transforms_[index].quaternion = quaternion;
 }
 
 // 平行移動のセッター
@@ -217,9 +216,9 @@ const Vector3& Object3d::GetScale(uint32_t index) const {
 }
 
 // 回転のゲッター
-const Vector3& Object3d::GetRotate(uint32_t index) const {
+const Quaternion& Object3d::GetQuaternion(uint32_t index) const {
 	// TODO: return ステートメントをここに挿入します
-	return transforms_[index].rotate;
+	return transforms_[index].quaternion;
 }
 
 // 平行移動のゲッター
@@ -271,7 +270,7 @@ Model* Object3d::GetModel() {
 }
 
 //ワールドマトリックスのゲッター
-Matrix4x4& Object3d::GetWorldMatrix(uint32_t index){
+Matrix4x4& Object3d::GetWorldMatrix(uint32_t index) {
 	return wvpData_[index].world;
 }
 

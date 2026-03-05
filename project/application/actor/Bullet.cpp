@@ -60,7 +60,7 @@ void Bullet::Update() {
 			bulletData.gameObject.transformData.translate += bulletData.gameObject.velocity;
 
 			//弾の情報を設定
-			bulletData.renderObject.object3d->SetTransformData(0,bulletData.gameObject.transformData);
+			bulletData.renderObject.object3d->SetTransformData(0, bulletData.gameObject.transformData);
 			bulletData.renderObject.object3d->GetModel()->SetMaterial(bulletData.renderObject.material);
 
 			//弾の生存させるか
@@ -76,8 +76,8 @@ void Bullet::Update() {
 
 			//ヒットボックスの更新
 			bulletData.renderObject.hitBox->SetTranslate(0, bulletData.gameObject.transformData.translate);
-			bulletData.renderObject.hitBox->SetRotate(0,bulletData.gameObject.transformData.rotate);
-			bulletData.renderObject.hitBox->SetScale(0,hitBoxScale_);
+			bulletData.renderObject.hitBox->SetQuaternion(0, bulletData.gameObject.transformData.quaternion);
+			bulletData.renderObject.hitBox->SetScale(0, hitBoxScale_);
 			bulletData.renderObject.hitBox->Update();
 		}
 	}
@@ -145,7 +145,7 @@ std::vector<BulletData>& Bullet::GetBulletData() {
 }
 
 //弾の生成
-void Bullet::CreateBullet(BulletData&bulletData) {
+void Bullet::CreateBullet(BulletData& bulletData) {
 	bulletData.gameObject.transformData.scale = Vector3::MakeAllOne();
 	bulletData.gameObject.isAlive = true;
 	//弾の位置を設定
@@ -165,7 +165,7 @@ void Bullet::CreateBullet(BulletData&bulletData) {
 
 	//サイズと角度の設定
 	bulletData.gameObject.transformData.scale = size_;
-	bulletData.gameObject.transformData.rotate = angle_;
+	bulletData.gameObject.transformData.quaternion = { angle_.x,angle_.y,angle_.z,0.0f };
 
 	//弾の速度を設定
 	bulletData.gameObject.velocity = { 0.0f,0.0f,speed_ };

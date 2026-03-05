@@ -173,7 +173,7 @@ void DebugCamera::TranslateUpdate() {
 	}
 
 	//カメラの角度をもとに回転行列を求める
-	Matrix4x4 rotMat = Rendering::MakeRotateXYZMatrix(rotate_);
+	Matrix4x4 rotMat = Rendering::MakeRotateMatrix(rotate_);
 
 	//カメラの向いてる方向を正にする(XとZ軸限定)
 	Vector3 moveDirXZ = Math::TransformNormal(Vector3(moveDir_.x, 0.0f, moveDir_.z), rotMat);

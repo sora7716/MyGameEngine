@@ -187,7 +187,7 @@ void GlobalVariables::SaveFile(const std::string& groupName) {
 			TransformData value = std::get<TransformData>(item);
 			root[groupName][itemName] = json::array({
 				value.scale.x,value.scale.y,value.scale.z,
-				value.rotate.x,value.rotate.y,value.rotate.z,
+				value.quaternion.x,value.quaternion.y,value.quaternion.z,
 				value.translate.x,value.translate.y,value.translate.z
 				});
 		} else if (std::holds_alternative<Vector4>(item)) {

@@ -123,7 +123,7 @@ void Enemy::Update() {
 
 		// ヒットボックスも同じ index にする（デバッグ表示目的なら）
 		entityGroup_.renderObject.hitBox->SetTranslate(aliveCount, entityGroup_.entity[i].gameObject.transformData.translate);
-		entityGroup_.renderObject.hitBox->SetRotate(aliveCount, entityGroup_.entity[i].gameObject.transformData.rotate);
+		entityGroup_.renderObject.hitBox->SetQuaternion(aliveCount, entityGroup_.entity[i].gameObject.transformData.quaternion);
 		entityGroup_.renderObject.hitBox->SetScale(aliveCount, entityGroup_.entity[i].hitBoxScale);
 
 		++aliveCount;
@@ -283,7 +283,7 @@ void Enemy::Chase() {
 		EnemyToTarget();
 
 		//カメラの角度をもとに回転行列を求める
-		Matrix4x4 rotMat = Rendering::MakeRotateXYZMatrix(entityGroup_.entity[i].gameObject.transformData.rotate);
+		Matrix4x4 rotMat = Rendering::MakeRotateMatrix(entityGroup_.entity[i].gameObject.transformData.quaternion);
 		Vector3 moveDir = { 0.0f,0.0f,-1.0f };
 		//カメラの向いてる方向を正にする(XとZ軸限定)
 		moveDir = Math::TransformNormal(moveDir, rotMat);
@@ -319,7 +319,7 @@ void Enemy::EnemyToTarget() {
 		//プレイヤーの向きに合わせる
 		Vector3 dir = (entityGroup_.entity[i].gameObject.transformData.translate - targetPos_).Normalize();
 		float yaw = std::atan2(dir.x, dir.z);
-		entityGroup_.entity[i].gameObject.transformData.rotate.y = yaw;
+		entityGroup_.entity[i].gameObject.transformData.quaternion.y = yaw;
 	}
 }
 

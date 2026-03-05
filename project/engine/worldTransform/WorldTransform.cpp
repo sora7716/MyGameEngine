@@ -88,7 +88,7 @@ void WorldTransform::SetScale(const Vector3& scale) {
 
 //回転のセッター
 void WorldTransform::SetRotate(const Vector3& rotate) {
-	transform_.rotate = rotate;
+	transform_.quaternion = { rotate.x,rotate.y,rotate.z,0.0f };
 }
 
 //平行移動のセッター
@@ -119,9 +119,9 @@ const Vector3& WorldTransform::GetScale() const {
 }
 
 //回転のゲッター
-const Vector3& WorldTransform::GetRotate() const {
+const Quaternion& WorldTransform::GetQuaternion() const {
 	// TODO: return ステートメントをここに挿入します
-	return transform_.rotate;
+	return transform_.quaternion;
 }
 
 //平行移動のセッター

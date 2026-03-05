@@ -56,8 +56,8 @@ void ColliderManager::SyncCollider() {
 
 		//OBBの値の更新
 		collider->obb.size = *collider->owner->scalePtr;
-		collider->obb.rotate = *collider->owner->rotatePtr;
-		Rendering::MakeOBBRotateMatrix(collider->obb.orientations, collider->obb.rotate);
+		collider->obb.quaternion = *collider->owner->rotatePtr;
+		Rendering::MakeOBBRotateMatrix(collider->obb.orientations, collider->obb.quaternion);
 		collider->obb.center = *collider->owner->translatePtr;
 	}
 }

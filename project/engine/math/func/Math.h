@@ -34,7 +34,7 @@ public:
 	/// <param name="v2">ベクトル2</param>
 	/// <param name="t">媒介変数</param>
 	/// <returns> 球面線形補間</returns>
-	static Vector3 SLerp(const Vector3& v1, const Vector3& v2, float t);
+	static Vector3 Slerp(const Vector3& v1, const Vector3& v2, float t);
 
 	/// <summary>
 	/// CatmullRom補間

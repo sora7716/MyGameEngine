@@ -2,6 +2,7 @@
 #include "RenderingData.h"
 #include "ResourceData.h"
 #include "PrimitiveData.h"
+#include "Quaternion.h"
 #include <functional>
 #include <memory>
 
@@ -89,7 +90,7 @@ struct BulletData {
 //tag: オブジェクトのタグ
 struct ColliderState {
 	Vector3* scalePtr;
-	Vector3* rotatePtr;
+	Quaternion* rotatePtr;
 	Vector3* translatePtr;
 	Vector3* velocityPtr;
 	bool* isOnGroundPtr;

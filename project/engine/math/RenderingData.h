@@ -3,12 +3,13 @@
 #include "Vector2.h"
 #include "Quaternion.h"
 #include "Matrix4x4.h"
+#include "Quaternion.h"
 #include <string>
 #include <vector>
 //Transform情報
 struct TransformData {
 	Vector3 scale;
-	Vector3 rotate;
+	Quaternion quaternion;
 	Vector3 translate;
 };
 

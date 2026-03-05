@@ -98,7 +98,7 @@ const Vector2& Object2d::GetScale() const {
 
 //回転のゲッター
 float Object2d::GetRotate() const {
-	return worldTransform_->GetRotate().z;
+	return worldTransform_->GetQuaternion().z;
 }
 
 //位置のゲッター

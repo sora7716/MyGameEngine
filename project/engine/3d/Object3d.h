@@ -91,7 +91,7 @@ public://メンバ関数
 	/// </summary>
 	/// <param name="index">インデックス</param>
 	/// <param name="rotate">回転</param>
-	void SetRotate(uint32_t index, const Vector3& rotate);
+	void SetQuaternion(uint32_t index, const Quaternion& quaternion);
 
 	/// <summary>
 	/// 平行移動のセッター
@@ -161,7 +161,7 @@ public://メンバ関数
 	/// </summary>
 	/// <param name="index">インデックス</param>
 	/// <returns>回転</returns>
-	const Vector3& GetRotate(uint32_t index)const;
+	const Quaternion& GetQuaternion(uint32_t index)const;
 
 	/// <summary>
 	/// 平行移動のゲッター

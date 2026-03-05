@@ -63,7 +63,7 @@ void WireframeObject3d::Initialize(WireframeObject3dCommon* wireframeObject3dCom
 	transforms_.resize(instanceCount);
 	for (TransformData& transform : transforms_) {
 		transform.scale = Vector3::MakeAllOne();
-		transform.rotate = {};
+		transform.quaternion = {};
 		transform.translate = { 0.0f,0.0f,0.0f };
 	}
 	//wvpデータも初期化
@@ -127,8 +127,8 @@ void WireframeObject3d::Update() {
 	//OBB
 	for (int32_t i = 0; i < static_cast<int32_t>(obbs_.size()); i++) {
 		obbs_[i].center = WireframeObject3d::GetWorldPos(0);
-		obbs_[i].rotate = transforms_[i].rotate;
-		Rendering::MakeOBBRotateMatrix(obbs_[i].orientations, obbs_[i].rotate);
+		obbs_[i].quaternion = { transforms_[i].quaternion.x,transforms_[i].quaternion.y,transforms_[i].quaternion.z };
+		Rendering::MakeOBBRotateMatrix(obbs_[i].orientations, obbs_[i].quaternion);
 		obbs_[i].size = transforms_[i].scale;
 	}
 }
@@ -213,8 +213,8 @@ void WireframeObject3d::SetRadius(uint32_t index, float radius) {
 }
 
 // 回転のセッター
-void WireframeObject3d::SetRotate(uint32_t index, const Vector3& rotate) {
-	transforms_[index].rotate = rotate;
+void WireframeObject3d::SetQuaternion(uint32_t index, const Quaternion& quaternion) {
+	transforms_[index].quaternion = quaternion;
 }
 
 // 平行移動のセッター
@@ -268,9 +268,9 @@ const Vector3& WireframeObject3d::GetScale(uint32_t index) const {
 }
 
 // 回転のゲッター
-const Vector3& WireframeObject3d::GetRotate(uint32_t index) const {
+const Quaternion& WireframeObject3d::GetQuaternion(uint32_t index) const {
 	// TODO: return ステートメントをここに挿入します
-	return transforms_[index].rotate;
+	return transforms_[index].quaternion;
 }
 
 // 平行移動のゲッター

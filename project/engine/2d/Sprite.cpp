@@ -101,7 +101,7 @@ void Sprite::SetColor(const Vector4& color) {
 void Sprite::SetTransformData(const Transform2dData& transform) {
 	transform_.scale.x = transform.scale.x;
 	transform_.scale.y = transform.scale.y;
-	transform_.rotate.z = transform.rotate;
+	transform_.quaternion.z = transform.rotate;
 	transform_.translate.x = transform.translate.x;
 	transform_.translate.y = transform.translate.y;
 }

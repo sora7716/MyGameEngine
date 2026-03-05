@@ -1,5 +1,7 @@
 #include "Rendering.h"
 #include "engine/math/func/Math.h"
+#include "Log.h"
+#include "StringUtility.h"
 #include <cassert>
 using namespace std;
 
@@ -72,7 +74,7 @@ Matrix4x4 Rendering::MakeRotateZMatrix(const float& radian) {
 }
 
 //x,y,z座標で回転
-Matrix4x4 Rendering::MakeRotateXYZMatrix(const Vector3& radian) {
+Matrix4x4 Rendering::MakeRotateMatrix(const Vector3& radian) {
 	return MakeRotateXMatrix(radian.x) * MakeRotateYMatrix(radian.y) * MakeRotateZMatrix(radian.z);
 }
 
@@ -130,7 +132,7 @@ Matrix4x4 Rendering::DirectionToDirection(const Vector3& from, const Vector3& to
 	return result;
 }
 
-//任意軸回転を表すQuaternionの生成
+//任意軸回転を表すクォータニオンの生成
 Quaternion Rendering::MakeRotateAxisAngleQuaternion(const Vector3& axis, float angle) {
 	Quaternion result = Quaternion::IdentityQuaternion();
 	//cos
@@ -144,7 +146,7 @@ Quaternion Rendering::MakeRotateAxisAngleQuaternion(const Vector3& axis, float a
 	return { n.x * sin,n.y * sin,n.z * sin,cos };
 }
 
-//ベクトルをクオータニオンで回転させた結果のベクトルを求める
+//ベクトルをクォータニオンで回転させた結果のベクトルを求める
 Vector3 Rendering::RotateVector(const Vector3& vector, const Quaternion& quaternion) {
 	Quaternion result = Quaternion::IdentityQuaternion();
 	Quaternion q = quaternion.Normalize();
@@ -156,6 +158,7 @@ Vector3 Rendering::RotateVector(const Vector3& vector, const Quaternion& quatern
 //Quaternionから回転行列を求める
 Matrix4x4 Rendering::MakeRotateMatrix(const Quaternion& quaternion) {
 	Matrix4x4 result = Matrix4x4::Identity4x4();
+
 	float x = quaternion.x;
 	float y = quaternion.y;
 	float z = quaternion.z;
@@ -174,8 +177,8 @@ Matrix4x4 Rendering::MakeRotateMatrix(const Quaternion& quaternion) {
 }
 
 // OBB用の回転行列
-void Rendering::MakeOBBRotateMatrix(Vector3* orientations, const Vector3& rotate) {
-	Matrix4x4 rotateMatrix = MakeRotateXYZMatrix(rotate);
+void Rendering::MakeOBBRotateMatrix(Vector3* orientations, const Quaternion& rotate) {
+	Matrix4x4 rotateMatrix = MakeRotateMatrix(rotate);
 
 	//回転行列からの抽出
 
@@ -208,12 +211,18 @@ Matrix4x4 Rendering::MakeOBBWorldMatrix(const Vector3* orientations, const Vecto
 
 //アフィン関数
 Matrix4x4 Rendering::MakeAffineMatrix(const TransformData& transform) {
-	return (MakeScaleMatrix(transform.scale) * MakeRotateXYZMatrix(transform.rotate)) * MakeTranslateMatrix(transform.translate);
+	Quaternion q = MakeRotateQuaternion(transform.quaternion);
+	return (MakeScaleMatrix(transform.scale) * MakeRotateMatrix(q)) * MakeTranslateMatrix(transform.translate);
+}
+
+//アフィン行列
+Matrix4x4 Rendering::MakeAffineMatrix(const Vector3& scale, const Vector3& rotate, const Vector3& translate) {
+	return (MakeScaleMatrix(scale) * MakeRotateMatrix(rotate)) * MakeTranslateMatrix(translate);
 }
 
 //STRの変換
 Matrix4x4 Rendering::MakeSTRMatrix(const Vector3& scale, const Vector3& rotate, const Vector3& translate) {
-	return MakeScaleMatrix(scale) * MakeTranslateMatrix(translate) * MakeRotateXYZMatrix(rotate);
+	return MakeScaleMatrix(scale) * MakeTranslateMatrix(translate) * MakeRotateMatrix(rotate);
 }
 
 // UVのアフィン変換
@@ -259,7 +268,20 @@ Matrix4x4 Rendering::MakeViewportMatrix(const float& left, const float& top, con
 //ビルボード行列を作成
 Matrix4x4 Rendering::MakeBillboardMatrix(const Matrix4x4& cameraWorldMatrix, const Vector3& rotate) {
 	//正面に向けるY軸回転の行列を作成
-	Matrix4x4 backToFrontMatrix = Rendering::MakeRotateXYZMatrix(rotate);
+	Matrix4x4 backToFrontMatrix = Rendering::MakeRotateMatrix(rotate);
+	//ビルボード行列を作成
+	Matrix4x4 billboardMatrix = backToFrontMatrix * cameraWorldMatrix;
+	billboardMatrix.m[3][0] = 0.0f; // X座標を0に設定
+	billboardMatrix.m[3][1] = 0.0f; // Y座標を0に設定
+	billboardMatrix.m[3][2] = 0.0f; // Z座標を0に設定
+	return billboardMatrix;
+}
+
+//ビルボード行列を作成
+Matrix4x4 Rendering::MakeBillboardMatrix(const Matrix4x4& cameraWorldMatrix, const Quaternion& quaternion) {
+	Quaternion q = MakeRotateQuaternion(quaternion);
+	//正面に向けるY軸回転の行列を作成
+	Matrix4x4 backToFrontMatrix = Rendering::MakeRotateMatrix(q);
 	//ビルボード行列を作成
 	Matrix4x4 billboardMatrix = backToFrontMatrix * cameraWorldMatrix;
 	billboardMatrix.m[3][0] = 0.0f; // X座標を0に設定
@@ -270,7 +292,7 @@ Matrix4x4 Rendering::MakeBillboardMatrix(const Matrix4x4& cameraWorldMatrix, con
 
 //ビルボード行列を含んだアフィン行列の作成
 Matrix4x4 Rendering::MakeBillboardAffineMatrix(const Matrix4x4& cameraWorldMatrix, const TransformData& transform) {
-	return (MakeScaleMatrix(transform.scale) * MakeBillboardMatrix(cameraWorldMatrix, transform.rotate)) * MakeTranslateMatrix(transform.translate);
+	return (MakeScaleMatrix(transform.scale) * MakeBillboardMatrix(cameraWorldMatrix, transform.quaternion)) * MakeTranslateMatrix(transform.translate);
 }
 
 //行列をTransformDataに分解
@@ -308,9 +330,9 @@ TransformData Rendering::DecomposeMatrix(const Matrix4x4& mat) {
 	float rm22 = mat.m[2][2] / result.scale.z;
 
 	// オイラー角 (Yaw-Pitch-Roll 順)
-	result.rotate.x = std::atan2(-rm21, sqrtf(rm20 * rm20 + rm22 * rm22));//Pitch
-	result.rotate.y = std::atan2(rm20, rm22);//Yaw
-	result.rotate.z = std::atan2(rm01, rm11);//Roll
+	result.quaternion.x = std::atan2(-rm21, sqrtf(rm20 * rm20 + rm22 * rm22));//Pitch
+	result.quaternion.y = std::atan2(rm20, rm22);//Yaw
+	result.quaternion.z = std::atan2(rm01, rm11);//Roll
 
 	//平行移動
 	result.translate = {
@@ -319,4 +341,20 @@ TransformData Rendering::DecomposeMatrix(const Matrix4x4& mat) {
 		mat.m[3][2]
 	};
 	return result;
+}
+
+//回転用のクォータニオンの作成
+Quaternion Rendering::MakeRotateQuaternion(const Quaternion& quaternion) {
+	float rx = quaternion.x;
+	float ry = quaternion.y;
+	float rz = quaternion.z;
+
+	Quaternion qx = { std::sin(rx * 0.5f), 0.0f, 0.0f, std::cos(rx * 0.5f) };
+	Quaternion qy = { 0.0f, std::sin(ry * 0.5f), 0.0f, std::cos(ry * 0.5f) };
+	Quaternion qz = { 0.0f, 0.0f, std::sin(rz * 0.5f), std::cos(rz * 0.5f) };
+
+	// 掛ける順番は座標系や実装方針で変わる
+	Quaternion q = qz * qy * qx;
+	q = q.Normalize();
+	return q;
 }

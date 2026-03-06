@@ -34,6 +34,7 @@ void TestPlayScene::Update() {
 	IScene::Update();
 
 	object3d_->SetTransformData(0, transformData_);
+	object3d_->SetCamera(camera_);
 	object3d_->Update();
 #ifdef USE_IMGUI
 	//ImGuiの受付開始

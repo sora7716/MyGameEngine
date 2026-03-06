@@ -536,6 +536,9 @@
     <ClInclude Include="engine\math\Quaternion.h">
       <Filter>engine\math</Filter>
     </ClInclude>
+    <ClInclude Include="engine\debug\CrashHandler.h">
+      <Filter>engine\debug</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="engine\resources\shaders\Object3d.PS.hlsl">

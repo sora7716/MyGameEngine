@@ -133,6 +133,7 @@
     <ClInclude Include="engine\base\WinApi.h" />
     <ClInclude Include="engine\camera\Camera.h" />
     <ClInclude Include="engine\camera\CameraManager.h" />
+    <ClInclude Include="engine\debug\CrashHandler.h" />
     <ClInclude Include="engine\debug\DebugCamera.h" />
     <ClInclude Include="engine\debug\GlobalVariables.h" />
     <ClInclude Include="engine\debug\ImGuiManager.h" />

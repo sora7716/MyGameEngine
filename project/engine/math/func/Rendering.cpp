@@ -158,7 +158,6 @@ Vector3 Rendering::RotateVector(const Vector3& vector, const Quaternion& quatern
 //Quaternionから回転行列を求める
 Matrix4x4 Rendering::MakeRotateMatrix(const Quaternion& quaternion) {
 	Matrix4x4 result = Matrix4x4::Identity4x4();
-
 	float x = quaternion.x;
 	float y = quaternion.y;
 	float z = quaternion.z;

@@ -1,7 +1,8 @@
 #pragma once
-#include "engine/math/Vector3.h"
-#include "engine/math/Matrix4x4.h"
-#include "engine/math/ResourceData.h"
+#include "Vector3.h"
+#include "Matrix4x4.h"
+#include "ResourceData.h"
+#include "Quaternion.h"
 #include <string>
 #include <vector>
 
@@ -33,7 +34,7 @@ public://メンバ関数
 	/// <param name="camera">カメラ</param>
 	/// <param name="rotate">回転</param>
 	/// <param name="position">位置</param>
-	void Initialize(Input* input, Camera* camera, const Vector3& rotate, const Vector3& position);
+	void Initialize(Input* input, Camera* camera, const Quaternion& rotate, const Vector3& position);
 
 	/// <summary>
 	/// 更新
@@ -89,7 +90,7 @@ private://メンバ変数
 	//Object3d* cameraObject_ = nullptr;
 
 	//回転
-	Vector3 rotate_ = { 0.0f,0.0f,0.0f };
+	Quaternion rotate_ = { 0.0f,0.0f,0.0f };
 	//平行移動
 	Vector3 translate_ = { 0.0f,0.0f,0.0f };
 	//FovY

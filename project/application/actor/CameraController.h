@@ -1,5 +1,6 @@
 #pragma once
-#include "engine/math/Vector3.h"
+#include "Vector3.h"
+#include "Quaternion.h"
 #include <string>
 
 //前方宣言
@@ -67,7 +68,7 @@ public://メンバ関数
 	/// 回転のセッター
 	/// </summary>
 	/// <param name="rotate">回転</param>
-	void SetRotate(const Vector3& rotate);
+	void SetRotate(const Quaternion& rotate);
 private://メンバ関数
 	/// <summary>
     /// 調整項目を適応
@@ -89,8 +90,8 @@ private://メンバ変数
 	Player* target_ = nullptr;
 	//追従対象とカメラの座標の差(オフセット)
 	Vector3 targetOffset_ = {};
-	//カメラの角度
-	Vector3 cameraRotate_ = {};
+	//カメラのクォータニオン
+	Quaternion quaternion_ = {};
 	//移動範囲
 	Rect movableArea_ = { 0.0f,100.0f,0.0f,100.0f };
 	//目的地

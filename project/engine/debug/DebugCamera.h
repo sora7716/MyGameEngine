@@ -1,6 +1,7 @@
 #pragma once
-#include "engine/math/Vector3.h"
-#include "engine/math/Vector2.h"
+#include "Vector3.h"
+#include "Vector2.h"
+#include "Quaternion.h" 
 #include <Windows.h>
 
 //前方宣言
@@ -22,14 +23,14 @@ public://メンバ関数
 	/// デストラクタ
 	/// </summary>
 	~DebugCamera() = default;
-	
+
 
 	/// <summary>
 	/// 初期化
 	/// </summary>
 	/// <param name="input">入力</param>
 	/// <param name="cameraManager">カメラマネージャー</param>
-	void Initialize(Input*input,CameraManager* cameraManager);
+	void Initialize(Input* input, CameraManager* cameraManager);
 
 	/// <summary>
 	/// 更新
@@ -111,7 +112,7 @@ private://メンバ変数
 	//カメラ
 	Camera* camera_ = nullptr;
 	//X,Y,Z軸回りのローカル回転角
-	Vector3 rotate_ = { 0.0f,0.0f,0.0f };
+	Quaternion rotate_ = { 0.0f,0.0f,0.0f,0.0f };
 	//ローカル座標
 	Vector3 translate_ = { 0.0f,0.0f,-10.0f };
 	//マウスのフリック量
@@ -119,7 +120,7 @@ private://メンバ変数
 	//カメラの移動方向のベクトル
 	Vector3 moveDir_ = {};
 	//入力
-	Input* input_ = nullptr; 
+	Input* input_ = nullptr;
 	//FovY
 	float fovY_ = 0.0f;
 	//Xboxの番号

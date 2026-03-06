@@ -7,7 +7,7 @@
 #include "engine/input/Input.h"
 
 //初期化
-void RailCamera::Initialize(Input* input, Camera* camera, const Vector3& rotate, const Vector3& position) {
+void RailCamera::Initialize(Input* input, Camera* camera, const Quaternion& rotate, const Vector3& position) {
 	//入力を記録
 	input_ = input;
 
@@ -51,7 +51,7 @@ void RailCamera::Update() {
 	//translate_ = Math::CatmullRomPosition(controlPoints_, frame_ / endFrame_);
 
 	//カメラの設定
-	camera_->SetRotate(rotate_);
+	camera_->SetQuaternion(rotate_);
 	camera_->SetTranslate(translate_);
 	camera_->SetFovY(fovY_);
 	////カメラのオブジェクト

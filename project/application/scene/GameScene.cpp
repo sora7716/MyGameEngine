@@ -82,8 +82,8 @@ void GameScene::Initialize(const SceneContext& sceneContext) {
 //更新
 void GameScene::Update() {
 	//追従カメラ
-	gameCamera_->Update();
 	gameCamera_->SetTragetPos(player_->GetTransformData().translate);
+	gameCamera_->Update();
 
 	//カメラの設定
 	player_->SetCamera(camera_);
@@ -141,13 +141,13 @@ void GameScene::Update() {
 	//}
 
 	//シーンの切り替え
-	if (player_->IsGoal()) {
-		//プレイヤーがゴールしたら
-		sceneContext_.sceneManager->ChangeScene("Result");
-	} else if (!player_->IsAlive()) {
-		//プレイヤーが死んだら
-		sceneContext_.sceneManager->ChangeScene("Result");
-	}
+	//if (player_->IsGoal()) {
+	//	//プレイヤーがゴールしたら
+	//	sceneContext_.sceneManager->ChangeScene("Result");
+	//} else if (!player_->IsAlive()) {
+	//	//プレイヤーが死んだら
+	//	sceneContext_.sceneManager->ChangeScene("Result");
+	//}
 
 	//シーンのインタフェースの初期化
 	IScene::Update();

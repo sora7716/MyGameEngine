@@ -209,7 +209,7 @@ public://メンバ関数
 	/// <param name="mat">行列</param>
 	/// <returns>TransformData</returns>
 	static TransformData DecomposeMatrix(const Matrix4x4& mat);
-private://メンバ関数
+
 	/// <summary>
     /// 回転用のクォータニオンの作成
     /// </summary>

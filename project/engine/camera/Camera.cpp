@@ -25,9 +25,9 @@ void Camera::Update() {
 	viewProjectionMatrix_ = viewMatrix_ * projectionMatrix_;
 }
 
-// 回転のセッター
-void Camera::SetRotate(const Vector3& rotate) {
-	transform_.quaternion = { rotate.x,rotate.y,rotate.z,0.0f };
+//クォータニオンのセッター
+void Camera::SetQuaternion(const Quaternion& quaternion) {
+	transform_.quaternion = quaternion;
 }
 
 // 平行移動のセッター

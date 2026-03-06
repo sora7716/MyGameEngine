@@ -12,7 +12,7 @@ void CameraController::Initialize(Camera* camera) {
 	//カメラを受け取る
 	camera_ = camera;
 	//角度
-	cameraRotate_ = { 0.51f,0.0f,0.0f };
+	quaternion_ = { 0.51f,0.0f,0.0f };
 	//位置のオフセット
 	targetOffset_ = { 0.0f,3.0f,-8.0f };
 	//FovY
@@ -23,7 +23,7 @@ void CameraController::Initialize(Camera* camera) {
 	//項目を生成
 	globalVariables->CreateGroup(groupName_);
 	//各調整項目を登録
-	globalVariables->AddItem(groupName_, "rotate", cameraRotate_);
+	//globalVariables->AddItem(groupName_, "rotate", cameraRotate_);
 	globalVariables->AddItem(groupName_, "offset", targetOffset_);
 	globalVariables->AddItem(groupName_, "fovY", fovY_);
 }
@@ -52,7 +52,7 @@ void CameraController::Update() {
 	camera_->SetTranslate(cameraTranslate);
 
 	//カメラの角度のセッター
-	camera_->SetRotate(cameraRotate_);
+	camera_->SetQuaternion(quaternion_);
 
 	//FovYのセッター
 	camera_->SetFovY(fovY_);
@@ -85,14 +85,14 @@ void CameraController::SetOffset(const Vector3& offset) {
 }
 
 //回転のセッター
-void CameraController::SetRotate(const Vector3& rotate) {
-	cameraRotate_ = rotate;
+void CameraController::SetRotate(const Quaternion& rotate) {
+	quaternion_ = rotate;
 }
 
 //調整項目を適応
 void CameraController::ApplyGlobalVariables() {
 	GlobalVariables* globalVariables = GlobalVariables::GetInstance();
 	fovY_ = globalVariables->GetValue<float>(groupName_, "fovY");
-	cameraRotate_ = globalVariables->GetValue<Vector3>(groupName_, "rotate");
+	//cameraRotate_ = globalVariables->GetValue<Vector3>(groupName_, "rotate");
 	targetOffset_ = globalVariables->GetValue<Vector3>(groupName_, "offset");
 }

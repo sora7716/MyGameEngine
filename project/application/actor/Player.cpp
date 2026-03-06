@@ -219,7 +219,7 @@ void Player::OnCollision(ColliderState* other) {
 		if (other->translatePtr->y < GetWorldPos().y - gameObject_.transformData.scale.y) {
 			gameObject_.velocity.y = 5.0f;
 		} else {
-			gameObject_.isAlive = false;
+			//gameObject_.isAlive = false;
 		}
 	} else if (other->tag == Tag::kGoal) {
 		isGoal_ = true;
@@ -321,7 +321,7 @@ void Player::Move() {
 	}
 
 	//カメラの角度をもとに回転行列を求める
-	Matrix4x4 rotMat = Rendering::MakeRotateMatrix(camera_->GetQuaternion());
+	Matrix4x4 rotMat = Rendering::MakeRotateMatrix(Rendering::MakeRotateQuaternion(camera_->GetQuaternion()));
 
 	//カメラの向いてる方向を正にする(XとZ軸限定)
 	Vector3 moveDirXZ = Math::TransformNormal(Vector3(gameObject_.direction.x, 0.0f, gameObject_.direction.z), rotMat);

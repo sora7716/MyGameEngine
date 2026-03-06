@@ -37,7 +37,7 @@ void DebugCamera::Update() {
 	}
 
 	//カメラ
-	camera_->SetRotate(rotate_);
+	camera_->SetQuaternion(rotate_);
 	camera_->SetTranslate(translate_);
 	camera_->Update();
 }
@@ -62,7 +62,7 @@ void DebugCamera::Debug() {
 #ifdef USE_IMGUI
 	ImGui::Text("ESCAPE or XboxPadforStart");
 	ImGui::Text("DebugMode:%s", isDebug ? "ON" : "OFF");
-	ImGui::DragFloat3("rotate", &rotate_.x, 0.1f);
+	ImGui::DragFloat4("rotate", &rotate_.x, 0.1f);
 	ImGui::DragFloat2("flick", &mouseFlick_.x, 0.1f);
 	ImGui::DragFloat("fovY", &fovY_, 0.1f);
 #endif // USE_IMGUI
@@ -173,7 +173,7 @@ void DebugCamera::TranslateUpdate() {
 	}
 
 	//カメラの角度をもとに回転行列を求める
-	Matrix4x4 rotMat = Rendering::MakeRotateMatrix(rotate_);
+	Matrix4x4 rotMat = Rendering::MakeRotateMatrix(Rendering::MakeRotateQuaternion(rotate_));
 
 	//カメラの向いてる方向を正にする(XとZ軸限定)
 	Vector3 moveDirXZ = Math::TransformNormal(Vector3(moveDir_.x, 0.0f, moveDir_.z), rotMat);

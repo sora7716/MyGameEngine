@@ -1,5 +1,6 @@
 #pragma once
 #include "Vector3.h"
+#include "Quaternion.h"
 #include <Windows.h>
 
 // 前方宣言
@@ -70,6 +71,8 @@ private://メンバ変数
 	//オフセット
 	Vector3 offset_{ 0.0f,0.0f,0.0f };
 	//回転
-	Vector3 rotate_{ 0.0f,0.0f,0.0f };
+	Vector3 rotate_ = {};
+	//クォータニオン
+	Quaternion quaternion_{ 0.0f,0.0f,0.0f ,0.0f };
 };
 

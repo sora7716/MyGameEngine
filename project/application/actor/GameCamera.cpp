@@ -31,20 +31,21 @@ void GameCamera::Update() {
 		}
 
 		// 回転更新（dtも掛けるのが理想）
-		rotate_.y += ry * kRotateSpeed * Math::kDeltaTime * -1.0f;
-		rotate_.x += rx * kRotateSpeed * Math::kDeltaTime * -1.0f;
+		quaternion_.y += ry * kRotateSpeed * Math::kDeltaTime * -1.0f;
+		quaternion_.x += rx * kRotateSpeed * Math::kDeltaTime * -1.0f;
 
 		//X軸制限（0〜90度）
-		float minX = -10.0f*Math::kRad;
+		float minX = -10.0f * Math::kRad;
 		float maxX = 60.0f * Math::kRad;
 
-		rotate_.x = std::clamp(rotate_.x, minX, maxX);
+		quaternion_.x = std::clamp(quaternion_.x, minX, maxX);
 	}
+
 	//カメラの回転を設定
-	camera_->SetRotate(rotate_);
+	camera_->SetQuaternion(quaternion_);
 
 	//カメラの角度から回転行列を求める
-	Matrix4x4 rotMat = Rendering::MakeRotateMatrix(rotate_);
+	Matrix4x4 rotMat = Rendering::MakeRotateMatrix(Rendering::MakeRotateQuaternion(quaternion_));
 
 	//オフセットをカメラの回転に合わせて回転させる
 	offset_ = Math::TransformNormal(offset_, rotMat);
@@ -59,7 +60,7 @@ void GameCamera::Update() {
 //デバッグ
 void GameCamera::Debug() {
 #ifdef USE_IMGUI
-	ImGui::DragFloat3("rotate", &rotate_.x, 0.1f);
+	ImGui::DragFloat3("rotate", &quaternion_.x, 0.1f);
 	ImGui::DragFloat3("offset", &offset_.x, 0.1f);
 #endif // USE_IMGUI
 }

@@ -22,10 +22,10 @@ public://メンバ関数
 	void Update();
 
 	/// <summary>
-	/// 回転のセッター
+	/// クォータニオンのセッター
 	/// </summary>
-	/// <param name="rotate">回転</param>
-	void SetRotate(const Vector3& rotate);
+	/// <param name="quaternion">クォータニオン</param>
+	void SetQuaternion(const Quaternion& quaternion);
 
 	/// <summary>
 	/// 平行移動のセッター

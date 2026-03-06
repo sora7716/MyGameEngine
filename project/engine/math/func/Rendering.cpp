@@ -177,7 +177,7 @@ Matrix4x4 Rendering::MakeRotateMatrix(const Quaternion& quaternion) {
 
 // OBB用の回転行列
 void Rendering::MakeOBBRotateMatrix(Vector3* orientations, const Quaternion& rotate) {
-	Matrix4x4 rotateMatrix = MakeRotateMatrix(rotate);
+	Matrix4x4 rotateMatrix = MakeRotateMatrix(MakeRotateQuaternion(rotate));
 
 	//回転行列からの抽出
 

@@ -112,7 +112,7 @@ void EnemyManager::SetSpawnParams(Enemy* enemy) {
 
 	//移動速度をランダム
 	std::uniform_real_distribution<float>distributionMoveSpeed(0.1f, 0.15f);
-	enemy->SetMoveSpeed(distributionMoveSpeed(randomEngine_));
+	//enemy->SetMoveSpeed(distributionMoveSpeed(randomEngine_));
 
 	//弾の発射速度をランダム
 	std::uniform_real_distribution<float>distributionBulletShotSpeed(-64.0f, -8.0f);

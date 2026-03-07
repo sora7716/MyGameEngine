@@ -76,32 +76,11 @@ public://メンバ関数
 	void SetTarget(const Vector3& targetPos);
 
 	/// <summary>
-	/// 移動速度のセッター
-	/// </summary>
-	/// <param name="moveSpeed">移動速度</param>
-	void SetMoveSpeed(float moveSpeed);
-
-	/// <summary>
 	/// エンティティのゲッター
 	/// </summary>
 	/// <returns>エンティティ</returns>
 	std::vector<Entity>& GetEntity();
 public://敵の行動
-	/// <summary>
-	/// 待機
-	/// </summary>
-	void Idol();
-
-	/// <summary>
-	/// 敵の生成
-	/// </summary>
-	void Spawn();
-
-	/// <summary>
-	/// 追従
-	/// </summary>
-	void Chase();
-
 	/// <summary>
 	/// 攻撃
 	/// </summary>
@@ -126,7 +105,9 @@ private://メンバ関数
 	/// ステートの切り替え
 	/// </summary>
 	/// <param name="next">次のステート</param>
-	void ChangeState(IEnemyState* next);
+	/// <param name="gameObject">ゲームオブジェクト</param>
+	/// <param name="collider">コライダーのセッター</param>
+	void ChangeState(IEnemyState* next, GameObject& gameObject, Collider& collider);
 private://定数
 	//待機時の回転速度
 	static inline const float kIdolRotSpeed = 0.5f;
@@ -139,8 +120,6 @@ private://定数
 private://メンバ変数
 	//敵の最初のスポーンテーブル
 	std::vector<Vector3>enemySpawnTable_;
-	//移動速度
-	float moveSpeed_ = 0.05f;
 
 	//エンティティ
 	EntityGroup entityGroup_ = {};

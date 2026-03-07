@@ -1,4 +1,5 @@
 #pragma once
+#include "ActorData.h"
 
 //前方宣言
 class Enemy;
@@ -19,17 +20,26 @@ public://メンバ変数
 	virtual~IEnemyState() = default;
 
 	/// <summary>
-	/// 敵のセッター
-	/// </summary>
-	/// <param name="enemy">敵</param>
-	void SetEnemy(Enemy* enemy);
-
-	/// <summary>
 	/// 実行(純粋仮想関数)
 	/// </summary>
-	virtual void Exce() = 0;
+	virtual void Exce(GameObject& gameObject, Collider& collider) = 0;
+
+	/// <summary>
+	/// 敵のスポーン位置のセッター
+	/// </summary>
+	/// <param name="enemySpawnPos">敵のスポーン位置</param>
+	void SetEnemySpawnPos(const Vector3& enemySpawnPos);
+
+	/// <summary>
+	/// ターゲットの位置のセッター
+	/// </summary>
+	/// <param name="targetPos">ターゲット</param>
+	void SetTargetPos(const Vector3& targetPos);
 protected://メンバ変数
-	Enemy* enemy_ = nullptr;
+	//敵のスポーン位置のテーブル
+	Vector3 enemySpawnPos_ = {};
+	//ターゲットの位置
+	Vector3 targetPos_ = {};
 };
 
 /// <summary>
@@ -40,7 +50,7 @@ public://メンバ関数
 	/// <summary>
 	/// 実行
 	/// </summary>
-	void Exce()override;
+	void Exce(GameObject& gameObject, Collider& collider)override;
 };
 
 /// <summary>
@@ -51,7 +61,7 @@ public://メンバ関数
 	/// <summary>
 	/// 実行
 	/// </summary>
-	void Exce()override;
+	void Exce(GameObject& gameObject, Collider& collider)override;
 };
 
 /// <summary>
@@ -62,7 +72,16 @@ public://メンバ関数
 	/// <summary>
 	/// 実行
 	/// </summary>
-	void Exce()override;
+	void Exce(GameObject& gameObject, Collider& collider)override;
+private://メンバ関数
+	/// <summary>
+	/// ターゲットの方向を向く
+	/// </summary>
+	/// <param name="gameObject">ゲームオブジェクト</param>
+	float EnemyToTarget(const GameObject& gameObject);
+private://メンバ変数
+	//移動速度
+	float moveSpeed_ = 0.05f;
 };
 
 ///// <summary>

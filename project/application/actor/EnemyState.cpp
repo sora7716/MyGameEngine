@@ -18,6 +18,7 @@ void EnemeyStateSpawn::Exce(GameObject& gameObject, Collider& collider) {
 	gameObject.isAlive = true;
 	collider.SetIsEnebled(true);
 	gameObject.transformData.translate = enemySpawnPos_;
+	gameObject.transformData.quaternion.y = Math::kPi;
 	gameObject.acceleration.y = Physics::kGravity;
 }
 
@@ -38,7 +39,7 @@ void EnemyStateChase::Exce(GameObject& gameObject, Collider& collider) {
 	gameObject.transformData.quaternion.y = EnemyToTarget(gameObject);
 
 	//カメラの角度をもとに回転行列を求める
-	Matrix4x4 rotMat = Rendering::MakeRotateMatrix(gameObject.transformData.quaternion);
+	Matrix4x4 rotMat = Rendering::MakeRotateMatrix(Rendering::MakeRotateQuaternion(gameObject.transformData.quaternion));
 	Vector3 moveDir = { 0.0f,0.0f,1.0f };
 	//カメラの向いてる方向を正にする(XとZ軸限定)
 	moveDir = Math::TransformNormal(moveDir, rotMat);
@@ -49,7 +50,7 @@ void EnemyStateChase::Exce(GameObject& gameObject, Collider& collider) {
 //ターゲットの方向を向く
 float EnemyStateChase::EnemyToTarget(const GameObject& gameObject) {
 	//プレイヤーの向きに合わせる
-	Vector3 dir = (gameObject.transformData.translate - targetPos_).Normalize();
+	Vector3 dir = (targetPos_ - gameObject.transformData.translate).Normalize();
 	float yaw = std::atan2(dir.x, dir.z);
 	return yaw;
 }

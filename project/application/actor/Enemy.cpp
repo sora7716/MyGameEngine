@@ -68,8 +68,8 @@ void Enemy::Initialize(Object3dCommon* object3dCommon, Camera* camera, const std
 
 	//スポーンテーブルのサイズを設定
 	enemySpawnTable_.resize(entityGroup_.objectCount);
-	//enemySpawnTable_[0] = { -8.0f,6.0f,15.0f };
-	enemySpawnTable_[0] = { 12.0f,0.0f,125.0f };
+	enemySpawnTable_[0] = { -8.0f,6.0f,15.0f };
+	//enemySpawnTable_[0] = { 12.0f,0.0f,125.0f };
 	//enemySpawnTable_[1] = { -10.0f,0.0f,45.0f };
 	//enemySpawnTable_[2] = { 12.0f,0.0f,125.0f };
 
@@ -283,8 +283,8 @@ void Enemy::Chase() {
 		EnemyToTarget();
 
 		//カメラの角度をもとに回転行列を求める
-		Matrix4x4 rotMat = Rendering::MakeRotateMatrix(entityGroup_.entity[i].gameObject.transformData.quaternion);
-		Vector3 moveDir = { 0.0f,0.0f,-1.0f };
+		Matrix4x4 rotMat = Rendering::MakeRotateMatrix(Rendering::MakeRotateQuaternion(entityGroup_.entity[i].gameObject.transformData.quaternion));
+		Vector3 moveDir = { 0.0f,0.0f,1.0f };
 		//カメラの向いてる方向を正にする(XとZ軸限定)
 		moveDir = Math::TransformNormal(moveDir, rotMat);
 		//カメラを移動させる
@@ -317,7 +317,7 @@ void Enemy::Attack() {
 void Enemy::EnemyToTarget() {
 	for (int32_t i = 0; i < entityGroup_.objectCount; i++) {
 		//プレイヤーの向きに合わせる
-		Vector3 dir = (entityGroup_.entity[i].gameObject.transformData.translate - targetPos_).Normalize();
+		Vector3 dir = (targetPos_ - entityGroup_.entity[i].gameObject.transformData.translate).Normalize();
 		float yaw = std::atan2(dir.x, dir.z);
 		entityGroup_.entity[i].gameObject.transformData.quaternion.y = yaw;
 	}

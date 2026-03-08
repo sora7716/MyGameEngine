@@ -25,6 +25,7 @@
     <ClCompile Include="application\actor\Player.cpp" />
     <ClCompile Include="application\actor\RailCamera.cpp" />
     <ClCompile Include="application\actor\Score.cpp" />
+    <ClCompile Include="application\actor\StageTimer.cpp" />
     <ClCompile Include="application\scene\GameScene.cpp" />
     <ClCompile Include="application\scene\ResultScene.cpp" />
     <ClCompile Include="application\scene\TestPlayScene.cpp" />
@@ -100,6 +101,7 @@
     <ClInclude Include="application\actor\Player.h" />
     <ClInclude Include="application\actor\RailCamera.h" />
     <ClInclude Include="application\actor\Score.h" />
+    <ClInclude Include="application\actor\StageTimer.h" />
     <ClInclude Include="application\scene\GameScene.h" />
     <ClInclude Include="application\scene\ResultScene.h" />
     <ClInclude Include="application\scene\TestPlayScene.h" />

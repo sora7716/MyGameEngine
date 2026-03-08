@@ -10,6 +10,7 @@ class Field;
 class Enemy;
 class EnemyManager;
 class Score;
+class StageTimer;
 
 /// <summary>
 /// ゲームシーン
@@ -64,6 +65,8 @@ private://メンバ変数
 
 	//スコアの表示
 	std::unique_ptr<Score>score_ = nullptr;
+	//ステージタイマー
+	std::unique_ptr<StageTimer>stageTimer_ = nullptr;
 
 	std::unique_ptr<Enemy>enemy_ = nullptr;
 };

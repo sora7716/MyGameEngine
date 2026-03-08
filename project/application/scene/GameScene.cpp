@@ -18,6 +18,7 @@
 #include "ColliderManager.h"
 #include "func/Math.h"
 #include "func/Physics.h"
+#include "StageTimer.h"
 
 //コンストラクタ
 GameScene::GameScene() {
@@ -58,6 +59,10 @@ void GameScene::Initialize(const SceneContext& sceneContext) {
 	//スコア
 	score_ = std::make_unique<Score>();
 	score_->Initialize(sceneContext_.object2dCommon);
+
+	//ステージタイマー
+	stageTimer_ = std::make_unique<StageTimer>();
+	stageTimer_->Initialize(sceneContext_.object2dCommon);
 
 	//衝突判定
 	//プレイヤー
@@ -110,14 +115,20 @@ void GameScene::Update() {
 	//スコア
 	score_->Update();
 
+	//ステージタイマー
+	stageTimer_->Update();
+
 	//シーンの切り替え
-	//if (player_->IsGoal()) {
-	//	//プレイヤーがゴールしたら
-	//	sceneContext_.sceneManager->ChangeScene("Result");
-	//} else if (!player_->IsAlive()) {
-	//	//プレイヤーが死んだら
-	//	sceneContext_.sceneManager->ChangeScene("Result");
-	//}
+	if (player_->IsGoal()) {
+		//プレイヤーがゴールしたら
+		sceneContext_.sceneManager->ChangeScene("Result");
+	} else if (!player_->IsAlive()) {
+		//プレイヤーが死んだら
+		sceneContext_.sceneManager->ChangeScene("Result");
+	} else if (stageTimer_->IsTimeUp()) {
+		//時間切れを起こしたら
+		sceneContext_.sceneManager->ChangeScene("Result");
+	}
 
 	//シーンのインタフェースの初期化
 	IScene::Update();
@@ -191,7 +202,10 @@ void GameScene::Draw() {
 	//enemyManager_->Draw();
 
 	//スコア
-	score_->Draw();
+	//score_->Draw();
+	
+	//ステージタイマー
+	stageTimer_->Draw();
 }
 
 //終了

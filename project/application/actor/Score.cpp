@@ -24,7 +24,7 @@ void Score::Initialize(Object2dCommon* object2dCommon) {
 	//文字のトランスフォームデータを作成
 	transformData_.scale = { 232.0f,200.0f };
 	transformData_.rotate = 0.0f;
-	transformData_.translate = { -390.0f,-160.0f };
+	transformData_.translate = { -400.0f,-130.0f };
 	//文字の生成と初期化
 	text_ = new Text();
 	text_->Initialize(object2dCommon, "scoreText");

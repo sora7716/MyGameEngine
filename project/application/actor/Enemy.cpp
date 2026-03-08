@@ -22,7 +22,7 @@ Enemy::~Enemy() {
 //初期化
 void Enemy::Initialize(Object3dCommon* object3dCommon, Camera* camera, const std::string& modelName) {
 	//オブジェクトの数
-	entityGroup_.objectCount = 1;
+	entityGroup_.objectCount = 8;
 	//インスタンス数
 	//instance_.reserve(100);
 	//エンティティの配列の大きさを決める
@@ -68,14 +68,18 @@ void Enemy::Initialize(Object3dCommon* object3dCommon, Camera* camera, const std
 
 	//スポーンテーブルのサイズを設定
 	enemySpawnTable_.resize(entityGroup_.objectCount);
-	enemySpawnTable_[0] = { -8.0f,6.0f,5.0f };
+	//enemySpawnTable_[0] = { -8.0f,6.0f,5.0f };
 	//enemySpawnTable_[1] = { -3.0f,6.0f,15.0f };
+	enemySpawnTable_[0] = { -8.0f,6.0f,5.0f };
+	enemySpawnTable_[1] = { -10.0f,0.0f,45.0f };
+	enemySpawnTable_[2] = { 12.0f,0.0f,125.0f };
+	enemySpawnTable_[3] = { -15.0f,2.0f,41.0f };
+	enemySpawnTable_[4] = { -10.0f,8.0f,15.0f };
+	enemySpawnTable_[5] = { -4.0f,2.0f,97.0f };
+	enemySpawnTable_[6] = { -13.0f,2.0f,-9.7f };
+	enemySpawnTable_[7] = { 9.0f,10.0f,26.0f };
 	//スポーンタイマー
 	spawnTimers_.resize(entityGroup_.objectCount);
-
-	//enemySpawnTable_[0] = { 12.0f,0.0f,125.0f };
-	//enemySpawnTable_[1] = { -10.0f,0.0f,45.0f };
-	//enemySpawnTable_[2] = { 12.0f,0.0f,125.0f };
 
 	//敵の位置
 	//entityGroup_.entity[0].gameObject.transformData.translate = enemySpawnTable_[0];
@@ -242,7 +246,7 @@ void Enemy::CreateEnemy() {
 	for (int32_t i = 0; i < entityGroup_.objectCount; i++) {
 		//敵の生成
 		if (!entityGroup_.entity[i].gameObject.isAlive) {
-			if (spawnTimers_[i] > 2.0f) {
+			if (spawnTimers_[i] > 5.0f) {
 				spawn_->SetEnemySpawnPos(enemySpawnTable_[i]);
 				spawn_->SetColliderPtr(&entityGroup_.entity[i].collider);
 				idol_->SetBaseYaw(entityGroup_.entity[i].gameObject.transformData.quaternion.y);

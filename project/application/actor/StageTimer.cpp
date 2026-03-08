@@ -17,14 +17,14 @@ void StageTimer::Initialize(Object2dCommon* object2dCommon) {
 	//文字スタイルを作成
 	textStyle_.text = "\0";
 	textStyle_.font = "\0";
-	textStyle_.size = 32.0f;
+	textStyle_.size = 16.0f;
 	textStyle_.color = Vector4::MakeWhiteColor();
 	//文字のトランスフォームデータを作成
 	transformData_.scale = { 232.0f,200.0f };
 	transformData_.rotate = 0.0f;
-	transformData_.translate = { -390.0f,-160.0f };
+	transformData_.translate = { -390.0f,-150.0f };
 	//文字の生成と初期化
-	text_ = new Text();
+	text_ = std::make_unique<Text>();
 	text_->Initialize(object2dCommon, "stageTimerText");
 	text_->SetTextStyle(textStyle_);
 }

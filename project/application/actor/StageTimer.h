@@ -1,6 +1,8 @@
 #pragma once
 #include "TextData.h"
 #include "RenderingData.h"
+#include <memory>
+
 //前方宣言
 class Text;
 class Object2dCommon;
@@ -48,7 +50,7 @@ public://メンバ関数
 	bool IsTimeUp();
 private://メンバ変数
 	//テキスト
-	Text* text_ = nullptr;
+	std::unique_ptr<Text> text_ = nullptr;
 	TextStyle textStyle_ = {};
 	//トランスフォーム
 	Transform2dData transformData_ = {};
@@ -57,4 +59,3 @@ private://メンバ変数
 	//時間切れ
 	bool isTimeUp_ = false;
 };
-

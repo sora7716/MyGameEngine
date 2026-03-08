@@ -167,6 +167,16 @@ void GameScene::Update() {
 	enemy_->Debug();
 	ImGui::End();
 
+	//ステージタイマー
+	ImGui::Begin("stageTimer");
+	stageTimer_->Debug();
+	ImGui::End();
+
+	//スコア
+	ImGui::Begin("score");
+	score_->Debug();
+	ImGui::End();
+
 	//スコア
 	//ImGui::Text("score:%d", Score::score);
 
@@ -202,7 +212,7 @@ void GameScene::Draw() {
 	//enemyManager_->Draw();
 
 	//スコア
-	//score_->Draw();
+	score_->Draw();
 	
 	//ステージタイマー
 	stageTimer_->Draw();

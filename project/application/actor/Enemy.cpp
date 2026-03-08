@@ -92,6 +92,7 @@ void Enemy::Initialize(Object3dCommon* object3dCommon, Camera* camera, const std
 	idol_ = std::make_unique<EnemeyStateIdol>();
 	chase_ = std::make_unique<EnemyStateChase>();
 	patrol_ = std::make_unique<EnemyStatePatrol>();
+	charge_ = std::make_unique<EnemyStateCharge>();
 
 	attackArea = std::make_unique<WireframeObject3d>();
 	attackArea->Initialize(object3dCommon->GetWireframeObject3dCommon(), camera, ModelType::kSphere);

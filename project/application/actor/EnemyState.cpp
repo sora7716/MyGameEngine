@@ -45,12 +45,12 @@ void EnemeyStateSpawn::Exce(GameObject& gameObject) {
 
 //待機
 void EnemeyStateIdol::Exce(GameObject& gameObject) {
-	rotateTime_ += 0.5f * Math::kDeltaTime;
+	//rotateTime_ += 0.5f * Math::kDeltaTime;
 
-	float amplitude = Math::kPi / 2.0f;
-	float angle = baseYaw_ + std::sin(rotateTime_) * amplitude;
+	//float amplitude = Math::kPi / 2.0f;
+	//float angle = baseYaw_ + std::sin(rotateTime_) * amplitude;
 
-	gameObject.transformData.quaternion.y = angle;
+	//gameObject.transformData.quaternion.y = angle;
 }
 
 //追従
@@ -79,6 +79,26 @@ Quaternion EnemyStateChase::EnemyToTarget(const GameObject& gameObject) {
 
 //パトロール
 void EnemyStatePatrol::Exce(GameObject& gameObject) {
+	//移動させる
+	gameObject.transformData.translate += MoveForward(gameObject.transformData.quaternion, moveSpeed_);
+}
+
+//突進
+void EnemyStateCharge::Exce(GameObject& gameObject) {
+	if (chargeTime_ < maxChargeTime_) {
+		chargeTime_ += Math::kDeltaTime;
+		moveSpeed_ = -0.05f;
+	} else {
+		releaseTime_ = chargeTime_;
+	}
+
+	if (releaseTime_ > 0.0f) {
+		releaseTime_ -= Math::kDeltaTime;
+		moveSpeed_ = 1.0f;
+	} else {
+		chargeTime_ = 0.0f;
+	}
+
 	//移動させる
 	gameObject.transformData.translate += MoveForward(gameObject.transformData.quaternion, moveSpeed_);
 }

@@ -129,5 +129,25 @@ private://メンバ変数
 	//移動速度
 	float moveSpeed_ = 0.05f;
 };
-//突進
+
+/// <summary>
+/// 突進
+/// </summary>
+class EnemyStateCharge :public IEnemyState {
+public://メンバ関数
+	/// <summary>
+    /// 実行
+    /// </summary>
+    /// <param name="gameObject">ゲームオブジェクト</param>
+	void Exce(GameObject& gameObject)override;
+private://メンバ変数
+	//移動速度
+	float moveSpeed_ = 0.0f;
+	//チャージする時間
+	float chargeTime_ = 0.0f;
+	//チャージ完了時間
+	float maxChargeTime_ = 0.5f;
+	//チャージの開放時間
+	float releaseTime_ = 0.0f;
+};
 //周りの敵を呼ぶ

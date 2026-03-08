@@ -137,6 +137,7 @@ private://メンバ変数
 	std::unique_ptr <IEnemyState> idol_ = nullptr;
 	std::unique_ptr <IEnemyState> chase_ = nullptr;
 	std::unique_ptr <IEnemyState> patrol_ = nullptr;
+	std::unique_ptr <IEnemyState> charge_ = nullptr;
 	IEnemyState* currentState_ = nullptr;
 
 	std::vector<float> spawnTimers_;

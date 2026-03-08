@@ -18,6 +18,8 @@ struct Quaternion {
 	/// <returns></returns>
 	Quaternion Conjugate()const;
 
+	Quaternion NormalizeSafe()const;
+
 	/// <summary>
 	/// 内積
 	/// </summary>

@@ -80,11 +80,6 @@ public://メンバ関数
 	/// </summary>
 	/// <returns>エンティティ</returns>
 	std::vector<Entity>& GetEntity();
-public://敵の行動
-	/// <summary>
-	/// 攻撃
-	/// </summary>
-	void Attack();
 private://メンバ関数
 	/// <summary>
 	/// ターゲットの方向を向く
@@ -106,8 +101,17 @@ private://メンバ関数
 	/// </summary>
 	/// <param name="next">次のステート</param>
 	/// <param name="gameObject">ゲームオブジェクト</param>
-	/// <param name="collider">コライダーのセッター</param>
-	void ChangeState(IEnemyState* next, GameObject& gameObject, Collider& collider);
+	void ChangeState(IEnemyState* next, GameObject& gameObject);
+
+	/// <summary>
+	/// 敵の生成
+	/// </summary>
+	void CreateEnemy();
+
+	/// <summary>
+	/// 敵の更新
+	/// </summary>
+	void UpdateEnemy();
 private://定数
 	//待機時の回転速度
 	static inline const float kIdolRotSpeed = 0.5f;
@@ -132,19 +136,24 @@ private://メンバ変数
 	std::unique_ptr <IEnemyState> spawn_ = nullptr;
 	std::unique_ptr <IEnemyState> idol_ = nullptr;
 	std::unique_ptr <IEnemyState> chase_ = nullptr;
+	std::unique_ptr <IEnemyState> patrol_ = nullptr;
 	IEnemyState* currentState_ = nullptr;
 
-	float spawnTimer_ = 0.0f;
+	std::vector<float> spawnTimers_;
 
 	//攻撃フラグ
 	bool isAttacking_ = false;
 	//攻撃タイマー
 	float attackTimer_ = 0.0f;
 
+	//ターゲットの半径
+	float targetRadius_ = 1.0f;
+	//索敵エリアの半径
+	float searchAreaRadius_ = 7.0f;
+
 	//ワイヤーフレーム
 	//球
 	std::unique_ptr <WireframeObject3d> sphere_ = nullptr;
-	float sphereRadius_ = 0.0f;
 	//行動が変化するエリア
 	std::unique_ptr <WireframeObject3d> attackArea = nullptr;
 	float attackAreaRadius_ = 0.0f;

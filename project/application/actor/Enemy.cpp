@@ -68,7 +68,11 @@ void Enemy::Initialize(Object3dCommon* object3dCommon, Camera* camera, const std
 
 	//スポーンテーブルのサイズを設定
 	enemySpawnTable_.resize(entityGroup_.objectCount);
-	enemySpawnTable_[0] = { -8.0f,6.0f,15.0f };
+	enemySpawnTable_[0] = { -8.0f,6.0f,5.0f };
+	//enemySpawnTable_[1] = { -3.0f,6.0f,15.0f };
+	//スポーンタイマー
+	spawnTimers_.resize(entityGroup_.objectCount);
+
 	//enemySpawnTable_[0] = { 12.0f,0.0f,125.0f };
 	//enemySpawnTable_[1] = { -10.0f,0.0f,45.0f };
 	//enemySpawnTable_[2] = { 12.0f,0.0f,125.0f };
@@ -87,6 +91,7 @@ void Enemy::Initialize(Object3dCommon* object3dCommon, Camera* camera, const std
 	spawn_ = std::make_unique<EnemeyStateSpawn>();
 	idol_ = std::make_unique<EnemeyStateIdol>();
 	chase_ = std::make_unique<EnemyStateChase>();
+	patrol_ = std::make_unique<EnemyStatePatrol>();
 
 	attackArea = std::make_unique<WireframeObject3d>();
 	attackArea->Initialize(object3dCommon->GetWireframeObject3dCommon(), camera, ModelType::kSphere);
@@ -97,67 +102,15 @@ void Enemy::Initialize(Object3dCommon* object3dCommon, Camera* camera, const std
 
 //更新
 void Enemy::Update() {
-	//加速度と速度を適応
-	IntegrateMotion();
+	//敵の生成
+	CreateEnemy();
 
-	int32_t aliveCount = 0;
+	//敵の更新
+	UpdateEnemy();
 
-	for (int32_t i = 0; i < entityGroup_.objectCount; i++) {
-
-		//敵の生成
-		if (!entityGroup_.entity[i].gameObject.isAlive) {
-			if (spawnTimer_ > 2.0f) {
-				ChangeState(spawn_.get(), entityGroup_.entity[i].gameObject, entityGroup_.entity[i].collider);
-				spawnTimer_ = 0.0f;
-			} else {
-				spawnTimer_ += Math::kDeltaTime;
-				continue;
-			}
-		}
-
-		// 生存だけを 0..aliveCount-1 に詰める
-		entityGroup_.renderObject.object3d->SetTransformData(
-			aliveCount,
-			entityGroup_.entity[i].gameObject.transformData
-		);
-
-		// ヒットボックスも同じ index にする（デバッグ表示目的なら）
-		entityGroup_.renderObject.hitBox->SetTranslate(aliveCount, entityGroup_.entity[i].gameObject.transformData.translate);
-		entityGroup_.renderObject.hitBox->SetQuaternion(aliveCount, entityGroup_.entity[i].gameObject.transformData.quaternion);
-		entityGroup_.renderObject.hitBox->SetScale(aliveCount, entityGroup_.entity[i].hitBoxScale);
-
-		++aliveCount;
-	}
-
-	for (int32_t i = 0; i < entityGroup_.objectCount; i++) {
-		if (entityGroup_.entity[i].gameObject.isAlive) {
-			//敵の状態
-			currentState_->Exce(entityGroup_.entity[i].gameObject, entityGroup_.entity[i].collider);
-
-			sphereRadius_ = 7.0f;
-			sphere_->SetRadius(i + 1, sphereRadius_);
-			sphere_->SetTranslate(i + 1, entityGroup_.entity[i].gameObject.transformData.translate);
-			Sphere targetArea = { targetPos_ ,1.0f };
-			Sphere myArea = { entityGroup_.entity[i].gameObject.transformData.translate,7.0f };
-			if (Collision::IsCollision(targetArea, myArea)) {
-				ChangeState(chase_.get(), entityGroup_.entity[i].gameObject, entityGroup_.entity[i].collider);
-			} else {
-				ChangeState(idol_.get(), entityGroup_.entity[i].gameObject, entityGroup_.entity[i].collider);
-			}
-		}
-	}
-
-	//オブジェクトの更新
+	//描画オブジェクトの更新
 	entityGroup_.renderObject.object3d->Update();
 	entityGroup_.renderObject.hitBox->Update();
-
-	// 描画に使う数を保存（メンバにして Draw で使う）
-	aliveCount_ = aliveCount;
-
-	//プレイヤーの半径
-	sphere_->SetRadius(0, 1.0f);
-	sphere_->SetTranslate(0, targetPos_);
-
 	sphere_->Update();
 }
 
@@ -182,7 +135,7 @@ void Enemy::Debug() {
 		ImGui::DragFloat3("velocity", &entityGroup_.entity[i].gameObject.velocity.x, 0.1f);
 		ImGui::DragFloat3("acceleration", &entityGroup_.entity[i].gameObject.acceleration.x, 0.1f);
 		ImGui::Checkbox("isAlive", &entityGroup_.entity[i].gameObject.isAlive);
-		ImGui::Text("timer%f", spawnTimer_);
+		ImGui::Text("timer%f", spawnTimers_[i]);
 		ImGui::PopID();
 	}
 #endif // _DEBUG
@@ -249,27 +202,6 @@ std::vector<Entity>& Enemy::GetEntity() {
 	return entityGroup_.entity;
 }
 
-//攻撃
-void Enemy::Attack() {
-	for (int32_t i = 0; i < entityGroup_.objectCount; i++) {
-		//ターゲットの方向を見る
-		EnemyToTarget();
-
-		//攻撃する時間を計測
-		//if (bulletShotTimer_ < kBulletShotTimerLimit) {
-		//	bulletShotTimer_ += Math::kDeltaTime;
-		//} else {
-		//	bulletShotTimer_ = 0.0f;
-		//	//攻撃フラグを立てる
-		//	isAttacking_ = true;
-		//}
-
-		//攻撃フラグを折る
-		isAttacking_ = false;
-	}
-}
-
-
 //ターゲットの方向を向く
 void Enemy::EnemyToTarget() {
 	for (int32_t i = 0; i < entityGroup_.objectCount; i++) {
@@ -278,41 +210,6 @@ void Enemy::EnemyToTarget() {
 		float yaw = std::atan2(dir.x, dir.z);
 		entityGroup_.entity[i].gameObject.transformData.quaternion.y = yaw;
 	}
-}
-
-//敵の振る舞い
-void Enemy::Behavior() {
-	////当たり判定
-	//if (Collision::IsCollision(sphere_->GetSphere(0), attackArea->GetSphere(0))) {
-	//	//敵の状態を設定
-	//	enemyState_ = std::make_unique<EnemeyStateAttack>();
-
-	//	//ワイヤーフレームの色を変更
-	//	sphere_->SetColor(Vector4::MakeRedColor());
-	//	attackArea->SetColor(Vector4::MakeRedColor());
-	//} else {
-
-	//	//攻撃タイマーの加算
-	//	if (attackTimer_ < kAttackTimerLimit) {
-	//		attackTimer_ += Math::kDeltaTime;
-	//	}
-
-	//	//攻撃タイマーが攻撃タイマーのリミット以上になったら
-	//	if (attackTimer_ >= kAttackTimerLimit) {
-	//		//敵がプレイヤーを追う
-	//		enemyState_ = std::make_unique<EnemyStateChase>();
-	//		//攻撃タイマーをリセット
-	//		attackTimer_ = 0.0f;
-	//	}
-
-	//	//ワイヤーフレームの色を変更
-	//	sphere_->SetColor(Vector4::MakeBlackColor());
-	//	attackArea->SetColor(Vector4::MakeBlackColor());
-	//}
-
-	////敵の状態
-	//enemyState_->SetEnemy(this);
-	//enemyState_->Exce();
 }
 
 //速度と加速度を位置に適応
@@ -330,10 +227,78 @@ void Enemy::IntegrateMotion() {
 }
 
 //ステートの切り替え
-void Enemy::ChangeState(IEnemyState* next, GameObject& gameObject, Collider& collider) {
+void Enemy::ChangeState(IEnemyState* next, GameObject& gameObject) {
 	currentState_ = next;
-	currentState_->SetEnemySpawnPos(enemySpawnTable_[0]);
-	currentState_->SetTargetPos(targetPos_);
 	//敵の状態
-	currentState_->Exce(gameObject, collider);
+	currentState_->Exce(gameObject);
+}
+
+//敵の生成
+void Enemy::CreateEnemy() {
+	int32_t aliveCount = 0;
+
+	//生成の処理
+	for (int32_t i = 0; i < entityGroup_.objectCount; i++) {
+		//敵の生成
+		if (!entityGroup_.entity[i].gameObject.isAlive) {
+			if (spawnTimers_[i] > 2.0f) {
+				spawn_->SetEnemySpawnPos(enemySpawnTable_[i]);
+				spawn_->SetColliderPtr(&entityGroup_.entity[i].collider);
+				idol_->SetBaseYaw(entityGroup_.entity[i].gameObject.transformData.quaternion.y);
+				ChangeState(spawn_.get(), entityGroup_.entity[i].gameObject);
+				spawnTimers_[i] = 0.0f;
+			} else {
+				spawnTimers_[i] += Math::kDeltaTime;
+				continue;
+			}
+		}
+
+		// 生存だけを 0..aliveCount-1 に詰める
+		entityGroup_.renderObject.object3d->SetTransformData(
+			aliveCount,
+			entityGroup_.entity[i].gameObject.transformData
+		);
+
+		// ヒットボックスも同じ index にする（デバッグ表示目的なら）
+		entityGroup_.renderObject.hitBox->SetTranslate(aliveCount, entityGroup_.entity[i].gameObject.transformData.translate);
+		entityGroup_.renderObject.hitBox->SetQuaternion(aliveCount, entityGroup_.entity[i].gameObject.transformData.quaternion);
+		entityGroup_.renderObject.hitBox->SetScale(aliveCount, entityGroup_.entity[i].hitBoxScale);
+
+		++aliveCount;
+	}
+	// 描画に使う数を保存（メンバにして Draw で使う）
+	aliveCount_ = aliveCount;
+}
+
+//敵の更新
+void Enemy::UpdateEnemy() {
+	for (int32_t i = 0; i < entityGroup_.objectCount; i++) {
+		if (entityGroup_.entity[i].gameObject.isAlive) {
+			//ターゲットの半径
+			Sphere targetSphere = { targetPos_ ,targetRadius_ };
+
+			//索敵エリア
+			Sphere searchArea = { entityGroup_.entity[i].gameObject.transformData.translate,searchAreaRadius_ };
+
+			//敵の索敵エリアに入ったら
+			if (Collision::IsCollision(targetSphere, searchArea)) {
+				chase_->SetTargetPos(targetPos_);
+				ChangeState(chase_.get(), entityGroup_.entity[i].gameObject);
+				idol_->SetBaseYaw(entityGroup_.entity[i].gameObject.transformData.quaternion.y);
+			} else {
+				ChangeState(idol_.get(), entityGroup_.entity[i].gameObject);
+			}
+
+			//索敵エリアのワイヤーフレームのサイズと位置
+			sphere_->SetRadius(i + 1, searchAreaRadius_);
+			sphere_->SetTranslate(i + 1, entityGroup_.entity[i].gameObject.transformData.translate);
+		}
+	}
+
+	//プレイヤーの半径
+	sphere_->SetRadius(0, targetRadius_);
+	sphere_->SetTranslate(0, targetPos_);
+
+	//加速度と速度を適応
+	IntegrateMotion();
 }

@@ -48,6 +48,7 @@ public://メンバ変数
 	/// </summary>
 	/// <param name="baseYaw">基準となるyaw</param>
 	void SetBaseYaw(float baseYaw);
+	IEnemyState(const IEnemyState& other);
 protected://メンバ関数
 	/// <summary>
 	/// 前方に動かす
@@ -72,11 +73,13 @@ protected://メンバ変数
 /// </summary>
 class EnemeyStateSpawn :public IEnemyState {
 public://メンバ関数
+	EnemeyStateSpawn();
 	/// <summary>
 	/// 実行
 	/// </summary>
 	/// <param name="gameObject">ゲームオブジェクト</param>
 	void Exce(GameObject& gameObject)override;
+	EnemeyStateSpawn(const EnemeyStateSpawn& other);
 };
 
 /// <summary>
@@ -84,11 +87,13 @@ public://メンバ関数
 /// </summary>
 class EnemeyStateIdol :public IEnemyState {
 public://メンバ関数
+	EnemeyStateIdol();
 	/// <summary>
 	/// 実行
 	/// </summary>
 	/// <param name="gameObject">ゲームオブジェクト</param>
 	void Exce(GameObject& gameObject)override;
+	EnemeyStateIdol(const EnemeyStateIdol& other);
 private://メンバ変数
 	//回転時間
 	float rotateTime_ = 0.0f;
@@ -99,11 +104,13 @@ private://メンバ変数
 /// </summary>
 class EnemyStateChase :public IEnemyState {
 public://メンバ関数
+	EnemyStateChase();
 	/// <summary>
 	/// 実行
 	/// </summary>
 	/// <param name="gameObject">ゲームオブジェクト</param>
 	void Exce(GameObject& gameObject)override;
+	EnemyStateChase(const EnemyStateChase& other);
 private://メンバ関数
 	/// <summary>
 	/// ターゲットの方向を向く
@@ -120,11 +127,14 @@ private://メンバ変数
 /// </summary>
 class EnemyStatePatrol :public IEnemyState {
 public://メンバ関数
+	EnemyStatePatrol();
 	/// <summary>
     /// 実行
     /// </summary>
 	/// <param name="gameObject">ゲームオブジェクト</param>
 	void Exce(GameObject& gameObject)override;
+
+	EnemyStatePatrol(const EnemyStatePatrol& other);
 private://メンバ変数
 	//移動速度
 	float moveSpeed_ = 0.05f;
@@ -135,11 +145,14 @@ private://メンバ変数
 /// </summary>
 class EnemyStateCharge :public IEnemyState {
 public://メンバ関数
+	EnemyStateCharge();
 	/// <summary>
     /// 実行
     /// </summary>
     /// <param name="gameObject">ゲームオブジェクト</param>
 	void Exce(GameObject& gameObject)override;
+
+	EnemyStateCharge(const EnemyStateCharge& other);
 private://メンバ変数
 	//移動速度
 	float moveSpeed_ = 0.0f;

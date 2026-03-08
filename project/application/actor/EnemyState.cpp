@@ -23,6 +23,17 @@ void IEnemyState::SetBaseYaw(float baseYaw) {
 	baseYaw_ = baseYaw;
 }
 
+IEnemyState::IEnemyState(const IEnemyState& other) {
+	//敵のスポーン位置のテーブル
+	enemySpawnPos_ = other.enemySpawnPos_;
+	//ターゲットの位置
+	targetPos_ = other.targetPos_;
+	//コライダー
+	colliderPtr_ = other.colliderPtr_;
+
+	baseYaw_ = other.baseYaw_;
+}
+
 //前方に動かす
 Vector3 IEnemyState::MoveForward(const Quaternion& quaternion, float speed) {
 	//カメラの角度をもとに回転行列を求める
@@ -34,6 +45,9 @@ Vector3 IEnemyState::MoveForward(const Quaternion& quaternion, float speed) {
 	return moveDir.Normalize() * speed;
 }
 
+EnemeyStateSpawn::EnemeyStateSpawn() {
+}
+
 //スポーン
 void EnemeyStateSpawn::Exce(GameObject& gameObject) {
 	gameObject.isAlive = true;
@@ -41,6 +55,13 @@ void EnemeyStateSpawn::Exce(GameObject& gameObject) {
 	gameObject.transformData.translate = enemySpawnPos_;
 	gameObject.transformData.quaternion.y = Math::kPi;
 	gameObject.acceleration.y = Physics::kGravity;
+}
+
+EnemeyStateSpawn::EnemeyStateSpawn(const EnemeyStateSpawn& other) {
+
+}
+
+EnemeyStateIdol::EnemeyStateIdol() {
 }
 
 //待機
@@ -51,6 +72,13 @@ void EnemeyStateIdol::Exce(GameObject& gameObject) {
 	//float angle = baseYaw_ + std::sin(rotateTime_) * amplitude;
 
 	//gameObject.transformData.quaternion.y = angle;
+}
+
+EnemeyStateIdol::EnemeyStateIdol(const EnemeyStateIdol& other) {
+	rotateTime_ = other.rotateTime_;
+}
+
+EnemyStateChase::EnemyStateChase() {
 }
 
 //追従
@@ -67,6 +95,10 @@ void EnemyStateChase::Exce(GameObject& gameObject) {
 	gameObject.transformData.translate += MoveForward(gameObject.transformData.quaternion, moveSpeed_);
 }
 
+EnemyStateChase::EnemyStateChase(const EnemyStateChase& other) {
+	moveSpeed_ = other.moveSpeed_;
+}
+
 //ターゲットの方向を向く
 Quaternion EnemyStateChase::EnemyToTarget(const GameObject& gameObject) {
 	//プレイヤーの向きに合わせる
@@ -77,10 +109,20 @@ Quaternion EnemyStateChase::EnemyToTarget(const GameObject& gameObject) {
 	return result;
 }
 
+EnemyStatePatrol::EnemyStatePatrol() {
+}
+
 //パトロール
 void EnemyStatePatrol::Exce(GameObject& gameObject) {
 	//移動させる
 	gameObject.transformData.translate += MoveForward(gameObject.transformData.quaternion, moveSpeed_);
+}
+
+EnemyStatePatrol::EnemyStatePatrol(const EnemyStatePatrol& other) {
+	moveSpeed_ = other.moveSpeed_;
+}
+
+EnemyStateCharge::EnemyStateCharge() {
 }
 
 //突進
@@ -101,4 +143,15 @@ void EnemyStateCharge::Exce(GameObject& gameObject) {
 
 	//移動させる
 	gameObject.transformData.translate += MoveForward(gameObject.transformData.quaternion, moveSpeed_);
+}
+
+EnemyStateCharge::EnemyStateCharge(const EnemyStateCharge& other) {
+	//移動速度
+	moveSpeed_ = other.moveSpeed_;
+	//チャージする時間
+	chargeTime_ = other.chargeTime_;
+	//チャージ完了時間
+	maxChargeTime_ = other.maxChargeTime_;
+	//チャージの開放時間
+	releaseTime_ = other.releaseTime_;
 }

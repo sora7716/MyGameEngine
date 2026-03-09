@@ -8,10 +8,8 @@
 
 //前方宣言
 class Object3dCommon;
-class Object3d;
 class Camera;
 class WireframeObject3d;
-class Bullet;
 
 /// <summary>
 /// 敵
@@ -85,11 +83,6 @@ private://メンバ関数
 	/// ターゲットの方向を向く
 	/// </summary>
 	void EnemyToTarget();
-
-	/// <summary>
-	/// 敵の振る舞い
-	/// </summary>
-	void Behavior();
 
 	/// <summary>
 	/// 速度と加速度を位置に適応

@@ -17,6 +17,7 @@ enum class Tag {
 	kWall,
 	kGround,
 	kGoal,
+	kItem,
 	kNone
 };
 
@@ -26,7 +27,8 @@ enum class Layer : uint32_t {
 	kPlayer = 1 << 0,
 	kEnemy = 1 << 1,
 	kWall = 1 << 2,
-	kGround = 1 << 3
+	kGround = 1 << 3,
+	kItem = 1 << 4
 };
 
 //ゲームオブジェクト

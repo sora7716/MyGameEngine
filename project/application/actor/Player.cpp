@@ -219,7 +219,7 @@ void Player::OnCollision(ColliderState* other) {
 		if (other->translatePtr->y < GetWorldPos().y - gameObject_.transformData.scale.y) {
 			gameObject_.velocity.y = 5.0f;
 		} else {
-			//gameObject_.isAlive = false;
+			gameObject_.isAlive = false;
 		}
 	} else if (other->tag == Tag::kGoal) {
 		isGoal_ = true;

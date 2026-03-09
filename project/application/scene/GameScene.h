@@ -11,6 +11,7 @@ class Enemy;
 class EnemyManager;
 class Score;
 class StageTimer;
+class Item;
 
 /// <summary>
 /// ゲームシーン
@@ -69,5 +70,7 @@ private://メンバ変数
 	std::unique_ptr<StageTimer>stageTimer_ = nullptr;
 
 	std::unique_ptr<Enemy>enemy_ = nullptr;
+
+	std::unique_ptr<Item>item_ = nullptr;
 };
 

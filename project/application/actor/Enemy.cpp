@@ -122,16 +122,6 @@ void Enemy::Update() {
 //デバッグ
 void Enemy::Debug() {
 #ifdef _DEBUG
-	//ImGuiManager::GetInstance()->DragTransform(gameObject_.transformData);
-	//ImGui::DragFloat3("hitBox.scale", &hitBoxScale_.x, 0.1f);
-	//ImGui::Text("hp:%d", hp_);
-	//ImGui::DragFloat3("hp.translate", &hpBarTransform_.translate.x, 0.1f);
-	//ImGui::DragFloat3("hp.scale", &hpBarTransform_.scale.x, 0.1f);
-	//ImGui::DragFloat("hp.posX", &hpBarPosX_, 0.1f);
-	//ImGui::DragFloat3("hpOutLine.translate", &hpOutLineTransform_.translate.x, 0.1f);
-	//ImGui::DragFloat3("hpOutLine.scale", &hpOutLineTransform_.scale.x, 0.1f);
-	//ImGui::DragFloat3("hitBox.scale", &hitBoxScale_.x, 0.1f);
-	//ImGui::Checkbox("collider.isTrigger", &collider_.isTrigger);
 	for (int32_t i = 0; i < entityGroup_.objectCount; i++) {
 		ImGui::PushID(i);
 		ImGui::SeparatorText(("enemy " + std::to_string(i)).c_str());

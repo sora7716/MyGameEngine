@@ -66,12 +66,12 @@ EnemeyStateIdol::EnemeyStateIdol() {
 
 //待機
 void EnemeyStateIdol::Exce(GameObject& gameObject) {
-	rotateTime_ += 0.5f * Math::kDeltaTime;
+	//rotateTime_ += 0.5f * Math::kDeltaTime;
 
-	float amplitude = Math::kPi / 2.0f;
-	float angle = baseYaw_ + std::sin(rotateTime_) * amplitude;
+	//float amplitude = Math::kPi / 2.0f;
+	//float angle = baseYaw_ + std::sin(rotateTime_) * amplitude;
 
-	gameObject.transformData.quaternion.y = angle;
+	//gameObject.transformData.quaternion.y = angle;
 }
 
 EnemeyStateIdol::EnemeyStateIdol(const EnemeyStateIdol& other) {

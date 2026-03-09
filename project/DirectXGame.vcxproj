@@ -22,6 +22,7 @@
     <ClCompile Include="application\actor\Field.cpp" />
     <ClCompile Include="application\actor\GameCamera.cpp" />
     <ClCompile Include="application\actor\GameObjectList.cpp" />
+    <ClCompile Include="application\actor\Item.cpp" />
     <ClCompile Include="application\actor\Player.cpp" />
     <ClCompile Include="application\actor\RailCamera.cpp" />
     <ClCompile Include="application\actor\Score.cpp" />
@@ -98,6 +99,7 @@
     <ClInclude Include="application\actor\Field.h" />
     <ClInclude Include="application\actor\GameCamera.h" />
     <ClInclude Include="application\actor\GameObjectList.h" />
+    <ClInclude Include="application\actor\Item.h" />
     <ClInclude Include="application\actor\Player.h" />
     <ClInclude Include="application\actor\RailCamera.h" />
     <ClInclude Include="application\actor\Score.h" />

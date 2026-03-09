@@ -2,7 +2,6 @@
 #include "GameScene.h"
 #include "Input.h"
 #include "Object3dCommon.h"
-#include "GlobalVariables.h"
 #include "func/Collision.h"
 #include "SceneManager.h"
 #include "CameraManager.h"
@@ -19,6 +18,7 @@
 #include "func/Math.h"
 #include "func/Physics.h"
 #include "StageTimer.h"
+#include "Item.h"
 
 //コンストラクタ
 GameScene::GameScene() {
@@ -64,6 +64,9 @@ void GameScene::Initialize(const SceneContext& sceneContext) {
 	stageTimer_ = std::make_unique<StageTimer>();
 	stageTimer_->Initialize(sceneContext_.object2dCommon);
 
+	item_ = std::make_unique<Item>();
+	item_->Initialize(sceneContext_.object3dCommon, camera_, "plane");
+
 	//衝突判定
 	//プレイヤー
 	colliderManager_->AddCollider(&player_->GetCollider());
@@ -82,6 +85,11 @@ void GameScene::Initialize(const SceneContext& sceneContext) {
 	for (int32_t i = 0; i < static_cast<int32_t>(enemy_->GetEntity().size()); i++) {
 		colliderManager_->AddCollider(&enemy_->GetEntity()[i].collider);
 	}
+
+	//アイテム
+	for (int32_t i = 0; i < static_cast<int32_t>(item_->GetEntity().size()); i++) {
+		colliderManager_->AddCollider(&item_->GetEntity()[i].collider);
+	}
 }
 
 //更新
@@ -94,6 +102,7 @@ void GameScene::Update() {
 	player_->SetCamera(camera_);
 	field_->SetCamera(camera_);
 	enemy_->SetCamera(camera_);
+	item_->SetCamera(camera_);
 	//enemyManager_->SetCamera(camera_);
 
 	Vector3 prePlayerPos = player_->GetTransformData().translate;
@@ -117,6 +126,8 @@ void GameScene::Update() {
 
 	//ステージタイマー
 	stageTimer_->Update();
+
+	item_->Update();
 
 	//シーンの切り替え
 	if (player_->IsGoal()) {
@@ -177,8 +188,10 @@ void GameScene::Update() {
 	score_->Debug();
 	ImGui::End();
 
-	//スコア
-	//ImGui::Text("score:%d", Score::score);
+	//アイテム
+	ImGui::Begin("Item");
+	item_->Debug();
+	ImGui::End();
 
 	//Object3dCommon
 	//sceneContext_.object3dCommon->Debug();
@@ -203,7 +216,11 @@ void GameScene::Draw() {
 	//プレイヤー
 	player_->Draw();
 
+	//敵
 	enemy_->Draw();
+
+	//アイテム
+	item_->Draw();
 
 	//マップチップ
 	field_->Draw();

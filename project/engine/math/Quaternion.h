@@ -55,6 +55,13 @@ struct Quaternion {
 	static Quaternion Slerp(const Quaternion& q1, const Quaternion& q2, float t);
 
 	/// <summary>
+	/// オイラー角からクォータニオンを生成
+	/// </summary>
+	/// <param name="rotate">オイラー角</param>
+	/// <returns>クォータニオン</returns>
+	static Quaternion MakeQuaternionForEulerAngle(const Vector3& rotate);
+
+	/// <summary>
 	/// 加算
 	/// </summary>
 	/// <param name="q">クォータニオン</param>

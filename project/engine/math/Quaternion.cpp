@@ -78,6 +78,22 @@ Quaternion Quaternion::Slerp(const Quaternion& q1, const Quaternion& q2, float t
 	return result;
 }
 
+//オイラー角からクォータニオンを生成
+Quaternion Quaternion::MakeQuaternionForEulerAngle(const Vector3& rotate) {
+	float rx = rotate.x;
+	float ry = rotate.y;
+	float rz = rotate.z;
+
+	Quaternion qx = { std::sin(rx * 0.5f), 0.0f, 0.0f, std::cos(rx * 0.5f) };
+	Quaternion qy = { 0.0f, std::sin(ry * 0.5f), 0.0f, std::cos(ry * 0.5f) };
+	Quaternion qz = { 0.0f, 0.0f, std::sin(rz * 0.5f), std::cos(rz * 0.5f) };
+
+	// 掛ける順番は座標系や実装方針で変わる
+	Quaternion q = qz * qy * qx;
+	q = q.Normalize();
+	return q;
+}
+
 //加算
 Quaternion Quaternion::operator+(const Quaternion& q) const {
 	Quaternion result = {};

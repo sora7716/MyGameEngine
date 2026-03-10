@@ -48,6 +48,10 @@ private://メンバ変数
 	std::unique_ptr<Object3d>object3d_ = nullptr;
 	TransformData transformData_ = {};
 
+	Quaternion end = { 0.5f,0.8f,0.0f,0.2f };
+	Quaternion start = Quaternion::IdentityQuaternion();
+	float frame_ = 0.0f;
+	bool isAnimation_ = false;
 	Vector3 eulerAngle_ = {};
 	Vector3 axis_ = { 0.0f,1.0f,0.0f };
 	float angle_ = 0.0f;

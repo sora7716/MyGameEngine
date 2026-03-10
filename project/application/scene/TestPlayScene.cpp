@@ -5,6 +5,7 @@
 #include "Text.h"
 #include "Core.h"
 #include "Object3d.h"
+#include "func/Math.h"
 
 //コンストラクタ
 TestPlayScene::TestPlayScene() {
@@ -44,17 +45,35 @@ void TestPlayScene::Update() {
 	debugCamera_->Debug();
 	ImGui::End();
 
+	if (isAnimation_) {
+		if (frame_ < 1.0f) {
+			frame_ += Math::kDeltaTime;
+		}
+	}
+
+	transformData_.quaternion = Quaternion::Slerp(start, end, frame_).Normalize();
 	//Object3d
 	ImGui::Begin("object3d");
 	//ImGuiManager::DragTransform(transformData_);
-	ImGui::DragFloat4("rotate", &transformData_.quaternion.x, 0.1f);
-	ImGui::DragFloat3("axis", &axis_.x, 0.1f);
+	//ImGui::DragFloat4("rotate", &transformData_.quaternion.x, 0.1f);
+	//ImGui::DragFloat3("axis", &axis_.x, 0.1f);
 
-	if (ImGui::DragFloat3("eulerAngle", &eulerAngle_.x, 0.1f)) {
-		transformData_.quaternion = Quaternion::MakeQuaternionForEulerAngle(eulerAngle_);
-	} else if (ImGui::DragFloat("angle", &angle_, 0.1f)) {
-		transformData_.quaternion = Rendering::MakeRotateAxisAngleQuaternion(axis_, angle_).Normalize();
+	//if (ImGui::DragFloat3("eulerAngle", &eulerAngle_.x, 0.1f)) {
+	//	transformData_.quaternion = Quaternion::MakeQuaternionForEulerAngle(eulerAngle_);
+	//} else if (ImGui::DragFloat("angle", &angle_, 0.1f)) {
+	//	transformData_.quaternion = Rendering::MakeRotateAxisAngleQuaternion(axis_, angle_).Normalize();
+	//}
+	if (ImGui::Button("isAnimation")) {
+		isAnimation_ = true;
 	}
+
+	if (ImGui::Button("Reset")) {
+		frame_ = 0.0f;
+		isAnimation_ = false;
+	}
+	ImGui::DragFloat("frame", &frame_);
+	ImGui::DragFloat4("start", &start.x, 0.1f);
+	ImGui::DragFloat4("end", &end.x, 0.1f);
 	ImGui::End();
 
 	//ImGuiの受付終了

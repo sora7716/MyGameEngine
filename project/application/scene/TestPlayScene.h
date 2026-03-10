@@ -48,32 +48,7 @@ private://メンバ変数
 	std::unique_ptr<Object3d>object3d_ = nullptr;
 	TransformData transformData_ = {};
 
-	Vector3 axis = Vector3::MakeAllOne().Normalize();
-	float angle = 0.44f;
-	Matrix4x4 rotateMatrix = Rendering::MakeRotateAxisAngle(axis, angle);
-
-	Quaternion q1 = { 2.0f,3.0f,4.0f,1.0f };
-	Quaternion q2 = { 1.0f,3.0f,5.0f,2.0f };
-	Quaternion identity = Quaternion::IdentityQuaternion();
-	Quaternion conj = q1.Conjugate();
-	Quaternion inv = q1.Inverse();
-	Quaternion normal = q1.Normalize();
-	Quaternion mul1 = q1 * q2;
-	Quaternion mul2 = q2 * q1;
-	float norm = q1.Norm();
-
-	Quaternion rotation = Rendering::MakeRotateAxisAngleQuaternion(Vector3({ 1.0f,0.4f,-0.2f }).Normalize(), 0.45f);
-	Vector3 pointY = { 2.1f,-0.9f,1.3f };
-	Matrix4x4 rotateMat = Rendering::MakeRotateMatrix(rotation);
-	Vector3 rotateByQuaternion = Rendering::RotateVector(pointY, rotation);
-	Vector3 rotateByMatrix = Rendering::Transform(pointY, rotateMat);
-
-	Quaternion rotation0 = Rendering::MakeRotateAxisAngleQuaternion({ 0.71f,0.71f,0.0f }, 0.3f);
-	Quaternion rotation1 = Rendering::MakeRotateAxisAngleQuaternion({ 0.71f,0.0f,0.71f }, 3.141592f);
-
-	Quaternion interpolate0 = Quaternion::Slerp(rotation0, rotation1, 0.0f);
-	Quaternion interpolate1 = Quaternion::Slerp(rotation0, rotation1, 0.3f);
-	Quaternion interpolate2 = Quaternion::Slerp(rotation0, rotation1, 0.5f);
-	Quaternion interpolate3 = Quaternion::Slerp(rotation0, rotation1, 0.7f);
-	Quaternion interpolate4 = Quaternion::Slerp(rotation0, rotation1, 1.0f);
+	Vector3 eulerAngle_ = {};
+	Vector3 axis_ = { 0.0f,1.0f,0.0f };
+	float angle_ = 0.0f;
 };

@@ -46,36 +46,15 @@ void TestPlayScene::Update() {
 
 	//Object3d
 	ImGui::Begin("object3d");
-	ImGuiManager::DragTransform(transformData_);
-	ImGui::End();
+	//ImGuiManager::DragTransform(transformData_);
+	ImGui::DragFloat4("rotate", &transformData_.quaternion.x, 0.1f);
+	ImGui::DragFloat3("axis", &axis_.x, 0.1f);
 
-	ImGui::Begin("MT4_01_00");
-	ImGuiManager::Matrix4x4Text(rotateMatrix, "rotateAxisAngle");
-	ImGui::End();
-
-	ImGui::Begin("MT4_01_03");
-	ImGuiManager::QuaternionText(identity, "Identity");
-	ImGuiManager::QuaternionText(conj, "Conjugate");
-	ImGuiManager::QuaternionText(inv, "Inverse");
-	ImGuiManager::QuaternionText(normal, "Normalize");
-	ImGuiManager::QuaternionText(mul1, "Multiply(q1,q2)");
-	ImGuiManager::QuaternionText(mul2, "Multiply(q2,q1)");
-	ImGuiManager::FloatText(norm, "Norm");
-	ImGui::End();
-
-	ImGui::Begin("MT4_01_04");
-	ImGuiManager::QuaternionText(rotation, "rotation");
-	ImGuiManager::Matrix4x4Text(rotateMat, "rotateMatrix");
-	ImGuiManager::Vector3Text(rotateByQuaternion, "rotateByQuaternion");
-	ImGuiManager::Vector3Text(rotateByMatrix, "rotateByMatrix");
-	ImGui::End();
-
-	ImGui::Begin("MT4_01_05");
-	ImGuiManager::QuaternionText(interpolate0, "interpolate0, Slerp(q0, q1, 0.0f)");
-	ImGuiManager::QuaternionText(interpolate1, "interpolate0, Slerp(q0, q1, 0.3f)");
-	ImGuiManager::QuaternionText(interpolate2, "interpolate0, Slerp(q0, q1, 0.5f)");
-	ImGuiManager::QuaternionText(interpolate3, "interpolate0, Slerp(q0, q1, 0.7f)");
-	ImGuiManager::QuaternionText(interpolate4, "interpolate0, Slerp(q0, q1, 1.0f)");
+	if (ImGui::DragFloat3("eulerAngle", &eulerAngle_.x, 0.1f)) {
+		transformData_.quaternion = Quaternion::MakeQuaternionForEulerAngle(eulerAngle_);
+	} else if (ImGui::DragFloat("angle", &angle_, 0.1f)) {
+		transformData_.quaternion = Rendering::MakeRotateAxisAngleQuaternion(axis_, angle_).Normalize();
+	}
 	ImGui::End();
 
 	//ImGuiの受付終了

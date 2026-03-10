@@ -210,8 +210,8 @@ Matrix4x4 Rendering::MakeOBBWorldMatrix(const Vector3* orientations, const Vecto
 
 //アフィン関数
 Matrix4x4 Rendering::MakeAffineMatrix(const TransformData& transform) {
-	Quaternion q = MakeRotateQuaternion(transform.quaternion);
-	return (MakeScaleMatrix(transform.scale) * MakeRotateMatrix(q)) * MakeTranslateMatrix(transform.translate);
+	//Quaternion q = MakeRotateQuaternion(transform.quaternion);
+	return (MakeScaleMatrix(transform.scale) * MakeRotateMatrix(transform.quaternion)) * MakeTranslateMatrix(transform.translate);
 }
 
 //アフィン行列

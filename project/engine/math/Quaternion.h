@@ -1,4 +1,6 @@
 #pragma once
+#include "Vector3.h"
+
 //クォータニオン
 struct Quaternion {
 	float x;
@@ -17,8 +19,6 @@ struct Quaternion {
 	/// </summary>
 	/// <returns></returns>
 	Quaternion Conjugate()const;
-
-	Quaternion NormalizeSafe()const;
 
 	/// <summary>
 	/// 内積

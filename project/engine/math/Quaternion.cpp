@@ -1,5 +1,4 @@
 #include "Quaternion.h"
-#include "Vector3.h"
 #include <cmath>
 
 //乗法単位元

@@ -6,7 +6,7 @@
 #include "SRVManager.h"
 #include "TextureManager.h"
 #include <cassert>
-#include "func/Math.h"
+#include "algorithm/Math.h"
 using namespace Microsoft::WRL;
 
 //デストラクタ

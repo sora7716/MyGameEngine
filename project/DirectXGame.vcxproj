@@ -12,21 +12,9 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="application\actor\ActorData.cpp" />
-    <ClCompile Include="application\actor\Bullet.cpp" />
-    <ClCompile Include="application\actor\CameraController.cpp" />
-    <ClCompile Include="application\actor\ColliderManager.cpp" />
-    <ClCompile Include="application\actor\ControlPoint.cpp" />
-    <ClCompile Include="application\actor\Enemy.cpp" />
-    <ClCompile Include="application\actor\EnemyManager.cpp" />
-    <ClCompile Include="application\actor\EnemyState.cpp" />
-    <ClCompile Include="application\actor\Field.cpp" />
-    <ClCompile Include="application\actor\GameCamera.cpp" />
-    <ClCompile Include="application\actor\GameObjectList.cpp" />
-    <ClCompile Include="application\actor\Item.cpp" />
-    <ClCompile Include="application\actor\Player.cpp" />
-    <ClCompile Include="application\actor\RailCamera.cpp" />
-    <ClCompile Include="application\actor\Score.cpp" />
-    <ClCompile Include="application\actor\StageTimer.cpp" />
+    <ClCompile Include="application\gameObject\ColliderData.cpp" />
+    <ClCompile Include="application\gameObject\GameObjectData.cpp" />
+    <ClCompile Include="application\gameObject\GameObjectList.cpp" />
     <ClCompile Include="application\scene\GameScene.cpp" />
     <ClCompile Include="application\scene\ResultScene.cpp" />
     <ClCompile Include="application\scene\TestPlayScene.cpp" />
@@ -67,13 +55,15 @@
     <ClCompile Include="engine\framework\GameSystem.cpp" />
     <ClCompile Include="engine\input\Input.cpp" />
     <ClCompile Include="engine\main.cpp" />
-    <ClCompile Include="engine\math\func\Aithmetic.cpp" />
-    <ClCompile Include="engine\math\func\Collision.cpp" />
-    <ClCompile Include="engine\math\func\Math.cpp" />
-    <ClCompile Include="engine\math\func\Physics.cpp" />
-    <ClCompile Include="engine\math\func\Rendering.cpp" />
+    <ClCompile Include="engine\math\algorithm\ColliderManager.cpp" />
+    <ClCompile Include="engine\math\algorithm\Collision.cpp" />
+    <ClCompile Include="engine\math\algorithm\Math.cpp" />
+    <ClCompile Include="engine\math\algorithm\Physics.cpp" />
+    <ClCompile Include="engine\math\algorithm\Rendering.cpp" />
     <ClCompile Include="engine\math\Matrix4x4.cpp" />
+    <ClCompile Include="engine\math\PhysicsData.cpp" />
     <ClCompile Include="engine\math\Quaternion.cpp" />
+    <ClCompile Include="engine\math\RenderingData.cpp" />
     <ClCompile Include="engine\math\Vector2.cpp" />
     <ClCompile Include="engine\math\Vector3.cpp" />
     <ClCompile Include="engine\math\Vector4.cpp" />
@@ -89,21 +79,9 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="application\actor\ActorData.h" />
-    <ClInclude Include="application\actor\Bullet.h" />
-    <ClInclude Include="application\actor\CameraController.h" />
-    <ClInclude Include="application\actor\ColliderManager.h" />
-    <ClInclude Include="application\actor\ControlPoint.h" />
-    <ClInclude Include="application\actor\Enemy.h" />
-    <ClInclude Include="application\actor\EnemyManager.h" />
-    <ClInclude Include="application\actor\EnemyState.h" />
-    <ClInclude Include="application\actor\Field.h" />
-    <ClInclude Include="application\actor\GameCamera.h" />
-    <ClInclude Include="application\actor\GameObjectList.h" />
-    <ClInclude Include="application\actor\Item.h" />
-    <ClInclude Include="application\actor\Player.h" />
-    <ClInclude Include="application\actor\RailCamera.h" />
-    <ClInclude Include="application\actor\Score.h" />
-    <ClInclude Include="application\actor\StageTimer.h" />
+    <ClInclude Include="application\gameObject\ColliderData.h" />
+    <ClInclude Include="application\gameObject\GameObjectData.h" />
+    <ClInclude Include="application\gameObject\GameObjectList.h" />
     <ClInclude Include="application\scene\GameScene.h" />
     <ClInclude Include="application\scene\ResultScene.h" />
     <ClInclude Include="application\scene\TestPlayScene.h" />
@@ -147,12 +125,12 @@
     <ClInclude Include="engine\framework\Framework.h" />
     <ClInclude Include="engine\framework\GameSystem.h" />
     <ClInclude Include="engine\input\Input.h" />
+    <ClInclude Include="engine\math\algorithm\ColliderManager.h" />
+    <ClInclude Include="engine\math\algorithm\Collision.h" />
+    <ClInclude Include="engine\math\algorithm\Math.h" />
+    <ClInclude Include="engine\math\algorithm\Physics.h" />
+    <ClInclude Include="engine\math\algorithm\Rendering.h" />
     <ClInclude Include="engine\math\PrimitiveData.h" />
-    <ClInclude Include="engine\math\func\Aithmetic.h" />
-    <ClInclude Include="engine\math\func\Collision.h" />
-    <ClInclude Include="engine\math\func\Math.h" />
-    <ClInclude Include="engine\math\func\Physics.h" />
-    <ClInclude Include="engine\math\func\Rendering.h" />
     <ClInclude Include="engine\math\Matrix3x3.h" />
     <ClInclude Include="engine\math\Matrix4x4.h" />
     <ClInclude Include="engine\math\PhysicsData.h" />
@@ -279,7 +257,7 @@
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
       <TreatWarningAsError>true</TreatWarningAsError>
-      <AdditionalIncludeDirectories>$(ProjectDir);$(ProjectDir)engine\base;$(ProjectDir)engine\2d;$(ProjectDir)externals;$(ProjectDir)engine\math;$(ProjectDir)engine\debug;$(ProjectDir)engine\input;$(ProjectDir)engine\audio;$(SolutionDir)DirectXTex;$(SolutionDir)imgui;$(ProjectDir)engine\resource;$(ProjectDir)application;$(ProjectDir)application\scene;$(ProjectDir)application\actor;$(ProjectDir)externals\assimp\include;$(ProjectDir)engine\3d;$(ProjectDir)engine\framework;$(ProjectDir)engine\camera;$(ProjectDir)engine\scene;$(ProjectDir)engine\worldTransform;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir);$(ProjectDir)engine\base;$(ProjectDir)engine\2d;$(ProjectDir)externals;$(ProjectDir)engine\math;$(ProjectDir)engine\debug;$(ProjectDir)engine\input;$(ProjectDir)engine\audio;$(SolutionDir)DirectXTex;$(SolutionDir)imgui;$(ProjectDir)engine\resource;$(ProjectDir)application;$(ProjectDir)application\scene;$(ProjectDir)application\actor;$(ProjectDir)externals\assimp\include;$(ProjectDir)engine\3d;$(ProjectDir)engine\framework;$(ProjectDir)engine\camera;$(ProjectDir)engine\scene;$(ProjectDir)engine\worldTransform;$(ProjectDir)application\gameObject;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>

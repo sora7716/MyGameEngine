@@ -1,7 +1,8 @@
 #pragma once
 #include "ActorData.h"
 #include <vector>
-#include <func/Collision.h>
+#include "algorithm/Collision.h"
+#include <cstdint>
 
 /// <summary>
 /// 衝突の管理
@@ -24,6 +25,13 @@ public://メンバ関数
 	/// 衝突判定を行う
 	/// </summary>
 	void ProcessCollision();
+
+	/// <summary>
+	/// Bitに変換
+	/// </summary>
+	/// <param name="layer">レイヤー</param>
+	/// <returns>レイヤーのBit</returns>
+	static uint32_t ToBit(Layer layer);
 private://メンバ関数
 	/// <summary>
 	/// 追加していいか

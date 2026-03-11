@@ -1,12 +1,12 @@
 #include "Sprite.h"
-#include "engine/2d/SpriteCommon.h"
+#include "SpriteCommon.h"
 #include <cassert>
-#include "engine/math/func/Math.h"
+#include "algorithm/Math.h"
 #include "TextureManager.h"
-#include "engine/base/DirectXBase.h"
+#include "DirectXBase.h"
 #include "WinApi.h"
-#include "engine/worldTransform/WorldTransform.h"
-#include "engine/debug/ImGuiManager.h"
+#include "WorldTransform.h"
+#include "ImGuiManager.h"
 
 //デストラクタ
 Sprite::~Sprite() {

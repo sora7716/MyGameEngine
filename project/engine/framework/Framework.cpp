@@ -1,11 +1,6 @@
 #include "Framework.h"
-#include "engine/2d/TextureManager.h"
-#include "application/actor/GameObjectList.h"
-#include "engine/math/func/Math.h"
-#include "engine/audio/AudioManager.h"
-#include "engine/input/Input.h"
-#include "engine/3d/ModelManager.h"
-#include "engine/particle/ParticleManager.h"
+#include "algorithm/Math.h"
+#include "Input.h"
 
 //初期化
 void Framework::Initialize() {

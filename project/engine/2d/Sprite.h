@@ -1,7 +1,7 @@
 #pragma once
-#include "engine/math/ResourceData.h"
-#include "engine/math/func/Rendering.h"
-#include "engine/base/BlendMode.h"
+#include "ResourceData.h"
+#include "algorithm/Rendering.h"
+#include "BlendMode.h"
 #include <d3d12.h>
 #include <dxgi1_6.h>
 #include <dxgidebug.h>

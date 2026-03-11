@@ -2,7 +2,7 @@
 #include "DebugCamera.h"
 #include "AbstractSceneFactory.h"
 #include "GlobalVariables.h"
-#include "ColliderManager.h"
+//#include "ColliderManager.h"
 
 //コンストラクタ
 IScene::IScene() {
@@ -20,7 +20,7 @@ void IScene::Initialize(const SceneContext& sceneContext) {
 	debugCamera_ = std::make_unique<DebugCamera>();
 	debugCamera_->Initialize(sceneContext_.input, sceneContext_.cameraManager);
 	//コライダーマネージャー
-	colliderManager_ = std::make_unique<ColliderManager>();
+	//colliderManager_ = std::make_unique<ColliderManager>();
 	////調整ファイルの読み込み
 	//GlobalVariables::GetInstance()->LoadFiles();
 }
@@ -30,7 +30,7 @@ void IScene::Update() {
 	//デバックカメラ
 	debugCamera_->Update();
 	//コライダーマネージャー
-	colliderManager_->ProcessCollision();
+	//colliderManager_->ProcessCollision();
 }
 
 //終了

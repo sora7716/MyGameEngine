@@ -1,5 +1,5 @@
 #include "ColliderManager.h"
-#include "func/Collision.h"
+#include "algorithm/Collision.h"
 #include "WireframeObject3d.h"
 #include "Object3d.h"
 
@@ -26,6 +26,11 @@ void ColliderManager::ProcessCollision() {
 	SyncCollider();
 	//衝突判定をチェック
 	CheckCollision();
+}
+
+//Bitに変換
+uint32_t ColliderManager::ToBit(Layer layer) {
+	return static_cast<uint32_t>(layer);
 }
 
 //追加していいか

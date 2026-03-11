@@ -1,7 +1,7 @@
 #include "DebugCamera.h"
-#include "engine/input/Input.h"
-#include "engine/math/func/Math.h"
-#include "engine/camera/CameraManager.h"
+#include "Input.h"
+#include "algorithm/Math.h"
+#include "CameraManager.h"
 #include "ImGuiManager.h"
 #include <algorithm>
 

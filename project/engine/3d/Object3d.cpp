@@ -2,9 +2,9 @@
 #include "Object3dCommon.h"
 #include "DirectXBase.h"
 #include "Camera.h"
-#include "func/Math.h"
+#include "algorithm/Math.h"
 #include "ModelManager.h"
-#include "func/Rendering.h"
+#include "algorithm/Rendering.h"
 #include "ImGuiManager.h"
 #include "SRVManager.h"
 #include "TextureManager.h"
@@ -30,13 +30,13 @@ void Object3d::Initialize(Object3dCommon* object3dCommon, Camera* camera, uint32
 	srvManager_ = object3dCommon_->GetSRVManager();
 	//座標変換のモード切替用変数
 	transform3dMode_ = transform3dMode;
-	//トランスフォームのデータ数を決定
-	transforms_.resize(instanceCount);
-	for (TransformData& transform : transforms_) {
-		transform.scale = Vector3::MakeAllOne();
-		transform.quaternion = {};
-		transform.translate = {};
+	//ゲームオブジェクトの数を決定
+	gameObjects_.resize(instanceCount);
+	//ゲームオブジェクトの初期化
+	for (GameObject& gameObject : gameObjects_) {
+		gameObject.Initialize();
 	}
+
 	//wvpのデータ数を決定
 	wvpData_.resize(instanceCount);
 	for (TransformationMatrix& wvp : wvpData_) {
@@ -44,6 +44,7 @@ void Object3d::Initialize(Object3dCommon* object3dCommon, Camera* camera, uint32
 		wvp.wvp = Matrix4x4::Identity4x4();
 		wvp.worldInverseTranspose = Matrix4x4::Identity4x4();
 	}
+
 	//wvpリソースの初期化
 	CreateTransformationMatrixResource();
 	//座標変換行列リソースのストラクチャバッファの生成
@@ -70,6 +71,25 @@ void Object3d::Initialize(Object3dCommon* object3dCommon, Camera* camera, uint32
 void Object3d::Update() {
 	//Object3dの共通部分の更新
 	object3dCommon_->Update();
+
+	//生存数
+	int32_t aliveCount = 0;
+
+	for (int32_t i = 0; i < gameObjects_.size(); i++) {
+		//生存フラグが立ってなければ
+		if (!gameObjects_[i].isAlive) {
+			continue;
+		}
+
+		//生存だけを0~aliveCount-1に詰める
+		gameObjects_[aliveCount] = gameObjects_[i];
+
+		//生存数を増やす
+		aliveCount++;
+	}
+
+	//生存数を記録
+	aliveCount_ = aliveCount;
 
 	if (model_) {
 		node_ = model_->GetModelData().rootNode;
@@ -101,43 +121,8 @@ void Object3d::Draw() {
 
 	//3Dモデルが割り当てられていれば描画
 	if (model_) {
-		model_->Draw(static_cast<uint32_t>(transforms_.size()));
+		model_->Draw(static_cast<uint32_t>(aliveCount_));
 	}
-}
-
-void Object3d::Draw(int32_t instanceCount) {
-	//3Dオブジェクトの共通部分
-	object3dCommon_->DrawSetting();
-
-	//PSOの設定
-	auto pso = object3dCommon_->GetGraphicsPipelineStates()[static_cast<int32_t>(blendMode_)].Get();
-	//グラフィックスパイプラインをセットするコマンド
-	directXBase_->GetCommandList()->SetPipelineState(pso);
-
-	//座標変換行列SRVの場所を設定
-	directXBase_->GetCommandList()->SetGraphicsRootDescriptorTable(1, srvManager_->GetGPUDescriptorHandle(srvIndex_));
-
-	//平光源CBufferの場所を設定
-	directXBase_->GetCommandList()->SetGraphicsRootConstantBufferView(3, object3dCommon_->GetDirectionalLightResource()->GetGPUVirtualAddress());
-	//点光源のStructuredBufferの場所を設定
-	directXBase_->GetCommandList()->SetGraphicsRootDescriptorTable(5, object3dCommon_->GetSRVManager()->GetGPUDescriptorHandle(object3dCommon_->GetSrvIndexPoint()));
-	//スポットライトのStructuredBufferを設定
-	directXBase_->GetCommandList()->SetGraphicsRootDescriptorTable(6, object3dCommon_->GetSRVManager()->GetGPUDescriptorHandle(object3dCommon_->GetSrvIndexSpot()));
-
-	//3Dモデルが割り当てられていれば描画
-	if (model_) {
-		model_->Draw(instanceCount);
-	}
-}
-
-//親子付け
-void Object3d::Compose(const WorldTransform* parent) {
-	worldTransform_->Compose(parent);
-}
-
-//親子関係を解除
-void Object3d::Decompose() {
-	worldTransform_->Decompose();
 }
 
 //モデルのセッター
@@ -153,21 +138,22 @@ void Object3d::SetCamera(Camera* camera) {
 
 // スケールのセッター
 void Object3d::SetScale(uint32_t index, const Vector3& scale) {
-	transforms_[index].scale = scale;
+	gameObjects_[index].transformData.scale = scale;
 }
 
+//クォータニオンのゲッター
 void Object3d::SetQuaternion(uint32_t index, const Quaternion& quaternion) {
-	transforms_[index].quaternion = quaternion;
+	gameObjects_[index].transformData.quaternion = quaternion;
 }
 
 // 平行移動のセッター
 void Object3d::SetTranslate(uint32_t index, const Vector3& translate) {
-	transforms_[index].translate = translate;
+	gameObjects_[index].transformData.translate = translate;
 }
 
-//トランスフォームのセッター
-void Object3d::SetTransformData(uint32_t index, const TransformData& transform) {
-	transforms_[index] = transform;
+//ゲームオブジェクトのセッター
+void Object3d::SetGameObject(uint32_t index, const GameObject& gameObject) {
+	gameObjects_[index] = gameObject;
 }
 
 // uvスケールのセッター
@@ -209,37 +195,37 @@ void Object3d::SetBlendMode(const BlendMode& blendMode) {
 	blendMode_ = blendMode;
 }
 
-// スケールのゲッター
+//スケールのゲッター
 const Vector3& Object3d::GetScale(uint32_t index) const {
 	// TODO: return ステートメントをここに挿入します
-	return transforms_[index].scale;
+	return gameObjects_[index].transformData.scale;
 }
 
-// 回転のゲッター
+//クォータニオンのゲッター
 const Quaternion& Object3d::GetQuaternion(uint32_t index) const {
 	// TODO: return ステートメントをここに挿入します
-	return transforms_[index].quaternion;
+	return gameObjects_[index].transformData.quaternion;
 }
 
-// 平行移動のゲッター
+//平行移動のゲッター
 const Vector3& Object3d::GetTranslate(uint32_t index) const {
 	// TODO: return ステートメントをここに挿入します
-	return transforms_[index].translate;
+	return gameObjects_[index].transformData.translate;
 }
 
-// uvスケールのゲッター
+//uvスケールのゲッター
 const Vector2& Object3d::GetUVScale() const {
 	// TODO: return ステートメントをここに挿入します
 	return uvTransform_.scale;
 }
 
-// uv回転のゲッター
+//uv回転のゲッター
 const float Object3d::GetUVRotate() const {
 	// TODO: return ステートメントをここに挿入します
 	return uvTransform_.rotate;
 }
 
-// uv平行移動のゲッター
+//uv平行移動のゲッター
 const Vector2& Object3d::GetUVTranslate() const {
 	// TODO: return ステートメントをここに挿入します
 	return uvTransform_.translate;
@@ -248,17 +234,17 @@ const Vector2& Object3d::GetUVTranslate() const {
 //色のゲッター
 const Vector4& Object3d::GetColor() const {
 	// TODO: return ステートメントをここに挿入します
-	static const Vector4 defaultColor(0, 0, 0, 0);
+	static const Vector4 defaultColor(0.0f, 0.0f, 0.0f, 0.0f);
 	if (model_) {
 		return model_->GetColor();
 	}
 	return defaultColor;
 }
 
-//トランスフォームデータのゲッター
-const TransformData& Object3d::GetTransformData(uint32_t index) const {
+//ゲームオブジェクトのゲッター
+const GameObject& Object3d::GetGameObject(uint32_t index) const {
 	// TODO: return ステートメントをここに挿入します
-	return transforms_[index];
+	return gameObjects_[index];
 }
 
 //モデルのゲッター
@@ -282,12 +268,12 @@ Vector3 Object3d::GetWorldPos(uint32_t index) {
 //座標変換行列リソースの生成
 void Object3d::CreateTransformationMatrixResource() {
 	// 配列サイズで確保
-	wvpResource_ = directXBase_->CreateBufferResource(sizeof(TransformationMatrix) * transforms_.size());
+	wvpResource_ = directXBase_->CreateBufferResource(sizeof(TransformationMatrix) * gameObjects_.size());
 	//座標変換行列リソースにデータを書き込むためのアドレスを取得してtransformationMatrixDataに割り当てる
 	//書き込むためのアドレス
 	wvpResource_->Map(0, nullptr, reinterpret_cast<void**>(&wvpPtr_));
 	//単位行列を書き込んでおく
-	for (uint32_t i = 0; i < static_cast<uint32_t>(transforms_.size()); i++) {
+	for (uint32_t i = 0; i < static_cast<uint32_t>(gameObjects_.size()); i++) {
 		wvpPtr_[i].wvp = Matrix4x4::Identity4x4();
 		wvpPtr_[i].world = Matrix4x4::Identity4x4();
 		wvpPtr_[i].worldInverseTranspose = Matrix4x4::Identity4x4();
@@ -301,15 +287,15 @@ void Object3d::CreateStructuredBufferForWvp() {
 	srvManager_->CreateSRVForStructuredBuffer(
 		srvIndex_,
 		wvpResource_.Get(),
-		static_cast<uint32_t>(transforms_.size()),
+		static_cast<uint32_t>(gameObjects_.size()),
 		sizeof(TransformationMatrix)
 	);
 }
 
 //座標の更新
 void Object3d::UpdateTransform() {
-	for (uint32_t i = 0; i < static_cast<uint32_t>(transforms_.size()); i++) {
-		wvpData_[i].world = Rendering::MakeAffineMatrix(transforms_[i]);
+	for (uint32_t i = 0; i < static_cast<uint32_t>(gameObjects_.size()); i++) {
+		wvpData_[i].world = Rendering::MakeAffineMatrix(gameObjects_[i].transformData);
 		//TransformからWorldMatrixを作る
 		if (parent_) {
 			wvpData_[i].world = wvpData_[i].world * parent_->GetWorldMatrix();
@@ -333,13 +319,13 @@ void Object3d::UpdateTransform() {
 
 //ビルボード行列での更新
 void Object3d::UpdateTransformBillboard() {
-	for (uint32_t i = 0; i < static_cast<uint32_t>(transforms_.size()); i++) {
+	for (uint32_t i = 0; i < static_cast<uint32_t>(gameObjects_.size()); i++) {
 		//カメラがなかったら
 		if (!camera_) {
 			wvpData_[i].wvp = wvpData_[i].world;
 			return;
 		}
-		wvpData_[i].world = Rendering::MakeBillboardAffineMatrix(camera_->GetWorldMatrix(), transforms_[i]);
+		wvpData_[i].world = Rendering::MakeBillboardAffineMatrix(camera_->GetWorldMatrix(), gameObjects_[i].transformData);
 		//TransformからWorldMatrixを作る
 		if (parent_) {
 			wvpData_[i].world = wvpData_[i].world * parent_->GetWorldMatrix();

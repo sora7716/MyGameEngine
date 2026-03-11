@@ -13,7 +13,7 @@ Physics::~Physics() {
 //フックの法則(ばね力)
 Vector3 Physics::ApplySpringForce(const Spring& spring, const Ball& ball) {
 	//加速度
-	Vector3 result = ball.acceleration;
+	Vector3 result = ball.physicsData.acceleration;
 	//ばねのアンカーとボールの位置の差
 	Vector3 diff = ball.position - spring.anchor;
 	float length = diff.Length();
@@ -23,7 +23,7 @@ Vector3 Physics::ApplySpringForce(const Spring& spring, const Ball& ball) {
 		Vector3 displacement = (ball.position - restPosition) * length;
 		Vector3 restoringForce = displacement * -spring.stiffness;
 		//減衰抵抗を計算する
-		Vector3 dampingForce = ball.velocity * -spring.dampingCoefficient;
+		Vector3 dampingForce = ball.physicsData.velociy * -spring.dampingCoefficient;
 		//減衰抵抗も加味して、物体にかかる力を決定する
 		Vector3 force = restoringForce + dampingForce;
 		result = force / ball.mass;

@@ -1,6 +1,6 @@
 #pragma once
-#include "engine/math/ResourceData.h"
-#include "engine/math/func/Rendering.h"
+#include "ResourceData.h"
+#include "algorithm/Rendering.h"
 #include <string>
 #include <vector>
 #include <wrl.h>

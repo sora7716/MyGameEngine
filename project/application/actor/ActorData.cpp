@@ -2,16 +2,6 @@
 #include "Object3d.h"
 #include "WireframeObject3d.h"
 
-//ゲームオブジェクトの初期化
-void GameObject::Initialize() {
-	transformData = { Vector3::MakeAllOne(),{},{} };
-	velocity = {};
-	acceleration = {};
-	direction = {};
-	isAlive = false;
-	isOnGround = false;
-}
-
 //レンダーオブジェクトのobject3dとhitBoxの生成
 RenderObject& RenderObject::Create() {
 	//Object3dの生成
@@ -39,67 +29,4 @@ RenderObject& RenderObject::InitializeMaterial() {
 //レンダーオブジェクトを作成
 RenderObject&& RenderObject::Build() {
 	return std::move(*this);
-}
-
-//コライダーの状態の初期化
-void ColliderState::Initialize(Vector3& hitBoxScale, GameObject& gameObject,Tag tag) {
-	scalePtr = &hitBoxScale;
-	rotatePtr = &gameObject.transformData.quaternion;
-	translatePtr = &gameObject.transformData.translate;
-	velocityPtr = &gameObject.velocity;
-	isOnGroundPtr = &gameObject.isOnGround;
-	this->tag = tag;
-}
-
-//コライダーのownerのセッター
-Collider& Collider::SetOwner(ColliderState* colliderState) {
-	owner = colliderState;
-	return *this;
-}
-
-Collider& Collider::CreateObb() {
-	return *this;
-}
-
-//コライダーのBodyTypeのセッター
-Collider& Collider::SetBodyType(BodyType bodyType) {
-	this->bodyType = bodyType;
-	return *this;
-}
-
-//コライダーのisTriggerのセッター
-Collider& Collider::SetIsTrigger(bool isTrigger) {
-	this->isTrigger = isTrigger;
-	return *this;
-}
-
-//コライダーのisEnableのセッター
-Collider& Collider::SetIsEnebled(bool isEnabled) {
-	this->isEnabled = isEnabled;
-	return *this;
-}
-
-//コライダーのレイヤーのセッター
-Collider& Collider::SetLayer(Layer layer) {
-	this->layer = layer;
-	return *this;
-}
-
-//コライダーのマスクレイヤーのセッター
-Collider& Collider::SetMaskLayer(uint32_t maskLayer) {
-	this->maskLayer = maskLayer;
-	return *this;
-}
-
-Collider& Collider::SetOnCollision(std::function<void(ColliderState* other)> onCollision) {
-	this->onCollision = onCollision;
-	return *this;
-}
-
-Collider&& Collider::Build() {
-	return std::move(*this);
-}
-
-uint32_t ToBits(Layer layer) {
-	return static_cast<uint32_t>(layer);
 }

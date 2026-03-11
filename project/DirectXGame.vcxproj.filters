@@ -37,9 +37,6 @@
     <Filter Include="engine\math">
       <UniqueIdentifier>{9166fe29-0a02-4f36-9391-fc197e0a431b}</UniqueIdentifier>
     </Filter>
-    <Filter Include="engine\math\func">
-      <UniqueIdentifier>{f4a79ad1-4ad4-48c3-b59c-2cb96d487971}</UniqueIdentifier>
-    </Filter>
     <Filter Include="application">
       <UniqueIdentifier>{b779c107-e531-4844-9928-b705d07604ff}</UniqueIdentifier>
     </Filter>
@@ -67,6 +64,12 @@
     <Filter Include="application\actor">
       <UniqueIdentifier>{27e5a16f-78eb-4123-ac65-8f26cccee1a6}</UniqueIdentifier>
     </Filter>
+    <Filter Include="application\gameObject">
+      <UniqueIdentifier>{b6b3c08d-ea3a-4c48-b1e0-d596fb3c9fe0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="engine\math\algorithm">
+      <UniqueIdentifier>{f4a79ad1-4ad4-48c3-b59c-2cb96d487971}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="engine\main.cpp">
@@ -77,12 +80,6 @@
     </ClCompile>
     <ClCompile Include="engine\base\WinApi.cpp">
       <Filter>engine\base</Filter>
-    </ClCompile>
-    <ClCompile Include="engine\math\func\Aithmetic.cpp">
-      <Filter>engine\math\func</Filter>
-    </ClCompile>
-    <ClCompile Include="engine\math\func\Math.cpp">
-      <Filter>engine\math\func</Filter>
     </ClCompile>
     <ClCompile Include="engine\debug\Log.cpp">
       <Filter>engine\debug</Filter>
@@ -125,9 +122,6 @@
     </ClCompile>
     <ClCompile Include="engine\3d\ModelManager.cpp">
       <Filter>engine\3d</Filter>
-    </ClCompile>
-    <ClCompile Include="engine\math\func\Rendering.cpp">
-      <Filter>engine\math\func</Filter>
     </ClCompile>
     <ClCompile Include="engine\base\SRVManager.cpp">
       <Filter>engine\base</Filter>
@@ -210,53 +204,14 @@
     <ClCompile Include="application\scene\TitleScene.cpp">
       <Filter>application\scene</Filter>
     </ClCompile>
-    <ClCompile Include="application\actor\GameObjectList.cpp">
-      <Filter>application\actor</Filter>
-    </ClCompile>
-    <ClCompile Include="application\actor\Player.cpp">
-      <Filter>application\actor</Filter>
-    </ClCompile>
-    <ClCompile Include="application\actor\CameraController.cpp">
-      <Filter>application\actor</Filter>
-    </ClCompile>
-    <ClCompile Include="application\actor\Field.cpp">
-      <Filter>application\actor</Filter>
-    </ClCompile>
     <ClCompile Include="engine\debug\GlobalVariables.cpp">
       <Filter>engine\debug</Filter>
-    </ClCompile>
-    <ClCompile Include="application\actor\RailCamera.cpp">
-      <Filter>application\actor</Filter>
-    </ClCompile>
-    <ClCompile Include="application\actor\Bullet.cpp">
-      <Filter>application\actor</Filter>
-    </ClCompile>
-    <ClCompile Include="application\actor\ControlPoint.cpp">
-      <Filter>application\actor</Filter>
-    </ClCompile>
-    <ClCompile Include="application\actor\GameCamera.cpp">
-      <Filter>application\actor</Filter>
     </ClCompile>
     <ClCompile Include="engine\debug\WireframeObject3dCommon.cpp">
       <Filter>engine\debug</Filter>
     </ClCompile>
     <ClCompile Include="engine\debug\WireframeObject3d.cpp">
       <Filter>engine\debug</Filter>
-    </ClCompile>
-    <ClCompile Include="engine\math\func\Collision.cpp">
-      <Filter>engine\math\func</Filter>
-    </ClCompile>
-    <ClCompile Include="application\actor\Enemy.cpp">
-      <Filter>application\actor</Filter>
-    </ClCompile>
-    <ClCompile Include="application\actor\EnemyState.cpp">
-      <Filter>application\actor</Filter>
-    </ClCompile>
-    <ClCompile Include="application\scene\ResultScene.cpp">
-      <Filter>application\scene</Filter>
-    </ClCompile>
-    <ClCompile Include="application\actor\EnemyManager.cpp">
-      <Filter>application\actor</Filter>
     </ClCompile>
     <ClCompile Include="engine\2d\TextRasterizer.cpp">
       <Filter>engine\2d</Filter>
@@ -267,14 +222,8 @@
     <ClCompile Include="engine\base\Core.cpp">
       <Filter>engine\base</Filter>
     </ClCompile>
-    <ClCompile Include="application\actor\Score.cpp">
-      <Filter>application\actor</Filter>
-    </ClCompile>
     <ClCompile Include="engine\base\Context.cpp">
       <Filter>engine\base</Filter>
-    </ClCompile>
-    <ClCompile Include="engine\math\func\Physics.cpp">
-      <Filter>engine\math\func</Filter>
     </ClCompile>
     <ClCompile Include="application\scene\TestPlayScene.cpp">
       <Filter>application\scene</Filter>
@@ -285,17 +234,41 @@
     <ClCompile Include="application\actor\ActorData.cpp">
       <Filter>application\actor</Filter>
     </ClCompile>
-    <ClCompile Include="application\actor\ColliderManager.cpp">
-      <Filter>application\actor</Filter>
-    </ClCompile>
     <ClCompile Include="engine\math\Quaternion.cpp">
       <Filter>engine\math</Filter>
     </ClCompile>
-    <ClCompile Include="application\actor\StageTimer.cpp">
-      <Filter>ソース ファイル</Filter>
+    <ClCompile Include="application\scene\ResultScene.cpp">
+      <Filter>application\scene</Filter>
     </ClCompile>
-    <ClCompile Include="application\actor\Item.cpp">
-      <Filter>ソース ファイル</Filter>
+    <ClCompile Include="application\gameObject\GameObjectData.cpp">
+      <Filter>application\gameObject</Filter>
+    </ClCompile>
+    <ClCompile Include="application\gameObject\GameObjectList.cpp">
+      <Filter>application\gameObject</Filter>
+    </ClCompile>
+    <ClCompile Include="engine\math\PhysicsData.cpp">
+      <Filter>engine\math</Filter>
+    </ClCompile>
+    <ClCompile Include="engine\math\RenderingData.cpp">
+      <Filter>engine\math</Filter>
+    </ClCompile>
+    <ClCompile Include="engine\math\algorithm\Collision.cpp">
+      <Filter>engine\math\algorithm</Filter>
+    </ClCompile>
+    <ClCompile Include="engine\math\algorithm\Math.cpp">
+      <Filter>engine\math\algorithm</Filter>
+    </ClCompile>
+    <ClCompile Include="engine\math\algorithm\Physics.cpp">
+      <Filter>engine\math\algorithm</Filter>
+    </ClCompile>
+    <ClCompile Include="engine\math\algorithm\Rendering.cpp">
+      <Filter>engine\math\algorithm</Filter>
+    </ClCompile>
+    <ClCompile Include="engine\math\algorithm\ColliderManager.cpp">
+      <Filter>engine\math</Filter>
+    </ClCompile>
+    <ClCompile Include="application\gameObject\ColliderData.cpp">
+      <Filter>application\gameObject</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -319,12 +292,6 @@
     </ClInclude>
     <ClInclude Include="engine\base\WinApi.h">
       <Filter>engine\base</Filter>
-    </ClInclude>
-    <ClInclude Include="engine\math\func\Aithmetic.h">
-      <Filter>engine\math\func</Filter>
-    </ClInclude>
-    <ClInclude Include="engine\math\func\Math.h">
-      <Filter>engine\math\func</Filter>
     </ClInclude>
     <ClInclude Include="engine\math\ResourceData.h">
       <Filter>engine\math</Filter>
@@ -361,9 +328,6 @@
     </ClInclude>
     <ClInclude Include="engine\3d\ModelManager.h">
       <Filter>engine\3d</Filter>
-    </ClInclude>
-    <ClInclude Include="engine\math\func\Rendering.h">
-      <Filter>engine\math\func</Filter>
     </ClInclude>
     <ClInclude Include="engine\base\SRVManager.h">
       <Filter>engine\base</Filter>
@@ -449,35 +413,11 @@
     <ClInclude Include="application\scene\TitleScene.h">
       <Filter>application\scene</Filter>
     </ClInclude>
-    <ClInclude Include="application\actor\GameObjectList.h">
-      <Filter>application\actor</Filter>
-    </ClInclude>
-    <ClInclude Include="application\actor\Player.h">
-      <Filter>application\actor</Filter>
-    </ClInclude>
     <ClInclude Include="application\actor\ActorData.h">
-      <Filter>application\actor</Filter>
-    </ClInclude>
-    <ClInclude Include="application\actor\CameraController.h">
-      <Filter>application\actor</Filter>
-    </ClInclude>
-    <ClInclude Include="application\actor\Field.h">
       <Filter>application\actor</Filter>
     </ClInclude>
     <ClInclude Include="engine\debug\GlobalVariables.h">
       <Filter>engine\debug</Filter>
-    </ClInclude>
-    <ClInclude Include="application\actor\RailCamera.h">
-      <Filter>application\actor</Filter>
-    </ClInclude>
-    <ClInclude Include="application\actor\Bullet.h">
-      <Filter>application\actor</Filter>
-    </ClInclude>
-    <ClInclude Include="application\actor\ControlPoint.h">
-      <Filter>application\actor</Filter>
-    </ClInclude>
-    <ClInclude Include="application\actor\GameCamera.h">
-      <Filter>application\actor</Filter>
     </ClInclude>
     <ClInclude Include="engine\debug\WireframeObject3d.h">
       <Filter>engine\debug</Filter>
@@ -488,23 +428,11 @@
     <ClInclude Include="engine\math\PrimitiveData.h">
       <Filter>engine\math</Filter>
     </ClInclude>
-    <ClInclude Include="engine\math\func\Collision.h">
-      <Filter>engine\math\func</Filter>
-    </ClInclude>
     <ClInclude Include="engine\base\GraphicsPipelineData.h">
       <Filter>engine\base</Filter>
     </ClInclude>
-    <ClInclude Include="application\actor\Enemy.h">
-      <Filter>application\actor</Filter>
-    </ClInclude>
-    <ClInclude Include="application\actor\EnemyState.h">
-      <Filter>application\actor</Filter>
-    </ClInclude>
     <ClInclude Include="application\scene\ResultScene.h">
       <Filter>application\scene</Filter>
-    </ClInclude>
-    <ClInclude Include="application\actor\EnemyManager.h">
-      <Filter>application\actor</Filter>
     </ClInclude>
     <ClInclude Include="engine\2d\TextRasterizer.h">
       <Filter>engine\2d</Filter>
@@ -515,9 +443,6 @@
     <ClInclude Include="engine\base\Core.h">
       <Filter>engine\base</Filter>
     </ClInclude>
-    <ClInclude Include="application\actor\Score.h">
-      <Filter>application\actor</Filter>
-    </ClInclude>
     <ClInclude Include="engine\2d\TextData.h">
       <Filter>engine\2d</Filter>
     </ClInclude>
@@ -527,17 +452,11 @@
     <ClInclude Include="engine\math\PhysicsData.h">
       <Filter>engine\math</Filter>
     </ClInclude>
-    <ClInclude Include="engine\math\func\Physics.h">
-      <Filter>engine\math\func</Filter>
-    </ClInclude>
     <ClInclude Include="application\scene\TestPlayScene.h">
       <Filter>application\scene</Filter>
     </ClInclude>
     <ClInclude Include="engine\scene\SceneManager.h">
       <Filter>engine\scene</Filter>
-    </ClInclude>
-    <ClInclude Include="application\actor\ColliderManager.h">
-      <Filter>application\actor</Filter>
     </ClInclude>
     <ClInclude Include="engine\math\Quaternion.h">
       <Filter>engine\math</Filter>
@@ -545,11 +464,29 @@
     <ClInclude Include="engine\debug\CrashHandler.h">
       <Filter>engine\debug</Filter>
     </ClInclude>
-    <ClInclude Include="application\actor\StageTimer.h">
-      <Filter>ヘッダー ファイル</Filter>
+    <ClInclude Include="application\gameObject\GameObjectData.h">
+      <Filter>application\gameObject</Filter>
     </ClInclude>
-    <ClInclude Include="application\actor\Item.h">
-      <Filter>ヘッダー ファイル</Filter>
+    <ClInclude Include="application\gameObject\GameObjectList.h">
+      <Filter>application\gameObject</Filter>
+    </ClInclude>
+    <ClInclude Include="engine\math\algorithm\Collision.h">
+      <Filter>engine\math\algorithm</Filter>
+    </ClInclude>
+    <ClInclude Include="engine\math\algorithm\Math.h">
+      <Filter>engine\math\algorithm</Filter>
+    </ClInclude>
+    <ClInclude Include="engine\math\algorithm\Physics.h">
+      <Filter>engine\math\algorithm</Filter>
+    </ClInclude>
+    <ClInclude Include="engine\math\algorithm\Rendering.h">
+      <Filter>engine\math\algorithm</Filter>
+    </ClInclude>
+    <ClInclude Include="engine\math\algorithm\ColliderManager.h">
+      <Filter>engine\math</Filter>
+    </ClInclude>
+    <ClInclude Include="application\gameObject\ColliderData.h">
+      <Filter>application\gameObject</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

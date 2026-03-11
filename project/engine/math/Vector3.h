@@ -77,3 +77,5 @@ struct Vector3 final {
 	// vのほうが小さい
 	bool operator<(const Vector3& v);
 };
+//float*Vector3
+const Vector3 operator*(float n, const Vector3& v);

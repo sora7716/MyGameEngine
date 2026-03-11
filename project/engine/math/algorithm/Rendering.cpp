@@ -1,5 +1,5 @@
 #include "Rendering.h"
-#include "engine/math/func/Math.h"
+#include "algorithm/Math.h"
 #include "Log.h"
 #include "StringUtility.h"
 #include <cassert>

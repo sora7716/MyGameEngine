@@ -1,7 +1,7 @@
 #pragma once
 #include "Model.h"
 #include "ResourceData.h"
-#include "RenderingData.h"
+#include "GameObjectData.h"
 #include "BlendMode.h"
 #include "WorldTransform.h"
 #include <vector>
@@ -49,23 +49,6 @@ public://メンバ関数
 	/// 描画
 	/// </summary>
 	void Draw();
-	
-	/// <summary>
-	/// 描画
-	/// </summary>
-	/// <param name="instanceCount">インスタンス数</param>
-	void Draw(int32_t instanceCount);
-
-	/// <summary>
-	/// 親子付け
-	/// </summary>
-	/// <param name="parent">親</param>
-	void Compose(const WorldTransform* parent);
-
-	/// <summary>
-	/// 親子関係を解除
-	/// </summary>
-	void Decompose();
 
 	/// <summary>
 	/// モデルのセッター
@@ -87,10 +70,10 @@ public://メンバ関数
 	void SetScale(uint32_t index, const Vector3& scale);
 
 	/// <summary>
-	/// 回転のセッター
+	/// クォータニオンのセッター
 	/// </summary>
 	/// <param name="index">インデックス</param>
-	/// <param name="rotate">回転</param>
+	/// <param name="quaternion">クォータニオン</param>
 	void SetQuaternion(uint32_t index, const Quaternion& quaternion);
 
 	/// <summary>
@@ -101,11 +84,11 @@ public://メンバ関数
 	void SetTranslate(uint32_t index, const Vector3& translate);
 
 	/// <summary>
-	/// トランスフォームのセッター
+	/// ゲームオブジェクトのセッター
 	/// </summary>
 	/// <param name="index">インデックス</param>
-	/// <param name="transform">トランスフォーム</param>
-	void SetTransformData(uint32_t index, const TransformData& transform);
+	/// <param name="gameObject">ゲームオブジェクト</param>
+	void SetGameObject(uint32_t index, const GameObject& gameObject);
 
 	/// <summary>
 	/// uvスケールのセッター
@@ -157,10 +140,10 @@ public://メンバ関数
 	const Vector3& GetScale(uint32_t index)const;
 
 	/// <summary>
-	/// 回転のゲッター
+	/// クォータニオンのゲッター
 	/// </summary>
 	/// <param name="index">インデックス</param>
-	/// <returns>回転</returns>
+	/// <returns>クォータニオン</returns>
 	const Quaternion& GetQuaternion(uint32_t index)const;
 
 	/// <summary>
@@ -195,11 +178,11 @@ public://メンバ関数
 	const Vector4& GetColor()const;
 
 	/// <summary>
-	/// トランスフォームデータのゲッター
+	/// ゲームオブジェクトのゲッター
 	/// </summary>
 	/// <param name="index">インデックス</param>
-	/// <returns>トランスフォームデータ</returns>
-	const TransformData& GetTransformData(uint32_t index)const;
+	/// <returns>ゲームオブジェクト</returns>
+	const GameObject& GetGameObject(uint32_t index)const;
 
 	/// <summary>
 	/// モデルのゲッター
@@ -269,7 +252,7 @@ private://メンバ変数
 	//カメラ
 	Camera* camera_ = nullptr;
 	//ワールド座標
-	std::vector<TransformData> transforms_ = {};
+	std::vector<GameObject> gameObjects_ = {};
 	Transform3dMode transform3dMode_ = Transform3dMode::kNormal;
 	uint32_t srvIndex_ = 0;
 	//親
@@ -281,5 +264,8 @@ private://メンバ変数
 
 	//マテリアル
 	Material material_ = {};
+
+	//生成数
+	uint32_t aliveCount_ = 1;
 };
 

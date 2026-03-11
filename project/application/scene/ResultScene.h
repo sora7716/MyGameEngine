@@ -4,7 +4,7 @@
 
 //前方宣言
 class Text;
-class Score;
+//class Score;
 
 /// <summary>
 /// タイトルシーン
@@ -46,7 +46,7 @@ private://メンバ変数
 	//Xboxの番号
 	DWORD xBoxPadNumber_ = 0;
 	//スコア
-	std::unique_ptr<Score>score_ = nullptr;
+	//std::unique_ptr<Score>score_ = nullptr;
 	//スコアの表示
 	std::unique_ptr<Text>drawScore_ = nullptr;
 	Vector2 scorePos_ = { 60.0f,300.0f };

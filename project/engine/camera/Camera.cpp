@@ -1,12 +1,12 @@
 #include "Camera.h"
-#include "engine/math/func/Math.h"
-#include "engine/base/WinApi.h"
+#include "algorithm/Math.h"
+#include "WinApi.h"
 
 /// <summary>
 /// コンストラクタ
 /// </summary>
 Camera::Camera() {
-	transform_ = { Vector3::MakeAllOne(),Quaternion::IdentityQuaternion(),{0.0f,0.0f,-10.0f}};
+	transform_ = { Vector3::MakeAllOne(),{},Quaternion::IdentityQuaternion(),{0.0f,0.0f,-10.0f} };
 	fovY_ = 0.45f;
 	aspectRation_ = float(WinApi::kClientWidth) / float(WinApi::kClientHeight);
 	nearClip_ = 0.1f;

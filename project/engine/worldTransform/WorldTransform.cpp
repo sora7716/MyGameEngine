@@ -1,8 +1,8 @@
 #include "WorldTransform.h"
-#include "engine/base/DirectXBase.h"
-#include "engine/math/func/Rendering.h"
-#include "engine/math/func/Math.h"
-#include "engine/camera/Camera.h"
+#include "DirectXBase.h"
+#include "algorithm/Rendering.h"
+#include "algorithm/Math.h"
+#include "Camera.h"
 #include <cmath>
 //メンバ関数テーブルの初期化
 void(WorldTransform::* WorldTransform::UpdateTransformTable[])() = {

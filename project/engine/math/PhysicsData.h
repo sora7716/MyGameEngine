@@ -26,6 +26,18 @@ struct Pendulum {
 	float angularAcceleration;
 };
 
+//速度や加速度地面の上にいるかどうか
+struct PhysicsData {
+	Vector3 velociy;
+	Vector3 acceleration;
+	bool isOnGround;
+
+	/// <summary>
+	/// 初期化
+	/// </summary>
+	void Initialize();
+};
+
 //ボール
 //position: 位置
 //velocity: 速度
@@ -33,9 +45,8 @@ struct Pendulum {
 //mass: 質量
 //radius: 半径
 struct Ball {
-	Vector3 position;
-	Vector3 velocity;
-	Vector3	acceleration;
-	float mass;
 	float radius;
+	Vector3 position;
+	PhysicsData physicsData;
+	float mass;
 };

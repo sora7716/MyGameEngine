@@ -1,6 +1,6 @@
 #define NOMINMAX
 #include "ParticleEmitter.h"
-#include "engine/math/func/Math.h"
+#include "algorithm/Math.h"
 #include "engine/camera/Camera.h"
 #include "engine/particle/ParticleCommon.h"
 #include "engine/3d/Model.h"

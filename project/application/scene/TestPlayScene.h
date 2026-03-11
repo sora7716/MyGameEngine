@@ -1,7 +1,8 @@
 #pragma once
 #include "IScene.h"
-#include "Quaternion.h"
-#include "func/Rendering.h"
+#include "GameObjectData.h"
+#include "algorithm/ColliderManager.h"
+#include <vector>
 //前方宣言
 class Object3d;
 
@@ -46,7 +47,9 @@ private://メンバ変数
 	DWORD xBoxPadNumber_ = 0;
 	//オブジェクト3d
 	std::unique_ptr<Object3d>object3d_ = nullptr;
-	TransformData transformData_ = {};
+	std::vector<GameObject> gameObject_ = {};
+	PhysicsData physicsData_ = {};
+	Vector3 scale = Vector3::MakeAllOne();
 
 	Quaternion end = { 0.5f,0.8f,0.0f,0.2f };
 	Quaternion start = Quaternion::IdentityQuaternion();
@@ -55,4 +58,8 @@ private://メンバ変数
 	Vector3 eulerAngle_ = {};
 	Vector3 axis_ = { 0.0f,1.0f,0.0f };
 	float angle_ = 0.0f;
+
+	std::unique_ptr<ColliderManager>colliderManager_ = nullptr;
+	std::vector<ColliderState> colliderStates_ = {};
+	std::vector<Collider> colliders_ = {};
 };

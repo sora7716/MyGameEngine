@@ -1,12 +1,12 @@
 #include "ResultScene.h"
-#include "engine/input/Input.h"
-#include "engine/camera/CameraManager.h"
-#include "engine/scene/SceneManager.h"
-#include "engine/debug/ImGuiManager.h"
-#include "application/actor/Score.h"
+#include "Input.h"
+#include "CameraManager.h"
+#include "SceneManager.h"
+#include "ImGuiManager.h"
 #include <sstream>
 #include <iomanip>
-#include "engine/2d/Text.h"
+#include "Text.h"
+//#include "application/actor/Score.h"
 
 //コンストラクタ
 ResultScene::ResultScene() {
@@ -27,9 +27,9 @@ void ResultScene::Initialize(const SceneContext& sceneContext) {
 	drawScore_->Initialize(sceneContext_.object2dCommon, "drawScore");
 	//スコアの文字列を作成
 	std::ostringstream scoreText;
-	scoreText << "SCORE : " << std::setw(Score::kDigitCount) << std::setfill('0') << score_->GetScore();
+	//scoreText << "SCORE : " << std::setw(Score::kDigitCount) << std::setfill('0') << score_->GetScore();
 	//スコアをリセット
-	score_->SetScore(0);
+	//score_->SetScore(0);
 	drawScore_->SetText(scoreText.str());
 
 	//PressReturn

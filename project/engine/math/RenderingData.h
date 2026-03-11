@@ -3,14 +3,19 @@
 #include "Vector2.h"
 #include "Quaternion.h"
 #include "Matrix4x4.h"
-#include "Quaternion.h"
 #include <string>
 #include <vector>
 //Transform情報
 struct TransformData {
 	Vector3 scale;
+	Vector3 eulerAngle;
 	Quaternion quaternion;
 	Vector3 translate;
+
+	/// <summary>
+	/// 初期化
+	/// </summary>
+	void Initialize();
 };
 
 //Transform2D情報

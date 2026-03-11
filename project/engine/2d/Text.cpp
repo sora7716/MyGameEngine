@@ -2,13 +2,13 @@
 #include "Text.h"
 #include "Object2dCommon.h"
 #include "TextureManager.h"
-#include "engine/worldTransform/WorldTransform.h"
-#include "engine/base/DirectXBase.h"
-#include "engine/base/WinApi.h"
-#include "engine/math/func/Rendering.h"
-#include "engine/math/func/Math.h"
-#include "engine/camera/Camera.h"
-#include "engine/base/StringUtility.h"
+#include "WorldTransform.h"
+#include "DirectXBase.h"
+#include "WinApi.h"
+#include "algorithm/Rendering.h"
+#include "algorithm/Math.h"
+#include "Camera.h"
+#include "StringUtility.h"
 #include <algorithm>
 
 //デストラクタ

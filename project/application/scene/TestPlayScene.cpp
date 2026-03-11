@@ -6,6 +6,7 @@
 #include "Core.h"
 #include "Object3d.h"
 #include "algorithm/Math.h"
+#include "algorithm/ColliderManager.h"
 #include <string>
 
 //コンストラクタ
@@ -49,8 +50,6 @@ void TestPlayScene::Initialize(const SceneContext& sceneContext) {
 	colliders_[1].layer = Layer::kEnemy;
 	colliders_[1].maskLayer = ColliderManager::ToBit(Layer::kPlayer);
 
-	colliderManager_ = std::make_unique<ColliderManager>();
-
 	for (uint32_t i = 0; i < objectCount; i++) {
 		colliderManager_->AddCollider(&colliders_[i]);
 	}
@@ -60,8 +59,6 @@ void TestPlayScene::Initialize(const SceneContext& sceneContext) {
 void TestPlayScene::Update() {
 	//シーンのインタフェースの初期化
 	IScene::Update();
-
-	colliderManager_->ProcessCollision();
 
 	for (int32_t i = 0; i < gameObject_.size(); i++) {
 		object3d_->SetGameObject(i, gameObject_[i]);

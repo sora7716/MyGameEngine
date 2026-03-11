@@ -1,7 +1,7 @@
 #pragma once
-#include "ActorData.h"
-#include <vector>
+#include "ColliderData.h"
 #include "algorithm/Collision.h"
+#include <vector>
 #include <cstdint>
 
 /// <summary>

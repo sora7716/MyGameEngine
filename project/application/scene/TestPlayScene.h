@@ -1,9 +1,12 @@
 #pragma once
 #include "IScene.h"
 #include "GameObjectData.h"
-#include "algorithm/ColliderManager.h"
+#include "ColliderData.h"
+#include "Input.h"
 #include <vector>
+
 //前方宣言
+class Camera;
 class Object3d;
 
 /// <summary>
@@ -59,7 +62,6 @@ private://メンバ変数
 	Vector3 axis_ = { 0.0f,1.0f,0.0f };
 	float angle_ = 0.0f;
 
-	std::unique_ptr<ColliderManager>colliderManager_ = nullptr;
 	std::vector<ColliderState> colliderStates_ = {};
 	std::vector<Collider> colliders_ = {};
 };

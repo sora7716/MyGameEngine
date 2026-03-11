@@ -1,7 +1,7 @@
 #pragma once
 #include "engine/base/Context.h"
-#include "engine/input/Input.h"
-#include "engine/debug/DebugCamera.h"
+#include "Input.h"
+#include "DebugCamera.h"
 #include <memory>
 
 // 前方宣言
@@ -51,6 +51,6 @@ protected://メンバ変数
 	//シーンファクトリー
 	AbstractSceneFactory* sceneFactory_ = nullptr;
 	//コライダーマネージャー
-	//std::unique_ptr<ColliderManager>colliderManager_ = nullptr;
+	std::unique_ptr<ColliderManager>colliderManager_ = nullptr;
 };
 

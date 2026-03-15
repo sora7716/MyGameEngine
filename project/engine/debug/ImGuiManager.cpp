@@ -1,6 +1,7 @@
 #include "ImGuiManager.h"
 #include "DirectXBase.h"
 #include "SRVManager.h"
+#include "algorithm/Rendering.h"
 #include "WinApi.h"
 
 //デストラクタ
@@ -68,16 +69,42 @@ void ImGuiManager::Draw() {
 #endif // USE_IMGUI
 }
 
+//デバッグで動かせるものをツリー上に配置
+void ImGuiManager::TreeNodeForEntityGroup(const std::string& label, EntityGroup& entityGroup) {
+	for (int32_t i = 0; i < entityGroup.objectCount; i++) {
+		ImGui::PushID(i);
+
+		if (ImGui::TreeNode((label + std::to_string(i)).c_str())) {
+			ImGuiManager::DebugGameObject(entityGroup.entity[i].gameObject);
+			ImGui::TreePop();
+		}
+
+		ImGui::PopID();
+	}
+}
+
 //トランスフォームデータ用のImGui
 void ImGuiManager::DragTransform(TransformData& transfromData) {
 #ifdef USE_IMGUI
+	ImGui::Checkbox("isUsingQuaternion", &transfromData.isUsingQuaternion);
 	ImGui::DragFloat3("scale", &transfromData.scale.x, 0.1f);
-	//ImGui::SliderAngle("rotateX", &transfromData.quaternion.x, 0.1f);
-	//ImGui::SliderAngle("rotateY", &transfromData.quaternion.y, 0.1f);
-	//ImGui::SliderAngle("rotateZ", &transfromData.quaternion.z, 0.1f);
-	ImGui::DragFloat4("rotate", &transfromData.quaternion.x, 0.1f);
+	if (transfromData.isUsingQuaternion) {
+		ImGui::DragFloat3("axis", &transfromData.axis.x, 0.01f, -1.0f, 1.0f);
+		ImGui::SliderAngle("angle", &transfromData.angle);
+		transfromData.quaternion = Rendering::MakeRotateAxisAngleQuaternion(transfromData.axis, transfromData.angle);
+	} else {
+		ImGui::DragFloat3("eulerAngle", &transfromData.eulerAngle.x, 0.1f);
+		transfromData.quaternion = Quaternion::MakeQuaternionForEulerAngle(transfromData.eulerAngle);
+	}
+	ImGui::DragFloat4("rotate", &transfromData.quaternion.x, 0.0f);
 	ImGui::DragFloat3("translate", &transfromData.translate.x, 0.1f);
 #endif // USE_IMGUI
+}
+
+//ゲームオブジェクトのデバッグ
+void ImGuiManager::DebugGameObject(GameObject& gameObject) {
+	ImGui::Checkbox("isAlive", &gameObject.isAlive);
+	DragTransform(gameObject.transformData);
 }
 
 //int型でcheckBoxを表示する

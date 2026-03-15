@@ -1,33 +1,31 @@
 #pragma once
 #include "ActorData.h"
-#include <string>
 
 //前方宣言
 class Object3dCommon;
 class Camera;
 
 /// <summary>
-/// アイテム
+/// プレイヤー
 /// </summary>
-class Item {
+class Player{
 public://メンバ関数
 	/// <summary>
 	/// コンストラクタ
 	/// </summary>
-	Item();
+	Player();
 
 	/// <summary>
 	/// デストラクタ
 	/// </summary>
-	~Item();
+	~Player();
 
 	/// <summary>
 	/// 初期化
 	/// </summary>
-	/// <param name="object3dCommon">Object3dの共通部分</param>
+	/// <param name="object3dCommon">3dオブジェクトの共通部分</param>
 	/// <param name="camera">カメラ</param>
-	/// <param name="modelName">モデル名</param>
-	void Initialize(Object3dCommon* object3dCommon, Camera* camera, const std::string& modelName);
+	void Initialize(Object3dCommon* object3dCommon, Camera* camera);
 
 	/// <summary>
 	/// 更新
@@ -38,13 +36,6 @@ public://メンバ関数
 	/// デバッグ
 	/// </summary>
 	void Debug();
-
-	/// <summary>
-	/// 衝突したら
-	/// </summary>
-	/// <param name="index">何番目が当たったのか</param>
-	/// <param name="other">衝突した物</param>
-	void OnCollision(int32_t index, ColliderState* other);
 
 	/// <summary>
 	/// 描画
@@ -65,7 +56,5 @@ public://メンバ関数
 private://メンバ変数
 	//エンティティグループ
 	EntityGroup entityGroup_ = {};
-	//生存カウント
-	uint32_t aliveCount_ = 0;
 };
 

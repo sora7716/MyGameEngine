@@ -70,6 +70,9 @@
     <Filter Include="engine\math\algorithm">
       <UniqueIdentifier>{f4a79ad1-4ad4-48c3-b59c-2cb96d487971}</UniqueIdentifier>
     </Filter>
+    <Filter Include="application\actor\field">
+      <UniqueIdentifier>{9ed0086f-1d8b-452f-9643-ea39d989dc8e}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="engine\main.cpp">
@@ -269,6 +272,12 @@
     </ClCompile>
     <ClCompile Include="application\gameObject\ColliderData.cpp">
       <Filter>application\gameObject</Filter>
+    </ClCompile>
+    <ClCompile Include="application\actor\field\Ground.cpp">
+      <Filter>application\actor\field</Filter>
+    </ClCompile>
+    <ClCompile Include="application\actor\character\player\Player.cpp">
+      <Filter>ソース ファイル</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -487,6 +496,12 @@
     </ClInclude>
     <ClInclude Include="application\gameObject\ColliderData.h">
       <Filter>application\gameObject</Filter>
+    </ClInclude>
+    <ClInclude Include="application\actor\field\Ground.h">
+      <Filter>application\actor\field</Filter>
+    </ClInclude>
+    <ClInclude Include="application\actor\character\player\Player.h">
+      <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

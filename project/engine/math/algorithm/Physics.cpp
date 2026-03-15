@@ -23,7 +23,7 @@ Vector3 Physics::ApplySpringForce(const Spring& spring, const Ball& ball) {
 		Vector3 displacement = (ball.position - restPosition) * length;
 		Vector3 restoringForce = displacement * -spring.stiffness;
 		//減衰抵抗を計算する
-		Vector3 dampingForce = ball.physicsData.velociy * -spring.dampingCoefficient;
+		Vector3 dampingForce = ball.physicsData.velocity * -spring.dampingCoefficient;
 		//減衰抵抗も加味して、物体にかかる力を決定する
 		Vector3 force = restoringForce + dampingForce;
 		result = force / ball.mass;

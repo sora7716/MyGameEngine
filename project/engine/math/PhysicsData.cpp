@@ -2,7 +2,7 @@
 
 //初期化
 void PhysicsData::Initialize() {
-	velociy = {};
+	velocity = {};
 	acceleration = {};
 	isOnGround = false;
 }

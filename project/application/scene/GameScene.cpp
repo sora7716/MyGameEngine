@@ -29,7 +29,7 @@ void GameScene::Initialize(const SceneContext& sceneContext) {
 	ground_->Initialize(sceneContext_.object3dCommon, camera_);
 
 	player_ = std::make_unique<Player>();
-	player_->Initialize(sceneContext_.object3dCommon, camera_);
+	player_->Initialize(sceneContext_.object3dCommon, camera_, sceneContext_.input);
 
 	for (Entity& entity : ground_->GetEntity()) {
 		colliderManager_->AddCollider(&entity.collider);

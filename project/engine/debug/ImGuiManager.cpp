@@ -76,6 +76,8 @@ void ImGuiManager::TreeNodeForEntityGroup(const std::string& label, EntityGroup&
 
 		if (ImGui::TreeNode((label + std::to_string(i)).c_str())) {
 			ImGuiManager::DebugGameObject(entityGroup.entity[i].gameObject);
+			ImGui::DragFloat3("velocity", &entityGroup.entity[i].physicsData.velocity.x, 0.1f);
+			ImGui::DragFloat3("acceleration", &entityGroup.entity[i].physicsData.acceleration.x, 0.1f);
 			ImGui::TreePop();
 		}
 

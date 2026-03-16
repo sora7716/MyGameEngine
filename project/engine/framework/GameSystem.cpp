@@ -10,7 +10,7 @@ void GameSystem::Initialize() {
 	//シーンの管理
 	core_->GetSceneManager()->Update();
 	//デバッグしたいシーンを呼び出す
-	core_->GetSceneManager()->ChangeScene("TestPlay");
+	core_->GetSceneManager()->ChangeScene("Game");
 #endif // _DEBUG
 }
 

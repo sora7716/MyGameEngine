@@ -209,12 +209,5 @@ public://メンバ関数
 	/// <param name="mat">行列</param>
 	/// <returns>TransformData</returns>
 	static TransformData DecomposeMatrix(const Matrix4x4& mat);
-
-	/// <summary>
-    /// 回転用のクォータニオンの作成
-    /// </summary>
-    /// <param name="quaternion">クォータニオン</param>
-    /// <returns>回転用のクォータニオン</returns>
-	static Quaternion MakeRotateQuaternion(const Quaternion& quaternion);
 };
 

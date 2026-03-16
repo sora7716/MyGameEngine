@@ -28,7 +28,7 @@ struct Pendulum {
 
 //速度や加速度地面の上にいるかどうか
 struct PhysicsData {
-	Vector3 velociy;
+	Vector3 velocity;
 	Vector3 acceleration;
 	bool isOnGround;
 

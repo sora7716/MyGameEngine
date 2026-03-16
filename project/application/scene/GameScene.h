@@ -4,14 +4,8 @@
 #include "PrimitiveData.h"
 
 //前方宣言
-//class Player;
-//class GameCamera;
-//class Field;
-//class Enemy;
-//class EnemyManager;
-//class Score;
-//class StageTimer;
-//class Item;
+class Ground;
+class Player;
 
 /// <summary>
 /// ゲームシーン
@@ -51,26 +45,9 @@ public://メンバ関数
 private://メンバ変数
 	//ゲームシーンのカメラ
 	Camera* camera_ = nullptr;
-
-	////プレイヤー
-	//std::unique_ptr<Player>player_ = nullptr;
-
-	////ゲームカメラ
-	//std::unique_ptr<GameCamera>gameCamera_ = nullptr;
-
-	////フィールド
-	//std::unique_ptr<Field>field_ = nullptr;
-
-	////敵の管理
-	////EnemyManager* enemyManager_ = nullptr;
-
-	////スコアの表示
-	//std::unique_ptr<Score>score_ = nullptr;
-	////ステージタイマー
-	//std::unique_ptr<StageTimer>stageTimer_ = nullptr;
-
-	//std::unique_ptr<Enemy>enemy_ = nullptr;
-
-	//std::unique_ptr<Item>item_ = nullptr;
+	//地面
+	std::unique_ptr<Ground>ground_ = nullptr;
+	//プレイヤー
+	std::unique_ptr<Player>player_ = nullptr;
 };
 

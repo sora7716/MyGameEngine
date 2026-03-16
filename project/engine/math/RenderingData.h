@@ -8,9 +8,18 @@
 //Transform情報
 struct TransformData {
 	Vector3 scale;
-	Vector3 eulerAngle;
 	Quaternion quaternion;
 	Vector3 translate;
+
+	//デバック用
+	//軸
+	Vector3 axis;
+	//角度
+	float angle;
+	//オイラー角
+	Vector3 eulerAngle;
+	//クォータニオンかオイラーか
+	bool isUsingQuaternion;
 
 	/// <summary>
 	/// 初期化

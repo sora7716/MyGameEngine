@@ -37,7 +37,7 @@ void DebugCamera::Update() {
 	}
 
 	//カメラ
-	camera_->SetQuaternion(rotate_);
+	camera_->SetQuaternion(Quaternion::MakeQuaternionForEulerAngle(rotate_));
 	camera_->SetTranslate(translate_);
 	camera_->Update();
 }
@@ -173,7 +173,7 @@ void DebugCamera::TranslateUpdate() {
 	}
 
 	//カメラの角度をもとに回転行列を求める
-	Matrix4x4 rotMat = Rendering::MakeRotateMatrix(Rendering::MakeRotateQuaternion(rotate_));
+	Matrix4x4 rotMat = Rendering::MakeRotateMatrix(Quaternion::MakeQuaternionForEulerAngle(rotate_));
 
 	//カメラの向いてる方向を正にする(XとZ軸限定)
 	Vector3 moveDirXZ = Math::TransformNormal(Vector3(moveDir_.x, 0.0f, moveDir_.z), rotMat);

@@ -5,6 +5,6 @@ void ColliderState::Initialize(GameObject& gameObject, PhysicsData& physicsData,
 	scalePtr = &scale;
 	rotatePtr = &gameObject.transformData.quaternion;
 	translatePtr = &gameObject.transformData.translate;
-	velocityPtr = &physicsData.velociy;
+	velocityPtr = &physicsData.velocity;
 	isOnGroundPtr = &physicsData.isOnGround;
 }

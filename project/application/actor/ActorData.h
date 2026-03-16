@@ -36,18 +36,10 @@ struct RenderObject {
 	RenderObject&& Build();
 };
 
-//弾
-struct BulletData {
-	GameObject gameObject;
-	RenderObject renderObject;
-	Vector3 direction;
-	Vector3 shootingPoint;
-	float aliveRange;
-};
-
 //実体
 struct Entity {
 	GameObject gameObject;
+	PhysicsData physicsData;
 	Vector3 hitBoxScale;
 	ColliderState colliderState;
 	Collider collider;

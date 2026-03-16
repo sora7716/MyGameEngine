@@ -112,7 +112,7 @@ private://メンバ変数
 	//カメラ
 	Camera* camera_ = nullptr;
 	//X,Y,Z軸回りのローカル回転角
-	Quaternion rotate_ = { 0.0f,0.0f,0.0f,0.0f };
+	Vector3 rotate_ = { 0.0f,0.0f,0.0f };
 	//ローカル座標
 	Vector3 translate_ = { 0.0f,0.0f,-10.0f };
 	//マウスのフリック量

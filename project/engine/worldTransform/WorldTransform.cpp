@@ -74,11 +74,10 @@ void WorldTransform::SetTransformData(const TransformData& transform) {
 
 //ワールド座標のセッター(2D)
 void WorldTransform::SetTransform2d(const Transform2dData& transform2d) {
-	transform_ = {
-		{transform2d.scale.x,transform2d.scale.y,1.0f},
-		{0.0f,0.0f,transform2d.rotate},
-		{transform2d.translate.x,transform2d.translate.y,0.0f}
-	};
+	transform_.scale = { transform2d.scale.x,transform2d.scale.y,1.0f };
+	transform_.eulerAngle = { 0.0f,0.0f,transform2d.rotate };
+	transform_.quaternion = Quaternion::MakeQuaternionForEulerAngle(transform_.eulerAngle);
+	transform_.translate = { transform2d.translate.x,transform2d.translate.y,0.0f };
 }
 
 //スケールのセッター

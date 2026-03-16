@@ -64,7 +64,7 @@ void GameScene::Update() {
 	ground_->Update();
 
 	if (!player_->GetEntity()[0].gameObject.isAlive) {
-		sceneContext_.sceneManager->ChangeScene("Result");
+		sceneContext_.sceneManager->ChangeScene("GameOver");
 	}
 
 	if (player_->IsGoalReached()) {

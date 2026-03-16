@@ -6,15 +6,13 @@
 #include <sstream>
 #include <iomanip>
 #include "Text.h"
-//#include "application/actor/Score.h"
+#include "field/StageTimer.h"
 
 //コンストラクタ
-ResultScene::ResultScene() {
-}
+ResultScene::ResultScene() {}
 
 //デストラクタ
-ResultScene::~ResultScene() {
-}
+ResultScene::~ResultScene() {}
 
 //初期化
 void ResultScene::Initialize(const SceneContext& sceneContext) {
@@ -27,9 +25,9 @@ void ResultScene::Initialize(const SceneContext& sceneContext) {
 	drawScore_->Initialize(sceneContext_.object2dCommon, "drawScore");
 	//スコアの文字列を作成
 	std::ostringstream scoreText;
-	//scoreText << "SCORE : " << std::setw(Score::kDigitCount) << std::setfill('0') << score_->GetScore();
-	//スコアをリセット
-	//score_->SetScore(0);
+	scoreText << "SCORE : " << std::setw(3) << std::setfill('0') << stageTimer_->timer_;
+	//タイマーをリセット
+	stageTimer_->timer_ = 100.0f;
 	drawScore_->SetText(scoreText.str());
 
 	//PressReturn

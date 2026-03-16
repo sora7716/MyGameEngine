@@ -48,6 +48,8 @@ public://メンバ関数
 	/// </summary>
 	/// <returns>時間切れ</returns>
 	bool IsTimeUp();
+public:
+	static inline float timer_ = 100.0f;
 private://メンバ変数
 	//テキスト
 	std::unique_ptr<Text> text_ = nullptr;
@@ -55,7 +57,6 @@ private://メンバ変数
 	//トランスフォーム
 	Transform2dData transformData_ = {};
 	//タイマー
-	float timer_ = 100.0f;
 	//時間切れ
 	bool isTimeUp_ = false;
 };

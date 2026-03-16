@@ -2,10 +2,10 @@
 #include "TitleScene.h"
 #include "GameScene.h"
 #include "ResultScene.h"
+#include "GameOverScene.h"
 #include "TestPlayScene.h"
 //デストラクタ
-SceneFactory::~SceneFactory() {
-}
+SceneFactory::~SceneFactory() {}
 
 // シーンの生成
 IScene* SceneFactory::CreateScene(const std::string& sceneName) {
@@ -17,6 +17,8 @@ IScene* SceneFactory::CreateScene(const std::string& sceneName) {
 		newScene = new GameScene();
 	} else if (sceneName == "Result") {
 		newScene = new ResultScene();
+	} else if (sceneName == "GameOver") {
+		newScene = new GameOverScene();
 	} else if (sceneName == "TestPlay") {
 		newScene = new TestPlayScene();
 	}
@@ -24,5 +26,4 @@ IScene* SceneFactory::CreateScene(const std::string& sceneName) {
 }
 
 //コンストラクタ
-SceneFactory::SceneFactory(AbstractSceneFactory::ConstructorKey key) :AbstractSceneFactory(key) {
-}
+SceneFactory::SceneFactory(AbstractSceneFactory::ConstructorKey key) :AbstractSceneFactory(key) {}

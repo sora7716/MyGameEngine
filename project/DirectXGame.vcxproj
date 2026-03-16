@@ -19,6 +19,7 @@
     <ClCompile Include="application\gameObject\ColliderData.cpp" />
     <ClCompile Include="application\gameObject\GameObjectData.cpp" />
     <ClCompile Include="application\gameObject\GameObjectList.cpp" />
+    <ClCompile Include="application\scene\GameOverScene.cpp" />
     <ClCompile Include="application\scene\GameScene.cpp" />
     <ClCompile Include="application\scene\ResultScene.cpp" />
     <ClCompile Include="application\scene\TestPlayScene.cpp" />
@@ -90,6 +91,7 @@
     <ClInclude Include="application\gameObject\ColliderData.h" />
     <ClInclude Include="application\gameObject\GameObjectData.h" />
     <ClInclude Include="application\gameObject\GameObjectList.h" />
+    <ClInclude Include="application\scene\GameOverScene.h" />
     <ClInclude Include="application\scene\GameScene.h" />
     <ClInclude Include="application\scene\ResultScene.h" />
     <ClInclude Include="application\scene\TestPlayScene.h" />

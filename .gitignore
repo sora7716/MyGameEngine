@@ -321,3 +321,7 @@ DirectXGame/imgui.ini
 #Dump
 *.dmp
 Dumps/
+
+#ImGui
+imgui.ini
+/project/application/actor/Enemy.cpp

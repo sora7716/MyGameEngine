@@ -67,6 +67,10 @@ void GameScene::Update() {
 		sceneContext_.sceneManager->ChangeScene("GameOver");
 	}
 
+	if (stageTimer_->IsTimeUp()) {
+		sceneContext_.sceneManager->ChangeScene("GameOver");
+	}
+
 	if (player_->IsGoalReached()) {
 		sceneContext_.sceneManager->ChangeScene("Result");
 	}

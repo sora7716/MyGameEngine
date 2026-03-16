@@ -10,12 +10,10 @@
 #include <string>
 
 //コンストラクタ
-TestPlayScene::TestPlayScene() {
-};
+TestPlayScene::TestPlayScene() {};
 
 //デストラクタ
-TestPlayScene::~TestPlayScene() {
-};
+TestPlayScene::~TestPlayScene() {};
 
 //初期化
 void TestPlayScene::Initialize(const SceneContext& sceneContext) {
@@ -24,7 +22,7 @@ void TestPlayScene::Initialize(const SceneContext& sceneContext) {
 	camera_ = sceneContext_.cameraManager->FindCamera("testPlayCamera");
 
 	object3d_ = std::make_unique<Object3d>();
-	uint32_t objectCount = 2;
+	uint32_t objectCount = 1;
 	object3d_->Initialize(sceneContext_.object3dCommon, camera_, objectCount);
 	object3d_->SetModel("sphere");
 
@@ -34,7 +32,7 @@ void TestPlayScene::Initialize(const SceneContext& sceneContext) {
 		gameObject.Initialize();
 	}
 	gameObject_[0].transformData.translate = { 4.0f,0.0f,0.0f };
-	gameObject_[1].transformData.translate = { 0.0f,0.0f,0.0f };
+	//gameObject_[1].transformData.translate = { 0.0f,0.0f,0.0f };
 
 	colliderStates_.resize(objectCount);
 	colliders_.resize(objectCount);
@@ -47,8 +45,8 @@ void TestPlayScene::Initialize(const SceneContext& sceneContext) {
 	}
 	colliders_[0].layer = Layer::kPlayer;
 	colliders_[0].maskLayer = ColliderManager::ToBit(Layer::kEnemy);
-	colliders_[1].layer = Layer::kEnemy;
-	colliders_[1].maskLayer = ColliderManager::ToBit(Layer::kPlayer);
+	//colliders_[1].layer = Layer::kEnemy;
+	//colliders_[1].maskLayer = ColliderManager::ToBit(Layer::kPlayer);
 
 	for (uint32_t i = 0; i < objectCount; i++) {
 		colliderManager_->AddCollider(&colliders_[i]);
@@ -81,6 +79,7 @@ void TestPlayScene::Update() {
 	}
 
 	//gameObject_.transformData.quaternion = Quaternion::Slerp(start, end, frame_).Normalize();
+	
 	//Object3d
 	ImGui::Begin("object3d");
 	for (int32_t i = 0; i < gameObject_.size(); i++) {
@@ -88,17 +87,18 @@ void TestPlayScene::Update() {
 		ImGui::SeparatorText(("object:" + std::to_string(i)).c_str());
 		ImGui::DragFloat3("translate", &gameObject_[i].transformData.translate.x, 0.1f);
 		ImGui::Checkbox("isAlive", &gameObject_[i].isAlive);
+		if (ImGui::DragFloat3("eulerAngle", &eulerAngle_.x, 0.1f)) {
+			gameObject_[i].transformData.quaternion = Quaternion::MakeQuaternionForEulerAngle(eulerAngle_);
+		} else if (ImGui::DragFloat("angle", &angle_, 0.1f)) {
+			gameObject_[i].transformData.quaternion = Rendering::MakeRotateAxisAngleQuaternion(axis_, angle_).Normalize();
+		}
 		ImGui::PopID();
 	}
+	ImGui::DragFloat3("axis", &axis_.x, 0.1f, -1.0f, 1.0f);
+	
 	//ImGuiManager::DragTransform(transformData_);
 	//ImGui::DragFloat4("rotate", &transformData_.quaternion.x, 0.1f);
-	//ImGui::DragFloat3("axis", &axis_.x, 0.1f);
 
-	//if (ImGui::DragFloat3("eulerAngle", &eulerAngle_.x, 0.1f)) {
-	//	transformData_.quaternion = Quaternion::MakeQuaternionForEulerAngle(eulerAngle_);
-	//} else if (ImGui::DragFloat("angle", &angle_, 0.1f)) {
-	//	transformData_.quaternion = Rendering::MakeRotateAxisAngleQuaternion(axis_, angle_).Normalize();
-	//}
 	//if (ImGui::Button("isAnimation")) {
 	//	isAnimation_ = true;
 	//}

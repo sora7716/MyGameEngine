@@ -25,7 +25,7 @@ void ResultScene::Initialize(const SceneContext& sceneContext) {
 	drawScore_->Initialize(sceneContext_.object2dCommon, "drawScore");
 	//スコアの文字列を作成
 	std::ostringstream scoreText;
-	scoreText << "SCORE : " << std::setw(3) << std::setfill('0') << stageTimer_->timer_;
+	scoreText << "SCORE : " << std::setw(3) << std::setfill('0') << 100.0f - stageTimer_->timer_;
 	//タイマーをリセット
 	stageTimer_->timer_ = 100.0f;
 	drawScore_->SetText(scoreText.str());

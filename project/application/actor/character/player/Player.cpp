@@ -45,6 +45,7 @@ void Player::Initialize(Object3dCommon* object3dCommon, Camera* camera, Input* i
 		entity.collider.bodyType = BodyType::kDynamic;
 		entity.collider.layer = Layer::kPlayer;
 		entity.collider.maskLayer = static_cast<uint32_t>(Layer::kGround);
+		entity.collider.onCollision = [this](ColliderState* other) {this->OnCollision(other); };
 	}
 }
 
@@ -58,6 +59,11 @@ void Player::Update() {
 
 		entityGroup_.renderObject.object3d->SetGameObject(i, entityGroup_.entity[i].gameObject);
 		entityGroup_.renderObject.hitBox->SetTransformData(i, entityGroup_.entity[i].gameObject.transformData);
+
+		//プレイヤーが落ちたら
+		if (entityGroup_.entity[i].gameObject.transformData.translate.y < -10.0f) {
+			entityGroup_.entity[i].gameObject.isAlive = false;
+		}
 	}
 
 	entityGroup_.renderObject.object3d->Update();
@@ -87,6 +93,15 @@ std::vector<Entity>& Player::GetEntity() {
 	return entityGroup_.entity;
 }
 
+//平行移動のゲッター
+Vector3 Player::GetTranslate() {
+	return entityGroup_.entity[0].gameObject.transformData.translate;
+}
+
+//ゴールしたかどうか
+bool Player::IsGoalReached() {
+	return isGoalReached_;
+}
 
 //移動
 void Player::Move() {
@@ -132,8 +147,8 @@ void Player::Move() {
 	moveDirection_ = { moveDirXZ.x,moveDirection_.y,moveDirXZ.z };
 
 	//移動させる
-	entityGroup_.entity[0].physicsData.velocity.x = moveDirection_.x * 0.5f;
-	entityGroup_.entity[0].physicsData.velocity.z = moveDirection_.z * 0.5f;
+	entityGroup_.entity[0].physicsData.velocity.x = moveDirection_.x * kMoveSpeed;
+	entityGroup_.entity[0].physicsData.velocity.z = moveDirection_.z * kMoveSpeed;
 }
 
 //ジャンプ
@@ -142,7 +157,7 @@ void Player::Jump() {
 		//地面にいたらジャンプできるようにする
 		if (input_->TriggerXboxPad(xboxNumber_, XboxInput::kA)) {
 			//Y軸に初速を代入
-			entityGroup_.entity[0].physicsData.velocity.y = 0.5f;
+			entityGroup_.entity[0].physicsData.velocity.y = kJumpSpeed;
 			//地面にいるかどうかのフラグをfalse
 			entityGroup_.entity[0].physicsData.isOnGround = false;
 		}
@@ -150,11 +165,18 @@ void Player::Jump() {
 #ifdef _DEBUG
 		if (input_->TriggerKey(DIK_SPACE)) {
 			//Y軸に初速を代入
-			entityGroup_.entity[0].physicsData.velocity.y = 0.5f;
+			entityGroup_.entity[0].physicsData.velocity.y = kJumpSpeed;
 			//地面にいるかどうかのフラグをfalse
 			entityGroup_.entity[0].physicsData.isOnGround = false;
 		}
 #endif // _DEBUG
 
+	}
+}
+
+//衝突したら
+void Player::OnCollision(ColliderState* other) {
+	if (other->tag == Tag::kGoal) {
+		isGoalReached_ = true;
 	}
 }

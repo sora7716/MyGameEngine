@@ -71,6 +71,7 @@ void ImGuiManager::Draw() {
 
 //デバッグで動かせるものをツリー上に配置
 void ImGuiManager::TreeNodeForEntityGroup(const std::string& label, EntityGroup& entityGroup) {
+#ifdef USE_IMGUI
 	for (int32_t i = 0; i < entityGroup.objectCount; i++) {
 		ImGui::PushID(i);
 
@@ -83,6 +84,7 @@ void ImGuiManager::TreeNodeForEntityGroup(const std::string& label, EntityGroup&
 
 		ImGui::PopID();
 	}
+#endif // USE_IMGUI
 }
 
 //トランスフォームデータ用のImGui
@@ -105,8 +107,10 @@ void ImGuiManager::DragTransform(TransformData& transfromData) {
 
 //ゲームオブジェクトのデバッグ
 void ImGuiManager::DebugGameObject(GameObject& gameObject) {
+#ifdef USE_IMGUI
 	ImGui::Checkbox("isAlive", &gameObject.isAlive);
 	DragTransform(gameObject.transformData);
+#endif // USE_IMGUI
 }
 
 //int型でcheckBoxを表示する
@@ -120,6 +124,7 @@ void ImGuiManager::CheckBoxToInt(const std::string& label, int32_t& frag) {
 
 //4x4の行列の表示
 void ImGuiManager::Matrix4x4Text(const Matrix4x4& matrix, const char* label) {
+#ifdef USE_IMGUI
 	ImGui::SeparatorText(label);
 	for (int32_t i = 0; i < 4; i++) {
 		for (int32_t j = 0; j < 4; j++) {
@@ -131,26 +136,32 @@ void ImGuiManager::Matrix4x4Text(const Matrix4x4& matrix, const char* label) {
 			}
 		}
 	}
+#endif // USE_IMGUI
 }
 
 //3次元ベクトルの表示
 void ImGuiManager::Vector3Text(const Vector3& vector, const char* label) {
+#ifdef USE_IMGUI
 	ImGui::SeparatorText(label);
 	ImGui::Text("%5.3f %5.3f %5.3f", vector.x, vector.y, vector.z);
+#endif // USE_IMGUI
 }
 
 //クオータニオンの表示
 void ImGuiManager::QuaternionText(const Quaternion& quaternion, const char* label) {
+#ifdef USE_IMGUI
 	ImGui::SeparatorText(label);
 	ImGui::Text("%5.3f %5.3f %5.3f %5.3f", quaternion.x, quaternion.y, quaternion.z, quaternion.w);
+#endif // USE_IMGUI
 }
 
 //浮動小数の表示
 void ImGuiManager::FloatText(float num, const char* label) {
+#ifdef USE_IMGUI
 	ImGui::SeparatorText(label);
 	ImGui::Text("%5.3f", num);
+#endif // USE_IMGUI
 }
 
 //コンストラクタ
-ImGuiManager::ImGuiManager(ConstructorKey) {
-}
+ImGuiManager::ImGuiManager(ConstructorKey) {}

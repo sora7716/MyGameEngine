@@ -1,7 +1,7 @@
 #pragma once
 #include "IScene.h"
-#include "GameObjectData.h"
-#include "ColliderData.h"
+#include "gameObject/GameObjectData.h"
+#include "gameObject/ColliderData.h"
 #include "Input.h"
 #include <vector>
 

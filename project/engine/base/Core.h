@@ -15,7 +15,7 @@
 #include "engine/scene/SceneManager.h"
 #include "engine/audio/AudioManager.h"
 #include "engine/particle/ParticleManager.h"
-#include "GameObjectList.h"
+#include "gameObject/GameObjectList.h"
 #include "engine/scene/AbstractSceneFactory.h"
 #include "engine/base/Context.h"
 #include <memory>

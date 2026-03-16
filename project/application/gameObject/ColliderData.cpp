@@ -7,4 +7,5 @@ void ColliderState::Initialize(GameObject& gameObject, PhysicsData& physicsData,
 	translatePtr = &gameObject.transformData.translate;
 	velocityPtr = &physicsData.velocity;
 	isOnGroundPtr = &physicsData.isOnGround;
+	tag = gameObject.tag;
 }

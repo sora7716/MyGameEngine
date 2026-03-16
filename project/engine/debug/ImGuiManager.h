@@ -1,5 +1,5 @@
 #pragma once
-#include "GameObjectData.h"
+#include "gameObject/GameObjectData.h"
 #include "ActorData.h"
 #ifdef USE_IMGUI
 #include "imgui/imgui.h"

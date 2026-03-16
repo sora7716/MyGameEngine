@@ -8,15 +8,15 @@
 #include "field/Ground.h"
 #include "character/player/Player.h"
 #include "algorithm/ColliderManager.h"
+#include "camera/GameCamera.h"
+#include "field/StageTimer.h"
 
 
 //コンストラクタ
-GameScene::GameScene() {
-}
+GameScene::GameScene() {}
 
 //デストラクタ
-GameScene::~GameScene() {
-}
+GameScene::~GameScene() {}
 
 //初期化
 void GameScene::Initialize(const SceneContext& sceneContext) {
@@ -24,6 +24,10 @@ void GameScene::Initialize(const SceneContext& sceneContext) {
 	IScene::Initialize(sceneContext);
 	//カメラの設定
 	camera_ = sceneContext_.cameraManager->FindCamera("gameCamera");
+
+	//ゲームカメラ
+	gameCamera_ = std::make_unique<GameCamera>();
+	gameCamera_->Initialize(sceneContext_.input, camera_);
 
 	ground_ = std::make_unique<Ground>();
 	ground_->Initialize(sceneContext_.object3dCommon, camera_);
@@ -38,17 +42,39 @@ void GameScene::Initialize(const SceneContext& sceneContext) {
 	for (Entity& entity : player_->GetEntity()) {
 		colliderManager_->AddCollider(&entity.collider);
 	}
+
+	//ステージタイマー
+	stageTimer_ = std::make_unique<StageTimer>();
+	stageTimer_->Initialize(sceneContext_.object2dCommon);
 }
 
 //更新
 void GameScene::Update() {
-
 	//シーンのインタフェースの初期化
 	IScene::Update();
 
+	//ゲームカメラ
+	gameCamera_->SetTragetPos(player_->GetTranslate());
+	gameCamera_->Update();
+
+	//カメラの設定
+	ground_->SetCamera(camera_);
+	player_->SetCamera(camera_);
+
 	ground_->Update();
 
+	if (!player_->GetEntity()[0].gameObject.isAlive) {
+		sceneContext_.sceneManager->ChangeScene("Result");
+	}
+
+	if (player_->IsGoalReached()) {
+		sceneContext_.sceneManager->ChangeScene("Result");
+	}
+
 	player_->Update();
+
+	stageTimer_->Update();
+
 #ifdef USE_IMGUI
 	//ImGuiの受付開始
 	sceneContext_.imguiManager->Begin();
@@ -87,6 +113,8 @@ void GameScene::Draw() {
 	ground_->Draw();
 
 	player_->Draw();
+
+	stageTimer_->Draw();
 }
 
 //終了

@@ -12,8 +12,10 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="application\actor\ActorData.cpp" />
+    <ClCompile Include="application\actor\camera\GameCamera.cpp" />
     <ClCompile Include="application\actor\character\player\Player.cpp" />
     <ClCompile Include="application\actor\field\Ground.cpp" />
+    <ClCompile Include="application\actor\field\StageTimer.cpp" />
     <ClCompile Include="application\gameObject\ColliderData.cpp" />
     <ClCompile Include="application\gameObject\GameObjectData.cpp" />
     <ClCompile Include="application\gameObject\GameObjectList.cpp" />
@@ -81,8 +83,10 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="application\actor\ActorData.h" />
+    <ClInclude Include="application\actor\camera\GameCamera.h" />
     <ClInclude Include="application\actor\character\player\Player.h" />
     <ClInclude Include="application\actor\field\Ground.h" />
+    <ClInclude Include="application\actor\field\StageTimer.h" />
     <ClInclude Include="application\gameObject\ColliderData.h" />
     <ClInclude Include="application\gameObject\GameObjectData.h" />
     <ClInclude Include="application\gameObject\GameObjectList.h" />

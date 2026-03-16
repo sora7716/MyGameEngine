@@ -1,6 +1,8 @@
 #pragma once
 #include "ActorData.h"
 #include <windows.h>
+#include <Vector3.h>
+#include "gameObject/ColliderData.h"
 
 //前方宣言
 class Object3dCommon;
@@ -56,6 +58,18 @@ public://メンバ関数
 	/// </summary>
 	/// <returns>エンティティ</returns>
 	std::vector<Entity>& GetEntity();
+
+	/// <summary>
+	/// 平行移動のゲッター
+	/// </summary>
+	/// <returns>平行移動</returns>
+	Vector3 GetTranslate();
+
+	/// <summary>
+	/// ゴールしたかどうか
+	/// </summary>
+	/// <returns>ゴールしたか</returns>
+	bool IsGoalReached();
 private://メンバ関数
 	/// <summary>
 	/// 移動
@@ -66,6 +80,17 @@ private://メンバ関数
 	/// ジャンプ
 	/// </summary>
 	void Jump();
+
+	/// <summary>
+	/// 衝突したら
+	/// </summary>
+	/// <param name="other">衝突対象</param>
+	void OnCollision(ColliderState* other);
+private://静的メンバ変数
+	//移動速度
+	static inline const float kMoveSpeed = 8.0f;
+	//ジャンプするときの初速
+	static inline const float kJumpSpeed = 15.0f;
 private://メンバ変数
 	//エンティティグループ
 	EntityGroup entityGroup_ = {};
@@ -77,5 +102,8 @@ private://メンバ変数
 	DWORD xboxNumber_ = 0;
 	//カメラ
 	Camera* camera_ = nullptr;
+
+	//ゴールしたら
+	bool isGoalReached_ = false;
 };
 

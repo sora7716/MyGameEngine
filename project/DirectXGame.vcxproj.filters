@@ -279,6 +279,12 @@
     <ClCompile Include="application\actor\character\player\Player.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
+    <ClCompile Include="application\actor\camera\GameCamera.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="application\actor\field\StageTimer.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="engine\math\Matrix4x4.h">
@@ -501,6 +507,12 @@
       <Filter>application\actor\field</Filter>
     </ClInclude>
     <ClInclude Include="application\actor\character\player\Player.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="application\actor\camera\GameCamera.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="application\actor\field\StageTimer.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
   </ItemGroup>

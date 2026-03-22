@@ -158,7 +158,7 @@ void Player::Jump() {
 		//地面にいたらジャンプできるようにする
 		if (input_->TriggerXboxPad(xboxNumber_, XboxInput::kA)) {
 			//Y軸に初速を代入
-			entityGroup_.entity[0].physicsData.velocity.y = kJumpSpeed;
+			entityGroup_.entity[0].physicsData.velocity.y = kJumpSpeed * jumpMultiplier_;
 			//地面にいるかどうかのフラグをfalse
 			entityGroup_.entity[0].physicsData.isOnGround = false;
 		}
@@ -177,7 +177,11 @@ void Player::Jump() {
 
 //衝突したら
 void Player::OnCollision(ColliderState* other) {
-	if (other->tag == Tag::kGoal) {
+	if (*other->tagPtr == Tag::kGoal) {
 		isGoalReached_ = true;
+	} else if (*other->tagPtr == Tag::kJumpPad) {
+		jumpMultiplier_ = 2.0f;//ジャンプの倍率を変更
+	} else {
+		jumpMultiplier_ = 1.0f;//ジャンプの倍率を当倍に変更
 	}
 }

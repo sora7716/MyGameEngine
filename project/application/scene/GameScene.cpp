@@ -7,6 +7,7 @@
 #include "Core.h"
 #include "field/Ground.h"
 #include "field/FallingGround.h"
+#include "field/JumpPad.h"
 #include "character/player/Player.h"
 #include "algorithm/ColliderManager.h"
 #include "camera/GameCamera.h"
@@ -39,6 +40,13 @@ void GameScene::Initialize(const SceneContext& sceneContext) {
 	fallingGround_ = std::make_unique<FallingGround>();
 	fallingGround_->Initialize(sceneContext_.object3dCommon, camera_);
 
+	jumpPad_ = std::make_unique<JumpPad>();
+	jumpPad_->Initialize(sceneContext_.object3dCommon, camera_);
+
+	for (Entity& entity : jumpPad_->GetEntity()) {
+		colliderManager_->AddCollider(&entity.collider);
+	}
+
 	for (Entity& entity : fallingGround_->GetEntity()) {
 		colliderManager_->AddCollider(&entity.collider);
 	}
@@ -66,11 +74,13 @@ void GameScene::Update() {
 	gameCamera_->Update();
 
 	//カメラの設定
+	jumpPad_->SetCamera(camera_);
 	fallingGround_->SetCamera(camera_);
 	ground_->SetCamera(camera_);
 	player_->SetCamera(camera_);
 
 	fallingGround_->Update();
+	jumpPad_->Update();
 	ground_->Update();
 
 	if (!player_->GetEntity()[0].gameObject.isAlive) {
@@ -101,6 +111,7 @@ void GameScene::Update() {
 	ImGui::Begin("ground");
 	ground_->Debug();
 	fallingGround_->Debug();
+	jumpPad_->Debug();
 	ImGui::End();
 
 	//プレイヤー
@@ -128,6 +139,8 @@ void GameScene::Draw() {
 	ground_->Draw();
 
 	fallingGround_->Draw();
+
+	jumpPad_->Draw();
 
 	player_->Draw();
 

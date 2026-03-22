@@ -17,6 +17,7 @@
     <ClCompile Include="application\actor\field\BaseGround.cpp" />
     <ClCompile Include="application\actor\field\FallingGround.cpp" />
     <ClCompile Include="application\actor\field\Ground.cpp" />
+    <ClCompile Include="application\actor\field\JumpPad.cpp" />
     <ClCompile Include="application\actor\field\StageTimer.cpp" />
     <ClCompile Include="application\gameObject\ColliderData.cpp" />
     <ClCompile Include="application\gameObject\GameObjectData.cpp" />
@@ -91,6 +92,7 @@
     <ClInclude Include="application\actor\field\BaseGround.h" />
     <ClInclude Include="application\actor\field\FallingGround.h" />
     <ClInclude Include="application\actor\field\Ground.h" />
+    <ClInclude Include="application\actor\field\JumpPad.h" />
     <ClInclude Include="application\actor\field\StageTimer.h" />
     <ClInclude Include="application\gameObject\ColliderData.h" />
     <ClInclude Include="application\gameObject\GameObjectData.h" />

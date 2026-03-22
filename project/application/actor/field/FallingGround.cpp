@@ -56,7 +56,7 @@ void FallingGround::Draw() {
 
 //衝突したら
 void FallingGround::OnCollision(uint32_t index, ColliderState* other) {
-	if (other->tag == Tag::kPlayer) {
+	if (*other->tagPtr == Tag::kPlayer) {
 		if (!isFalling_) {
 			fallDelaySecond_ = kFallDelaySecond;//落ちるまでの時間を設定
 			isFalling_ = true;//落ちるフラグを立てる

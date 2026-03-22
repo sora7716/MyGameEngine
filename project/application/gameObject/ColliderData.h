@@ -28,7 +28,7 @@ struct ColliderState {
 	Vector3* translatePtr;
 	Vector3* velocityPtr;
 	bool* isOnGroundPtr;
-	Tag tag;
+	Tag *tagPtr;
 
 	/// <summary>
     /// 初期化

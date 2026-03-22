@@ -102,8 +102,9 @@ private://メンバ変数
 	DWORD xboxNumber_ = 0;
 	//カメラ
 	Camera* camera_ = nullptr;
-
 	//ゴールしたら
 	bool isGoalReached_ = false;
+	//ジャンプの倍率
+	float jumpMultiplier_ = 1.0f;
 };
 

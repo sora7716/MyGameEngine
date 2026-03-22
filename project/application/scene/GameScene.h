@@ -53,6 +53,8 @@ private://メンバ変数
 	std::unique_ptr<BaseGround>ground_ = nullptr;
 	//落ちる床
 	std::unique_ptr<BaseGround>fallingGround_ = nullptr;
+	//ジャンプパッド
+	std::unique_ptr<BaseGround>jumpPad_ = nullptr;
 	//プレイヤー
 	std::unique_ptr<Player>player_ = nullptr;
 	//ステージタイマー

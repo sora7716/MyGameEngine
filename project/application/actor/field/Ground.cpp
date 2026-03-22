@@ -45,9 +45,3 @@ void Ground::Initialize(Object3dCommon* object3dCommon, Camera* camera) {
 	entityGroup_.entity[6].gameObject.transformData.translate = { -3.0f,10.0f,-1.0f };
 	entityGroup_.entity[6].colliderState.tag = Tag::kGoal;
 }
-
-//更新
-void Ground::Update() {
-	//基底クラスの更新
-	BaseGround::Update();
-}

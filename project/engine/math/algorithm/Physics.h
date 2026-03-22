@@ -16,12 +16,12 @@ public://メンバ関数
 	~Physics();
 
 	/// <summary>
-    /// フックの法則(ばね力)
-    /// </summary>
-    /// <param name="spring">ばね</param>
-    /// <param name="ball">ボール</param>
+	/// フックの法則(ばね力)
+	/// </summary>
+	/// <param name="spring">ばね</param>
+	/// <param name="ball">ボール</param>
 	/// <returns>加速度</returns>
-	static Vector3 ApplySpringForce(const Spring& spring,const Ball& ball);
+	static Vector3 ApplySpringForce(const Spring& spring, const Ball& ball);
 
 	/// <summary>
 	/// 振り子
@@ -32,6 +32,6 @@ public://メンバ関数
 	static Vector3 ApplyPendulumForce(Pendulum& pendulum, const Vector3& ballPos);
 public://定数
 	//重力加速度
-	static inline const float kGravity = -20.0f;
+	static inline const Vector3 kGravity = { 0.0f,-20.0f,0.0f };
 };
 

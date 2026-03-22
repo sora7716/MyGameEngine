@@ -37,7 +37,8 @@ void Player::Initialize(Object3dCommon* object3dCommon, Camera* camera, Input* i
 	//初期化
 	for (Entity& entity : entityGroup_.entity) {
 		entity.gameObject.Initialize();
-		entity.physicsData.acceleration.y = Physics::kGravity;
+		entity.gameObject.tag = Tag::kPlayer;
+		entity.physicsData.acceleration = Physics::kGravity;
 		entity.colliderState.Initialize(entity.gameObject, entity.physicsData, entity.gameObject.transformData.scale);
 		entity.collider.owner = &entity.colliderState;
 		entity.collider.isEnabled = true;

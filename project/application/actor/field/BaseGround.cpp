@@ -3,6 +3,7 @@
 #include "WireframeObject3d.h"
 #include "Object3dCommon.h"
 #include "ImGuiManager.h"
+#include"algorithm/Math.h"
 
 //コンストラクタ
 BaseGround::BaseGround() {
@@ -28,15 +29,16 @@ void BaseGround::Initialize(Object3dCommon* object3dCommon, Camera* camera) {
 	entityGroup_.renderObject.hitBox->Initialize(object3dCommon->GetWireframeObject3dCommon(), camera, ModelType::kCube, entityGroup_.objectCount);
 
 	//初期化
-	for (Entity& entity : entityGroup_.entity) {
-		entity.gameObject.Initialize();
-		entity.colliderState.Initialize(entity.gameObject, entity.physicsData, entity.gameObject.transformData.scale);
-		entity.collider.owner = &entity.colliderState;
-		entity.collider.isEnabled = true;
-		entity.collider.isTrigger = false;
-		entity.collider.bodyType = BodyType::kStatic;
-		entity.collider.layer = Layer::kGround;
-		entity.collider.maskLayer = static_cast<uint32_t>(Layer::kPlayer);
+	for (uint32_t i = 0; i < static_cast<uint32_t>(entityGroup_.entity.size()); i++) {
+		entityGroup_.entity[i].gameObject.Initialize();
+		entityGroup_.entity[i].colliderState.Initialize(entityGroup_.entity[i].gameObject, entityGroup_.entity[i].physicsData, entityGroup_.entity[i].gameObject.transformData.scale);
+		entityGroup_.entity[i].collider.owner = &entityGroup_.entity[i].colliderState;
+		entityGroup_.entity[i].collider.isEnabled = true;
+		entityGroup_.entity[i].collider.isTrigger = false;
+		entityGroup_.entity[i].collider.bodyType = BodyType::kStatic;
+		entityGroup_.entity[i].collider.layer = Layer::kGround;
+		entityGroup_.entity[i].collider.maskLayer = static_cast<uint32_t>(Layer::kPlayer);
+		entityGroup_.entity[i].collider.onCollision = [this, i](ColliderState* other) {this->OnCollision(i, other); };
 	}
 }
 
@@ -44,6 +46,8 @@ void BaseGround::Initialize(Object3dCommon* object3dCommon, Camera* camera) {
 void BaseGround::Update() {
 	//ゲームオブジェクトなどの設定
 	for (int32_t i = 0; i < entityGroup_.objectCount; i++) {
+		entityGroup_.entity[i].physicsData.velocity += entityGroup_.entity[i].physicsData.acceleration * Math::kDeltaTime;
+		entityGroup_.entity[i].gameObject.transformData.translate += entityGroup_.entity[i].physicsData.velocity * Math::kDeltaTime;
 		entityGroup_.renderObject.object3d->SetGameObject(i, entityGroup_.entity[i].gameObject);
 		entityGroup_.renderObject.hitBox->SetTransformData(i, entityGroup_.entity[i].gameObject.transformData);
 	}
@@ -62,6 +66,10 @@ void BaseGround::Debug() {
 void BaseGround::Draw() {
 	entityGroup_.renderObject.object3d->Draw();
 	entityGroup_.renderObject.hitBox->Draw();
+}
+
+//衝突したら
+void BaseGround::OnCollision(uint32_t index, ColliderState* other) {
 }
 
 //カメラのセッター

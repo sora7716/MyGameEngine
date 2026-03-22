@@ -4,7 +4,7 @@
 #include "PrimitiveData.h"
 
 //前方宣言
-class Ground;
+class BaseGround;
 class Player;
 class GameCamera;
 class StageTimer;
@@ -50,7 +50,9 @@ private://メンバ変数
 	//ゲームカメラ
 	std::unique_ptr<GameCamera>gameCamera_ = nullptr;
 	//地面
-	std::unique_ptr<Ground>ground_ = nullptr;
+	std::unique_ptr<BaseGround>ground_ = nullptr;
+	//落ちる床
+	std::unique_ptr<BaseGround>fallingGround_ = nullptr;
 	//プレイヤー
 	std::unique_ptr<Player>player_ = nullptr;
 	//ステージタイマー

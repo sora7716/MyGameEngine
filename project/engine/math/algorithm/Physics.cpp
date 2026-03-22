@@ -34,7 +34,7 @@ Vector3 Physics::ApplySpringForce(const Spring& spring, const Ball& ball) {
 //振り子
 Vector3 Physics::ApplyPendulumForce(Pendulum& pendulum, const Vector3& ballPos) {
 	Vector3 result = ballPos;
-	pendulum.angularAcceleration = -(std::fabs(kGravity) / pendulum.length) * std::sin(pendulum.angle);
+	pendulum.angularAcceleration = -(std::fabs(kGravity.y) / pendulum.length) * std::sin(pendulum.angle);
 	pendulum.angularVelocity += pendulum.angularAcceleration * Math::kDeltaTime;
 	pendulum.angle += pendulum.angularVelocity * Math::kDeltaTime;
 	// 振り子の先端

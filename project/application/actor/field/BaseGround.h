@@ -25,21 +25,29 @@ public://メンバ関数
     /// </summary>
     /// <param name="object3dCommon">3dオブジェクトの共通部分</param>
     /// <param name="camera">カメラ</param>
-	void Initialize(Object3dCommon* object3dCommon, Camera* camera);
+	virtual void Initialize(Object3dCommon* object3dCommon, Camera* camera);
+	
 	/// <summary>
 	/// 更新
 	/// </summary>
-	void Update();
+	virtual void Update();
 
 	/// <summary>
 	/// デバッグ
 	/// </summary>
-	void Debug();
+	virtual void Debug();
 
 	/// <summary>
 	/// 描画
 	/// </summary>
-	void Draw();
+	virtual void Draw();
+
+	/// <summary>
+	/// 衝突したら
+	/// </summary>
+	/// <param name="index">検索キー</param>
+	/// <param name="other">衝突した対象</param>
+	virtual void OnCollision(uint32_t index,ColliderState*other);
 
 	/// <summary>
 	/// カメラのセッター

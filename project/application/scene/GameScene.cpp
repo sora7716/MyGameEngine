@@ -8,6 +8,7 @@
 #include "field/Ground.h"
 #include "field/FallingGround.h"
 #include "field/JumpPad.h"
+#include "field/SeesawPlatform.h"
 #include "character/player/Player.h"
 #include "algorithm/ColliderManager.h"
 #include "camera/GameCamera.h"
@@ -43,6 +44,13 @@ void GameScene::Initialize(const SceneContext& sceneContext) {
 	jumpPad_ = std::make_unique<JumpPad>();
 	jumpPad_->Initialize(sceneContext_.object3dCommon, camera_);
 
+	seesawPlatform_ = std::make_unique<SeesawPlatform>();
+	seesawPlatform_->Initialize(sceneContext_.object3dCommon, camera_);
+
+	for (Entity& entity : seesawPlatform_->GetEntity()) {
+		colliderManager_->AddCollider(&entity.collider);
+	}
+
 	for (Entity& entity : jumpPad_->GetEntity()) {
 		colliderManager_->AddCollider(&entity.collider);
 	}
@@ -74,11 +82,13 @@ void GameScene::Update() {
 	gameCamera_->Update();
 
 	//カメラの設定
+	seesawPlatform_->SetCamera(camera_);
 	jumpPad_->SetCamera(camera_);
 	fallingGround_->SetCamera(camera_);
 	ground_->SetCamera(camera_);
 	player_->SetCamera(camera_);
 
+	seesawPlatform_->Update();
 	fallingGround_->Update();
 	jumpPad_->Update();
 	ground_->Update();
@@ -112,6 +122,7 @@ void GameScene::Update() {
 	ground_->Debug();
 	fallingGround_->Debug();
 	jumpPad_->Debug();
+	seesawPlatform_->Debug();
 	ImGui::End();
 
 	//プレイヤー
@@ -137,6 +148,8 @@ void GameScene::Update() {
 //描画
 void GameScene::Draw() {
 	ground_->Draw();
+
+	seesawPlatform_->Draw();
 
 	fallingGround_->Draw();
 

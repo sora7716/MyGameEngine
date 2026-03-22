@@ -19,4 +19,6 @@ void JumpPad::Initialize(Object3dCommon* object3dCommon, Camera* camera) {
 	for (uint32_t i = 0; i < static_cast<uint32_t>(entityGroup_.entity.size()); i++) {
 		entityGroup_.entity[i].gameObject.tag = Tag::kJumpPad;
 	}
+
+	entityGroup_.entity[0].gameObject.transformData.translate = { -5.0f,0.0f,0.0f };
 }

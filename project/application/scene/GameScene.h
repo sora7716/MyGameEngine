@@ -55,6 +55,8 @@ private://メンバ変数
 	std::unique_ptr<BaseGround>fallingGround_ = nullptr;
 	//ジャンプパッド
 	std::unique_ptr<BaseGround>jumpPad_ = nullptr;
+	//シーソーのような床
+	std::unique_ptr<BaseGround>seesawPlatform_ = nullptr;
 	//プレイヤー
 	std::unique_ptr<Player>player_ = nullptr;
 	//ステージタイマー

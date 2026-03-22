@@ -14,6 +14,7 @@
     <ClCompile Include="application\actor\ActorData.cpp" />
     <ClCompile Include="application\actor\camera\GameCamera.cpp" />
     <ClCompile Include="application\actor\character\player\Player.cpp" />
+    <ClCompile Include="application\actor\field\BaseGround.cpp" />
     <ClCompile Include="application\actor\field\Ground.cpp" />
     <ClCompile Include="application\actor\field\StageTimer.cpp" />
     <ClCompile Include="application\gameObject\ColliderData.cpp" />
@@ -86,6 +87,7 @@
     <ClInclude Include="application\actor\ActorData.h" />
     <ClInclude Include="application\actor\camera\GameCamera.h" />
     <ClInclude Include="application\actor\character\player\Player.h" />
+    <ClInclude Include="application\actor\field\BaseGround.h" />
     <ClInclude Include="application\actor\field\Ground.h" />
     <ClInclude Include="application\actor\field\StageTimer.h" />
     <ClInclude Include="application\gameObject\ColliderData.h" />

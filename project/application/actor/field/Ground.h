@@ -1,14 +1,10 @@
 #pragma once
-#include "ActorData.h"
-
-//前方宣言
-class Object3dCommon;
-class Camera;
+#include "BaseGround.h"
 
 /// <summary>
 /// 地面
 /// </summary>
-class Ground {
+class Ground :public BaseGround {
 public://メンバ関数
 	/// <summary>
 	/// コンストラクタ
@@ -31,30 +27,5 @@ public://メンバ関数
 	/// 更新
 	/// </summary>
 	void Update();
-
-	/// <summary>
-	/// デバッグ
-	/// </summary>
-	void Debug();
-
-	/// <summary>
-	/// 描画
-	/// </summary>
-	void Draw();
-
-	/// <summary>
-	/// カメラのセッター
-	/// </summary>
-	/// <param name="camera">カメラ</param>
-	void SetCamera(Camera* camera);
-
-	/// <summary>
-	/// エンティティのゲッター
-	/// </summary>
-	/// <returns>エンティティ</returns>
-	std::vector<Entity>& GetEntity();
-private://メンバ変数
-	//エンティティの塊
-	EntityGroup entityGroup_ = {};
 };
 

@@ -73,6 +73,9 @@
     <Filter Include="application\actor\field">
       <UniqueIdentifier>{9ed0086f-1d8b-452f-9643-ea39d989dc8e}</UniqueIdentifier>
     </Filter>
+    <Filter Include="application\actor\character">
+      <UniqueIdentifier>{e4c0b8d1-d6ef-4fb1-b2ec-c827f4987ed5}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="engine\main.cpp">
@@ -276,28 +279,31 @@
     <ClCompile Include="application\actor\field\Ground.cpp">
       <Filter>application\actor\field</Filter>
     </ClCompile>
-    <ClCompile Include="application\actor\character\player\Player.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
-    <ClCompile Include="application\actor\camera\GameCamera.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
-    <ClCompile Include="application\actor\field\StageTimer.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
-    <ClCompile Include="application\scene\GameOverScene.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
     <ClCompile Include="application\actor\field\BaseGround.cpp">
-      <Filter>ソース ファイル</Filter>
+      <Filter>application\actor\field</Filter>
     </ClCompile>
     <ClCompile Include="application\actor\field\FallingGround.cpp">
-      <Filter>ソース ファイル</Filter>
+      <Filter>application\actor\field</Filter>
     </ClCompile>
     <ClCompile Include="application\actor\field\JumpPad.cpp">
-      <Filter>ソース ファイル</Filter>
+      <Filter>application\actor\field</Filter>
     </ClCompile>
     <ClCompile Include="application\actor\field\SeesawPlatform.cpp">
+      <Filter>application\actor\field</Filter>
+    </ClCompile>
+    <ClCompile Include="application\actor\character\player\Player.cpp">
+      <Filter>application\actor\character</Filter>
+    </ClCompile>
+    <ClCompile Include="application\actor\camera\GameCamera.cpp">
+      <Filter>application\actor</Filter>
+    </ClCompile>
+    <ClCompile Include="application\actor\field\StageTimer.cpp">
+      <Filter>application\actor</Filter>
+    </ClCompile>
+    <ClCompile Include="application\scene\GameOverScene.cpp">
+      <Filter>application\scene</Filter>
+    </ClCompile>
+    <ClCompile Include="engine\debug\Shape.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
   </ItemGroup>
@@ -521,28 +527,31 @@
     <ClInclude Include="application\actor\field\Ground.h">
       <Filter>application\actor\field</Filter>
     </ClInclude>
-    <ClInclude Include="application\actor\character\player\Player.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="application\actor\camera\GameCamera.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="application\actor\field\StageTimer.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="application\scene\GameOverScene.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
     <ClInclude Include="application\actor\field\BaseGround.h">
-      <Filter>ヘッダー ファイル</Filter>
+      <Filter>application\actor\field</Filter>
     </ClInclude>
     <ClInclude Include="application\actor\field\FallingGround.h">
-      <Filter>ヘッダー ファイル</Filter>
+      <Filter>application\actor\field</Filter>
     </ClInclude>
     <ClInclude Include="application\actor\field\JumpPad.h">
-      <Filter>ヘッダー ファイル</Filter>
+      <Filter>application\actor\field</Filter>
     </ClInclude>
     <ClInclude Include="application\actor\field\SeesawPlatform.h">
+      <Filter>application\actor\field</Filter>
+    </ClInclude>
+    <ClInclude Include="application\actor\character\player\Player.h">
+      <Filter>application\actor\character</Filter>
+    </ClInclude>
+    <ClInclude Include="application\actor\camera\GameCamera.h">
+      <Filter>application\actor</Filter>
+    </ClInclude>
+    <ClInclude Include="application\actor\field\StageTimer.h">
+      <Filter>application\actor</Filter>
+    </ClInclude>
+    <ClInclude Include="application\scene\GameOverScene.h">
+      <Filter>application\scene</Filter>
+    </ClInclude>
+    <ClInclude Include="engine\debug\Shape.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
   </ItemGroup>
@@ -565,6 +574,12 @@
     <FxCompile Include="engine\resources\shaders\Sprite.PS.hlsl">
       <Filter>shaders</Filter>
     </FxCompile>
+    <FxCompile Include="engine\resources\shaders\Shape.VS.hlsl">
+      <Filter>shaders</Filter>
+    </FxCompile>
+    <FxCompile Include="engine\resources\shaders\Shape.PS.hlsl">
+      <Filter>shaders</Filter>
+    </FxCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="engine\resources\shaders\Object3d.hlsli">
@@ -574,6 +589,9 @@
       <Filter>shaders</Filter>
     </None>
     <None Include="engine\resources\shaders\Sprite.hlsli">
+      <Filter>shaders</Filter>
+    </None>
+    <None Include="engine\resources\shaders\Shape.hlsli">
       <Filter>shaders</Filter>
     </None>
   </ItemGroup>

@@ -51,6 +51,8 @@ void Core::Initialize() {
 	gameObjectList_->Initialize(this);
 	//シーンで必要なものをまとめる
 	sceneContex_.input = input_.get();
+	sceneContex_.directXBase = directXBase_.get();
+	sceneContex_.textureManager = textureManager_.get();
 	sceneContex_.cameraManager = cameraManager_.get();
 	sceneContex_.audioManager = audioManager_.get();
 	sceneContex_.imguiManager = imguiManager_.get();

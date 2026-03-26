@@ -1,6 +1,6 @@
 #include "GraphicsPipeline.h"
 #include "DirectXBase.h"
-#include "engine/debug/Log.h"
+#include "Log.h"
 #include "StringUtility.h"
 #include <cassert>
 #pragma comment(lib,"d3d12.lib")
@@ -8,6 +8,12 @@
 #pragma comment(lib,"dxguid.lib")
 #pragma comment(lib,"dxcompiler.lib")
 using namespace Microsoft::WRL;
+
+//コンストラクタ
+GraphicsPipeline::GraphicsPipeline() {}
+
+//デストラクタ
+GraphicsPipeline::~GraphicsPipeline() {}
 
 //ルートシグネイチャBlobの生成(スプライト用)
 void GraphicsPipeline::CreateRootSignatureBlobForSprite() {

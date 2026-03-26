@@ -2,6 +2,7 @@
 #include "engine/base/DirectXBase.h"
 #include "engine/camera/Camera.h"
 #include "engine/base/GraphicsPipeline.h"
+#include "Blend.h"
 #include <cassert>
 using namespace Microsoft::WRL;
 

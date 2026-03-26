@@ -7,6 +7,7 @@
 #include "TextureManager.h"
 #include <cassert>
 #include "algorithm/Math.h"
+#include "Blend.h"
 using namespace Microsoft::WRL;
 
 //デストラクタ

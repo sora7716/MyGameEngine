@@ -58,6 +58,7 @@
     <ClCompile Include="engine\debug\GlobalVariables.cpp" />
     <ClCompile Include="engine\debug\ImGuiManager.cpp" />
     <ClCompile Include="engine\debug\Log.cpp" />
+    <ClCompile Include="engine\debug\Shape.cpp" />
     <ClCompile Include="engine\debug\WireframeObject3d.cpp" />
     <ClCompile Include="engine\debug\WireframeObject3dCommon.cpp" />
     <ClCompile Include="engine\framework\Framework.cpp" />
@@ -138,6 +139,7 @@
     <ClInclude Include="engine\debug\GlobalVariables.h" />
     <ClInclude Include="engine\debug\ImGuiManager.h" />
     <ClInclude Include="engine\debug\Log.h" />
+    <ClInclude Include="engine\debug\Shape.h" />
     <ClInclude Include="engine\debug\WireframeObject3d.h" />
     <ClInclude Include="engine\debug\WireframeObject3dCommon.h" />
     <ClInclude Include="engine\framework\Framework.h" />
@@ -171,14 +173,15 @@
   <ItemGroup>
     <None Include="engine\resources\shaders\Object3d.hlsli">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
     </None>
     <None Include="engine\resources\shaders\Particle.hlsli">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
     </None>
+    <None Include="engine\resources\shaders\Shape.hlsli" />
     <None Include="engine\resources\shaders\Sprite.hlsli">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
     </None>
   </ItemGroup>
@@ -198,6 +201,16 @@
     <FxCompile Include="engine\resources\shaders\Particle.VS.hlsl">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+    </FxCompile>
+    <FxCompile Include="engine\resources\shaders\Shape.PS.hlsl">
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Pixel</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Pixel</ShaderType>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+    </FxCompile>
+    <FxCompile Include="engine\resources\shaders\Shape.VS.hlsl">
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Vertex</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Vertex</ShaderType>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
     </FxCompile>
     <FxCompile Include="engine\resources\shaders\Sprite.PS.hlsl">
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Pixel</ShaderType>

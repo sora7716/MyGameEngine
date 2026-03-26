@@ -3,6 +3,7 @@
 #include "gameObject/GameObjectData.h"
 #include "gameObject/ColliderData.h"
 #include "Input.h"
+#include "Shape.h"
 #include <vector>
 
 //前方宣言
@@ -64,4 +65,6 @@ private://メンバ変数
 
 	std::vector<ColliderState> colliderStates_ = {};
 	std::vector<Collider> colliders_ = {};
+
+	std::unique_ptr<Shape>shape_ = nullptr;
 };

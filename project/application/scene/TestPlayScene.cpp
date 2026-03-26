@@ -51,6 +51,9 @@ void TestPlayScene::Initialize(const SceneContext& sceneContext) {
 	for (uint32_t i = 0; i < objectCount; i++) {
 		colliderManager_->AddCollider(&colliders_[i]);
 	}
+
+	shape_ = std::make_unique<Shape>();
+	shape_->Initialize(sceneContext_.directXBase, sceneContext_.textureManager, camera_, "uvChecker.png");
 }
 
 //更新ww
@@ -63,6 +66,8 @@ void TestPlayScene::Update() {
 	}
 	object3d_->SetCamera(camera_);
 	object3d_->Update();
+
+	shape_->Update();
 
 #ifdef USE_IMGUI
 	//ImGuiの受付開始
@@ -79,7 +84,7 @@ void TestPlayScene::Update() {
 	}
 
 	//gameObject_.transformData.quaternion = Quaternion::Slerp(start, end, frame_).Normalize();
-	
+
 	//Object3d
 	ImGui::Begin("object3d");
 	for (int32_t i = 0; i < gameObject_.size(); i++) {
@@ -95,7 +100,11 @@ void TestPlayScene::Update() {
 		ImGui::PopID();
 	}
 	ImGui::DragFloat3("axis", &axis_.x, 0.1f, -1.0f, 1.0f);
-	
+
+	ImGui::Begin("obj");
+	shape_->Debug();
+	ImGui::End();
+
 	//ImGuiManager::DragTransform(transformData_);
 	//ImGui::DragFloat4("rotate", &transformData_.quaternion.x, 0.1f);
 
@@ -128,6 +137,7 @@ void TestPlayScene::Update() {
 //描画
 void TestPlayScene::Draw() {
 	object3d_->Draw();
+	shape_->Draw();
 }
 
 //終了

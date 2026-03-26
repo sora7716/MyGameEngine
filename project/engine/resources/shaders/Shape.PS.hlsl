@@ -1,4 +1,4 @@
-#include "Sprite.hlsli"
+#include "Shape.hlsli"
 
 //マテリアル
 struct Material {
@@ -16,21 +16,25 @@ struct PixelShaderOutput {
     float32_t4 color : SV_TARGET0;
 };
 
-PixelShaderOutput main(VertexShaderOutput input) {
+PixelShaderOutput main(VertexShaderOutput input)
+{
     float32_t4 transformedUV = mul(float32_t4(input.texcoord, 0.0f, 1.0f), gMaterial.uvMatrix);
     float32_t4 textureColor = gTexture.Sample(gSampler, transformedUV.xy);
     PixelShaderOutput output;
     output.color = gMaterial.color * textureColor;
     //textureのα値が0.5f以下の時にPixelを棄却
-    if (textureColor.a <= 0.5) {
+    if (textureColor.a <= 0.5)
+    {
         discard;
     }
     //textureのα値の0の時にPixelを棄却
-    if (textureColor.a == 0.0) {
+    if (textureColor.a == 0.0)
+    {
         discard;
     }
     //output.colorのα値が0の時にPixelを棄却
-    if (output.color.a == 0.0) {
+    if (output.color.a == 0.0)
+    {
         discard;
     }
     return output;

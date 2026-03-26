@@ -1,6 +1,8 @@
 #pragma once
 //前方宣言
 class Input;
+class DirectXBase;
+class TextureManager;
 class Object3dCommon;
 class Object2dCommon;
 class SpriteCommon;
@@ -16,6 +18,8 @@ class Core;
 //シーンで必要なクラス
 struct SceneContext {
 	Input* input;
+	DirectXBase* directXBase;
+	TextureManager* textureManager;
 	Object3dCommon* object3dCommon;
 	Object2dCommon* object2dCommon;
 	SpriteCommon* spriteCommon;

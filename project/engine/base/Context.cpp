@@ -4,6 +4,8 @@
 //ゲームエンジンの核から必要な物を抽出する
 void SceneContext::operator=(Core* core) {
 	input = core->GetInput();
+	directXBase = core->GetDirectXBase();
+	textureManager = core->GetTextureManager();
 	object3dCommon = core->GetObject3dCommon();
 	object2dCommon = core->GetObject2dCommon();
 	spriteCommon = core->GetSpriteCommon();

@@ -120,9 +120,14 @@ void GameScene::Update() {
 	//地面
 	ImGui::Begin("ground");
 	ground_->Debug();
+	ImGui::End();
+
+	ImGui::Begin("falling");
 	fallingGround_->Debug();
+	ImGui::End();
+
+	ImGui::Begin("jumpPad");
 	jumpPad_->Debug();
-	seesawPlatform_->Debug();
 	ImGui::End();
 
 	//プレイヤー

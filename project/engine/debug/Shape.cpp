@@ -1,5 +1,4 @@
 #include "Shape.h"
-#include "TextureManager.h"
 #include "DirectXBase.h"
 #include "algorithm/Rendering.h"
 #include "algorithm/Math.h"
@@ -18,11 +17,9 @@ Shape::Shape() {}
 Shape::~Shape() {}
 
 //初期化
-void Shape::Initialize(DirectXBase* directXBase, TextureManager* textureManager, Camera* camera, const std::string& textureName) {
+void Shape::Initialize(DirectXBase* directXBase, Camera* camera) {
 	//DirectXの基盤部分を記録する
 	directXBase_ = directXBase;
-	//テクスチャの管理を記録
-	textureManager_ = textureManager;
 	//カメラの記録
 	camera_ = camera;
 
@@ -36,13 +33,6 @@ void Shape::Initialize(DirectXBase* directXBase, TextureManager* textureManager,
 	//マテリアルデータの生成
 	CreateMaterialResource();
 
-	//テクスチャのファイルパスの記録
-	modelData_.material.textureFilePath = "engine/resources/textures/" + textureName;
-	//テクスチャの読み込み
-	textureManager_->LoadTexture(modelData_.material.textureFilePath);
-
-	//uvTransform変数を作る
-	uvTransform_ = { {1.0f,1.0f},0.0f,{0.0f,0.0f} };
 	transform_.Initialize();
 
 	//wvpリソースの初期化
@@ -51,15 +41,20 @@ void Shape::Initialize(DirectXBase* directXBase, TextureManager* textureManager,
 
 //更新
 void Shape::Update() {
+	//頂点データの設定
+	//SettingVertexData();
+	vertexData_[0].position = segment_.origin;
+	vertexData_[1].position = segment_.origin + segment_.diff;
 	//ワールドトランスフォームの更新
 	UpdateTransform();
-	//UVTransform
-	materialData_->uvMatrix = Rendering::MakeUVAffineMatrix(uvTransform_.scale, uvTransform_.rotate, uvTransform_.translate);
 }
 
 //デバッグ
 void Shape::Debug() {
 	ImGuiManager::DragTransform(transform_);
+	ImGui::DragFloat3("origin", &segment_.origin.x, 0.1f);
+	ImGui::DragFloat3("diff", &segment_.diff.x, 0.1f);
+	ImGui::ColorEdit4("color", &color_->x);
 }
 
 //描画
@@ -68,7 +63,7 @@ void Shape::Draw() {
 	//ルートシグネイチャをセットするコマンド
 	directXBase_->GetCommandList()->SetGraphicsRootSignature(rootSignature_.Get());
 	//プリミティブトポロジーをセットするコマンド
-	directXBase_->GetCommandList()->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+	directXBase_->GetCommandList()->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_LINELIST);
 	//グラフィックスパイプラインをセットするコマンド
 	directXBase_->GetCommandList()->SetPipelineState(graphicsPipelineState_.Get());
 	//座標変換行列CBufferの場所を設定
@@ -79,99 +74,112 @@ void Shape::Draw() {
 	directXBase_->GetCommandList()->IASetVertexBuffers(0, 1, &vertexBufferView_);//VBVを設定
 	//マテリアルCBufferの場所を設定
 	directXBase_->GetCommandList()->SetGraphicsRootConstantBufferView(0, materialResource_->GetGPUVirtualAddress());//material
-	//SRVのDescriptorTableの先頭を設定
-	directXBase_->GetCommandList()->SetGraphicsRootDescriptorTable(2, textureManager_->GetSRVHandleGPU(modelData_.material.textureFilePath));
 	//描画(DrawCall/ドローコール)
-	directXBase_->GetCommandList()->DrawIndexedInstanced(6, 1, 0, 0, 0);
+	directXBase_->GetCommandList()->DrawIndexedInstanced(2, 1, 0, 0, 0);
 }
 
-//頂点データの初期化
-void Shape::InitializeVertexData() {
-	modelData_.vertices.clear();
+//カメラのセッター
+void Shape::SetCamera(Camera* camera) {
+	camera_ = camera;
+}
 
-	// 左上
-	modelData_.vertices.push_back({
-		.position = {-1.0f, 1.0f, 0.0f, 1.0f},
-		.texcoord = {0.0f, 0.0f},
-		.normal = {0.0f, 0.0f, 1.0f}
-	});
+//頂点データの設定
+void Shape::SettingVertexData() {
+	//verte
+	//// 左上
+	//lineVertex_.vertices.push_back({
+	//	.position = {-1.0f, 1.0f, 0.0f, 1.0f},
+	//	.texcoord = {0.0f, 0.0f},
+	//	.normal = {0.0f, 0.0f, 1.0f}
+	//});
 
-	// 右上
-	modelData_.vertices.push_back({
-		.position = {1.0f, 1.0f, 0.0f, 1.0f},
-		.texcoord = {1.0f, 0.0f},
-		.normal = {0.0f, 0.0f, 1.0f}
-	});
+	//// 右上
+	//lineVertex_.vertices.push_back({
+	//	.position = {1.0f, 1.0f, 0.0f, 1.0f},
+	//	.texcoord = {1.0f, 0.0f},
+	//	.normal = {0.0f, 0.0f, 1.0f}
+	//});
 
-	// 左下
-	modelData_.vertices.push_back({
-		.position = {-1.0f, -1.0f, 0.0f, 1.0f},
-		.texcoord = {0.0f, 1.0f},
-		.normal = {0.0f, 0.0f, 1.0f}
-	});
+	//// 左下
+	//lineVertex_.vertices.push_back({
+	//	.position = {-1.0f, -1.0f, 0.0f, 1.0f},
+	//	.texcoord = {0.0f, 1.0f},
+	//	.normal = {0.0f, 0.0f, 1.0f}
+	//});
 
-	// 右下
-	modelData_.vertices.push_back({
-		.position = {1.0f, -1.0f, 0.0f, 1.0f},
-		.texcoord = {1.0f, 1.0f},
-		.normal = {0.0f, 0.0f, 1.0f}
-	});
+	//// 右下
+	//lineVertex_.vertices.push_back({
+	//	.position = {1.0f, -1.0f, 0.0f, 1.0f},
+	//	.texcoord = {1.0f, 1.0f},
+	//	.normal = {0.0f, 0.0f, 1.0f}
+	//});
 }
 
 //インデックスリソースの生成
 void Shape::CreateIndexResource() {
-	indexResource_ = directXBase_->CreateBufferResource(sizeof(uint32_t) * 6);
+	indexResource_ = directXBase_->CreateBufferResource(sizeof(uint32_t) * 2);
 
 	indexBufferView_.BufferLocation = indexResource_->GetGPUVirtualAddress();
-	indexBufferView_.SizeInBytes = UINT(sizeof(uint32_t) * 6);
+	indexBufferView_.SizeInBytes = UINT(sizeof(uint32_t) * 2);
 	indexBufferView_.Format = DXGI_FORMAT_R32_UINT;
 
 	indexResource_->Map(0, nullptr, reinterpret_cast<void**>(&indexData_));
 
 	indexData_[0] = 0;
 	indexData_[1] = 1;
-	indexData_[2] = 2;
-	indexData_[3] = 2;
-	indexData_[4] = 1;
-	indexData_[5] = 3;
+
+	//indexData_[0] = 0;
+	//indexData_[1] = 1;
+	//indexData_[2] = 2;
+	//indexData_[3] = 2;
+	//indexData_[4] = 1;
+	//indexData_[5] = 3;
 }
 
 //頂点データの生成
 void Shape::CreateVertexResource() {
 	//頂点データの初期化
-	InitializeVertexData();
+	SettingVertexData();
 	//頂点リソースを生成
-	vertexResource_ = directXBase_->CreateBufferResource(sizeof(VertexData) * modelData_.vertices.size());
+	vertexResource_ = directXBase_->CreateBufferResource(sizeof(VertexData) * 2);
 	//VertexBufferViewを作成する(頂点バッファービュー)
 	//リソースの先頭アドレスから使う
 	vertexBufferView_.BufferLocation = vertexResource_->GetGPUVirtualAddress();
 	//使用するリソースのサイズは頂点3つ分のサイズ
-	vertexBufferView_.SizeInBytes = UINT(sizeof(VertexData) * modelData_.vertices.size());
+	vertexBufferView_.SizeInBytes = UINT(sizeof(VertexData) * 2);
 	//1頂点当たりのサイズ
 	vertexBufferView_.StrideInBytes = sizeof(VertexData);
 
 	//頂点リソースにデータを書き込む
-	VertexData* vertexData = nullptr;
 	//書き込むためのアドレスを取得
-	vertexResource_->Map(0, nullptr, reinterpret_cast<void**>(&vertexData));//書き込むためのアドレスを取得
-	std::memcpy(vertexData, modelData_.vertices.data(), sizeof(VertexData) * modelData_.vertices.size());//頂点データをリソースにコピー
+	vertexResource_->Map(0, nullptr, reinterpret_cast<void**>(&vertexData_));//書き込むためのアドレスを取得
+
+	//頂点データの初期化
+	vertexData_[0] = {
+		{-0.5f,0.0f,0.0f,1.0f},
+		{0.0f,0.0f},
+		{0.0f,0.0f,1.0f}
+	};
+	vertexData_[1] = {
+		{0.5f,0.0f,0.0f,1.0f},
+		{0.0f,0.0f},
+		{0.0f,0.0f,1.0f}
+	};
 }
 
 //マテリアルデータの初期化
 void Shape::InitializeMaterialData() {
 	//色を書き込む
-	materialData_->color = { 1.0f, 1.0f, 1.0f, 1.0f };
-	materialData_->enableLighting = false;
-	materialData_->uvMatrix = Matrix4x4::Identity4x4();
+	*color_ = { 1.0f, 1.0f, 1.0f, 1.0f };
 }
 
 //マテリアルリソースの生成
 void Shape::CreateMaterialResource() {
 	//マテリアルリソースを作る
-	materialResource_ = directXBase_->CreateBufferResource(sizeof(Material));
+	materialResource_ = directXBase_->CreateBufferResource(sizeof(Vector4));
 	//マテリアルリソースにデータを書き込むためのアドレスを取得してmaterialDataに割り当てる
 	//書き込むためのアドレスを取得
-	materialResource_->Map(0, nullptr, reinterpret_cast<void**>(&materialData_));
+	materialResource_->Map(0, nullptr, reinterpret_cast<void**>(&color_));
 	//マテリアルデータの初期値を書き込む
 	InitializeMaterialData();
 }
@@ -194,29 +202,16 @@ void Shape::CreateRootSignatureBlob() {
 	//RootSignature作成
 	D3D12_ROOT_SIGNATURE_DESC descriptionRootSignature{};
 	descriptionRootSignature.Flags = D3D12_ROOT_SIGNATURE_FLAG_ALLOW_INPUT_ASSEMBLER_INPUT_LAYOUT;
-	//Samplerの設定
-	D3D12_STATIC_SAMPLER_DESC staticSamplers[1] = {};
-	staticSamplers[0].Filter = D3D12_FILTER_MIN_MAG_MIP_LINEAR;//バイナリフィルター
-	staticSamplers[0].AddressU = D3D12_TEXTURE_ADDRESS_MODE_WRAP;//0~1の範囲外をリピート
-	staticSamplers[0].AddressV = D3D12_TEXTURE_ADDRESS_MODE_WRAP;//0~1の範囲外をリピート
-	staticSamplers[0].AddressW = D3D12_TEXTURE_ADDRESS_MODE_WRAP;//0~1の範囲外をリピート
-	staticSamplers[0].ComparisonFunc = D3D12_COMPARISON_FUNC_NEVER;//比較しない
-	staticSamplers[0].MaxLOD = D3D12_FLOAT32_MAX;//ありたっけのMipmapを使う
-	staticSamplers[0].ShaderRegister = 0;//レジスタ番号
-	staticSamplers[0].ShaderVisibility = D3D12_SHADER_VISIBILITY_PIXEL;//PixelShaderを使う
-	descriptionRootSignature.pStaticSamplers = staticSamplers;
-	descriptionRootSignature.NumStaticSamplers = _countof(staticSamplers);
 
 	//DescriptorRange
-	D3D12_DESCRIPTOR_RANGE descriptorRange[1] = {};
-	descriptorRange[0].BaseShaderRegister = 0;//0から始まる
-	descriptorRange[0].NumDescriptors = 1;//数は1つ
-	descriptorRange[0].RangeType = D3D12_DESCRIPTOR_RANGE_TYPE_SRV;//SRVを使う
-	descriptorRange[0].OffsetInDescriptorsFromTableStart = D3D12_DESCRIPTOR_RANGE_OFFSET_APPEND;//Offsetを自動計算
-
+	//D3D12_DESCRIPTOR_RANGE descriptorRange[1] = {};
+	//descriptorRange[0].BaseShaderRegister = 0;//0から始まる
+	//descriptorRange[0].NumDescriptors = 1;//数は1つ
+	//descriptorRange[0].RangeType = D3D12_DESCRIPTOR_RANGE_TYPE_SRV;//SRVを使う
+	//descriptorRange[0].OffsetInDescriptorsFromTableStart = D3D12_DESCRIPTOR_RANGE_OFFSET_APPEND;//Offsetを自動計算
 
 	//RootParameterの作成。複数設定できるので配列。
-	D3D12_ROOT_PARAMETER rootParameters[3] = {};
+	D3D12_ROOT_PARAMETER rootParameters[2] = {};
 	//色情報
 	rootParameters[0].ParameterType = D3D12_ROOT_PARAMETER_TYPE_CBV;//CBVを使うb0のbと一致する	
 	rootParameters[0].ShaderVisibility = D3D12_SHADER_VISIBILITY_PIXEL;//PixelShaderを使う
@@ -227,11 +222,11 @@ void Shape::CreateRootSignatureBlob() {
 	rootParameters[1].ShaderVisibility = D3D12_SHADER_VISIBILITY_VERTEX;//VertexShaderを使う
 	rootParameters[1].Descriptor.ShaderRegister = 0;//レジスタ番号
 
-	//DescriptorTable(DescriptorRangeをまとめたもの)
-	rootParameters[2].ParameterType = D3D12_ROOT_PARAMETER_TYPE_DESCRIPTOR_TABLE;//DescriptorTableを使う
-	rootParameters[2].ShaderVisibility = D3D12_SHADER_VISIBILITY_PIXEL;//PixelShaderを使う
-	rootParameters[2].DescriptorTable.pDescriptorRanges = descriptorRange;//Tableの中身の配列を指定
-	rootParameters[2].DescriptorTable.NumDescriptorRanges = _countof(descriptorRange);//Tableで利用する数
+	////DescriptorTable(DescriptorRangeをまとめたもの)
+	//rootParameters[2].ParameterType = D3D12_ROOT_PARAMETER_TYPE_DESCRIPTOR_TABLE;//DescriptorTableを使う
+	//rootParameters[2].ShaderVisibility = D3D12_SHADER_VISIBILITY_PIXEL;//PixelShaderを使う
+	//rootParameters[2].DescriptorTable.pDescriptorRanges = descriptorRange;//Tableの中身の配列を指定
+	//rootParameters[2].DescriptorTable.NumDescriptorRanges = _countof(descriptorRange);//Tableで利用する数
 
 	descriptionRootSignature.pParameters = rootParameters;//ルートパラメータ配列へのポインタ
 	descriptionRootSignature.NumParameters = _countof(rootParameters);//配列の長さ
@@ -277,7 +272,7 @@ void Shape::InitializeInputLayoutDesc() {
 //ラスタライザステートの初期化
 void Shape::InitializeRasterizerSatate() {
 	//裏面(時計周り)を表示しない
-	rasterizerDesc_.CullMode = D3D12_CULL_MODE_BACK;
+	rasterizerDesc_.CullMode = D3D12_CULL_MODE_NONE;
 	//三角形の中を塗りつぶす
 	rasterizerDesc_.FillMode = D3D12_FILL_MODE_SOLID;
 }
@@ -328,7 +323,7 @@ ComPtr<ID3D12PipelineState> Shape::CreateGraphicsPipeline() {
 	graphicsPipelineStateDesc.NumRenderTargets = 1;
 	graphicsPipelineStateDesc.RTVFormats[0] = DXGI_FORMAT_R8G8B8A8_UNORM_SRGB;
 	//利用するトポロジ(形状)のタイプ。三角形
-	graphicsPipelineStateDesc.PrimitiveTopologyType = D3D12_PRIMITIVE_TOPOLOGY_TYPE_TRIANGLE;
+	graphicsPipelineStateDesc.PrimitiveTopologyType = D3D12_PRIMITIVE_TOPOLOGY_TYPE_LINE;
 	//どのように画面に色を打ち込むかの設定(気にしなくてよい)
 	graphicsPipelineStateDesc.SampleDesc.Count = 1;
 	graphicsPipelineStateDesc.SampleMask = D3D12_DEFAULT_SAMPLE_MASK;

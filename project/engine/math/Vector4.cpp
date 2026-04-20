@@ -45,3 +45,11 @@ Vector4 Vector4::ColorCodeTransform(const std::string& colorCode) {
 	int32_t alpha = (colorCode.size() == 9) ? std::stoi(colorCode.substr(7, 2), nullptr, 16) : 255;
 	return Vector4(r / 255.0f, g / 255.0f, b / 255.0f, alpha / 255.0f);
 }
+
+// Vector3をVector4に代入
+Vector4 Vector4::operator=(const Vector3& v) {
+	x = v.x;
+	y = v.y;
+	z = v.z;
+	return *this;
+}

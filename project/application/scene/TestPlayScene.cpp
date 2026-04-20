@@ -53,7 +53,7 @@ void TestPlayScene::Initialize(const SceneContext& sceneContext) {
 	}
 
 	shape_ = std::make_unique<Shape>();
-	shape_->Initialize(sceneContext_.directXBase, sceneContext_.textureManager, camera_, "uvChecker.png");
+	shape_->Initialize(sceneContext_.directXBase, camera_);
 }
 
 //更新ww
@@ -67,6 +67,7 @@ void TestPlayScene::Update() {
 	object3d_->SetCamera(camera_);
 	object3d_->Update();
 
+	shape_->SetCamera(camera_);
 	shape_->Update();
 
 #ifdef USE_IMGUI
@@ -87,19 +88,20 @@ void TestPlayScene::Update() {
 
 	//Object3d
 	ImGui::Begin("object3d");
-	for (int32_t i = 0; i < gameObject_.size(); i++) {
-		ImGui::PushID(i);
-		ImGui::SeparatorText(("object:" + std::to_string(i)).c_str());
-		ImGui::DragFloat3("translate", &gameObject_[i].transformData.translate.x, 0.1f);
-		ImGui::Checkbox("isAlive", &gameObject_[i].isAlive);
-		if (ImGui::DragFloat3("eulerAngle", &eulerAngle_.x, 0.1f)) {
-			gameObject_[i].transformData.quaternion = Quaternion::MakeQuaternionForEulerAngle(eulerAngle_);
-		} else if (ImGui::DragFloat("angle", &angle_, 0.1f)) {
-			gameObject_[i].transformData.quaternion = Rendering::MakeRotateAxisAngleQuaternion(axis_, angle_).Normalize();
-		}
-		ImGui::PopID();
-	}
-	ImGui::DragFloat3("axis", &axis_.x, 0.1f, -1.0f, 1.0f);
+	//for (int32_t i = 0; i < gameObject_.size(); i++) {
+	//	ImGui::PushID(i);
+	//	ImGui::SeparatorText(("object:" + std::to_string(i)).c_str());
+	//	ImGui::DragFloat3("translate", &gameObject_[i].transformData.translate.x, 0.1f);
+	//	ImGui::Checkbox("isAlive", &gameObject_[i].isAlive);
+	//	if (ImGui::DragFloat3("eulerAngle", &eulerAngle_.x, 0.1f)) {
+	//		gameObject_[i].transformData.quaternion = Quaternion::MakeQuaternionForEulerAngle(eulerAngle_);
+	//	} else if (ImGui::DragFloat("angle", &angle_, 0.1f)) {
+	//		gameObject_[i].transformData.quaternion = Rendering::MakeRotateAxisAngleQuaternion(axis_, angle_).Normalize();
+	//	}
+	//	ImGui::PopID();
+	//}
+	ImGuiManager::DebugGameObject(gameObject_[0]);
+	ImGui::End();
 
 	ImGui::Begin("obj");
 	shape_->Debug();
@@ -119,7 +121,7 @@ void TestPlayScene::Update() {
 	//ImGui::DragFloat("frame", &frame_);
 	//ImGui::DragFloat4("start", &start.x, 0.1f);
 	//ImGui::DragFloat4("end", &end.x, 0.1f);
-	ImGui::End();
+	//ImGui::End();
 
 	//ImGuiの受付終了
 	sceneContext_.imguiManager->End();

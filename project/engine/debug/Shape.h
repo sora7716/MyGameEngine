@@ -14,9 +14,10 @@ class DirectXBase;
 class TextureManager;
 class Camera;
 
-struct LineVertex {
-	Vector4 position;
-	Vector4 color;
+//線分
+struct Segment {
+	Vector3 origin;
+	Vector3 diff;
 };
 
 /// <summary>
@@ -39,9 +40,9 @@ public://メンバ関数
 	/// <summary>
 	/// 初期化
 	/// </summary>
-	/// <param name="object2dCommon">2Dオブジェクトの共通部分</param>
-	/// <param name="textureName">テクスチャのファイル名</param>
-	void Initialize(DirectXBase* directXBase, TextureManager* textureManager, Camera* camera, const std::string& textureName);
+	/// <param name="directXBase">DirectXの基盤部分</param>
+	/// <param name="camera">カメラ</param>
+	void Initialize(DirectXBase* directXBase, Camera* camera);
 
 	/// <summary>
 	/// 更新
@@ -57,11 +58,17 @@ public://メンバ関数
 	/// 描画
 	/// </summary>
 	void Draw();
+
+	/// <summary>
+	/// カメラのセッター
+	/// </summary>
+	/// <param name="camera">カメラ</param>
+	void SetCamera(Camera*camera);
 private://メンバ関数
 	/// <summary>
-	/// 頂点データの初期化
+	/// 頂点データの設定
 	/// </summary>
-	void InitializeVertexData();
+	void SettingVertexData();
 
 	/// <summary>
 	/// 頂点リソースの生成
@@ -145,6 +152,8 @@ private://メンバ変数
 	TextureManager* textureManager_ = nullptr;
 	//カメラ
 	Camera* camera_ = nullptr;
+	//線分
+	Segment segment_ = {};
 
 	//バッファリソース
 	ComPtr<ID3D12Resource>vertexResource_ = nullptr;//頂点
@@ -152,10 +161,9 @@ private://メンバ変数
 	ComPtr<ID3D12Resource>indexResource_ = nullptr;//インデックス
 	ComPtr<ID3D12Resource>wvpResource_ = nullptr;//ワールドビュープロジェクション
 	//バッファリソース内のデータを指すポインタ
-	//モデルデータ
-	ModelData modelData_ = {};
-	//マテリアルデータ
-	Material* materialData_ = nullptr;
+	Vector4* color_ = nullptr;
+	//頂点データ
+	VertexData* vertexData_ = nullptr;
 	//インデックスデータ
 	uint32_t* indexData_ = nullptr;
 	//ワールドビュープロジェクションのデータ
@@ -163,13 +171,6 @@ private://メンバ変数
 	//バッファリソースの使い道を補足するバッファビュー
 	D3D12_VERTEX_BUFFER_VIEW vertexBufferView_ = {};//頂点
 	D3D12_INDEX_BUFFER_VIEW indexBufferView_ = {};//インデックス	
-
-	//UV座標
-	Transform2dData uvTransform_ = {
-		.scale = { 1.0f,1.0f },
-		.rotate = 0.0f,
-		.translate = {0.0f,0.0f}
-	};
 
 	//ワールド座標
 	TransformData transform_ = {};

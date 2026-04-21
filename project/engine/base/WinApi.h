@@ -25,7 +25,7 @@ public://メンバ関数
 	/// プロセスメッセージ
 	/// </summary>
 	/// <returns>プロセスメッセージ</returns>
-	bool ProcesMessage();
+	bool ProcessMessage();
 
 	/// <summary>
 	/// HWNDのゲッター
@@ -43,7 +43,7 @@ public://メンバ関数
 	WinApi(const WinApi&) = delete;
 	//代入演算子禁止
 	const WinApi& operator=(const WinApi&) = delete;
-public://PrassKey
+public://PassKey
 	class ConstructorKey {
 	private:
 		ConstructorKey() = default;
@@ -52,7 +52,7 @@ public://PrassKey
 	/// <summary>
 	/// コンストラクタ
 	/// </summary>
-	/// <param name="">PrassKeyを受け取る</param>
+	/// <param name="">PassKeyを受け取る</param>
 	explicit WinApi(ConstructorKey);
 public://静的メンバ関数
 	/// <summary>

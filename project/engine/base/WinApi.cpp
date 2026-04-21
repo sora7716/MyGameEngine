@@ -51,7 +51,7 @@ void WinApi::Initialize() {
 }
 
 // プロセスメッセージ
-bool WinApi::ProcesMessage(){
+bool WinApi::ProcessMessage(){
 	MSG msg;
 	if (PeekMessage(&msg, NULL, 0, 0, PM_REMOVE)) {
 		TranslateMessage(&msg);

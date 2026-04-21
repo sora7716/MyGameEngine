@@ -51,5 +51,5 @@ void Framework::Run() {
 
 //終了リクエスト
 bool Framework::isEndRequest() {
-	return core_->GetWinApi()->ProcesMessage();
+	return core_->GetWinApi()->ProcessMessage();
 }

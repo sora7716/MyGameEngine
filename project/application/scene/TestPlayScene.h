@@ -69,4 +69,5 @@ private://メンバ変数
 
 	std::unique_ptr<BaseShape>shape_ = nullptr;
 	std::unique_ptr<Line>line_ = nullptr;
+	Segment segment_ = { {0.0f,0.0f,0.0f},{0.5f,0.0f,0.0f} };
 };

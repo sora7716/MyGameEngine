@@ -25,6 +25,16 @@ void Line::Draw() {
 	BaseShape::Draw();
 }
 
+//線分のゲッター
+void Line::SetSegment(const Segment& segment) {
+	segment_ = segment;
+}
+
+//線分のゲッター
+Segment Line::GetSegment() {
+	return segment_;
+}
+
 //頂点データの設定
 void Line::SettingVertexData() {
 	vertexData_[0].position = segment_.origin;

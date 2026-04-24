@@ -8,6 +8,12 @@ struct Sphere {
 	float radius;   //半径
 };
 
+//線分
+struct Segment {
+	Vector3 origin;
+	Vector3 diff;
+};
+
 //AABB
 struct AABB {
 	Vector3 min;//最小値

@@ -76,6 +76,7 @@ void TestPlayScene::Update() {
 	//shape_->Update();
 	line_->SetCamera(camera_);
 
+	line_->SetSegment(segment_);
 	line_->Update();
 
 #ifdef USE_IMGUI
@@ -112,7 +113,8 @@ void TestPlayScene::Update() {
 	ImGui::End();
 
 	ImGui::Begin("obj");
-	line_->Debug();
+	ImGui::DragFloat3("origin", &segment_.origin.x);
+	ImGui::DragFloat3("diff", &segment_.diff.x);
 	ImGui::End();
 
 	//ImGuiManager::DragTransform(transformData_);

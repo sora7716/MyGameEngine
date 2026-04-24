@@ -30,6 +30,18 @@ public://メンバ関数
 	void Draw()override;
 
 	/// <summary>
+	/// 線分のセッター
+	/// </summary>
+	/// <param name="segment">線分</param>
+	void SetSegment(const Segment& segment);
+
+	/// <summary>
+	/// 線分のゲッター
+	/// </summary>
+	/// <returns>線分</returns>
+	Segment GetSegment();
+private://メンバ変数
+	/// <summary>
 	/// 頂点データの設定
 	/// </summary>
 	void SettingVertexData()override;
@@ -40,6 +52,6 @@ public://メンバ関数
 	void SettingIndexDate()override;
 private://メンバ変数
 	//線分
-	//Segment segment_ = {};
+	Segment segment_ = {};
 };
 

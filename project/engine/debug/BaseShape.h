@@ -1,9 +1,9 @@
 #pragma once
-#include "engine/math/ResourceData.h"
-#include "engine/math/RenderingData.h"
+#include "ResourceData.h"
+#include "RenderingData.h"
+#include "PrimitiveData.h"
 #include <string>
 #include <wrl.h>
-#include <memory>
 #include <d3d12.h>
 #include <dxcapi.h>
 #include <cstdint>
@@ -13,12 +13,6 @@ class DirectXBase;
 class DirectXBase;
 class TextureManager;
 class Camera;
-
-//線分
-struct Segment {
-	Vector3 origin;
-	Vector3 diff;
-};
 
 /// <summary>
 /// 形
@@ -50,11 +44,6 @@ public://メンバ関数
 	virtual void Update();
 
 	/// <summary>
-	/// デバッグ
-	/// </summary>
-	void Debug();
-
-	/// <summary>
 	/// 描画
 	/// </summary>
 	virtual void Draw();
@@ -68,12 +57,12 @@ protected://メンバ関数
 	/// <summary>
 	/// 頂点データの設定
 	/// </summary>
-	virtual void SettingVertexData();
+	virtual void SettingVertexData() = 0;
 
 	/// <summary>
 	/// インデックスの設定
 	/// </summary>
-	virtual void SettingIndexDate();
+	virtual void SettingIndexDate() = 0;
 private://メンバ関数
 	/// <summary>
 	/// 頂点リソースの生成
@@ -182,10 +171,10 @@ private://メンバ変数
 	ComPtr<IDxcBlob> pixelShaderBlob_ = nullptr;
 	//グラフィックスパイプライン(PSO)
 	ComPtr<ID3D12PipelineState> graphicsPipelineState_ = nullptr;
-protected://メンバ変数
 	//ファイル名
 	std::wstring vertexShaderFileName_ = L"Shape.VS.hlsl";//頂点
 	std::wstring pixelShaderFileName_ = L"Shape.PS.hlsl";//ピクセル
+protected://メンバ変数
 	//ワールド行列
 	Matrix4x4 worldMatrix_ = {};
 	//ワールド座標
@@ -196,7 +185,5 @@ protected://メンバ変数
 	VertexData* vertexData_ = nullptr;
 	//インデックスデータ
 	uint32_t* indexData_ = nullptr;
-	//線分
-	Segment segment_ = {};
 };
 

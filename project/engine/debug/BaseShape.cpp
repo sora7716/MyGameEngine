@@ -47,16 +47,6 @@ void BaseShape::Update() {
 	UpdateTransform();
 }
 
-//デバッグ
-void BaseShape::Debug() {
-#ifdef USE_IMGUI
-	ImGuiManager::DragTransform(transform_);
-	ImGui::DragFloat3("origin", &segment_.origin.x, 0.1f);
-	ImGui::DragFloat3("diff", &segment_.diff.x, 0.1f);
-	ImGui::ColorEdit4("color", &color_->x);
-#endif // USE_IMGUI
-}
-
 //描画
 void BaseShape::Draw() {
 	//2Dオブジェクトの共通部分
@@ -81,18 +71,6 @@ void BaseShape::Draw() {
 //カメラのセッター
 void BaseShape::SetCamera(Camera* camera) {
 	camera_ = camera;
-}
-
-//頂点データの設定
-void BaseShape::SettingVertexData() {
-	//vertexData_[0].position = segment_.origin;
-	//vertexData_[1].position = segment_.origin + segment_.diff;
-}
-
-//インデックスデータの設定
-void BaseShape::SettingIndexDate() {
-	indexData_[0] = 0;
-	indexData_[1] = 1;
 }
 
 //インデックスリソースの生成

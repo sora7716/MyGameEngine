@@ -6,7 +6,7 @@
 #include "SRVManager.h"
 #include "TextureManager.h"
 #include <cassert>
-#include "algorithm/Math.h"
+#include "algorithms/Math.h"
 #include "Blend.h"
 using namespace Microsoft::WRL;
 
@@ -314,7 +314,7 @@ void WireframeObject3dCommon::CreateSpotLight() {
 		spotLightPtr_[i].intensity = 4.0f;
 		spotLightPtr_[i].decay = 2.0f;
 		spotLightPtr_[i].cosAngle = std::cos(Math::kPi / 3.0f);
-		spotLightPtr_[i].cosFolloffStart = 1.0f;
+		spotLightPtr_[i].cosFalloffStart = 1.0f;
 		spotLightPtr_[i].isBlinnPhong = true;
 		spotLightPtr_[i].enableSpotLighting = false;
 	}

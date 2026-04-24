@@ -1,6 +1,6 @@
 #pragma once
 #include "ResourceData.h"
-#include "algorithm/Rendering.h"
+#include "algorithms/Rendering.h"
 #include "BlendMode.h"
 #include <d3d12.h>
 #include <dxgi1_6.h>

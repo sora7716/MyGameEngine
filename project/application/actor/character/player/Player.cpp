@@ -3,8 +3,8 @@
 #include "Object3d.h"
 #include "WireframeObject3d.h"
 #include "ImGuiManager.h"
-#include "algorithm/Physics.h"
-#include "algorithm/Math.h"
+#include "algorithms/Physics.h"
+#include "algorithms/Math.h"
 #include "Input.h"
 #include "Camera.h"
 

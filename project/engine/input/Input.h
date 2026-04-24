@@ -114,16 +114,16 @@ public://メンバ関数
 	/// <summary>
 	/// マウスのボタンの押下した瞬間をチェック
 	/// </summary>
-	/// <param name="mouseClicPos">マウスのボタン</param>
+	/// <param name="mouseClickPos">マウスのボタン</param>
 	/// <returns>押した瞬間</returns>
-	bool TriggerMouseButton(Click mouseClicPos);
+	bool TriggerMouseButton(Click mouseClickPos);
 
 	/// <summary>
 	/// マウスのボタンを離した瞬間をチェック
 	/// </summary>
-	/// <param name="mouseClicPos">マウスのボタン</param>
+	/// <param name="mouseClickPos">マウスのボタン</param>
 	/// <returns>離した瞬間</returns>
-	bool ReleaseTriggerMouseButton(Click mouseClicPos);
+	bool ReleaseTriggerMouseButton(Click mouseClickPos);
 
 	/// <summary>
 	/// マウスの移動量のゲッター

@@ -1,5 +1,5 @@
 #include "Camera.h"
-#include "algorithm/Math.h"
+#include "algorithms/Math.h"
 #include "WinApi.h"
 
 /// <summary>

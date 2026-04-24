@@ -5,8 +5,8 @@
 #include "WorldTransform.h"
 #include "DirectXBase.h"
 #include "WinApi.h"
-#include "algorithm/Rendering.h"
-#include "algorithm/Math.h"
+#include "algorithms/Rendering.h"
+#include "algorithms/Math.h"
 #include "Camera.h"
 #include "StringUtility.h"
 #include <algorithm>

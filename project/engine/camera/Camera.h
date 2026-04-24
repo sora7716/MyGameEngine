@@ -1,5 +1,5 @@
 #pragma once
-#include "algorithm/Rendering.h"
+#include "algorithms/Rendering.h"
 
 /// <summary>
 /// カメラ

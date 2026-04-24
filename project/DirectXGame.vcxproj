@@ -65,11 +65,11 @@
     <ClCompile Include="engine\framework\GameSystem.cpp" />
     <ClCompile Include="engine\input\Input.cpp" />
     <ClCompile Include="engine\main.cpp" />
-    <ClCompile Include="engine\math\algorithm\ColliderManager.cpp" />
-    <ClCompile Include="engine\math\algorithm\Collision.cpp" />
-    <ClCompile Include="engine\math\algorithm\Math.cpp" />
-    <ClCompile Include="engine\math\algorithm\Physics.cpp" />
-    <ClCompile Include="engine\math\algorithm\Rendering.cpp" />
+    <ClCompile Include="engine\math\algorithms\ColliderManager.cpp" />
+    <ClCompile Include="engine\math\algorithms\Collision.cpp" />
+    <ClCompile Include="engine\math\algorithms\Math.cpp" />
+    <ClCompile Include="engine\math\algorithms\Physics.cpp" />
+    <ClCompile Include="engine\math\algorithms\Rendering.cpp" />
     <ClCompile Include="engine\math\Matrix4x4.cpp" />
     <ClCompile Include="engine\math\PhysicsData.cpp" />
     <ClCompile Include="engine\math\Quaternion.cpp" />
@@ -145,11 +145,11 @@
     <ClInclude Include="engine\framework\Framework.h" />
     <ClInclude Include="engine\framework\GameSystem.h" />
     <ClInclude Include="engine\input\Input.h" />
-    <ClInclude Include="engine\math\algorithm\ColliderManager.h" />
-    <ClInclude Include="engine\math\algorithm\Collision.h" />
-    <ClInclude Include="engine\math\algorithm\Math.h" />
-    <ClInclude Include="engine\math\algorithm\Physics.h" />
-    <ClInclude Include="engine\math\algorithm\Rendering.h" />
+    <ClInclude Include="engine\math\algorithms\ColliderManager.h" />
+    <ClInclude Include="engine\math\algorithms\Collision.h" />
+    <ClInclude Include="engine\math\algorithms\Math.h" />
+    <ClInclude Include="engine\math\algorithms\Physics.h" />
+    <ClInclude Include="engine\math\algorithms\Rendering.h" />
     <ClInclude Include="engine\math\PrimitiveData.h" />
     <ClInclude Include="engine\math\Matrix3x3.h" />
     <ClInclude Include="engine\math\Matrix4x4.h" />
@@ -179,7 +179,10 @@
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
     </None>
-    <None Include="engine\resources\shaders\Shape.hlsli" />
+    <None Include="engine\resources\shaders\Shape.hlsli">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+    </None>
     <None Include="engine\resources\shaders\Sprite.hlsli">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
@@ -206,11 +209,13 @@
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Pixel</ShaderType>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Pixel</ShaderType>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
     </FxCompile>
     <FxCompile Include="engine\resources\shaders\Shape.VS.hlsl">
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Vertex</ShaderType>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Vertex</ShaderType>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
     </FxCompile>
     <FxCompile Include="engine\resources\shaders\Sprite.PS.hlsl">
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Pixel</ShaderType>
@@ -319,7 +324,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
       <AdditionalOptions>/utf-8 %(AdditionalOptions)</AdditionalOptions>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
-      <AdditionalIncludeDirectories>$(ProjectDir);$(ProjectDir)engine\base;$(ProjectDir)engine\2d;$(ProjectDir)externals;$(ProjectDir)engine\math;$(ProjectDir)engine\debug;$(ProjectDir)engine\input;$(ProjectDir)engine\audio;$(SolutionDir)DirectXTex;$(SolutionDir)imgui;$(ProjectDir)engine\resource;$(ProjectDir)application;$(ProjectDir)application\scene;$(ProjectDir)application\actor;$(ProjectDir)externals\assimp\include;$(ProjectDir)engine\camera;$(ProjectDir)engine\framework;$(ProjectDir)engine\3d;$(ProjectDir)engine\scene;$(ProjectDir)engine\worldTransform;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir);$(ProjectDir)engine\base;$(ProjectDir)engine\2d;$(ProjectDir)externals;$(ProjectDir)engine\math;$(ProjectDir)engine\debug;$(ProjectDir)engine\input;$(ProjectDir)engine\audio;$(SolutionDir)DirectXTex;$(SolutionDir)imgui;$(ProjectDir)engine\resource;$(ProjectDir)application;$(ProjectDir)application\scene;$(ProjectDir)application\actor;$(ProjectDir)externals\assimp\include;$(ProjectDir)engine\camera;$(ProjectDir)engine\framework;$(ProjectDir)engine\3d;$(ProjectDir)engine\scene;$(ProjectDir)engine\worldTransform;$(ProjectDir)application\gameObject;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <Optimization>MinSpace</Optimization>
     </ClCompile>
     <Link>

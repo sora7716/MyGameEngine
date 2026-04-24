@@ -1,7 +1,7 @@
 #include "Shape.h"
 #include "DirectXBase.h"
-#include "algorithm/Rendering.h"
-#include "algorithm/Math.h"
+#include "algorithms/Rendering.h"
+#include "algorithms/Math.h"
 #include "Log.h"
 #include "GraphicsPipeline.h"
 #include "Camera.h"
@@ -51,10 +51,12 @@ void Shape::Update() {
 
 //デバッグ
 void Shape::Debug() {
+#ifdef USE_IMGUI
 	ImGuiManager::DragTransform(transform_);
 	ImGui::DragFloat3("origin", &segment_.origin.x, 0.1f);
 	ImGui::DragFloat3("diff", &segment_.diff.x, 0.1f);
 	ImGui::ColorEdit4("color", &color_->x);
+#endif // USE_IMGUI
 }
 
 //描画
@@ -85,7 +87,7 @@ void Shape::SetCamera(Camera* camera) {
 
 //頂点データの設定
 void Shape::SettingVertexData() {
-	//verte
+	//vertex
 	//// 左上
 	//lineVertex_.vertices.push_back({
 	//	.position = {-1.0f, 1.0f, 0.0f, 1.0f},

@@ -2,7 +2,7 @@
 #include "DebugCamera.h"
 #include "AbstractSceneFactory.h"
 #include "GlobalVariables.h"
-#include "algorithm/ColliderManager.h"
+#include "algorithms/ColliderManager.h"
 
 //コンストラクタ
 BaseScene::BaseScene() {

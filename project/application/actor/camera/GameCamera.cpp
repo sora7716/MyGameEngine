@@ -1,8 +1,8 @@
 #include "GameCamera.h"
 #include "Camera.h"
 #include "ImGuiManager.h"
-#include "algorithm/Rendering.h"
-#include "algorithm/Math.h"
+#include "algorithms/Rendering.h"
+#include "algorithms/Math.h"
 #include "Input.h"
 
 //初期化
@@ -76,6 +76,6 @@ void GameCamera::SetCamera(Camera* camera) {
 }
 
 //ターゲットの位置のセッター
-void GameCamera::SetTragetPos(const Vector3& targetPos) {
+void GameCamera::SetTargetPos(const Vector3& targetPos) {
 	targetPos_ = targetPos;
 }

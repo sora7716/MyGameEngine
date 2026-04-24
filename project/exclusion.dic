@@ -41,6 +41,7 @@ wndproc
 winmain
 debug
 msg
+xbox
 
 // DirectX 12 & DXGI
 d3d
@@ -67,6 +68,8 @@ allocator
 fence
 barrier
 descs
+countof
+texcoord
 
 // HLSL & Shaders (often used in C++ setup)
 hlsl
@@ -103,6 +106,13 @@ perspective
 fov
 aspect
 ratio
+euler
+Phong
+Slerp
+Catmull
+CatmullRom
+Collidable
+aabb
 
 // Graphics Concepts
 texel
@@ -121,5 +131,4 @@ wireframe
 fullscreen
 vsync
 
-//Math
-euler
+Datas

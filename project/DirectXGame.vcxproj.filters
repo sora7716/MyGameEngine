@@ -258,21 +258,6 @@
     <ClCompile Include="engine\math\RenderingData.cpp">
       <Filter>engine\math</Filter>
     </ClCompile>
-    <ClCompile Include="engine\math\algorithm\Collision.cpp">
-      <Filter>engine\math\algorithm</Filter>
-    </ClCompile>
-    <ClCompile Include="engine\math\algorithm\Math.cpp">
-      <Filter>engine\math\algorithm</Filter>
-    </ClCompile>
-    <ClCompile Include="engine\math\algorithm\Physics.cpp">
-      <Filter>engine\math\algorithm</Filter>
-    </ClCompile>
-    <ClCompile Include="engine\math\algorithm\Rendering.cpp">
-      <Filter>engine\math\algorithm</Filter>
-    </ClCompile>
-    <ClCompile Include="engine\math\algorithm\ColliderManager.cpp">
-      <Filter>engine\math</Filter>
-    </ClCompile>
     <ClCompile Include="application\gameObject\ColliderData.cpp">
       <Filter>application\gameObject</Filter>
     </ClCompile>
@@ -305,6 +290,21 @@
     </ClCompile>
     <ClCompile Include="engine\debug\Shape.cpp">
       <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="engine\math\algorithms\ColliderManager.cpp">
+      <Filter>engine\math\algorithm</Filter>
+    </ClCompile>
+    <ClCompile Include="engine\math\algorithms\Collision.cpp">
+      <Filter>engine\math\algorithm</Filter>
+    </ClCompile>
+    <ClCompile Include="engine\math\algorithms\Math.cpp">
+      <Filter>engine\math\algorithm</Filter>
+    </ClCompile>
+    <ClCompile Include="engine\math\algorithms\Physics.cpp">
+      <Filter>engine\math\algorithm</Filter>
+    </ClCompile>
+    <ClCompile Include="engine\math\algorithms\Rendering.cpp">
+      <Filter>engine\math\algorithm</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -506,21 +506,6 @@
     <ClInclude Include="application\gameObject\GameObjectList.h">
       <Filter>application\gameObject</Filter>
     </ClInclude>
-    <ClInclude Include="engine\math\algorithm\Collision.h">
-      <Filter>engine\math\algorithm</Filter>
-    </ClInclude>
-    <ClInclude Include="engine\math\algorithm\Math.h">
-      <Filter>engine\math\algorithm</Filter>
-    </ClInclude>
-    <ClInclude Include="engine\math\algorithm\Physics.h">
-      <Filter>engine\math\algorithm</Filter>
-    </ClInclude>
-    <ClInclude Include="engine\math\algorithm\Rendering.h">
-      <Filter>engine\math\algorithm</Filter>
-    </ClInclude>
-    <ClInclude Include="engine\math\algorithm\ColliderManager.h">
-      <Filter>engine\math</Filter>
-    </ClInclude>
     <ClInclude Include="application\gameObject\ColliderData.h">
       <Filter>application\gameObject</Filter>
     </ClInclude>
@@ -553,6 +538,21 @@
     </ClInclude>
     <ClInclude Include="engine\debug\Shape.h">
       <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="engine\math\algorithms\ColliderManager.h">
+      <Filter>engine\math\algorithm</Filter>
+    </ClInclude>
+    <ClInclude Include="engine\math\algorithms\Collision.h">
+      <Filter>engine\math\algorithm</Filter>
+    </ClInclude>
+    <ClInclude Include="engine\math\algorithms\Math.h">
+      <Filter>engine\math\algorithm</Filter>
+    </ClInclude>
+    <ClInclude Include="engine\math\algorithms\Physics.h">
+      <Filter>engine\math\algorithm</Filter>
+    </ClInclude>
+    <ClInclude Include="engine\math\algorithms\Rendering.h">
+      <Filter>engine\math\algorithm</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

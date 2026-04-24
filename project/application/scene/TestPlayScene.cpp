@@ -5,8 +5,8 @@
 #include "Text.h"
 #include "Core.h"
 #include "Object3d.h"
-#include "algorithm/Math.h"
-#include "algorithm/ColliderManager.h"
+#include "algorithms/Math.h"
+#include "algorithms/ColliderManager.h"
 #include <string>
 
 //コンストラクタ

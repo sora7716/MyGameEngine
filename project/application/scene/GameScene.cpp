@@ -10,7 +10,7 @@
 #include "field/JumpPad.h"
 #include "field/SeesawPlatform.h"
 #include "character/player/Player.h"
-#include "algorithm/ColliderManager.h"
+#include "algorithms/ColliderManager.h"
 #include "camera/GameCamera.h"
 #include "field/StageTimer.h"
 
@@ -78,7 +78,7 @@ void GameScene::Update() {
 	BaseScene::Update();
 
 	//ゲームカメラ
-	gameCamera_->SetTragetPos(player_->GetTranslate());
+	gameCamera_->SetTargetPos(player_->GetTranslate());
 	gameCamera_->Update();
 
 	//カメラの設定

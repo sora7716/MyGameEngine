@@ -1,6 +1,6 @@
 #include "FallingGround.h"
-#include "algorithm/Physics.h"
-#include "algorithm/Math.h"
+#include "algorithms/Physics.h"
+#include "algorithms/Math.h"
 #include "Object3d.h"
 #include "ImGuiManager.h"
 
@@ -43,9 +43,11 @@ void FallingGround::Update() {
 
 //デバッグ
 void FallingGround::Debug() {
+#ifdef USE_IMGUi
 	//基底クラスのデバッグ
 	BaseGround::Debug();
 	ImGui::Text("fallingCount:%f", fallDelaySecond_);
+#endif // USE_IMGUi
 }
 
 //描画

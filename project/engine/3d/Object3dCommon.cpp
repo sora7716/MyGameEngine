@@ -6,7 +6,7 @@
 #include "SRVManager.h"
 #include "TextureManager.h"
 #include <cassert>
-#include "algorithm/Math.h"
+#include "algorithms/Math.h"
 #include "Blend.h"
 using namespace Microsoft::WRL;
 
@@ -94,7 +94,7 @@ void Object3dCommon::Initialize(DirectXBase* directXBase, SRVManager* srvManager
 	//	spotLightDataList_[i].direction = Vector3({ -1.0f,-1.0f,0.0f }).Normalize();
 	//	spotLightDataList_[i].intensity = 4.0f;
 	//	spotLightDataList_[i].decay = 2.0f;
-	//	spotLightDataList_[i].cosFolloffStart = 1.0f;
+		//spotLightDataList_[i].cosFollOffStart = 1.0f;
 	//	spotLightDataList_[i].cosAngle = std::cos(Math::kPi / 3.0f);
 	//	spotLightDataList_[i].isBlinnPhong = false;
 	//	spotLightDataList_[i].enableSpotLighting = false;
@@ -328,7 +328,7 @@ void Object3dCommon::CreateSpotLight() {
 		spotLightPtr_[i].intensity = 4.0f;
 		spotLightPtr_[i].decay = 2.0f;
 		spotLightPtr_[i].cosAngle = std::cos(Math::kPi / 3.0f);
-		spotLightPtr_[i].cosFolloffStart = 1.0f;
+		spotLightPtr_[i].cosFalloffStart = 1.0f;
 		spotLightPtr_[i].isBlinnPhong = true;
 		spotLightPtr_[i].enableSpotLighting = false;
 	}

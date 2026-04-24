@@ -1,5 +1,5 @@
 #include "Framework.h"
-#include "algorithm/Math.h"
+#include "algorithms/Math.h"
 #include "Input.h"
 
 //初期化

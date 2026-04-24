@@ -3,7 +3,7 @@
 #include "WireframeObject3d.h"
 #include "Object3dCommon.h"
 #include "ImGuiManager.h"
-#include"algorithm/Math.h"
+#include"algorithms/Math.h"
 
 //コンストラクタ
 BaseGround::BaseGround() {

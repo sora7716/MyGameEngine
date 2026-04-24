@@ -1,6 +1,6 @@
 #pragma once
 #include "ResourceData.h"
-#include "algorithm/Rendering.h"
+#include "algorithms/Rendering.h"
 #include <string>
 #include <vector>
 #include <wrl.h>

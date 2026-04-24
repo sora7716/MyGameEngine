@@ -1,5 +1,5 @@
 #include "SeesawPlatform.h"
-#include "algorithm/Rendering.h"
+#include "algorithms/Rendering.h"
 
 //コンストラクタ
 SeesawPlatform::SeesawPlatform() {

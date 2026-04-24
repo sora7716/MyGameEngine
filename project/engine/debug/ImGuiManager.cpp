@@ -1,7 +1,7 @@
 #include "ImGuiManager.h"
 #include "DirectXBase.h"
 #include "SRVManager.h"
-#include "algorithm/Rendering.h"
+#include "algorithms/Rendering.h"
 #include "WinApi.h"
 
 //デストラクタ
@@ -88,20 +88,20 @@ void ImGuiManager::TreeNodeForEntityGroup(const std::string& label, EntityGroup&
 }
 
 //トランスフォームデータ用のImGui
-void ImGuiManager::DragTransform(TransformData& transfromData) {
+void ImGuiManager::DragTransform(TransformData& transformData) {
 #ifdef USE_IMGUI
-	ImGui::Checkbox("isUsingQuaternion", &transfromData.isUsingQuaternion);
-	ImGui::DragFloat3("scale", &transfromData.scale.x, 0.1f);
-	if (transfromData.isUsingQuaternion) {
-		ImGui::DragFloat3("axis", &transfromData.axis.x, 0.01f, -1.0f, 1.0f);
-		ImGui::SliderAngle("angle", &transfromData.angle);
-		transfromData.quaternion = Rendering::MakeRotateAxisAngleQuaternion(transfromData.axis, transfromData.angle);
+	ImGui::Checkbox("isUsingQuaternion", &transformData.isUsingQuaternion);
+	ImGui::DragFloat3("scale", &transformData.scale.x, 0.1f);
+	if (transformData.isUsingQuaternion) {
+		ImGui::DragFloat3("axis", &transformData.axis.x, 0.01f, -1.0f, 1.0f);
+		ImGui::SliderAngle("angle", &transformData.angle);
+		transformData.quaternion = Rendering::MakeRotateAxisAngleQuaternion(transformData.axis, transformData.angle);
 	} else {
-		ImGui::DragFloat3("eulerAngle", &transfromData.eulerAngle.x, 0.1f);
-		transfromData.quaternion = Quaternion::MakeQuaternionForEulerAngle(transfromData.eulerAngle);
+		ImGui::DragFloat3("eulerAngle", &transformData.eulerAngle.x, 0.1f);
+		transformData.quaternion = Quaternion::MakeQuaternionForEulerAngle(transformData.eulerAngle);
 	}
-	ImGui::DragFloat4("rotate", &transfromData.quaternion.x, 0.0f);
-	ImGui::DragFloat3("translate", &transfromData.translate.x, 0.1f);
+	ImGui::DragFloat4("rotate", &transformData.quaternion.x, 0.0f);
+	ImGui::DragFloat3("translate", &transformData.translate.x, 0.1f);
 #endif // USE_IMGUI
 }
 

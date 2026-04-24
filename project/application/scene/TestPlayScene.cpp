@@ -61,7 +61,7 @@ void TestPlayScene::Initialize(const SceneContext& sceneContext) {
 	line_->Initialize(sceneContext_.directXBase, camera_);
 }
 
-//更新ww
+//更新
 void TestPlayScene::Update() {
 	//シーンのインタフェースの初期化
 	BaseScene::Update();
@@ -80,8 +80,7 @@ void TestPlayScene::Update() {
 	line_->Update();
 
 #ifdef USE_IMGUI
-	//ImGuiの受付開始
-	sceneContext_.imguiManager->Begin();
+
 	//デバッグカメラ
 	ImGui::Begin("debugCamera");
 	debugCamera_->Debug();
@@ -133,8 +132,6 @@ void TestPlayScene::Update() {
 	//ImGui::DragFloat4("end", &end.x, 0.1f);
 	//ImGui::End();
 
-	//ImGuiの受付終了
-	sceneContext_.imguiManager->End();
 #endif // USE_IMGUI
 
 #ifdef _DEBUG

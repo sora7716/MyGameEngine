@@ -33,6 +33,11 @@ void BaseScene::Update() {
 	colliderManager_->ProcessCollision();
 }
 
+//デバッグ
+void BaseScene::Debug() {
+
+}
+
 //終了
 void BaseScene::Finalize() {
 	//シーンファクトリーの解放

@@ -680,3 +680,4 @@ void DirectXBase::StopExecution() {
 	}
 #endif // _DEBUG
 }
+ 

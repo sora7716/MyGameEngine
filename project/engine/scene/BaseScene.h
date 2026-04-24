@@ -1,5 +1,5 @@
 #pragma once
-#include "engine/base/Context.h"
+#include "Context.h"
 #include "Input.h"
 #include "DebugCamera.h"
 #include <memory>
@@ -35,6 +35,11 @@ public://メンバ関数
 	/// 更新
 	/// </summary>
 	virtual void Update();
+
+	/// <summary>
+	/// デバッグ
+	/// </summary>
+	virtual void Debug();
 
 	/// <summary>
 	/// 終了

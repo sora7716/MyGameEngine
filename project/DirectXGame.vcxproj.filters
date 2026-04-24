@@ -147,7 +147,7 @@
     <ClCompile Include="engine\framework\Framework.cpp">
       <Filter>engine\framwork</Filter>
     </ClCompile>
-    <ClCompile Include="engine\scene\IScene.cpp">
+    <ClCompile Include="engine\scene\BaseScene.cpp">
       <Filter>engine\scene</Filter>
     </ClCompile>
     <ClCompile Include="engine\scene\AbstractSceneFactory.cpp">
@@ -383,7 +383,7 @@
     <ClInclude Include="engine\framework\Framework.h">
       <Filter>engine\framwork</Filter>
     </ClInclude>
-    <ClInclude Include="engine\scene\IScene.h">
+    <ClInclude Include="engine\scene\BaseScene.h">
       <Filter>engine\scene</Filter>
     </ClInclude>
     <ClInclude Include="engine\scene\AbstractSceneFactory.h">

@@ -14,7 +14,7 @@ GameOverScene::~GameOverScene() {};
 //初期化
 void GameOverScene::Initialize(const SceneContext& sceneContext) {
 	//シーンのインタフェースの初期化
-	IScene::Initialize(sceneContext);
+	BaseScene::Initialize(sceneContext);
 	camera_ = sceneContext_.cameraManager->FindCamera("titleCamera");
 
 	//タイトル名
@@ -37,7 +37,7 @@ void GameOverScene::Initialize(const SceneContext& sceneContext) {
 //更新ww
 void GameOverScene::Update() {
 	//シーンのインタフェースの初期化
-	IScene::Update();
+	BaseScene::Update();
 
 	//シーンの切り替え
 	if (sceneContext_.input->TriggerXboxPad(xBoxPadNumber_, XboxInput::kB)) {
@@ -89,5 +89,5 @@ void GameOverScene::Draw() {
 //終了
 void GameOverScene::Finalize() {
 	//シーンのインターフェースの終了
-	IScene::Finalize();
+	BaseScene::Finalize();
 }

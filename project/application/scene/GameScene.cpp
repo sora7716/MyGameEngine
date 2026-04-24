@@ -24,7 +24,7 @@ GameScene::~GameScene() {}
 //初期化
 void GameScene::Initialize(const SceneContext& sceneContext) {
 	//シーンのインタフェースの初期化
-	IScene::Initialize(sceneContext);
+	BaseScene::Initialize(sceneContext);
 	//カメラの設定
 	camera_ = sceneContext_.cameraManager->FindCamera("gameCamera");
 
@@ -75,7 +75,7 @@ void GameScene::Initialize(const SceneContext& sceneContext) {
 //更新
 void GameScene::Update() {
 	//シーンのインタフェースの初期化
-	IScene::Update();
+	BaseScene::Update();
 
 	//ゲームカメラ
 	gameCamera_->SetTragetPos(player_->GetTranslate());
@@ -168,5 +168,5 @@ void GameScene::Draw() {
 //終了
 void GameScene::Finalize() {
 	//シーンのインターフェース
-	IScene::Finalize();
+	BaseScene::Finalize();
 }

@@ -1,19 +1,19 @@
-#include "IScene.h"
+#include "BaseScene.h"
 #include "DebugCamera.h"
 #include "AbstractSceneFactory.h"
 #include "GlobalVariables.h"
 #include "algorithm/ColliderManager.h"
 
 //コンストラクタ
-IScene::IScene() {
+BaseScene::BaseScene() {
 }
 
 //デストラクタ
-IScene::~IScene() {
+BaseScene::~BaseScene() {
 }
 
 //初期化
-void IScene::Initialize(const SceneContext& sceneContext) {
+void BaseScene::Initialize(const SceneContext& sceneContext) {
 	//ゲームエンジンの核
 	sceneContext_ = sceneContext;
 	//デバックカメラ
@@ -26,7 +26,7 @@ void IScene::Initialize(const SceneContext& sceneContext) {
 }
 
 //更新
-void IScene::Update() {
+void BaseScene::Update() {
 	//デバックカメラ
 	debugCamera_->Update();
 	//コライダーマネージャー
@@ -34,7 +34,7 @@ void IScene::Update() {
 }
 
 //終了
-void IScene::Finalize() {
+void BaseScene::Finalize() {
 	//シーンファクトリーの解放
 	delete sceneFactory_;
 	sceneFactory_ = nullptr;

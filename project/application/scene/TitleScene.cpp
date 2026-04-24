@@ -16,7 +16,7 @@ TitleScene::~TitleScene() {
 //初期化
 void TitleScene::Initialize(const SceneContext& sceneContext) {
 	//シーンのインタフェースの初期化
-	IScene::Initialize(sceneContext);
+	BaseScene::Initialize(sceneContext);
 	camera_ = sceneContext_.cameraManager->FindCamera("titleCamera");
 
 	//タイトル名
@@ -39,7 +39,7 @@ void TitleScene::Initialize(const SceneContext& sceneContext) {
 //更新ww
 void TitleScene::Update() {
 	//シーンのインタフェースの初期化
-	IScene::Update();
+	BaseScene::Update();
 	
 	//シーンの切り替え
 	if (sceneContext_.input->TriggerXboxPad(xBoxPadNumber_, XboxInput::kB)) {
@@ -91,5 +91,5 @@ void TitleScene::Draw() {
 //終了
 void TitleScene::Finalize() {
 	//シーンのインターフェースの終了
-	IScene::Finalize();
+	BaseScene::Finalize();
 }

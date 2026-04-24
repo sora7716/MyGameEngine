@@ -1,12 +1,12 @@
 #pragma once
-#include "engine/scene/IScene.h"
-#include "engine/math/Vector2.h"
+#include "BaseScene.h"
+#include "Vector2.h"
 class Text;
 
 /// <summary>
 /// ゲームオーバーシーン
 /// </summary>
-class GameOverScene :public IScene {
+class GameOverScene :public BaseScene {
 public://メンバ関数
 	/// <summary>
 	/// コンストラクタ

@@ -1,5 +1,5 @@
 #pragma once
-#include "IScene.h"
+#include "BaseScene.h"
 #include "RenderingData.h"
 #include "PrimitiveData.h"
 
@@ -12,7 +12,7 @@ class StageTimer;
 /// <summary>
 /// ゲームシーン
 /// </summary>
-class GameScene :public IScene {
+class GameScene :public BaseScene {
 public://メンバ関数
 	/// <summary>
 	/// コンストラクタ

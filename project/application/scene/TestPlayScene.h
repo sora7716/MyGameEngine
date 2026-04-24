@@ -1,7 +1,7 @@
 #pragma once
-#include "IScene.h"
-#include "gameObject/GameObjectData.h"
-#include "gameObject/ColliderData.h"
+#include "BaseScene.h"
+#include "GameObjectData.h"
+#include "ColliderData.h"
 #include "Input.h"
 #include "Shape.h"
 #include <vector>
@@ -13,7 +13,7 @@ class Object3d;
 /// <summary>
 /// テストプレイシーン
 /// </summary>
-class TestPlayScene :public IScene {
+class TestPlayScene :public BaseScene {
 public://メンバ関数
 	/// <summary>
 	/// コンストラクタ

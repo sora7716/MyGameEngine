@@ -11,19 +11,19 @@ class ColliderManager;
 class DirectXBase;
 
 /// <summary>
-/// シーンのインターフェース
+/// シーンの基底クラス
 /// </summary>
-class IScene {
+class BaseScene {
 public://メンバ関数
 	/// <summary>
 	/// コンストラクタ
 	/// </summary>
-	IScene();
+	BaseScene();
 
 	/// <summary>
 	/// デストラクタ
 	/// </summary>
-	virtual ~IScene();
+	virtual ~BaseScene();
 
 	/// <summary>
 	/// 初期化

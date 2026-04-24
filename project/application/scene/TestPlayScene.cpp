@@ -18,7 +18,7 @@ TestPlayScene::~TestPlayScene() {};
 //初期化
 void TestPlayScene::Initialize(const SceneContext& sceneContext) {
 	//シーンのインタフェースの初期化
-	IScene::Initialize(sceneContext);
+	BaseScene::Initialize(sceneContext);
 	camera_ = sceneContext_.cameraManager->FindCamera("testPlayCamera");
 
 	object3d_ = std::make_unique<Object3d>();
@@ -59,7 +59,7 @@ void TestPlayScene::Initialize(const SceneContext& sceneContext) {
 //更新ww
 void TestPlayScene::Update() {
 	//シーンのインタフェースの初期化
-	IScene::Update();
+	BaseScene::Update();
 
 	for (int32_t i = 0; i < gameObject_.size(); i++) {
 		object3d_->SetGameObject(i, gameObject_[i]);
@@ -145,5 +145,5 @@ void TestPlayScene::Draw() {
 //終了
 void TestPlayScene::Finalize() {
 	//シーンのインターフェースの終了
-	IScene::Finalize();
+	BaseScene::Finalize();
 }

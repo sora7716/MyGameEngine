@@ -1,4 +1,4 @@
-#include "Shape.h"
+#include "BaseShape.h"
 #include "DirectXBase.h"
 #include "algorithms/Rendering.h"
 #include "algorithms/Math.h"
@@ -11,13 +11,13 @@ using namespace Microsoft::WRL;
 #pragma comment(lib,"d3d12.lib")
 
 //コンストラクタ
-Shape::Shape() {}
+BaseShape::BaseShape() {}
 
 //デストラクタ
-Shape::~Shape() {}
+BaseShape::~BaseShape() {}
 
 //初期化
-void Shape::Initialize(DirectXBase* directXBase, Camera* camera) {
+void BaseShape::Initialize(DirectXBase* directXBase, Camera* camera) {
 	//DirectXの基盤部分を記録する
 	directXBase_ = directXBase;
 	//カメラの記録
@@ -40,17 +40,15 @@ void Shape::Initialize(DirectXBase* directXBase, Camera* camera) {
 }
 
 //更新
-void Shape::Update() {
+void BaseShape::Update() {
 	//頂点データの設定
-	//SettingVertexData();
-	vertexData_[0].position = segment_.origin;
-	vertexData_[1].position = segment_.origin + segment_.diff;
+	SettingVertexData();
 	//ワールドトランスフォームの更新
 	UpdateTransform();
 }
 
 //デバッグ
-void Shape::Debug() {
+void BaseShape::Debug() {
 #ifdef USE_IMGUI
 	ImGuiManager::DragTransform(transform_);
 	ImGui::DragFloat3("origin", &segment_.origin.x, 0.1f);
@@ -60,7 +58,7 @@ void Shape::Debug() {
 }
 
 //描画
-void Shape::Draw() {
+void BaseShape::Draw() {
 	//2Dオブジェクトの共通部分
 	//ルートシグネイチャをセットするコマンド
 	directXBase_->GetCommandList()->SetGraphicsRootSignature(rootSignature_.Get());
@@ -81,44 +79,24 @@ void Shape::Draw() {
 }
 
 //カメラのセッター
-void Shape::SetCamera(Camera* camera) {
+void BaseShape::SetCamera(Camera* camera) {
 	camera_ = camera;
 }
 
 //頂点データの設定
-void Shape::SettingVertexData() {
-	//vertex
-	//// 左上
-	//lineVertex_.vertices.push_back({
-	//	.position = {-1.0f, 1.0f, 0.0f, 1.0f},
-	//	.texcoord = {0.0f, 0.0f},
-	//	.normal = {0.0f, 0.0f, 1.0f}
-	//});
+void BaseShape::SettingVertexData() {
+	//vertexData_[0].position = segment_.origin;
+	//vertexData_[1].position = segment_.origin + segment_.diff;
+}
 
-	//// 右上
-	//lineVertex_.vertices.push_back({
-	//	.position = {1.0f, 1.0f, 0.0f, 1.0f},
-	//	.texcoord = {1.0f, 0.0f},
-	//	.normal = {0.0f, 0.0f, 1.0f}
-	//});
-
-	//// 左下
-	//lineVertex_.vertices.push_back({
-	//	.position = {-1.0f, -1.0f, 0.0f, 1.0f},
-	//	.texcoord = {0.0f, 1.0f},
-	//	.normal = {0.0f, 0.0f, 1.0f}
-	//});
-
-	//// 右下
-	//lineVertex_.vertices.push_back({
-	//	.position = {1.0f, -1.0f, 0.0f, 1.0f},
-	//	.texcoord = {1.0f, 1.0f},
-	//	.normal = {0.0f, 0.0f, 1.0f}
-	//});
+//インデックスデータの設定
+void BaseShape::SettingIndexDate() {
+	indexData_[0] = 0;
+	indexData_[1] = 1;
 }
 
 //インデックスリソースの生成
-void Shape::CreateIndexResource() {
+void BaseShape::CreateIndexResource() {
 	indexResource_ = directXBase_->CreateBufferResource(sizeof(uint32_t) * 2);
 
 	indexBufferView_.BufferLocation = indexResource_->GetGPUVirtualAddress();
@@ -127,21 +105,12 @@ void Shape::CreateIndexResource() {
 
 	indexResource_->Map(0, nullptr, reinterpret_cast<void**>(&indexData_));
 
-	indexData_[0] = 0;
-	indexData_[1] = 1;
-
-	//indexData_[0] = 0;
-	//indexData_[1] = 1;
-	//indexData_[2] = 2;
-	//indexData_[3] = 2;
-	//indexData_[4] = 1;
-	//indexData_[5] = 3;
+	//インデックスデータの設定
+	SettingIndexDate();
 }
 
 //頂点データの生成
-void Shape::CreateVertexResource() {
-	//頂点データの初期化
-	SettingVertexData();
+void BaseShape::CreateVertexResource() {
 	//頂点リソースを生成
 	vertexResource_ = directXBase_->CreateBufferResource(sizeof(VertexData) * 2);
 	//VertexBufferViewを作成する(頂点バッファービュー)
@@ -170,13 +139,13 @@ void Shape::CreateVertexResource() {
 }
 
 //マテリアルデータの初期化
-void Shape::InitializeMaterialData() {
+void BaseShape::InitializeMaterialData() {
 	//色を書き込む
 	*color_ = { 1.0f, 1.0f, 1.0f, 1.0f };
 }
 
 //マテリアルリソースの生成
-void Shape::CreateMaterialResource() {
+void BaseShape::CreateMaterialResource() {
 	//マテリアルリソースを作る
 	materialResource_ = directXBase_->CreateBufferResource(sizeof(Vector4));
 	//マテリアルリソースにデータを書き込むためのアドレスを取得してmaterialDataに割り当てる
@@ -187,7 +156,7 @@ void Shape::CreateMaterialResource() {
 }
 
 //WorldTransformation行列リソースの生成
-void Shape::CreateTransformationMatrixResource() {
+void BaseShape::CreateTransformationMatrixResource() {
 	//座標変換行列リソースを作成する
 	wvpResource_ = directXBase_->CreateBufferResource(sizeof(TransformationMatrix));
 	//座標変換行列リソースにデータを書き込むためのアドレスを取得してtransformationMatrixDataに割り当てる
@@ -200,7 +169,7 @@ void Shape::CreateTransformationMatrixResource() {
 }
 
 //ルートシグネイチャBlobの生成
-void Shape::CreateRootSignatureBlob() {
+void BaseShape::CreateRootSignatureBlob() {
 	//RootSignature作成
 	D3D12_ROOT_SIGNATURE_DESC descriptionRootSignature{};
 	descriptionRootSignature.Flags = D3D12_ROOT_SIGNATURE_FLAG_ALLOW_INPUT_ASSEMBLER_INPUT_LAYOUT;
@@ -242,14 +211,14 @@ void Shape::CreateRootSignatureBlob() {
 }
 
 //ルートシグネイチャの生成
-void Shape::CreateRootSignature() {
+void BaseShape::CreateRootSignature() {
 	HRESULT result = S_FALSE;
 	result = directXBase_->GetDevice()->CreateRootSignature(0, signatureBlob_->GetBufferPointer(), signatureBlob_->GetBufferSize(), IID_PPV_ARGS(&rootSignature_));
 	assert(SUCCEEDED(result));
 }
 
 //インプットレイアウトの初期化
-void Shape::InitializeInputLayoutDesc() {
+void BaseShape::InitializeInputLayoutDesc() {
 	//InputElementDesc
 	static D3D12_INPUT_ELEMENT_DESC inputElementDescs[3] = {};
 	inputElementDescs[0].SemanticName = "POSITION";
@@ -272,7 +241,7 @@ void Shape::InitializeInputLayoutDesc() {
 }
 
 //ラスタライザステートの初期化
-void Shape::InitializeRasterizerSatate() {
+void BaseShape::InitializeRasterizerState() {
 	//裏面(時計周り)を表示しない
 	rasterizerDesc_.CullMode = D3D12_CULL_MODE_NONE;
 	//三角形の中を塗りつぶす
@@ -280,21 +249,21 @@ void Shape::InitializeRasterizerSatate() {
 }
 
 //頂点シェーダのコンパイル
-void Shape::CompileVertexShader() {
+void BaseShape::CompileVertexShader() {
 	//VertexShader
 	vertexShaderBlob_ = directXBase_->CompilerShader(L"engine/resources/shaders/" + vertexShaderFileName_, L"vs_6_0");
 	assert(vertexShaderBlob_ != nullptr);
 }
 
 //ピクセルシェーダのコンパイル
-void Shape::CompilePixelShader() {
+void BaseShape::CompilePixelShader() {
 	//PixelShader
 	pixelShaderBlob_ = directXBase_->CompilerShader(L"engine/resources/shaders/" + pixelShaderFileName_, L"ps_6_0");
 	assert(pixelShaderBlob_ != nullptr);
 }
 
 //ブレンドステートの初期化
-void Shape::InitializeBlendState() {
+void BaseShape::InitializeBlendState() {
 	blendDesc_.RenderTarget[0].RenderTargetWriteMask = D3D12_COLOR_WRITE_ENABLE_ALL;
 	blendDesc_.RenderTarget[0].BlendEnable = TRUE;	blendDesc_.RenderTarget[0].SrcBlend = D3D12_BLEND_SRC_ALPHA;
 	blendDesc_.RenderTarget[0].BlendOp = D3D12_BLEND_OP_ADD;
@@ -306,7 +275,7 @@ void Shape::InitializeBlendState() {
 }
 
 //PSOの生成
-ComPtr<ID3D12PipelineState> Shape::CreateGraphicsPipeline() {
+ComPtr<ID3D12PipelineState> BaseShape::CreateGraphicsPipeline() {
 	HRESULT result = S_FALSE;
 	//PSOを生成
 	D3D12_GRAPHICS_PIPELINE_STATE_DESC graphicsPipelineStateDesc{};
@@ -340,7 +309,7 @@ ComPtr<ID3D12PipelineState> Shape::CreateGraphicsPipeline() {
 }
 
 //グラフィックスパイプラインの構築
-void Shape::BuildGraphicsPipeline() {
+void BaseShape::BuildGraphicsPipeline() {
 	//デプスステンシルステート
 	directXBase_->InitializeDepthStencilForObject3d();
 	//ルートシグネイチャBlobの生成
@@ -350,7 +319,7 @@ void Shape::BuildGraphicsPipeline() {
 	//インプットレイアウト
 	InitializeInputLayoutDesc();
 	//ラスタライザステート
-	InitializeRasterizerSatate();
+	InitializeRasterizerState();
 	//頂点シェーダBlob
 	CompileVertexShader();
 	//ピクセルシェーダBlob
@@ -363,7 +332,7 @@ void Shape::BuildGraphicsPipeline() {
 }
 
 //座標の更新
-void Shape::UpdateTransform() {
+void BaseShape::UpdateTransform() {
 	worldMatrix_ = Rendering::MakeAffineMatrix(transform_);
 	//TransformからWorldMatrixを作る
 	//if (parent_) {

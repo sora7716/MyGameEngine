@@ -23,31 +23,31 @@ struct Segment {
 /// <summary>
 /// 形
 /// </summary>
-class Shape {
+class BaseShape {
 private://エイリアステンプレート
 	template <class T>using ComPtr = Microsoft::WRL::ComPtr<T>;
 public://メンバ関数
 	/// <summary>
 	/// コンストラクタ
 	/// </summary>
-	Shape();
+	BaseShape();
 
 	/// <summary>
 	/// デストラクタ
 	/// </summary>
-	~Shape();
+	virtual ~BaseShape();
 
 	/// <summary>
 	/// 初期化
 	/// </summary>
 	/// <param name="directXBase">DirectXの基盤部分</param>
 	/// <param name="camera">カメラ</param>
-	void Initialize(DirectXBase* directXBase, Camera* camera);
+	virtual void Initialize(DirectXBase* directXBase, Camera* camera);
 
 	/// <summary>
 	/// 更新
 	/// </summary>
-	void Update();
+	virtual void Update();
 
 	/// <summary>
 	/// デバッグ
@@ -57,19 +57,24 @@ public://メンバ関数
 	/// <summary>
 	/// 描画
 	/// </summary>
-	void Draw();
+	virtual void Draw();
 
 	/// <summary>
 	/// カメラのセッター
 	/// </summary>
 	/// <param name="camera">カメラ</param>
-	void SetCamera(Camera*camera);
-private://メンバ関数
+	void SetCamera(Camera* camera);
+protected://メンバ関数
 	/// <summary>
 	/// 頂点データの設定
 	/// </summary>
-	void SettingVertexData();
+	virtual void SettingVertexData();
 
+	/// <summary>
+	/// インデックスの設定
+	/// </summary>
+	virtual void SettingIndexDate();
+private://メンバ関数
 	/// <summary>
 	/// 頂点リソースの生成
 	/// </summary>
@@ -113,7 +118,7 @@ private://メンバ関数
 	/// <summary>
 	/// ラスタライザステートの初期化
 	/// </summary>
-	void InitializeRasterizerSatate();
+	void InitializeRasterizerState();
 
 	/// <summary>
 	/// 頂点シェーダのコンパイル
@@ -148,35 +153,18 @@ private://メンバ関数
 private://メンバ変数
 	//DirectXの基盤部分
 	DirectXBase* directXBase_ = nullptr;
-	//テクスチャマネージャー
-	TextureManager* textureManager_ = nullptr;
 	//カメラ
 	Camera* camera_ = nullptr;
-	//線分
-	Segment segment_ = {};
-
 	//バッファリソース
 	ComPtr<ID3D12Resource>vertexResource_ = nullptr;//頂点
 	ComPtr<ID3D12Resource>materialResource_ = nullptr;//マテリアル
 	ComPtr<ID3D12Resource>indexResource_ = nullptr;//インデックス
 	ComPtr<ID3D12Resource>wvpResource_ = nullptr;//ワールドビュープロジェクション
-	//バッファリソース内のデータを指すポインタ
-	Vector4* color_ = nullptr;
-	//頂点データ
-	VertexData* vertexData_ = nullptr;
-	//インデックスデータ
-	uint32_t* indexData_ = nullptr;
 	//ワールドビュープロジェクションのデータ
 	TransformationMatrix* wvpData_ = nullptr;
 	//バッファリソースの使い道を補足するバッファビュー
 	D3D12_VERTEX_BUFFER_VIEW vertexBufferView_ = {};//頂点
 	D3D12_INDEX_BUFFER_VIEW indexBufferView_ = {};//インデックス	
-
-	//ワールド座標
-	TransformData transform_ = {};
-
-	//ワールド行列
-	Matrix4x4 worldMatrix_ = {};
 
 	//ルートシグネイチャ
 	ComPtr<ID3D12RootSignature>rootSignature_ = nullptr;
@@ -188,14 +176,27 @@ private://メンバ変数
 	D3D12_BLEND_DESC blendDesc_ = {};
 	//ラスタライザステート
 	D3D12_RASTERIZER_DESC rasterizerDesc_ = {};
-	//ファイル名
-	std::wstring vertexShaderFileName_ = L"Shape.VS.hlsl";//頂点
-	std::wstring pixelShaderFileName_ = L"Shape.PS.hlsl";//ピクセル
 	//頂点シェーダBlob
 	ComPtr<IDxcBlob> vertexShaderBlob_ = nullptr;
 	//ピクセルシェーダBlob
 	ComPtr<IDxcBlob> pixelShaderBlob_ = nullptr;
 	//グラフィックスパイプライン(PSO)
 	ComPtr<ID3D12PipelineState> graphicsPipelineState_ = nullptr;
+protected://メンバ変数
+	//ファイル名
+	std::wstring vertexShaderFileName_ = L"Shape.VS.hlsl";//頂点
+	std::wstring pixelShaderFileName_ = L"Shape.PS.hlsl";//ピクセル
+	//ワールド行列
+	Matrix4x4 worldMatrix_ = {};
+	//ワールド座標
+	TransformData transform_ = {};
+	//バッファリソース内のデータを指すポインタ
+	Vector4* color_ = nullptr;
+	//頂点データ
+	VertexData* vertexData_ = nullptr;
+	//インデックスデータ
+	uint32_t* indexData_ = nullptr;
+	//線分
+	Segment segment_ = {};
 };
 

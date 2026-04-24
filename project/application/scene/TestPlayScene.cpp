@@ -7,6 +7,8 @@
 #include "Object3d.h"
 #include "algorithms/Math.h"
 #include "algorithms/ColliderManager.h"
+#include "BaseShape.h"
+#include "Line.h"
 #include <string>
 
 //コンストラクタ
@@ -52,8 +54,11 @@ void TestPlayScene::Initialize(const SceneContext& sceneContext) {
 		colliderManager_->AddCollider(&colliders_[i]);
 	}
 
-	shape_ = std::make_unique<Shape>();
-	shape_->Initialize(sceneContext_.directXBase, camera_);
+	//shape_ = std::make_unique<BaseShape>();
+	//shape_->Initialize(sceneContext_.directXBase, camera_);
+
+	line_ = std::make_unique<Line>();
+	line_->Initialize(sceneContext_.directXBase, camera_);
 }
 
 //更新ww
@@ -67,8 +72,11 @@ void TestPlayScene::Update() {
 	object3d_->SetCamera(camera_);
 	object3d_->Update();
 
-	shape_->SetCamera(camera_);
-	shape_->Update();
+	//shape_->SetCamera(camera_);
+	//shape_->Update();
+	line_->SetCamera(camera_);
+
+	line_->Update();
 
 #ifdef USE_IMGUI
 	//ImGuiの受付開始
@@ -104,7 +112,7 @@ void TestPlayScene::Update() {
 	ImGui::End();
 
 	ImGui::Begin("obj");
-	shape_->Debug();
+	line_->Debug();
 	ImGui::End();
 
 	//ImGuiManager::DragTransform(transformData_);
@@ -139,7 +147,8 @@ void TestPlayScene::Update() {
 //描画
 void TestPlayScene::Draw() {
 	object3d_->Draw();
-	shape_->Draw();
+	//shape_->Draw();
+	line_->Draw();
 }
 
 //終了

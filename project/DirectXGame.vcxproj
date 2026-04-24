@@ -57,8 +57,9 @@
     <ClCompile Include="engine\debug\DebugCamera.cpp" />
     <ClCompile Include="engine\debug\GlobalVariables.cpp" />
     <ClCompile Include="engine\debug\ImGuiManager.cpp" />
+    <ClCompile Include="engine\debug\Line.cpp" />
     <ClCompile Include="engine\debug\Log.cpp" />
-    <ClCompile Include="engine\debug\Shape.cpp" />
+    <ClCompile Include="engine\debug\BaseShape.cpp" />
     <ClCompile Include="engine\debug\WireframeObject3d.cpp" />
     <ClCompile Include="engine\debug\WireframeObject3dCommon.cpp" />
     <ClCompile Include="engine\framework\Framework.cpp" />
@@ -138,8 +139,9 @@
     <ClInclude Include="engine\debug\DebugCamera.h" />
     <ClInclude Include="engine\debug\GlobalVariables.h" />
     <ClInclude Include="engine\debug\ImGuiManager.h" />
+    <ClInclude Include="engine\debug\Line.h" />
     <ClInclude Include="engine\debug\Log.h" />
-    <ClInclude Include="engine\debug\Shape.h" />
+    <ClInclude Include="engine\debug\BaseShape.h" />
     <ClInclude Include="engine\debug\WireframeObject3d.h" />
     <ClInclude Include="engine\debug\WireframeObject3dCommon.h" />
     <ClInclude Include="engine\framework\Framework.h" />

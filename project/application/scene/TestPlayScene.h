@@ -3,12 +3,13 @@
 #include "GameObjectData.h"
 #include "ColliderData.h"
 #include "Input.h"
-#include "Shape.h"
 #include <vector>
 
 //前方宣言
 class Camera;
 class Object3d;
+class Line;
+class BaseShape;
 
 /// <summary>
 /// テストプレイシーン
@@ -66,5 +67,6 @@ private://メンバ変数
 	std::vector<ColliderState> colliderStates_ = {};
 	std::vector<Collider> colliders_ = {};
 
-	std::unique_ptr<Shape>shape_ = nullptr;
+	std::unique_ptr<BaseShape>shape_ = nullptr;
+	std::unique_ptr<Line>line_ = nullptr;
 };

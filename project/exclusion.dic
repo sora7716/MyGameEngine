@@ -107,6 +107,7 @@ fov
 aspect
 ratio
 euler
+eulerAngle
 Phong
 Slerp
 Catmull

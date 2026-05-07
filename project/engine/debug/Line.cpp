@@ -8,6 +8,8 @@ Line::~Line() {}
 
 //初期化
 void Line::Initialize(DirectXBase* directXBase, Camera* camera) {
+	vertexCount_ = 2;
+	indexCount_ = 2;
 	BaseShape::Initialize(directXBase, camera);
 }
 
@@ -37,12 +39,19 @@ Segment Line::GetSegment() {
 
 //頂点データの設定
 void Line::SettingVertexData() {
+	//始点
 	vertexData_[0].position = segment_.origin;
+	vertexData_[0].texcoord = { 0.0f,0.0f };
+	vertexData_[0].normal = { 0.0f,0.0f,1.0f };
+
+	//終点
 	vertexData_[1].position = segment_.origin + segment_.diff;
+	vertexData_[1].texcoord = { 1.0f,0.0f };
+	vertexData_[1].normal = { 0.0f,0.0f,1.0f };
 }
 
 //インデックスの設定
-void Line::SettingIndexDate() {
+void Line::SettingIndexData() {
 	indexData_[0] = 0;
 	indexData_[1] = 1;
 }

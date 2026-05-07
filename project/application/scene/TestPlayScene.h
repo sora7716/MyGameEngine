@@ -9,6 +9,7 @@
 class Camera;
 class Object3d;
 class Line;
+class Cube;
 class BaseShape;
 
 /// <summary>
@@ -36,6 +37,11 @@ public://メンバ関数
 	/// 更新
 	/// </summary>
 	void Update()override;
+
+	/// <summary>
+	/// デバッグ
+	/// </summary>
+	void Debug()override;
 
 	/// <summary>
 	/// 描画

@@ -51,5 +51,6 @@ Vector4 Vector4::operator=(const Vector3& v) {
 	x = v.x;
 	y = v.y;
 	z = v.z;
+	w = 1.0f;
 	return *this;
 }

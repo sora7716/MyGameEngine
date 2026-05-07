@@ -1,16 +1,16 @@
 #pragma once
 #include "BaseShape.h"
-class Line:public BaseShape{
+class Cube:public BaseShape {
 public://メンバ関数
 	/// <summary>
 	/// コンストラクタ
 	/// </summary>
-	Line();
+	Cube();
 
 	/// <summary>
 	/// デストラクタ
 	/// </summary>
-	~Line();
+	~Cube();
 
 	/// <summary>
 	/// 初期化
@@ -25,21 +25,14 @@ public://メンバ関数
 	void Update()override;
 
 	/// <summary>
+	/// デバッグ
+	/// </summary>
+	void Debug();
+
+	/// <summary>
 	/// 描画
 	/// </summary>
 	void Draw()override;
-
-	/// <summary>
-	/// 線分のセッター
-	/// </summary>
-	/// <param name="segment">線分</param>
-	void SetSegment(const Segment& segment);
-
-	/// <summary>
-	/// 線分のゲッター
-	/// </summary>
-	/// <returns>線分</returns>
-	Segment GetSegment();
 private://メンバ変数
 	/// <summary>
 	/// 頂点データの設定

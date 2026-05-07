@@ -54,6 +54,7 @@
     <ClCompile Include="engine\base\WinApi.cpp" />
     <ClCompile Include="engine\camera\Camera.cpp" />
     <ClCompile Include="engine\camera\CameraManager.cpp" />
+    <ClCompile Include="engine\debug\Cube.cpp" />
     <ClCompile Include="engine\debug\DebugCamera.cpp" />
     <ClCompile Include="engine\debug\GlobalVariables.cpp" />
     <ClCompile Include="engine\debug\ImGuiManager.cpp" />
@@ -136,6 +137,7 @@
     <ClInclude Include="engine\camera\Camera.h" />
     <ClInclude Include="engine\camera\CameraManager.h" />
     <ClInclude Include="engine\debug\CrashHandler.h" />
+    <ClInclude Include="engine\debug\Cube.h" />
     <ClInclude Include="engine\debug\DebugCamera.h" />
     <ClInclude Include="engine\debug\GlobalVariables.h" />
     <ClInclude Include="engine\debug\ImGuiManager.h" />

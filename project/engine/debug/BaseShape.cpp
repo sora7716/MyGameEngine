@@ -65,7 +65,7 @@ void BaseShape::Draw() {
 	//マテリアルCBufferの場所を設定
 	directXBase_->GetCommandList()->SetGraphicsRootConstantBufferView(0, materialResource_->GetGPUVirtualAddress());//material
 	//描画(DrawCall/ドローコール)
-	directXBase_->GetCommandList()->DrawIndexedInstanced(2, 1, 0, 0, 0);
+	directXBase_->GetCommandList()->DrawIndexedInstanced(indexCount_, 1, 0, 0, 0);
 }
 
 //カメラのセッター
@@ -75,27 +75,27 @@ void BaseShape::SetCamera(Camera* camera) {
 
 //インデックスリソースの生成
 void BaseShape::CreateIndexResource() {
-	indexResource_ = directXBase_->CreateBufferResource(sizeof(uint32_t) * 2);
+	indexResource_ = directXBase_->CreateBufferResource(sizeof(uint32_t) * indexCount_);
 
 	indexBufferView_.BufferLocation = indexResource_->GetGPUVirtualAddress();
-	indexBufferView_.SizeInBytes = UINT(sizeof(uint32_t) * 2);
+	indexBufferView_.SizeInBytes = UINT(sizeof(uint32_t) * indexCount_);
 	indexBufferView_.Format = DXGI_FORMAT_R32_UINT;
 
 	indexResource_->Map(0, nullptr, reinterpret_cast<void**>(&indexData_));
 
 	//インデックスデータの設定
-	SettingIndexDate();
+	SettingIndexData();
 }
 
 //頂点データの生成
 void BaseShape::CreateVertexResource() {
 	//頂点リソースを生成
-	vertexResource_ = directXBase_->CreateBufferResource(sizeof(VertexData) * 2);
+	vertexResource_ = directXBase_->CreateBufferResource(sizeof(VertexData) * vertexCount_);
 	//VertexBufferViewを作成する(頂点バッファービュー)
 	//リソースの先頭アドレスから使う
 	vertexBufferView_.BufferLocation = vertexResource_->GetGPUVirtualAddress();
 	//使用するリソースのサイズは頂点3つ分のサイズ
-	vertexBufferView_.SizeInBytes = UINT(sizeof(VertexData) * 2);
+	vertexBufferView_.SizeInBytes = UINT(sizeof(VertexData) * vertexCount_);
 	//1頂点当たりのサイズ
 	vertexBufferView_.StrideInBytes = sizeof(VertexData);
 
@@ -104,16 +104,7 @@ void BaseShape::CreateVertexResource() {
 	vertexResource_->Map(0, nullptr, reinterpret_cast<void**>(&vertexData_));//書き込むためのアドレスを取得
 
 	//頂点データの初期化
-	vertexData_[0] = {
-		{-0.5f,0.0f,0.0f,1.0f},
-		{0.0f,0.0f},
-		{0.0f,0.0f,1.0f}
-	};
-	vertexData_[1] = {
-		{0.5f,0.0f,0.0f,1.0f},
-		{0.0f,0.0f},
-		{0.0f,0.0f,1.0f}
-	};
+	SettingVertexData();
 }
 
 //マテリアルデータの初期化

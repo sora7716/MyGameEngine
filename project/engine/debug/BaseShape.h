@@ -62,7 +62,7 @@ protected://メンバ関数
 	/// <summary>
 	/// インデックスの設定
 	/// </summary>
-	virtual void SettingIndexDate() = 0;
+	virtual void SettingIndexData() = 0;
 private://メンバ関数
 	/// <summary>
 	/// 頂点リソースの生成
@@ -175,6 +175,10 @@ private://メンバ変数
 	std::wstring vertexShaderFileName_ = L"Shape.VS.hlsl";//頂点
 	std::wstring pixelShaderFileName_ = L"Shape.PS.hlsl";//ピクセル
 protected://メンバ変数
+	//頂点数
+	int32_t vertexCount_ = 0;
+	//インデックス数
+	int32_t indexCount_ = 0;
 	//ワールド行列
 	Matrix4x4 worldMatrix_ = {};
 	//ワールド座標

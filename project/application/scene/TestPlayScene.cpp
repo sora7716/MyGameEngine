@@ -9,6 +9,7 @@
 #include "algorithms/ColliderManager.h"
 #include "BaseShape.h"
 #include "Line.h"
+#include "Cube.h"
 #include <string>
 
 //コンストラクタ
@@ -78,7 +79,10 @@ void TestPlayScene::Update() {
 
 	line_->SetSegment(segment_);
 	line_->Update();
+}
 
+//デバッグ
+void TestPlayScene::Debug() {
 #ifdef USE_IMGUI
 
 	//デバッグカメラ
@@ -112,8 +116,8 @@ void TestPlayScene::Update() {
 	ImGui::End();
 
 	ImGui::Begin("obj");
-	ImGui::DragFloat3("origin", &segment_.origin.x);
-	ImGui::DragFloat3("diff", &segment_.diff.x);
+	ImGui::DragFloat3("origin", &segment_.origin.x, 0.1f);
+	ImGui::DragFloat3("diff", &segment_.diff.x, 0.1f);
 	ImGui::End();
 
 	//ImGuiManager::DragTransform(transformData_);

@@ -73,6 +73,16 @@ void BaseShape::SetCamera(Camera* camera) {
 	camera_ = camera;
 }
 
+//色のセッター
+void BaseShape::SetColor(const Vector4& color) {
+	*color_ = color;
+}
+
+//色のゲッター
+Vector4 BaseShape::GetColor() {
+	return *color_;
+}
+
 //インデックスリソースの生成
 void BaseShape::CreateIndexResource() {
 	indexResource_ = directXBase_->CreateBufferResource(sizeof(uint32_t) * indexCount_);

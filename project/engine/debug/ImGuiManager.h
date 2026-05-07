@@ -8,6 +8,7 @@
 #endif // USE_IMGUI
 #include <string>
 #include <Vector3.h>
+#include <PrimitiveData.h>
 //前方宣言
 class DirectXBase;
 class SRVManager;
@@ -60,6 +61,12 @@ public://メンバ関数
 	static void DragTransform(TransformData& transfromData);
 
 	/// <summary>
+	/// OBBデータ用のImGui
+	/// </summary>
+	/// <param name="obb">obb</param>
+	static void DragOBB(OBB& obb);
+
+	/// <summary>
 	/// ゲームオブジェクトのデバッグ
 	/// </summary>
 	/// <param name="gameObject">ゲームオブジェクト</param>
@@ -99,7 +106,7 @@ public://メンバ関数
 	/// <param name="num">浮動小数</param>
 	/// <param name="label">ラベル</param>
 	static void FloatText(float num, const char* label);
-public://PrassKey
+public://PassKey
 	class ConstructorKey {
 	private:
 		ConstructorKey() = default;
@@ -109,7 +116,7 @@ public://PrassKey
 	/// <summary>
 	/// コンストラクタ
 	/// </summary>
-	/// <param name="">PrassKeyを受け取る</param>
+	/// <param name="">PassKeyを受け取る</param>
 	explicit ImGuiManager(ConstructorKey);
 private://メンバ関数
 	//デストラクタの封印

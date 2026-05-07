@@ -44,7 +44,7 @@ private://メンバ変数
 	/// </summary>
 	void SettingIndexData()override;
 private://メンバ変数
-	//線分
-	Segment segment_ = {};
+	//OBB
+	OBB obb_ = {};
 };
 

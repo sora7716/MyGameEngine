@@ -105,6 +105,17 @@ void ImGuiManager::DragTransform(TransformData& transformData) {
 #endif // USE_IMGUI
 }
 
+//OBBデータ用のImGui
+void ImGuiManager::DragOBB(OBB& obb) {
+#ifdef USE_IMGUI
+	ImGui::DragFloat3("size", &obb.size.x, 0.1f);
+	static Vector3 obbRadian = {};
+	ImGui::DragFloat3("rotate", &obbRadian.x, 0.0f);
+	obb.quaternion = Quaternion::MakeQuaternionForEulerAngle(obbRadian);
+	ImGui::DragFloat3("center", &obb.center.x, 0.1f);
+#endif // USE_IMGUI
+}
+
 //ゲームオブジェクトのデバッグ
 void ImGuiManager::DebugGameObject(GameObject& gameObject) {
 #ifdef USE_IMGUI

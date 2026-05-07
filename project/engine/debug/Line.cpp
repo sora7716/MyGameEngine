@@ -52,6 +52,9 @@ void Line::SettingVertexData() {
 
 //インデックスの設定
 void Line::SettingIndexData() {
+	//始点
 	indexData_[0] = 0;
+	
+	//終点
 	indexData_[1] = 1;
 }

@@ -60,6 +60,9 @@ void TestPlayScene::Initialize(const SceneContext& sceneContext) {
 
 	line_ = std::make_unique<Line>();
 	line_->Initialize(sceneContext_.directXBase, camera_);
+
+	cube_ = std::make_unique<Cube>();
+	cube_->Initialize(sceneContext_.directXBase,camera_);
 }
 
 //更新
@@ -76,9 +79,12 @@ void TestPlayScene::Update() {
 	//shape_->SetCamera(camera_);
 	//shape_->Update();
 	line_->SetCamera(camera_);
+	cube_->SetCamera(camera_);
 
 	line_->SetSegment(segment_);
 	line_->Update();
+
+	cube_->Update();
 }
 
 //デバッグ
@@ -120,6 +126,10 @@ void TestPlayScene::Debug() {
 	ImGui::DragFloat3("diff", &segment_.diff.x, 0.1f);
 	ImGui::End();
 
+	ImGui::Begin("cube");
+	cube_->Debug();
+	ImGui::End();
+
 	//ImGuiManager::DragTransform(transformData_);
 	//ImGui::DragFloat4("rotate", &transformData_.quaternion.x, 0.1f);
 
@@ -151,7 +161,8 @@ void TestPlayScene::Debug() {
 void TestPlayScene::Draw() {
 	object3d_->Draw();
 	//shape_->Draw();
-	line_->Draw();
+	//line_->Draw();
+	cube_->Draw();
 }
 
 //終了

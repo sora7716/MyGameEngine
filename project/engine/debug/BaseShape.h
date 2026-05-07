@@ -53,6 +53,18 @@ public://メンバ関数
 	/// </summary>
 	/// <param name="camera">カメラ</param>
 	void SetCamera(Camera* camera);
+
+	/// <summary>
+	/// カラーのセッター
+	/// </summary>
+	/// <param name="color">色</param>
+	void SetColor(const Vector4& color);
+
+	/// <summary>
+	/// カラーのゲッター
+	/// </summary>
+	/// <returns>色</returns>
+	Vector4 GetColor();
 protected://メンバ関数
 	/// <summary>
 	/// 頂点データの設定

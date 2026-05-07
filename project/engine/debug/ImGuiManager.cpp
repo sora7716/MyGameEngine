@@ -25,7 +25,7 @@ void ImGuiManager::Initialize(WinApi* winApi, DirectXBase* directXBase, SRVManag
 	ImGui::CreateContext();
 	//ImGuiのスタイルを設定
 	ImGui::StyleColorsDark();
-	ImGui_ImplWin32_Init(winApi->GetHwnd());
+	ImGui_ImplWin32_Init(winApi->GetHwnd(0));
 	//srvの確保
 	srvManager_->Allocate();
 	ImGui_ImplDX12_Init(

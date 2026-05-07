@@ -2,6 +2,7 @@
 #include <Windows.h>
 #include <cstdint>
 #include <string>
+#include <vector>
 
 //前方宣言
 class Core;
@@ -15,7 +16,7 @@ public://メンバ関数
 	/// デストラクタ
 	/// </summary>
 	~WinApi();
-	
+
 	/// <summary>
 	/// 初期化
 	/// </summary>
@@ -30,8 +31,9 @@ public://メンバ関数
 	/// <summary>
 	/// HWNDのゲッター
 	/// </summary>
+	/// <param name="index">インデックス</param>
 	/// <returns>HWND</returns>
-	HWND GetHwnd()const;
+	HWND GetHwnd(uint32_t index = 0)const;
 
 	/// <summary>
 	/// WNDクラスのゲッター
@@ -73,7 +75,8 @@ public://定数
 	static inline const std::wstring label = L"CG3";
 private://メンバ変数
 	WNDCLASS wndClass_{};	//ウィンドウクラス
-	HWND hwnd_ = nullptr;	//ウィンドウハンドル
+	std::vector<HWND> hwnds_ = { nullptr };	//ウィンドウハンドル
+	static inline HWND debugHwnd_ = nullptr;
 	RECT windowRect_{};
 };
 

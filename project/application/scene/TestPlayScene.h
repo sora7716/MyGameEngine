@@ -7,6 +7,7 @@
 
 //前方宣言
 class Camera;
+class Box;
 
 /// <summary>
 /// テストプレイシーン
@@ -52,4 +53,6 @@ private://メンバ変数
 	Camera* camera_ = nullptr;
 	//Xboxの番号
 	DWORD xBoxPadNumber_ = 0;
+
+	std::unique_ptr<Box>box_ = nullptr;
 };

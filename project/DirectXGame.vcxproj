@@ -35,6 +35,7 @@
     <ClCompile Include="engine\2d\Text.cpp" />
     <ClCompile Include="engine\2d\TextRasterizer.cpp" />
     <ClCompile Include="engine\2d\TextureManager.cpp" />
+    <ClCompile Include="engine\3d\Box.cpp" />
     <ClCompile Include="engine\3d\Model.cpp" />
     <ClCompile Include="engine\3d\ModelCommon.cpp" />
     <ClCompile Include="engine\3d\ModelManager.cpp" />
@@ -117,6 +118,7 @@
     <ClInclude Include="engine\2d\TextData.h" />
     <ClInclude Include="engine\2d\TextRasterizer.h" />
     <ClInclude Include="engine\2d\TextureManager.h" />
+    <ClInclude Include="engine\3d\Box.h" />
     <ClInclude Include="engine\3d\Model.h" />
     <ClInclude Include="engine\3d\ModelCommon.h" />
     <ClInclude Include="engine\3d\ModelManager.h" />

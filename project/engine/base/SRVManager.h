@@ -1,4 +1,6 @@
 #pragma once
+#include "DirectXTex/DirectXTex.h"
+#include "DirectXTex/d3dx12.h"
 #include <stdint.h>
 #include <wrl.h>
 #include <d3d12.h>
@@ -41,11 +43,12 @@ public://メンバ関数
 	/// <summary>
 	/// SRV生成(テクスチャ用)
 	/// </summary>
+	/// <param name="metadata">画面の幅などの調整</param>
 	/// <param name="srvIndex">srvインデックス</param>
 	/// <param name="resource">リソース</param>
 	/// <param name="format">フォーマット</param>
 	/// <param name="mipLevels">ミップレベル</param>
-	void CreateSRVForTexture2D(uint32_t srvIndex, ID3D12Resource* resource, DXGI_FORMAT format, UINT mipLevels);
+	void CreateSRVForTexture2D(DirectX::TexMetadata metadata,uint32_t srvIndex, ID3D12Resource* resource, DXGI_FORMAT format, UINT mipLevels);
 
 	/// <summary>
 	/// SRV生成(Structured Buffer用)

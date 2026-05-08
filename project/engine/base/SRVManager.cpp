@@ -33,7 +33,7 @@ uint32_t SRVManager::Allocate() {
 }
 
 //解放
-void SRVManager::Free(uint32_t index){
+void SRVManager::Free(uint32_t index) {
 	//範囲内のインデックスのみ会法
 	if (index >= 0 && index < useIndex_) {
 		freeList_.push(index);
@@ -41,13 +41,20 @@ void SRVManager::Free(uint32_t index){
 }
 
 // SRV生成(テクスチャ用)
-void SRVManager::CreateSRVForTexture2D(uint32_t srvIndex, ID3D12Resource* resource, DXGI_FORMAT format, UINT mipLevels) {
+void SRVManager::CreateSRVForTexture2D(DirectX::TexMetadata metadata, uint32_t srvIndex, ID3D12Resource* resource, DXGI_FORMAT format, UINT mipLevels) {
 	//SRVの設定
 	D3D12_SHADER_RESOURCE_VIEW_DESC srvDesc{};
-	srvDesc.Format = format;
-	srvDesc.Shader4ComponentMapping = D3D12_DEFAULT_SHADER_4_COMPONENT_MAPPING;
-	srvDesc.ViewDimension = D3D12_SRV_DIMENSION_TEXTURE2D;//2Dテクスチャ
-	srvDesc.Texture2D.MipLevels = UINT(mipLevels);
+	srvDesc.Format = metadata.format;
+	if (metadata.IsCubemap()) {
+		srvDesc.ViewDimension = D3D12_SRV_DIMENSION_TEXTURECUBE;
+		srvDesc.TextureCube.MostDetailedMip = 0;
+		srvDesc.TextureCube.MipLevels = UINT_MAX;
+		srvDesc.TextureCube.ResourceMinLODClamp = 0.0f;
+	} else {
+		srvDesc.Shader4ComponentMapping = D3D12_DEFAULT_SHADER_4_COMPONENT_MAPPING;
+		srvDesc.ViewDimension = D3D12_SRV_DIMENSION_TEXTURE2D;//2Dテクスチャ
+		srvDesc.Texture2D.MipLevels = UINT(mipLevels);
+	}
 	//設定を元にSRVを生成
 	directXBase_->GetDevice()->CreateShaderResourceView(resource, &srvDesc, GetCPUDescriptorHandle(srvIndex));
 }
@@ -80,7 +87,7 @@ void SRVManager::SetGraphicsRootDescriptorTable(UINT rootParameterIndex, uint32_
 
 // 最大テクスチャを超えて読み込もうとしてるかチェック
 bool SRVManager::TextureLimitCheck(uint32_t kSRVTop) {
-	return useIndex_+kSRVTop < kMaxSRVCount;
+	return useIndex_ + kSRVTop < kMaxSRVCount;
 }
 
 // CPUデスクリプタハンドルのゲッター
@@ -94,10 +101,9 @@ D3D12_GPU_DESCRIPTOR_HANDLE SRVManager::GetGPUDescriptorHandle(uint32_t index) {
 }
 
 // デスクリプタヒープのゲッター
-ID3D12DescriptorHeap* SRVManager::GetDescriptorHeap() const{
+ID3D12DescriptorHeap* SRVManager::GetDescriptorHeap() const {
 	return descriptorHeap_.Get();
 }
 
 //コンストラクタ
-SRVManager::SRVManager(ConstructorKey) {
-}
+SRVManager::SRVManager(ConstructorKey) {}

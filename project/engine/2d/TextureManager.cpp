@@ -33,15 +33,27 @@ void TextureManager::LoadTexture(const std::string& filePath) {
 	DirectX::ScratchImage image{};
 	std::wstring filePathW = StringUtility::ConvertString(filePath);
 	HRESULT hr = DirectX::LoadFromWICFile(filePathW.c_str(), DirectX::WIC_FLAGS_FORCE_SRGB, nullptr, image);
+
+	if (filePathW.ends_with(L".dds")) {//.ddsで終わっていたらddsとみなす。
+		hr = DirectX::LoadFromDDSFile(filePathW.c_str(), DirectX::DDS_FLAGS_NONE, nullptr, image);
+	} else {
+		hr = DirectX::LoadFromWICFile(filePathW.c_str(), DirectX::WIC_FLAGS_FORCE_SRGB, nullptr, image);
+	}
+
 	assert(SUCCEEDED(hr));
 
 	//ミップマップの作成
 	DirectX::ScratchImage mipImages{};
 
-	if (image.GetMetadata().width <= 1 && image.GetMetadata().height <= 1) {
-		DirectX::LoadFromWICFile(filePathW.c_str(), DirectX::WIC_FLAGS_FORCE_SRGB, nullptr, mipImages);
+	//DirectXTexでは直接的に圧縮フォーマットのMipMap生成に対応してないのでimageをそのまま使用する
+	if (DirectX::IsCompressed(image.GetMetadata().format)) {
+		mipImages = std::move(image);
 	} else {
-		hr = DirectX::GenerateMipMaps(image.GetImages(), image.GetImageCount(), image.GetMetadata(), DirectX::TEX_FILTER_SRGB, 0, mipImages);
+		if (image.GetMetadata().width <= 1 && image.GetMetadata().height <= 1) {
+			DirectX::LoadFromWICFile(filePathW.c_str(), DirectX::WIC_FLAGS_FORCE_SRGB, nullptr, mipImages);
+		} else {
+			hr = DirectX::GenerateMipMaps(image.GetImages(), image.GetImageCount(), image.GetMetadata(), DirectX::TEX_FILTER_SRGB, 4, mipImages);
+		}
 	}
 
 	assert(SUCCEEDED(hr));
@@ -52,14 +64,14 @@ void TextureManager::LoadTexture(const std::string& filePath) {
 	//追加したテクスチャデータの参照を取得する
 	TextureData& textureData = textureDatas_[filePath];
 	textureData.metadata = mipImages.GetMetadata();
-	textureData.resourece = directXBase_->CreateTextureResource(textureData.metadata);
-	textureData.intermediateResource = directXBase_->UploadTextureData(textureData.resourece.Get(), textureData.state,mipImages);
+	textureData.resource = directXBase_->CreateTextureResource(textureData.metadata);
+	textureData.intermediateResource = directXBase_->UploadTextureData(textureData.resource.Get(), textureData.state, mipImages);
 	//SRVの確保
 	textureData.srvIndex = srvManager_->Allocate() + kSRVIndexTop;
 	textureData.srvHandleCPU = srvManager_->GetCPUDescriptorHandle(textureData.srvIndex);
 	textureData.srvHandleGPU = srvManager_->GetGPUDescriptorHandle(textureData.srvIndex);
 	//SRVの設定
-	srvManager_->CreateSRVForTexture2D(textureData.srvIndex, textureData.resourece.Get(), textureData.metadata.format, UINT(textureData.metadata.mipLevels));
+	srvManager_->CreateSRVForTexture2D(textureData.metadata, textureData.srvIndex, textureData.resource.Get(), textureData.metadata.format, UINT(textureData.metadata.mipLevels));
 }
 
 //テクスチャファイルのアンロード
@@ -99,18 +111,18 @@ void TextureManager::CreateTextureFromMemoryBGRA(const std::string& key, const v
 
 	TextureData& textureData = textureDatas_[key];
 	textureData.metadata = img.GetMetadata();
-	textureData.resourece = directXBase_->CreateTextureResource(textureData.metadata);
-	textureData.intermediateResource = directXBase_->UploadTextureData(textureData.resourece.Get(), textureData.state,img);
+	textureData.resource = directXBase_->CreateTextureResource(textureData.metadata);
+	textureData.intermediateResource = directXBase_->UploadTextureData(textureData.resource.Get(), textureData.state, img);
 
 	textureData.srvIndex = srvManager_->Allocate() + kSRVIndexTop;
 	textureData.srvHandleCPU = srvManager_->GetCPUDescriptorHandle(textureData.srvIndex);
 	textureData.srvHandleGPU = srvManager_->GetGPUDescriptorHandle(textureData.srvIndex);
 
-	srvManager_->CreateSRVForTexture2D(textureData.srvIndex, textureData.resourece.Get(), textureData.metadata.format, UINT(textureData.metadata.mipLevels));
+	srvManager_->CreateSRVForTexture2D(textureData.metadata, textureData.srvIndex, textureData.resource.Get(), textureData.metadata.format, UINT(textureData.metadata.mipLevels));
 }
 
 //文字テクスチャなどをCPUメモリからの更新
-void TextureManager::UpdateTextureFromMemotyBGRA(const std::string& key, const void* pixelsBGRA, uint32_t width, uint32_t height, uint32_t strideBytes) {
+void TextureManager::UpdateTextureFromMemoryBGRA(const std::string& key, const void* pixelsBGRA, uint32_t width, uint32_t height, uint32_t strideBytes) {
 
 	//まだ無ければ新規作成
 	if (!textureDatas_.contains(key)) {
@@ -143,7 +155,7 @@ void TextureManager::UpdateTextureFromMemotyBGRA(const std::string& key, const v
 
 
 	//ここでupload resourceを作り出す
-	textureData.intermediateResource = directXBase_->UploadTextureData(textureData.resourece.Get(), textureData.state,img);
+	textureData.intermediateResource = directXBase_->UploadTextureData(textureData.resource.Get(), textureData.state, img);
 }
 
 // メタデータの取得
@@ -163,5 +175,4 @@ D3D12_GPU_DESCRIPTOR_HANDLE TextureManager::GetSRVHandleGPU(const std::string& f
 }
 
 //コンストラクタ
-TextureManager::TextureManager(ConstructorKey) {
-}
+TextureManager::TextureManager(ConstructorKey) {}

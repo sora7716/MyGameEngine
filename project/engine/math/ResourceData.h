@@ -5,6 +5,7 @@
 #include <string>
 #include <vector>
 
+
 //頂点データ
 struct VertexData {
 	Vector4 position;//直行座標

@@ -231,5 +231,5 @@ void Text::AcquireTextTexture() {
 	CpuBitmap cpuBitmap = textRasterizer_->RenderTextToCpuBitmap(StringUtility::ConvertString(textStyle_.text), static_cast<uint32_t>(transform_.scale.x), static_cast<uint32_t>(transform_.scale.y), StringUtility::ConvertString(textStyle_.font), textStyle_.size, textStyle_.color);
 
 	//テクスチャマネージャーに登録
-	object2dCommon_->GetTextureManager()->UpdateTextureFromMemotyBGRA(textData_.textKey, cpuBitmap.bgra.data(), cpuBitmap.width, cpuBitmap.height, cpuBitmap.stride);
+	object2dCommon_->GetTextureManager()->UpdateTextureFromMemoryBGRA(textData_.textKey, cpuBitmap.bgra.data(), cpuBitmap.width, cpuBitmap.height, cpuBitmap.stride);
 }

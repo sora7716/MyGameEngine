@@ -1,6 +1,6 @@
 #pragma once
-#include "externals/DirectXTex/DirectXTex.h"
-#include "externals/DirectXTex/d3dx12.h"
+#include "DirectXTex/DirectXTex.h"
+#include "DirectXTex/d3dx12.h"
 #include <string>
 #include <unordered_map>
 
@@ -17,16 +17,16 @@ private://エイリアステンプレート
 	template <class T>using ComPtr = Microsoft::WRL::ComPtr<T>;
 private://構造体
 	//テクスチャデータ
-	typedef struct TextureData {
+	struct TextureData {
 		DirectX::TexMetadata metadata;//画像の幅や高さなどの情報
-		ComPtr<ID3D12Resource>resourece;//テクスチャリソース
+		ComPtr<ID3D12Resource>resource;//テクスチャリソース
 		uint32_t srvIndex;//SRVインデックス
 		ComPtr<ID3D12Resource>intermediateResource;//アップロードするリソース
 		D3D12_CPU_DESCRIPTOR_HANDLE srvHandleCPU;//SRV作成時に必要なCPUハンドル
 		D3D12_GPU_DESCRIPTOR_HANDLE srvHandleGPU;//描画コマンドに必要なGPUハンドル
 
 		D3D12_RESOURCE_STATES state = D3D12_RESOURCE_STATE_COPY_DEST; // ←生成直後はこれ
-	}TextureData;
+	};
 public://メンバ関数
 	/// <summary>
 	/// デストラクタ
@@ -70,7 +70,7 @@ public://メンバ関数
 	/// <param name="width">テクスチャの横幅(ピクセル単位)</param>
 	/// <param name="height">テクスチャの縦幅(ピクセル単位)</param>
 	/// <param name="strideBytes">1行当たりのバイト数</param>
-	void UpdateTextureFromMemotyBGRA(const std::string& key, const void* pixelsBGRA, uint32_t width, uint32_t height, uint32_t strideBytes);
+	void UpdateTextureFromMemoryBGRA(const std::string& key, const void* pixelsBGRA, uint32_t width, uint32_t height, uint32_t strideBytes);
 
 	/// <summary>
 	/// メタデータの取得
@@ -92,7 +92,7 @@ public://メンバ関数
 	/// <param name="filePath">ファイルパス</param>
 	/// <returns>GPUハンドル</returns>
 	D3D12_GPU_DESCRIPTOR_HANDLE GetSRVHandleGPU(const std::string& filePath);
-public://PrassKey
+public://PassKey
 	class ConstructorKey {
 		ConstructorKey() = default;
 		friend class Core;
@@ -100,7 +100,7 @@ public://PrassKey
 	/// <summary>
 	/// コンストラクタ
 	/// </summary>
-	/// <param name="">PrassKeyを受け取る</param>
+	/// <param name="">PassKeyを受け取る</param>
 	explicit TextureManager(ConstructorKey);
 private://メンバ関数
 	//コピーコンストラクタ禁止

@@ -62,7 +62,8 @@ void TestPlayScene::Initialize(const SceneContext& sceneContext) {
 	line_->Initialize(sceneContext_.directXBase, camera_);
 
 	cube_ = std::make_unique<Cube>();
-	cube_->Initialize(sceneContext_.directXBase,camera_);
+	cube_->Initialize(sceneContext_.directXBase, camera_);
+	obb_.size = Vector3::MakeAllOne();
 }
 
 //更新
@@ -84,6 +85,7 @@ void TestPlayScene::Update() {
 	line_->SetSegment(segment_);
 	line_->Update();
 
+	cube_->SetOBB(obb_);
 	cube_->Update();
 }
 
@@ -127,7 +129,7 @@ void TestPlayScene::Debug() {
 	ImGui::End();
 
 	ImGui::Begin("cube");
-	cube_->Debug();
+	ImGuiManager::DragOBB(obb_);
 	ImGui::End();
 
 	//ImGuiManager::DragTransform(transformData_);

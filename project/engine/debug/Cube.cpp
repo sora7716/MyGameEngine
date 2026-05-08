@@ -15,18 +15,14 @@ void Cube::Initialize(DirectXBase* directXBase, Camera* camera) {
 
 //更新
 void Cube::Update() {
+	//トランスフォームに送信
+	transform_.quaternion = obb_.quaternion;
+	transform_.translate = obb_.center;
+
 	//頂点データの設定
 	SettingVertexData();
 	//基底クラスの更新
 	BaseShape::Update();
-}
-
-//デバッグ
-void Cube::Debug() {
-	Vector4 color = GetColor();
-	ImGui::ColorEdit4("color", &color.x);
-	ImGuiManager::DragOBB(obb_);
-	SetColor(color);
 }
 
 //描画
@@ -35,14 +31,34 @@ void Cube::Draw() {
 	BaseShape::Draw();
 }
 
-//頂点データの設定
-void Cube::SettingVertexData() {
+//OBBのセッター
+void Cube::SetOBB(const OBB& obb) {
+	obb_ = obb;
+}
+
+//OBBのゲッター
+OBB Cube::GetOBB() {
+	return obb_;
+}
+
+//AABBのゲッター
+AABB Cube::GetAABB() {
 	//AABB
 	AABB aabb = {
 		{obb_.center - obb_.size},
 		{obb_.center + obb_.size},
 	};
-	//前面
+	return aabb;
+}
+
+//頂点データの設定
+void Cube::SettingVertexData() {
+	//AABB
+	AABB aabb = {
+		{-obb_.size},
+		{obb_.size},
+	};
+	////前面
 	// 左上
 	vertexData_[0].position = { aabb.min.x,aabb.min.y,aabb.min.z,1.0f };
 	// 右上
@@ -51,7 +67,7 @@ void Cube::SettingVertexData() {
 	vertexData_[2].position = { aabb.max.x,aabb.max.y,aabb.min.z,1.0f };
 	// 左下
 	vertexData_[3].position = { aabb.min.x,aabb.max.y,aabb.min.z,1.0f };
-	
+
 	//背面
 	// 左上
 	vertexData_[4].position = { aabb.min.x,aabb.min.y,aabb.max.z,1.0f };

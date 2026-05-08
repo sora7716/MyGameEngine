@@ -78,4 +78,5 @@ private://メンバ変数
 	Segment segment_ = { {0.0f,0.0f,0.0f},{0.5f,0.0f,0.0f} };
 
 	std::unique_ptr<Cube>cube_ = nullptr;
+	OBB obb_ = {};
 };

@@ -1,5 +1,6 @@
 #pragma once
 #include "BaseShape.h"
+#include <PrimitiveData.h>
 class Cube:public BaseShape {
 public://メンバ関数
 	/// <summary>
@@ -25,14 +26,27 @@ public://メンバ関数
 	void Update()override;
 
 	/// <summary>
-	/// デバッグ
-	/// </summary>
-	void Debug();
-
-	/// <summary>
 	/// 描画
 	/// </summary>
 	void Draw()override;
+
+	/// <summary>
+	/// OBBのセッター
+	/// </summary>
+	/// <param name="obb">OBB</param>
+	void SetOBB(const OBB& obb);
+
+	/// <summary>
+	/// OBBのゲッター
+	/// </summary>
+	/// <returns>OBB</returns>
+	OBB GetOBB();
+
+	/// <summary>
+	/// AABBのゲッター
+	/// </summary>
+	/// <returns>AABB</returns>
+	AABB GetAABB();
 private://メンバ変数
 	/// <summary>
 	/// 頂点データの設定

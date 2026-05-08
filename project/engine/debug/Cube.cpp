@@ -1,5 +1,5 @@
 #include "Cube.h"
-#include "ImGuiManager.h"
+using namespace PrimitiveData;
 //コンストラクタ
 Cube::Cube() {}
 

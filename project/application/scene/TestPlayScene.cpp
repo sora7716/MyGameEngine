@@ -10,6 +10,7 @@
 #include "BaseShape.h"
 #include "Line.h"
 #include "Cube.h"
+#include "Circle.h"
 #include <string>
 
 //コンストラクタ
@@ -64,6 +65,9 @@ void TestPlayScene::Initialize(const SceneContext& sceneContext) {
 	cube_ = std::make_unique<Cube>();
 	cube_->Initialize(sceneContext_.directXBase, camera_);
 	obb_.size = Vector3::MakeAllOne();
+
+	circle_ = std::make_unique<Circle>();
+	circle_->Initialize(sceneContext_.directXBase, camera_);
 }
 
 //更新
@@ -81,12 +85,16 @@ void TestPlayScene::Update() {
 	//shape_->Update();
 	line_->SetCamera(camera_);
 	cube_->SetCamera(camera_);
+	circle_->SetCamera(camera_);
 
 	line_->SetSegment(segment_);
 	line_->Update();
 
 	cube_->SetOBB(obb_);
 	cube_->Update();
+
+
+	circle_->Update();
 }
 
 //デバッグ
@@ -132,6 +140,10 @@ void TestPlayScene::Debug() {
 	ImGuiManager::DragOBB(obb_);
 	ImGui::End();
 
+	ImGui::Begin("circle");
+	circle_->Debug();
+	ImGui::End();
+
 	//ImGuiManager::DragTransform(transformData_);
 	//ImGui::DragFloat4("rotate", &transformData_.quaternion.x, 0.1f);
 
@@ -164,7 +176,8 @@ void TestPlayScene::Draw() {
 	object3d_->Draw();
 	//shape_->Draw();
 	//line_->Draw();
-	cube_->Draw();
+	//cube_->Draw();
+	circle_->Draw();
 }
 
 //終了

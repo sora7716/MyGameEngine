@@ -56,6 +56,7 @@
     <ClCompile Include="engine\camera\CameraManager.cpp" />
     <ClCompile Include="engine\debug\Cube.cpp" />
     <ClCompile Include="engine\debug\DebugCamera.cpp" />
+    <ClCompile Include="engine\debug\Circle.cpp" />
     <ClCompile Include="engine\debug\GlobalVariables.cpp" />
     <ClCompile Include="engine\debug\ImGuiManager.cpp" />
     <ClCompile Include="engine\debug\Line.cpp" />
@@ -139,6 +140,7 @@
     <ClInclude Include="engine\debug\CrashHandler.h" />
     <ClInclude Include="engine\debug\Cube.h" />
     <ClInclude Include="engine\debug\DebugCamera.h" />
+    <ClInclude Include="engine\debug\Circle.h" />
     <ClInclude Include="engine\debug\GlobalVariables.h" />
     <ClInclude Include="engine\debug\ImGuiManager.h" />
     <ClInclude Include="engine\debug\Line.h" />

@@ -56,7 +56,7 @@ enum class BodyType {
 //onCollision: 衝突したときに呼ばれる
 struct Collider {
 	ColliderState* owner;
-	OBB obb;
+	PrimitiveData::OBB obb;
 	bool isTrigger;
 	bool isEnabled;
 	Layer layer;

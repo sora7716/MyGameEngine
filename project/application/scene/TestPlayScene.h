@@ -10,6 +10,7 @@ class Camera;
 class Object3d;
 class Line;
 class Cube;
+class Circle;
 class BaseShape;
 
 /// <summary>
@@ -75,8 +76,10 @@ private://メンバ変数
 
 	std::unique_ptr<BaseShape>shape_ = nullptr;
 	std::unique_ptr<Line>line_ = nullptr;
-	Segment segment_ = { {0.0f,0.0f,0.0f},{0.5f,0.0f,0.0f} };
+	PrimitiveData::Segment segment_ = { {0.0f,0.0f,0.0f},{0.5f,0.0f,0.0f} };
 
 	std::unique_ptr<Cube>cube_ = nullptr;
-	OBB obb_ = {};
+	PrimitiveData::OBB obb_ = {};
+
+	std::unique_ptr<Circle>circle_ = nullptr;
 };

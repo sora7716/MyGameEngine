@@ -1,4 +1,5 @@
 #include "Line.h"
+using namespace PrimitiveData;
 
 //コンストラクタ
 Line::Line() {}

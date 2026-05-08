@@ -1,10 +1,11 @@
 #define NOMINMAX
 #include "ParticleEmitter.h"
 #include "algorithms/Math.h"
-#include "engine/camera/Camera.h"
-#include "engine/particle/ParticleCommon.h"
-#include "engine/3d/Model.h"
-#include "engine/debug/ImGuiManager.h"
+#include "Camera.h"
+#include "ParticleCommon.h"
+#include "Model.h"
+#include "ImGuiManager.h"
+using namespace PrimitiveData;
 
 //初期化
 void ParticleEmitter::Initialize(ParticleCommon* particleCommon, Model* model) {

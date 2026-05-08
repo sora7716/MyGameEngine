@@ -1,17 +1,17 @@
 #pragma once
 #include "BaseShape.h"
 #include "PrimitiveData.h"
-class Cube:public BaseShape {
+class Circle : public BaseShape{
 public://メンバ関数
 	/// <summary>
 	/// コンストラクタ
 	/// </summary>
-	Cube();
+	Circle();
 
 	/// <summary>
 	/// デストラクタ
 	/// </summary>
-	~Cube();
+	~Circle();
 
 	/// <summary>
 	/// 初期化
@@ -26,27 +26,14 @@ public://メンバ関数
 	void Update()override;
 
 	/// <summary>
+	/// デバッグ
+	/// </summary>
+	void Debug();
+
+	/// <summary>
 	/// 描画
 	/// </summary>
 	void Draw()override;
-
-	/// <summary>
-	/// OBBのセッター
-	/// </summary>
-	/// <param name="obb">OBB</param>
-	void SetOBB(const PrimitiveData::OBB& obb);
-
-	/// <summary>
-	/// OBBのゲッター
-	/// </summary>
-	/// <returns>OBB</returns>
-	PrimitiveData::OBB GetOBB();
-
-	/// <summary>
-	/// AABBのゲッター
-	/// </summary>
-	/// <returns>AABB</returns>
-	PrimitiveData::AABB GetAABB();
 private://メンバ変数
 	/// <summary>
 	/// 頂点データの設定
@@ -58,7 +45,7 @@ private://メンバ変数
 	/// </summary>
 	void SettingIndexData()override;
 private://メンバ変数
-	//OBB
-	PrimitiveData::OBB obb_ = {};
+	//円
+	PrimitiveData::Circle circle_ = {};
 };
 

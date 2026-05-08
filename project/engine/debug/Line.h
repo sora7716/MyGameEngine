@@ -1,5 +1,6 @@
 #pragma once
 #include "BaseShape.h"
+#include "PrimitiveData.h"
 class Line:public BaseShape{
 public://メンバ関数
 	/// <summary>
@@ -33,13 +34,13 @@ public://メンバ関数
 	/// 線分のセッター
 	/// </summary>
 	/// <param name="segment">線分</param>
-	void SetSegment(const Segment& segment);
+	void SetSegment(const PrimitiveData::Segment& segment);
 
 	/// <summary>
 	/// 線分のゲッター
 	/// </summary>
 	/// <returns>線分</returns>
-	Segment GetSegment();
+	PrimitiveData::Segment GetSegment();
 private://メンバ変数
 	/// <summary>
 	/// 頂点データの設定
@@ -52,6 +53,6 @@ private://メンバ変数
 	void SettingIndexData()override;
 private://メンバ変数
 	//線分
-	Segment segment_ = {};
+	PrimitiveData::Segment segment_ = {};
 };
 

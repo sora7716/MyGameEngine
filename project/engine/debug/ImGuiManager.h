@@ -64,7 +64,13 @@ public://メンバ関数
 	/// OBBデータ用のImGui
 	/// </summary>
 	/// <param name="obb">obb</param>
-	static void DragOBB(OBB& obb);
+	static void DragOBB(PrimitiveData::OBB& obb);
+
+	/// <summary>
+	/// 円用のImGui
+	/// </summary>
+	/// <param name="circle">円</param>
+	static void DragCircle(PrimitiveData::Circle& circle);
 
 	/// <summary>
 	/// ゲームオブジェクトのデバッグ

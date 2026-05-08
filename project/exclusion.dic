@@ -114,6 +114,8 @@ Catmull
 CatmullRom
 Collidable
 aabb
+obbs
+aabbs
 
 // Graphics Concepts
 texel

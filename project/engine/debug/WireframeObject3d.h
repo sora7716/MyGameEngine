@@ -223,21 +223,21 @@ public://メンバ関数
 	/// </summary>
 	/// <param name="index">インデックス</param>
 	/// <returns>球</returns>
-	Sphere GetSphere(uint32_t index)const;
+	PrimitiveData::Sphere GetSphere(uint32_t index)const;
 
 	/// <summary>
 	/// AABBのゲッター
 	/// </summary>
 	/// <param name="index">インデックス</param>
 	/// <returns>AABB</returns>
-	AABB GetAABB(uint32_t index)const;
+	PrimitiveData::AABB GetAABB(uint32_t index)const;
 
 	/// <summary>
 	/// OBBのゲッター
 	/// </summary>
 	/// <param name="index">インデックス</param>
 	/// <returns></returns>
-	OBB GetOBB(uint32_t index)const;
+	PrimitiveData::OBB GetOBB(uint32_t index)const;
 private://メンバ関数
 	/// <summary>
 	/// 座標変換行列リソースの生成
@@ -299,7 +299,7 @@ private://メンバ変数
 	Material material_ = {};
 
 	//衝突判定に使用するプリミティブのデータ
-	std::vector<Sphere> spheres_ = {};//球
-	std::vector<AABB> aabbs_ = {};//AABB
-	std::vector<OBB> obbs_ = {};//OBB
+	std::vector<PrimitiveData::Sphere> spheres_ = {};//球
+	std::vector<PrimitiveData::AABB> aabbs_ = {};//AABB
+	std::vector<PrimitiveData::OBB> obbs_ = {};//OBB
 };

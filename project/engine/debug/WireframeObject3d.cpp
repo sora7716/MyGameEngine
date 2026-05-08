@@ -10,6 +10,8 @@
 #include "SRVManager.h"
 #include "TextureManager.h"
 #include <cassert>
+
+using namespace PrimitiveData;
 //メンバ関数テーブルの初期化
 void(WireframeObject3d::* WireframeObject3d::UpdateTransformTable[])() = {
 	&UpdateTransform,

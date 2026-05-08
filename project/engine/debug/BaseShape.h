@@ -1,7 +1,6 @@
 #pragma once
 #include "ResourceData.h"
 #include "RenderingData.h"
-#include "PrimitiveData.h"
 #include <string>
 #include <wrl.h>
 #include <d3d12.h>

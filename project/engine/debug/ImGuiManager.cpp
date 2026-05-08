@@ -106,13 +106,22 @@ void ImGuiManager::DragTransform(TransformData& transformData) {
 }
 
 //OBBデータ用のImGui
-void ImGuiManager::DragOBB(OBB& obb) {
+void ImGuiManager::DragOBB(PrimitiveData::OBB& obb) {
 #ifdef USE_IMGUI
 	ImGui::DragFloat3("size", &obb.size.x, 0.1f);
 	static Vector3 obbRadian = {};
 	ImGui::DragFloat3("rotate", &obbRadian.x, 0.1f);
 	obb.quaternion = Quaternion::MakeQuaternionForEulerAngle(obbRadian);
 	ImGui::DragFloat3("center", &obb.center.x, 0.1f);
+#endif // USE_IMGUI
+}
+
+//円用のImGui
+void ImGuiManager::DragCircle(PrimitiveData::Circle& circle) {
+#ifdef USE_IMGUI
+	ImGui::DragFloat3("center", &circle.center.x, 0.1f);
+	ImGui::DragFloat3("eulerAngle", &circle.eulerAngle.x, 0.1f);
+	ImGui::DragFloat("radius", &circle.radius, 0.01f);
 #endif // USE_IMGUI
 }
 

@@ -73,6 +73,12 @@ public://メンバ関数
 	static void DragCircle(PrimitiveData::Circle& circle);
 
 	/// <summary>
+	/// 球用のIｍGui
+	/// </summary>
+	/// <param name="sphere">球</param>
+	static void DragSphere(PrimitiveData::Sphere& sphere);
+
+	/// <summary>
 	/// ゲームオブジェクトのデバッグ
 	/// </summary>
 	/// <param name="gameObject">ゲームオブジェクト</param>

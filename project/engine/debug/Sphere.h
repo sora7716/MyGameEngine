@@ -1,17 +1,17 @@
 #pragma once
 #include "BaseShape.h"
 #include "PrimitiveData.h"
-class Circle : public BaseShape{
+class Sphere :public BaseShape{
 public://メンバ関数
 	/// <summary>
 	/// コンストラクタ
 	/// </summary>
-	Circle();
+	Sphere();
 
 	/// <summary>
 	/// デストラクタ
 	/// </summary>
-	~Circle();
+	~Sphere();
 
 	/// <summary>
 	/// 初期化
@@ -31,15 +31,16 @@ public://メンバ関数
 	void Draw()override;
 
 	/// <summary>
-	/// 円のセッター
+	/// 球のセッター
 	/// </summary>
-	void SetCircle(const PrimitiveData::Circle& circle);
-	
+	/// <param name="sphere">球</param>
+	void SetSphere(const PrimitiveData::Sphere& sphere);
+
 	/// <summary>
-	/// 円のゲッター
+	/// 球のゲッター
 	/// </summary>
-	/// <returns>円</returns>
-	PrimitiveData::Circle GetCircle();
+	/// <returns>球</returns>
+	PrimitiveData::Sphere GetSphere();
 private://メンバ変数
 	/// <summary>
 	/// 頂点データの設定
@@ -50,8 +51,10 @@ private://メンバ変数
 	/// インデックスの設定
 	/// </summary>
 	void SettingIndexData()override;
+private://定数
+	static inline const int32_t kCircleVertexCount = 32;
 private://メンバ変数
-	//円
-	PrimitiveData::Circle circle_ = {};
+	//球
+	PrimitiveData::Sphere sphere_ = {};
 };
 

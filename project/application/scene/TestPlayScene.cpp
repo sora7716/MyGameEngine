@@ -11,6 +11,7 @@
 #include "Line.h"
 #include "Cube.h"
 #include "Circle.h"
+#include "Sphere.h"
 #include <string>
 
 //コンストラクタ
@@ -68,6 +69,10 @@ void TestPlayScene::Initialize(const SceneContext& sceneContext) {
 
 	circle_ = std::make_unique<Circle>();
 	circle_->Initialize(sceneContext_.directXBase, camera_);
+	circleData_.radius = 1.0f;
+
+	sphere_ = std::make_unique<Sphere>();
+	sphere_->Initialize(sceneContext_.directXBase, camera_);
 }
 
 //更新
@@ -86,6 +91,7 @@ void TestPlayScene::Update() {
 	line_->SetCamera(camera_);
 	cube_->SetCamera(camera_);
 	circle_->SetCamera(camera_);
+	sphere_->SetCamera(camera_);
 
 	line_->SetSegment(segment_);
 	line_->Update();
@@ -93,8 +99,11 @@ void TestPlayScene::Update() {
 	cube_->SetOBB(obb_);
 	cube_->Update();
 
-
+	circle_->SetCircle(circleData_);
 	circle_->Update();
+	
+	sphere_->SetSphere(sphereData_);
+	sphere_->Update();
 }
 
 //デバッグ
@@ -141,7 +150,11 @@ void TestPlayScene::Debug() {
 	ImGui::End();
 
 	ImGui::Begin("circle");
-	circle_->Debug();
+	ImGuiManager::DragCircle(circleData_);
+	ImGui::End();
+
+	ImGui::Begin("sphere");
+	ImGuiManager::DragSphere(sphereData_);
 	ImGui::End();
 
 	//ImGuiManager::DragTransform(transformData_);
@@ -175,9 +188,10 @@ void TestPlayScene::Debug() {
 void TestPlayScene::Draw() {
 	object3d_->Draw();
 	//shape_->Draw();
-	//line_->Draw();
-	//cube_->Draw();
+	line_->Draw();
+	cube_->Draw();
 	circle_->Draw();
+	sphere_->Draw();
 }
 
 //終了

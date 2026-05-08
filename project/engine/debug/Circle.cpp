@@ -1,6 +1,5 @@
 #include "Circle.h"
 #include "algorithms/Math.h"
-#include "ImGuiManager.h"
 //コンストラクタ
 Circle::Circle() {}
 
@@ -13,7 +12,7 @@ void Circle::Initialize(DirectXBase* directXBase, Camera* camera) {
 	indexCount_ = vertexCount_ * 2;
 	BaseShape::Initialize(directXBase, camera);
 
-	circle_.radius = 0.1f;
+	circle_.radius = 1.0f;
 }
 
 //更新
@@ -28,15 +27,20 @@ void Circle::Update() {
 	BaseShape::Update();
 }
 
-//デバッグ
-void Circle::Debug() {
-	ImGuiManager::DragCircle(circle_);
-}
-
 //描画
 void Circle::Draw() {
 	//基底クラスの描画
 	BaseShape::Draw();
+}
+
+//円のセッター
+void Circle::SetCircle(const PrimitiveData::Circle& circle) {
+	circle_ = circle;
+}
+
+//円のゲッター
+PrimitiveData::Circle Circle::GetCircle() {
+	return circle_;
 }
 
 //頂点データの設定

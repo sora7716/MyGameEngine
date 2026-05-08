@@ -125,6 +125,14 @@ void ImGuiManager::DragCircle(PrimitiveData::Circle& circle) {
 #endif // USE_IMGUI
 }
 
+//球用のImGui
+void ImGuiManager::DragSphere(PrimitiveData::Sphere& sphere) {
+#ifdef USE_IMGUI
+	ImGui::DragFloat3("center", &sphere.center.x, 0.1f);
+	ImGui::DragFloat("radius", &sphere.radius, 0.01f);
+#endif // USE_IMGUI
+}
+
 //ゲームオブジェクトのデバッグ
 void ImGuiManager::DebugGameObject(GameObject& gameObject) {
 #ifdef USE_IMGUI

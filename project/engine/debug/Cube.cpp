@@ -11,6 +11,9 @@ void Cube::Initialize(DirectXBase* directXBase, Camera* camera) {
 	vertexCount_ = 8;
 	indexCount_ = 24;
 	BaseShape::Initialize(directXBase, camera);
+
+	//サイズを設定
+	obb_.size = Vector3::MakeAllOne();
 }
 
 //更新

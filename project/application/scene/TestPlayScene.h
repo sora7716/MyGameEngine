@@ -8,10 +8,11 @@
 //前方宣言
 class Camera;
 class Object3d;
+class BaseShape;
 class Line;
 class Cube;
 class Circle;
-class BaseShape;
+class Sphere;
 
 /// <summary>
 /// テストプレイシーン
@@ -82,4 +83,8 @@ private://メンバ変数
 	PrimitiveData::OBB obb_ = {};
 
 	std::unique_ptr<Circle>circle_ = nullptr;
+	PrimitiveData::Circle circleData_ = {};
+
+	std::unique_ptr<Sphere>sphere_ = nullptr;
+	PrimitiveData::Sphere sphereData_ = {};
 };

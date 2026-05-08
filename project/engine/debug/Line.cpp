@@ -12,6 +12,9 @@ void Line::Initialize(DirectXBase* directXBase, Camera* camera) {
 	vertexCount_ = 2;
 	indexCount_ = 2;
 	BaseShape::Initialize(directXBase, camera);
+
+	//差分を設定
+	segment_.diff = { 1.0f,0.0f,0.0f };
 }
 
 //更新
@@ -55,7 +58,7 @@ void Line::SettingVertexData() {
 void Line::SettingIndexData() {
 	//始点
 	indexData_[0] = 0;
-	
+
 	//終点
 	indexData_[1] = 1;
 }

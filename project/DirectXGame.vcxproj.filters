@@ -76,6 +76,9 @@
     <Filter Include="application\actor\character">
       <UniqueIdentifier>{e4c0b8d1-d6ef-4fb1-b2ec-c827f4987ed5}</UniqueIdentifier>
     </Filter>
+    <Filter Include="engine\debug\wireframe">
+      <UniqueIdentifier>{a630cca5-20b8-4df5-ae4e-e26027a95569}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="engine\main.cpp">
@@ -288,9 +291,6 @@
     <ClCompile Include="application\scene\GameOverScene.cpp">
       <Filter>application\scene</Filter>
     </ClCompile>
-    <ClCompile Include="engine\debug\BaseShape.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
     <ClCompile Include="engine\math\algorithms\ColliderManager.cpp">
       <Filter>engine\math\algorithm</Filter>
     </ClCompile>
@@ -306,17 +306,20 @@
     <ClCompile Include="engine\math\algorithms\Rendering.cpp">
       <Filter>engine\math\algorithm</Filter>
     </ClCompile>
-    <ClCompile Include="engine\debug\Line.cpp">
-      <Filter>ソース ファイル</Filter>
+    <ClCompile Include="engine\debug\wireframe\BaseShape.cpp">
+      <Filter>engine\debug\wireframe</Filter>
     </ClCompile>
-    <ClCompile Include="engine\debug\Cube.cpp">
-      <Filter>ソース ファイル</Filter>
+    <ClCompile Include="engine\debug\wireframe\Circle.cpp">
+      <Filter>engine\debug\wireframe</Filter>
     </ClCompile>
-    <ClCompile Include="engine\debug\Circle.cpp">
-      <Filter>ソース ファイル</Filter>
+    <ClCompile Include="engine\debug\wireframe\Cube.cpp">
+      <Filter>engine\debug\wireframe</Filter>
     </ClCompile>
-    <ClCompile Include="engine\debug\Sphere.cpp">
-      <Filter>ソース ファイル</Filter>
+    <ClCompile Include="engine\debug\wireframe\Line.cpp">
+      <Filter>engine\debug\wireframe</Filter>
+    </ClCompile>
+    <ClCompile Include="engine\debug\wireframe\Sphere.cpp">
+      <Filter>engine\debug\wireframe</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -548,9 +551,6 @@
     <ClInclude Include="application\scene\GameOverScene.h">
       <Filter>application\scene</Filter>
     </ClInclude>
-    <ClInclude Include="engine\debug\BaseShape.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
     <ClInclude Include="engine\math\algorithms\ColliderManager.h">
       <Filter>engine\math\algorithm</Filter>
     </ClInclude>
@@ -566,17 +566,20 @@
     <ClInclude Include="engine\math\algorithms\Rendering.h">
       <Filter>engine\math\algorithm</Filter>
     </ClInclude>
-    <ClInclude Include="engine\debug\Line.h">
-      <Filter>ヘッダー ファイル</Filter>
+    <ClInclude Include="engine\debug\wireframe\BaseShape.h">
+      <Filter>engine\debug\wireframe</Filter>
     </ClInclude>
-    <ClInclude Include="engine\debug\Cube.h">
-      <Filter>ヘッダー ファイル</Filter>
+    <ClInclude Include="engine\debug\wireframe\Circle.h">
+      <Filter>engine\debug\wireframe</Filter>
     </ClInclude>
-    <ClInclude Include="engine\debug\Circle.h">
-      <Filter>ヘッダー ファイル</Filter>
+    <ClInclude Include="engine\debug\wireframe\Cube.h">
+      <Filter>engine\debug\wireframe</Filter>
     </ClInclude>
-    <ClInclude Include="engine\debug\Sphere.h">
-      <Filter>ヘッダー ファイル</Filter>
+    <ClInclude Include="engine\debug\wireframe\Line.h">
+      <Filter>engine\debug\wireframe</Filter>
+    </ClInclude>
+    <ClInclude Include="engine\debug\wireframe\Sphere.h">
+      <Filter>engine\debug\wireframe</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

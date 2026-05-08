@@ -5,7 +5,9 @@ extern IMGUI_IMPL_API LRESULT ImGui_ImplWin32_WndProcHandler(HWND hwnd, UINT msg
 
 //デストラクタ
 WinApi::~WinApi() {
-	CloseWindow(hwnd_);
+	for (HWND& hwnd : hwnds_) {
+		CloseWindow(hwnd);
+	}
 	CoUninitialize();
 }
 
@@ -33,7 +35,10 @@ void WinApi::Initialize() {
 	//クライアント領域を元に実際のサイズをwrcを変更してもらう
 	AdjustWindowRect(&windowRect_, WS_OVERLAPPEDWINDOW, false);
 
-	hwnd_ = CreateWindow(
+	//ウィンドウハンドルの数を設定
+	hwnds_.resize(2);
+
+	hwnds_[0] = CreateWindow(
 		wndClass_.lpszClassName,//利用するクラス
 		label.c_str(),
 		WS_OVERLAPPEDWINDOW,//よく見るウィンドウのスタイル
@@ -46,12 +51,30 @@ void WinApi::Initialize() {
 		wndClass_.hInstance,//インスタンスハンドル
 		nullptr
 	);
-	//ウィンドウを表示する
-	ShowWindow(hwnd_, SW_SHOW);
+
+	hwnds_[1] = CreateWindow(
+		wndClass_.lpszClassName,//利用するクラス
+		L"DebugWindow",
+		WS_OVERLAPPEDWINDOW,//よく見るウィンドウのスタイル
+		CW_USEDEFAULT,//表示X座標(Windowに任せる)
+		CW_USEDEFAULT,//表示Y座標(Windowに任せる)
+		windowRect_.right - windowRect_.left,//ウィンドウの横幅
+		windowRect_.bottom - windowRect_.top,//ウィンドウの縦幅
+		nullptr,
+		nullptr,
+		wndClass_.hInstance,//インスタンスハンドル
+		nullptr
+	);
+	debugHwnd_ = hwnds_[1];
+
+	////ウィンドウを表示する
+	//for (const HWND& hwnd : hwnds_) {
+	//}
+	ShowWindow(hwnds_[0], SW_SHOW);
 }
 
 // プロセスメッセージ
-bool WinApi::ProcesMessage(){
+bool WinApi::ProcessMessage() {
 	MSG msg;
 	if (PeekMessage(&msg, NULL, 0, 0, PM_REMOVE)) {
 		TranslateMessage(&msg);
@@ -65,21 +88,25 @@ bool WinApi::ProcesMessage(){
 }
 
 //HWNDのゲッター
-HWND WinApi::GetHwnd()const{
-	return hwnd_;
+HWND WinApi::GetHwnd(uint32_t index)const {
+	return hwnds_[index];
 }
 
 //WNDクラスのゲッター
-WNDCLASS WinApi::GetWndClass()const{
+WNDCLASS WinApi::GetWndClass()const {
 	return wndClass_;
 }
 
 //コンストラクタ
-WinApi::WinApi(ConstructorKey) {
-}
+WinApi::WinApi(ConstructorKey) {}
 
 //ウィンドウプロシージャ
 LRESULT WinApi::WindowProc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam) {
+	//if (hwnd == debugHwnd_) {
+	//	if (ImGui_ImplWin32_WndProcHandler(hwnd, msg, wparam, lparam)) {
+	//		return true;
+	//	}
+	//}
 	if (ImGui_ImplWin32_WndProcHandler(hwnd, msg, wparam, lparam)) {
 		return true;
 	}

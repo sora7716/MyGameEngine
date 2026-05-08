@@ -6,6 +6,8 @@
 #include <algorithm>
 #include <array>
 
+using namespace PrimitiveData;
+
 /// <summary>
 /// 球同士の衝突判定
 /// </summary>

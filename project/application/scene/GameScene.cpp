@@ -6,8 +6,11 @@
 #include "WireframeObject3d.h"
 #include "Core.h"
 #include "field/Ground.h"
+#include "field/FallingGround.h"
+#include "field/JumpPad.h"
+#include "field/SeesawPlatform.h"
 #include "character/player/Player.h"
-#include "algorithm/ColliderManager.h"
+#include "algorithms/ColliderManager.h"
 #include "camera/GameCamera.h"
 #include "field/StageTimer.h"
 
@@ -21,7 +24,7 @@ GameScene::~GameScene() {}
 //初期化
 void GameScene::Initialize(const SceneContext& sceneContext) {
 	//シーンのインタフェースの初期化
-	IScene::Initialize(sceneContext);
+	BaseScene::Initialize(sceneContext);
 	//カメラの設定
 	camera_ = sceneContext_.cameraManager->FindCamera("gameCamera");
 
@@ -34,6 +37,27 @@ void GameScene::Initialize(const SceneContext& sceneContext) {
 
 	player_ = std::make_unique<Player>();
 	player_->Initialize(sceneContext_.object3dCommon, camera_, sceneContext_.input);
+
+	fallingGround_ = std::make_unique<FallingGround>();
+	fallingGround_->Initialize(sceneContext_.object3dCommon, camera_);
+
+	jumpPad_ = std::make_unique<JumpPad>();
+	jumpPad_->Initialize(sceneContext_.object3dCommon, camera_);
+
+	seesawPlatform_ = std::make_unique<SeesawPlatform>();
+	seesawPlatform_->Initialize(sceneContext_.object3dCommon, camera_);
+
+	for (Entity& entity : seesawPlatform_->GetEntity()) {
+		colliderManager_->AddCollider(&entity.collider);
+	}
+
+	for (Entity& entity : jumpPad_->GetEntity()) {
+		colliderManager_->AddCollider(&entity.collider);
+	}
+
+	for (Entity& entity : fallingGround_->GetEntity()) {
+		colliderManager_->AddCollider(&entity.collider);
+	}
 
 	for (Entity& entity : ground_->GetEntity()) {
 		colliderManager_->AddCollider(&entity.collider);
@@ -51,16 +75,22 @@ void GameScene::Initialize(const SceneContext& sceneContext) {
 //更新
 void GameScene::Update() {
 	//シーンのインタフェースの初期化
-	IScene::Update();
+	BaseScene::Update();
 
 	//ゲームカメラ
-	gameCamera_->SetTragetPos(player_->GetTranslate());
+	gameCamera_->SetTargetPos(player_->GetTranslate());
 	gameCamera_->Update();
 
 	//カメラの設定
+	seesawPlatform_->SetCamera(camera_);
+	jumpPad_->SetCamera(camera_);
+	fallingGround_->SetCamera(camera_);
 	ground_->SetCamera(camera_);
 	player_->SetCamera(camera_);
 
+	seesawPlatform_->Update();
+	fallingGround_->Update();
+	jumpPad_->Update();
 	ground_->Update();
 
 	if (!player_->GetEntity()[0].gameObject.isAlive) {
@@ -92,6 +122,14 @@ void GameScene::Update() {
 	ground_->Debug();
 	ImGui::End();
 
+	ImGui::Begin("falling");
+	fallingGround_->Debug();
+	ImGui::End();
+
+	ImGui::Begin("jumpPad");
+	jumpPad_->Debug();
+	ImGui::End();
+
 	//プレイヤー
 	ImGui::Begin("player");
 	player_->Debug();
@@ -116,6 +154,12 @@ void GameScene::Update() {
 void GameScene::Draw() {
 	ground_->Draw();
 
+	seesawPlatform_->Draw();
+
+	fallingGround_->Draw();
+
+	jumpPad_->Draw();
+
 	player_->Draw();
 
 	stageTimer_->Draw();
@@ -124,5 +168,5 @@ void GameScene::Draw() {
 //終了
 void GameScene::Finalize() {
 	//シーンのインターフェース
-	IScene::Finalize();
+	BaseScene::Finalize();
 }

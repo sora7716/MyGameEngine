@@ -1,5 +1,5 @@
 #pragma once
-#include "IScene.h"
+#include "BaseScene.h"
 #include <string>
 
 /// <summary>
@@ -17,7 +17,7 @@ public://メンバ関数
 	/// </summary>
 	/// <param name="sceneName">シーン名</param>
 	/// <returns>シーン</returns>
-	virtual IScene* CreateScene(const std::string& sceneName) = 0;
+	virtual BaseScene* CreateScene(const std::string& sceneName) = 0;
 public://PrassKey
 	class ConstructorKey {
 	private:

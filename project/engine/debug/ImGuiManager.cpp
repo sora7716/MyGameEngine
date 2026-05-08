@@ -1,7 +1,7 @@
 #include "ImGuiManager.h"
 #include "DirectXBase.h"
 #include "SRVManager.h"
-#include "algorithm/Rendering.h"
+#include "algorithms/Rendering.h"
 #include "WinApi.h"
 
 //デストラクタ
@@ -25,7 +25,7 @@ void ImGuiManager::Initialize(WinApi* winApi, DirectXBase* directXBase, SRVManag
 	ImGui::CreateContext();
 	//ImGuiのスタイルを設定
 	ImGui::StyleColorsDark();
-	ImGui_ImplWin32_Init(winApi->GetHwnd());
+	ImGui_ImplWin32_Init(winApi->GetHwnd(0));
 	//srvの確保
 	srvManager_->Allocate();
 	ImGui_ImplDX12_Init(
@@ -88,20 +88,48 @@ void ImGuiManager::TreeNodeForEntityGroup(const std::string& label, EntityGroup&
 }
 
 //トランスフォームデータ用のImGui
-void ImGuiManager::DragTransform(TransformData& transfromData) {
+void ImGuiManager::DragTransform(TransformData& transformData) {
 #ifdef USE_IMGUI
-	ImGui::Checkbox("isUsingQuaternion", &transfromData.isUsingQuaternion);
-	ImGui::DragFloat3("scale", &transfromData.scale.x, 0.1f);
-	if (transfromData.isUsingQuaternion) {
-		ImGui::DragFloat3("axis", &transfromData.axis.x, 0.01f, -1.0f, 1.0f);
-		ImGui::SliderAngle("angle", &transfromData.angle);
-		transfromData.quaternion = Rendering::MakeRotateAxisAngleQuaternion(transfromData.axis, transfromData.angle);
+	ImGui::Checkbox("isUsingQuaternion", &transformData.isUsingQuaternion);
+	ImGui::DragFloat3("scale", &transformData.scale.x, 0.1f);
+	if (transformData.isUsingQuaternion) {
+		ImGui::DragFloat3("axis", &transformData.axis.x, 0.01f, -1.0f, 1.0f);
+		ImGui::SliderAngle("angle", &transformData.angle);
+		transformData.quaternion = Rendering::MakeRotateAxisAngleQuaternion(transformData.axis, transformData.angle);
 	} else {
-		ImGui::DragFloat3("eulerAngle", &transfromData.eulerAngle.x, 0.1f);
-		transfromData.quaternion = Quaternion::MakeQuaternionForEulerAngle(transfromData.eulerAngle);
+		ImGui::DragFloat3("eulerAngle", &transformData.eulerAngle.x, 0.1f);
+		transformData.quaternion = Quaternion::MakeQuaternionForEulerAngle(transformData.eulerAngle);
 	}
-	ImGui::DragFloat4("rotate", &transfromData.quaternion.x, 0.0f);
-	ImGui::DragFloat3("translate", &transfromData.translate.x, 0.1f);
+	ImGui::DragFloat4("rotate", &transformData.quaternion.x, 0.0f);
+	ImGui::DragFloat3("translate", &transformData.translate.x, 0.1f);
+#endif // USE_IMGUI
+}
+
+//OBBデータ用のImGui
+void ImGuiManager::DragOBB(PrimitiveData::OBB& obb) {
+#ifdef USE_IMGUI
+	ImGui::DragFloat3("size", &obb.size.x, 0.1f);
+	static Vector3 obbRadian = {};
+	ImGui::DragFloat3("rotate", &obbRadian.x, 0.1f);
+	obb.quaternion = Quaternion::MakeQuaternionForEulerAngle(obbRadian);
+	ImGui::DragFloat3("center", &obb.center.x, 0.1f);
+#endif // USE_IMGUI
+}
+
+//円用のImGui
+void ImGuiManager::DragCircle(PrimitiveData::Circle& circle) {
+#ifdef USE_IMGUI
+	ImGui::DragFloat3("center", &circle.center.x, 0.1f);
+	ImGui::DragFloat3("eulerAngle", &circle.eulerAngle.x, 0.1f);
+	ImGui::DragFloat("radius", &circle.radius, 0.01f);
+#endif // USE_IMGUI
+}
+
+//球用のImGui
+void ImGuiManager::DragSphere(PrimitiveData::Sphere& sphere) {
+#ifdef USE_IMGUI
+	ImGui::DragFloat3("center", &sphere.center.x, 0.1f);
+	ImGui::DragFloat("radius", &sphere.radius, 0.01f);
 #endif // USE_IMGUI
 }
 

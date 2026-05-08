@@ -1,7 +1,7 @@
 #include "StageTimer.h"
 #include "Text.h"
 #include "ImGuiManager.h"
-#include "algorithm/Math.h"
+#include "algorithms/Math.h"
 #include <sstream>
 #include <iomanip>
 

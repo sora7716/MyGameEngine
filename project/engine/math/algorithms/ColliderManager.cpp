@@ -1,5 +1,5 @@
 #include "ColliderManager.h"
-#include "algorithm/Collision.h"
+#include "algorithms/Collision.h"
 #include "WireframeObject3d.h"
 #include "Object3d.h"
 

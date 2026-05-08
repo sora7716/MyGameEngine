@@ -1,7 +1,7 @@
 #include "WorldTransform.h"
 #include "DirectXBase.h"
-#include "algorithm/Rendering.h"
-#include "algorithm/Math.h"
+#include "algorithms/Rendering.h"
+#include "algorithms/Math.h"
 #include "Camera.h"
 #include <cmath>
 //メンバ関数テーブルの初期化

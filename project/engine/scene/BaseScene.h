@@ -1,5 +1,5 @@
 #pragma once
-#include "engine/base/Context.h"
+#include "Context.h"
 #include "Input.h"
 #include "DebugCamera.h"
 #include <memory>
@@ -11,19 +11,19 @@ class ColliderManager;
 class DirectXBase;
 
 /// <summary>
-/// シーンのインターフェース
+/// シーンの基底クラス
 /// </summary>
-class IScene {
+class BaseScene {
 public://メンバ関数
 	/// <summary>
 	/// コンストラクタ
 	/// </summary>
-	IScene();
+	BaseScene();
 
 	/// <summary>
 	/// デストラクタ
 	/// </summary>
-	virtual ~IScene();
+	virtual ~BaseScene();
 
 	/// <summary>
 	/// 初期化
@@ -35,6 +35,11 @@ public://メンバ関数
 	/// 更新
 	/// </summary>
 	virtual void Update();
+
+	/// <summary>
+	/// デバッグ
+	/// </summary>
+	virtual void Debug();
 
 	/// <summary>
 	/// 終了

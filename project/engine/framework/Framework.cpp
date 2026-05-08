@@ -1,5 +1,5 @@
 #include "Framework.h"
-#include "algorithm/Math.h"
+#include "algorithms/Math.h"
 #include "Input.h"
 
 //初期化
@@ -51,5 +51,5 @@ void Framework::Run() {
 
 //終了リクエスト
 bool Framework::isEndRequest() {
-	return core_->GetWinApi()->ProcesMessage();
+	return core_->GetWinApi()->ProcessMessage();
 }

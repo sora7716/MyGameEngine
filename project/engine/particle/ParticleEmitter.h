@@ -38,7 +38,7 @@ struct Emitter {
 //フィールドの加速度
 struct AccelerationField {
 	Vector3 acceleration;//加速度
-	AABB area;//範囲
+	PrimitiveData::AABB area;//範囲
 };
 
 /// <summary>
@@ -148,7 +148,7 @@ private://メンバ関数
 	/// <param name="aabb">AABB</param>
 	/// <param name="point">point</param>
 	/// <returns>衝突判定</returns>
-	bool IsCollision(const AABB& aabb, const Vector3& point);
+	bool IsCollision(const PrimitiveData::AABB& aabb, const Vector3& point);
 public://静的メンバ変数
 	//パーティクルの数
 	static const uint32_t kNumMaxInstance = 1024;

@@ -8,9 +8,9 @@
 SceneFactory::~SceneFactory() {}
 
 // シーンの生成
-IScene* SceneFactory::CreateScene(const std::string& sceneName) {
+BaseScene* SceneFactory::CreateScene(const std::string& sceneName) {
 	//次のシーンの生成
-	IScene* newScene = nullptr;
+	BaseScene* newScene = nullptr;
 	if (sceneName == "Title") {
 		newScene = new TitleScene();
 	} else if (sceneName == "Game") {

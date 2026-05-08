@@ -3,6 +3,7 @@
 #include "engine/camera/Camera.h"
 #include "engine/base/GraphicsPipeline.h"
 #include "engine/2d/TextureManager.h"
+#include "Blend.h"
 #include <cassert>
 using namespace Microsoft::WRL;
 

@@ -1,18 +1,23 @@
 #pragma once
-#include "IScene.h"
-#include "gameObject/GameObjectData.h"
-#include "gameObject/ColliderData.h"
+#include "BaseScene.h"
+#include "GameObjectData.h"
+#include "ColliderData.h"
 #include "Input.h"
 #include <vector>
 
 //前方宣言
 class Camera;
 class Object3d;
+class BaseShape;
+class Line;
+class Cube;
+class Circle;
+class Sphere;
 
 /// <summary>
 /// テストプレイシーン
 /// </summary>
-class TestPlayScene :public IScene {
+class TestPlayScene :public BaseScene {
 public://メンバ関数
 	/// <summary>
 	/// コンストラクタ
@@ -34,6 +39,11 @@ public://メンバ関数
 	/// 更新
 	/// </summary>
 	void Update()override;
+
+	/// <summary>
+	/// デバッグ
+	/// </summary>
+	void Debug()override;
 
 	/// <summary>
 	/// 描画
@@ -64,4 +74,17 @@ private://メンバ変数
 
 	std::vector<ColliderState> colliderStates_ = {};
 	std::vector<Collider> colliders_ = {};
+
+	std::unique_ptr<BaseShape>shape_ = nullptr;
+	std::unique_ptr<Line>line_ = nullptr;
+	PrimitiveData::Segment segment_ = { {0.0f,0.0f,0.0f},{0.5f,0.0f,0.0f} };
+
+	std::unique_ptr<Cube>cube_ = nullptr;
+	PrimitiveData::OBB obb_ = {};
+
+	std::unique_ptr<Circle>circle_ = nullptr;
+	PrimitiveData::Circle circleData_ = {};
+
+	std::unique_ptr<Sphere>sphere_ = nullptr;
+	PrimitiveData::Sphere sphereData_ = {};
 };

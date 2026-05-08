@@ -1,10 +1,10 @@
 #pragma once
-#include "IScene.h"
+#include "BaseScene.h"
 #include "RenderingData.h"
 #include "PrimitiveData.h"
 
 //前方宣言
-class Ground;
+class BaseGround;
 class Player;
 class GameCamera;
 class StageTimer;
@@ -12,7 +12,7 @@ class StageTimer;
 /// <summary>
 /// ゲームシーン
 /// </summary>
-class GameScene :public IScene {
+class GameScene :public BaseScene {
 public://メンバ関数
 	/// <summary>
 	/// コンストラクタ
@@ -50,7 +50,13 @@ private://メンバ変数
 	//ゲームカメラ
 	std::unique_ptr<GameCamera>gameCamera_ = nullptr;
 	//地面
-	std::unique_ptr<Ground>ground_ = nullptr;
+	std::unique_ptr<BaseGround>ground_ = nullptr;
+	//落ちる床
+	std::unique_ptr<BaseGround>fallingGround_ = nullptr;
+	//ジャンプパッド
+	std::unique_ptr<BaseGround>jumpPad_ = nullptr;
+	//シーソーのような床
+	std::unique_ptr<BaseGround>seesawPlatform_ = nullptr;
 	//プレイヤー
 	std::unique_ptr<Player>player_ = nullptr;
 	//ステージタイマー

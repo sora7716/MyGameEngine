@@ -2,14 +2,16 @@
 #include "WireframeObject3dCommon.h"
 #include "DirectXBase.h"
 #include "Camera.h"
-#include "algorithm/Math.h"
+#include "algorithms/Math.h"
 #include "ModelManager.h"
 #include "Model.h"
-#include "algorithm/Rendering.h"
+#include "algorithms/Rendering.h"
 #include "ImGuiManager.h"
 #include "SRVManager.h"
 #include "TextureManager.h"
 #include <cassert>
+
+using namespace PrimitiveData;
 //メンバ関数テーブルの初期化
 void(WireframeObject3d::* WireframeObject3d::UpdateTransformTable[])() = {
 	&UpdateTransform,

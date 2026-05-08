@@ -4,11 +4,9 @@
 //タグ
 enum class Tag {
 	kPlayer,
-	kEnemy,
-	kWall,
+	kJumpPad,
 	kGround,
 	kGoal,
-	kItem,
 	kNone
 };
 

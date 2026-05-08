@@ -1,6 +1,6 @@
 #pragma once
-#include "engine/scene/IScene.h"
-#include "engine/math/Vector2.h"
+#include "BaseScene.h"
+#include "Vector2.h"
 
 //前方宣言
 class Text;
@@ -9,7 +9,7 @@ class StageTimer;
 /// <summary>
 /// タイトルシーン
 /// </summary>
-class ResultScene :public IScene {
+class ResultScene :public BaseScene {
 public://メンバ関数
 	/// <summary>
 	/// コンストラクタ
@@ -50,7 +50,7 @@ private://メンバ変数
 	//スコアの表示
 	std::unique_ptr<Text>drawScore_ = nullptr;
 	Vector2 scorePos_ = { 60.0f,300.0f };
-	Vector2 scoreScele_ = { 500.0f,500.0f };
+	Vector2 scoreScale_ = { 500.0f,500.0f };
 	float scoreTextSize_ = 64.0f;
 
 	//リターン

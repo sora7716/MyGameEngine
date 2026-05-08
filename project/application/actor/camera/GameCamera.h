@@ -55,7 +55,7 @@ public://メンバ関数
 	/// ターゲットの位置のセッター
 	/// </summary>
 	/// <param name="targetPos">ターゲットの位置</param>
-	void SetTragetPos(const Vector3& targetPos);
+	void SetTargetPos(const Vector3& targetPos);
 private://定数
 	//カメラの回転速度
 	static inline const float kRotateSpeed = 5.0f;

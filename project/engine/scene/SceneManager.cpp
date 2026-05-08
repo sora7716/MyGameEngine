@@ -1,4 +1,5 @@
 #include "SceneManager.h"
+#include "ImGuiManager.h"
 #include <cassert>
 
 //デストラクタ
@@ -32,6 +33,12 @@ void SceneManager::Update() {
 	}
 	//更新
 	scene_->Update();
+
+#ifdef USE_IMGUI
+	sceneContext_.imguiManager->Begin();
+	scene_->Debug();
+	sceneContext_.imguiManager->End();
+#endif // USE_IMGUI
 }
 
 //描画

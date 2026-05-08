@@ -1,8 +1,8 @@
 #include "Input.h"
 #include "WinApi.h"
 #include "Camera.h"
-#include "algorithm/Rendering.h"
-#include "algorithm/Math.h"
+#include "algorithms/Rendering.h"
+#include "algorithms/Math.h"
 #include <cassert>
 #include <climits>
 #pragma comment(lib,"dinput8.lib")
@@ -78,9 +78,9 @@ bool Input::PressMouseButton(Click mouseClicPos) {
 }
 
 //マウスのボタンの押下した瞬間をチェック
-bool Input::TriggerMouseButton(Click mouseClicPos) {
+bool Input::TriggerMouseButton(Click mouseClickPos) {
 	//マウスの押していればtrueを返す
-	if (mouseState_.rgbButtons[static_cast<uint32_t>(mouseClicPos)] && !preMouseState_.rgbButtons[static_cast<uint32_t>(mouseClicPos)]) {
+	if (mouseState_.rgbButtons[static_cast<uint32_t>(mouseClickPos)] && !preMouseState_.rgbButtons[static_cast<uint32_t>(mouseClickPos)]) {
 		return true;
 	}
 	//そうでなければfalseを返す
@@ -88,9 +88,9 @@ bool Input::TriggerMouseButton(Click mouseClicPos) {
 }
 
 //マウスのボタンを話した瞬間をチェック
-bool Input::ReleaseTriggerMouseButton(Click mouseClicPos) {
+bool Input::ReleaseTriggerMouseButton(Click mouseClickPos) {
 	//マウスの押していればtrueを返す
-	if (!mouseState_.rgbButtons[static_cast<uint32_t>(mouseClicPos)] && preMouseState_.rgbButtons[static_cast<uint32_t>(mouseClicPos)]) {
+	if (!mouseState_.rgbButtons[static_cast<uint32_t>(mouseClickPos)] && preMouseState_.rgbButtons[static_cast<uint32_t>(mouseClickPos)]) {
 		return true;
 	}
 	//そうでなければfalseを返す

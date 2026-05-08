@@ -16,7 +16,7 @@ public://メンバ関数
 	/// </summary>
 	/// <param name="sceneName">シーン名</param>
 	/// <returns>シーン</returns>
-	IScene* CreateScene(const std::string& sceneName)override;
+	BaseScene* CreateScene(const std::string& sceneName)override;
 public://PrassKey
 	class ConstructorKey {
 	private:

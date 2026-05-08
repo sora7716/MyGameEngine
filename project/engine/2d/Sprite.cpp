@@ -1,7 +1,7 @@
 #include "Sprite.h"
 #include "SpriteCommon.h"
 #include <cassert>
-#include "algorithm/Math.h"
+#include "algorithms/Math.h"
 #include "TextureManager.h"
 #include "DirectXBase.h"
 #include "WinApi.h"
@@ -143,7 +143,7 @@ void Sprite::CreateVertexResource() {
 	//1頂点当たりのサイズ
 	vertexBufferView_.StrideInBytes = sizeof(VertexData);
 
-	//VertexResorceにデータを書き込むためのアドレスを取得してvertexDataに割り当てる
+	//VertexResourceにデータを書き込むためのアドレスを取得してvertexDataに割り当てる
 	vertexResource_->Map(0, nullptr, reinterpret_cast<void**>(&vertexData_));
 	InitializeVertexData();
 }

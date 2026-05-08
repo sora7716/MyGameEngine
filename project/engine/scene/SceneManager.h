@@ -1,5 +1,5 @@
 #pragma once
-#include "IScene.h"
+#include "BaseScene.h"
 #include "AbstractSceneFactory.h"
 
 /// <summary>
@@ -39,7 +39,7 @@ public://メンバ関数
 	/// </summary>
 	/// <param name="sceneName"></param>
 	void ChangeScene(const std::string& sceneName);
-public://PrassKey
+public://PassKey
 	class ConstructorKey {
 	private:
 		ConstructorKey() = default;
@@ -49,7 +49,7 @@ public://PrassKey
 	/// <summary>
 	/// コンストラクタ
 	/// </summary>
-	/// <param name="">PrassKeyを受け取る</param>
+	/// <param name="">PassKeyを受け取る</param>
 	explicit SceneManager(ConstructorKey);
 private://メンバ関数
 	//コピーコンストラクタを禁止
@@ -67,8 +67,8 @@ private://メンバ変数
 	//シーンファクトリー
 	AbstractSceneFactory* sceneFactory_ = nullptr;
 	//シーン
-	IScene* scene_ = nullptr;
+	BaseScene* scene_ = nullptr;
 	//次のシーン
-	IScene* nextScene_ = nullptr;
+	BaseScene* nextScene_ = nullptr;
 };
 

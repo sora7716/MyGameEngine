@@ -1,4 +1,5 @@
 #pragma once
+#include "Vector3.h"
 #include <string>
 struct RGB final{
 	float r;
@@ -63,4 +64,11 @@ struct Vector4 final {
 	/// <param name="colorCode">カラーコード</param>
 	/// <returns>Vector4</returns>
 	static Vector4 ColorCodeTransform(const std::string& colorCode);
+
+	/// <summary>
+	/// Vector3をVector4に代入
+	/// </summary>
+	/// <param name="v">3次元ベクトル</param>
+	/// <returns>4次元ベクトル</returns>
+	Vector4 operator=(const Vector3& v);
 };

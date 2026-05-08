@@ -17,7 +17,7 @@ ResultScene::~ResultScene() {}
 //初期化
 void ResultScene::Initialize(const SceneContext& sceneContext) {
 	//シーンのインタフェースの初期化
-	IScene::Initialize(sceneContext);
+	BaseScene::Initialize(sceneContext);
 	camera_ = sceneContext_.cameraManager->FindCamera("ResultCamera");
 
 	//スコア
@@ -39,7 +39,7 @@ void ResultScene::Initialize(const SceneContext& sceneContext) {
 //更新ww
 void ResultScene::Update() {
 	//シーンのインタフェースの初期化
-	IScene::Update();
+	BaseScene::Update();
 
 	if (sceneContext_.input->TriggerKey(DIK_SPACE)) {
 		sceneContext_.sceneManager->ChangeScene("Title");
@@ -48,12 +48,12 @@ void ResultScene::Update() {
 	}
 
 	drawScore_->SetTranslate(scorePos_);
-	drawScore_->SetScale(scoreScele_);
+	drawScore_->SetScale(scoreScale_);
 	drawScore_->SetTextSize(scoreTextSize_);
 	drawScore_->Update();
 
 	pressReturn_->SetTranslate(pressReturnPos_);
-	pressReturn_->SetScale(scoreScele_);
+	pressReturn_->SetScale(scoreScale_);
 	pressReturn_->SetTextSize(pressReturnSize_);
 	pressReturn_->Update();
 #ifdef USE_IMGUI
@@ -64,7 +64,7 @@ void ResultScene::Update() {
 	debugCamera_->Debug();
 	ImGui::SeparatorText("socre");
 	ImGui::PushID(0);
-	ImGui::DragFloat2("scale", &scoreScele_.x, 0.1f);
+	ImGui::DragFloat2("scale", &scoreScale_.x, 0.1f);
 	ImGui::DragFloat2("position", &scorePos_.x, 0.1f);
 	ImGui::DragFloat("textSize", &scoreTextSize_, 0.1f);
 	ImGui::PopID();
@@ -99,5 +99,5 @@ void ResultScene::Draw() {
 //終了
 void ResultScene::Finalize() {
 	//シーンのインターフェースの終了
-	IScene::Finalize();
+	BaseScene::Finalize();
 }

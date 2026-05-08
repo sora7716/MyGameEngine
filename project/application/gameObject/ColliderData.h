@@ -28,7 +28,7 @@ struct ColliderState {
 	Vector3* translatePtr;
 	Vector3* velocityPtr;
 	bool* isOnGroundPtr;
-	Tag tag;
+	Tag *tagPtr;
 
 	/// <summary>
     /// 初期化
@@ -56,7 +56,7 @@ enum class BodyType {
 //onCollision: 衝突したときに呼ばれる
 struct Collider {
 	ColliderState* owner;
-	OBB obb;
+	PrimitiveData::OBB obb;
 	bool isTrigger;
 	bool isEnabled;
 	Layer layer;

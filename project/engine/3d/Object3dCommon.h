@@ -171,7 +171,7 @@ public://メンバ関数
 	/// </summary>
 	/// <param name="pointLightPos">ポイントライトの位置</param>
 	void SetPointLightPos(const Vector3& pointLightPos);
-public://PrassKey
+public://PassKey
 	class ConstructorKey {
 	private:
 		ConstructorKey() = default;
@@ -181,7 +181,7 @@ public://PrassKey
 	/// <summary>
 	/// コンストラクタ
 	/// </summary>
-	/// <param name="">PrassKeyを受け取る</param>
+	/// <param name="">PassKeyを受け取る</param>
 	explicit Object3dCommon(ConstructorKey);
 private://メンバ関数
 	//コピーコンストラクタ禁止

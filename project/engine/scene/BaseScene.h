@@ -2,6 +2,7 @@
 #include "Context.h"
 #include "Input.h"
 #include "DebugCamera.h"
+#include "Camera.h"
 #include <memory>
 
 // 前方宣言
@@ -57,5 +58,7 @@ protected://メンバ変数
 	AbstractSceneFactory* sceneFactory_ = nullptr;
 	//コライダーマネージャー
 	std::unique_ptr<ColliderManager>colliderManager_ = nullptr;
+	//カメラ
+	Camera camera_;
 };
 

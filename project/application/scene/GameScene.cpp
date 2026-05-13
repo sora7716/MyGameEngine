@@ -26,26 +26,26 @@ void GameScene::Initialize(const SceneContext& sceneContext) {
 	//シーンのインタフェースの初期化
 	BaseScene::Initialize(sceneContext);
 	//カメラの設定
-	camera_ = sceneContext_.cameraManager->FindCamera("gameCamera");
+	camera_ = *sceneContext_.cameraManager->FindCamera("gameCamera");
 
 	//ゲームカメラ
 	gameCamera_ = std::make_unique<GameCamera>();
-	gameCamera_->Initialize(sceneContext_.input, camera_);
+	gameCamera_->Initialize(sceneContext_.input, &camera_);
 
 	ground_ = std::make_unique<Ground>();
-	ground_->Initialize(sceneContext_.object3dCommon, camera_);
+	ground_->Initialize(sceneContext_.object3dCommon, &camera_);
 
 	player_ = std::make_unique<Player>();
-	player_->Initialize(sceneContext_.object3dCommon, camera_, sceneContext_.input);
+	player_->Initialize(sceneContext_.object3dCommon, &camera_, sceneContext_.input);
 
 	fallingGround_ = std::make_unique<FallingGround>();
-	fallingGround_->Initialize(sceneContext_.object3dCommon, camera_);
+	fallingGround_->Initialize(sceneContext_.object3dCommon, &camera_);
 
 	jumpPad_ = std::make_unique<JumpPad>();
-	jumpPad_->Initialize(sceneContext_.object3dCommon, camera_);
+	jumpPad_->Initialize(sceneContext_.object3dCommon, &camera_);
 
 	seesawPlatform_ = std::make_unique<SeesawPlatform>();
-	seesawPlatform_->Initialize(sceneContext_.object3dCommon, camera_);
+	seesawPlatform_->Initialize(sceneContext_.object3dCommon, &camera_);
 
 	for (Entity& entity : seesawPlatform_->GetEntity()) {
 		colliderManager_->AddCollider(&entity.collider);
@@ -82,11 +82,11 @@ void GameScene::Update() {
 	gameCamera_->Update();
 
 	//カメラの設定
-	seesawPlatform_->SetCamera(camera_);
-	jumpPad_->SetCamera(camera_);
-	fallingGround_->SetCamera(camera_);
-	ground_->SetCamera(camera_);
-	player_->SetCamera(camera_);
+	//seesawPlatform_->SetCamera(camera_);
+	//jumpPad_->SetCamera(camera_);
+	//fallingGround_->SetCamera(camera_);
+	//ground_->SetCamera(camera_);
+	//player_->SetCamera(camera_);
 
 	seesawPlatform_->Update();
 	fallingGround_->Update();
@@ -141,10 +141,10 @@ void GameScene::Update() {
 #ifdef _DEBUG
 	//カメラの切り替え
 	if (debugCamera_->IsDebug()) {
-		camera_ = debugCamera_->GetCamera();
+		camera_ = *debugCamera_->GetCamera();
 	} else {
 		//camera_ = gameCamera_->GetCamera();
-		camera_ = sceneContext_.cameraManager->FindCamera("gameCamera");
+		camera_ = *sceneContext_.cameraManager->FindCamera("gameCamera");
 	}
 #endif // _DEBUG
 

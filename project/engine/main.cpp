@@ -8,7 +8,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	SetUnhandledExceptionFilter(ExportDump);
 
 	//メモリーリークをチェック
-	D3DResourceLeakChecker leakChacker;
+	D3DResourceLeakChecker leakChecker;
 
 	//ゲームシステムの生成
 	std::unique_ptr<Framework> gameSystem = std::make_unique<GameSystem>();

@@ -18,7 +18,7 @@ ResultScene::~ResultScene() {}
 void ResultScene::Initialize(const SceneContext& sceneContext) {
 	//シーンのインタフェースの初期化
 	BaseScene::Initialize(sceneContext);
-	camera_ = sceneContext_.cameraManager->FindCamera("ResultCamera");
+	camera_ = *sceneContext_.cameraManager->FindCamera("ResultCamera");
 
 	//スコア
 	drawScore_ = std::make_unique<Text>();
@@ -81,9 +81,9 @@ void ResultScene::Update() {
 
 #ifdef _DEBUG
 	if (debugCamera_->IsDebug()) {
-		camera_ = debugCamera_->GetCamera();
+		camera_ = *debugCamera_->GetCamera();
 	} else {
-		camera_ = sceneContext_.cameraManager->FindCamera("ResultCamera");
+		camera_ = *sceneContext_.cameraManager->FindCamera("ResultCamera");
 	}
 #endif // _DEBUG
 

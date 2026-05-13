@@ -1,6 +1,7 @@
 #include "TestPlayScene.h"
 #include "Input.h"
 #include "CameraManager.h"
+#include "ImGuiManager.h"
 #include "Box.h"
 
 //コンストラクタ
@@ -13,11 +14,10 @@ TestPlayScene::~TestPlayScene() {};
 void TestPlayScene::Initialize(const SceneContext& sceneContext) {
 	//ベースシーンの初期化
 	BaseScene::Initialize(sceneContext);
-	camera_ = sceneContext_.cameraManager->FindCamera("testPlayCamera");
+	camera_ = *sceneContext_.cameraManager->FindCamera("testPlayCamera");
 
 	box_ = std::make_unique<Box>();
-	box_->Initialize(sceneContext_.object3dCommon,camera_);
-	box_->SetModel("player");
+	box_->Initialize(sceneContext_.directXBase,&camera_);
 }
 
 //更新
@@ -31,14 +31,16 @@ void TestPlayScene::Update() {
 //デバッグ
 void TestPlayScene::Debug() {
 #ifdef USE_IMGUI
-
+	ImGui::Begin("box");
+	box_->Debug();
+	ImGui::End();
 #endif // USE_IMGUI
 
 #ifdef _DEBUG
 	if (debugCamera_->IsDebug()) {
-		camera_ = debugCamera_->GetCamera();
+		camera_ = *debugCamera_->GetCamera();
 	} else {
-		camera_ = sceneContext_.cameraManager->FindCamera("testPlayCamera");
+		camera_ = *sceneContext_.cameraManager->FindCamera("testPlayCamera");
 	}
 #endif // _DEBUG
 }

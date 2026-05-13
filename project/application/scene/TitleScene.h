@@ -38,8 +38,7 @@ public://メンバ関数
 	/// 終了
 	/// </summary>
 	void Finalize()override;
-private://メンバ変数
-	Camera* camera_ = nullptr;
+private://メンバ変数n  
 	//Xboxの番号
 	DWORD xBoxPadNumber_ = 0;
 	//ゲームタイトル

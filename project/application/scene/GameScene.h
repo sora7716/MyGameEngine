@@ -45,8 +45,6 @@ public://メンバ関数
 	/// </summary>
 	void Finalize()override;
 private://メンバ変数
-	//ゲームシーンのカメラ
-	Camera* camera_ = nullptr;
 	//ゲームカメラ
 	std::unique_ptr<GameCamera>gameCamera_ = nullptr;
 	//地面

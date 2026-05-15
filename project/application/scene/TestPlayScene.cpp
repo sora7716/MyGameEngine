@@ -17,7 +17,8 @@ void TestPlayScene::Initialize(const SceneContext& sceneContext) {
 	camera_ = *sceneContext_.cameraManager->FindCamera("testPlayCamera");
 
 	box_ = std::make_unique<Box>();
-	box_->Initialize(sceneContext_.directXBase,&camera_);
+	box_->Initialize(sceneContext_.object3dCommon,&camera_);
+	box_->SetModel("cube");
 }
 
 //更新
@@ -32,7 +33,7 @@ void TestPlayScene::Update() {
 void TestPlayScene::Debug() {
 #ifdef USE_IMGUI
 	ImGui::Begin("box");
-	box_->Debug();
+	//box_->Debug();
 	ImGui::End();
 #endif // USE_IMGUI
 

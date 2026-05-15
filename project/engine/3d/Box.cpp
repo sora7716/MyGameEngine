@@ -3,7 +3,6 @@
 #include "algorithms/Rendering.h"
 #include "algorithms/Math.h"
 #include "Log.h"
-#include "GraphicsPipeline.h"
 #include "Camera.h"
 #include "ImGuiManager.h"
 using namespace Microsoft::WRL;
@@ -83,44 +82,231 @@ void Box::SetCamera(Camera* camera) {
 //頂点データの設定
 void Box::SettingVertexData() {
 	//vertex
+	
+	//Z+
 	// 左上
-	vertexData_[0]={
-		.position = {-1.0f, 1.0f, 0.0f, 1.0f},
+	vertexData_[0] = {
+		.position = {-1.0f, 1.0f, 1.0f, 1.0f},
 		.texcoord = {0.0f, 0.0f},
 		.normal = {0.0f, 0.0f, 1.0f}
 	};
 
 	//右上
 	vertexData_[1] = {
-		.position = {1.0f, 1.0f, 0.0f, 1.0f},
-		.texcoord = {0.0f, 0.0f},
+		.position = {1.0f, 1.0f, 1.0f, 1.0f},
+		.texcoord = {1.0f, 0.0f},
 		.normal = {0.0f, 0.0f, 1.0f}
 	};
 
 	//左下
 	vertexData_[2] = {
-			.position = {-1.0f, -1.0f, 0.0f, 1.0f},
-			.texcoord = {0.0f, 0.0f},
+			.position = {-1.0f, -1.0f, 1.0f, 1.0f},
+			.texcoord = {0.0f, 1.0f},
 			.normal = {0.0f, 0.0f, 1.0f}
 	};
 
 	//右下
 	vertexData_[3] = {
-			.position = {1.0f, -1.0f, 0.0f, 1.0f},
-			.texcoord = {0.0f, 0.0f},
+			.position = {1.0f, -1.0f, 1.0f, 1.0f},
+			.texcoord = {1.0f, 1.0f},
 			.normal = {0.0f, 0.0f, 1.0f}
+	};
+
+	//Z-
+	// 左上
+	vertexData_[4] = {
+		.position = {-1.0f, 1.0f, -1.0f, 1.0f},
+		.texcoord = {0.0f, 0.0f},
+		.normal = {0.0f, 0.0f, -1.0f}
+	};
+
+	//右上
+	vertexData_[5] = {
+		.position = {1.0f, 1.0f, -1.0f, 1.0f},
+		.texcoord = {1.0f, 0.0f},
+		.normal = {0.0f, 0.0f, -1.0f}
+	};
+
+	//左下
+	vertexData_[6] = {
+			.position = {-1.0f, -1.0f, -1.0f, 1.0f},
+			.texcoord = {0.0f, 1.0f},
+			.normal = {0.0f, 0.0f, -1.0f}
+	};
+
+	//右下
+	vertexData_[7] = {
+			.position = {1.0f, -1.0f, -1.0f, 1.0f},
+			.texcoord = {1.0f, 1.0f},
+			.normal = {0.0f, 0.0f, -1.0f}
+	};
+
+	//X+
+	// 左上
+	vertexData_[8] = {
+		.position = {1.0f, -1.0f, 1.0f, 1.0f},
+		.texcoord = {0.0f, 0.0f},
+		.normal = {1.0f, 0.0f, 0.0f}
+	};
+
+	//右上
+	vertexData_[9] = {
+		.position = {1.0f, 1.0f, 1.0f, 1.0f},
+		.texcoord = {1.0f, 0.0f},
+		.normal = {1.0f, 0.0f, 0.0f}
+	};
+
+	//左下
+	vertexData_[10] = {
+			.position = {1.0f, -1.0f, -1.0f, 1.0f},
+			.texcoord = {0.0f, 1.0f},
+			.normal = {1.0f, 0.0f, 0.0f}
+	};
+
+	//右下
+	vertexData_[11] = {
+			.position = {1.0f, 1.0f, -1.0f, 1.0f},
+			.texcoord = {1.0f, 1.0f},
+			.normal = {1.0f, 0.0f, 0.0f}
+	};
+
+	//X-
+	// 左上
+	vertexData_[12] = {
+		.position = {-1.0f, -1.0f, 1.0f, 1.0f},
+		.texcoord = {0.0f, 0.0f},
+		.normal = {-1.0f, 0.0f, 0.0f}
+	};
+
+	//右上
+	vertexData_[13] = {
+		.position = {-1.0f, 1.0f, 1.0f, 1.0f},
+		.texcoord = {1.0f, 0.0f},
+		.normal = {-1.0f, 0.0f, 0.0f}
+	};
+
+	//左下
+	vertexData_[14] = {
+			.position = {-1.0f, -1.0f, -1.0f, 1.0f},
+			.texcoord = {0.0f, 1.0f},
+			.normal = {-1.0f, 0.0f, 0.0f}
+	};
+
+	//右下
+	vertexData_[15] = {
+			.position = {-1.0f, 1.0f, -1.0f, 1.0f},
+			.texcoord = {1.0f, 1.0f},
+			.normal = {-1.0f, 0.0f, 0.0f}
+	};
+
+	//Y+
+	// 左上
+	vertexData_[16] = {
+		.position = {-1.0f, 1.0f, 1.0f, 1.0f},
+		.texcoord = {0.0f, 0.0f},
+		.normal = {0.0f, 1.0f, 0.0f}
+	};
+
+	//右上
+	vertexData_[17] = {
+		.position = {1.0f, 1.0f, 1.0f, 1.0f},
+		.texcoord = {1.0f, 0.0f},
+		.normal = {0.0f, 1.0f, 0.0f}
+	};
+
+	//左下
+	vertexData_[18] = {
+			.position = {-1.0f, 1.0f, -1.0f, 1.0f},
+			.texcoord = {0.0f, 1.0f},
+			.normal = {0.0f, 1.0f, 0.0f}
+	};
+
+	//右下
+	vertexData_[19] = {
+			.position = {1.0f, 1.0f, -1.0f, 1.0f},
+			.texcoord = {1.0f, 1.0f},
+			.normal = {0.0f, 1.0f, 0.0f}
+	};
+
+	//Y-
+	// 左上
+	vertexData_[20] = {
+		.position = {-1.0f, -1.0f, 1.0f, 1.0f},
+		.texcoord = {0.0f, 0.0f},
+		.normal = {0.0f, -1.0f, 0.0f}
+	};
+
+	//右上
+	vertexData_[21] = {
+		.position = {1.0f, -1.0f, 1.0f, 1.0f},
+		.texcoord = {1.0f, 0.0f},
+		.normal = {0.0f, -1.0f, 0.0f}
+	};
+
+	//左下
+	vertexData_[22] = {
+			.position = {-1.0f, -1.0f, -1.0f, 1.0f},
+			.texcoord = {0.0f, 1.0f},
+			.normal = {0.0f, -1.0f, 0.0f}
+	};
+
+	//右下
+	vertexData_[23] = {
+			.position = {1.0f, -1.0f, -1.0f, 1.0f},
+			.texcoord = {1.0f, 1.0f},
+			.normal = {0.0f, -1.0f, 0.0f}
 	};
 }
 
 //インデックスデータの設定
 void Box::SettingIndexData() {
+	// Z+  正面
 	indexData_[0] = 0;
-	indexData_[1] = 1;
-	indexData_[2] = 2;
-	
+	indexData_[1] = 2;
+	indexData_[2] = 1;
 	indexData_[3] = 2;
-	indexData_[4] = 1;
-	indexData_[5] = 3;
+	indexData_[4] = 3;
+	indexData_[5] = 1;
+
+	// Z-  背面
+	indexData_[6] = 4;
+	indexData_[7] = 5;
+	indexData_[8] = 6;
+	indexData_[9] = 6;
+	indexData_[10] = 5;
+	indexData_[11] = 7;
+
+	// X+  右面
+	indexData_[12] = 8;
+	indexData_[13] = 10;
+	indexData_[14] = 9;
+	indexData_[15] = 10;
+	indexData_[16] = 11;
+	indexData_[17] = 9;
+
+	// X-  左面
+	indexData_[18] = 12;
+	indexData_[19] = 13;
+	indexData_[20] = 14;
+	indexData_[21] = 14;
+	indexData_[22] = 13;
+	indexData_[23] = 15;
+
+	// Y+  上面
+	indexData_[24] = 16;
+	indexData_[25] = 17;
+	indexData_[26] = 18;
+	indexData_[27] = 18;
+	indexData_[28] = 17;
+	indexData_[29] = 19;
+
+	// Y-  下面
+	indexData_[30] = 20;
+	indexData_[31] = 22;
+	indexData_[32] = 21;
+	indexData_[33] = 22;
+	indexData_[34] = 23;
+	indexData_[35] = 21;
 }
 
 //インデックスリソースの生成

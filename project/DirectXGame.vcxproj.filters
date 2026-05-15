@@ -613,6 +613,12 @@
     <FxCompile Include="engine\resources\shaders\Shape.PS.hlsl">
       <Filter>shaders</Filter>
     </FxCompile>
+    <FxCompile Include="engine\resources\shaders\Box.VS.hlsl">
+      <Filter>shaders</Filter>
+    </FxCompile>
+    <FxCompile Include="engine\resources\shaders\Box.PS.hlsl">
+      <Filter>shaders</Filter>
+    </FxCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="engine\resources\shaders\Object3d.hlsli">
@@ -625,6 +631,9 @@
       <Filter>shaders</Filter>
     </None>
     <None Include="engine\resources\shaders\Shape.hlsli">
+      <Filter>shaders</Filter>
+    </None>
+    <None Include="engine\resources\shaders\Box.hlsli">
       <Filter>shaders</Filter>
     </None>
   </ItemGroup>

@@ -214,10 +214,6 @@ private://メンバ関数
 	/// </summary>
 	void CreateStructuredBufferForSpot();
 private://静的メンバ変数
-	//インスタンス
-	static inline Object3dCommon* instance = nullptr;
-	//Finalizeをしたかどうかのフラグ
-	static inline bool isFinalize = false;
 	//ライトの最大値
 	static inline const int32_t kMaxLightCount = 64;
 private://メンバ変数

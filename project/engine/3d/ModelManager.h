@@ -40,6 +40,12 @@ public://メンバ関数
 	/// <param name="name">名前</param>
 	/// <returns>モデル</returns>
 	Model* FindModel(const std::string& name);
+
+	/// <summary>
+	/// モデルの共通部分のゲッター
+	/// </summary>
+	/// <returns>モデルの共通部分</returns>
+	ModelCommon* GetModelCommon();
 public://PrassKey
 	class ConstructorKey {
 		ConstructorKey() = default;

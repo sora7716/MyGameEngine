@@ -3,8 +3,7 @@
 #include "engine/3d/Model.h"
 
 //デストラクタ
-ModelManager::~ModelManager() {
-}
+ModelManager::~ModelManager() {}
 
 //初期化
 void ModelManager::Initialize(DirectXBase* directXBase, TextureManager* textureManager) {
@@ -38,6 +37,10 @@ Model* ModelManager::FindModel(const std::string& name) {
 	return nullptr;
 }
 
-//コンストラクタ
-ModelManager::ModelManager(ConstructorKey) {
+//モデルの共通部分のゲッター
+ModelCommon* ModelManager::GetModelCommon() {
+	return modelCommon_;
 }
+
+//コンストラクタ
+ModelManager::ModelManager(ConstructorKey) {}

@@ -51,12 +51,6 @@ public://メンバ関数
 	void Draw();
 
 	/// <summary>
-	/// モデルのセッター
-	/// </summary>
-	/// <param name="name">モデルの名前</param>
-	void SetModel(const std::string& name);
-
-	/// <summary>
 	/// カメラのセッター
 	/// </summary>
 	/// <param name="camera">カメラ</param>
@@ -109,22 +103,10 @@ public://メンバ関数
 	void SetUVTranslate(const Vector2& uvTranslate);
 
 	/// <summary>
-	/// 色のセッター
-	/// </summary>
-	/// <param name="color">色</param>
-	void SetColor(const Vector4& color);
-
-	/// <summary>
 	/// 親のセッター
 	/// </summary>
 	/// <param name="parent">親</param>
 	void SetParent(const WorldTransform* parent);
-
-	/// <summary>
-	/// テクスチャの変更
-	/// </summary>
-	/// <param name="filePath">ファイルパス</param>
-	void SetTexture(const std::string& filePath);
 
 	/// <summary>
 	/// ブレンドモードのセッター
@@ -172,23 +154,11 @@ public://メンバ関数
 	const Vector2& GetUVTranslate()const;
 
 	/// <summary>
-	/// 色のゲッター
-	/// </summary>
-	/// <returns>色</returns>
-	const Vector4& GetColor()const;
-
-	/// <summary>
 	/// ゲームオブジェクトのゲッター
 	/// </summary>
 	/// <param name="index">インデックス</param>
 	/// <returns>ゲームオブジェクト</returns>
 	const GameObject& GetGameObject(uint32_t index)const;
-
-	/// <summary>
-	/// モデルのゲッター
-	/// </summary>
-	/// <returns>モデル</returns>
-	Model* GetModel();
 
 	/// <summary>
 	/// ワールドマトリックスのゲッター
@@ -240,8 +210,6 @@ private://メンバ変数
 	DirectXBase* directXBase_ = nullptr;
 	//SRVマネージャー
 	SRVManager* srvManager_ = nullptr;
-	//3Dモデル
-	Model* model_ = nullptr;
 	//ワールドトランスフォーム
 	WorldTransform* worldTransform_ = nullptr;
 	//ワールドビュープロジェクションのリソース
@@ -268,4 +236,3 @@ private://メンバ変数
 	//生成数
 	uint32_t aliveCount_ = 1;
 };
-

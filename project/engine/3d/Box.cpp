@@ -91,10 +91,10 @@ void Box::Update() {
 	//生存数を記録
 	aliveCount_ = aliveCount;
 
-	if (model_) {
-		node_ = model_->GetModelData().rootNode;
-		model_->UVTransform(uvTransform_);
-	}
+	//if (model_) {
+	//	node_ = model_->GetModelData().rootNode;
+	//	model_->UVTransform(uvTransform_);
+	//}
 	//トランスフォームの更新
 	(this->*UpdateTransformTable[static_cast<uint32_t>(transform3dMode_)])();
 }
@@ -119,15 +119,10 @@ void Box::Draw() {
 	//スポットライトのStructuredBufferを設定
 	directXBase_->GetCommandList()->SetGraphicsRootDescriptorTable(6, object3dCommon_->GetSRVManager()->GetGPUDescriptorHandle(object3dCommon_->GetSrvIndexSpot()));
 
-	//3Dモデルが割り当てられていれば描画
-	if (model_) {
-		model_->Draw(static_cast<uint32_t>(aliveCount_));
-	}
-}
-
-//モデルのセッター
-void Box::SetModel(const std::string& name) {
-	model_ = object3dCommon_->GetModelManager()->FindModel(name);
+	////3Dモデルが割り当てられていれば描画
+	//if (model_) {
+	//	model_->Draw(static_cast<uint32_t>(aliveCount_));
+	//}
 }
 
 //カメラのセッター
@@ -171,23 +166,9 @@ void Box::SetUVTranslate(const Vector2& uvTranslate) {
 	uvTransform_.translate = uvTranslate;
 }
 
-//色のセッター
-void Box::SetColor(const Vector4& color) {
-	if (model_) {
-		model_->SetColor(color);
-	}
-}
-
 //親のセッター
 void Box::SetParent(const WorldTransform* parent) {
 	worldTransform_->SetParent(parent);
-}
-
-//テクスチャの変更
-void Box::SetTexture(const std::string& filePath) {
-	if (model_) {
-		model_->SetTexture(filePath);
-	}
 }
 
 //ブレンドモードのセッター
@@ -231,28 +212,10 @@ const Vector2& Box::GetUVTranslate() const {
 	return uvTransform_.translate;
 }
 
-//色のゲッター
-const Vector4& Box::GetColor() const {
-	// TODO: return ステートメントをここに挿入します
-	static const Vector4 defaultColor(0.0f, 0.0f, 0.0f, 0.0f);
-	if (model_) {
-		return model_->GetColor();
-	}
-	return defaultColor;
-}
-
 //ゲームオブジェクトのゲッター
 const GameObject& Box::GetGameObject(uint32_t index) const {
 	// TODO: return ステートメントをここに挿入します
 	return gameObjects_[index];
-}
-
-//モデルのゲッター
-Model* Box::GetModel() {
-	if (model_) {
-		return model_;
-	}
-	return nullptr;
 }
 
 //ワールドマトリックスのゲッター

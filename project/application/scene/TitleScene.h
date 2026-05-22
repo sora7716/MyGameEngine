@@ -38,7 +38,7 @@ public://メンバ関数
 	/// 終了
 	/// </summary>
 	void Finalize()override;
-private://メンバ変数n  
+private://メンバ変数
 	//Xboxの番号
 	DWORD xBoxPadNumber_ = 0;
 	//ゲームタイトル
@@ -47,7 +47,7 @@ private://メンバ変数n
 	float titleNameSize_ = 128.0f;
 
 	//スタートの開始ボタン
-	std::unique_ptr<Text>pressStart_=nullptr;
+	std::unique_ptr<Text>pressStart_ = nullptr;
 	Vector2 pressStartPos_ = {};
 	float pressStartSize_ = 64.0f;
 };

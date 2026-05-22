@@ -1,6 +1,6 @@
 #pragma once
-#include "gameObject/GameObjectData.h"
-#include "gameObject/ColliderData.h"
+#include "GameObjectData.h"
+#include "ColliderData.h"
 #include "ResourceData.h"
 #include <memory>
 

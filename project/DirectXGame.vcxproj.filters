@@ -249,20 +249,11 @@
     <ClCompile Include="application\scene\ResultScene.cpp">
       <Filter>application\scene</Filter>
     </ClCompile>
-    <ClCompile Include="application\gameObject\GameObjectData.cpp">
-      <Filter>application\gameObject</Filter>
-    </ClCompile>
-    <ClCompile Include="application\gameObject\GameObjectList.cpp">
-      <Filter>application\gameObject</Filter>
-    </ClCompile>
     <ClCompile Include="engine\math\PhysicsData.cpp">
       <Filter>engine\math</Filter>
     </ClCompile>
     <ClCompile Include="engine\math\RenderingData.cpp">
       <Filter>engine\math</Filter>
-    </ClCompile>
-    <ClCompile Include="application\gameObject\ColliderData.cpp">
-      <Filter>application\gameObject</Filter>
     </ClCompile>
     <ClCompile Include="application\actor\field\Ground.cpp">
       <Filter>application\actor\field</Filter>
@@ -323,6 +314,15 @@
     </ClCompile>
     <ClCompile Include="engine\3d\Box.cpp">
       <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="engine\gameObject\ColliderData.cpp">
+      <Filter>application\gameObject</Filter>
+    </ClCompile>
+    <ClCompile Include="engine\gameObject\GameObjectData.cpp">
+      <Filter>application\gameObject</Filter>
+    </ClCompile>
+    <ClCompile Include="engine\gameObject\GameObjectList.cpp">
+      <Filter>application\gameObject</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -464,9 +464,6 @@
     <ClInclude Include="application\scene\GameScene.h">
       <Filter>application\scene</Filter>
     </ClInclude>
-    <ClInclude Include="application\scene\TitleScene.h">
-      <Filter>application\scene</Filter>
-    </ClInclude>
     <ClInclude Include="application\actor\ActorData.h">
       <Filter>application\actor</Filter>
     </ClInclude>
@@ -517,15 +514,6 @@
     </ClInclude>
     <ClInclude Include="engine\debug\CrashHandler.h">
       <Filter>engine\debug</Filter>
-    </ClInclude>
-    <ClInclude Include="application\gameObject\GameObjectData.h">
-      <Filter>application\gameObject</Filter>
-    </ClInclude>
-    <ClInclude Include="application\gameObject\GameObjectList.h">
-      <Filter>application\gameObject</Filter>
-    </ClInclude>
-    <ClInclude Include="application\gameObject\ColliderData.h">
-      <Filter>application\gameObject</Filter>
     </ClInclude>
     <ClInclude Include="application\actor\field\Ground.h">
       <Filter>application\actor\field</Filter>
@@ -586,6 +574,18 @@
     </ClInclude>
     <ClInclude Include="engine\3d\Box.h">
       <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="application\scene\TitleScene.h">
+      <Filter>application\scene</Filter>
+    </ClInclude>
+    <ClInclude Include="engine\gameObject\ColliderData.h">
+      <Filter>application\gameObject</Filter>
+    </ClInclude>
+    <ClInclude Include="engine\gameObject\GameObjectData.h">
+      <Filter>application\gameObject</Filter>
+    </ClInclude>
+    <ClInclude Include="engine\gameObject\GameObjectList.h">
+      <Filter>application\gameObject</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

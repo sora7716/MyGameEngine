@@ -1,5 +1,5 @@
 #pragma once
-#include "gameObject/ColliderData.h"
+#include "ColliderData.h"
 #include "algorithms/Collision.h"
 #include <vector>
 #include <cstdint>

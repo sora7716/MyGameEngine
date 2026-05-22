@@ -1,7 +1,7 @@
 #pragma once
 #include "Model.h"
 #include "ResourceData.h"
-#include "gameObject/GameObjectData.h"
+#include "GameObjectData.h"
 #include "BlendMode.h"
 #include "WorldTransform.h"
 #include <vector>

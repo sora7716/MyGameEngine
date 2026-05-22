@@ -2,7 +2,7 @@
 #include "ActorData.h"
 #include <windows.h>
 #include <Vector3.h>
-#include "gameObject/ColliderData.h"
+#include "ColliderData.h"
 
 //前方宣言
 class Object3dCommon;

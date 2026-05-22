@@ -142,12 +142,13 @@ void ImGuiManager::DebugGameObject(GameObject& gameObject) {
 }
 
 //int型でcheckBoxを表示する
-void ImGuiManager::CheckBoxToInt(const std::string& label, int32_t& frag) {
+bool ImGuiManager::CheckBoxToInt(const std::string& label, int32_t& frag) {
 	bool checkBox = static_cast<bool>(frag);
 #ifdef USE_IMGUI
 	ImGui::Checkbox(label.c_str(), &checkBox);
 #endif // USE_IMGUI
 	frag = static_cast<int32_t>(checkBox);
+	return checkBox;
 }
 
 //4x4の行列の表示

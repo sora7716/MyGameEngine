@@ -1,5 +1,5 @@
 #pragma once
-#include "gameObject/GameObjectData.h"
+#include "GameObjectData.h"
 #include "ActorData.h"
 #ifdef USE_IMGUI
 #include "imgui/imgui.h"
@@ -89,7 +89,8 @@ public://メンバ関数
 	/// </summary>
 	/// <param name="label">ラベル</param>
 	/// <param name="frag">フラグ</param>
-	static void CheckBoxToInt(const std::string& label, int32_t& frag);
+	/// <returns>チェックフラグの状態</returns>
+	static bool CheckBoxToInt(const std::string& label, int32_t& frag);
 
 	/// <summary>
 	/// 4x4の行列の表示

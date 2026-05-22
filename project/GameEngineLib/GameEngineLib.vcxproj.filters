@@ -1,0 +1,173 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <ClCompile Include="engine\2d\Object2d.cpp" />
+    <ClCompile Include="engine\2d\Object2dCommon.cpp" />
+    <ClCompile Include="engine\2d\Sprite.cpp" />
+    <ClCompile Include="engine\2d\SpriteCommon.cpp" />
+    <ClCompile Include="engine\2d\Text.cpp" />
+    <ClCompile Include="engine\2d\TextRasterizer.cpp" />
+    <ClCompile Include="engine\2d\TextureManager.cpp" />
+    <ClCompile Include="engine\3d\Box.cpp" />
+    <ClCompile Include="engine\3d\Model.cpp" />
+    <ClCompile Include="engine\3d\ModelCommon.cpp" />
+    <ClCompile Include="engine\3d\ModelManager.cpp" />
+    <ClCompile Include="engine\3d\Object3d.cpp" />
+    <ClCompile Include="engine\3d\Object3dCommon.cpp" />
+    <ClCompile Include="engine\audio\Audio.cpp" />
+    <ClCompile Include="engine\audio\AudioManager.cpp" />
+    <ClCompile Include="engine\base\Blend.cpp" />
+    <ClCompile Include="engine\base\Context.cpp" />
+    <ClCompile Include="engine\base\Core.cpp" />
+    <ClCompile Include="engine\base\D3DResourceLeakChecker.cpp" />
+    <ClCompile Include="engine\base\DirectXBase.cpp" />
+    <ClCompile Include="engine\base\FixFPS.cpp" />
+    <ClCompile Include="engine\base\GraphicsPipeline.cpp" />
+    <ClCompile Include="engine\base\SRVManager.cpp" />
+    <ClCompile Include="engine\base\StringUtility.cpp" />
+    <ClCompile Include="engine\base\WinApi.cpp" />
+    <ClCompile Include="engine\camera\Camera.cpp" />
+    <ClCompile Include="engine\camera\CameraManager.cpp" />
+    <ClCompile Include="engine\debug\DebugCamera.cpp" />
+    <ClCompile Include="engine\debug\GlobalVariables.cpp" />
+    <ClCompile Include="engine\debug\ImGuiManager.cpp" />
+    <ClCompile Include="engine\debug\Log.cpp" />
+    <ClCompile Include="engine\debug\WireframeObject3d.cpp" />
+    <ClCompile Include="engine\debug\WireframeObject3dCommon.cpp" />
+    <ClCompile Include="engine\debug\wireframe\BaseShape.cpp" />
+    <ClCompile Include="engine\debug\wireframe\Circle.cpp" />
+    <ClCompile Include="engine\debug\wireframe\Cube.cpp" />
+    <ClCompile Include="engine\debug\wireframe\Line.cpp" />
+    <ClCompile Include="engine\debug\wireframe\Sphere.cpp" />
+    <ClCompile Include="engine\framework\Framework.cpp" />
+    <ClCompile Include="engine\framework\GameSystem.cpp" />
+    <ClCompile Include="engine\gameObject\ColliderData.cpp" />
+    <ClCompile Include="engine\gameObject\GameObjectData.cpp" />
+    <ClCompile Include="engine\gameObject\GameObjectList.cpp" />
+    <ClCompile Include="engine\input\Input.cpp" />
+    <ClCompile Include="engine\math\algorithms\ColliderManager.cpp" />
+    <ClCompile Include="engine\math\algorithms\Collision.cpp" />
+    <ClCompile Include="engine\math\algorithms\Math.cpp" />
+    <ClCompile Include="engine\math\algorithms\Physics.cpp" />
+    <ClCompile Include="engine\math\algorithms\Rendering.cpp" />
+    <ClCompile Include="engine\math\Matrix4x4.cpp" />
+    <ClCompile Include="engine\math\PhysicsData.cpp" />
+    <ClCompile Include="engine\math\Quaternion.cpp" />
+    <ClCompile Include="engine\math\RenderingData.cpp" />
+    <ClCompile Include="engine\math\Vector2.cpp" />
+    <ClCompile Include="engine\math\Vector3.cpp" />
+    <ClCompile Include="engine\math\Vector4.cpp" />
+    <ClCompile Include="engine\particle\ParticleCommon.cpp" />
+    <ClCompile Include="engine\particle\ParticleEmitter.cpp" />
+    <ClCompile Include="engine\particle\ParticleManager.cpp" />
+    <ClCompile Include="engine\particle\ParticleSystem.cpp" />
+    <ClCompile Include="engine\scene\BaseScene.cpp" />
+    <ClCompile Include="engine\scene\SceneFactory.cpp" />
+    <ClCompile Include="engine\scene\SceneManager.cpp" />
+    <ClCompile Include="engine\worldTransform\WorldTransform.cpp" />
+    <ClCompile Include="pch.cpp" />
+    <ClCompile Include="engine\scene\AbstractSceneFactory.cpp">
+      <Filter>engine\scene</Filter>
+    </ClCompile>
+    <ClCompile Include="application\actor\ActorData.cpp">
+      <Filter>application</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="engine\2d\Object2d.h" />
+    <ClInclude Include="engine\2d\Object2dCommon.h" />
+    <ClInclude Include="engine\2d\Sprite.h" />
+    <ClInclude Include="engine\2d\SpriteCommon.h" />
+    <ClInclude Include="engine\2d\Text.h" />
+    <ClInclude Include="engine\2d\TextData.h" />
+    <ClInclude Include="engine\2d\TextRasterizer.h" />
+    <ClInclude Include="engine\2d\TextureManager.h" />
+    <ClInclude Include="engine\3d\Box.h" />
+    <ClInclude Include="engine\3d\Model.h" />
+    <ClInclude Include="engine\3d\ModelCommon.h" />
+    <ClInclude Include="engine\3d\ModelManager.h" />
+    <ClInclude Include="engine\3d\Object3d.h" />
+    <ClInclude Include="engine\3d\Object3dCommon.h" />
+    <ClInclude Include="engine\audio\Audio.h" />
+    <ClInclude Include="engine\audio\AudioManager.h" />
+    <ClInclude Include="engine\base\Blend.h" />
+    <ClInclude Include="engine\base\BlendMode.h" />
+    <ClInclude Include="engine\base\Context.h" />
+    <ClInclude Include="engine\base\Core.h" />
+    <ClInclude Include="engine\base\D3DResourceLeakChecker.h" />
+    <ClInclude Include="engine\base\DirectXBase.h" />
+    <ClInclude Include="engine\base\FixFPS.h" />
+    <ClInclude Include="engine\base\GraphicsPipeline.h" />
+    <ClInclude Include="engine\base\GraphicsPipelineData.h" />
+    <ClInclude Include="engine\base\SRVManager.h" />
+    <ClInclude Include="engine\base\StringUtility.h" />
+    <ClInclude Include="engine\base\WinApi.h" />
+    <ClInclude Include="engine\camera\Camera.h" />
+    <ClInclude Include="engine\camera\CameraManager.h" />
+    <ClInclude Include="engine\debug\CrashHandler.h" />
+    <ClInclude Include="engine\debug\DebugCamera.h" />
+    <ClInclude Include="engine\debug\GlobalVariables.h" />
+    <ClInclude Include="engine\debug\ImGuiManager.h" />
+    <ClInclude Include="engine\debug\Log.h" />
+    <ClInclude Include="engine\debug\WireframeObject3d.h" />
+    <ClInclude Include="engine\debug\WireframeObject3dCommon.h" />
+    <ClInclude Include="engine\debug\wireframe\BaseShape.h" />
+    <ClInclude Include="engine\debug\wireframe\Circle.h" />
+    <ClInclude Include="engine\debug\wireframe\Cube.h" />
+    <ClInclude Include="engine\debug\wireframe\Line.h" />
+    <ClInclude Include="engine\debug\wireframe\Sphere.h" />
+    <ClInclude Include="engine\framework\Framework.h" />
+    <ClInclude Include="engine\framework\GameSystem.h" />
+    <ClInclude Include="engine\gameObject\ColliderData.h" />
+    <ClInclude Include="engine\gameObject\GameObjectData.h" />
+    <ClInclude Include="engine\gameObject\GameObjectList.h" />
+    <ClInclude Include="engine\input\Input.h" />
+    <ClInclude Include="engine\math\algorithms\ColliderManager.h" />
+    <ClInclude Include="engine\math\algorithms\Collision.h" />
+    <ClInclude Include="engine\math\algorithms\Math.h" />
+    <ClInclude Include="engine\math\algorithms\Physics.h" />
+    <ClInclude Include="engine\math\algorithms\Rendering.h" />
+    <ClInclude Include="engine\math\Matrix3x3.h" />
+    <ClInclude Include="engine\math\Matrix4x4.h" />
+    <ClInclude Include="engine\math\PhysicsData.h" />
+    <ClInclude Include="engine\math\PrimitiveData.h" />
+    <ClInclude Include="engine\math\Quaternion.h" />
+    <ClInclude Include="engine\math\RenderingData.h" />
+    <ClInclude Include="engine\math\ResourceData.h" />
+    <ClInclude Include="engine\math\Vector2.h" />
+    <ClInclude Include="engine\math\Vector3.h" />
+    <ClInclude Include="engine\math\Vector4.h" />
+    <ClInclude Include="engine\particle\ParticleCommon.h" />
+    <ClInclude Include="engine\particle\ParticleEmitter.h" />
+    <ClInclude Include="engine\particle\ParticleManager.h" />
+    <ClInclude Include="engine\particle\ParticleSystem.h" />
+    <ClInclude Include="engine\scene\BaseScene.h" />
+    <ClInclude Include="engine\scene\SceneFactory.h" />
+    <ClInclude Include="engine\scene\SceneManager.h" />
+    <ClInclude Include="engine\worldTransform\WorldTransform.h" />
+    <ClInclude Include="externals\DirectXTex\d3dx12.h" />
+    <ClInclude Include="externals\DirectXTex\DirectXTex.h" />
+    <ClInclude Include="framework.h" />
+    <ClInclude Include="pch.h" />
+    <ClInclude Include="engine\scene\AbstractSceneFactory.h">
+      <Filter>engine\scene</Filter>
+    </ClInclude>
+    <ClInclude Include="application\actor\ActorData.h">
+      <Filter>application</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="engine">
+      <UniqueIdentifier>{dba96e18-6df9-4e4b-a06c-386ad0e70fc2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="application">
+      <UniqueIdentifier>{3ee0a1f2-eedf-404c-baa2-80b2389a16a2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="externals">
+      <UniqueIdentifier>{36a39a66-9b8e-4e93-9f2d-fd090358dffb}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="engine\scene">
+      <UniqueIdentifier>{62dad4db-0de9-49c2-a262-9b1fad0e656f}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+</Project>

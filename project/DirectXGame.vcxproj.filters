@@ -16,59 +16,14 @@
     <Filter Include="shaders">
       <UniqueIdentifier>{b16f66bf-0edd-4c70-9653-49abd78975bd}</UniqueIdentifier>
     </Filter>
-    <Filter Include="engine">
-      <UniqueIdentifier>{3f40db2f-e651-4102-b4aa-228e6db54a4a}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="engine\2d">
-      <UniqueIdentifier>{4d00935a-7f96-419d-af99-6e799300f223}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="engine\audio">
-      <UniqueIdentifier>{7d92218e-5326-48be-b8fe-be7c59b9dcfb}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="engine\base">
-      <UniqueIdentifier>{ef2e0cf6-e3fb-4e95-a879-b641ce751810}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="engine\debug">
-      <UniqueIdentifier>{c793e6da-f161-41c5-ba48-ad2073df3575}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="engine\input">
-      <UniqueIdentifier>{cd3a8eaa-58ec-49cd-bb11-0d6a68b13df8}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="engine\math">
-      <UniqueIdentifier>{9166fe29-0a02-4f36-9391-fc197e0a431b}</UniqueIdentifier>
-    </Filter>
     <Filter Include="application">
       <UniqueIdentifier>{b779c107-e531-4844-9928-b705d07604ff}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="engine\particle">
-      <UniqueIdentifier>{74a5fc19-3416-4892-aa63-de0e504292bc}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="engine\scene">
-      <UniqueIdentifier>{247103c9-90aa-480e-ad7d-9f128487e9be}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="engine\framwork">
-      <UniqueIdentifier>{4ac48d9b-28cd-4b88-b0e4-12be62ae53eb}</UniqueIdentifier>
     </Filter>
     <Filter Include="application\scene">
       <UniqueIdentifier>{d09609c5-5464-4a8e-a106-9af2e72858bf}</UniqueIdentifier>
     </Filter>
-    <Filter Include="engine\3d">
-      <UniqueIdentifier>{79d8f6c8-0826-4916-b23e-c709776c8173}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="engine\camera">
-      <UniqueIdentifier>{8f993481-635a-49e1-ad52-504c01cab954}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="engine\worldTransform">
-      <UniqueIdentifier>{6b108ed3-207f-4093-80c2-6739f3530329}</UniqueIdentifier>
-    </Filter>
     <Filter Include="application\actor">
       <UniqueIdentifier>{27e5a16f-78eb-4123-ac65-8f26cccee1a6}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="application\gameObject">
-      <UniqueIdentifier>{b6b3c08d-ea3a-4c48-b1e0-d596fb3c9fe0}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="engine\math\algorithm">
-      <UniqueIdentifier>{f4a79ad1-4ad4-48c3-b59c-2cb96d487971}</UniqueIdentifier>
     </Filter>
     <Filter Include="application\actor\field">
       <UniqueIdentifier>{9ed0086f-1d8b-452f-9643-ea39d989dc8e}</UniqueIdentifier>
@@ -76,136 +31,10 @@
     <Filter Include="application\actor\character">
       <UniqueIdentifier>{e4c0b8d1-d6ef-4fb1-b2ec-c827f4987ed5}</UniqueIdentifier>
     </Filter>
-    <Filter Include="engine\debug\wireframe">
-      <UniqueIdentifier>{a630cca5-20b8-4df5-ae4e-e26027a95569}</UniqueIdentifier>
-    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="engine\main.cpp">
       <Filter>ソース ファイル</Filter>
-    </ClCompile>
-    <ClCompile Include="engine\base\DirectXBase.cpp">
-      <Filter>engine\base</Filter>
-    </ClCompile>
-    <ClCompile Include="engine\base\WinApi.cpp">
-      <Filter>engine\base</Filter>
-    </ClCompile>
-    <ClCompile Include="engine\debug\Log.cpp">
-      <Filter>engine\debug</Filter>
-    </ClCompile>
-    <ClCompile Include="engine\debug\DebugCamera.cpp">
-      <Filter>engine\debug</Filter>
-    </ClCompile>
-    <ClCompile Include="engine\audio\Audio.cpp">
-      <Filter>engine\audio</Filter>
-    </ClCompile>
-    <ClCompile Include="engine\input\Input.cpp">
-      <Filter>engine\input</Filter>
-    </ClCompile>
-    <ClCompile Include="engine\base\D3DResourceLeakChecker.cpp">
-      <Filter>engine\base</Filter>
-    </ClCompile>
-    <ClCompile Include="engine\base\FixFPS.cpp">
-      <Filter>engine\base</Filter>
-    </ClCompile>
-    <ClCompile Include="engine\2d\Sprite.cpp">
-      <Filter>engine\2d</Filter>
-    </ClCompile>
-    <ClCompile Include="engine\math\Vector2.cpp">
-      <Filter>engine\math</Filter>
-    </ClCompile>
-    <ClCompile Include="engine\math\Matrix4x4.cpp">
-      <Filter>engine\math</Filter>
-    </ClCompile>
-    <ClCompile Include="engine\math\Vector3.cpp">
-      <Filter>engine\math</Filter>
-    </ClCompile>
-    <ClCompile Include="engine\2d\TextureManager.cpp">
-      <Filter>engine\2d</Filter>
-    </ClCompile>
-    <ClCompile Include="engine\3d\Model.cpp">
-      <Filter>engine\3d</Filter>
-    </ClCompile>
-    <ClCompile Include="engine\3d\ModelCommon.cpp">
-      <Filter>engine\3d</Filter>
-    </ClCompile>
-    <ClCompile Include="engine\3d\ModelManager.cpp">
-      <Filter>engine\3d</Filter>
-    </ClCompile>
-    <ClCompile Include="engine\base\SRVManager.cpp">
-      <Filter>engine\base</Filter>
-    </ClCompile>
-    <ClCompile Include="engine\base\StringUtility.cpp">
-      <Filter>engine\base</Filter>
-    </ClCompile>
-    <ClCompile Include="engine\audio\AudioManager.cpp">
-      <Filter>engine\audio</Filter>
-    </ClCompile>
-    <ClCompile Include="engine\debug\ImGuiManager.cpp">
-      <Filter>engine\debug</Filter>
-    </ClCompile>
-    <ClCompile Include="engine\framework\GameSystem.cpp">
-      <Filter>engine\framwork</Filter>
-    </ClCompile>
-    <ClCompile Include="engine\framework\Framework.cpp">
-      <Filter>engine\framwork</Filter>
-    </ClCompile>
-    <ClCompile Include="engine\scene\BaseScene.cpp">
-      <Filter>engine\scene</Filter>
-    </ClCompile>
-    <ClCompile Include="engine\scene\AbstractSceneFactory.cpp">
-      <Filter>engine\scene</Filter>
-    </ClCompile>
-    <ClCompile Include="engine\scene\SceneManager.cpp">
-      <Filter>engine\scene</Filter>
-    </ClCompile>
-    <ClCompile Include="engine\2d\SpriteCommon.cpp">
-      <Filter>engine\2d</Filter>
-    </ClCompile>
-    <ClCompile Include="engine\math\Vector4.cpp">
-      <Filter>engine\math</Filter>
-    </ClCompile>
-    <ClCompile Include="engine\3d\Object3dCommon.cpp">
-      <Filter>engine\3d</Filter>
-    </ClCompile>
-    <ClCompile Include="engine\2d\Object2dCommon.cpp">
-      <Filter>engine\2d</Filter>
-    </ClCompile>
-    <ClCompile Include="engine\particle\ParticleCommon.cpp">
-      <Filter>engine\particle</Filter>
-    </ClCompile>
-    <ClCompile Include="engine\particle\ParticleSystem.cpp">
-      <Filter>engine\particle</Filter>
-    </ClCompile>
-    <ClCompile Include="engine\base\GraphicsPipeline.cpp">
-      <Filter>engine\base</Filter>
-    </ClCompile>
-    <ClCompile Include="engine\3d\Object3d.cpp">
-      <Filter>engine\3d</Filter>
-    </ClCompile>
-    <ClCompile Include="engine\2d\Object2d.cpp">
-      <Filter>engine\2d</Filter>
-    </ClCompile>
-    <ClCompile Include="engine\camera\Camera.cpp">
-      <Filter>engine\camera</Filter>
-    </ClCompile>
-    <ClCompile Include="engine\camera\CameraManager.cpp">
-      <Filter>engine\camera</Filter>
-    </ClCompile>
-    <ClCompile Include="engine\worldTransform\WorldTransform.cpp">
-      <Filter>engine\worldTransform</Filter>
-    </ClCompile>
-    <ClCompile Include="engine\particle\ParticleManager.cpp">
-      <Filter>engine\particle</Filter>
-    </ClCompile>
-    <ClCompile Include="engine\base\Blend.cpp">
-      <Filter>engine\base</Filter>
-    </ClCompile>
-    <ClCompile Include="engine\particle\ParticleEmitter.cpp">
-      <Filter>engine\particle</Filter>
-    </ClCompile>
-    <ClCompile Include="engine\scene\SceneFactory.cpp">
-      <Filter>engine\scene</Filter>
     </ClCompile>
     <ClCompile Include="application\scene\GameScene.cpp">
       <Filter>application\scene</Filter>
@@ -213,47 +42,14 @@
     <ClCompile Include="application\scene\TitleScene.cpp">
       <Filter>application\scene</Filter>
     </ClCompile>
-    <ClCompile Include="engine\debug\GlobalVariables.cpp">
-      <Filter>engine\debug</Filter>
-    </ClCompile>
-    <ClCompile Include="engine\debug\WireframeObject3dCommon.cpp">
-      <Filter>engine\debug</Filter>
-    </ClCompile>
-    <ClCompile Include="engine\debug\WireframeObject3d.cpp">
-      <Filter>engine\debug</Filter>
-    </ClCompile>
-    <ClCompile Include="engine\2d\TextRasterizer.cpp">
-      <Filter>engine\2d</Filter>
-    </ClCompile>
-    <ClCompile Include="engine\2d\Text.cpp">
-      <Filter>engine\2d</Filter>
-    </ClCompile>
-    <ClCompile Include="engine\base\Core.cpp">
-      <Filter>engine\base</Filter>
-    </ClCompile>
-    <ClCompile Include="engine\base\Context.cpp">
-      <Filter>engine\base</Filter>
-    </ClCompile>
     <ClCompile Include="application\scene\TestPlayScene.cpp">
       <Filter>application\scene</Filter>
     </ClCompile>
     <ClCompile Include="engine\scene\SceneManager.cpp">
       <Filter>engine\scene</Filter>
     </ClCompile>
-    <ClCompile Include="application\actor\ActorData.cpp">
-      <Filter>application\actor</Filter>
-    </ClCompile>
-    <ClCompile Include="engine\math\Quaternion.cpp">
-      <Filter>engine\math</Filter>
-    </ClCompile>
     <ClCompile Include="application\scene\ResultScene.cpp">
       <Filter>application\scene</Filter>
-    </ClCompile>
-    <ClCompile Include="engine\math\PhysicsData.cpp">
-      <Filter>engine\math</Filter>
-    </ClCompile>
-    <ClCompile Include="engine\math\RenderingData.cpp">
-      <Filter>engine\math</Filter>
     </ClCompile>
     <ClCompile Include="application\actor\field\Ground.cpp">
       <Filter>application\actor\field</Filter>
@@ -282,238 +78,22 @@
     <ClCompile Include="application\scene\GameOverScene.cpp">
       <Filter>application\scene</Filter>
     </ClCompile>
-    <ClCompile Include="engine\math\algorithms\ColliderManager.cpp">
-      <Filter>engine\math\algorithm</Filter>
-    </ClCompile>
-    <ClCompile Include="engine\math\algorithms\Collision.cpp">
-      <Filter>engine\math\algorithm</Filter>
-    </ClCompile>
-    <ClCompile Include="engine\math\algorithms\Math.cpp">
-      <Filter>engine\math\algorithm</Filter>
-    </ClCompile>
-    <ClCompile Include="engine\math\algorithms\Physics.cpp">
-      <Filter>engine\math\algorithm</Filter>
-    </ClCompile>
-    <ClCompile Include="engine\math\algorithms\Rendering.cpp">
-      <Filter>engine\math\algorithm</Filter>
-    </ClCompile>
-    <ClCompile Include="engine\debug\wireframe\BaseShape.cpp">
-      <Filter>engine\debug\wireframe</Filter>
-    </ClCompile>
-    <ClCompile Include="engine\debug\wireframe\Circle.cpp">
-      <Filter>engine\debug\wireframe</Filter>
-    </ClCompile>
-    <ClCompile Include="engine\debug\wireframe\Cube.cpp">
-      <Filter>engine\debug\wireframe</Filter>
-    </ClCompile>
-    <ClCompile Include="engine\debug\wireframe\Line.cpp">
-      <Filter>engine\debug\wireframe</Filter>
-    </ClCompile>
-    <ClCompile Include="engine\debug\wireframe\Sphere.cpp">
-      <Filter>engine\debug\wireframe</Filter>
-    </ClCompile>
-    <ClCompile Include="engine\3d\Box.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
-    <ClCompile Include="engine\gameObject\ColliderData.cpp">
-      <Filter>application\gameObject</Filter>
-    </ClCompile>
-    <ClCompile Include="engine\gameObject\GameObjectData.cpp">
-      <Filter>application\gameObject</Filter>
-    </ClCompile>
-    <ClCompile Include="engine\gameObject\GameObjectList.cpp">
-      <Filter>application\gameObject</Filter>
+    <ClCompile Include="application\actor\ActorData.cpp">
+      <Filter>application\actor</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="engine\math\Matrix4x4.h">
-      <Filter>engine\math</Filter>
-    </ClInclude>
-    <ClInclude Include="engine\math\Matrix3x3.h">
-      <Filter>engine\math</Filter>
-    </ClInclude>
-    <ClInclude Include="engine\math\Vector2.h">
-      <Filter>engine\math</Filter>
-    </ClInclude>
-    <ClInclude Include="engine\math\Vector3.h">
-      <Filter>engine\math</Filter>
-    </ClInclude>
-    <ClInclude Include="engine\math\Vector4.h">
-      <Filter>engine\math</Filter>
-    </ClInclude>
-    <ClInclude Include="engine\base\DirectXBase.h">
-      <Filter>engine\base</Filter>
-    </ClInclude>
-    <ClInclude Include="engine\base\WinApi.h">
-      <Filter>engine\base</Filter>
-    </ClInclude>
-    <ClInclude Include="engine\math\ResourceData.h">
-      <Filter>engine\math</Filter>
-    </ClInclude>
-    <ClInclude Include="engine\debug\Log.h">
-      <Filter>engine\debug</Filter>
-    </ClInclude>
-    <ClInclude Include="engine\audio\Audio.h">
-      <Filter>engine\audio</Filter>
-    </ClInclude>
-    <ClInclude Include="engine\debug\DebugCamera.h">
-      <Filter>engine\debug</Filter>
-    </ClInclude>
-    <ClInclude Include="engine\input\Input.h">
-      <Filter>engine\input</Filter>
-    </ClInclude>
-    <ClInclude Include="engine\base\D3DResourceLeakChecker.h">
-      <Filter>engine\base</Filter>
-    </ClInclude>
-    <ClInclude Include="engine\base\FixFPS.h">
-      <Filter>engine\base</Filter>
-    </ClInclude>
-    <ClInclude Include="engine\2d\Sprite.h">
-      <Filter>engine\2d</Filter>
-    </ClInclude>
-    <ClInclude Include="engine\2d\TextureManager.h">
-      <Filter>engine\2d</Filter>
-    </ClInclude>
-    <ClInclude Include="engine\3d\ModelCommon.h">
-      <Filter>engine\3d</Filter>
-    </ClInclude>
-    <ClInclude Include="engine\3d\Model.h">
-      <Filter>engine\3d</Filter>
-    </ClInclude>
-    <ClInclude Include="engine\3d\ModelManager.h">
-      <Filter>engine\3d</Filter>
-    </ClInclude>
-    <ClInclude Include="engine\base\SRVManager.h">
-      <Filter>engine\base</Filter>
-    </ClInclude>
-    <ClInclude Include="engine\base\StringUtility.h">
-      <Filter>engine\base</Filter>
-    </ClInclude>
-    <ClInclude Include="engine\audio\AudioManager.h">
-      <Filter>engine\audio</Filter>
-    </ClInclude>
-    <ClInclude Include="engine\debug\ImGuiManager.h">
-      <Filter>engine\debug</Filter>
-    </ClInclude>
-    <ClInclude Include="engine\framework\GameSystem.h">
-      <Filter>engine\framwork</Filter>
-    </ClInclude>
-    <ClInclude Include="engine\framework\Framework.h">
-      <Filter>engine\framwork</Filter>
-    </ClInclude>
-    <ClInclude Include="engine\scene\BaseScene.h">
-      <Filter>engine\scene</Filter>
-    </ClInclude>
-    <ClInclude Include="engine\scene\AbstractSceneFactory.h">
-      <Filter>engine\scene</Filter>
-    </ClInclude>
-    <ClInclude Include="engine\scene\SceneManager.h">
-      <Filter>engine\scene</Filter>
-    </ClInclude>
-    <ClInclude Include="engine\2d\SpriteCommon.h">
-      <Filter>engine\2d</Filter>
-    </ClInclude>
-    <ClInclude Include="engine\3d\Object3dCommon.h">
-      <Filter>engine\3d</Filter>
-    </ClInclude>
-    <ClInclude Include="engine\2d\Object2dCommon.h">
-      <Filter>engine\2d</Filter>
-    </ClInclude>
-    <ClInclude Include="engine\particle\ParticleCommon.h">
-      <Filter>engine\particle</Filter>
-    </ClInclude>
-    <ClInclude Include="engine\particle\ParticleSystem.h">
-      <Filter>engine\particle</Filter>
-    </ClInclude>
-    <ClInclude Include="engine\base\GraphicsPipeline.h">
-      <Filter>engine\base</Filter>
-    </ClInclude>
-    <ClInclude Include="engine\3d\Object3d.h">
-      <Filter>engine\3d</Filter>
-    </ClInclude>
-    <ClInclude Include="engine\2d\Object2d.h">
-      <Filter>engine\2d</Filter>
-    </ClInclude>
-    <ClInclude Include="engine\camera\Camera.h">
-      <Filter>engine\camera</Filter>
-    </ClInclude>
-    <ClInclude Include="engine\camera\CameraManager.h">
-      <Filter>engine\camera</Filter>
-    </ClInclude>
-    <ClInclude Include="engine\worldTransform\WorldTransform.h">
-      <Filter>engine\worldTransform</Filter>
-    </ClInclude>
-    <ClInclude Include="engine\math\RenderingData.h">
-      <Filter>engine\math</Filter>
-    </ClInclude>
-    <ClInclude Include="engine\particle\ParticleManager.h">
-      <Filter>engine\particle</Filter>
-    </ClInclude>
-    <ClInclude Include="engine\base\Blend.h">
-      <Filter>engine\base</Filter>
-    </ClInclude>
-    <ClInclude Include="engine\base\BlendMode.h">
-      <Filter>engine\base</Filter>
-    </ClInclude>
-    <ClInclude Include="engine\particle\ParticleEmitter.h">
-      <Filter>engine\particle</Filter>
-    </ClInclude>
-    <ClInclude Include="engine\scene\SceneFactory.h">
-      <Filter>engine\scene</Filter>
-    </ClInclude>
     <ClInclude Include="application\scene\GameScene.h">
       <Filter>application\scene</Filter>
     </ClInclude>
-    <ClInclude Include="application\actor\ActorData.h">
-      <Filter>application\actor</Filter>
-    </ClInclude>
-    <ClInclude Include="engine\debug\GlobalVariables.h">
-      <Filter>engine\debug</Filter>
-    </ClInclude>
-    <ClInclude Include="engine\debug\WireframeObject3d.h">
-      <Filter>engine\debug</Filter>
-    </ClInclude>
-    <ClInclude Include="engine\debug\WireframeObject3dCommon.h">
-      <Filter>engine\debug</Filter>
-    </ClInclude>
-    <ClInclude Include="engine\math\PrimitiveData.h">
-      <Filter>engine\math</Filter>
-    </ClInclude>
-    <ClInclude Include="engine\base\GraphicsPipelineData.h">
-      <Filter>engine\base</Filter>
-    </ClInclude>
     <ClInclude Include="application\scene\ResultScene.h">
       <Filter>application\scene</Filter>
-    </ClInclude>
-    <ClInclude Include="engine\2d\TextRasterizer.h">
-      <Filter>engine\2d</Filter>
-    </ClInclude>
-    <ClInclude Include="engine\2d\Text.h">
-      <Filter>engine\2d</Filter>
-    </ClInclude>
-    <ClInclude Include="engine\base\Core.h">
-      <Filter>engine\base</Filter>
-    </ClInclude>
-    <ClInclude Include="engine\2d\TextData.h">
-      <Filter>engine\2d</Filter>
-    </ClInclude>
-    <ClInclude Include="engine\base\Context.h">
-      <Filter>engine\base</Filter>
-    </ClInclude>
-    <ClInclude Include="engine\math\PhysicsData.h">
-      <Filter>engine\math</Filter>
     </ClInclude>
     <ClInclude Include="application\scene\TestPlayScene.h">
       <Filter>application\scene</Filter>
     </ClInclude>
     <ClInclude Include="engine\scene\SceneManager.h">
       <Filter>engine\scene</Filter>
-    </ClInclude>
-    <ClInclude Include="engine\math\Quaternion.h">
-      <Filter>engine\math</Filter>
-    </ClInclude>
-    <ClInclude Include="engine\debug\CrashHandler.h">
-      <Filter>engine\debug</Filter>
     </ClInclude>
     <ClInclude Include="application\actor\field\Ground.h">
       <Filter>application\actor\field</Filter>
@@ -542,50 +122,11 @@
     <ClInclude Include="application\scene\GameOverScene.h">
       <Filter>application\scene</Filter>
     </ClInclude>
-    <ClInclude Include="engine\math\algorithms\ColliderManager.h">
-      <Filter>engine\math\algorithm</Filter>
-    </ClInclude>
-    <ClInclude Include="engine\math\algorithms\Collision.h">
-      <Filter>engine\math\algorithm</Filter>
-    </ClInclude>
-    <ClInclude Include="engine\math\algorithms\Math.h">
-      <Filter>engine\math\algorithm</Filter>
-    </ClInclude>
-    <ClInclude Include="engine\math\algorithms\Physics.h">
-      <Filter>engine\math\algorithm</Filter>
-    </ClInclude>
-    <ClInclude Include="engine\math\algorithms\Rendering.h">
-      <Filter>engine\math\algorithm</Filter>
-    </ClInclude>
-    <ClInclude Include="engine\debug\wireframe\BaseShape.h">
-      <Filter>engine\debug\wireframe</Filter>
-    </ClInclude>
-    <ClInclude Include="engine\debug\wireframe\Circle.h">
-      <Filter>engine\debug\wireframe</Filter>
-    </ClInclude>
-    <ClInclude Include="engine\debug\wireframe\Cube.h">
-      <Filter>engine\debug\wireframe</Filter>
-    </ClInclude>
-    <ClInclude Include="engine\debug\wireframe\Line.h">
-      <Filter>engine\debug\wireframe</Filter>
-    </ClInclude>
-    <ClInclude Include="engine\debug\wireframe\Sphere.h">
-      <Filter>engine\debug\wireframe</Filter>
-    </ClInclude>
-    <ClInclude Include="engine\3d\Box.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
     <ClInclude Include="application\scene\TitleScene.h">
       <Filter>application\scene</Filter>
     </ClInclude>
-    <ClInclude Include="engine\gameObject\ColliderData.h">
-      <Filter>application\gameObject</Filter>
-    </ClInclude>
-    <ClInclude Include="engine\gameObject\GameObjectData.h">
-      <Filter>application\gameObject</Filter>
-    </ClInclude>
-    <ClInclude Include="engine\gameObject\GameObjectList.h">
-      <Filter>application\gameObject</Filter>
+    <ClInclude Include="application\actor\ActorData.h">
+      <Filter>application\actor</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

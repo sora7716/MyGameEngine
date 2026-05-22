@@ -18,6 +18,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "externals", "externals", "{
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "imgui", "externals\imgui\imgui.vcxproj", "{5D12BC0A-8015-450B-9A4D-11C648938B14}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "GameEngineLib", "GameEngineLib\GameEngineLib.vcxproj", "{EA88C189-BBCF-4D34-9B61-8566CA137AC6}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x64 = Debug|x64
@@ -36,6 +38,10 @@ Global
 		{5D12BC0A-8015-450B-9A4D-11C648938B14}.Debug|x64.Build.0 = Debug|x64
 		{5D12BC0A-8015-450B-9A4D-11C648938B14}.Release|x64.ActiveCfg = Release|x64
 		{5D12BC0A-8015-450B-9A4D-11C648938B14}.Release|x64.Build.0 = Release|x64
+		{EA88C189-BBCF-4D34-9B61-8566CA137AC6}.Debug|x64.ActiveCfg = Debug|x64
+		{EA88C189-BBCF-4D34-9B61-8566CA137AC6}.Debug|x64.Build.0 = Debug|x64
+		{EA88C189-BBCF-4D34-9B61-8566CA137AC6}.Release|x64.ActiveCfg = Release|x64
+		{EA88C189-BBCF-4D34-9B61-8566CA137AC6}.Release|x64.Build.0 = Release|x64
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -43,5 +49,8 @@ Global
 	GlobalSection(NestedProjects) = preSolution
 		{371B9FA9-4C90-4AC6-A123-ACED756D6C77} = {DB61614D-1FA3-4722-907F-D8D22FD59076}
 		{5D12BC0A-8015-450B-9A4D-11C648938B14} = {DB61614D-1FA3-4722-907F-D8D22FD59076}
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {7D47AD3C-7E93-413D-88AE-CEE6F74A0401}
 	EndGlobalSection
 EndGlobal

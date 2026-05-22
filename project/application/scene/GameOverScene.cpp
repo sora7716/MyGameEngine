@@ -1,9 +1,9 @@
 #include "GameOverScene.h"
-#include "engine/input/Input.h"
-#include "engine/camera/CameraManager.h"
-#include "engine/scene/SceneManager.h"
-#include "engine/2d/Text.h"
-#include "engine/base/Core.h"
+#include "Input.h"
+#include "CameraManager.h"
+#include "SceneManager.h"
+#include "Text.h"
+#include "Core.h"
 
 //コンストラクタ
 GameOverScene::GameOverScene() {};

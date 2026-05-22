@@ -1,5 +1,5 @@
-#include "framework/GameSystem.h"
-#include "engine/base/D3DResourceLeakChecker.h"
+#include "GameSystem.h"
+#include "D3DResourceLeakChecker.h"
 #include "CrashHandler.h"
 
 //Windowsアプリでのエントリーポイント(main関数)

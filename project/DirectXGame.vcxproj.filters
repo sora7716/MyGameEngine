@@ -636,5 +636,8 @@
     <None Include="engine\resources\shaders\Box.hlsli">
       <Filter>shaders</Filter>
     </None>
+    <None Include="engine\resources\shaders\CommonTypes.hlsli">
+      <Filter>shaders</Filter>
+    </None>
   </ItemGroup>
 </Project>

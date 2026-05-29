@@ -56,10 +56,10 @@ float32_t3 DirectionalLighting(VertexShaderOutput input, float32_t4 textureColor
     //ライティングの方法
     if (gDirectionalLight.isLambert) {
         //lambert
-        NDotDirectional = saturate(dot(normalize(input.normal), -gDirectionalLight.direction));
+        NDotDirectional = saturate(dot(normalize(input.normal), -(float3)gDirectionalLight.direction));
     } else {
         //half lambert
-        float32_t NdotL = dot(normalize(input.normal), -gDirectionalLight.direction);
+        float32_t NdotL = dot(normalize(input.normal), -(float3)gDirectionalLight.direction);
         //拡散反射
         NDotDirectional = pow(NdotL * 0.5f + 0.5f, 2.0f);
     }
@@ -69,15 +69,15 @@ float32_t3 DirectionalLighting(VertexShaderOutput input, float32_t4 textureColor
     if (gDirectionalLight.isBlinnPhong) {
         //BlingPhongReflectionModel
         //ハーフベクトル
-        float32_t3 halfVector = normalize(-gDirectionalLight.direction + toEye);
-        float32_t NDotH = dot(normalize(input.normal), halfVector);
+        float32_t3 halfVector = normalize(-(float3)gDirectionalLight.direction + toEye);
+        float32_t NDotH = dot(normalize(input.normal), (float3)halfVector);
         specularPow = pow(saturate(NDotH), gMaterial.shininess); //反射強度
     } else {
         //PhongReflectionModel
         //入射光の反射ベクトルを求める
-        float32_t3 reflectLight = reflect(gDirectionalLight.direction, normalize(input.normal));
+        float32_t3 reflectLight = reflect((float3)gDirectionalLight.direction, normalize(input.normal));
         //鏡面反射の強度
-        float32_t RdotE = dot(reflectLight, toEye);
+        float32_t RdotE = dot((float3)reflectLight, (float3)toEye);
         specularPow = pow(saturate(RdotE), gMaterial.shininess); //反射強度
     }
     

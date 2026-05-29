@@ -324,6 +324,9 @@
     <ClCompile Include="engine\gameObject\GameObjectList.cpp">
       <Filter>application\gameObject</Filter>
     </ClCompile>
+    <ClCompile Include="engine\debug\CrashHandler.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="engine\math\Matrix4x4.h">
@@ -512,9 +515,6 @@
     <ClInclude Include="engine\math\Quaternion.h">
       <Filter>engine\math</Filter>
     </ClInclude>
-    <ClInclude Include="engine\debug\CrashHandler.h">
-      <Filter>engine\debug</Filter>
-    </ClInclude>
     <ClInclude Include="application\actor\field\Ground.h">
       <Filter>application\actor\field</Filter>
     </ClInclude>
@@ -586,6 +586,9 @@
     </ClInclude>
     <ClInclude Include="engine\gameObject\GameObjectList.h">
       <Filter>application\gameObject</Filter>
+    </ClInclude>
+    <ClInclude Include="engine\debug\CrashHandler.h">
+      <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

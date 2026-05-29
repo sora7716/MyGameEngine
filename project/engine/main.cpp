@@ -10,9 +10,6 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	//メモリーリークをチェック
 	D3DResourceLeakChecker leakChecker;
 
-	uint32_t* p = nullptr;
-	*p = 100;
-
 	//ゲームシステムの生成
 	std::unique_ptr<Framework> gameSystem = std::make_unique<GameSystem>();
 

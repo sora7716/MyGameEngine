@@ -40,27 +40,38 @@ void Box::Initialize(DirectXBase* directXBase, TextureManager* textureManager, C
 	CreateDirectionLight();
 	//カメラリソースの生成
 	CreateCameraResource(camera_->GetTranslate());
-
+	
+	//ワールド座標の初期化
 	transform_.Initialize();
 
 	//wvpリソースの初期化
 	CreateTransformationMatrixResource();
+	
+	//UV座標の初期化
+	uvTransform_.Initialize();
 }
 
 //更新
 void Box::Update() {
 	//頂点データの設定
 	//SettingVertexData();
-	//ワールドトランスフォームの更新
+	//ワールド座標の更新
 	UpdateTransform();
+	//UV座標の更新
+	UpdateUvTransform();
 }
 
 //デバッグ
 void Box::Debug() {
 #ifdef USE_IMGUI
 	ImGuiManager::DragTransform(transform_);
+	ImGui::ColorEdit4("materialColor", &material_->color.x);
+	ImGui::DragFloat2("uvScale", &uvTransform_.scale.x, 0.1f);
+	ImGui::DragFloat("uvRotate", &uvTransform_.rotate, 0.1f);
+	ImGui::DragFloat2("uvTranslate", &uvTransform_.translate.x, 0.1f);
 	if (ImGuiManager::CheckBoxToInt("enableLighting", material_->enableLighting)) {
-		ImGui::ColorEdit4("color", &directionalLightPtr_->color.x);
+		ImGui::DragFloat("shiness", &material_->shininess, 0.1f);
+		ImGui::ColorEdit4("lightColor", &directionalLightPtr_->color.x);
 		ImGui::DragFloat3("direction", &directionalLightPtr_->direction.x);
 		ImGui::DragFloat("intensity", &directionalLightPtr_->intensity);
 		ImGuiManager::CheckBoxToInt("isLambert", directionalLightPtr_->isLambert);
@@ -601,6 +612,11 @@ void Box::UpdateTransform() {
 	wvpData_->world = worldMatrix_;
 	//逆行列の転置行列を送信
 	wvpData_->worldInverseTranspose = worldMatrix_.InverseTranspose();
+}
+
+//UV座標の更新
+void Box::UpdateUvTransform() {
+	material_->uvMatrix = Rendering::MakeUVAffineMatrix(uvTransform_);
 }
 
 //カメラリソースの生成

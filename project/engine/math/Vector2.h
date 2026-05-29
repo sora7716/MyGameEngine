@@ -15,6 +15,12 @@ struct Vector2 final {
 	/// <returns>正規化ベクトル</returns>
 	Vector2 Normalize();
 
+	/// <summary>
+	/// Vector2のメンバ変数すべてに1.0fを代入したVector2を作成
+	/// </summary>
+	/// <returns>Vector2</returns>
+	static Vector2 MakeAllOne();
+
 	//加法
 	Vector2 operator+(const Vector2& v)const;
 	//減法

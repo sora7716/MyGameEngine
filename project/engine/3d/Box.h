@@ -152,6 +152,11 @@ private://メンバ関数
 	void UpdateTransform();
 
 	/// <summary>
+	/// UV座標の更新
+	/// </summary>
+	void UpdateUvTransform();
+
+	/// <summary>
 	/// カメラリソースの生成
 	/// </summary>
 	void CreateCameraResource(const Vector3& cameraTranslate);
@@ -204,6 +209,8 @@ private://メンバ変数
 	TransformData transform_ = {};
 	//ワールド行列
 	Matrix4x4 worldMatrix_ = {};
+	//uv座標
+	Transform2dData uvTransform_ = {};
 
 	//ルートシグネイチャ
 	ComPtr<ID3D12RootSignature>rootSignature_ = nullptr;

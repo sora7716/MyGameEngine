@@ -77,7 +77,7 @@ void Model::Draw(uint32_t objectCount) {
 
 //uv変換
 void Model::UVTransform(Transform2dData uvTransform) {
-	materialPtr_->uvMatrix = Rendering::MakeUVAffineMatrix(uvTransform.scale, uvTransform.rotate, uvTransform.translate);
+	materialPtr_->uvMatrix = Rendering::MakeUVAffineMatrix(uvTransform);
 }
 
 // 色を変更

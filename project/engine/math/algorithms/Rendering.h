@@ -139,11 +139,9 @@ public://メンバ関数
 	/// <summary>
 	/// UVのアフィン変換
 	/// </summary>
-	/// <param name="scale">倍率</param>
-	/// <param name="rotate">回転</param>
-	/// <param name="translate">移動</param>
-	/// <returns></returns>
-	static Matrix4x4 MakeUVAffineMatrix(const Vector2& scale, float rotate, const Vector2& translate);
+	/// <param name="uvTransform">uv座標</param>
+	/// <returns>アフィン行列</returns>
+	static Matrix4x4 MakeUVAffineMatrix(const Transform2dData& uvTransform);
 
 	/// <summary>
 	/// 正射影行列

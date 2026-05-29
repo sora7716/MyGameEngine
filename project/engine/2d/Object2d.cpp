@@ -52,7 +52,7 @@ void Object2d::Update() {
 	//ワールドトランスフォームの更新
 	worldTransform_->Update();
 	//UVTransform
-	materialData_->uvMatrix = Rendering::MakeUVAffineMatrix(uvTransform_.scale, uvTransform_.rotate, uvTransform_.translate);
+	materialData_->uvMatrix = Rendering::MakeUVAffineMatrix(uvTransform_);
 }
 
 //描画

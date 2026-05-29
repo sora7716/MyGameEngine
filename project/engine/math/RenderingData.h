@@ -32,6 +32,11 @@ struct Transform2dData {
 	Vector2 scale;
 	float rotate;
 	Vector2 translate;
+	
+	/// <summary>
+    /// 初期化
+    /// </summary>
+	void Initialize();
 };
 
 //TransformationMatrix

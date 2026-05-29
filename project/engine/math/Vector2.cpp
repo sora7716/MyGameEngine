@@ -13,6 +13,11 @@ Vector2 Vector2::Normalize() {
 	return result;
 }
 
+//Vector2のメンバ変数すべてに1.0fを代入したVector2を作成
+Vector2 Vector2::MakeAllOne() {
+	return Vector2(1.0f, 1.0f);
+}
+
 //加法
 Vector2 Vector2::operator+(const Vector2& v)const {
 	return { x + v.x,y + v.y };

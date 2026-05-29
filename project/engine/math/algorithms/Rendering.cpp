@@ -225,8 +225,8 @@ Matrix4x4 Rendering::MakeSTRMatrix(const Vector3& scale, const Vector3& rotate, 
 }
 
 // UVのアフィン変換
-Matrix4x4 Rendering::MakeUVAffineMatrix(const Vector2& scale, float rotate, const Vector2& translate) {
-	return MakeScaleMatrix({ scale.x,scale.y,1.0f }) * MakeRotateZMatrix(rotate) * MakeTranslateMatrix({ translate.x,translate.y,1.0f });
+Matrix4x4 Rendering::MakeUVAffineMatrix(const Transform2dData& uvTransform) {
+	return MakeScaleMatrix({ uvTransform.scale.x,uvTransform.scale.y,1.0f }) * MakeRotateZMatrix(uvTransform.rotate) * MakeTranslateMatrix({ uvTransform.translate.x,uvTransform.translate.y,1.0f });
 }
 
 // 正射影行列

@@ -64,10 +64,16 @@ struct MaterialData {
 	uint32_t srvIndex;
 };
 
+//メッシュデータ
+struct MeshData {
+	std::vector<VertexData>vertices;
+	std::vector<uint32_t>indices;
+};
+
 
 //モデルデータの構造体
 struct ModelData {
-	std::vector<VertexData> vertices;
+	MeshData mesh;
 	MaterialData material;
 	Node rootNode;
 };

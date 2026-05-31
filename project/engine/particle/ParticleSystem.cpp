@@ -65,7 +65,7 @@ void ParticleSystem::Draw() {
 	//SRVのDescriptorTableの先頭を設定
 	directXBase_->GetCommandList()->SetGraphicsRootDescriptorTable(2, particleCommon_->GetTextureManager()->GetSRVHandleGPU(modelData_.material.textureFilePath));
 	//描画(DrawCall/ドローコール)
-	directXBase_->GetCommandList()->DrawIndexedInstanced(static_cast<UINT>(modelData_.vertices.size()), emitter_->GetNumInstance(), 0, 0, 0);
+	directXBase_->GetCommandList()->DrawIndexedInstanced(static_cast<UINT>(modelData_.mesh.vertices.size()), emitter_->GetNumInstance(), 0, 0, 0);
 }
 
 
@@ -116,32 +116,32 @@ void ParticleSystem::SetAccelerationField(const AccelerationField& field) {
 
 //モデルデータの初期化
 void ParticleSystem::InitializeQuadModelData() {
-	modelData_.vertices.push_back({
+	modelData_.mesh.vertices.push_back({
 		.position = {1.0f,1.0f,0.0f,1.0f},
 		.texcoord = {0.0f,0.0f},
 		.normal = {0.0f,0.0f,1.0f}
 		});//左上
-	modelData_.vertices.push_back({
+	modelData_.mesh.vertices.push_back({
 		.position = {-1.0f,1.0f,0.0f,1.0f},
 		.texcoord = {1.0f,0.0f},
 		.normal = {0.0f,0.0f,1.0f}
 		});//右上
-	modelData_.vertices.push_back({
+	modelData_.mesh.vertices.push_back({
 		.position = {1.0f,-1.0f,0.0f,1.0f},
 		.texcoord = {0.0f,1.0f},
 		.normal = {0.0f,0.0f,1.0f}
 		});//左下
-	modelData_.vertices.push_back({
+	modelData_.mesh.vertices.push_back({
 		.position = {1.0f,-1.0f,0.0f,1.0f},
 		.texcoord = {0.0f,1.0f},
 		.normal = {0.0f,0.0f,1.0f}
 		});//左下
-	modelData_.vertices.push_back({
+	modelData_.mesh.vertices.push_back({
 		.position = {-1.0f,1.0f,0.0f,1.0f},
 		.texcoord = {1.0f,0.0f},
 		.normal = {0.0f,0.0f,1.0f}
 		});//右上
-	modelData_.vertices.push_back({
+	modelData_.mesh.vertices.push_back({
 		.position = {-1.0f,-1.0f,0.0f,1.0f},
 		.texcoord = {1.0f,1.0f},
 		.normal = {0.0f,0.0f,1.0f}
@@ -167,12 +167,12 @@ void ParticleSystem::CreateVertexResource() {
 		InitializeQuadModelData();
 	}
 	//頂点リソースを生成
-	vertexResource_ = directXBase_->CreateBufferResource(sizeof(VertexData) * modelData_.vertices.size());
+	vertexResource_ = directXBase_->CreateBufferResource(sizeof(VertexData) * modelData_.mesh.vertices.size());
 	//VertexBufferViewを作成する(頂点バッファービュー)
 	//リソースの先頭アドレスから使う
 	vertexBufferView_.BufferLocation = vertexResource_->GetGPUVirtualAddress();
 	//使用するリソースのサイズは頂点3つ分のサイズ
-	vertexBufferView_.SizeInBytes = UINT(sizeof(VertexData) * modelData_.vertices.size());
+	vertexBufferView_.SizeInBytes = UINT(sizeof(VertexData) * modelData_.mesh.vertices.size());
 	//1頂点当たりのサイズ
 	vertexBufferView_.StrideInBytes = sizeof(VertexData);
 
@@ -180,7 +180,7 @@ void ParticleSystem::CreateVertexResource() {
 	VertexData* vertexData = nullptr;
 	//書き込むためのアドレスを取得
 	vertexResource_->Map(0, nullptr, reinterpret_cast<void**>(&vertexData));//書き込むためのアドレスを取得
-	std::memcpy(vertexData, modelData_.vertices.data(), sizeof(VertexData) * modelData_.vertices.size());//頂点データをリソースにコピー
+	std::memcpy(vertexData, modelData_.mesh.vertices.data(), sizeof(VertexData) * modelData_.mesh.vertices.size());//頂点データをリソースにコピー
 }
 
 //マテリアルリソースの生成
@@ -196,16 +196,16 @@ void ParticleSystem::CreateMaterialResource() {
 
 void ParticleSystem::CreateIndexResource() {
 	//Index用(3dGameObject)
-	indexResource_ = directXBase_->CreateBufferResource(sizeof(uint32_t) * modelData_.vertices.size());
+	indexResource_ = directXBase_->CreateBufferResource(sizeof(uint32_t) * modelData_.mesh.vertices.size());
 	//リソースの先頭のアドレスから使う
 	indexBufferView_.BufferLocation = indexResource_->GetGPUVirtualAddress();
 	//使用するリソースのサイズはインデックス6つ分のサイズ
-	indexBufferView_.SizeInBytes = UINT(sizeof(uint32_t) * modelData_.vertices.size());
+	indexBufferView_.SizeInBytes = UINT(sizeof(uint32_t) * modelData_.mesh.vertices.size());
 	//インデックスはuint32_tとする
 	indexBufferView_.Format = DXGI_FORMAT_R32_UINT;
 	//IndexResourceにデータを書き込む
 	indexResource_->Map(0, nullptr, reinterpret_cast<void**>(&indexData_));
-	for (int i = 0; i < modelData_.vertices.size(); i++) {
+	for (int i = 0; i < modelData_.mesh.vertices.size(); i++) {
 		indexData_[i] = i; indexData_[i + 1] = i + 1; indexData_[i + 2] = i + 2;
 		indexData_[i + 3] = i + 1; indexData_[i + 4] = i + 3; indexData_[i + 5] = i + 2;
 	}

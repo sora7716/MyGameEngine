@@ -1,0 +1,76 @@
+#include "Mesh.h"
+#include "DirectXBase.h"
+
+//コンストラクタ
+Mesh::Mesh() {
+}
+
+//デストラクタ
+Mesh::~Mesh() {
+}
+
+//初期化
+void Mesh::Initialize(DirectXBase* directXBase, const MeshData& meshData) {
+	//DirectXの基盤部分を受け取る
+	directXBase_ = directXBase;
+	//メッシュデータを受け取る
+	meshData_ = meshData;
+	//頂点リソースの生成
+	CreateVertexResource();
+	//インデックスリソースの生成
+	CreateIndexResource();
+}
+
+//描画
+void Mesh::Draw(uint32_t objectCount) {
+	//VertexBufferViewの設定
+	directXBase_->GetCommandList()->IASetVertexBuffers(0, 1, &vertexBufferView_);//VBVを設定
+	directXBase_->GetCommandList()->IASetIndexBuffer(&indexBufferView_);//IBVを設定
+	if (objectCount > 0) {
+		//描画
+		directXBase_->GetCommandList()->DrawIndexedInstanced(UINT(meshData_.vertices.size()), objectCount, 0, 0, 0);
+	}
+}
+
+//頂点リソースの生成
+void Mesh::CreateVertexResource() {
+	//頂点リソースを生成
+	vertexResource_ = directXBase_->CreateBufferResource(sizeof(VertexData) * meshData_.vertices.size());
+	//VertexBufferViewを作成する(頂点バッファービュー)
+	//リソースの先頭アドレスから使う
+	vertexBufferView_.BufferLocation = vertexResource_->GetGPUVirtualAddress();
+	//使用するリソースのサイズは頂点3つ分のサイズ
+	vertexBufferView_.SizeInBytes = UINT(sizeof(VertexData) * meshData_.vertices.size());
+	//1頂点当たりのサイズ
+	vertexBufferView_.StrideInBytes = sizeof(VertexData);
+
+	//頂点リソースにデータを書き込む
+	VertexData* vertexData = nullptr;
+	//書き込むためのアドレスを取得
+	vertexResource_->Map(0, nullptr, reinterpret_cast<void**>(&vertexData));
+	//頂点データをリソースにコピー
+	std::memcpy(vertexData, meshData_.vertices.data(), sizeof(VertexData) * meshData_.vertices.size());
+}
+
+//インデックスリソースの生成
+void Mesh::CreateIndexResource() {
+	//Index用(3dGameObject)
+	indexResource_ = directXBase_->CreateBufferResource(sizeof(uint32_t) * meshData_.vertices.size());
+	//リソースの先頭のアドレスから使う
+	indexBufferView_.BufferLocation = indexResource_->GetGPUVirtualAddress();
+	//使用するリソースのサイズはインデックス6つ分のサイズ
+	indexBufferView_.SizeInBytes = UINT(sizeof(uint32_t) * meshData_.vertices.size());
+	//インデックスはuint32_tとする
+	indexBufferView_.Format = DXGI_FORMAT_R32_UINT;
+
+	//インデックスリソースにデータを書き込む
+	uint32_t* indexData = nullptr;
+	//書き込むアドレスを取得
+	indexResource_->Map(0, nullptr, reinterpret_cast<void**>(&indexData));
+	for (int i = 0; i < meshData_.vertices.size(); i++) {
+		indexData[i] = i; indexData[i + 1] = i + 1; indexData[i + 2] = i + 2;
+		indexData[i + 3] = i + 1; indexData[i + 4] = i + 3; indexData[i + 5] = i + 2;
+	}
+	//インデックスデータをリソースにコピー
+	std::memcpy(indexData, meshData_.indices.data(), sizeof(uint32_t) * meshData_.indices.size());
+}

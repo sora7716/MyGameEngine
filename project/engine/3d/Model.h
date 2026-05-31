@@ -5,12 +5,16 @@
 #include <vector>
 #include <wrl.h>
 #include <d3d12.h>
+#include <memory>
 
 //前方宣言
 class ModelCommon;
 class DirectXBase;
+class Mesh;
 
-//3dモデル
+/// <summary>
+/// モデル
+/// </summary>
 class Model {
 private://エイリアステンプレート
 	template <class T>using ComPtr = Microsoft::WRL::ComPtr<T>;
@@ -18,12 +22,12 @@ public://メンバ関数
 	/// <summary>
 	/// コンストラクタ
 	/// </summary>
-	Model() = default;
+	Model();
 
 	/// <summary>
 	/// デストラクタ
 	/// </summary>
-	~Model() = default;
+	~Model();
 
 	/// <summary>
 	/// 初期化
@@ -101,16 +105,6 @@ public://メンバ関数
 	void SetRimLight(const RimLight& rimLight);
 private://メンバ関数
 	/// <summary>
-	/// 頂点リソースの生成
-	/// </summary>
-	void CreateVertexResource();
-
-	/// <summary>
-	/// インデックスリソースの生成
-	/// </summary>
-	void CreateIndexResource();
-
-	/// <summary>
 	/// マテリアルリソースの生成
 	/// </summary>
 	void CreateMaterialResource();
@@ -126,25 +120,15 @@ private://メンバ変数
 	DirectXBase* directXBase_ = nullptr;
 	//Objファイルデータ
 	ModelData modelData_ = {};
-	//VertexResource
-	ComPtr<ID3D12Resource>vertexResource_ = nullptr;
-	//VertexBufferView
-	D3D12_VERTEX_BUFFER_VIEW vertexBufferView_ = {};
-	//VertexResourceにデータを書き込むためのポインタ
-	VertexData* vertexData_ = nullptr;
 	//マテリアルリソース
 	ComPtr<ID3D12Resource>materialResource_ = nullptr;
 	//マテリアルリソースにデータを書き込むためのポインタ
 	Material* materialPtr_ = nullptr;
-	//IndexResource
-	ComPtr<ID3D12Resource>indexResource_ = nullptr;
-	//IndexResourceにデータを書き込むためのポインタ
-	uint32_t* indexData_ = nullptr;
-	//IndexBufferView
-	D3D12_INDEX_BUFFER_VIEW indexBufferView_ = {};//インデックス
 	//リムライト
 	RimLight* rimLightPtr_ = nullptr;
 	//リムライトリソース
 	ComPtr<ID3D12Resource>rimLightResource_ = nullptr;
+	//メッシュ
+	std::unique_ptr<Mesh>mesh_ = nullptr;
 };
 

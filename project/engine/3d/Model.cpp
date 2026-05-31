@@ -1,7 +1,9 @@
 #include "Model.h"
-#include "engine/base/DirectXBase.h"
-#include "engine/3d/ModelCommon.h"
-#include "engine/2d/TextureManager.h"
+#include "DirectXBase.h"
+#include "ModelCommon.h"
+#include "Mesh.h"
+#include "TextureManager.h"
+#include "Mesh.h"
 #include <cassert>
 #include <fstream>
 #include <sstream>
@@ -39,17 +41,25 @@ Node ReadNode(aiNode* node) {
 	return result;
 }
 
+//コンストラクタ
+Model::Model() {
+}
+
+//デストラクタ
+Model::~Model() {
+}
+
 //初期化
 void Model::Initialize(ModelCommon* modelCommon, const std::string& directoryPath, const std::string& storedFilePath, const std::string& filename) {
 	//ModelCommonのポインタを引数からメンバ変数を記録する
 	modelCommon_ = modelCommon;
+	//DirectXの基盤部分を受け取る
 	directXBase_ = modelCommon_->GetDirectXBase();
 	//モデルの読み込み
 	modelData_ = LoadModelFile(directoryPath, storedFilePath, filename);
-	//頂点リソースの生成
-	CreateVertexResource();
-	//インデックスリソースの生成
-	CreateIndexResource();
+	//メッシュの生成
+	mesh_ = std::make_unique<Mesh>();
+	mesh_->Initialize(directXBase_,modelData_.mesh);
 	//マテリアルリソースの生成
 	CreateMaterialResource();
 	//リムライトリソースの生成
@@ -60,19 +70,14 @@ void Model::Initialize(ModelCommon* modelCommon, const std::string& directoryPat
 
 //描画
 void Model::Draw(uint32_t objectCount) {
-	//VertexBufferViewの設定
-	directXBase_->GetCommandList()->IASetVertexBuffers(0, 1, &vertexBufferView_);//VBVを設定
-	directXBase_->GetCommandList()->IASetIndexBuffer(&indexBufferView_);//IBVを設定
 	//マテリアルCBufferの場所を設定
 	directXBase_->GetCommandList()->SetGraphicsRootConstantBufferView(0, materialResource_->GetGPUVirtualAddress());
-	//リムライトのCbufferの場所を設定
+	//リムライトのCBufferの場所を設定
 	directXBase_->GetCommandList()->SetGraphicsRootConstantBufferView(7, rimLightResource_->GetGPUVirtualAddress());
 	//SRVのDescriptorTableの先頭を設定
 	directXBase_->GetCommandList()->SetGraphicsRootDescriptorTable(2, modelCommon_->GetTextureManager()->GetSRVHandleGPU(modelData_.material.textureFilePath));
-	if (objectCount > 0) {
-		//描画
-		directXBase_->GetCommandList()->DrawIndexedInstanced(UINT(modelData_.vertices.size()), objectCount, 0, 0, 0);
-	}
+	//描画
+	mesh_->Draw(objectCount);
 }
 
 //uv変換
@@ -116,7 +121,7 @@ MaterialData Model::LoadMaterialTemplateFile(const std::string& directoryPath, c
 		std::string identifier;
 		std::istringstream s(line);
 		s >> identifier;
-		//identifilerに応じた処理
+		//identifierに応じた処理
 		if (identifier == "map_Kd") {
 			std::string textureFilename;
 			s >> textureFilename;
@@ -170,7 +175,7 @@ ModelData Model::LoadModelFile(const std::string& directoryPath, const std::stri
 				vertex.normal.y *= -1.0f;
 				vertex.normal.z *= -1.0f;
 
-				modelData.vertices.push_back(vertex);
+				modelData.mesh.vertices.push_back(vertex);
 			}
 		}
 	}
@@ -207,43 +212,6 @@ void Model::SetRimLight(const RimLight& rimLight) {
 	rimLightPtr_->power = rimLight.power;
 	rimLightPtr_->softness = rimLight.softness;
 	rimLightPtr_->enableRimLighting = rimLight.enableRimLighting;
-}
-
-//頂点リソースの生成
-void Model::CreateVertexResource() {
-	//頂点リソースを生成
-	vertexResource_ = directXBase_->CreateBufferResource(sizeof(VertexData) * modelData_.vertices.size());
-	//VertexBufferViewを作成する(頂点バッファービュー)
-	//リソースの先頭アドレスから使う
-	vertexBufferView_.BufferLocation = vertexResource_->GetGPUVirtualAddress();
-	//使用するリソースのサイズは頂点3つ分のサイズ
-	vertexBufferView_.SizeInBytes = UINT(sizeof(VertexData) * modelData_.vertices.size());
-	//1頂点当たりのサイズ
-	vertexBufferView_.StrideInBytes = sizeof(VertexData);
-
-	//頂点リソースにデータを書き込む
-	VertexData* vertexData = nullptr;
-	//書き込むためのアドレスを取得
-	vertexResource_->Map(0, nullptr, reinterpret_cast<void**>(&vertexData));//書き込むためのアドレスを取得
-	std::memcpy(vertexData, modelData_.vertices.data(), sizeof(VertexData) * modelData_.vertices.size());//頂点データをリソースにコピー
-}
-
-//インデックスリソースの生成
-void Model::CreateIndexResource() {
-	//Index用(3dGameObject)
-	indexResource_ = directXBase_->CreateBufferResource(sizeof(uint32_t) * modelData_.vertices.size());
-	//リソースの先頭のアドレスから使う
-	indexBufferView_.BufferLocation = indexResource_->GetGPUVirtualAddress();
-	//使用するリソースのサイズはインデックス6つ分のサイズ
-	indexBufferView_.SizeInBytes = UINT(sizeof(uint32_t) * modelData_.vertices.size());
-	//インデックスはuint32_tとする
-	indexBufferView_.Format = DXGI_FORMAT_R32_UINT;
-	//IndexResourceにデータを書き込む
-	indexResource_->Map(0, nullptr, reinterpret_cast<void**>(&indexData_));
-	for (int i = 0; i < modelData_.vertices.size(); i++) {
-		indexData_[i] = i; indexData_[i + 1] = i + 1; indexData_[i + 2] = i + 2;
-		indexData_[i + 3] = i + 1; indexData_[i + 4] = i + 3; indexData_[i + 5] = i + 2;
-	}
 }
 
 //マテリアルリソースの生成

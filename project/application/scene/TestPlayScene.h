@@ -7,6 +7,7 @@
 
 //前方宣言
 class Box;
+class Object3d;
 
 /// <summary>
 /// テストプレイシーン
@@ -53,4 +54,6 @@ private://メンバ変数
 	DWORD xBoxPadNumber_ = 0;
 
 	std::unique_ptr<Box>box_ = nullptr;
+
+	std::unique_ptr<Object3d>object3d_ = nullptr;
 };

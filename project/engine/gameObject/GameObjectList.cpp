@@ -36,6 +36,8 @@ void GameObjectList::LoadModel() {
 	core_->GetModelManager()->LoadModel("sphere", "sphere", "sphere.gltf");
 	//キューブ
 	core_->GetModelManager()->LoadModel("cube", "cube", "cube.obj");
+	//マルチメッシュ
+	core_->GetModelManager()->LoadModel("multiMesh", "base", "multiMesh.obj");
 
 	//ゲームで使用するモデル
 	//プレイヤー

@@ -118,6 +118,8 @@ private://メンバ変数
 	ModelCommon* modelCommon_ = nullptr;
 	//DirectXの基盤部分
 	DirectXBase* directXBase_ = nullptr;
+	//メッシュ
+	std::vector<std::unique_ptr<Mesh>>meshes_;
 	//Objファイルデータ
 	ModelData modelData_ = {};
 	//マテリアルリソース
@@ -128,7 +130,5 @@ private://メンバ変数
 	RimLight* rimLightPtr_ = nullptr;
 	//リムライトリソース
 	ComPtr<ID3D12Resource>rimLightResource_ = nullptr;
-	//メッシュ
-	std::unique_ptr<Mesh>mesh_ = nullptr;
 };
 

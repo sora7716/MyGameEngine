@@ -48,24 +48,24 @@ void ParticleSystem::Update() {
 
 //描画
 void ParticleSystem::Draw() {
-	//描画準備
-	particleCommon_->DrawSetting();
-	//PSOの設定
-	auto pso = particleCommon_->GetGraphicsPipelineStates()[static_cast<int32_t>(blendMode_)].Get();
-	//グラフィックスパイプラインをセットするコマンド
-	directXBase_->GetCommandList()->SetPipelineState(pso);
-	//VertexBufferViewの設定
-	directXBase_->GetCommandList()->IASetVertexBuffers(0, 1, &vertexBufferView_);//VBVを設定
-	//IndexBufferViewの設定
-	directXBase_->GetCommandList()->IASetIndexBuffer(&indexBufferView_);//IBVを設定
-	//マテリアルCBufferの場所を設定
-	directXBase_->GetCommandList()->SetGraphicsRootConstantBufferView(0, materialResource_->GetGPUVirtualAddress());//material
-	//ワールドトランスフォームの描画
-	directXBase_->GetCommandList()->SetGraphicsRootDescriptorTable(1, particleCommon_->GetSRVManager()->GetGPUDescriptorHandle(srvIndex_));
-	//SRVのDescriptorTableの先頭を設定
-	directXBase_->GetCommandList()->SetGraphicsRootDescriptorTable(2, particleCommon_->GetTextureManager()->GetSRVHandleGPU(modelData_.material.textureFilePath));
-	//描画(DrawCall/ドローコール)
-	directXBase_->GetCommandList()->DrawIndexedInstanced(static_cast<UINT>(modelData_.mesh.vertices.size()), emitter_->GetNumInstance(), 0, 0, 0);
+	////描画準備
+	//particleCommon_->DrawSetting();
+	////PSOの設定
+	//auto pso = particleCommon_->GetGraphicsPipelineStates()[static_cast<int32_t>(blendMode_)].Get();
+	////グラフィックスパイプラインをセットするコマンド
+	//directXBase_->GetCommandList()->SetPipelineState(pso);
+	////VertexBufferViewの設定
+	//directXBase_->GetCommandList()->IASetVertexBuffers(0, 1, &vertexBufferView_);//VBVを設定
+	////IndexBufferViewの設定
+	//directXBase_->GetCommandList()->IASetIndexBuffer(&indexBufferView_);//IBVを設定
+	////マテリアルCBufferの場所を設定
+	//directXBase_->GetCommandList()->SetGraphicsRootConstantBufferView(0, materialResource_->GetGPUVirtualAddress());//material
+	////ワールドトランスフォームの描画
+	//directXBase_->GetCommandList()->SetGraphicsRootDescriptorTable(1, particleCommon_->GetSRVManager()->GetGPUDescriptorHandle(srvIndex_));
+	////SRVのDescriptorTableの先頭を設定
+	//directXBase_->GetCommandList()->SetGraphicsRootDescriptorTable(2, particleCommon_->GetTextureManager()->GetSRVHandleGPU(modelData_.material.textureFilePath));
+	////描画(DrawCall/ドローコール)
+	//directXBase_->GetCommandList()->DrawIndexedInstanced(static_cast<UINT>(modelData_.meshes.vertices.size()), emitter_->GetNumInstance(), 0, 0, 0);
 }
 
 
@@ -116,36 +116,36 @@ void ParticleSystem::SetAccelerationField(const AccelerationField& field) {
 
 //モデルデータの初期化
 void ParticleSystem::InitializeQuadModelData() {
-	modelData_.mesh.vertices.push_back({
-		.position = {1.0f,1.0f,0.0f,1.0f},
-		.texcoord = {0.0f,0.0f},
-		.normal = {0.0f,0.0f,1.0f}
-		});//左上
-	modelData_.mesh.vertices.push_back({
-		.position = {-1.0f,1.0f,0.0f,1.0f},
-		.texcoord = {1.0f,0.0f},
-		.normal = {0.0f,0.0f,1.0f}
-		});//右上
-	modelData_.mesh.vertices.push_back({
-		.position = {1.0f,-1.0f,0.0f,1.0f},
-		.texcoord = {0.0f,1.0f},
-		.normal = {0.0f,0.0f,1.0f}
-		});//左下
-	modelData_.mesh.vertices.push_back({
-		.position = {1.0f,-1.0f,0.0f,1.0f},
-		.texcoord = {0.0f,1.0f},
-		.normal = {0.0f,0.0f,1.0f}
-		});//左下
-	modelData_.mesh.vertices.push_back({
-		.position = {-1.0f,1.0f,0.0f,1.0f},
-		.texcoord = {1.0f,0.0f},
-		.normal = {0.0f,0.0f,1.0f}
-		});//右上
-	modelData_.mesh.vertices.push_back({
-		.position = {-1.0f,-1.0f,0.0f,1.0f},
-		.texcoord = {1.0f,1.0f},
-		.normal = {0.0f,0.0f,1.0f}
-		});//右下
+	//modelData_.meshes.vertices.push_back({
+	//	.position = {1.0f,1.0f,0.0f,1.0f},
+	//	.texcoord = {0.0f,0.0f},
+	//	.normal = {0.0f,0.0f,1.0f}
+	//	});//左上
+	//modelData_.meshes.vertices.push_back({
+	//	.position = {-1.0f,1.0f,0.0f,1.0f},
+	//	.texcoord = {1.0f,0.0f},
+	//	.normal = {0.0f,0.0f,1.0f}
+	//	});//右上
+	//modelData_.meshes.vertices.push_back({
+	//	.position = {1.0f,-1.0f,0.0f,1.0f},
+	//	.texcoord = {0.0f,1.0f},
+	//	.normal = {0.0f,0.0f,1.0f}
+	//	});//左下
+	//modelData_.meshes.vertices.push_back({
+	//	.position = {1.0f,-1.0f,0.0f,1.0f},
+	//	.texcoord = {0.0f,1.0f},
+	//	.normal = {0.0f,0.0f,1.0f}
+	//	});//左下
+	//modelData_.meshes.vertices.push_back({
+	//	.position = {-1.0f,1.0f,0.0f,1.0f},
+	//	.texcoord = {1.0f,0.0f},
+	//	.normal = {0.0f,0.0f,1.0f}
+	//	});//右上
+	//modelData_.meshes.vertices.push_back({
+	//	.position = {-1.0f,-1.0f,0.0f,1.0f},
+	//	.texcoord = {1.0f,1.0f},
+	//	.normal = {0.0f,0.0f,1.0f}
+	//	});//右下
 }
 
 //マテリアルデータの初期化
@@ -158,29 +158,29 @@ void ParticleSystem::InitializeMaterialData() {
 
 //頂点リソースの生成
 void ParticleSystem::CreateVertexResource() {
-	//頂点データの初期化
-	if (emitter_->GetModel()) {
-		//モデルがあればモデルデータを取得
-		modelData_ = emitter_->GetModel()->GetModelData();
-	} else {
-		//モデルがなければ四角形を生成
-		InitializeQuadModelData();
-	}
-	//頂点リソースを生成
-	vertexResource_ = directXBase_->CreateBufferResource(sizeof(VertexData) * modelData_.mesh.vertices.size());
-	//VertexBufferViewを作成する(頂点バッファービュー)
-	//リソースの先頭アドレスから使う
-	vertexBufferView_.BufferLocation = vertexResource_->GetGPUVirtualAddress();
-	//使用するリソースのサイズは頂点3つ分のサイズ
-	vertexBufferView_.SizeInBytes = UINT(sizeof(VertexData) * modelData_.mesh.vertices.size());
-	//1頂点当たりのサイズ
-	vertexBufferView_.StrideInBytes = sizeof(VertexData);
+	////頂点データの初期化
+	//if (emitter_->GetModel()) {
+	//	//モデルがあればモデルデータを取得
+	//	modelData_ = emitter_->GetModel()->GetModelData();
+	//} else {
+	//	//モデルがなければ四角形を生成
+	//	InitializeQuadModelData();
+	//}
+	////頂点リソースを生成
+	//vertexResource_ = directXBase_->CreateBufferResource(sizeof(VertexData) * modelData_.meshes.vertices.size());
+	////VertexBufferViewを作成する(頂点バッファービュー)
+	////リソースの先頭アドレスから使う
+	//vertexBufferView_.BufferLocation = vertexResource_->GetGPUVirtualAddress();
+	////使用するリソースのサイズは頂点3つ分のサイズ
+	//vertexBufferView_.SizeInBytes = UINT(sizeof(VertexData) * modelData_.meshes.vertices.size());
+	////1頂点当たりのサイズ
+	//vertexBufferView_.StrideInBytes = sizeof(VertexData);
 
-	//頂点リソースにデータを書き込む
-	VertexData* vertexData = nullptr;
-	//書き込むためのアドレスを取得
-	vertexResource_->Map(0, nullptr, reinterpret_cast<void**>(&vertexData));//書き込むためのアドレスを取得
-	std::memcpy(vertexData, modelData_.mesh.vertices.data(), sizeof(VertexData) * modelData_.mesh.vertices.size());//頂点データをリソースにコピー
+	////頂点リソースにデータを書き込む
+	//VertexData* vertexData = nullptr;
+	////書き込むためのアドレスを取得
+	//vertexResource_->Map(0, nullptr, reinterpret_cast<void**>(&vertexData));//書き込むためのアドレスを取得
+	//std::memcpy(vertexData, modelData_.meshes.vertices.data(), sizeof(VertexData) * modelData_.meshes.vertices.size());//頂点データをリソースにコピー
 }
 
 //マテリアルリソースの生成
@@ -195,20 +195,20 @@ void ParticleSystem::CreateMaterialResource() {
 }
 
 void ParticleSystem::CreateIndexResource() {
-	//Index用(3dGameObject)
-	indexResource_ = directXBase_->CreateBufferResource(sizeof(uint32_t) * modelData_.mesh.vertices.size());
-	//リソースの先頭のアドレスから使う
-	indexBufferView_.BufferLocation = indexResource_->GetGPUVirtualAddress();
-	//使用するリソースのサイズはインデックス6つ分のサイズ
-	indexBufferView_.SizeInBytes = UINT(sizeof(uint32_t) * modelData_.mesh.vertices.size());
-	//インデックスはuint32_tとする
-	indexBufferView_.Format = DXGI_FORMAT_R32_UINT;
-	//IndexResourceにデータを書き込む
-	indexResource_->Map(0, nullptr, reinterpret_cast<void**>(&indexData_));
-	for (int i = 0; i < modelData_.mesh.vertices.size(); i++) {
-		indexData_[i] = i; indexData_[i + 1] = i + 1; indexData_[i + 2] = i + 2;
-		indexData_[i + 3] = i + 1; indexData_[i + 4] = i + 3; indexData_[i + 5] = i + 2;
-	}
+	////Index用(3dGameObject)
+	//indexResource_ = directXBase_->CreateBufferResource(sizeof(uint32_t) * modelData_.meshes.vertices.size());
+	////リソースの先頭のアドレスから使う
+	//indexBufferView_.BufferLocation = indexResource_->GetGPUVirtualAddress();
+	////使用するリソースのサイズはインデックス6つ分のサイズ
+	//indexBufferView_.SizeInBytes = UINT(sizeof(uint32_t) * modelData_.meshes.vertices.size());
+	////インデックスはuint32_tとする
+	//indexBufferView_.Format = DXGI_FORMAT_R32_UINT;
+	////IndexResourceにデータを書き込む
+	//indexResource_->Map(0, nullptr, reinterpret_cast<void**>(&indexData_));
+	//for (int i = 0; i < modelData_.meshes.vertices.size(); i++) {
+	//	indexData_[i] = i; indexData_[i + 1] = i + 1; indexData_[i + 2] = i + 2;
+	//	indexData_[i + 3] = i + 1; indexData_[i + 4] = i + 3; indexData_[i + 5] = i + 2;
+	//}
 }
 
 //ワールドトランスフォームのリソースの生成

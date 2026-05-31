@@ -57,24 +57,24 @@ void Object2d::Update() {
 
 //描画
 void Object2d::Draw() {
-	//2Dオブジェクトの共通部分
-	object2dCommon_->DrawSetting();
-	//PSOの設定
-	auto pso = object2dCommon_->GetGraphicsPipelineStates()[static_cast<int32_t>(blendMode_)].Get();
-	//グラフィックスパイプラインをセットするコマンド
-	directXBase_->GetCommandList()->SetPipelineState(pso);
-	//ワールドトランスフォームの描画
-	worldTransform_->Draw();
-	//IndexBufferViewの設定
-	directXBase_->GetCommandList()->IASetIndexBuffer(&indexBufferView_);//IBVを設定
-	//VertexBufferViewの設定
-	directXBase_->GetCommandList()->IASetVertexBuffers(0, 1, &vertexBufferView_);//VBVを設定
-	//マテリアルCBufferの場所を設定
-	directXBase_->GetCommandList()->SetGraphicsRootConstantBufferView(0, materialResource_->GetGPUVirtualAddress());//material
-	//SRVのDescriptorTableの先頭を設定
-	directXBase_->GetCommandList()->SetGraphicsRootDescriptorTable(2, object2dCommon_->GetTextureManager()->GetSRVHandleGPU(modelData_.material.textureFilePath));
-	//描画(DrawCall/ドローコール)
-	directXBase_->GetCommandList()->DrawIndexedInstanced(static_cast<UINT>(modelData_.mesh.vertices.size()), 1, 0, 0, 0);
+	////2Dオブジェクトの共通部分
+	//object2dCommon_->DrawSetting();
+	////PSOの設定
+	//auto pso = object2dCommon_->GetGraphicsPipelineStates()[static_cast<int32_t>(blendMode_)].Get();
+	////グラフィックスパイプラインをセットするコマンド
+	//directXBase_->GetCommandList()->SetPipelineState(pso);
+	////ワールドトランスフォームの描画
+	//worldTransform_->Draw();
+	////IndexBufferViewの設定
+	//directXBase_->GetCommandList()->IASetIndexBuffer(&indexBufferView_);//IBVを設定
+	////VertexBufferViewの設定
+	//directXBase_->GetCommandList()->IASetVertexBuffers(0, 1, &vertexBufferView_);//VBVを設定
+	////マテリアルCBufferの場所を設定
+	//directXBase_->GetCommandList()->SetGraphicsRootConstantBufferView(0, materialResource_->GetGPUVirtualAddress());//material
+	////SRVのDescriptorTableの先頭を設定
+	//directXBase_->GetCommandList()->SetGraphicsRootDescriptorTable(2, object2dCommon_->GetTextureManager()->GetSRVHandleGPU(modelData_.material.textureFilePath));
+	////描画(DrawCall/ドローコール)
+	//directXBase_->GetCommandList()->DrawIndexedInstanced(static_cast<UINT>(modelData_.meshes.vertices.size()), 1, 0, 0, 0);
 }
 
 //テキストのセッター
@@ -194,58 +194,58 @@ void Object2d::SetBlendMode(const BlendMode& blendMode) {
 
 //頂点データの初期化
 void Object2d::InitializeVertexData() {
-	//左上
-	modelData_.mesh.vertices.push_back({ .position = {1.0f,1.0f,0.0f,1.0f},.texcoord = {0.0f,0.0f},.normal = {0.0f,0.0f,1.0f} });
-	//右上
-	modelData_.mesh.vertices.push_back({ .position = {-1.0f,1.0f,0.0f,1.0f},.texcoord = {1.0f,0.0f},.normal = {0.0f,0.0f,1.0f} });
-	//左下
-	modelData_.mesh.vertices.push_back({ .position = {1.0f,-1.0f,0.0f,1.0f},.texcoord = {0.0f,1.0f},.normal = {0.0f,0.0f,1.0f} });
+	////左上
+	//modelData_.meshes.vertices.push_back({ .position = {1.0f,1.0f,0.0f,1.0f},.texcoord = {0.0f,0.0f},.normal = {0.0f,0.0f,1.0f} });
+	////右上
+	//modelData_.meshes.vertices.push_back({ .position = {-1.0f,1.0f,0.0f,1.0f},.texcoord = {1.0f,0.0f},.normal = {0.0f,0.0f,1.0f} });
+	////左下
+	//modelData_.meshes.vertices.push_back({ .position = {1.0f,-1.0f,0.0f,1.0f},.texcoord = {0.0f,1.0f},.normal = {0.0f,0.0f,1.0f} });
 
-	//左下
-	modelData_.mesh.vertices.push_back({ .position = {1.0f,-1.0f,0.0f,1.0f},.texcoord = {0.0f,1.0f},.normal = {0.0f,0.0f,1.0f} });
-	//右上
-	modelData_.mesh.vertices.push_back({ .position = {-1.0f,1.0f,0.0f,1.0f},.texcoord = {1.0f,0.0f},.normal = {0.0f,0.0f,1.0f} });
-	//右下
-	modelData_.mesh.vertices.push_back({ .position = {-1.0f,-1.0f,0.0f,1.0f},.texcoord = {1.0f,1.0f},.normal = {0.0f,0.0f,1.0f} });
+	////左下
+	//modelData_.meshes.vertices.push_back({ .position = {1.0f,-1.0f,0.0f,1.0f},.texcoord = {0.0f,1.0f},.normal = {0.0f,0.0f,1.0f} });
+	////右上
+	//modelData_.meshes.vertices.push_back({ .position = {-1.0f,1.0f,0.0f,1.0f},.texcoord = {1.0f,0.0f},.normal = {0.0f,0.0f,1.0f} });
+	////右下
+	//modelData_.meshes.vertices.push_back({ .position = {-1.0f,-1.0f,0.0f,1.0f},.texcoord = {1.0f,1.0f},.normal = {0.0f,0.0f,1.0f} });
 }
 
 //インデックスリソースの生成
 void Object2d::CreateIndexResource() {
-	//Index用(3dGameObject)
-	indexResource_ = directXBase_->CreateBufferResource(sizeof(uint32_t) * modelData_.mesh.vertices.size());
-	//リソースの先頭のアドレスから使う
-	indexBufferView_.BufferLocation = indexResource_->GetGPUVirtualAddress();
-	//使用するリソースのサイズはインデックス6つ分のサイズ
-	indexBufferView_.SizeInBytes = UINT(sizeof(uint32_t) * modelData_.mesh.vertices.size());
-	//インデックスはuint32_tとする
-	indexBufferView_.Format = DXGI_FORMAT_R32_UINT;
-	//IndexResourceにデータを書き込む
-	indexResource_->Map(0, nullptr, reinterpret_cast<void**>(&indexData_));
-	for (int i = 0; i < modelData_.mesh.vertices.size(); i++) {
-		indexData_[i] = i; indexData_[i + 1] = i + 1; indexData_[i + 2] = i + 2;
-		indexData_[i + 3] = i + 1; indexData_[i + 4] = i + 3; indexData_[i + 5] = i + 2;
-	}
+	////Index用(3dGameObject)
+	//indexResource_ = directXBase_->CreateBufferResource(sizeof(uint32_t) * modelData_.meshes.vertices.size());
+	////リソースの先頭のアドレスから使う
+	//indexBufferView_.BufferLocation = indexResource_->GetGPUVirtualAddress();
+	////使用するリソースのサイズはインデックス6つ分のサイズ
+	//indexBufferView_.SizeInBytes = UINT(sizeof(uint32_t) * modelData_.meshes.vertices.size());
+	////インデックスはuint32_tとする
+	//indexBufferView_.Format = DXGI_FORMAT_R32_UINT;
+	////IndexResourceにデータを書き込む
+	//indexResource_->Map(0, nullptr, reinterpret_cast<void**>(&indexData_));
+	//for (int i = 0; i < modelData_.meshes.vertices.size(); i++) {
+	//	indexData_[i] = i; indexData_[i + 1] = i + 1; indexData_[i + 2] = i + 2;
+	//	indexData_[i + 3] = i + 1; indexData_[i + 4] = i + 3; indexData_[i + 5] = i + 2;
+	//}
 }
 
 //頂点データの生成
 void Object2d::CreateVertexResource() {
-	//頂点データの初期化
-	InitializeVertexData();
-	//頂点リソースを生成
-	vertexResource_ = directXBase_->CreateBufferResource(sizeof(VertexData) * modelData_.mesh.vertices.size());
-	//VertexBufferViewを作成する(頂点バッファービュー)
-	//リソースの先頭アドレスから使う
-	vertexBufferView_.BufferLocation = vertexResource_->GetGPUVirtualAddress();
-	//使用するリソースのサイズは頂点3つ分のサイズ
-	vertexBufferView_.SizeInBytes = UINT(sizeof(VertexData) * modelData_.mesh.vertices.size());
-	//1頂点当たりのサイズ
-	vertexBufferView_.StrideInBytes = sizeof(VertexData);
+	////頂点データの初期化
+	//InitializeVertexData();
+	////頂点リソースを生成
+	//vertexResource_ = directXBase_->CreateBufferResource(sizeof(VertexData) * modelData_.meshes.vertices.size());
+	////VertexBufferViewを作成する(頂点バッファービュー)
+	////リソースの先頭アドレスから使う
+	//vertexBufferView_.BufferLocation = vertexResource_->GetGPUVirtualAddress();
+	////使用するリソースのサイズは頂点3つ分のサイズ
+	//vertexBufferView_.SizeInBytes = UINT(sizeof(VertexData) * modelData_.meshes.vertices.size());
+	////1頂点当たりのサイズ
+	//vertexBufferView_.StrideInBytes = sizeof(VertexData);
 
-	//頂点リソースにデータを書き込む
-	VertexData* vertexData = nullptr;
-	//書き込むためのアドレスを取得
-	vertexResource_->Map(0, nullptr, reinterpret_cast<void**>(&vertexData));//書き込むためのアドレスを取得
-	std::memcpy(vertexData, modelData_.mesh.vertices.data(), sizeof(VertexData) * modelData_.mesh.vertices.size());//頂点データをリソースにコピー
+	////頂点リソースにデータを書き込む
+	//VertexData* vertexData = nullptr;
+	////書き込むためのアドレスを取得
+	//vertexResource_->Map(0, nullptr, reinterpret_cast<void**>(&vertexData));//書き込むためのアドレスを取得
+	//std::memcpy(vertexData, modelData_.meshes.vertices.data(), sizeof(VertexData) * modelData_.meshes.vertices.size());//頂点データをリソースにコピー
 }
 
 //マテリアルデータの初期化

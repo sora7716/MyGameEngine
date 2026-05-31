@@ -57,9 +57,12 @@ void Model::Initialize(ModelCommon* modelCommon, const std::string& directoryPat
 	directXBase_ = modelCommon_->GetDirectXBase();
 	//モデルの読み込み
 	modelData_ = LoadModelFile(directoryPath, storedFilePath, filename);
-	//メッシュの生成
-	mesh_ = std::make_unique<Mesh>();
-	mesh_->Initialize(directXBase_, modelData_.mesh);
+	//メッシュの生成と初期化
+	for (const MeshData& meshData : modelData_.meshes) {
+		std::unique_ptr<Mesh>mesh = std::make_unique<Mesh>();
+		mesh->Initialize(directXBase_, meshData);
+		meshes_.push_back(std::move(mesh));
+	}
 	//マテリアルリソースの生成
 	CreateMaterialResource();
 	//リムライトリソースの生成
@@ -76,8 +79,10 @@ void Model::Draw(uint32_t objectCount) {
 	directXBase_->GetCommandList()->SetGraphicsRootConstantBufferView(7, rimLightResource_->GetGPUVirtualAddress());
 	//SRVのDescriptorTableの先頭を設定
 	directXBase_->GetCommandList()->SetGraphicsRootDescriptorTable(2, modelCommon_->GetTextureManager()->GetSRVHandleGPU(modelData_.material.textureFilePath));
-	//描画
-	mesh_->Draw(objectCount);
+	//メッシュの描画
+	for (std::unique_ptr<Mesh>& mesh : meshes_) {
+		mesh->Draw(objectCount);
+	}
 }
 
 //uv変換
@@ -146,18 +151,18 @@ ModelData Model::LoadModelFile(const std::string& directoryPath, const std::stri
 
 	//meshを解析する
 	for (uint32_t meshIndex = 0; meshIndex < scene->mNumMeshes; meshIndex++) {
-		aiMesh* mesh = scene->mMeshes[meshIndex];
-		assert(mesh->HasNormals());//法線がないメッシュは未対応
-		assert(mesh->HasTextureCoords(0));//Texcoordがないメッシュは未対応
+		aiMesh* assimpMesh = scene->mMeshes[meshIndex];
+		assert(assimpMesh->HasNormals());//法線がないメッシュは未対応
+		assert(assimpMesh->HasTextureCoords(0));//Texcoordがないメッシュは未対応
 
-		//頂点データのオフセット
-		uint32_t vertexOffset = static_cast<uint32_t>(modelData.mesh.vertices.size());
+		//メッシュデータ
+		MeshData meshData;
 
 		//頂点を見る
-		for (uint32_t vertexIndex = 0; vertexIndex < mesh->mNumVertices; vertexIndex++) {
-			aiVector3D& position = mesh->mVertices[vertexIndex];
-			aiVector3D& normal = mesh->mNormals[vertexIndex];
-			aiVector3D& texcoord = mesh->mTextureCoords[0][vertexIndex];
+		for (uint32_t vertexIndex = 0; vertexIndex < assimpMesh->mNumVertices; vertexIndex++) {
+			aiVector3D& position = assimpMesh->mVertices[vertexIndex];
+			aiVector3D& normal = assimpMesh->mNormals[vertexIndex];
+			aiVector3D& texcoord = assimpMesh->mTextureCoords[0][vertexIndex];
 
 			VertexData vertex = {};
 			vertex.position = { position.x,position.y,position.z,1.0f };
@@ -169,19 +174,22 @@ ModelData Model::LoadModelFile(const std::string& directoryPath, const std::stri
 			vertex.position.w = 1.0f;
 			vertex.normal *= -1.0f;
 
-			modelData.mesh.vertices.push_back(vertex);
+			meshData.vertices.push_back(vertex);
 		}
 
 		//インデックスを見る
-		for (uint32_t faceIndex = 0; faceIndex < mesh->mNumFaces; faceIndex++) {
-			aiFace& face = mesh->mFaces[faceIndex];
+		for (uint32_t faceIndex = 0; faceIndex < assimpMesh->mNumFaces; faceIndex++) {
+			aiFace& face = assimpMesh->mFaces[faceIndex];
 			//三角形以外は未対応
 			assert(face.mNumIndices == 3);
 
-			modelData.mesh.indices.push_back(vertexOffset + face.mIndices[0]);
-			modelData.mesh.indices.push_back(vertexOffset + face.mIndices[1]);
-			modelData.mesh.indices.push_back(vertexOffset + face.mIndices[2]);
+			meshData.indices.push_back(face.mIndices[0]);
+			meshData.indices.push_back(face.mIndices[1]);
+			meshData.indices.push_back(face.mIndices[2]);
 		}
+
+		//モデルデータにメッシュデータを移動
+		modelData.meshes.push_back(std::move(meshData));
 	}
 
 	//RootNodeの解析

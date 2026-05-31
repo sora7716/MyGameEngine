@@ -73,7 +73,7 @@ struct MeshData {
 
 //モデルデータの構造体
 struct ModelData {
-	MeshData mesh;
+	std::vector<MeshData> meshes;
 	MaterialData material;
 	Node rootNode;
 };

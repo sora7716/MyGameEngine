@@ -23,7 +23,7 @@ void TestPlayScene::Initialize(const SceneContext& sceneContext) {
 
 	object3d_ = std::make_unique<Object3d>();
 	object3d_->Initialize(sceneContext_.object3dCommon,&camera_);
-	object3d_->SetModel("player");
+	object3d_->SetModel("multiMesh");
 }
 
 //更新

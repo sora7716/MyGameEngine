@@ -59,7 +59,7 @@ void Model::Initialize(ModelCommon* modelCommon, const std::string& directoryPat
 	modelData_ = LoadModelFile(directoryPath, storedFilePath, filename);
 	//メッシュの生成
 	mesh_ = std::make_unique<Mesh>();
-	mesh_->Initialize(directXBase_,modelData_.mesh);
+	mesh_->Initialize(directXBase_, modelData_.mesh);
 	//マテリアルリソースの生成
 	CreateMaterialResource();
 	//リムライトリソースの生成
@@ -150,33 +150,37 @@ ModelData Model::LoadModelFile(const std::string& directoryPath, const std::stri
 		assert(mesh->HasNormals());//法線がないメッシュは未対応
 		assert(mesh->HasTextureCoords(0));//Texcoordがないメッシュは未対応
 
-		//Faceの解析をする
+		//頂点データのオフセット
+		uint32_t vertexOffset = static_cast<uint32_t>(modelData.mesh.vertices.size());
+
+		//頂点を見る
+		for (uint32_t vertexIndex = 0; vertexIndex < mesh->mNumVertices; vertexIndex++) {
+			aiVector3D& position = mesh->mVertices[vertexIndex];
+			aiVector3D& normal = mesh->mNormals[vertexIndex];
+			aiVector3D& texcoord = mesh->mTextureCoords[0][vertexIndex];
+
+			VertexData vertex = {};
+			vertex.position = { position.x,position.y,position.z,1.0f };
+			vertex.normal = { normal.x,normal.y,normal.z };
+			vertex.texcoord = { texcoord.x,texcoord.y };
+
+			//右手座標系から見だりて座標系に直してる
+			vertex.position *= -1.0f;
+			vertex.position.w = 1.0f;
+			vertex.normal *= -1.0f;
+
+			modelData.mesh.vertices.push_back(vertex);
+		}
+
+		//インデックスを見る
 		for (uint32_t faceIndex = 0; faceIndex < mesh->mNumFaces; faceIndex++) {
 			aiFace& face = mesh->mFaces[faceIndex];
-			assert(face.mNumIndices == 3);//三角形以外は未対応
+			//三角形以外は未対応
+			assert(face.mNumIndices == 3);
 
-			//Faceの中身を解析(Vertex)
-			for (uint32_t element = 0; element < face.mNumIndices; element++) {
-				uint32_t vertexIndex = face.mIndices[element];
-				aiVector3D& position = mesh->mVertices[vertexIndex];
-				aiVector3D& normal = mesh->mNormals[vertexIndex];
-				aiVector3D& texcoord = mesh->mTextureCoords[0][vertexIndex];
-
-				VertexData vertex = {};
-				vertex.position = { position.x,position.y,position.z,1.0f };
-				vertex.normal = { normal.x,normal.y,normal.z };
-				vertex.texcoord = { texcoord.x,texcoord.y };
-
-				//aiProcess_MakeLeftHandedはz*=-1で、右手->左手に変換するので手動で対処
-				vertex.position.x *= -1.0f;
-				vertex.position.y *= -1.0f;
-				vertex.position.z *= -1.0f;
-				vertex.normal.x *= -1.0f;
-				vertex.normal.y *= -1.0f;
-				vertex.normal.z *= -1.0f;
-
-				modelData.mesh.vertices.push_back(vertex);
-			}
+			modelData.mesh.indices.push_back(vertexOffset + face.mIndices[0]);
+			modelData.mesh.indices.push_back(vertexOffset + face.mIndices[1]);
+			modelData.mesh.indices.push_back(vertexOffset + face.mIndices[2]);
 		}
 	}
 

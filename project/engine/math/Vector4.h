@@ -71,4 +71,10 @@ struct Vector4 final {
 	/// <param name="v">3次元ベクトル</param>
 	/// <returns>4次元ベクトル</returns>
 	Vector4 operator=(const Vector3& v);
+
+	/// <summary>
+	/// スカラー倍
+	/// </summary>
+	/// <param name="n">浮動小数</param>
+	void operator*=(float n);
 };

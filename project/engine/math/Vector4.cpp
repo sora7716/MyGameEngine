@@ -54,3 +54,11 @@ Vector4 Vector4::operator=(const Vector3& v) {
 	w = 1.0f;
 	return *this;
 }
+
+//スカラー倍
+void Vector4::operator*=(float n) {
+	x *= n;
+	y *= n;
+	z *= n;
+	w *= n;
+}

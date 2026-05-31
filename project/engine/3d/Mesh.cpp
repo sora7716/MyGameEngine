@@ -26,9 +26,13 @@ void Mesh::Draw(uint32_t objectCount) {
 	//VertexBufferViewの設定
 	directXBase_->GetCommandList()->IASetVertexBuffers(0, 1, &vertexBufferView_);//VBVを設定
 	directXBase_->GetCommandList()->IASetIndexBuffer(&indexBufferView_);//IBVを設定
+	//オブジェクト数が0より大きければ
 	if (objectCount > 0) {
-		//描画
-		directXBase_->GetCommandList()->DrawIndexedInstanced(UINT(meshData_.vertices.size()), objectCount, 0, 0, 0);
+		//メッシュが空じゃなければ
+		if (!meshData_.indices.empty()) {
+			//描画
+			directXBase_->GetCommandList()->DrawIndexedInstanced(UINT(meshData_.indices.size()), objectCount, 0, 0, 0);
+		}
 	}
 }
 
@@ -55,11 +59,11 @@ void Mesh::CreateVertexResource() {
 //インデックスリソースの生成
 void Mesh::CreateIndexResource() {
 	//Index用(3dGameObject)
-	indexResource_ = directXBase_->CreateBufferResource(sizeof(uint32_t) * meshData_.vertices.size());
+	indexResource_ = directXBase_->CreateBufferResource(sizeof(uint32_t) * meshData_.indices.size());
 	//リソースの先頭のアドレスから使う
 	indexBufferView_.BufferLocation = indexResource_->GetGPUVirtualAddress();
 	//使用するリソースのサイズはインデックス6つ分のサイズ
-	indexBufferView_.SizeInBytes = UINT(sizeof(uint32_t) * meshData_.vertices.size());
+	indexBufferView_.SizeInBytes = UINT(sizeof(uint32_t) * meshData_.indices.size());
 	//インデックスはuint32_tとする
 	indexBufferView_.Format = DXGI_FORMAT_R32_UINT;
 
@@ -67,10 +71,6 @@ void Mesh::CreateIndexResource() {
 	uint32_t* indexData = nullptr;
 	//書き込むアドレスを取得
 	indexResource_->Map(0, nullptr, reinterpret_cast<void**>(&indexData));
-	for (int i = 0; i < meshData_.vertices.size(); i++) {
-		indexData[i] = i; indexData[i + 1] = i + 1; indexData[i + 2] = i + 2;
-		indexData[i + 3] = i + 1; indexData[i + 4] = i + 3; indexData[i + 5] = i + 2;
-	}
 	//インデックスデータをリソースにコピー
 	std::memcpy(indexData, meshData_.indices.data(), sizeof(uint32_t) * meshData_.indices.size());
 }

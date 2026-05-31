@@ -68,13 +68,14 @@ struct MaterialData {
 struct MeshData {
 	std::vector<VertexData>vertices;
 	std::vector<uint32_t>indices;
+	uint32_t materialIndex = 0;
 };
 
 
 //モデルデータの構造体
 struct ModelData {
 	std::vector<MeshData> meshes;
-	MaterialData material;
+	std::vector<MaterialData> material;
 	Node rootNode;
 };
 

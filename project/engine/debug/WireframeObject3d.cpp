@@ -253,9 +253,9 @@ void WireframeObject3d::SetColor(const Vector4& color) {
 
 //テクスチャの変更
 void WireframeObject3d::SetTexture(const std::string& filePath) {
-	if (model_) {
-		model_->SetTexture(filePath);
-	}
+	//if (model_) {
+	//	model_->SetTexture(filePath);
+	//}
 }
 
 //ブレンドモードのセッター

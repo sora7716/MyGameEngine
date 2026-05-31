@@ -35,6 +35,12 @@ public://メンバ関数
 	/// </summary>
 	/// <param name="objectCount">オブジェクト数</param>
 	void Draw(uint32_t objectCount);
+
+	/// <summary>
+	/// マテリアルインデックスの取得
+	/// </summary>
+	/// <returns>マテリアルインデックス</returns>
+	uint32_t GetMaterialIndex();
 private://メンバ関数
 	/// <summary>
 	/// 頂点リソースの生成

@@ -24,6 +24,11 @@ void TextureManager::Initialize(DirectXBase* directXBase, SRVManager* srvManager
 
 //テクスチャファイルの読み込み
 void TextureManager::LoadTexture(const std::string& filePath) {
+	//ファイルパスが空だったら読み込まない
+	if (filePath.empty()) {
+		return;
+	}
+
 	//読み込み済みテクスチャを検索
 	if (textureDatas_.contains(filePath)) {
 		//読み込み済みなら早期リターン

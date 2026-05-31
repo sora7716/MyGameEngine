@@ -36,6 +36,11 @@ void Mesh::Draw(uint32_t objectCount) {
 	}
 }
 
+//マテリアルインデックスの取得
+uint32_t Mesh::GetMaterialIndex() {
+	return meshData_.materialIndex;
+}
+
 //頂点リソースの生成
 void Mesh::CreateVertexResource() {
 	//頂点リソースを生成

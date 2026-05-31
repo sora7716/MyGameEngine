@@ -10,35 +10,35 @@
 
 //初期化
 void ParticleSystem::Initialize(ParticleCommon* particleCommon, const std::string& textureName, Model* model) {
-	//パーティクルの共通部分
-	particleCommon_ = particleCommon_;
+	////パーティクルの共通部分
+	//particleCommon_ = particleCommon_;
 
-	//DirectXの基盤部分を記録する
-	directXBase_ = particleCommon_->GetDirectXBase();
+	////DirectXの基盤部分を記録する
+	//directXBase_ = particleCommon_->GetDirectXBase();
 
-	//エミッター
-	emitter_ = std::make_unique<ParticleEmitter>();
-	emitter_->Initialize(particleCommon_, model);
+	////エミッター
+	//emitter_ = std::make_unique<ParticleEmitter>();
+	//emitter_->Initialize(particleCommon_, model);
 
-	//ワールドトランスフォームのリソースの生成
-	CreateWorldTransformResource();
+	////ワールドトランスフォームのリソースの生成
+	//CreateWorldTransformResource();
 
-	//頂点リソースの生成
-	CreateVertexResource();
+	////頂点リソースの生成
+	//CreateVertexResource();
 
-	//テクスチャファイルの記録
-	modelData_.material.textureFilePath = "engine/resources/textures/" + textureName;
-	//テクスチャの読み込み
-	particleCommon_->GetTextureManager()->LoadTexture(modelData_.material.textureFilePath);
+	////テクスチャファイルの記録
+	//modelData_.material.textureFilePath = "engine/resources/textures/" + textureName;
+	////テクスチャの読み込み
+	//particleCommon_->GetTextureManager()->LoadTexture(modelData_.material.textureFilePath);
 
-	//マテリアルリソースの生成
-	CreateMaterialResource();
+	////マテリアルリソースの生成
+	//CreateMaterialResource();
 
-	//インデックスリソースの生成
-	CreateIndexResource();
+	////インデックスリソースの生成
+	//CreateIndexResource();
 
-	//ストラクチャバッファの生成
-	CreateStructuredBuffer();
+	////ストラクチャバッファの生成
+	//CreateStructuredBuffer();
 }
 
 //更新
@@ -81,7 +81,8 @@ void ParticleSystem::Finalize() {
 
 //テクスチャ名のゲッター
 std::string ParticleSystem::GetTextureName() {
-	return modelData_.material.textureFilePath;
+	//return modelData_.material.textureFilePath;
+	return 0;
 }
 
 //カメラのセッター

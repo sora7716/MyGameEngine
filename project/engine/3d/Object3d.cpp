@@ -184,9 +184,9 @@ void Object3d::SetParent(const WorldTransform* parent) {
 }
 
 //テクスチャの変更
-void Object3d::SetTexture(const std::string& filePath) {
+void Object3d::SetTexture(uint32_t index, const std::string& filePath) {
 	if (model_) {
-		model_->SetTexture(filePath);
+		model_->SetTexture(index,filePath);
 	}
 }
 

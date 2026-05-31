@@ -68,7 +68,9 @@ void Model::Initialize(ModelCommon* modelCommon, const std::string& directoryPat
 	//リムライトリソースの生成
 	CreateRimLightResource();
 	//テクスチャの読み込み
-	modelCommon_->GetTextureManager()->LoadTexture(modelData_.material.textureFilePath);
+	for (const MaterialData& materialData : modelData_.material) {
+		modelCommon_->GetTextureManager()->LoadTexture(materialData.textureFilePath);
+	}
 }
 
 //描画
@@ -78,9 +80,15 @@ void Model::Draw(uint32_t objectCount) {
 	//リムライトのCBufferの場所を設定
 	directXBase_->GetCommandList()->SetGraphicsRootConstantBufferView(7, rimLightResource_->GetGPUVirtualAddress());
 	//SRVのDescriptorTableの先頭を設定
-	directXBase_->GetCommandList()->SetGraphicsRootDescriptorTable(2, modelCommon_->GetTextureManager()->GetSRVHandleGPU(modelData_.material.textureFilePath));
+	//directXBase_->GetCommandList()->SetGraphicsRootDescriptorTable(2, modelCommon_->GetTextureManager()->GetSRVHandleGPU(modelData_.material.textureFilePath));
 	//メッシュの描画
 	for (std::unique_ptr<Mesh>& mesh : meshes_) {
+		uint32_t materialIndex = mesh->GetMaterialIndex();
+
+		MaterialData& materialData = modelData_.material[materialIndex];
+
+		//テクスチャをセット
+		directXBase_->GetCommandList()->SetGraphicsRootDescriptorTable(2, modelCommon_->GetTextureManager()->GetSRVHandleGPU(materialData.textureFilePath));
 		mesh->Draw(objectCount);
 	}
 }
@@ -96,9 +104,9 @@ void Model::SetColor(const Vector4& color) {
 }
 
 //テクスチャの変更
-void Model::SetTexture(const std::string& filePath) {
-	modelData_.material.textureFilePath = "engine/resources/textures/" + filePath;
-	modelCommon_->GetTextureManager()->LoadTexture(modelData_.material.textureFilePath);
+void Model::SetTexture(uint32_t index, const std::string& filePath) {
+	modelData_.material[index].textureFilePath = "engine/resources/textures/" + filePath;
+	modelCommon_->GetTextureManager()->LoadTexture(modelData_.material[index].textureFilePath);
 }
 
 //色を取得
@@ -157,6 +165,7 @@ ModelData Model::LoadModelFile(const std::string& directoryPath, const std::stri
 
 		//メッシュデータ
 		MeshData meshData;
+		meshData.materialIndex = assimpMesh->mMaterialIndex;
 
 		//頂点を見る
 		for (uint32_t vertexIndex = 0; vertexIndex < assimpMesh->mNumVertices; vertexIndex++) {
@@ -198,11 +207,23 @@ ModelData Model::LoadModelFile(const std::string& directoryPath, const std::stri
 	//materialを解析
 	for (uint32_t materialIndex = 0; materialIndex < scene->mNumMaterials; materialIndex++) {
 		aiMaterial* material = scene->mMaterials[materialIndex];
-		if (material->GetTextureCount(aiTextureType_DIFFUSE) != 0) {
+
+		//マテリアルデータ
+		MaterialData materialData;
+
+		if (material->GetTextureCount(aiTextureType_BASE_COLOR) != 0) {
+			aiString textureFilePath;
+			material->GetTexture(aiTextureType_BASE_COLOR, 0, &textureFilePath);
+
+			materialData.textureFilePath = directoryPath + "/" + storedFilePath + "/" + textureFilePath.C_Str();
+		} else if (material->GetTextureCount(aiTextureType_DIFFUSE) != 0) {
 			aiString textureFilePath;
 			material->GetTexture(aiTextureType_DIFFUSE, 0, &textureFilePath);
-			modelData.material.textureFilePath = directoryPath + "/" + storedFilePath + "/" + textureFilePath.C_Str();
+			materialData.textureFilePath = directoryPath + "/" + storedFilePath + "/" + textureFilePath.C_Str();
 		}
+
+		//モデルデータのマテリアルにマテリアルデータを移動
+		modelData.material.push_back(std::move(materialData));
 	}
 
 	return modelData;

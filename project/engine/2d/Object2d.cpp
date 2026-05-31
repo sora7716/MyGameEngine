@@ -14,35 +14,35 @@ Object2d::~Object2d() {
 }
 //初期化
 void Object2d::Initialize(Object2dCommon* object2dCommon, const std::string& textureName) {
-	//2Dオブジェクトの共通部分
-	object2dCommon_ = object2dCommon;
-	//DirectXの基盤部分を記録する
-	directXBase_ = object2dCommon_->GetDirectXBase();
-	//頂点データの生成
-	CreateVertexResource();
-	//インデックスリソースの生成
-	CreateIndexResource();
-	//マテリアルデータの生成
-	CreateMaterialResource();
-	//テクスチャのファイルパスの記録
-	modelData_.material.textureFilePath = "engine/resources/textures/" + textureName;
-	//テクスチャの読み込み
-	object2dCommon_->GetTextureManager()->LoadTexture(modelData_.material.textureFilePath);
-	//uvTransform変数を作る
-	uvTransform_ = { {1.0f,1.0f},Math::kPi,{0.0f,0.0f} };
-	//ワールドトランスフォームの生成と初期化
-	worldTransform_ = new WorldTransform();
-	worldTransform_->Initialize(directXBase_, TransformMode::k2d);
-	//カメラにデフォルトカメラを代入
-	worldTransform_->SetCamera(object2dCommon_->GetDefaultCamera());
-	//スクリーンに表示する範囲を設定
-	WorldTransform::ScreenArea screenArea = {
-		.left = -static_cast<float>(WinApi::kClientWidth / 2),
-		.top = -static_cast<float>(WinApi::kClientHeight / 2),
-		.right = static_cast<float>(WinApi::kClientWidth / 2),
-		.bottom = static_cast<float>(WinApi::kClientHeight / 2),
-	};
-	worldTransform_->SetScreenArea(screenArea);
+	////2Dオブジェクトの共通部分
+	//object2dCommon_ = object2dCommon;
+	////DirectXの基盤部分を記録する
+	//directXBase_ = object2dCommon_->GetDirectXBase();
+	////頂点データの生成
+	//CreateVertexResource();
+	////インデックスリソースの生成
+	//CreateIndexResource();
+	////マテリアルデータの生成
+	//CreateMaterialResource();
+	////テクスチャのファイルパスの記録
+	//modelData_.material.textureFilePath = "engine/resources/textures/" + textureName;
+	////テクスチャの読み込み
+	//object2dCommon_->GetTextureManager()->LoadTexture(modelData_.material.textureFilePath);
+	////uvTransform変数を作る
+	//uvTransform_ = { {1.0f,1.0f},Math::kPi,{0.0f,0.0f} };
+	////ワールドトランスフォームの生成と初期化
+	//worldTransform_ = new WorldTransform();
+	//worldTransform_->Initialize(directXBase_, TransformMode::k2d);
+	////カメラにデフォルトカメラを代入
+	//worldTransform_->SetCamera(object2dCommon_->GetDefaultCamera());
+	////スクリーンに表示する範囲を設定
+	//WorldTransform::ScreenArea screenArea = {
+	//	.left = -static_cast<float>(WinApi::kClientWidth / 2),
+	//	.top = -static_cast<float>(WinApi::kClientHeight / 2),
+	//	.right = static_cast<float>(WinApi::kClientWidth / 2),
+	//	.bottom = static_cast<float>(WinApi::kClientHeight / 2),
+	//};
+	//worldTransform_->SetScreenArea(screenArea);
 }
 
 //更新
@@ -79,13 +79,13 @@ void Object2d::Draw() {
 
 //テキストのセッター
 void Object2d::SetText(const std::string& textName) {
-	modelData_.material.textureFilePath = textName;
+	//modelData_.material.textureFilePath = textName;
 }
 
 //テクスチャの変更
 void Object2d::ChangeTexture(std::string textureName) {
-	modelData_.material.textureFilePath = "engine/resources/textures/" + textureName;
-	object2dCommon_->GetTextureManager()->LoadTexture(modelData_.material.textureFilePath);
+	//modelData_.material.textureFilePath = "engine/resources/textures/" + textureName;
+	//object2dCommon_->GetTextureManager()->LoadTexture(modelData_.material.textureFilePath);
 }
 
 //サイズのゲッター

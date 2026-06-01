@@ -39,7 +39,7 @@ public://メンバ関数
 	/// テクスチャの読み込み
 	/// </summary>
 	/// <param name="filename">ファイル名</param>
-	void LoadTexture(const std::string& filename);
+	void LoadTexture(std::string& filename);
 
 	/// <summary>
 	/// 平行光源の生成

@@ -68,7 +68,7 @@ void Model::Initialize(ModelCommon* modelCommon, const std::string& directoryPat
 	//リムライトリソースの生成
 	CreateRimLightResource();
 	//テクスチャの読み込み
-	for (const MaterialData& materialData : modelData_.material) {
+	for (MaterialData& materialData : modelData_.material) {
 		modelCommon_->GetTextureManager()->LoadTexture(materialData.textureFilePath);
 	}
 }

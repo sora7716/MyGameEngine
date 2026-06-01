@@ -4,6 +4,7 @@
 #include "ImGuiManager.h"
 #include "Box.h"
 #include "Object3d.h"
+#include "Cube.h"
 
 //コンストラクタ
 TestPlayScene::TestPlayScene() {};
@@ -28,6 +29,9 @@ void TestPlayScene::Initialize(const SceneContext& sceneContext) {
 	for (uint32_t i = 0; i < object3d_->GetModel()->GetMeshes().size(); i++) {
 		transform2ds_.push_back({ object3d_->GetUVScale(i),object3d_->GetUVRotate(i),object3d_->GetUVTranslate(i) });
 	}
+
+	cube_ = std::make_unique<Cube>();
+	cube_->Initialize(sceneContext_.directXBase, &camera_);
 }
 
 //更新

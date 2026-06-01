@@ -8,6 +8,7 @@
 //前方宣言
 class Box;
 class Object3d;
+class Cube;
 
 /// <summary>
 /// テストプレイシーン
@@ -58,4 +59,7 @@ private://メンバ変数
 	std::unique_ptr<Object3d>object3d_ = nullptr;
 
 	std::vector<Transform2dData>transform2ds_;
+
+	std::unique_ptr<Cube>cube_ = nullptr;
+	PrimitiveData::OBB obb_ = {};
 };

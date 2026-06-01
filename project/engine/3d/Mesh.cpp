@@ -19,6 +19,8 @@ void Mesh::Initialize(DirectXBase* directXBase, const MeshData& meshData) {
 	CreateVertexResource();
 	//インデックスリソースの生成
 	CreateIndexResource();
+	//AABBの作成
+	CreateAABB();
 }
 
 //描画
@@ -36,14 +38,15 @@ void Mesh::Draw(uint32_t objectCount) {
 	}
 }
 
-//メッシュデータの設定
-void Mesh::SetMeshData(const MeshData& meshData) {
-	meshData_ = meshData;
-}
-
 //マテリアルインデックスの取得
 uint32_t Mesh::GetMaterialIndex() {
 	return meshData_.materialIndex;
+}
+
+//AABBの取得
+const PrimitiveData::AABB& Mesh::GetAABB() const {
+	// TODO: return ステートメントをここに挿入します
+	return aabb_;
 }
 
 //頂点リソースの生成
@@ -83,4 +86,32 @@ void Mesh::CreateIndexResource() {
 	indexResource_->Map(0, nullptr, reinterpret_cast<void**>(&indexData));
 	//インデックスデータをリソースにコピー
 	std::memcpy(indexData, meshData_.indices.data(), sizeof(uint32_t) * meshData_.indices.size());
+}
+
+//AABBの生成
+void Mesh::CreateAABB() {
+	//頂点データが無ければ
+	if (meshData_.vertices.empty()) {
+		return;
+	}
+
+	//最小値の決める
+	aabb_.min = {
+		meshData_.vertices[0].position.x,
+		meshData_.vertices[0].position.y,
+		meshData_.vertices[0].position.z,
+	};
+
+	//最大値の決める
+	aabb_.max = aabb_.min;
+
+	//AABBを作成
+	for (const VertexData& vertex : meshData_.vertices) {
+		Vector3 vertexPosition = { vertex.position.x,vertex.position.y,vertex.position.z };
+		
+		//最小値を求める
+		aabb_.min= aabb_.min.Min(vertexPosition);
+		//最大値を求める
+		aabb_.max= aabb_.max.Max(vertexPosition);
+	}
 }

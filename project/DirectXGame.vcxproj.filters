@@ -325,10 +325,10 @@
       <Filter>application\gameObject</Filter>
     </ClCompile>
     <ClCompile Include="engine\debug\CrashHandler.cpp">
-      <Filter>ソース ファイル</Filter>
+      <Filter>engine\debug</Filter>
     </ClCompile>
     <ClCompile Include="engine\3d\Mesh.cpp">
-      <Filter>ソース ファイル</Filter>
+      <Filter>engine\3d</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -591,10 +591,10 @@
       <Filter>application\gameObject</Filter>
     </ClInclude>
     <ClInclude Include="engine\debug\CrashHandler.h">
-      <Filter>ヘッダー ファイル</Filter>
+      <Filter>engine\debug</Filter>
     </ClInclude>
     <ClInclude Include="engine\3d\Mesh.h">
-      <Filter>ヘッダー ファイル</Filter>
+      <Filter>engine\3d</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

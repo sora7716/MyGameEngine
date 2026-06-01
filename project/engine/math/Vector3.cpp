@@ -1,9 +1,31 @@
+#define NOMINMAX
 #include "Vector3.h"
 #include <cmath>
+#include <algorithm>
 
 //Vector3のメンバ変数すべてに1.0fを代入したVector3を作成
 Vector3 Vector3::MakeAllOne() {
 	return Vector3(1.0f, 1.0f, 1.0f);
+}
+
+//最小値
+Vector3 Vector3::Min(const Vector3& v) const {
+	Vector3 result = {};
+	result.x = std::min(x, v.x);
+	result.y = std::min(y, v.y);
+	result.z = std::min(z, v.z);
+
+	return result;
+}
+
+//最大値
+Vector3 Vector3::Max(const Vector3& v) const {
+	Vector3 result = {};
+	result.x = std::max(x, v.x);
+	result.y = std::max(y, v.y);
+	result.z = std::max(z, v.z);
+
+	return result;
 }
 
 //長さ(ノルム)

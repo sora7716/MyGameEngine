@@ -13,6 +13,20 @@ struct Vector3 final {
 	/// <returns>Vector3</returns>
 	static Vector3 MakeAllOne();
 
+	/// <summary>
+	/// 最小値
+	/// </summary>
+	/// <param name="v">ベクトル</param>
+	/// <returns>最小値</returns>
+	Vector3 Min(const Vector3& v)const;
+
+	/// <summary>
+	/// 最大値
+	/// </summary>
+	/// <param name="v">ベクトル</param>
+	/// <returns>最大値</returns>
+	Vector3 Max(const Vector3& v)const;
+
 	//長さ(ノルム)
 	float Length();
 	// 正規化

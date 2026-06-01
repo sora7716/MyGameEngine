@@ -38,16 +38,16 @@ public://メンバ関数
 	void Draw(uint32_t objectCount);
 
 	/// <summary>
-	/// メッシュデータの設定
-	/// </summary>
-	/// <param name="meshData">メッシュデータ</param>
-	void SetMeshData(const MeshData& meshData);
-
-	/// <summary>
 	/// マテリアルインデックスの取得
 	/// </summary>
 	/// <returns>マテリアルインデックス</returns>
 	uint32_t GetMaterialIndex();
+
+	/// <summary>
+	/// AABBを取得
+	/// </summary>
+	/// <returns></returns>
+	const PrimitiveData::AABB& GetAABB()const;
 private://メンバ関数
 	/// <summary>
 	/// 頂点リソースの生成
@@ -58,6 +58,11 @@ private://メンバ関数
 	/// インデックスリソースの生成
 	/// </summary>
 	void CreateIndexResource();
+
+	/// <summary>
+	/// AABBの生成
+	/// </summary>
+	void CreateAABB();
 private://メンバ変数
 	//DirectXの基盤部分
 	DirectXBase* directXBase_ = nullptr;

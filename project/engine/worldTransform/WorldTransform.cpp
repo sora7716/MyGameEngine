@@ -12,6 +12,14 @@ void(WorldTransform::* WorldTransform::UpdateTransformTable[])() = {
 	&UpdateTrasformDirectionToDirection
 };
 
+//コンストラクタ
+WorldTransform::WorldTransform() {
+}
+
+//デストラクタ
+WorldTransform::~WorldTransform() {
+}
+
 //初期化
 void WorldTransform::Initialize(DirectXBase* directXBase, TransformMode transformMode) {
 	//DirectXの基盤部分の記録

@@ -36,6 +36,11 @@ void Mesh::Draw(uint32_t objectCount) {
 	}
 }
 
+//メッシュデータの設定
+void Mesh::SetMeshData(const MeshData& meshData) {
+	meshData_ = meshData;
+}
+
 //マテリアルインデックスの取得
 uint32_t Mesh::GetMaterialIndex() {
 	return meshData_.materialIndex;

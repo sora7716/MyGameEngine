@@ -46,29 +46,32 @@ public://メンバ関数
 	void Draw(uint32_t objectCount = 1);
 
 	/// <summary>
-	/// uv変換
+	/// UV変換
 	/// </summary>
+	/// <param name="index">インデックス</param>
 	/// <param name="uvTransform">uv座標</param>
-	void UVTransform(Transform2dData uvTransform);
+	void UVTransform(uint32_t index, Transform2dData uvTransform);
 
 	/// <summary>
 	/// 色を変更
 	/// </summary>
+	/// <param name="index">インデックス</param>
 	/// <param name="color">色</param>
-	void SetColor(const Vector4& color);
+	void SetColor(uint32_t index, const Vector4& color);
 
 	/// <summary>
-    /// テクスチャの変更
-    /// </summary>
+	/// テクスチャの変更
+	/// </summary>
 	/// <param name="index">インデックス</param>
-    /// <param name="filePath">ファイルパス</param>
+	/// <param name="filePath">ファイルパス</param>
 	void SetTexture(uint32_t index, const std::string& filePath);
 
 	/// <summary>
 	/// 色を取得
 	/// </summary>
+	/// <param name="index">インデックス</param>
 	/// <returns>色</returns>
-	const Vector4& GetColor()const;
+	const Vector4& GetColor(uint32_t index)const;
 
 	/// <summary>
 	/// モデルデータのゲッター
@@ -96,14 +99,21 @@ public://メンバ関数
 	/// <summary>
 	/// マテリアルのセッター
 	/// </summary>
+	/// <param name="index">インデックス</param>
 	/// <param name="materialData">マテリアルデータ</param>
-	void SetMaterial(const Material& materialData);
+	void SetMaterial(uint32_t index, const Material& materialData);
 
 	/// <summary>
 	/// リムライトのセッター
 	/// </summary>
 	/// <param name="rimLight">リムライト</param>
 	void SetRimLight(const RimLight& rimLight);
+
+	/// <summary>
+	/// メッシュ達の取得
+	/// </summary>
+	/// <returns>メッシュ達</returns>
+	const std::vector<std::unique_ptr<Mesh>>& GetMeshes()const;
 private://メンバ関数
 	/// <summary>
 	/// マテリアルリソースの生成
@@ -124,9 +134,9 @@ private://メンバ変数
 	//Objファイルデータ
 	ModelData modelData_ = {};
 	//マテリアルリソース
-	ComPtr<ID3D12Resource>materialResource_ = nullptr;
+	std::vector<ComPtr<ID3D12Resource>>materialResources_;
 	//マテリアルリソースにデータを書き込むためのポインタ
-	Material* materialPtr_ = nullptr;
+	std::vector<Material*> materialPtrs_;
 	//リムライト
 	RimLight* rimLightPtr_ = nullptr;
 	//リムライトリソース

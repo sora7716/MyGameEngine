@@ -56,4 +56,6 @@ private://メンバ変数
 	std::unique_ptr<Box>box_ = nullptr;
 
 	std::unique_ptr<Object3d>object3d_ = nullptr;
+
+	std::vector<Transform2dData>transform2ds_;
 };

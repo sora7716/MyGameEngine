@@ -2,6 +2,7 @@
 #include "WireframeObject3dCommon.h"
 #include "DirectXBase.h"
 #include "Camera.h"
+#include "Mesh.h"
 #include "algorithms/Math.h"
 #include "ModelManager.h"
 #include "Model.h"
@@ -44,7 +45,7 @@ void WireframeObject3d::Initialize(WireframeObject3dCommon* wireframeObject3dCom
 		model_ = wireframeObject3dCommon_->GetModelManager()->FindModel("cube");
 	}
 	//マテリアルの設定
-	model_->SetMaterial(material_);
+	model_->SetMaterial(0, material_);
 #endif // _DEBUG
 
 	//モデルタイプをリリース時でも使っている風にしている
@@ -110,7 +111,9 @@ void WireframeObject3d::Update() {
 
 	if (model_) {
 		node_ = model_->GetModelData().rootNode;
-		model_->UVTransform(uvTransform_);
+		for (uint32_t i = 0; i < model_->GetMeshes().size(); i++) {
+			model_->UVTransform(i, uvTransform_);
+		}
 	}
 	//トランスフォームの更新
 	(this->*UpdateTransformTable[static_cast<uint32_t>(transform3dMode_)])();
@@ -245,9 +248,9 @@ void WireframeObject3d::SetUVTranslate(const Vector2& uvTranslate) {
 }
 
 //色のセッター
-void WireframeObject3d::SetColor(const Vector4& color) {
+void WireframeObject3d::SetColor(uint32_t index, const Vector4& color) {
 	if (model_) {
-		model_->SetColor(color);
+		model_->SetColor(index, color);
 	}
 }
 
@@ -300,11 +303,11 @@ const Vector2& WireframeObject3d::GetUVTranslate() const {
 }
 
 //色のゲッター
-const Vector4& WireframeObject3d::GetColor() const {
+const Vector4& WireframeObject3d::GetColor(uint32_t index) const {
 	// TODO: return ステートメントをここに挿入します
 	static const Vector4 defaultColor(0, 0, 0, 0);
 	if (model_) {
-		return model_->GetColor();
+		return model_->GetColor(index);
 	}
 	return defaultColor;
 }

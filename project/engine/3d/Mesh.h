@@ -37,6 +37,12 @@ public://メンバ関数
 	void Draw(uint32_t objectCount);
 
 	/// <summary>
+	/// メッシュデータの設定
+	/// </summary>
+	/// <param name="meshData">メッシュデータ</param>
+	void SetMeshData(const MeshData& meshData);
+
+	/// <summary>
 	/// マテリアルインデックスの取得
 	/// </summary>
 	/// <returns>マテリアルインデックス</returns>

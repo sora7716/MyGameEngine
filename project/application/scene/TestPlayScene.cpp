@@ -22,14 +22,25 @@ void TestPlayScene::Initialize(const SceneContext& sceneContext) {
 	//box_->SetModel("cube");
 
 	object3d_ = std::make_unique<Object3d>();
-	object3d_->Initialize(sceneContext_.object3dCommon,&camera_);
+	object3d_->Initialize(sceneContext_.object3dCommon, &camera_);
 	object3d_->SetModel("multiMaterial");
+
+	for (uint32_t i = 0; i < object3d_->GetModel()->GetMeshes().size(); i++) {
+		transform2ds_.push_back({ object3d_->GetUVScale(i),object3d_->GetUVRotate(i),object3d_->GetUVTranslate(i) });
+	}
 }
 
 //更新
 void TestPlayScene::Update() {
 	//ベースシーンの更新
 	BaseScene::Update();
+
+
+	for (uint32_t i = 0; i < object3d_->GetModel()->GetMeshes().size(); i++) {
+		object3d_->SetUVScale(i, transform2ds_[i].scale);
+		object3d_->SetUVRotate(i, transform2ds_[i].rotate);
+		object3d_->SetUVTranslate(i, transform2ds_[i].translate);
+	}
 
 	object3d_->Update();
 
@@ -46,7 +57,14 @@ void TestPlayScene::Debug() {
 	ImGui::Begin("object3d");
 	GameObject gameObject = object3d_->GetGameObject(0);
 	ImGuiManager::DebugGameObject(gameObject);
-	object3d_->SetGameObject(0,gameObject);
+	object3d_->SetGameObject(0, gameObject);
+	for (uint32_t i = 0; i < transform2ds_.size(); i++) {
+		ImGui::PushID(i);
+		ImGui::DragFloat2("uvScale", &transform2ds_[i].scale.x, 0.1f);
+		ImGui::DragFloat("uvRotate", &transform2ds_[i].rotate, 0.1f);
+		ImGui::DragFloat2("uvTranslate", &transform2ds_[i].translate.x, 0.1f);
+		ImGui::PopID();
+	}
 	ImGui::End();
 #endif // USE_IMGUI
 

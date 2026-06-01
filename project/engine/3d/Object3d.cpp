@@ -2,10 +2,10 @@
 #include "Object3dCommon.h"
 #include "DirectXBase.h"
 #include "Camera.h"
-#include "algorithms/Math.h"
 #include "ModelManager.h"
 #include "algorithms/Rendering.h"
 #include "ImGuiManager.h"
+#include "Mesh.h"
 #include "SRVManager.h"
 #include "TextureManager.h"
 #include <cassert>
@@ -50,9 +50,6 @@ void Object3d::Initialize(Object3dCommon* object3dCommon, Camera* camera, uint32
 	//座標変換行列リソースのストラクチャバッファの生成
 	CreateStructuredBufferForWvp();
 
-	//uv座標
-	uvTransform_ = { {1.0f,1.0f},0.0f,{0.0f,0.0f} };
-
 	//カメラにデフォルトカメラを代入
 	camera_ = camera;
 	//カメラをセット
@@ -93,7 +90,10 @@ void Object3d::Update() {
 
 	if (model_) {
 		node_ = model_->GetModelData().rootNode;
-		model_->UVTransform(uvTransform_);
+		for (uint32_t i = 0; i < model_->GetMeshes().size(); i++) {
+			uint32_t materialIndex = model_->GetMeshes()[i]->GetMaterialIndex();
+			model_->UVTransform(materialIndex, uvTransform_[i]);
+		}
 	}
 	//トランスフォームの更新
 	(this->*UpdateTransformTable[static_cast<uint32_t>(transform3dMode_)])();
@@ -128,6 +128,11 @@ void Object3d::Draw() {
 //モデルのセッター
 void Object3d::SetModel(const std::string& name) {
 	model_ = object3dCommon_->GetModelManager()->FindModel(name);
+	//uv座標
+	uvTransform_.resize(model_->GetModelData().material.size());
+	for (uint32_t i = 0; i < uvTransform_.size(); i++) {
+		uvTransform_[i] = { {1.0f,1.0f},0.0f,{0.0f,0.0f} };
+	}
 }
 
 //カメラのセッター
@@ -157,24 +162,24 @@ void Object3d::SetGameObject(uint32_t index, const GameObject& gameObject) {
 }
 
 // uvスケールのセッター
-void Object3d::SetUVScale(const Vector2& uvScale) {
-	uvTransform_.scale = uvScale;
+void Object3d::SetUVScale(uint32_t index, const Vector2& uvScale) {
+	uvTransform_[index].scale = uvScale;
 }
 
 // uv回転のセッター
-void Object3d::SetUVRotate(float uvRotate) {
-	uvTransform_.rotate = uvRotate;
+void Object3d::SetUVRotate(uint32_t index, float uvRotate) {
+	uvTransform_[index].rotate = uvRotate;
 }
 
 // uv平行移動のセッター
-void Object3d::SetUVTranslate(const Vector2& uvTranslate) {
-	uvTransform_.translate = uvTranslate;
+void Object3d::SetUVTranslate(uint32_t index, const Vector2& uvTranslate) {
+	uvTransform_[index].translate = uvTranslate;
 }
 
 //色のセッター
-void Object3d::SetColor(const Vector4& color) {
+void Object3d::SetColor(uint32_t index, const Vector4& color) {
 	if (model_) {
-		model_->SetColor(color);
+		model_->SetColor(index, color);
 	}
 }
 
@@ -186,8 +191,13 @@ void Object3d::SetParent(const WorldTransform* parent) {
 //テクスチャの変更
 void Object3d::SetTexture(uint32_t index, const std::string& filePath) {
 	if (model_) {
-		model_->SetTexture(index,filePath);
+		model_->SetTexture(index, filePath);
 	}
+}
+
+//UV座標の設定
+void Object3d::SetUVTransform(uint32_t index, const Transform2dData& uvTransform) {
+	uvTransform_[index] = uvTransform;
 }
 
 //ブレンドモードのセッター
@@ -214,29 +224,35 @@ const Vector3& Object3d::GetTranslate(uint32_t index) const {
 }
 
 //uvスケールのゲッター
-const Vector2& Object3d::GetUVScale() const {
+const Vector2& Object3d::GetUVScale(uint32_t index) const {
 	// TODO: return ステートメントをここに挿入します
-	return uvTransform_.scale;
+	return uvTransform_[index].scale;
 }
 
 //uv回転のゲッター
-const float Object3d::GetUVRotate() const {
+const float Object3d::GetUVRotate(uint32_t index) const {
 	// TODO: return ステートメントをここに挿入します
-	return uvTransform_.rotate;
+	return uvTransform_[index].rotate;
 }
 
 //uv平行移動のゲッター
-const Vector2& Object3d::GetUVTranslate() const {
+const Vector2& Object3d::GetUVTranslate(uint32_t index) const {
 	// TODO: return ステートメントをここに挿入します
-	return uvTransform_.translate;
+	return uvTransform_[index].translate;
+}
+
+//UV座標の取得
+const Transform2dData& Object3d::GetUVTransform(uint32_t index) const {
+	// TODO: return ステートメントをここに挿入します
+	return uvTransform_[index];
 }
 
 //色のゲッター
-const Vector4& Object3d::GetColor() const {
+const Vector4& Object3d::GetColor(uint32_t index) const {
 	// TODO: return ステートメントをここに挿入します
 	static const Vector4 defaultColor(0.0f, 0.0f, 0.0f, 0.0f);
 	if (model_) {
-		return model_->GetColor();
+		return model_->GetColor(index);
 	}
 	return defaultColor;
 }

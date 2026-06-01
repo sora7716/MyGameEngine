@@ -34,12 +34,12 @@ public://メンバ関数
 	/// <summary>
 	/// コンストラクタ
 	/// </summary>
-	WorldTransform() = default;
+	WorldTransform();
 
 	/// <summary>
 	/// デストラクタ
 	/// </summary>
-	~WorldTransform() = default;
+	~WorldTransform();
 
 	/// <summary>
 	/// 初期化

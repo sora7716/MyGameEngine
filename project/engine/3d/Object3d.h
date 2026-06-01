@@ -8,6 +8,7 @@
 #include <string>
 #include <wrl.h>
 #include <d3d12.h>
+#include <RenderingData.h>
 //前方宣言
 class DirectXBase;
 class SRVManager;
@@ -93,26 +94,30 @@ public://メンバ関数
 	/// <summary>
 	/// uvスケールのセッター
 	/// </summary>
+	/// <param name="index">インデックス</param>
 	/// <param name="uvScale">スケール</param>
-	void SetUVScale(const Vector2& uvScale);
+	void SetUVScale(uint32_t index, const Vector2& uvScale);
 
 	/// <summary>
 	/// uv回転のセッター
 	/// </summary>
+	/// <param name="index">インデックス</param>
 	/// <param name="uvRotate">回転</param>
-	void SetUVRotate(float uvRotate);
+	void SetUVRotate(uint32_t index, float uvRotate);
 
 	/// <summary>
 	/// uv平行移動のセッター
 	/// </summary>
+	/// <param name="index">インデックス</param>
 	/// <param name="uvTranslate">平行移動</param>
-	void SetUVTranslate(const Vector2& uvTranslate);
+	void SetUVTranslate(uint32_t index, const Vector2& uvTranslate);
 
 	/// <summary>
 	/// 色のセッター
 	/// </summary>
+	/// <param name="index">インデックス</param>
 	/// <param name="color">色</param>
-	void SetColor(const Vector4& color);
+	void SetColor(uint32_t index, const Vector4& color);
 
 	/// <summary>
 	/// 親のセッター
@@ -125,7 +130,14 @@ public://メンバ関数
 	/// </summary>
 	/// <param name="index">インデックス</param>
 	/// <param name="filePath">ファイルパス</param>
-	void SetTexture(uint32_t index,const std::string& filePath);
+	void SetTexture(uint32_t index, const std::string& filePath);
+
+	/// <summary>
+	/// UV座標の設定
+	/// </summary>
+	/// <param name="index">インデックス</param>
+	/// <param name="uvTransform">UV座標</param>
+	void SetUVTransform(uint32_t index,const Transform2dData& uvTransform);
 
 	/// <summary>
 	/// ブレンドモードのセッター
@@ -157,26 +169,37 @@ public://メンバ関数
 	/// <summary>
 	/// uvスケールのゲッター
 	/// </summary>
+	/// <param name="index">インデックス</param>
 	/// <returns>uvスケール</returns>
-	const Vector2& GetUVScale()const;
+	const Vector2& GetUVScale(uint32_t index)const;
 
 	/// <summary>
 	/// uv回転のゲッター
 	/// </summary>
+	/// <param name="index">インデックス</param>
 	/// <returns>uv回転</returns>
-	const float GetUVRotate()const;
+	const float GetUVRotate(uint32_t index)const;
 
 	/// <summary>
 	/// uv平行移動のゲッター
 	/// </summary>
+	/// <param name="index">インデックス</param>
 	/// <returns>uv平行移動</returns>
-	const Vector2& GetUVTranslate()const;
+	const Vector2& GetUVTranslate(uint32_t index)const;
+
+	/// <summary>
+	/// UV座標の取得
+	/// </summary>
+	/// <param name="index">インデックス</param>
+	/// <returns>UV座標</returns>
+	const Transform2dData& GetUVTransform(uint32_t index)const;
 
 	/// <summary>
 	/// 色のゲッター
 	/// </summary>
+	/// <param name="index">インデックス</param>
 	/// <returns>色</returns>
-	const Vector4& GetColor()const;
+	const Vector4& GetColor(uint32_t index)const;
 
 	/// <summary>
 	/// ゲームオブジェクトのゲッター
@@ -199,10 +222,10 @@ public://メンバ関数
 	Matrix4x4& GetWorldMatrix(uint32_t index);
 
 	/// <summary>
-    /// ワールド座標のゲッター
-    /// </summary>
+	/// ワールド座標のゲッター
+	/// </summary>
 	/// <param name="index">インデックス</param>
-    /// <returns>ワールド座標</returns>
+	/// <returns>ワールド座標</returns>
 	Vector3 GetWorldPos(uint32_t index);
 private://メンバ関数
 	/// <summary>
@@ -232,11 +255,7 @@ private://メンバ変数
 	Object3dCommon* object3dCommon_ = nullptr;
 
 	//UV座標
-	Transform2dData uvTransform_ = {
-		.scale = { 1.0f,1.0f },
-		.rotate = 0.0f,
-		.translate = {0.0f,0.0f}
-	};
+	std::vector<Transform2dData> uvTransform_;
 	//DirectXの基盤部分
 	DirectXBase* directXBase_ = nullptr;
 	//SRVマネージャー

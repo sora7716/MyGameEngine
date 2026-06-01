@@ -56,7 +56,7 @@ public://メンバ関数
 	/// 描画
 	/// </summary>
 	void Draw();
-	
+
 	/// <summary>
 	/// 描画
 	/// </summary>
@@ -129,10 +129,11 @@ public://メンバ関数
 	void SetUVTranslate(const Vector2& uvTranslate);
 
 	/// <summary>
-	/// 色のセッター
-	/// </summary>
-	/// <param name="color">色</param>
-	void SetColor(const Vector4& color);
+    /// 色のセッター
+    /// </summary>
+	/// <param name="index">インデックス</param>
+    /// <param name="color">色</param>
+	void SetColor(uint32_t index, const Vector4& color);
 
 	/// <summary>
 	/// テクスチャの変更
@@ -188,8 +189,9 @@ public://メンバ関数
 	/// <summary>
 	/// 色のゲッター
 	/// </summary>
+	/// <param name="index">インデックス</param>
 	/// <returns>色</returns>
-	const Vector4& GetColor()const;
+	const Vector4& GetColor(uint32_t index)const;
 
 	/// <summary>
 	/// トランスフォームデータのゲッター

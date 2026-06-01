@@ -3,7 +3,6 @@
 #include "ModelCommon.h"
 #include "Mesh.h"
 #include "TextureManager.h"
-#include "Mesh.h"
 #include <cassert>
 #include <fstream>
 #include <sstream>
@@ -63,6 +62,9 @@ void Model::Initialize(ModelCommon* modelCommon, const std::string& directoryPat
 		mesh->Initialize(directXBase_, meshData);
 		meshes_.push_back(std::move(mesh));
 	}
+	//マテリアルリソースとポインタのサイズ設定
+	materialResources_.resize(modelData_.material.size());
+	materialPtrs_.resize(modelData_.material.size());
 	//マテリアルリソースの生成
 	CreateMaterialResource();
 	//リムライトリソースの生成
@@ -75,15 +77,14 @@ void Model::Initialize(ModelCommon* modelCommon, const std::string& directoryPat
 
 //描画
 void Model::Draw(uint32_t objectCount) {
-	//マテリアルCBufferの場所を設定
-	directXBase_->GetCommandList()->SetGraphicsRootConstantBufferView(0, materialResource_->GetGPUVirtualAddress());
 	//リムライトのCBufferの場所を設定
 	directXBase_->GetCommandList()->SetGraphicsRootConstantBufferView(7, rimLightResource_->GetGPUVirtualAddress());
-	//SRVのDescriptorTableの先頭を設定
-	//directXBase_->GetCommandList()->SetGraphicsRootDescriptorTable(2, modelCommon_->GetTextureManager()->GetSRVHandleGPU(modelData_.material.textureFilePath));
 	//メッシュの描画
 	for (std::unique_ptr<Mesh>& mesh : meshes_) {
 		uint32_t materialIndex = mesh->GetMaterialIndex();
+
+		//マテリアルCBufferの場所を設定
+		directXBase_->GetCommandList()->SetGraphicsRootConstantBufferView(0, materialResources_[materialIndex]->GetGPUVirtualAddress());
 
 		MaterialData& materialData = modelData_.material[materialIndex];
 
@@ -94,13 +95,13 @@ void Model::Draw(uint32_t objectCount) {
 }
 
 //uv変換
-void Model::UVTransform(Transform2dData uvTransform) {
-	materialPtr_->uvMatrix = Rendering::MakeUVAffineMatrix(uvTransform);
+void Model::UVTransform(uint32_t index, Transform2dData uvTransform) {
+	materialPtrs_[index]->uvMatrix = Rendering::MakeUVAffineMatrix(uvTransform);
 }
 
 // 色を変更
-void Model::SetColor(const Vector4& color) {
-	materialPtr_->color = color;
+void Model::SetColor(uint32_t index, const Vector4& color) {
+	materialPtrs_[index]->color = color;
 }
 
 //テクスチャの変更
@@ -110,9 +111,9 @@ void Model::SetTexture(uint32_t index, const std::string& filePath) {
 }
 
 //色を取得
-const Vector4& Model::GetColor() const {
+const Vector4& Model::GetColor(uint32_t index) const {
 	// TODO: return ステートメントをここに挿入します
-	return materialPtr_->color;
+	return materialPtrs_[index]->color;
 }
 
 //モデルデータのゲッター
@@ -176,12 +177,13 @@ ModelData Model::LoadModelFile(const std::string& directoryPath, const std::stri
 			VertexData vertex = {};
 			vertex.position = { position.x,position.y,position.z,1.0f };
 			vertex.normal = { normal.x,normal.y,normal.z };
-			vertex.texcoord = { texcoord.x,texcoord.y };
+			vertex.texcoord = { texcoord.x, texcoord.y };
 
 			//右手座標系から見だりて座標系に直してる
-			vertex.position *= -1.0f;
-			vertex.position.w = 1.0f;
-			vertex.normal *= -1.0f;
+			vertex.position.z *= -1.0f;
+			//vertex.position.y *= -1.0f;
+			//vertex.position.z *= -1.0f;
+			vertex.normal.z *= -1.0f;
 
 			meshData.vertices.push_back(vertex);
 		}
@@ -230,11 +232,11 @@ ModelData Model::LoadModelFile(const std::string& directoryPath, const std::stri
 }
 
 //マテリアルのセッター
-void Model::SetMaterial(const Material& materialData) {
-	materialPtr_->color = materialData.color;
-	materialPtr_->enableLighting = materialData.enableLighting;
-	materialPtr_->shininess = materialData.shininess;
-	materialPtr_->uvMatrix = materialData.uvMatrix;
+void Model::SetMaterial(uint32_t index, const Material& materialData) {
+	materialPtrs_[index]->color = materialData.color;
+	materialPtrs_[index]->enableLighting = materialData.enableLighting;
+	materialPtrs_[index]->shininess = materialData.shininess;
+	materialPtrs_[index]->uvMatrix = materialData.uvMatrix;
 }
 
 
@@ -247,17 +249,24 @@ void Model::SetRimLight(const RimLight& rimLight) {
 	rimLightPtr_->enableRimLighting = rimLight.enableRimLighting;
 }
 
+//メッシュたちのゲッター
+const std::vector<std::unique_ptr<Mesh>>& Model::GetMeshes() const {
+	return meshes_;
+}
+
 //マテリアルリソースの生成
 void Model::CreateMaterialResource() {
-	//マテリアル用のリソースを作る
-	materialResource_ = directXBase_->CreateBufferResource(sizeof(Material));
-	//書き込むためのアドレスを取得
-	materialResource_->Map(0, nullptr, reinterpret_cast<void**>(&materialPtr_));
-	//色を書き込む
-	materialPtr_->color = { 1.0f, 1.0f, 1.0f, 1.0f };
-	materialPtr_->enableLighting = true;
-	materialPtr_->uvMatrix = Matrix4x4::Identity4x4();
-	materialPtr_->shininess = 10.0f;
+	for (uint32_t i = 0; i < modelData_.material.size(); i++) {
+		//マテリアル用のリソースを作る
+		materialResources_[i] = directXBase_->CreateBufferResource(sizeof(Material));
+		//書き込むためのアドレスを取得
+		materialResources_[i]->Map(0, nullptr, reinterpret_cast<void**>(&materialPtrs_[i]));
+		//色を書き込む
+		materialPtrs_[i]->color = { 1.0f, 1.0f, 1.0f, 1.0f };
+		materialPtrs_[i]->enableLighting = true;
+		materialPtrs_[i]->uvMatrix = Matrix4x4::Identity4x4();
+		materialPtrs_[i]->shininess = 10.0f;
+	}
 }
 
 //リムライトのリソースを生成

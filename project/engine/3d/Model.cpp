@@ -181,8 +181,6 @@ ModelData Model::LoadModelFile(const std::string& directoryPath, const std::stri
 
 			//右手座標系から見だりて座標系に直してる
 			vertex.position.z *= -1.0f;
-			//vertex.position.y *= -1.0f;
-			//vertex.position.z *= -1.0f;
 			vertex.normal.z *= -1.0f;
 
 			meshData.vertices.push_back(vertex);

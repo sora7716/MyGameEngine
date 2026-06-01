@@ -1,5 +1,6 @@
 #pragma once
 #include "ResourceData.h"
+#include "PrimitiveData.h"
 #include <wrl.h>
 #include <d3d12.h>
 
@@ -70,5 +71,7 @@ private://メンバ変数
 	D3D12_INDEX_BUFFER_VIEW indexBufferView_ = {};
 	//メッシュデータ
 	MeshData meshData_;
+	//AABB
+	PrimitiveData::AABB aabb_ = {};
 };
 

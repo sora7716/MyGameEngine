@@ -167,3 +167,21 @@ Vector3 Math::CircularMoveXZ(const Vector3& center, const Vector2& radius, float
 	result.z = center.z + sin(theta) * radius.y;
 	return result;
 }
+
+//平面の作成(無限平面)
+PrimitiveData::Plane Math::MakePlane(const Vector3& p0, const Vector3& p1, const Vector3& p2) {
+	//平面
+	PrimitiveData::Plane plane = {};
+
+	//p0　-> p1へ向かうベクトル
+	Vector3 v01 = p1 - p0;
+	//p1　-> p2へ向かうベクトル
+	Vector3 v12 = p1 - p2;
+	//法線
+	plane.normal = v01.Cross(v12);
+
+	//距離
+	plane.distance = -plane.normal.Dot(p0);
+
+	return plane;
+}

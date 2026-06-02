@@ -1,5 +1,7 @@
 #include "Circle.h"
 #include "algorithms/Math.h"
+using namespace Primitive;
+
 //コンストラクタ
 Circle::Circle() {}
 
@@ -21,16 +23,8 @@ void Circle::Update() {
 	transform_.quaternion = Quaternion::MakeQuaternionForEulerAngle(circle_.eulerAngle);
 	transform_.translate = circle_.center;
 
-	//頂点データの設定
-	SettingVertexData();
 	//基底クラスの更新
 	BaseShape::Update();
-}
-
-//描画
-void Circle::Draw() {
-	//基底クラスの描画
-	BaseShape::Draw();
 }
 
 //円のセッター

@@ -192,5 +192,14 @@ void ImGuiManager::FloatText(float num, const char* label) {
 #endif // USE_IMGUI
 }
 
+//AABBの表示
+void ImGuiManager::AABBText(const PrimitiveData::AABB& aabb, const char* label) {
+#ifdef _DEBUG
+	ImGuiManager::Vector3Text(aabb.min, (static_cast<std::string>(label) + ".min").c_str());
+	ImGuiManager::Vector3Text(aabb.max, (static_cast<std::string>(label) + ".max").c_str());
+#endif // _DEBUG
+
+}
+
 //コンストラクタ
 ImGuiManager::ImGuiManager(ConstructorKey) {}

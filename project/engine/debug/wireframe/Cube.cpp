@@ -1,5 +1,7 @@
 #include "Cube.h"
 using namespace PrimitiveData;
+using namespace Primitive;
+
 //コンストラクタ
 Cube::Cube() {}
 
@@ -22,16 +24,8 @@ void Cube::Update() {
 	transform_.quaternion = obb_.quaternion;
 	transform_.translate = obb_.center;
 
-	//頂点データの設定
-	SettingVertexData();
 	//基底クラスの更新
 	BaseShape::Update();
-}
-
-//描画
-void Cube::Draw() {
-	//基底クラスの描画
-	BaseShape::Draw();
 }
 
 //OBBのセッター
@@ -58,8 +52,8 @@ AABB Cube::GetAABB() {
 void Cube::SettingVertexData() {
 	//AABB
 	AABB aabb = {
-		{-obb_.size},
-		{obb_.size},
+		{-obb_.size / 2.0f},
+		{obb_.size / 2.0f},
 	};
 	////前面
 	// 左上

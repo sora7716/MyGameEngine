@@ -1,5 +1,4 @@
 #pragma once
-#include "Model.h"
 #include "ResourceData.h"
 #include "GameObjectData.h"
 #include "BlendMode.h"
@@ -14,6 +13,7 @@ class DirectXBase;
 class SRVManager;
 class Object3dCommon;
 class Camera;
+class Model;
 
 /// <summary>
 /// 3Dオブジェクト

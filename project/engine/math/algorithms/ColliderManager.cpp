@@ -2,6 +2,7 @@
 #include "algorithms/Collision.h"
 #include "WireframeObject3d.h"
 #include "Object3d.h"
+#include "Rendering.h"
 
 //コライダーの追加
 void ColliderManager::AddCollider(Collider* collider) {

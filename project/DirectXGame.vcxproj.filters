@@ -330,6 +330,12 @@
     <ClCompile Include="engine\3d\Mesh.cpp">
       <Filter>engine\3d</Filter>
     </ClCompile>
+    <ClCompile Include="engine\math\PrimitiveData.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="engine\debug\wireframe\Frustum.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="engine\math\Matrix4x4.h">
@@ -595,6 +601,9 @@
     </ClInclude>
     <ClInclude Include="engine\3d\Mesh.h">
       <Filter>engine\3d</Filter>
+    </ClInclude>
+    <ClInclude Include="engine\debug\wireframe\Frustum.h">
+      <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

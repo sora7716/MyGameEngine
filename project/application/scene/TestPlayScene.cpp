@@ -4,7 +4,10 @@
 #include "ImGuiManager.h"
 #include "Box.h"
 #include "Object3d.h"
+#include "Model.h"
+#include "Mesh.h"
 #include "Cube.h"
+#include "Frustum.h"
 
 //コンストラクタ
 TestPlayScene::TestPlayScene() {};
@@ -30,15 +33,16 @@ void TestPlayScene::Initialize(const SceneContext& sceneContext) {
 		transform2ds_.push_back({ object3d_->GetUVScale(i),object3d_->GetUVRotate(i),object3d_->GetUVTranslate(i) });
 	}
 
-	cube_ = std::make_unique<Cube>();
-	cube_->Initialize(sceneContext_.directXBase, &camera_);
+	frustum_ = std::make_unique<Primitive::Frustum>();
+	frustum_->Initialize(sceneContext_.directXBase, &camera_);
+	testPlayCamera = sceneContext_.cameraManager->FindCamera("testPlayCamera");
+	frustum_->SetTargetCamera(testPlayCamera);
 }
 
 //更新
 void TestPlayScene::Update() {
 	//ベースシーンの更新
 	BaseScene::Update();
-
 
 	for (uint32_t i = 0; i < object3d_->GetModel()->GetMeshes().size(); i++) {
 		object3d_->SetUVScale(i, transform2ds_[i].scale);
@@ -47,6 +51,8 @@ void TestPlayScene::Update() {
 	}
 
 	object3d_->Update();
+
+	frustum_->Update();
 
 	//box_->Update();
 }
@@ -70,6 +76,15 @@ void TestPlayScene::Debug() {
 		ImGui::PopID();
 	}
 	ImGui::End();
+
+	ImGui::Begin("camera");
+	Vector3 cameraTranslate = testPlayCamera->GetTranslate();
+	Vector3 cameraRotate = testPlayCamera->GetEulerAngle();
+	ImGui::DragFloat3("rotate", &cameraRotate.x, 0.1f);
+	ImGui::DragFloat3("translate", &cameraTranslate.x, 0.1f);
+	testPlayCamera->SetEulerAngle(cameraRotate);
+	testPlayCamera->SetTranslate(cameraTranslate);
+	ImGui::End();
 #endif // USE_IMGUI
 
 #ifdef _DEBUG
@@ -86,6 +101,8 @@ void TestPlayScene::Draw() {
 	//box_->Draw();
 
 	object3d_->Draw();
+
+	frustum_->Draw();
 }
 
 //終了

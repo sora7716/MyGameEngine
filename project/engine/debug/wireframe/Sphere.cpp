@@ -1,6 +1,8 @@
 #include "Sphere.h"
 #include "algorithms/Math.h"
 #include "ImGuiManager.h"
+using namespace Primitive;
+
 //コンストラクタ
 Sphere::Sphere() {}
 
@@ -22,16 +24,8 @@ void Sphere::Update() {
 	//トランスフォームに送信
 	transform_.translate = sphere_.center;
 
-	//頂点データの設定
-	SettingVertexData();
 	//基底クラスの更新
 	BaseShape::Update();
-}
-
-//描画
-void Sphere::Draw() {
-	//基底クラスの描画
-	BaseShape::Draw();
 }
 
 //球のセッター

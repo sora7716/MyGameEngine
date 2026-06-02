@@ -5,6 +5,7 @@
 #include "ModelManager.h"
 #include "algorithms/Rendering.h"
 #include "ImGuiManager.h"
+#include "Model.h"
 #include "Mesh.h"
 #include "SRVManager.h"
 #include "TextureManager.h"

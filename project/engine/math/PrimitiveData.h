@@ -34,5 +34,16 @@ namespace PrimitiveData {
 		Quaternion quaternion;//回転
 		Vector3 orientations[3];//座法軸。正規化・直行必須
 		Vector3 size;//座標軸方向の長さ半分。中心から面までの距離
+
+		/// <summary>
+		/// 初期化
+		/// </summary>
+		void Initialize();
+	};
+
+	//Plane
+	struct Plane {
+		Vector3 normal;//法線
+		float distance;//距離
 	};
 }

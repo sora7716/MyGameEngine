@@ -1,5 +1,7 @@
 #include "Line.h"
 using namespace PrimitiveData;
+using namespace Primitive;
+
 
 //コンストラクタ
 Line::Line() {}
@@ -19,16 +21,8 @@ void Line::Initialize(DirectXBase* directXBase, Camera* camera) {
 
 //更新
 void Line::Update() {
-	//頂点データの設定
-	SettingVertexData();
 	//基底クラスの更新
 	BaseShape::Update();
-}
-
-//描画
-void Line::Draw() {
-	//基底クラスの描画
-	BaseShape::Draw();
 }
 
 //線分のゲッター

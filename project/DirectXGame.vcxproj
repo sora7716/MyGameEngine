@@ -63,6 +63,7 @@
     <ClCompile Include="engine\debug\wireframe\BaseShape.cpp" />
     <ClCompile Include="engine\debug\wireframe\Circle.cpp" />
     <ClCompile Include="engine\debug\wireframe\Cube.cpp" />
+    <ClCompile Include="engine\debug\wireframe\Frustum.cpp" />
     <ClCompile Include="engine\debug\wireframe\Line.cpp" />
     <ClCompile Include="engine\debug\wireframe\Sphere.cpp" />
     <ClCompile Include="engine\framework\Framework.cpp" />
@@ -79,6 +80,7 @@
     <ClCompile Include="engine\math\algorithms\Rendering.cpp" />
     <ClCompile Include="engine\math\Matrix4x4.cpp" />
     <ClCompile Include="engine\math\PhysicsData.cpp" />
+    <ClCompile Include="engine\math\PrimitiveData.cpp" />
     <ClCompile Include="engine\math\Quaternion.cpp" />
     <ClCompile Include="engine\math\RenderingData.cpp" />
     <ClCompile Include="engine\math\Vector2.cpp" />
@@ -150,6 +152,7 @@
     <ClInclude Include="engine\debug\wireframe\BaseShape.h" />
     <ClInclude Include="engine\debug\wireframe\Circle.h" />
     <ClInclude Include="engine\debug\wireframe\Cube.h" />
+    <ClInclude Include="engine\debug\wireframe\Frustum.h" />
     <ClInclude Include="engine\debug\wireframe\Line.h" />
     <ClInclude Include="engine\debug\wireframe\Sphere.h" />
     <ClInclude Include="engine\framework\Framework.h" />

@@ -8,7 +8,12 @@
 //前方宣言
 class Box;
 class Object3d;
-class Cube;
+
+namespace Primitive {
+	class Cube;
+	class Frustum;
+}
+
 
 /// <summary>
 /// テストプレイシーン
@@ -60,6 +65,7 @@ private://メンバ変数
 
 	std::vector<Transform2dData>transform2ds_;
 
-	std::unique_ptr<Cube>cube_ = nullptr;
-	PrimitiveData::OBB obb_ = {};
+	std::unique_ptr<Primitive::Frustum>frustum_ = nullptr;
+
+	Camera* testPlayCamera = nullptr;
 };

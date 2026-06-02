@@ -7,8 +7,8 @@
 #include "imgui/imgui_impl_win32.h"
 #endif // USE_IMGUI
 #include <string>
-#include <Vector3.h>
-#include <PrimitiveData.h>
+#include "Vector3.h"
+#include "PrimitiveData.h"
 //前方宣言
 class DirectXBase;
 class SRVManager;
@@ -57,8 +57,8 @@ public://メンバ関数
 	/// <summary>
 	/// トランスフォームデータ用のImGui
 	/// </summary>
-	/// <param name="transfromData">トランスフォームデータ</param>
-	static void DragTransform(TransformData& transfromData);
+	/// <param name="transformData">トランスフォームデータ</param>
+	static void DragTransform(TransformData& transformData);
 
 	/// <summary>
 	/// OBBデータ用のImGui
@@ -119,6 +119,13 @@ public://メンバ関数
 	/// <param name="num">浮動小数</param>
 	/// <param name="label">ラベル</param>
 	static void FloatText(float num, const char* label);
+
+	/// <summary>
+	/// AABBの表示
+	/// </summary>
+	/// <param name="aabb">aabb</param>
+	/// <param name="label">ラベル</param>
+	static void AABBText(const PrimitiveData::AABB& aabb, const char* label);
 public://PassKey
 	class ConstructorKey {
 	private:

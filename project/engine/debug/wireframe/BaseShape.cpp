@@ -7,6 +7,7 @@
 #include "Camera.h"
 #include "ImGuiManager.h"
 using namespace Microsoft::WRL;
+using namespace Primitive;
 
 #pragma comment(lib,"d3d12.lib")
 

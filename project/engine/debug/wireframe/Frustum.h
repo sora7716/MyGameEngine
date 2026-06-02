@@ -1,18 +1,24 @@
 #pragma once
 #include "BaseShape.h"
-#include "PrimitiveData.h"
+
+//前方宣言
+class Camera;
+
+/// <summary>
+/// 視錐台
+/// </summary>
 namespace Primitive {
-	class Circle : public BaseShape {
+	class Frustum :public BaseShape {
 	public://メンバ関数
 		/// <summary>
 		/// コンストラクタ
 		/// </summary>
-		Circle();
+		Frustum();
 
 		/// <summary>
 		/// デストラクタ
 		/// </summary>
-		~Circle();
+		~Frustum();
 
 		/// <summary>
 		/// 初期化
@@ -27,18 +33,13 @@ namespace Primitive {
 		void Update()override;
 
 		/// <summary>
-		/// 円のセッター
+		/// 対象となるカメラの設定
 		/// </summary>
-		void SetCircle(const PrimitiveData::Circle& circle);
-
-		/// <summary>
-		/// 円のゲッター
-		/// </summary>
-		/// <returns>円</returns>
-		PrimitiveData::Circle GetCircle();
+		/// <param name="targetCamera">対象となるカメラ</param>
+		void SetTargetCamera(Camera*targetCamera);
 	private://メンバ変数
 		/// <summary>
-		/// 頂点データの設定
+		/// 頂点の設定
 		/// </summary>
 		void SettingVertexData()override;
 
@@ -47,8 +48,8 @@ namespace Primitive {
 		/// </summary>
 		void SettingIndexData()override;
 	private://メンバ変数
-		//円
-		PrimitiveData::Circle circle_ = {};
+		//対象となるカメラ
+		Camera* targetCamera_ = nullptr;
 	};
 }
 

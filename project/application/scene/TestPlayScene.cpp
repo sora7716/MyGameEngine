@@ -8,6 +8,7 @@
 #include "Mesh.h"
 #include "Cube.h"
 #include "Frustum.h"
+#include "Line.h"
 
 //コンストラクタ
 TestPlayScene::TestPlayScene() {};

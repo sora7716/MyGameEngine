@@ -29,7 +29,7 @@ Vector3 Math::Slerp(const Vector3& v1, const Vector3& v2, float t) {
 	nv1 = nv1.Normalize();
 	Vector3 nv2 = v2; // v2 の正規化ベクトル
 	nv2 = nv2.Normalize();
-	float dot =nv1.Dot(nv2);   // 正規化されたベクトル同士の内積
+	float dot = nv1.Dot(nv2);   // 正規化されたベクトル同士の内積
 
 	// 誤差により1.0fを超えるのを防ぐ
 	dot = std::clamp(dot, -1.0f, 1.0f);
@@ -178,7 +178,7 @@ PrimitiveData::Plane Math::MakePlane(const Vector3& p0, const Vector3& p1, const
 	//p1　-> p2へ向かうベクトル
 	Vector3 v12 = p1 - p2;
 	//法線
-	plane.normal = v01.Cross(v12);
+	plane.normal = v01.Cross(v12).Normalize();
 
 	//距離
 	plane.distance = -plane.normal.Dot(p0);

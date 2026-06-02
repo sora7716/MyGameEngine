@@ -12,6 +12,7 @@ class Object3d;
 namespace Primitive {
 	class Cube;
 	class Frustum;
+	class Line;
 }
 
 

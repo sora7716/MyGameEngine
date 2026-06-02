@@ -2,6 +2,7 @@
 #include "Vector3.h"
 #include "Matrix4x4.h"
 #include "Vector2.h"
+#include "PrimitiveData.h"
 #include <vector>
 #include <cmath>
 #include <numbers>
@@ -95,14 +96,16 @@ public:
 	/// <param name="center">中心</param>
 	/// <param name="radius">円運動の半径</param>
 	/// <param name="theta">角度</param>
-	static Vector3 CircularMoveXZ(const Vector3& center,const Vector2& radius,float theta);
+	static Vector3 CircularMoveXZ(const Vector3& center, const Vector2& radius, float theta);
 
-	///// <summary>
-	///// 弧度法を度数法に変換
-	///// </summary>
-	///// <param name="rad"></param>
-	///// <returns></returns>
-	//static float Degree(float rad);
+	/// <summary>
+	/// 平面を作成(無限平面)
+	/// </summary>
+	/// <param name="p0">平面上の点0</param>
+	/// <param name="p1">平面上の点1</param>
+	/// <param name="p2">平面上の点2</param>
+	/// <returns>平面</returns>
+	static PrimitiveData::Plane MakePlane(const Vector3& p0, const Vector3& p1, const Vector3& p2);
 public://定数
 	//デルタタイム
 	static inline const float kDeltaTime = 1.0f / 60.0f;

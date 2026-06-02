@@ -10,8 +10,8 @@ Primitive::Plane::~Plane() {}
 
 //初期化
 void Primitive::Plane::Initialize(DirectXBase* directXBase, Camera* camera) {
-	vertexCount_ = 8;
-	indexCount_ = 24;
+	vertexCount_ = 4;
+	indexCount_ = 4;
 	BaseShape::Initialize(directXBase, camera);
 
 	//サイズを設定

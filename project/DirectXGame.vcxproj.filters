@@ -67,9 +67,6 @@
     <Filter Include="application\gameObject">
       <UniqueIdentifier>{b6b3c08d-ea3a-4c48-b1e0-d596fb3c9fe0}</UniqueIdentifier>
     </Filter>
-    <Filter Include="engine\math\algorithm">
-      <UniqueIdentifier>{f4a79ad1-4ad4-48c3-b59c-2cb96d487971}</UniqueIdentifier>
-    </Filter>
     <Filter Include="application\actor\field">
       <UniqueIdentifier>{9ed0086f-1d8b-452f-9643-ea39d989dc8e}</UniqueIdentifier>
     </Filter>
@@ -78,6 +75,9 @@
     </Filter>
     <Filter Include="engine\debug\wireframe">
       <UniqueIdentifier>{a630cca5-20b8-4df5-ae4e-e26027a95569}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="engine\math\algorithms">
+      <UniqueIdentifier>{f4a79ad1-4ad4-48c3-b59c-2cb96d487971}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -283,19 +283,19 @@
       <Filter>application\scene</Filter>
     </ClCompile>
     <ClCompile Include="engine\math\algorithms\ColliderManager.cpp">
-      <Filter>engine\math\algorithm</Filter>
+      <Filter>engine\math\algorithms</Filter>
     </ClCompile>
     <ClCompile Include="engine\math\algorithms\Collision.cpp">
-      <Filter>engine\math\algorithm</Filter>
+      <Filter>engine\math\algorithms</Filter>
     </ClCompile>
     <ClCompile Include="engine\math\algorithms\Math.cpp">
-      <Filter>engine\math\algorithm</Filter>
+      <Filter>engine\math\algorithms</Filter>
     </ClCompile>
     <ClCompile Include="engine\math\algorithms\Physics.cpp">
-      <Filter>engine\math\algorithm</Filter>
+      <Filter>engine\math\algorithms</Filter>
     </ClCompile>
     <ClCompile Include="engine\math\algorithms\Rendering.cpp">
-      <Filter>engine\math\algorithm</Filter>
+      <Filter>engine\math\algorithms</Filter>
     </ClCompile>
     <ClCompile Include="engine\debug\wireframe\BaseShape.cpp">
       <Filter>engine\debug\wireframe</Filter>
@@ -555,19 +555,19 @@
       <Filter>application\scene</Filter>
     </ClInclude>
     <ClInclude Include="engine\math\algorithms\ColliderManager.h">
-      <Filter>engine\math\algorithm</Filter>
+      <Filter>engine\math\algorithms</Filter>
     </ClInclude>
     <ClInclude Include="engine\math\algorithms\Collision.h">
-      <Filter>engine\math\algorithm</Filter>
+      <Filter>engine\math\algorithms</Filter>
     </ClInclude>
     <ClInclude Include="engine\math\algorithms\Math.h">
-      <Filter>engine\math\algorithm</Filter>
+      <Filter>engine\math\algorithms</Filter>
     </ClInclude>
     <ClInclude Include="engine\math\algorithms\Physics.h">
-      <Filter>engine\math\algorithm</Filter>
+      <Filter>engine\math\algorithms</Filter>
     </ClInclude>
     <ClInclude Include="engine\math\algorithms\Rendering.h">
-      <Filter>engine\math\algorithm</Filter>
+      <Filter>engine\math\algorithms</Filter>
     </ClInclude>
     <ClInclude Include="engine\debug\wireframe\BaseShape.h">
       <Filter>engine\debug\wireframe</Filter>

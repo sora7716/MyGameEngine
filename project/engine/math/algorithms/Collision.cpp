@@ -5,6 +5,7 @@
 #include <format>
 #include <algorithm>
 #include <array>
+#include <cmath>
 
 using namespace PrimitiveData;
 
@@ -210,7 +211,11 @@ bool Collision::IsCollision(const OBB& obb1, const OBB& obb2) {
 
 //平面と球の衝突判定
 bool Collision::IsCollision(const PrimitiveData::Plane& plane, const PrimitiveData::Sphere& sphere) {
-
+	//球の中心点との距離
+	float distance = std::fabs(plane.normal.Dot(sphere.center) - plane.distance);
+	
+	//衝突判定
+	return distance <= sphere.radius;
 }
 
 HitInfo Collision::GetHitInfo(const OBB& obb1, const OBB& obb2) {

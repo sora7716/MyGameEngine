@@ -11,6 +11,7 @@
 #include "Line.h"
 #include "Plane.h"
 #include "Sphere.h"
+#include "algorithms/Collision.h"
 
 //コンストラクタ
 TestPlayScene::TestPlayScene() {};
@@ -43,7 +44,6 @@ void TestPlayScene::Initialize(const SceneContext& sceneContext) {
 
 	plane_ = std::make_unique<Primitive::Plane>();
 	plane_->Initialize(sceneContext_.directXBase, &camera_);
-	plane_->SetColor(Vector4::MakeRedColor());
 
 	sphere_ = std::make_unique<Primitive::Sphere>();
 	sphere_->Initialize(sceneContext_.directXBase,&camera_);
@@ -63,6 +63,12 @@ void TestPlayScene::Update() {
 	object3d_->Update();
 
 	frustum_->Update();
+
+	if (Collision::IsCollision(plane_->GetPlane(), sphere_->GetSphere())) {
+		sphere_->SetColor(Vector4::MakeRedColor());
+	} else {
+		sphere_->SetColor(Vector4::MakeWhiteColor());
+	}
 
 	plane_->Update();
 

@@ -50,6 +50,8 @@ public://メンバ関数
 	//純粋仮想関数
 	virtual void Draw() = 0;
 protected://メンバ変数
+	//Xboxの番号
+	DWORD xBoxPadNumber_ = 0;
 	//シーンで必要なもの
 	SceneContext sceneContext_ = {};
 	//デバックカメラ

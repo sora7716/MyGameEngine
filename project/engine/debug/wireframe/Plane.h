@@ -1,6 +1,7 @@
 #pragma once
 #include "BaseShape.h"
 #include "PrimitiveData.h"
+#include <Vector3.h>
 namespace Primitive {
 	class Plane :public BaseShape {
 	public://メンバ関数
@@ -27,22 +28,16 @@ namespace Primitive {
 		void Update()override;
 
 		/// <summary>
-		/// OBBのセッター
+		/// 平面の設定
 		/// </summary>
-		/// <param name="obb">OBB</param>
-		void SetOBB(const PrimitiveData::OBB& obb);
+		/// <param name="plane">平面</param>
+		void SetPlane(const PrimitiveData::Plane& plane);
 
 		/// <summary>
-		/// OBBのゲッター
+		/// 平面の取得
 		/// </summary>
-		/// <returns>OBB</returns>
-		PrimitiveData::OBB GetOBB();
-
-		/// <summary>
-		/// AABBのゲッター
-		/// </summary>
-		/// <returns>AABB</returns>
-		PrimitiveData::AABB GetAABB();
+		/// <returns>平面</returns>
+		const PrimitiveData::Plane& GetPlane()const;
 	private://メンバ変数
 		/// <summary>
 		/// 頂点データの設定
@@ -53,8 +48,13 @@ namespace Primitive {
 		/// インデックスの設定
 		/// </summary>
 		void SettingIndexData()override;
+
+		/// <summary>
+		/// 垂直の処理
+		/// </summary>
+		/// <param name="v">ベクトル</param>
+		Vector3 Perpendicular(const Vector3& v);
 	private://メンバ変数
-		//OBB
-		PrimitiveData::OBB obb_ = {};
+		PrimitiveData::Plane plane_ = {};
 	};
 }

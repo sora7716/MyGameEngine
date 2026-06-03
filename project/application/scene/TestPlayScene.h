@@ -13,6 +13,8 @@ namespace Primitive {
 	class Cube;
 	class Frustum;
 	class Line;
+	class Plane;
+	class Sphere;
 }
 
 
@@ -57,9 +59,6 @@ public://メンバ関数
 	/// </summary>
 	void Finalize()override;
 private://メンバ変数
-	//Xboxの番号
-	DWORD xBoxPadNumber_ = 0;
-
 	std::unique_ptr<Box>box_ = nullptr;
 
 	std::unique_ptr<Object3d>object3d_ = nullptr;
@@ -69,4 +68,8 @@ private://メンバ変数
 	std::unique_ptr<Primitive::Frustum>frustum_ = nullptr;
 
 	Camera* testPlayCamera = nullptr;
+
+	std::unique_ptr<Primitive::Plane>plane_ = nullptr;
+
+	std::unique_ptr<Primitive::Sphere>sphere_ = nullptr;
 };

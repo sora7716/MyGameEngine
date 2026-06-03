@@ -1,7 +1,4 @@
 #include "Plane.h"
-
-using namespace PrimitiveData;
-
 //コンストラクタ
 Primitive::Plane::Plane() {}
 
@@ -11,74 +8,63 @@ Primitive::Plane::~Plane() {}
 //初期化
 void Primitive::Plane::Initialize(DirectXBase* directXBase, Camera* camera) {
 	vertexCount_ = 4;
-	indexCount_ = 4;
+	indexCount_ = 8;
 	BaseShape::Initialize(directXBase, camera);
-
-	//サイズを設定
-	obb_.size = Vector3::MakeAllOne();
+	plane_ = {
+		.normal = {0.0f,1.0f,0.0f},
+		.distance = 0.0f
+	};
 }
 
 //更新
 void Primitive::Plane::Update() {
-	//トランスフォームに送信
-	transform_.quaternion = obb_.quaternion;
-	transform_.translate = obb_.center;
-
 	//基底クラスの更新
 	BaseShape::Update();
 }
 
-//OBBのセッター
-void Primitive::Plane::SetOBB(const OBB& obb) {
-	obb_ = obb;
+//平面の設定
+void Primitive::Plane::SetPlane(const PrimitiveData::Plane& plane) {
+	plane_ = plane;
 }
 
-//OBBのゲッター
-OBB Primitive::Plane::GetOBB() {
-	return obb_;
-}
-
-//AABBのゲッター
-AABB Primitive::Plane::GetAABB() {
-	//AABB
-	AABB aabb = {
-		{obb_.center - obb_.size},
-		{obb_.center + obb_.size},
-	};
-	return aabb;
+//平面の取得
+const PrimitiveData::Plane& Primitive::Plane::GetPlane() const {
+	// TODO: return ステートメントをここに挿入します
+	return plane_;
 }
 
 //頂点データの設定
 void Primitive::Plane::SettingVertexData() {
-	//AABB
-	AABB aabb = {
-		{-obb_.size / 2.0f},
-		{obb_.size / 2.0f},
+	Vector3 normal = plane_.normal.Normalize();
+
+	//平面上の中心点
+	Vector3 center = normal * -plane_.distance;
+
+	//平面上の横方向
+	Vector3 tangent = Perpendicular(normal).Normalize();
+
+	//平面上の縦方向
+	Vector3 bitangent = normal.Cross(tangent).Normalize();
+
+	float halfSize = 5.0f;
+
+	Vector3 positions[4] = {
+		center + tangent * halfSize + bitangent * halfSize,
+		center - tangent * halfSize + bitangent * halfSize,
+		center - tangent * halfSize - bitangent * halfSize,
+		center + tangent * halfSize - bitangent * halfSize,
 	};
-	////前面
-	// 左上
-	vertexData_[0].position = { aabb.min.x,aabb.min.y,aabb.min.z,1.0f };
-	// 右上
-	vertexData_[1].position = { aabb.max.x,aabb.min.y,aabb.min.z,1.0f };
-	// 右下
-	vertexData_[2].position = { aabb.max.x,aabb.max.y,aabb.min.z,1.0f };
-	// 左下
-	vertexData_[3].position = { aabb.min.x,aabb.max.y,aabb.min.z,1.0f };
 
-	//背面
-	// 左上
-	vertexData_[4].position = { aabb.min.x,aabb.min.y,aabb.max.z,1.0f };
-	// 右上
-	vertexData_[5].position = { aabb.max.x,aabb.min.y,aabb.max.z,1.0f };
-	// 右下
-	vertexData_[6].position = { aabb.max.x,aabb.max.y,aabb.max.z,1.0f };
-	// 左下
-	vertexData_[7].position = { aabb.min.x,aabb.max.y,aabb.max.z,1.0f };
+	for (uint32_t i = 0; i < 4; i++) {
+		vertexData_[i].position = {
+			positions[i].x,
+			positions[i].y,
+			positions[i].z,
+			1.0f
+		};
 
-	//UVとNormalの初期化
-	for (int32_t i = 0; i < vertexCount_; i++) {
+		vertexData_[i].normal = normal;
 		vertexData_[i].texcoord = { 0.0f,0.0f };
-		vertexData_[i].normal = { 0.0f,0.0f,1.0f };
 	}
 }
 
@@ -90,22 +76,21 @@ void Primitive::Plane::SettingIndexData() {
 		1,2,
 		2,3,
 		3,0,
-
-		//背面
-		4,5,
-		5,6,
-		6,7,
-		7,4,
-
-		//接続
-		0,4,
-		1,5,
-		2,6,
-		3,7
 	};
 
 	//作成したインデックスデータを代入前面
 	for (int32_t i = 0; i < indexCount_; i++) {
 		indexData_[i] = indices[i];
+	}
+
+}
+
+//垂直の処理
+Vector3 Primitive::Plane::Perpendicular(const Vector3& v){
+	// TODO: return ステートメントをここに挿入します
+	if (v.x != 0.0f || v.y != 0.0f) {
+		return { -v.y, v.x, 0.0f };
+	} else {
+		return { 0.0f, -v.z, v.y };
 	}
 }

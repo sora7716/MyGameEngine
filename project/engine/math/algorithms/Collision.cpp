@@ -208,6 +208,11 @@ bool Collision::IsCollision(const OBB& obb1, const OBB& obb2) {
 	return true;
 }
 
+//平面と球の衝突判定
+bool Collision::IsCollision(const PrimitiveData::Plane& plane, const PrimitiveData::Sphere& sphere) {
+
+}
+
 HitInfo Collision::GetHitInfo(const OBB& obb1, const OBB& obb2) {
 	//衝突情報
 	HitInfo hitInfo{

@@ -9,6 +9,8 @@
 #include "Cube.h"
 #include "Frustum.h"
 #include "Line.h"
+#include "Plane.h"
+#include "Sphere.h"
 
 //コンストラクタ
 TestPlayScene::TestPlayScene() {};
@@ -38,6 +40,13 @@ void TestPlayScene::Initialize(const SceneContext& sceneContext) {
 	frustum_->Initialize(sceneContext_.directXBase, &camera_);
 	testPlayCamera = sceneContext_.cameraManager->FindCamera("testPlayCamera");
 	frustum_->SetTargetCamera(testPlayCamera);
+
+	plane_ = std::make_unique<Primitive::Plane>();
+	plane_->Initialize(sceneContext_.directXBase, &camera_);
+	plane_->SetColor(Vector4::MakeRedColor());
+
+	sphere_ = std::make_unique<Primitive::Sphere>();
+	sphere_->Initialize(sceneContext_.directXBase,&camera_);
 }
 
 //更新
@@ -54,6 +63,10 @@ void TestPlayScene::Update() {
 	object3d_->Update();
 
 	frustum_->Update();
+
+	plane_->Update();
+
+	sphere_->Update();
 
 	//box_->Update();
 }
@@ -86,6 +99,20 @@ void TestPlayScene::Debug() {
 	testPlayCamera->SetEulerAngle(cameraRotate);
 	testPlayCamera->SetTranslate(cameraTranslate);
 	ImGui::End();
+
+	ImGui::Begin("plane");
+	PrimitiveData::Plane planeData = plane_->GetPlane();
+	ImGui::DragFloat3("normal", &planeData.normal.x, 0.1f);
+	ImGui::DragFloat("distance", &planeData.distance, 0.1f);
+	plane_->SetPlane(planeData);
+	ImGui::End();
+
+	ImGui::Begin("sphere");
+	PrimitiveData::Sphere sphereData = sphere_->GetSphere();
+	ImGui::DragFloat3("center", &sphereData.center.x, 0.1f);
+	ImGui::DragFloat("radius", &sphereData.radius, 0.1f);
+	sphere_->SetSphere(sphereData);
+	ImGui::End();
 #endif // USE_IMGUI
 
 #ifdef _DEBUG
@@ -101,9 +128,13 @@ void TestPlayScene::Debug() {
 void TestPlayScene::Draw() {
 	//box_->Draw();
 
-	object3d_->Draw();
+	//object3d_->Draw();
 
-	frustum_->Draw();
+	//frustum_->Draw();
+
+	plane_->Draw();
+
+	sphere_->Draw();
 }
 
 //終了

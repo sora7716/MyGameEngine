@@ -70,6 +70,7 @@ private://メンバ変数
 	Camera* testPlayCamera = nullptr;
 
 	std::unique_ptr<Primitive::Plane>plane_ = nullptr;
+	std::unique_ptr<Primitive::Cube>cube_ = nullptr;
 
 	std::unique_ptr<Primitive::Sphere>sphere_ = nullptr;
 };

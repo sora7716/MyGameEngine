@@ -9,11 +9,11 @@ Primitive::Plane::~Plane() {}
 void Primitive::Plane::Initialize(DirectXBase* directXBase, Camera* camera) {
 	vertexCount_ = 4;
 	indexCount_ = 8;
-	BaseShape::Initialize(directXBase, camera);
 	plane_ = {
 		.normal = {0.0f,1.0f,0.0f},
 		.distance = 0.0f
 	};
+	BaseShape::Initialize(directXBase, camera);
 }
 
 //更新
@@ -38,7 +38,7 @@ void Primitive::Plane::SettingVertexData() {
 	Vector3 normal = plane_.normal.Normalize();
 
 	//平面上の中心点
-	Vector3 center = normal * -plane_.distance;
+	Vector3 center = normal * plane_.distance;
 
 	//平面上の横方向
 	Vector3 tangent = Perpendicular(normal).Normalize();

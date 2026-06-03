@@ -27,9 +27,22 @@ struct Vector3 final {
 	/// <returns>最大値</returns>
 	Vector3 Max(const Vector3& v)const;
 
-	//長さ(ノルム)
+	/// <summary>
+	/// 絶対値
+	/// </summary>
+	/// <returns>絶対値</returns>
+	Vector3 Abs()const;
+
+	/// <summary>
+	/// 長さ(ノルム)
+	/// </summary>
+	/// <returns>長さ(ノルム)</returns>
 	float Length();
-	// 正規化
+
+	/// <summary>
+	/// 正規化
+	/// </summary>
+	/// <returns>正規化</returns>
 	Vector3 Normalize()const;
 
 	/// <summary>

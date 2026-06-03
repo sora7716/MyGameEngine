@@ -12,10 +12,9 @@ Cube::~Cube() {}
 void Cube::Initialize(DirectXBase* directXBase, Camera* camera) {
 	vertexCount_ = 8;
 	indexCount_ = 24;
+	//OBBを初期化
+	obb_.Initialize();
 	BaseShape::Initialize(directXBase, camera);
-
-	//サイズを設定
-	obb_.size = Vector3::MakeAllOne();
 }
 
 //更新
@@ -42,8 +41,8 @@ OBB Cube::GetOBB() {
 AABB Cube::GetAABB() {
 	//AABB
 	AABB aabb = {
-		{obb_.center - obb_.size},
-		{obb_.center + obb_.size},
+		{obb_.center - obb_.size / 2.0f},
+		{obb_.center + obb_.size / 2.0f},
 	};
 	return aabb;
 }

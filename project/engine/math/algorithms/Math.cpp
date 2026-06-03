@@ -181,7 +181,7 @@ PrimitiveData::Plane Math::MakePlane(const Vector3& p0, const Vector3& p1, const
 	plane.normal = v01.Cross(v12).Normalize();
 
 	//距離
-	plane.distance = -plane.normal.Dot(p0);
+	plane.distance = plane.normal.Dot(p0);
 
 	return plane;
 }

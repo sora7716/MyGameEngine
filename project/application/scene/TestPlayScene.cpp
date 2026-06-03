@@ -47,6 +47,9 @@ void TestPlayScene::Initialize(const SceneContext& sceneContext) {
 
 	sphere_ = std::make_unique<Primitive::Sphere>();
 	sphere_->Initialize(sceneContext_.directXBase,&camera_);
+
+	cube_ = std::make_unique<Primitive::Cube>();
+	cube_->Initialize(sceneContext_.directXBase,&camera_);
 }
 
 //更新
@@ -70,10 +73,17 @@ void TestPlayScene::Update() {
 		sphere_->SetColor(Vector4::MakeWhiteColor());
 	}
 
+	if (Collision::IsCollision(plane_->GetPlane(), cube_->GetAABB())) {
+		cube_->SetColor(Vector4::MakeRedColor());
+	} else {
+		cube_->SetColor(Vector4::MakeWhiteColor());
+	}
+
 	plane_->Update();
 
 	sphere_->Update();
 
+	cube_->Update();
 	//box_->Update();
 }
 
@@ -119,6 +129,13 @@ void TestPlayScene::Debug() {
 	ImGui::DragFloat("radius", &sphereData.radius, 0.1f);
 	sphere_->SetSphere(sphereData);
 	ImGui::End();
+
+	ImGui::Begin("cube");
+	PrimitiveData::OBB obb = cube_->GetOBB();
+	ImGui::DragFloat3("size", &obb.size.x, 0.1f);
+	ImGui::DragFloat3("translate", &obb.center.x, 0.1f);
+	cube_->SetOBB(obb);
+	ImGui::End();
 #endif // USE_IMGUI
 
 #ifdef _DEBUG
@@ -141,6 +158,8 @@ void TestPlayScene::Draw() {
 	plane_->Draw();
 
 	sphere_->Draw();
+
+	cube_->Draw();
 }
 
 //終了

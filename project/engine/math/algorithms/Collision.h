@@ -64,6 +64,13 @@ public://静的メンバ関数
 	/// <returns>衝突したかのフラグ</returns>
 	static bool IsCollision(const PrimitiveData::Plane& plane, const PrimitiveData::Sphere& sphere);
 
+	/// <summary>
+	/// 平面とAABBの衝突判定
+	/// </summary>
+	/// <param name="plane">平面</param>
+	/// <param name="aabb">AABB</param>
+	/// <returns>衝突したかのフラグ</returns>
+	static bool IsCollision(const PrimitiveData::Plane& plane, const PrimitiveData::AABB& aabb);
 
 	static HitInfo GetHitInfo(const PrimitiveData::OBB& obb1, const PrimitiveData::OBB& obb2);
 };

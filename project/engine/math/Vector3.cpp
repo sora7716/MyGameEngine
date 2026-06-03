@@ -28,6 +28,15 @@ Vector3 Vector3::Max(const Vector3& v) const {
 	return result;
 }
 
+//絶対値
+Vector3 Vector3::Abs() const {
+	Vector3 result = {};
+	result.x = std::abs(x);
+	result.y = std::abs(y);
+	result.z = std::abs(z);
+	return result;
+}
+
 //長さ(ノルム)
 float Vector3::Length() {
 	float result = std::sqrt(Vector3(x, y, z).Dot(Vector3(x, y, z)));

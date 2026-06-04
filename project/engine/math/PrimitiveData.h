@@ -2,6 +2,7 @@
 #include "Vector3.h"
 #include "Quaternion.h"
 #include <array>
+#include "Matrix4x4.h"
 
 namespace PrimitiveData {
 	//球のデータ
@@ -27,6 +28,13 @@ namespace PrimitiveData {
 	struct AABB {
 		Vector3 min;//最小値
 		Vector3 max;//最大値
+
+		/// <summary>
+		/// 行列との掛け算
+		/// </summary>
+		/// <param name="m">行列</param>
+		/// <returns>AABB</returns>
+		AABB operator*(const Matrix4x4& m)const;
 	};
 
 	//OBB

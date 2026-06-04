@@ -71,39 +71,6 @@ void Object3d::Update() {
 	//Object3dの共通部分の更新
 	object3dCommon_->Update();
 
-	//生存数
-	int32_t aliveCount = 0;
-
-	for (int32_t i = 0; i < gameObjects_.size(); i++) {
-		//生存フラグが立ってなければ
-		if (!gameObjects_[i].isActive) {
-			continue;
-		}
-
-		//生存だけを0~aliveCount-1に詰める
-		gameObjects_[aliveCount] = gameObjects_[i];
-
-		//もし視錐台があるなら
-		for (uint32_t j = 0; j < model_->GetMeshes().size(); j++) {
-			if (!frustum_) {
-				break;
-			}
-			//視錐台の中の中にある?
-			gameObjects_[i].isEnabled = Collision::IsCollision(*frustum_, model_->GetMeshes()[j]->GetAABB());
-		}
-
-		//描画フラグが立っていなければ
-		if (!gameObjects_[i].isEnabled) {
-			continue;
-		}
-
-		//生存数を増やす
-		aliveCount++;
-	}
-
-	//生存数を記録
-	aliveCount_ = aliveCount;
-
 	if (model_) {
 		node_ = model_->GetModelData().rootNode;
 		for (uint32_t i = 0; i < model_->GetMeshes().size(); i++) {
@@ -111,8 +78,55 @@ void Object3d::Update() {
 			model_->UVTransform(materialIndex, uvTransform_[i]);
 		}
 	}
+
+	//描画するオブジェクト数
+	drawCount_ = 0;
+
+	for (int32_t i = 0; i < gameObjects_.size(); i++) {
+		//生存フラグが立ってなければ
+		if (!gameObjects_[i].isActive) {
+			continue;
+		}
+
+
+		//このオブジェクト本来のワールド行列を求める
+		Matrix4x4 worldMatrix = Rendering::MakeAffineMatrix(gameObjects_[i].transform);
+
+		if (parent_) {
+			worldMatrix = worldMatrix * parent_->GetWorldMatrix();
+		}
+
+		worldMatrix = node_.localMatrix * worldMatrix;
+
+		//表示するかのフラグ
+		bool isVisible = true;
+		if (frustum_ && model_) {
+			isVisible = false;
+			for (const std::unique_ptr<Mesh>& mesh : model_->GetMeshes()) {
+				PrimitiveData::AABB worldAABB = mesh->GetAABB() * worldMatrix;
+
+				if (Collision::IsCollision(*frustum_, worldAABB)) {
+					isVisible = true;
+					break;
+				}
+			}
+		}
+
+		gameObjects_[i].isEnabled = isVisible;
+
+		if (!isVisible) {
+			continue;
+		}
+
+		//描画するオブジェクトだけを0~aliveCount-1に詰める
+		gameObjects_[drawCount_] = gameObjects_[i];
+		//描画するオブジェクトを増やす
+		drawCount_++;
+	}
+
 	//トランスフォームの更新
 	(this->*UpdateTransformTable[static_cast<uint32_t>(transform3dMode_)])();
+
 }
 
 //描画
@@ -137,7 +151,7 @@ void Object3d::Draw() {
 
 	//3Dモデルが割り当てられていれば描画
 	if (model_) {
-		model_->Draw(static_cast<uint32_t>(aliveCount_));
+		model_->Draw(static_cast<uint32_t>(drawCount_));
 	}
 }
 
@@ -159,17 +173,17 @@ void Object3d::SetCamera(Camera* camera) {
 
 // スケールの設定
 void Object3d::SetScale(uint32_t index, const Vector3& scale) {
-	gameObjects_[index].transformData.scale = scale;
+	gameObjects_[index].transform.scale = scale;
 }
 
 //クォータニオンの取得
 void Object3d::SetQuaternion(uint32_t index, const Quaternion& quaternion) {
-	gameObjects_[index].transformData.quaternion = quaternion;
+	gameObjects_[index].transform.quaternion = quaternion;
 }
 
 // 平行移動の設定
 void Object3d::SetTranslate(uint32_t index, const Vector3& translate) {
-	gameObjects_[index].transformData.translate = translate;
+	gameObjects_[index].transform.translate = translate;
 }
 
 //ゲームオブジェクトの設定
@@ -229,19 +243,19 @@ void Object3d::SetFrustum(PrimitiveData::Frustum* frustum) {
 //スケールの取得
 const Vector3& Object3d::GetScale(uint32_t index) const {
 	// TODO: return ステートメントをここに挿入します
-	return gameObjects_[index].transformData.scale;
+	return gameObjects_[index].transform.scale;
 }
 
 //クォータニオンの取得
 const Quaternion& Object3d::GetQuaternion(uint32_t index) const {
 	// TODO: return ステートメントをここに挿入します
-	return gameObjects_[index].transformData.quaternion;
+	return gameObjects_[index].transform.quaternion;
 }
 
 //平行移動の取得
 const Vector3& Object3d::GetTranslate(uint32_t index) const {
 	// TODO: return ステートメントをここに挿入します
-	return gameObjects_[index].transformData.translate;
+	return gameObjects_[index].transform.translate;
 }
 
 //uvスケールの取得
@@ -332,7 +346,7 @@ void Object3d::CreateStructuredBufferForWvp() {
 //座標の更新
 void Object3d::UpdateTransform() {
 	for (uint32_t i = 0; i < static_cast<uint32_t>(gameObjects_.size()); i++) {
-		wvpData_[i].world = Rendering::MakeAffineMatrix(gameObjects_[i].transformData);
+		wvpData_[i].world = Rendering::MakeAffineMatrix(gameObjects_[i].transform);
 		//TransformからWorldMatrixを作る
 		if (parent_) {
 			wvpData_[i].world = wvpData_[i].world * parent_->GetWorldMatrix();
@@ -362,7 +376,7 @@ void Object3d::UpdateTransformBillboard() {
 			wvpData_[i].wvp = wvpData_[i].world;
 			return;
 		}
-		wvpData_[i].world = Rendering::MakeBillboardAffineMatrix(camera_->GetWorldMatrix(), gameObjects_[i].transformData);
+		wvpData_[i].world = Rendering::MakeBillboardAffineMatrix(camera_->GetWorldMatrix(), gameObjects_[i].transform);
 		//TransformからWorldMatrixを作る
 		if (parent_) {
 			wvpData_[i].world = wvpData_[i].world * parent_->GetWorldMatrix();

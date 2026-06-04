@@ -29,8 +29,13 @@ void TestPlayScene::Initialize(const SceneContext& sceneContext) {
 	//box_->Initialize(sceneContext_.directXBase, sceneContext_.textureManager, &camera_);
 	//box_->SetModel("cube");
 
+	gameObjects_.resize(3);
+	for (GameObject& gameObject : gameObjects_) {
+		gameObject.Initialize();
+		gameObject.transform.translate.x *= 2.0f;
+	}
 	object3d_ = std::make_unique<Object3d>();
-	object3d_->Initialize(sceneContext_.object3dCommon, &camera_);
+	object3d_->Initialize(sceneContext_.object3dCommon, &camera_, static_cast<uint32_t>(gameObjects_.size()));
 	object3d_->SetModel("multiMaterial");
 
 	for (uint32_t i = 0; i < object3d_->GetModel()->GetMeshes().size(); i++) {
@@ -43,7 +48,7 @@ void TestPlayScene::Initialize(const SceneContext& sceneContext) {
 	frustum_->SetTargetCamera(testPlayCamera);
 
 	cube_ = std::make_unique<Primitive::Cube>();
-	cube_->Initialize(sceneContext_.directXBase,&camera_);
+	cube_->Initialize(sceneContext_.directXBase, &camera_);
 }
 
 //更新
@@ -60,6 +65,9 @@ void TestPlayScene::Update() {
 	PrimitiveData::Frustum frustumPtr = frustum_->GetFrustum();
 	object3d_->SetFrustum(&frustumPtr);
 
+	for (uint32_t i = 0; i < gameObjects_.size(); i++) {
+		object3d_->SetGameObject(i, gameObjects_[i]);
+	}
 	object3d_->Update();
 
 	frustum_->Update();
@@ -82,16 +90,24 @@ void TestPlayScene::Debug() {
 	//ImGui::End();
 
 	ImGui::Begin("object3d");
-	GameObject gameObject = object3d_->GetGameObject(0);
-	ImGuiManager::DebugGameObject(gameObject);
-	object3d_->SetGameObject(0, gameObject);
-	for (uint32_t i = 0; i < transform2ds_.size(); i++) {
+	
+	for (int32_t i = 0; i < gameObjects_.size(); i++) {
 		ImGui::PushID(i);
-		ImGui::DragFloat2("uvScale", &transform2ds_[i].scale.x, 0.1f);
-		ImGui::DragFloat("uvRotate", &transform2ds_[i].rotate, 0.1f);
-		ImGui::DragFloat2("uvTranslate", &transform2ds_[i].translate.x, 0.1f);
+
+		if (ImGui::TreeNode(("object" + std::to_string(i)).c_str())) {
+			ImGuiManager::DebugGameObject(gameObjects_[i]);
+			ImGui::TreePop();
+		}
+
 		ImGui::PopID();
-	}
+	}	
+	//for (uint32_t i = 0; i < transform2ds_.size(); i++) {
+	//	ImGui::PushID(i);
+	//	ImGui::DragFloat2("uvScale", &transform2ds_[i].scale.x, 0.1f);
+	//	ImGui::DragFloat("uvRotate", &transform2ds_[i].rotate, 0.1f);
+	//	ImGui::DragFloat2("uvTranslate", &transform2ds_[i].translate.x, 0.1f);
+	//	ImGui::PopID();
+	//}
 	ImGui::End();
 
 	ImGui::Begin("camera");

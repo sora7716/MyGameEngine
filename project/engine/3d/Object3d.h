@@ -293,7 +293,7 @@ private://メンバ変数
 	Material material_ = {};
 
 	//生成数
-	uint32_t aliveCount_ = 1;
+	uint32_t drawCount_ = 1;
 
 	//視錐台
 	PrimitiveData::Frustum* frustum_ = nullptr;

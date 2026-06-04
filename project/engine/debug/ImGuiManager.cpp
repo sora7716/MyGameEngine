@@ -137,7 +137,7 @@ void ImGuiManager::DragSphere(PrimitiveData::Sphere& sphere) {
 void ImGuiManager::DebugGameObject(GameObject& gameObject) {
 #ifdef USE_IMGUI
 	ImGui::Checkbox("isAlive", &gameObject.isActive);
-	DragTransform(gameObject.transformData);
+	DragTransform(gameObject.transform);
 #endif // USE_IMGUI
 }
 

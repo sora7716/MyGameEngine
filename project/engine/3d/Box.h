@@ -206,11 +206,11 @@ private://メンバ変数
 	D3D12_INDEX_BUFFER_VIEW indexBufferView_ = {};//インデックス
 
 	//ワールド座標
-	TransformData transform_ = {};
+	Transform transform_ = {};
 	//ワールド行列
 	Matrix4x4 worldMatrix_ = {};
 	//uv座標
-	Transform2dData uvTransform_ = {};
+	Transform2d uvTransform_ = {};
 
 	//ルートシグネイチャ
 	ComPtr<ID3D12RootSignature>rootSignature_ = nullptr;

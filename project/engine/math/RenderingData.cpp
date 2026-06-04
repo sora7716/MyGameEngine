@@ -1,7 +1,7 @@
 #include "RenderingData.h"
 
 //初期化
-void TransformData::Initialize() {
+void Transform::Initialize() {
 	scale = Vector3::MakeAllOne();
 	quaternion = Quaternion::IdentityQuaternion();
 	translate = { 0.0f,0.0f,0.0f };
@@ -13,7 +13,7 @@ void TransformData::Initialize() {
 }
 
 //初期化
-void Transform2dData::Initialize() {
+void Transform2d::Initialize() {
 	this->scale = Vector2::MakeAllOne();
 	this->rotate = 0.0f;
 	this->translate = { 0.0f,0.0f };

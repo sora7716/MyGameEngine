@@ -1,4 +1,5 @@
 #pragma once
+#include "Matrix4x4.h"
 /// <summary>
 /// 3次元ベクトル
 /// </summary>
@@ -75,6 +76,8 @@ struct Vector3 final {
 	Vector3 operator-(const Vector3& v)const;
 	//乗法
 	Vector3 operator*(const Vector3& v)const;
+	//乗法(行列)
+	Vector3 operator*(const Matrix4x4& m)const;
 	//除法
 	Vector3 operator/(const Vector3& v)const;
 	//加法(複合)
@@ -83,6 +86,7 @@ struct Vector3 final {
 	Vector3& operator-=(const Vector3& v);
 	//乗法(複合)
 	Vector3& operator*=(const Vector3& v);
+
 	//除法(複合)
 	Vector3& operator/=(const Vector3& v);
 	// スカラー倍

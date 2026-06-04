@@ -12,7 +12,7 @@
 using json = nlohmann::json;
 
 //項目
-using Item = std::variant<int32_t, float,TransformData,Vector3,Vector4>;
+using Item = std::variant<int32_t, float,Transform,Vector3,Vector4>;
 
 //グループ
 using Group = std::map<std::string, Item>;

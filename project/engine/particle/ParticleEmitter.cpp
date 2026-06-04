@@ -89,7 +89,7 @@ void ParticleEmitter::SetCamera(Camera* camera) {
 }
 
 //トランスフォームデータのセッター
-void ParticleEmitter::SetTransformData(const TransformData& transfrom) {
+void ParticleEmitter::SetTransformData(const Transform& transfrom) {
 	emitter_.transform = transfrom;
 }
 

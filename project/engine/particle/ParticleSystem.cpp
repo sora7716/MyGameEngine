@@ -96,7 +96,7 @@ void ParticleSystem::SetBlendMode(BlendMode blendMode) {
 }
 
 //トランスフォームデータのセッター
-void ParticleSystem::SetTransformData(const TransformData& transfrom) {
+void ParticleSystem::SetTransformData(const Transform& transfrom) {
 	emitter_->SetTransformData(transfrom);
 }
 

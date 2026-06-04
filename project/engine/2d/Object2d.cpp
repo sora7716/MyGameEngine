@@ -153,7 +153,7 @@ void Object2d::SetTranslate(const Vector2& translate) {
 }
 
 //トランスフォームのセッター
-void Object2d::SetTransformData(const Transform2dData& transform) {
+void Object2d::SetTransformData(const Transform2d& transform) {
 	transform_ = transform;
 }
 

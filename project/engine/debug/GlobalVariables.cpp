@@ -73,9 +73,9 @@ void GlobalVariables::Update() {
 				//Vector3型の値を保持してれば
 				Vector3* ptr = std::get_if<Vector3>(&item);
 				ImGui::DragFloat3(itemName.c_str(), reinterpret_cast<float*>(ptr), 0.1f);
-			} else if (std::holds_alternative<TransformData>(item)) {
+			} else if (std::holds_alternative<Transform>(item)) {
 				//TransformData型の値を保持してれば
-				TransformData* ptr = std::get_if<TransformData>(&item);
+				Transform* ptr = std::get_if<Transform>(&item);
 				ImGuiManager::DragTransform(*ptr);
 			} else if (std::holds_alternative<Vector4>(item)) {
 				//Vector4型の値を保持してれば
@@ -182,9 +182,9 @@ void GlobalVariables::SaveFile(const std::string& groupName) {
 			//float型のjson配列を登録
 			Vector3 value = std::get<Vector3>(item);
 			root[groupName][itemName] = json::array({ value.x,value.y,value.z });
-		} else if (std::holds_alternative<TransformData>(item)) {
+		} else if (std::holds_alternative<Transform>(item)) {
 			//float型のjson配列を登録
-			TransformData value = std::get<TransformData>(item);
+			Transform value = std::get<Transform>(item);
 			root[groupName][itemName] = json::array({
 				value.scale.x,value.scale.y,value.scale.z,
 				value.quaternion.x,value.quaternion.y,value.quaternion.z,
@@ -286,7 +286,7 @@ void GlobalVariables::LoadFile(const std::string& groupName) {
 			SetValue(groupName, itemName, value);
 		} else if (itItem->is_array() && itItem->size() == 9) {
 			//要素数9の配列であれば
-			TransformData value = { 
+			Transform value = { 
 				{ itItem->at(0),itItem->at(1),itItem->at(2) },
 				{ itItem->at(3),itItem->at(4),itItem->at(5) },
 				{ itItem->at(6),itItem->at(7),itItem->at(8) }	

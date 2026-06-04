@@ -63,14 +63,11 @@ private://メンバ変数
 
 	std::unique_ptr<Object3d>object3d_ = nullptr;
 
-	std::vector<Transform2dData>transform2ds_;
+	std::vector<Transform2d>transform2ds_;
 
 	std::unique_ptr<Primitive::Frustum>frustum_ = nullptr;
 
 	Camera* testPlayCamera = nullptr;
 
-	std::unique_ptr<Primitive::Plane>plane_ = nullptr;
 	std::unique_ptr<Primitive::Cube>cube_ = nullptr;
-
-	std::unique_ptr<Primitive::Sphere>sphere_ = nullptr;
 };

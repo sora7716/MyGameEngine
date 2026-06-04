@@ -64,7 +64,7 @@ void WireframeObject3d::Initialize(WireframeObject3dCommon* wireframeObject3dCom
 	transform3dMode_ = transform3dMode;
 	//トランスフォームのデータ数を決定
 	transforms_.resize(instanceCount);
-	for (TransformData& transform : transforms_) {
+	for (Transform& transform : transforms_) {
 		transform.scale = Vector3::MakeAllOne();
 		transform.quaternion = {};
 		transform.translate = { 0.0f,0.0f,0.0f };
@@ -228,7 +228,7 @@ void WireframeObject3d::SetTranslate(uint32_t index, const Vector3& translate) {
 }
 
 //トランスフォームのセッター
-void WireframeObject3d::SetTransformData(uint32_t index, const TransformData& transform) {
+void WireframeObject3d::SetTransformData(uint32_t index, const Transform& transform) {
 	transforms_[index] = transform;
 }
 
@@ -313,7 +313,7 @@ const Vector4& WireframeObject3d::GetColor(uint32_t index) const {
 }
 
 //トランスフォームデータのゲッター
-const TransformData& WireframeObject3d::GetTransformData(uint32_t index) const {
+const Transform& WireframeObject3d::GetTransformData(uint32_t index) const {
 	// TODO: return ステートメントをここに挿入します
 	return transforms_[index];
 }

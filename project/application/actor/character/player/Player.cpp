@@ -63,7 +63,7 @@ void Player::Update() {
 
 		//プレイヤーが落ちたら
 		if (entityGroup_.entity[i].gameObject.transformData.translate.y < -10.0f) {
-			entityGroup_.entity[i].gameObject.isAlive = false;
+			entityGroup_.entity[i].gameObject.isActive = false;
 		}
 	}
 

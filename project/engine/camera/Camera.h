@@ -130,7 +130,7 @@ public://メンバ関数
 	const float GetAspectRation()const;
 private://メンバ変数
 	//ローカル座標
-	TransformData transform_ = {};
+	Transform transform_ = {};
 	//ワールド行列
 	Matrix4x4 worldMatrix_ = {};
 	//ビュー行列

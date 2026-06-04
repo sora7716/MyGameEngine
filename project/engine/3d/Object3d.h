@@ -7,7 +7,8 @@
 #include <string>
 #include <wrl.h>
 #include <d3d12.h>
-#include <RenderingData.h>
+#include "RenderingData.h"
+#include "PrimitiveData.h"
 //前方宣言
 class DirectXBase;
 class SRVManager;
@@ -52,75 +53,75 @@ public://メンバ関数
 	void Draw();
 
 	/// <summary>
-	/// モデルのセッター
+	/// モデルの設定
 	/// </summary>
 	/// <param name="name">モデルの名前</param>
 	void SetModel(const std::string& name);
 
 	/// <summary>
-	/// カメラのセッター
+	/// カメラの設定
 	/// </summary>
 	/// <param name="camera">カメラ</param>
 	void SetCamera(Camera* camera);
 
 	/// <summary>
-	/// スケールのセッター
+	/// スケールの設定
 	/// </summary>
 	/// <param name="index">インデックス</param>
 	/// <param name="scale">スケール</param>
 	void SetScale(uint32_t index, const Vector3& scale);
 
 	/// <summary>
-	/// クォータニオンのセッター
+	/// クォータニオンの設定
 	/// </summary>
 	/// <param name="index">インデックス</param>
 	/// <param name="quaternion">クォータニオン</param>
 	void SetQuaternion(uint32_t index, const Quaternion& quaternion);
 
 	/// <summary>
-	/// 平行移動のセッター
+	/// 平行移動の設定
 	/// </summary>
 	/// <param name="index">インデックス</param>
 	/// <param name="translate">平行移動</param>
 	void SetTranslate(uint32_t index, const Vector3& translate);
 
 	/// <summary>
-	/// ゲームオブジェクトのセッター
+	/// ゲームオブジェクトの設定
 	/// </summary>
 	/// <param name="index">インデックス</param>
 	/// <param name="gameObject">ゲームオブジェクト</param>
 	void SetGameObject(uint32_t index, const GameObject& gameObject);
 
 	/// <summary>
-	/// uvスケールのセッター
+	/// uvスケールの設定
 	/// </summary>
 	/// <param name="index">インデックス</param>
 	/// <param name="uvScale">スケール</param>
 	void SetUVScale(uint32_t index, const Vector2& uvScale);
 
 	/// <summary>
-	/// uv回転のセッター
+	/// uv回転の設定
 	/// </summary>
 	/// <param name="index">インデックス</param>
 	/// <param name="uvRotate">回転</param>
 	void SetUVRotate(uint32_t index, float uvRotate);
 
 	/// <summary>
-	/// uv平行移動のセッター
+	/// uv平行移動の設定
 	/// </summary>
 	/// <param name="index">インデックス</param>
 	/// <param name="uvTranslate">平行移動</param>
 	void SetUVTranslate(uint32_t index, const Vector2& uvTranslate);
 
 	/// <summary>
-	/// 色のセッター
+	/// 色の設定
 	/// </summary>
 	/// <param name="index">インデックス</param>
 	/// <param name="color">色</param>
 	void SetColor(uint32_t index, const Vector4& color);
 
 	/// <summary>
-	/// 親のセッター
+	/// 親の設定
 	/// </summary>
 	/// <param name="parent">親</param>
 	void SetParent(const WorldTransform* parent);
@@ -137,51 +138,57 @@ public://メンバ関数
 	/// </summary>
 	/// <param name="index">インデックス</param>
 	/// <param name="uvTransform">UV座標</param>
-	void SetUVTransform(uint32_t index,const Transform2dData& uvTransform);
+	void SetUVTransform(uint32_t index, const Transform2d& uvTransform);
 
 	/// <summary>
-	/// ブレンドモードのセッター
+	/// ブレンドモードの設定
 	/// </summary>
 	/// <param name="blendMode"></param>
 	void SetBlendMode(const BlendMode& blendMode);
 
 	/// <summary>
-	/// スケールのゲッター
+	/// 視錐台の設定
+	/// </summary>
+	/// <param name="frustum">視錐台</param>
+	void SetFrustum(PrimitiveData::Frustum* frustum);
+
+	/// <summary>
+	/// スケールの取得
 	/// </summary>
 	/// <param name="index">インデックス</param>
 	/// <returns>スケール</returns>
 	const Vector3& GetScale(uint32_t index)const;
 
 	/// <summary>
-	/// クォータニオンのゲッター
+	/// クォータニオンの取得
 	/// </summary>
 	/// <param name="index">インデックス</param>
 	/// <returns>クォータニオン</returns>
 	const Quaternion& GetQuaternion(uint32_t index)const;
 
 	/// <summary>
-	/// 平行移動のゲッター
+	/// 平行移動の取得
 	/// </summary>
 	/// <param name="index">インデックス</param>
 	/// <returns>平行移動</returns>
 	const Vector3& GetTranslate(uint32_t index)const;
 
 	/// <summary>
-	/// uvスケールのゲッター
+	/// uvスケールの取得
 	/// </summary>
 	/// <param name="index">インデックス</param>
 	/// <returns>uvスケール</returns>
 	const Vector2& GetUVScale(uint32_t index)const;
 
 	/// <summary>
-	/// uv回転のゲッター
+	/// uv回転の取得
 	/// </summary>
 	/// <param name="index">インデックス</param>
 	/// <returns>uv回転</returns>
 	const float GetUVRotate(uint32_t index)const;
 
 	/// <summary>
-	/// uv平行移動のゲッター
+	/// uv平行移動の取得
 	/// </summary>
 	/// <param name="index">インデックス</param>
 	/// <returns>uv平行移動</returns>
@@ -192,37 +199,37 @@ public://メンバ関数
 	/// </summary>
 	/// <param name="index">インデックス</param>
 	/// <returns>UV座標</returns>
-	const Transform2dData& GetUVTransform(uint32_t index)const;
+	const Transform2d& GetUVTransform(uint32_t index)const;
 
 	/// <summary>
-	/// 色のゲッター
+	/// 色の取得
 	/// </summary>
 	/// <param name="index">インデックス</param>
 	/// <returns>色</returns>
 	const Vector4& GetColor(uint32_t index)const;
 
 	/// <summary>
-	/// ゲームオブジェクトのゲッター
+	/// ゲームオブジェクトの取得
 	/// </summary>
 	/// <param name="index">インデックス</param>
 	/// <returns>ゲームオブジェクト</returns>
 	const GameObject& GetGameObject(uint32_t index)const;
 
 	/// <summary>
-	/// モデルのゲッター
+	/// モデルの取得
 	/// </summary>
 	/// <returns>モデル</returns>
 	Model* GetModel();
 
 	/// <summary>
-	/// ワールドマトリックスのゲッター
+	/// ワールドマトリックスの取得
 	/// </summary>
 	/// <param name="index">インデックス</param>
 	/// <returns>ワールドマトリックス</returns>
 	Matrix4x4& GetWorldMatrix(uint32_t index);
 
 	/// <summary>
-	/// ワールド座標のゲッター
+	/// ワールド座標の取得
 	/// </summary>
 	/// <param name="index">インデックス</param>
 	/// <returns>ワールド座標</returns>
@@ -255,7 +262,7 @@ private://メンバ変数
 	Object3dCommon* object3dCommon_ = nullptr;
 
 	//UV座標
-	std::vector<Transform2dData> uvTransform_;
+	std::vector<Transform2d> uvTransform_;
 	//DirectXの基盤部分
 	DirectXBase* directXBase_ = nullptr;
 	//SRVマネージャー
@@ -287,5 +294,8 @@ private://メンバ変数
 
 	//生成数
 	uint32_t aliveCount_ = 1;
+
+	//視錐台
+	PrimitiveData::Frustum* frustum_ = nullptr;
 };
 

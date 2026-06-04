@@ -50,7 +50,7 @@ public://メンバ関数
 	/// </summary>
 	/// <param name="index">インデックス</param>
 	/// <param name="uvTransform">uv座標</param>
-	void UVTransform(uint32_t index, Transform2dData uvTransform);
+	void UVTransform(uint32_t index, Transform2d uvTransform);
 
 	/// <summary>
 	/// 色を変更

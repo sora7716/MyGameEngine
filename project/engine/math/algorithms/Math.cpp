@@ -175,10 +175,10 @@ PrimitiveData::Plane Math::MakePlane(const Vector3& p0, const Vector3& p1, const
 
 	//p0　-> p1へ向かうベクトル
 	Vector3 v01 = p1 - p0;
-	//p1　-> p2へ向かうベクトル
-	Vector3 v12 = p1 - p2;
+	//p0　-> p2へ向かうベクトル
+	Vector3 v02 = p2 - p0;
 	//法線
-	plane.normal = v01.Cross(v12).Normalize();
+	plane.normal = v01.Cross(v02).Normalize();
 
 	//距離
 	plane.distance = plane.normal.Dot(p0);

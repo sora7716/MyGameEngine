@@ -3,6 +3,7 @@
 //初期化
 void GameObject::Initialize() {
 	transformData.Initialize();
-	isAlive = true;
+	isActive = true;
+	isEnabled = true;
 	tag = Tag::kNone;
 }

@@ -111,7 +111,7 @@ void Text::SetTranslate(const Vector2& translate) {
 }
 
 //トランスフォームデータのセッター
-void Text::SetTransformDate(const Transform2dData& transformData) {
+void Text::SetTransformDate(const Transform2d& transformData) {
 	transform_ = transformData;
 }
 

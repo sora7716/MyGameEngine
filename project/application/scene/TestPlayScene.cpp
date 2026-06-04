@@ -42,12 +42,6 @@ void TestPlayScene::Initialize(const SceneContext& sceneContext) {
 	testPlayCamera = sceneContext_.cameraManager->FindCamera("testPlayCamera");
 	frustum_->SetTargetCamera(testPlayCamera);
 
-	plane_ = std::make_unique<Primitive::Plane>();
-	plane_->Initialize(sceneContext_.directXBase, &camera_);
-
-	sphere_ = std::make_unique<Primitive::Sphere>();
-	sphere_->Initialize(sceneContext_.directXBase,&camera_);
-
 	cube_ = std::make_unique<Primitive::Cube>();
 	cube_->Initialize(sceneContext_.directXBase,&camera_);
 }
@@ -63,27 +57,20 @@ void TestPlayScene::Update() {
 		object3d_->SetUVTranslate(i, transform2ds_[i].translate);
 	}
 
+	PrimitiveData::Frustum frustumPtr = frustum_->GetFrustum();
+	object3d_->SetFrustum(&frustumPtr);
+
 	object3d_->Update();
 
 	frustum_->Update();
 
-	if (Collision::IsCollision(plane_->GetPlane(), sphere_->GetSphere())) {
-		sphere_->SetColor(Vector4::MakeRedColor());
-	} else {
-		sphere_->SetColor(Vector4::MakeWhiteColor());
-	}
+	cube_->Update();
 
-	if (Collision::IsCollision(plane_->GetPlane(), cube_->GetAABB())) {
+	if (Collision::IsCollision(frustum_->GetFrustum(), cube_->GetAABB())) {
 		cube_->SetColor(Vector4::MakeRedColor());
 	} else {
 		cube_->SetColor(Vector4::MakeWhiteColor());
 	}
-
-	plane_->Update();
-
-	sphere_->Update();
-
-	cube_->Update();
 	//box_->Update();
 }
 
@@ -114,20 +101,18 @@ void TestPlayScene::Debug() {
 	ImGui::DragFloat3("translate", &cameraTranslate.x, 0.1f);
 	testPlayCamera->SetEulerAngle(cameraRotate);
 	testPlayCamera->SetTranslate(cameraTranslate);
-	ImGui::End();
+	for (int i = 0; i < 6; i++) {
+		const auto& plane = frustum_->GetFrustum().planes[i];
 
-	ImGui::Begin("plane");
-	PrimitiveData::Plane planeData = plane_->GetPlane();
-	ImGui::DragFloat3("normal", &planeData.normal.x, 0.1f);
-	ImGui::DragFloat("distance", &planeData.distance, 0.1f);
-	plane_->SetPlane(planeData);
-	ImGui::End();
-
-	ImGui::Begin("sphere");
-	PrimitiveData::Sphere sphereData = sphere_->GetSphere();
-	ImGui::DragFloat3("center", &sphereData.center.x, 0.1f);
-	ImGui::DragFloat("radius", &sphereData.radius, 0.1f);
-	sphere_->SetSphere(sphereData);
+		ImGui::Text(
+			"plane %d normal %.2f %.2f %.2f distance %.2f",
+			i,
+			plane.normal.x,
+			plane.normal.y,
+			plane.normal.z,
+			plane.distance
+		);
+	}
 	ImGui::End();
 
 	ImGui::Begin("cube");
@@ -151,13 +136,9 @@ void TestPlayScene::Debug() {
 void TestPlayScene::Draw() {
 	//box_->Draw();
 
-	//object3d_->Draw();
+	object3d_->Draw();
 
-	//frustum_->Draw();
-
-	plane_->Draw();
-
-	sphere_->Draw();
+	frustum_->Draw();
 
 	cube_->Draw();
 }

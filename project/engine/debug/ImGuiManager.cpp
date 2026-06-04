@@ -88,7 +88,7 @@ void ImGuiManager::TreeNodeForEntityGroup(const std::string& label, EntityGroup&
 }
 
 //トランスフォームデータ用のImGui
-void ImGuiManager::DragTransform(TransformData& transformData) {
+void ImGuiManager::DragTransform(Transform& transformData) {
 #ifdef USE_IMGUI
 	ImGui::Checkbox("isUsingQuaternion", &transformData.isUsingQuaternion);
 	ImGui::DragFloat3("scale", &transformData.scale.x, 0.1f);
@@ -136,7 +136,7 @@ void ImGuiManager::DragSphere(PrimitiveData::Sphere& sphere) {
 //ゲームオブジェクトのデバッグ
 void ImGuiManager::DebugGameObject(GameObject& gameObject) {
 #ifdef USE_IMGUI
-	ImGui::Checkbox("isAlive", &gameObject.isAlive);
+	ImGui::Checkbox("isAlive", &gameObject.isActive);
 	DragTransform(gameObject.transformData);
 #endif // USE_IMGUI
 }

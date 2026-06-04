@@ -12,8 +12,9 @@ enum class Tag {
 
 //ゲームオブジェクト
 struct GameObject {
-	TransformData transformData;
-	bool isAlive;
+	Transform transformData;
+	bool isActive;
+	bool isEnabled;
 	Tag tag;
 	/// <summary>
 	/// 初期化

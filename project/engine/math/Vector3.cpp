@@ -2,6 +2,7 @@
 #include "Vector3.h"
 #include <cmath>
 #include <algorithm>
+#include <cassert>
 
 //Vector3のメンバ変数すべてに1.0fを代入したVector3を作成
 Vector3 Vector3::MakeAllOne() {
@@ -95,6 +96,21 @@ Vector3 Vector3::operator-(const Vector3& v)const {
 //乗法
 Vector3 Vector3::operator*(const Vector3& v) const {
 	return { x * v.x,y * v.y,z * v.z };
+}
+
+//乗法(行列)
+Vector3 Vector3::operator*(const Matrix4x4& m) const {
+	Vector3 result{};
+	result.x = x * m.m[0][0] + y * m.m[1][0] + z * m.m[2][0] + 1.0f * m.m[3][0];
+	result.y = x * m.m[0][1] + y * m.m[1][1] + z * m.m[2][1] + 1.0f * m.m[3][1];
+	result.z = x * m.m[0][2] + y * m.m[1][2] + z * m.m[2][2] + 1.0f * m.m[3][2];
+	float w = x * m.m[0][3] + y * m.m[1][3] + z * m.m[2][3] + 1.0f * m.m[3][3];
+	assert(w != 0.0f);
+	result.x /= w;
+	result.y /= w;
+	result.z /= w;
+
+	return result;
 }
 
 //除法

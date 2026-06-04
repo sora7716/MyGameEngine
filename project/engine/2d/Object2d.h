@@ -128,7 +128,7 @@ public://メンバ関数
 	/// トランスフォームのセッター
 	/// </summary>
 	/// <param name="transform">トランスフォ-ム(scaleは100,100で初期設定)</param>
-	void SetTransformData(const Transform2dData& transform);
+	void SetTransformData(const Transform2d& transform);
 
 	/// <summary>
 	/// UVのサイズのセッター
@@ -215,13 +215,13 @@ private://メンバ変数
 	D3D12_VERTEX_BUFFER_VIEW vertexBufferView_ = {};//頂点
 	D3D12_INDEX_BUFFER_VIEW indexBufferView_ = {};//インデックス	
 	//UV座標
-	Transform2dData uvTransform_ = {
+	Transform2d uvTransform_ = {
 		.scale = { 1.0f,1.0f },
 		.rotate = 0.0f,
 		.translate = {0.0f,0.0f}
 	};
 	//ワールド座標
-	Transform2dData transform_ = {
+	Transform2d transform_ = {
 		.scale = {100.0f,100.0f},
 		.rotate = 0.0f,
 		.translate = {0.0f,0.0f}

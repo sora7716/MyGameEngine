@@ -1,4 +1,5 @@
 #include "Vector4.h"
+#include <cassert>
 
 //RGBのゲッター
 const RGB Vector4::GetRGB()const {
@@ -61,4 +62,16 @@ void Vector4::operator*=(float n) {
 	y *= n;
 	z *= n;
 	w *= n;
+}
+
+//乗法
+Vector4 Vector4::operator*(const Matrix4x4& m) {
+	Vector4 result{};
+
+	result.x = x * m.m[0][0] + y * m.m[1][0] + z * m.m[2][0] + w * m.m[3][0];
+	result.y = x * m.m[0][1] + y * m.m[1][1] + z * m.m[2][1] + w * m.m[3][1];
+	result.z = x * m.m[0][2] + y * m.m[1][2] + z * m.m[2][2] + w * m.m[3][2];
+	result.w = x * m.m[0][3] + y * m.m[1][3] + z * m.m[2][3] + w * m.m[3][3];
+
+	return result;
 }

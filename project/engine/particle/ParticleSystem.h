@@ -77,7 +77,7 @@ public://メンバ関数
 	/// トランスフォームデータのセッター
 	/// </summary>
 	/// <param name="transfrom">トランスフォーム</param>
-	void SetTransformData(const TransformData& transfrom);
+	void SetTransformData(const Transform& transfrom);
 
 	/// <summary>
 	/// パーティクルの数のセッター

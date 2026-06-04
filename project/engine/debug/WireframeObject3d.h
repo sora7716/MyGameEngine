@@ -108,7 +108,7 @@ public://メンバ関数
 	/// </summary>
 	/// <param name="index">インデックス</param>
 	/// <param name="transform">トランスフォーム</param>
-	void SetTransformData(uint32_t index, const TransformData& transform);
+	void SetTransformData(uint32_t index, const Transform& transform);
 
 	/// <summary>
 	/// uvスケールのセッター
@@ -198,7 +198,7 @@ public://メンバ関数
 	/// </summary>
 	/// <param name="index">インデックス</param>
 	/// <returns>トランスフォームデータ</returns>
-	const TransformData& GetTransformData(uint32_t index)const;
+	const Transform& GetTransformData(uint32_t index)const;
 
 	/// <summary>
 	/// モデルのゲッター
@@ -268,7 +268,7 @@ private://メンバ変数
 	WireframeObject3dCommon* wireframeObject3dCommon_ = nullptr;
 
 	//UV座標
-	Transform2dData uvTransform_ = {
+	Transform2d uvTransform_ = {
 		.scale = { 1.0f,1.0f },
 		.rotate = 0.0f,
 		.translate = {0.0f,0.0f}
@@ -287,7 +287,7 @@ private://メンバ変数
 	//カメラ
 	Camera* camera_ = nullptr;
 	//ワールド座標
-	std::vector<TransformData> transforms_ = {};
+	std::vector<Transform> transforms_ = {};
 	Transform3dMode transform3dMode_ = Transform3dMode::kNormal;
 	uint32_t srvIndex_ = 0;
 	//親

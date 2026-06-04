@@ -6,7 +6,7 @@
 #include <string>
 #include <vector>
 //Transform情報
-struct TransformData {
+struct Transform {
 	Vector3 scale;
 	Quaternion quaternion;
 	Vector3 translate;
@@ -28,7 +28,7 @@ struct TransformData {
 };
 
 //Transform2D情報
-struct Transform2dData {
+struct Transform2d {
 	Vector2 scale;
 	float rotate;
 	Vector2 translate;

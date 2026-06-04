@@ -9,6 +9,7 @@
 #include "Mesh.h"
 #include "SRVManager.h"
 #include "TextureManager.h"
+#include "algorithms/Collision.h"
 #include <cassert>
 //メンバ関数テーブルの初期化
 void(Object3d::* Object3d::UpdateTransformTable[])() = {
@@ -75,12 +76,26 @@ void Object3d::Update() {
 
 	for (int32_t i = 0; i < gameObjects_.size(); i++) {
 		//生存フラグが立ってなければ
-		if (!gameObjects_[i].isAlive) {
+		if (!gameObjects_[i].isActive) {
 			continue;
 		}
 
 		//生存だけを0~aliveCount-1に詰める
 		gameObjects_[aliveCount] = gameObjects_[i];
+
+		//もし視錐台があるなら
+		for (uint32_t j = 0; j < model_->GetMeshes().size(); j++) {
+			if (!frustum_) {
+				break;
+			}
+			//視錐台の中の中にある?
+			gameObjects_[i].isEnabled = Collision::IsCollision(*frustum_, model_->GetMeshes()[j]->GetAABB());
+		}
+
+		//描画フラグが立っていなければ
+		if (!gameObjects_[i].isEnabled) {
+			continue;
+		}
 
 		//生存数を増やす
 		aliveCount++;
@@ -126,7 +141,7 @@ void Object3d::Draw() {
 	}
 }
 
-//モデルのセッター
+//モデルの設定
 void Object3d::SetModel(const std::string& name) {
 	model_ = object3dCommon_->GetModelManager()->FindModel(name);
 	//uv座標
@@ -136,55 +151,55 @@ void Object3d::SetModel(const std::string& name) {
 	}
 }
 
-//カメラのセッター
+//カメラの設定
 void Object3d::SetCamera(Camera* camera) {
 	camera_ = camera;
 	object3dCommon_->SetCameraForGPU(camera->GetTranslate());
 }
 
-// スケールのセッター
+// スケールの設定
 void Object3d::SetScale(uint32_t index, const Vector3& scale) {
 	gameObjects_[index].transformData.scale = scale;
 }
 
-//クォータニオンのゲッター
+//クォータニオンの取得
 void Object3d::SetQuaternion(uint32_t index, const Quaternion& quaternion) {
 	gameObjects_[index].transformData.quaternion = quaternion;
 }
 
-// 平行移動のセッター
+// 平行移動の設定
 void Object3d::SetTranslate(uint32_t index, const Vector3& translate) {
 	gameObjects_[index].transformData.translate = translate;
 }
 
-//ゲームオブジェクトのセッター
+//ゲームオブジェクトの設定
 void Object3d::SetGameObject(uint32_t index, const GameObject& gameObject) {
 	gameObjects_[index] = gameObject;
 }
 
-// uvスケールのセッター
+// uvスケールの設定
 void Object3d::SetUVScale(uint32_t index, const Vector2& uvScale) {
 	uvTransform_[index].scale = uvScale;
 }
 
-// uv回転のセッター
+// uv回転の設定
 void Object3d::SetUVRotate(uint32_t index, float uvRotate) {
 	uvTransform_[index].rotate = uvRotate;
 }
 
-// uv平行移動のセッター
+// uv平行移動の設定
 void Object3d::SetUVTranslate(uint32_t index, const Vector2& uvTranslate) {
 	uvTransform_[index].translate = uvTranslate;
 }
 
-//色のセッター
+//色の設定
 void Object3d::SetColor(uint32_t index, const Vector4& color) {
 	if (model_) {
 		model_->SetColor(index, color);
 	}
 }
 
-//親のセッター
+//親の設定
 void Object3d::SetParent(const WorldTransform* parent) {
 	worldTransform_->SetParent(parent);
 }
@@ -197,58 +212,63 @@ void Object3d::SetTexture(uint32_t index, const std::string& filePath) {
 }
 
 //UV座標の設定
-void Object3d::SetUVTransform(uint32_t index, const Transform2dData& uvTransform) {
+void Object3d::SetUVTransform(uint32_t index, const Transform2d& uvTransform) {
 	uvTransform_[index] = uvTransform;
 }
 
-//ブレンドモードのセッター
+//ブレンドモードの設定
 void Object3d::SetBlendMode(const BlendMode& blendMode) {
 	blendMode_ = blendMode;
 }
 
-//スケールのゲッター
+//視錐台の設定
+void Object3d::SetFrustum(PrimitiveData::Frustum* frustum) {
+	frustum_ = frustum;
+}
+
+//スケールの取得
 const Vector3& Object3d::GetScale(uint32_t index) const {
 	// TODO: return ステートメントをここに挿入します
 	return gameObjects_[index].transformData.scale;
 }
 
-//クォータニオンのゲッター
+//クォータニオンの取得
 const Quaternion& Object3d::GetQuaternion(uint32_t index) const {
 	// TODO: return ステートメントをここに挿入します
 	return gameObjects_[index].transformData.quaternion;
 }
 
-//平行移動のゲッター
+//平行移動の取得
 const Vector3& Object3d::GetTranslate(uint32_t index) const {
 	// TODO: return ステートメントをここに挿入します
 	return gameObjects_[index].transformData.translate;
 }
 
-//uvスケールのゲッター
+//uvスケールの取得
 const Vector2& Object3d::GetUVScale(uint32_t index) const {
 	// TODO: return ステートメントをここに挿入します
 	return uvTransform_[index].scale;
 }
 
-//uv回転のゲッター
+//uv回転の取得
 const float Object3d::GetUVRotate(uint32_t index) const {
 	// TODO: return ステートメントをここに挿入します
 	return uvTransform_[index].rotate;
 }
 
-//uv平行移動のゲッター
+//uv平行移動の取得
 const Vector2& Object3d::GetUVTranslate(uint32_t index) const {
 	// TODO: return ステートメントをここに挿入します
 	return uvTransform_[index].translate;
 }
 
 //UV座標の取得
-const Transform2dData& Object3d::GetUVTransform(uint32_t index) const {
+const Transform2d& Object3d::GetUVTransform(uint32_t index) const {
 	// TODO: return ステートメントをここに挿入します
 	return uvTransform_[index];
 }
 
-//色のゲッター
+//色の取得
 const Vector4& Object3d::GetColor(uint32_t index) const {
 	// TODO: return ステートメントをここに挿入します
 	static const Vector4 defaultColor(0.0f, 0.0f, 0.0f, 0.0f);
@@ -258,13 +278,13 @@ const Vector4& Object3d::GetColor(uint32_t index) const {
 	return defaultColor;
 }
 
-//ゲームオブジェクトのゲッター
+//ゲームオブジェクトの取得
 const GameObject& Object3d::GetGameObject(uint32_t index) const {
 	// TODO: return ステートメントをここに挿入します
 	return gameObjects_[index];
 }
 
-//モデルのゲッター
+//モデルの取得
 Model* Object3d::GetModel() {
 	if (model_) {
 		return model_;
@@ -272,12 +292,12 @@ Model* Object3d::GetModel() {
 	return nullptr;
 }
 
-//ワールドマトリックスのゲッター
+//ワールドマトリックスの取得
 Matrix4x4& Object3d::GetWorldMatrix(uint32_t index) {
 	return wvpData_[index].world;
 }
 
-//ワールド座標のゲッター
+//ワールド座標の取得
 Vector3 Object3d::GetWorldPos(uint32_t index) {
 	return { wvpData_[index].world.m[3][0],wvpData_[index].world.m[3][1],wvpData_[index].world.m[3][2] };
 }

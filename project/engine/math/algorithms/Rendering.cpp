@@ -25,21 +25,6 @@ Matrix4x4 Rendering::MakeTranslateMatrix(const Vector3& translate) {
 	return result;
 }
 
-//同次座標系で計算しデカルト座標系に変換
-Vector3 Rendering::Transform(const Vector3& vector, const Matrix4x4& matrix) {
-	Vector3 result{};
-	result.x = vector.x * matrix.m[0][0] + vector.y * matrix.m[1][0] + vector.z * matrix.m[2][0] + 1.0f * matrix.m[3][0];
-	result.y = vector.x * matrix.m[0][1] + vector.y * matrix.m[1][1] + vector.z * matrix.m[2][1] + 1.0f * matrix.m[3][1];
-	result.z = vector.x * matrix.m[0][2] + vector.y * matrix.m[1][2] + vector.z * matrix.m[2][2] + 1.0f * matrix.m[3][2];
-	float w = vector.x * matrix.m[0][3] + vector.y * matrix.m[1][3] + vector.z * matrix.m[2][3] + 1.0f * matrix.m[3][3];
-	assert(w != 0.0f);
-	result.x /= w;
-	result.y /= w;
-	result.z /= w;
-
-	return result;
-}
-
 //x座標を軸に回転
 Matrix4x4 Rendering::MakeRotateXMatrix(const float& radian) {
 	//単位行列で初期化
@@ -209,7 +194,7 @@ Matrix4x4 Rendering::MakeOBBWorldMatrix(const Vector3* orientations, const Vecto
 }
 
 //アフィン関数
-Matrix4x4 Rendering::MakeAffineMatrix(const TransformData& transform) {
+Matrix4x4 Rendering::MakeAffineMatrix(const Transform& transform) {
 	//Quaternion q = MakeRotateQuaternion(transform.quaternion);
 	return (MakeScaleMatrix(transform.scale) * MakeRotateMatrix(transform.quaternion)) * MakeTranslateMatrix(transform.translate);
 }
@@ -225,7 +210,7 @@ Matrix4x4 Rendering::MakeSTRMatrix(const Vector3& scale, const Vector3& rotate, 
 }
 
 // UVのアフィン変換
-Matrix4x4 Rendering::MakeUVAffineMatrix(const Transform2dData& uvTransform) {
+Matrix4x4 Rendering::MakeUVAffineMatrix(const Transform2d& uvTransform) {
 	return MakeScaleMatrix({ uvTransform.scale.x,uvTransform.scale.y,1.0f }) * MakeRotateZMatrix(uvTransform.rotate) * MakeTranslateMatrix({ uvTransform.translate.x,uvTransform.translate.y,1.0f });
 }
 
@@ -289,13 +274,13 @@ Matrix4x4 Rendering::MakeBillboardMatrix(const Matrix4x4& cameraWorldMatrix, con
 }
 
 //ビルボード行列を含んだアフィン行列の作成
-Matrix4x4 Rendering::MakeBillboardAffineMatrix(const Matrix4x4& cameraWorldMatrix, const TransformData& transform) {
+Matrix4x4 Rendering::MakeBillboardAffineMatrix(const Matrix4x4& cameraWorldMatrix, const Transform& transform) {
 	return (MakeScaleMatrix(transform.scale) * MakeBillboardMatrix(cameraWorldMatrix, transform.quaternion)) * MakeTranslateMatrix(transform.translate);
 }
 
 //行列をTransformDataに分解
-TransformData Rendering::DecomposeMatrix(const Matrix4x4& mat) {
-	TransformData result{};
+Transform Rendering::DecomposeMatrix(const Matrix4x4& mat) {
+	Transform result{};
 	//拡縮
 	result.scale.x = std::sqrt(
 		std::pow(mat.m[0][0], 2.0f) +

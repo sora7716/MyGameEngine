@@ -1,5 +1,6 @@
 #pragma once
 #include "Vector3.h"
+#include "Matrix4x4.h"
 #include <string>
 struct RGB final{
 	float r;
@@ -77,4 +78,11 @@ struct Vector4 final {
 	/// </summary>
 	/// <param name="n">浮動小数</param>
 	void operator*=(float n);
+
+	/// <summary>
+	/// 乗法
+	/// </summary>
+	/// <param name="m">行列</param>
+	/// <returns>4次元ベクトル</returns>
+	Vector4 operator*(const Matrix4x4& m);
 };

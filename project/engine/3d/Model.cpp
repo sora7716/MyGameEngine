@@ -95,7 +95,7 @@ void Model::Draw(uint32_t objectCount) {
 }
 
 //uv変換
-void Model::UVTransform(uint32_t index, Transform2dData uvTransform) {
+void Model::UVTransform(uint32_t index, Transform2d uvTransform) {
 	materialPtrs_[index]->uvMatrix = Rendering::MakeUVAffineMatrix(uvTransform);
 }
 

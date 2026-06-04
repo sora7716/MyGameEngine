@@ -93,7 +93,7 @@ void GameScene::Update() {
 	jumpPad_->Update();
 	ground_->Update();
 
-	if (!player_->GetEntity()[0].gameObject.isAlive) {
+	if (!player_->GetEntity()[0].gameObject.isActive) {
 		sceneContext_.sceneManager->ChangeScene("GameOver");
 	}
 

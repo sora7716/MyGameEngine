@@ -1,6 +1,7 @@
 #pragma once
 #include "Vector3.h"
 #include "Quaternion.h"
+#include <array>
 
 namespace PrimitiveData {
 	//球のデータ
@@ -45,5 +46,20 @@ namespace PrimitiveData {
 	struct Plane {
 		Vector3 normal;//法線
 		float distance;//距離
+	};
+
+	//視錐台
+	struct Frustum {
+		enum PlaneIndex {
+			kLeft,
+			kRight,
+			kTop,
+			kBottom,
+			kNear,
+			kFar,
+			kCount
+		};
+		std::array<Plane, kCount>planes;//面
+		std::array<Vector3, 8>corners;//頂点
 	};
 }

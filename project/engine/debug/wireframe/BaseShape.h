@@ -194,7 +194,7 @@ namespace Primitive {
 		//ワールド行列
 		Matrix4x4 worldMatrix_ = {};
 		//ワールド座標
-		TransformData transform_ = {};
+		Transform transform_ = {};
 		//バッファリソース内のデータを指すポインタ
 		Vector4* color_ = nullptr;
 		//頂点データ

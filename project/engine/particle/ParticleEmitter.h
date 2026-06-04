@@ -19,7 +19,7 @@ struct ParticleForGPU {
 
 //パーティクル単体のデータ
 struct Particle {
-	TransformData transform;//SRVの情報
+	Transform transform;//SRVの情報
 	Vector3 velocity;//方向
 	Vector4 color;//色
 	float lifeTime;//生存時間
@@ -28,7 +28,7 @@ struct Particle {
 
 //発生源
 struct Emitter {
-	TransformData transform;//エミッターのTransform
+	Transform transform;//エミッターのTransform
 	uint32_t count;//発生数
 	float frequency;//発生頻度
 	float frequencyTime;//頻度用時刻
@@ -96,7 +96,7 @@ public://メンバ関数
 	/// トランスフォームデータのセッター
 	/// </summary>
 	/// <param name="transfrom">トランスフォーム</param>
-	void SetTransformData(const TransformData& transfrom);
+	void SetTransformData(const Transform& transfrom);
 
 	/// <summary>
 	/// パーティクルの数のセッター

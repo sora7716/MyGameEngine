@@ -33,6 +33,10 @@ void Object3d::Initialize(Object3dCommon* object3dCommon, Camera* camera, uint32
 	transform3dMode_ = transform3dMode;
 	//ゲームオブジェクトの数を決定
 	gameObjects_.resize(instanceCount);
+	//UV座標のサイズ決定
+	for (std::vector<Transform2d>& uvTransform2d : lodUvTransforms_) {
+		uvTransform2d.resize(gameObjects_.size());
+	}
 	//ゲームオブジェクトの初期化
 	for (GameObject& gameObject : gameObjects_) {
 		gameObject.Initialize();
@@ -85,15 +89,6 @@ void Object3d::Update() {
 		node_ = lodModels_[0]->GetModelData().rootNode;
 	}
 
-
-	//モデルが存在したらメッシュごとにUV座標を適応
-	if (model_) {
-		for (uint32_t i = 0; i < model_->GetMeshes().size(); i++) {
-			uint32_t materialIndex = model_->GetMeshes()[i]->GetMaterialIndex();
-			model_->UVTransform(materialIndex, uvTransform_[i]);
-		}
-	}
-
 	for (int32_t i = 0; i < gameObjects_.size(); i++) {
 		//生存フラグが立ってなければ
 		if (!gameObjects_[i].isActive) {
@@ -135,6 +130,14 @@ void Object3d::Update() {
 
 		//描画カウントを加算
 		lodDrawCount_[lodIndex]++;
+
+		//モデルが存在したらメッシュごとにUV座標を適応
+		if (lodModels_[lodIndex]) {
+			for (uint32_t i = 0; i < lodModels_[lodIndex]->GetMeshes().size(); i++) {
+				uint32_t materialIndex = lodModels_[lodIndex]->GetMeshes()[i]->GetMaterialIndex();
+				lodModels_[lodIndex]->UVTransform(materialIndex, lodUvTransforms_[lodIndex][i]);
+			}
+		}
 	}
 
 }
@@ -213,17 +216,23 @@ void Object3d::SetGameObject(uint32_t index, const GameObject& gameObject) {
 
 // uvスケールの設定
 void Object3d::SetUVScale(uint32_t index, const Vector2& uvScale) {
-	uvTransform_[index].scale = uvScale;
+	for (std::vector<Transform2d>& uvTransforms : lodUvTransforms_) {
+		uvTransforms[index].scale = uvScale;
+	}
 }
 
 // uv回転の設定
 void Object3d::SetUVRotate(uint32_t index, float uvRotate) {
-	uvTransform_[index].rotate = uvRotate;
+	for (std::vector<Transform2d>& uvTransforms : lodUvTransforms_) {
+		uvTransforms[index].rotate = uvRotate;
+	}
 }
 
 // uv平行移動の設定
 void Object3d::SetUVTranslate(uint32_t index, const Vector2& uvTranslate) {
-	uvTransform_[index].translate = uvTranslate;
+	for (std::vector<Transform2d>& uvTransforms : lodUvTransforms_) {
+		uvTransforms[index].translate = uvTranslate;
+	}
 }
 
 //色の設定
@@ -251,7 +260,9 @@ void Object3d::SetTexture(uint32_t materialIndex, const std::string& filePath) {
 
 //UV座標の設定
 void Object3d::SetUVTransform(uint32_t index, const Transform2d& uvTransform) {
-	uvTransform_[index] = uvTransform;
+	for (std::vector<Transform2d>& uvTransforms : lodUvTransforms_) {
+		uvTransforms[index] = uvTransform;
+	}
 }
 
 //ブレンドモードの設定
@@ -285,25 +296,25 @@ const Vector3& Object3d::GetTranslate(uint32_t index) const {
 //uvスケールの取得
 const Vector2& Object3d::GetUVScale(uint32_t index) const {
 	// TODO: return ステートメントをここに挿入します
-	return uvTransform_[index].scale;
+	return lodUvTransforms_[0][index].scale;
 }
 
 //uv回転の取得
 const float Object3d::GetUVRotate(uint32_t index) const {
 	// TODO: return ステートメントをここに挿入します
-	return uvTransform_[index].rotate;
+	return lodUvTransforms_[0][index].rotate;
 }
 
 //uv平行移動の取得
 const Vector2& Object3d::GetUVTranslate(uint32_t index) const {
 	// TODO: return ステートメントをここに挿入します
-	return uvTransform_[index].translate;
+	return lodUvTransforms_[0][index].translate;
 }
 
 //UV座標の取得
 const Transform2d& Object3d::GetUVTransform(uint32_t index) const {
 	// TODO: return ステートメントをここに挿入します
-	return uvTransform_[index];
+	return lodUvTransforms_[0][index];
 }
 
 //色の取得

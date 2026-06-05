@@ -300,7 +300,7 @@ private://メンバ変数
 	//3Dオブジェクトの共通部分
 	Object3dCommon* object3dCommon_ = nullptr;
 	//UV座標
-	std::vector<Transform2d> uvTransform_;
+	std::array<std::vector<Transform2d>,kLODCount> lodUvTransforms_;
 	//DirectXの基盤部分
 	DirectXBase* directXBase_ = nullptr;
 	//SRVマネージャー

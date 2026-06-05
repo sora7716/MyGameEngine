@@ -108,11 +108,11 @@ void Object3d::Update() {
 
 		//LODの計算
 		Vector3 cameraWorldPos = camera_->GetWorldPos();
-		Vector3 objectWorldPos = { worldMatrix_.m[3][0],worldMatrix_.m[3][1],worldMatrix_.m[3][2] };
+		Vector3 objectWorldPos = GetWorldPos(i);
 
 		float distance = (objectWorldPos - cameraWorldPos).Length();
 
-		uint32_t lodIndex = SelectLOD(distance);
+		uint32_t lodIndex = SelectLOD(distance, gameObjects_[i].currentLOD);
 		//lodIndex番目がlodModelsに無かったら
 		if (!lodModels_[lodIndex]) {
 			continue;
@@ -131,13 +131,13 @@ void Object3d::Update() {
 		//描画カウントを加算
 		lodDrawCount_[lodIndex]++;
 
-		//モデルが存在したらメッシュごとにUV座標を適応
-		if (lodModels_[lodIndex]) {
-			for (uint32_t i = 0; i < lodModels_[lodIndex]->GetMeshes().size(); i++) {
-				uint32_t materialIndex = lodModels_[lodIndex]->GetMeshes()[i]->GetMaterialIndex();
-				lodModels_[lodIndex]->UVTransform(materialIndex, lodUvTransforms_[lodIndex][i]);
-			}
-		}
+		////モデルが存在したらメッシュごとにUV座標を適応
+		//if (lodModels_[lodIndex]) {
+		//	for (uint32_t i = 0; i < lodModels_[lodIndex]->GetMeshes().size(); i++) {
+		//		uint32_t materialIndex = lodModels_[lodIndex]->GetMeshes()[i]->GetMaterialIndex();
+		//		lodModels_[lodIndex]->UVTransform(materialIndex, lodUvTransforms_[lodIndex][i]);
+		//	}
+		//}
 	}
 
 }
@@ -445,17 +445,37 @@ void Object3d::UpdateVisibility(uint32_t index, const Matrix4x4& worldMatrix) {
 }
 
 //距離によってLODモデルの添え字を取得
-uint32_t Object3d::SelectLOD(float distance) const {
+uint32_t Object3d::SelectLOD(float distance, uint32_t currentLOD) const {
 	//LODモデルが無かった場合
 	if (lodModels_.empty()) {
 		return 0;
 	}
 
-	for (uint32_t i = 0; i < lodDistances_.size(); i++) {
-		if (distance < lodDistances_[i]) {
-			return i;
+	//LODモデル番号
+	uint32_t result = currentLOD;
+	//ヒステリシス幅
+	const float hysteresis = 5.0f;
+
+	//現在のLODをみて
+	switch (currentLOD) {
+	case 0:
+		if (distance >= lodDistances_[0]) {
+			result = 1;
 		}
+		break;
+	case 1:
+		if (distance < lodDistances_[0]) {
+			result = 0;
+		} else if (result >= lodDistances_[1]) {
+			result = 2;
+		}
+		break;
+	case 2:
+		if (distance < lodDistances_[1]) {
+			result = 1;
+		}
+		break;
 	}
 
-	return static_cast<uint32_t>(lodModels_.size() - 1);
+	return result;
 }

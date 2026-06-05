@@ -6,4 +6,5 @@ void GameObject::Initialize() {
 	isActive = true;
 	isEnabled = true;
 	tag = Tag::kNone;
+	currentLOD = 0;
 }

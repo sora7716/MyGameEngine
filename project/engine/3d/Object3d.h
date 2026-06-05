@@ -282,13 +282,14 @@ private://メンバ関数
 	/// <param name="index">インデックス</param>
 	/// <param name="worldMatrix">ワールド行列</param>
 	void UpdateVisibility(uint32_t index,const Matrix4x4& worldMatrix);
-
+	
 	/// <summary>
 	/// 距離によってLODモデルの添え字を取得
 	/// </summary>
 	/// <param name="distance">距離</param>
+	/// <param name="currentLOD">現在のLOD</param>
 	/// <returns>LODモデルの添え字</returns>
-	uint32_t SelectLOD(float distance)const;
+	uint32_t SelectLOD(float distance,uint32_t currentLOD)const;
 private://メンバ関数テーブル
 	//座標の更新をまとめた
 	static void (Object3d::* UpdateWorldMatrixTable[])(uint32_t index);

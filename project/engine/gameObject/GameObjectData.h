@@ -16,6 +16,7 @@ struct GameObject {
 	bool isActive;
 	bool isEnabled;
 	Tag tag;
+	uint32_t currentLOD;
 	/// <summary>
 	/// 初期化
 	/// </summary>

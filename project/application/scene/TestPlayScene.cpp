@@ -39,9 +39,9 @@ void TestPlayScene::Initialize(const SceneContext& sceneContext) {
 	object3d_ = std::make_unique<Object3d>();
 	object3d_->Initialize(sceneContext_.object3dCommon, &camera_, static_cast<uint32_t>(gameObjects_.size()));
 	//object3d_->SetModel("multiMaterial");
-	object3d_->SetLODModel(0, "height");
-	object3d_->SetLODModel(1, "medium");
-	object3d_->SetLODModel(2, "low");
+	object3d_->SetLODModel(0, "dekanu");
+	object3d_->SetLODModel(1, "dekanu");
+	object3d_->SetLODModel(2, "dekanu");
 
 	//for (uint32_t i = 0; i < object3d_->GetModel()->GetMeshes().size(); i++) {
 	//	transform2ds_.push_back({ object3d_->GetUVScale(i),object3d_->GetUVRotate(i),object3d_->GetUVTranslate(i) });

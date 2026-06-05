@@ -30,13 +30,16 @@ void TestPlayScene::Initialize(const SceneContext& sceneContext) {
 	//box_->SetModel("cube");
 
 	gameObjects_.resize(3);
+	int32_t index = 0;
 	for (GameObject& gameObject : gameObjects_) {
 		gameObject.Initialize();
-		gameObject.transform.translate.x *= 2.0f;
+		gameObject.transform.translate.x += index * 10.0f;
+		index++;
 	}
 	object3d_ = std::make_unique<Object3d>();
 	object3d_->Initialize(sceneContext_.object3dCommon, &camera_, static_cast<uint32_t>(gameObjects_.size()));
 	object3d_->SetModel("multiMaterial");
+	//object3d_->SetModel("low");
 
 	for (uint32_t i = 0; i < object3d_->GetModel()->GetMeshes().size(); i++) {
 		transform2ds_.push_back({ object3d_->GetUVScale(i),object3d_->GetUVRotate(i),object3d_->GetUVTranslate(i) });
@@ -90,7 +93,7 @@ void TestPlayScene::Debug() {
 	//ImGui::End();
 
 	ImGui::Begin("object3d");
-	
+
 	for (int32_t i = 0; i < gameObjects_.size(); i++) {
 		ImGui::PushID(i);
 
@@ -100,7 +103,7 @@ void TestPlayScene::Debug() {
 		}
 
 		ImGui::PopID();
-	}	
+	}
 	//for (uint32_t i = 0; i < transform2ds_.size(); i++) {
 	//	ImGui::PushID(i);
 	//	ImGui::DragFloat2("uvScale", &transform2ds_[i].scale.x, 0.1f);

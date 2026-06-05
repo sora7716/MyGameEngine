@@ -66,6 +66,13 @@ void GameObjectList::LoadModel() {
 	core_->GetModelManager()->LoadModel("test", "base", "axis.obj");
 	//壁
 	core_->GetModelManager()->LoadModel("wall", "cube", "cube.obj");
+
+	//高
+	core_->GetModelManager()->LoadModel("height", "height", "height.obj");
+	//中
+	core_->GetModelManager()->LoadModel("medium", "medium", "medium.obj");
+	//低
+	core_->GetModelManager()->LoadModel("low", "low", "low.obj");
 }
 
 //カメラの生成

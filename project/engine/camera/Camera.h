@@ -106,6 +106,12 @@ public://メンバ関数
 	const Vector3& GetTranslate()const;
 
 	/// <summary>
+	/// ワールド座標の取得
+	/// </summary>
+	/// <returns>ワールド座標</returns>
+	Vector3 GetWorldPos()const;
+
+	/// <summary>
 	/// ニアクリップ距離の取得
 	/// </summary>
 	/// <returns></returns>

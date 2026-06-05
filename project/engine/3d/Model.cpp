@@ -14,7 +14,7 @@
 /// </summary>
 /// <param name="node">assimpのノード</param>
 /// <returns>ノード</returns>
-Node ReadNode(aiNode* node) {
+static Node ReadNode(aiNode* node) {
 	Node result;
 	//nodeのlocalMatrixを取得
 	aiMatrix4x4 aiLocalMatrix = node->mTransformation;

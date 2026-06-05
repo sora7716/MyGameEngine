@@ -27,7 +27,7 @@ void Camera::Update() {
 }
 
 //オイラー角の設定
-void Camera::SetEulerAngle(const Vector3& eulerAngle){
+void Camera::SetEulerAngle(const Vector3& eulerAngle) {
 	transform_.eulerAngle = eulerAngle;
 	transform_.quaternion = Quaternion::MakeQuaternionForEulerAngle(transform_.eulerAngle);
 }
@@ -102,6 +102,11 @@ const Quaternion& Camera::GetQuaternion() const {
 const Vector3& Camera::GetTranslate() const {
 	// TODO: return ステートメントをここに挿入します
 	return transform_.translate;
+}
+
+//ワールド座標の取得
+Vector3 Camera::GetWorldPos() const {
+	return { worldMatrix_.m[3][0],worldMatrix_.m[3][1],worldMatrix_.m[3][2] };
 }
 
 //ニアクリップ距離の取得

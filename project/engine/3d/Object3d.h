@@ -3,12 +3,13 @@
 #include "GameObjectData.h"
 #include "BlendMode.h"
 #include "WorldTransform.h"
+#include "PrimitiveData.h"
+#include "RenderingData.h"
 #include <vector>
 #include <string>
 #include <wrl.h>
 #include <d3d12.h>
-#include "RenderingData.h"
-#include "PrimitiveData.h"
+#include <array>
 //前方宣言
 class DirectXBase;
 class SRVManager;
@@ -57,6 +58,13 @@ public://メンバ関数
 	/// </summary>
 	/// <param name="name">モデルの名前</param>
 	void SetModel(const std::string& name);
+
+	/// <summary>
+	/// LODモデルの設定
+	/// </summary>
+	/// <param name="lodIndex">インデックス</param>
+	/// <param name="modelName">モデル名</param>
+	void SetLODModel(uint32_t lodIndex, const std::string& modelName);
 
 	/// <summary>
 	/// カメラの設定
@@ -116,9 +124,9 @@ public://メンバ関数
 	/// <summary>
 	/// 色の設定
 	/// </summary>
-	/// <param name="index">インデックス</param>
+	/// <param name="materialIndex">マテリアルの検索キー</param>
 	/// <param name="color">色</param>
-	void SetColor(uint32_t index, const Vector4& color);
+	void SetColor(uint32_t materialIndex, const Vector4& color);
 
 	/// <summary>
 	/// 親の設定
@@ -129,9 +137,9 @@ public://メンバ関数
 	/// <summary>
 	/// テクスチャの変更
 	/// </summary>
-	/// <param name="index">インデックス</param>
+	/// <param name="materialIndex">マテリアルの検索キー</param>
 	/// <param name="filePath">ファイルパス</param>
-	void SetTexture(uint32_t index, const std::string& filePath);
+	void SetTexture(uint32_t materialIndex, const std::string& filePath);
 
 	/// <summary>
 	/// UV座標の設定
@@ -244,44 +252,80 @@ private://メンバ関数
 	/// 座標変換行列リソースのストラクチャバッファの生成
 	/// </summary>
 	void CreateStructuredBufferForWvp();
+	
+
+	/// <summary>
+	/// ワールド行列を作成
+	/// </summary>
+	/// <param name="index">インデックス</param>
+	/// <returns>ワールド行列</returns>
+	void MakeWorldMatrix(uint32_t index);
+
+	/// <summary>
+	/// ビルボード行列の作成
+	/// </summary>
+	/// <param name="index">インデックス</param>
+	/// <returns>ビルボード行列</returns>
+	void MakeBillboardWorldMatrix(uint32_t index);
 
 	/// <summary>
 	/// 座標の更新
 	/// </summary>
-	void UpdateTransform();
+	/// <param name="lodIndex">LODの検索キー</param>
+	/// <param name="drawIndex">描画の検索キー</param>
+	/// <param name="worldMatrix">ワールド行列</param>
+	void UpdateWorldTransform(uint32_t lodIndex,uint32_t drawIndex,const Matrix4x4& worldMatrix);
 
 	/// <summary>
-	/// ビルボード行列での更新
+	/// オブジェクトの表示状態の更新
 	/// </summary>
-	void UpdateTransformBillboard();
+	/// <param name="index">インデックス</param>
+	/// <param name="worldMatrix">ワールド行列</param>
+	void UpdateVisibility(uint32_t index,const Matrix4x4& worldMatrix);
+
+	/// <summary>
+	/// 距離によってLODモデルの添え字を取得
+	/// </summary>
+	/// <param name="distance">距離</param>
+	/// <returns>LODモデルの添え字</returns>
+	uint32_t SelectLOD(float distance)const;
 private://メンバ関数テーブル
 	//座標の更新をまとめた
-	static void (Object3d::* UpdateTransformTable[])();
+	static void (Object3d::* UpdateWorldMatrixTable[])(uint32_t index);
+	//定数
+private:
+	//LODの数
+	static inline const uint32_t kLODCount = 3;
 private://メンバ変数
 	//3Dオブジェクトの共通部分
 	Object3dCommon* object3dCommon_ = nullptr;
-
 	//UV座標
 	std::vector<Transform2d> uvTransform_;
 	//DirectXの基盤部分
 	DirectXBase* directXBase_ = nullptr;
 	//SRVマネージャー
 	SRVManager* srvManager_ = nullptr;
-	//3Dモデル
+	//モデル
 	Model* model_ = nullptr;
-	//ワールドトランスフォーム
-	WorldTransform* worldTransform_ = nullptr;
+	
+	//LOD用のモデル
+	std::vector <Model*>lodModels_;
+	//LODの距離
+	std::vector<float>lodDistances_;
+
+	std::array<std::vector<TransformationMatrix>, kLODCount>lodWvpData_;
 	//ワールドビュープロジェクションのリソース
-	ComPtr<ID3D12Resource>wvpResource_ = nullptr;
+	std::array<ComPtr<ID3D12Resource>, kLODCount> lodWvpResources_;
 	//ワールドビュープロジェクションのポインタ
-	TransformationMatrix* wvpPtr_ = nullptr;
-	std::vector<TransformationMatrix> wvpData_ = {};
+	std::array<TransformationMatrix*, kLODCount>lodWvpPtrs_;
+	std::array<uint32_t, kLODCount>lodSrvIndices_;
+	std::array<uint32_t, kLODCount>lodDrawCount_;
 	//カメラ
 	Camera* camera_ = nullptr;
 	//ワールド座標
 	std::vector<GameObject> gameObjects_ = {};
 	Transform3dMode transform3dMode_ = Transform3dMode::kNormal;
-	uint32_t srvIndex_ = 0;
+	Matrix4x4 worldMatrix_ = Matrix4x4::Identity4x4();
 	//親
 	const WorldTransform* parent_ = nullptr;
 	//ノード
@@ -291,9 +335,6 @@ private://メンバ変数
 
 	//マテリアル
 	Material material_ = {};
-
-	//生成数
-	uint32_t drawCount_ = 1;
 
 	//視錐台
 	PrimitiveData::Frustum* frustum_ = nullptr;

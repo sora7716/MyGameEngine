@@ -38,12 +38,14 @@ void TestPlayScene::Initialize(const SceneContext& sceneContext) {
 	}
 	object3d_ = std::make_unique<Object3d>();
 	object3d_->Initialize(sceneContext_.object3dCommon, &camera_, static_cast<uint32_t>(gameObjects_.size()));
-	object3d_->SetModel("multiMaterial");
-	//object3d_->SetModel("low");
+	//object3d_->SetModel("multiMaterial");
+	object3d_->SetLODModel(0, "height");
+	object3d_->SetLODModel(1, "medium");
+	object3d_->SetLODModel(2, "low");
 
-	for (uint32_t i = 0; i < object3d_->GetModel()->GetMeshes().size(); i++) {
-		transform2ds_.push_back({ object3d_->GetUVScale(i),object3d_->GetUVRotate(i),object3d_->GetUVTranslate(i) });
-	}
+	//for (uint32_t i = 0; i < object3d_->GetModel()->GetMeshes().size(); i++) {
+	//	transform2ds_.push_back({ object3d_->GetUVScale(i),object3d_->GetUVRotate(i),object3d_->GetUVTranslate(i) });
+	//}
 
 	frustum_ = std::make_unique<Primitive::Frustum>();
 	frustum_->Initialize(sceneContext_.directXBase, &camera_);
@@ -59,11 +61,11 @@ void TestPlayScene::Update() {
 	//ベースシーンの更新
 	BaseScene::Update();
 
-	for (uint32_t i = 0; i < object3d_->GetModel()->GetMeshes().size(); i++) {
-		object3d_->SetUVScale(i, transform2ds_[i].scale);
-		object3d_->SetUVRotate(i, transform2ds_[i].rotate);
-		object3d_->SetUVTranslate(i, transform2ds_[i].translate);
-	}
+	//for (uint32_t i = 0; i < object3d_->GetModel()->GetMeshes().size(); i++) {
+	//	object3d_->SetUVScale(i, transform2ds_[i].scale);
+	//	object3d_->SetUVRotate(i, transform2ds_[i].rotate);
+	//	object3d_->SetUVTranslate(i, transform2ds_[i].translate);
+	//}
 
 	PrimitiveData::Frustum frustumPtr = frustum_->GetFrustum();
 	object3d_->SetFrustum(&frustumPtr);
@@ -120,18 +122,6 @@ void TestPlayScene::Debug() {
 	ImGui::DragFloat3("translate", &cameraTranslate.x, 0.1f);
 	testPlayCamera->SetEulerAngle(cameraRotate);
 	testPlayCamera->SetTranslate(cameraTranslate);
-	for (int i = 0; i < 6; i++) {
-		const auto& plane = frustum_->GetFrustum().planes[i];
-
-		ImGui::Text(
-			"plane %d normal %.2f %.2f %.2f distance %.2f",
-			i,
-			plane.normal.x,
-			plane.normal.y,
-			plane.normal.z,
-			plane.distance
-		);
-	}
 	ImGui::End();
 
 	ImGui::Begin("cube");

@@ -31,7 +31,7 @@ void Player::Initialize(Object3dCommon* object3dCommon, Camera* camera, Input* i
 	entityGroup_.entity.resize(entityGroup_.objectCount);
 
 	entityGroup_.renderObject.object3d->Initialize(object3dCommon, camera, entityGroup_.objectCount);
-	entityGroup_.renderObject.object3d->SetModel(entityGroup_.modelName);
+	//entityGroup_.renderObject.object3d->SetModel(entityGroup_.modelName);
 	entityGroup_.renderObject.hitBox->Initialize(object3dCommon->GetWireframeObject3dCommon(), camera, ModelType::kCube, entityGroup_.objectCount);
 
 	//初期化

@@ -4,6 +4,7 @@
 #include "Camera.h"
 #include "ModelManager.h"
 #include "algorithms/Rendering.h"
+#include "GameObject.h"
 #include "ImGuiManager.h"
 #include "Model.h"
 #include "Mesh.h"
@@ -11,6 +12,12 @@
 #include "TextureManager.h"
 #include "algorithms/Collision.h"
 #include <cassert>
+//初期化
+void Object3dInstance::Initialize(GameObject* gameObject) {
+	this->gameObject = gameObject;
+	currentLOD = 0;
+}
+
 //メンバ関数テーブルの初期化
 void(Object3d::* Object3d::UpdateWorldMatrixTable[])(uint32_t index) = {
 	&MakeWorldMatrix,
@@ -26,7 +33,7 @@ Object3d::~Object3d() {
 }
 
 //初期化
-void Object3d::Initialize(Object3dCommon* object3dCommon, Camera* renderCamera, uint32_t instanceCount, Transform3dMode transform3dMode) {
+void Object3d::Initialize(Object3dCommon* object3dCommon, Camera* renderCamera, uint32_t maxInstanceCount, Transform3dMode transform3dMode) {
 	//3Dオブジェクトの共通部分
 	object3dCommon_ = object3dCommon;
 	//DirectXの基盤部分を受け取る
@@ -36,14 +43,11 @@ void Object3d::Initialize(Object3dCommon* object3dCommon, Camera* renderCamera, 
 	//座標変換のモード切替用変数
 	transform3dMode_ = transform3dMode;
 	//ゲームオブジェクトの数を決定
-	gameObjects_.resize(instanceCount);
-	//ゲームオブジェクトの初期化
-	for (GameObject& gameObject : gameObjects_) {
-		gameObject.Initialize();
-	}
+	maxInstanceCount_ = maxInstanceCount;
+	instanceData_.resize(maxInstanceCount);
 	for (uint32_t lod = 0; lod < kLODCount; lod++) {
 		//wvpのデータ数を決定
-		lodWvpData_[lod].resize(instanceCount);
+		lodWvpData_[lod].resize(maxInstanceCount);
 		for (TransformationMatrix& wvp : lodWvpData_[lod]) {
 			wvp.world = Matrix4x4::Identity4x4();
 			wvp.wvp = Matrix4x4::Identity4x4();
@@ -89,9 +93,15 @@ void Object3d::Update() {
 		node_ = lodModels_[0]->GetModelData().rootNode;
 	}
 
-	for (int32_t i = 0; i < gameObjects_.size(); i++) {
+	for (int32_t i = 0; i < instanceData_.size(); i++) {
+		GameObject* gameObject = instanceData_[i].gameObject;
+		//ゲームオブジェクトが存在してない場合
+		if (!gameObject) {
+			continue;
+		}
+
 		//生存フラグが立ってなければ
-		if (!gameObjects_[i].isActive) {
+		if (!gameObject->IsActive()) {
 			continue;
 		}
 
@@ -102,7 +112,7 @@ void Object3d::Update() {
 		UpdateVisibility(i, worldMatrix_);
 
 		//表示しなかったら
-		if (!gameObjects_[i].isEnabled) {
+		if (!instanceData_[i].isEnabled) {
 			continue;
 		}
 
@@ -112,8 +122,8 @@ void Object3d::Update() {
 
 		float distance = (objectWorldPos - cameraWorldPos).Length();
 
-		uint32_t lodIndex = SelectLOD(distance, gameObjects_[i].currentLOD);
-		gameObjects_[i].currentLOD = lodIndex;
+		uint32_t lodIndex = SelectLOD(distance, instanceData_[i].currentLOD);
+		instanceData_[i].currentLOD = lodIndex;
 		//lodIndex番目がlodModelsに無かったら
 		if (!lodModels_[lodIndex]) {
 			continue;
@@ -187,6 +197,21 @@ void Object3d::Draw() {
 	}
 }
 
+//インスタンスの追加
+uint32_t Object3d::AddInstance(GameObject* gameObject) {
+	//ゲームオブジェクトがNullじゃないか
+	assert(gameObject);
+	//インスタンスの最大数を超えてないか
+	assert(instanceData_.size() < maxInstanceCount_);
+
+	Object3dInstance instance;
+	instance.Initialize(gameObject);
+
+	instanceData_.push_back(instance);
+
+	return static_cast<uint32_t>(instanceData_.size() - 1);
+}
+
 //LODモデルの設定
 void Object3d::SetLODModel(uint32_t lodIndex, const std::string& modelName) {
 	if (lodModels_.size() <= lodIndex) {
@@ -211,26 +236,6 @@ void Object3d::SetLODModel(uint32_t lodIndex, const std::string& modelName) {
 //カメラの設定
 void Object3d::SetGameCamera(Camera* gameCamera) {
 	gameCamera_ = gameCamera;
-}
-
-// スケールの設定
-void Object3d::SetScale(uint32_t index, const Vector3& scale) {
-	gameObjects_[index].transform.scale = scale;
-}
-
-//クォータニオンの取得
-void Object3d::SetQuaternion(uint32_t index, const Quaternion& quaternion) {
-	gameObjects_[index].transform.quaternion = quaternion;
-}
-
-// 平行移動の設定
-void Object3d::SetTranslate(uint32_t index, const Vector3& translate) {
-	gameObjects_[index].transform.translate = translate;
-}
-
-//ゲームオブジェクトの設定
-void Object3d::SetGameObject(uint32_t index, const GameObject& gameObject) {
-	gameObjects_[index] = gameObject;
 }
 
 // uvスケールの設定
@@ -289,24 +294,6 @@ void Object3d::SetBlendMode(const BlendMode& blendMode) {
 	blendMode_ = blendMode;
 }
 
-//スケールの取得
-const Vector3& Object3d::GetScale(uint32_t index) const {
-	// TODO: return ステートメントをここに挿入します
-	return gameObjects_[index].transform.scale;
-}
-
-//クォータニオンの取得
-const Quaternion& Object3d::GetQuaternion(uint32_t index) const {
-	// TODO: return ステートメントをここに挿入します
-	return gameObjects_[index].transform.quaternion;
-}
-
-//平行移動の取得
-const Vector3& Object3d::GetTranslate(uint32_t index) const {
-	// TODO: return ステートメントをここに挿入します
-	return gameObjects_[index].transform.translate;
-}
-
 //uvスケールの取得
 const Vector2& Object3d::GetUVScale(uint32_t index) const {
 	// TODO: return ステートメントをここに挿入します
@@ -341,12 +328,6 @@ const Vector4& Object3d::GetColor(uint32_t index) const {
 	return defaultColor;
 }
 
-//ゲームオブジェクトの取得
-const GameObject& Object3d::GetGameObject(uint32_t index) const {
-	// TODO: return ステートメントをここに挿入します
-	return gameObjects_[index];
-}
-
 //モデルの取得
 Model* Object3d::GetModel() {
 	if (lodModels_[0]) {
@@ -370,15 +351,15 @@ Vector3 Object3d::GetWorldPos(uint32_t index) {
 //座標変換行列リソースの生成
 void Object3d::CreateTransformationMatrixResource() {
 	for (uint32_t lod = 0; lod < kLODCount; lod++) {
-		lodWvpData_[lod].resize(gameObjects_.size());
+		lodWvpData_[lod].resize(instanceData_.size());
 
 		// 配列サイズで確保
-		lodWvpResources_[lod] = directXBase_->CreateBufferResource(sizeof(TransformationMatrix) * gameObjects_.size());
+		lodWvpResources_[lod] = directXBase_->CreateBufferResource(sizeof(TransformationMatrix) * instanceData_.size());
 		//座標変換行列リソースにデータを書き込むためのアドレスを取得してtransformationMatrixDataに割り当てる
 		//書き込むためのアドレス
 		lodWvpResources_[lod]->Map(0, nullptr, reinterpret_cast<void**>(&lodWvpPtrs_[lod]));
 		//単位行列を書き込んでおく
-		for (uint32_t i = 0; i < static_cast<uint32_t>(gameObjects_.size()); i++) {
+		for (uint32_t i = 0; i < static_cast<uint32_t>(instanceData_.size()); i++) {
 			lodWvpPtrs_[lod][i].wvp = Matrix4x4::Identity4x4();
 			lodWvpPtrs_[lod][i].world = Matrix4x4::Identity4x4();
 			lodWvpPtrs_[lod][i].worldInverseTranspose = Matrix4x4::Identity4x4();
@@ -394,7 +375,7 @@ void Object3d::CreateStructuredBufferForWvp() {
 		srvManager_->CreateSRVForStructuredBuffer(
 			lodSrvIndices_[lod],
 			lodWvpResources_[lod].Get(),
-			static_cast<uint32_t>(gameObjects_.size()),
+			static_cast<uint32_t>(instanceData_.size()),
 			sizeof(TransformationMatrix)
 		);
 	}
@@ -402,8 +383,12 @@ void Object3d::CreateStructuredBufferForWvp() {
 
 //ワールド行列を作成
 void Object3d::MakeWorldMatrix(uint32_t index) {
+	GameObject* gameObject = instanceData_[index].gameObject;
+	//ゲームオブジェクトがNullじゃないか
+	assert(gameObject);
+
 	//このオブジェクト本来のワールド行列を求める
-	worldMatrix_ = Rendering::MakeAffineMatrix(gameObjects_[index].transform);
+	worldMatrix_ = Rendering::MakeAffineMatrix(gameObject->GetTransform());
 
 	if (parent_) {
 		worldMatrix_ = worldMatrix_ * parent_->GetWorldMatrix();
@@ -414,8 +399,12 @@ void Object3d::MakeWorldMatrix(uint32_t index) {
 
 //ビルボード行列の作成
 void Object3d::MakeBillboardWorldMatrix(uint32_t index) {
+	GameObject* gameObject = instanceData_[index].gameObject;
+	//ゲームオブジェクトがNullじゃないか
+	assert(gameObject);
+
 	//このオブジェクト本来のワールド行列を求める
-	worldMatrix_ = Rendering::MakeBillboardAffineMatrix(renderCamera_->GetWorldMatrix(), gameObjects_[index].transform);
+	worldMatrix_ = Rendering::MakeBillboardAffineMatrix(renderCamera_->GetWorldMatrix(), gameObject->GetTransform());
 
 	if (parent_) {
 		worldMatrix_ = worldMatrix_ * parent_->GetWorldMatrix();
@@ -455,7 +444,7 @@ void Object3d::UpdateVisibility(uint32_t index, const Matrix4x4& worldMatrix) {
 		}
 	}
 
-	gameObjects_[index].isEnabled = isVisible;
+	instanceData_[index].isEnabled = isVisible;
 }
 
 //距離によってLODモデルの添え字を取得

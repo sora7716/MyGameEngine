@@ -59,7 +59,7 @@ protected://メンバ変数
 	//シーンファクトリー
 	AbstractSceneFactory* sceneFactory_ = nullptr;
 	//コライダーマネージャー
-	std::unique_ptr<ColliderManager>colliderManager_ = nullptr;
+	//std::unique_ptr<ColliderManager>colliderManager_ = nullptr;
 	//描画用のカメラ
 	Camera renderCamera_;
 	//ゲームプレイ用のカメラ

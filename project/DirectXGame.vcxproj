@@ -11,20 +11,9 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="application\actor\ActorData.cpp" />
     <ClCompile Include="application\actor\camera\GameCamera.cpp" />
-    <ClCompile Include="application\actor\character\player\Player.cpp" />
-    <ClCompile Include="application\actor\field\BaseGround.cpp" />
-    <ClCompile Include="application\actor\field\FallingGround.cpp" />
-    <ClCompile Include="application\actor\field\Ground.cpp" />
-    <ClCompile Include="application\actor\field\JumpPad.cpp" />
-    <ClCompile Include="application\actor\field\SeesawPlatform.cpp" />
     <ClCompile Include="application\actor\field\StageTimer.cpp" />
-    <ClCompile Include="application\scene\GameOverScene.cpp" />
-    <ClCompile Include="application\scene\GameScene.cpp" />
-    <ClCompile Include="application\scene\ResultScene.cpp" />
     <ClCompile Include="application\scene\TestPlayScene.cpp" />
-    <ClCompile Include="application\scene\TitleScene.cpp" />
     <ClCompile Include="engine\2d\Object2d.cpp" />
     <ClCompile Include="engine\2d\Object2dCommon.cpp" />
     <ClCompile Include="engine\2d\Sprite.cpp" />
@@ -69,12 +58,10 @@
     <ClCompile Include="engine\debug\wireframe\Sphere.cpp" />
     <ClCompile Include="engine\framework\Framework.cpp" />
     <ClCompile Include="engine\framework\GameSystem.cpp" />
-    <ClCompile Include="engine\gameObject\ColliderData.cpp" />
-    <ClCompile Include="engine\gameObject\GameObjectData.cpp" />
+    <ClCompile Include="engine\gameObject\GameObject.cpp" />
     <ClCompile Include="engine\gameObject\GameObjectList.cpp" />
     <ClCompile Include="engine\input\Input.cpp" />
     <ClCompile Include="engine\main.cpp" />
-    <ClCompile Include="engine\math\algorithms\ColliderManager.cpp" />
     <ClCompile Include="engine\math\algorithms\Collision.cpp" />
     <ClCompile Include="engine\math\algorithms\Math.cpp" />
     <ClCompile Include="engine\math\algorithms\Physics.cpp" />
@@ -98,20 +85,9 @@
     <ClCompile Include="engine\worldTransform\WorldTransform.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="application\actor\ActorData.h" />
     <ClInclude Include="application\actor\camera\GameCamera.h" />
-    <ClInclude Include="application\actor\character\player\Player.h" />
-    <ClInclude Include="application\actor\field\BaseGround.h" />
-    <ClInclude Include="application\actor\field\FallingGround.h" />
-    <ClInclude Include="application\actor\field\Ground.h" />
-    <ClInclude Include="application\actor\field\JumpPad.h" />
-    <ClInclude Include="application\actor\field\SeesawPlatform.h" />
     <ClInclude Include="application\actor\field\StageTimer.h" />
-    <ClInclude Include="application\scene\GameOverScene.h" />
-    <ClInclude Include="application\scene\GameScene.h" />
-    <ClInclude Include="application\scene\ResultScene.h" />
     <ClInclude Include="application\scene\TestPlayScene.h" />
-    <ClInclude Include="application\scene\TitleScene.h" />
     <ClInclude Include="engine\2d\Object2d.h" />
     <ClInclude Include="engine\2d\Object2dCommon.h" />
     <ClInclude Include="engine\2d\Sprite.h" />
@@ -159,11 +135,9 @@
     <ClInclude Include="engine\debug\wireframe\Sphere.h" />
     <ClInclude Include="engine\framework\Framework.h" />
     <ClInclude Include="engine\framework\GameSystem.h" />
-    <ClInclude Include="engine\gameObject\ColliderData.h" />
-    <ClInclude Include="engine\gameObject\GameObjectData.h" />
+    <ClInclude Include="engine\gameObject\GameObject.h" />
     <ClInclude Include="engine\gameObject\GameObjectList.h" />
     <ClInclude Include="engine\input\Input.h" />
-    <ClInclude Include="engine\math\algorithms\ColliderManager.h" />
     <ClInclude Include="engine\math\algorithms\Collision.h" />
     <ClInclude Include="engine\math\algorithms\Math.h" />
     <ClInclude Include="engine\math\algorithms\Physics.h" />

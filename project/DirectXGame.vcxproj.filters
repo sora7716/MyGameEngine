@@ -207,12 +207,6 @@
     <ClCompile Include="engine\scene\SceneFactory.cpp">
       <Filter>engine\scene</Filter>
     </ClCompile>
-    <ClCompile Include="application\scene\GameScene.cpp">
-      <Filter>application\scene</Filter>
-    </ClCompile>
-    <ClCompile Include="application\scene\TitleScene.cpp">
-      <Filter>application\scene</Filter>
-    </ClCompile>
     <ClCompile Include="engine\debug\GlobalVariables.cpp">
       <Filter>engine\debug</Filter>
     </ClCompile>
@@ -240,14 +234,8 @@
     <ClCompile Include="engine\scene\SceneManager.cpp">
       <Filter>engine\scene</Filter>
     </ClCompile>
-    <ClCompile Include="application\actor\ActorData.cpp">
-      <Filter>application\actor</Filter>
-    </ClCompile>
     <ClCompile Include="engine\math\Quaternion.cpp">
       <Filter>engine\math</Filter>
-    </ClCompile>
-    <ClCompile Include="application\scene\ResultScene.cpp">
-      <Filter>application\scene</Filter>
     </ClCompile>
     <ClCompile Include="engine\math\PhysicsData.cpp">
       <Filter>engine\math</Filter>
@@ -255,35 +243,11 @@
     <ClCompile Include="engine\math\RenderingData.cpp">
       <Filter>engine\math</Filter>
     </ClCompile>
-    <ClCompile Include="application\actor\field\Ground.cpp">
-      <Filter>application\actor\field</Filter>
-    </ClCompile>
-    <ClCompile Include="application\actor\field\BaseGround.cpp">
-      <Filter>application\actor\field</Filter>
-    </ClCompile>
-    <ClCompile Include="application\actor\field\FallingGround.cpp">
-      <Filter>application\actor\field</Filter>
-    </ClCompile>
-    <ClCompile Include="application\actor\field\JumpPad.cpp">
-      <Filter>application\actor\field</Filter>
-    </ClCompile>
-    <ClCompile Include="application\actor\field\SeesawPlatform.cpp">
-      <Filter>application\actor\field</Filter>
-    </ClCompile>
-    <ClCompile Include="application\actor\character\player\Player.cpp">
-      <Filter>application\actor\character</Filter>
-    </ClCompile>
     <ClCompile Include="application\actor\camera\GameCamera.cpp">
       <Filter>application\actor</Filter>
     </ClCompile>
     <ClCompile Include="application\actor\field\StageTimer.cpp">
       <Filter>application\actor</Filter>
-    </ClCompile>
-    <ClCompile Include="application\scene\GameOverScene.cpp">
-      <Filter>application\scene</Filter>
-    </ClCompile>
-    <ClCompile Include="engine\math\algorithms\ColliderManager.cpp">
-      <Filter>engine\math\algorithms</Filter>
     </ClCompile>
     <ClCompile Include="engine\math\algorithms\Collision.cpp">
       <Filter>engine\math\algorithms</Filter>
@@ -315,10 +279,7 @@
     <ClCompile Include="engine\3d\Box.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="engine\gameObject\ColliderData.cpp">
-      <Filter>application\gameObject</Filter>
-    </ClCompile>
-    <ClCompile Include="engine\gameObject\GameObjectData.cpp">
+    <ClCompile Include="engine\gameObject\GameObject.cpp">
       <Filter>application\gameObject</Filter>
     </ClCompile>
     <ClCompile Include="engine\gameObject\GameObjectList.cpp">
@@ -476,12 +437,6 @@
     <ClInclude Include="engine\scene\SceneFactory.h">
       <Filter>engine\scene</Filter>
     </ClInclude>
-    <ClInclude Include="application\scene\GameScene.h">
-      <Filter>application\scene</Filter>
-    </ClInclude>
-    <ClInclude Include="application\actor\ActorData.h">
-      <Filter>application\actor</Filter>
-    </ClInclude>
     <ClInclude Include="engine\debug\GlobalVariables.h">
       <Filter>engine\debug</Filter>
     </ClInclude>
@@ -496,9 +451,6 @@
     </ClInclude>
     <ClInclude Include="engine\base\GraphicsPipelineData.h">
       <Filter>engine\base</Filter>
-    </ClInclude>
-    <ClInclude Include="application\scene\ResultScene.h">
-      <Filter>application\scene</Filter>
     </ClInclude>
     <ClInclude Include="engine\2d\TextRasterizer.h">
       <Filter>engine\2d</Filter>
@@ -527,35 +479,11 @@
     <ClInclude Include="engine\math\Quaternion.h">
       <Filter>engine\math</Filter>
     </ClInclude>
-    <ClInclude Include="application\actor\field\Ground.h">
-      <Filter>application\actor\field</Filter>
-    </ClInclude>
-    <ClInclude Include="application\actor\field\BaseGround.h">
-      <Filter>application\actor\field</Filter>
-    </ClInclude>
-    <ClInclude Include="application\actor\field\FallingGround.h">
-      <Filter>application\actor\field</Filter>
-    </ClInclude>
-    <ClInclude Include="application\actor\field\JumpPad.h">
-      <Filter>application\actor\field</Filter>
-    </ClInclude>
-    <ClInclude Include="application\actor\field\SeesawPlatform.h">
-      <Filter>application\actor\field</Filter>
-    </ClInclude>
-    <ClInclude Include="application\actor\character\player\Player.h">
-      <Filter>application\actor\character</Filter>
-    </ClInclude>
     <ClInclude Include="application\actor\camera\GameCamera.h">
       <Filter>application\actor</Filter>
     </ClInclude>
     <ClInclude Include="application\actor\field\StageTimer.h">
       <Filter>application\actor</Filter>
-    </ClInclude>
-    <ClInclude Include="application\scene\GameOverScene.h">
-      <Filter>application\scene</Filter>
-    </ClInclude>
-    <ClInclude Include="engine\math\algorithms\ColliderManager.h">
-      <Filter>engine\math\algorithms</Filter>
     </ClInclude>
     <ClInclude Include="engine\math\algorithms\Collision.h">
       <Filter>engine\math\algorithms</Filter>
@@ -587,13 +515,7 @@
     <ClInclude Include="engine\3d\Box.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="application\scene\TitleScene.h">
-      <Filter>application\scene</Filter>
-    </ClInclude>
-    <ClInclude Include="engine\gameObject\ColliderData.h">
-      <Filter>application\gameObject</Filter>
-    </ClInclude>
-    <ClInclude Include="engine\gameObject\GameObjectData.h">
+    <ClInclude Include="engine\gameObject\GameObject.h">
       <Filter>application\gameObject</Filter>
     </ClInclude>
     <ClInclude Include="engine\gameObject\GameObjectList.h">

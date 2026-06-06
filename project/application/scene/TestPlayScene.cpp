@@ -2,6 +2,7 @@
 #include "Input.h"
 #include "CameraManager.h"
 #include "ImGuiManager.h"
+#include "GameObject.h"
 #include "Box.h"
 #include "Object3d.h"
 #include "Model.h"
@@ -29,21 +30,23 @@ void TestPlayScene::Initialize(const SceneContext& sceneContext) {
 	//box_ = std::make_unique<Box>();
 	//box_->Initialize(sceneContext_.directXBase, sceneContext_.textureManager, &camera_);
 	//box_->SetModel("cube");
-
-	gameObjects_.resize(3);
-	int32_t index = 0;
-	for (GameObject& gameObject : gameObjects_) {
-		gameObject.Initialize();
-		gameObject.transform.translate.x += index * 10.0f;
-		index++;
-	}
 	object3d_ = std::make_unique<Object3d>();
-	object3d_->Initialize(sceneContext_.object3dCommon, &renderCamera_, static_cast<uint32_t>(gameObjects_.size()));
+	object3d_->Initialize(sceneContext_.object3dCommon, &renderCamera_, 100);
 	object3d_->SetGameCamera(gameCamera_);
 	//object3d_->SetModel("multiMaterial");
 	object3d_->SetLODModel(0, "height");
 	object3d_->SetLODModel(1, "medium");
 	object3d_->SetLODModel(2, "low");
+
+	std::unique_ptr<GameObject>tree = std::make_unique<GameObject>();
+	tree->Initialize("tree");
+	tree->GetTransform().translate = { 0.0f,0.0f,10.0f };
+	tree->GetTransform().scale = Vector3::MakeAllOne();
+
+	GameObject* treePtr = tree.get();
+
+	gameObjects_.push_back(std::move(tree));
+	object3d_->AddInstance(treePtr);
 
 	//for (uint32_t i = 0; i < object3d_->GetModel()->GetMeshes().size(); i++) {
 	//	transform2ds_.push_back({ object3d_->GetUVScale(i),object3d_->GetUVRotate(i),object3d_->GetUVTranslate(i) });
@@ -68,10 +71,6 @@ void TestPlayScene::Update() {
 	//	object3d_->SetUVTranslate(i, transform2ds_[i].translate);
 	//}
 
-	for (uint32_t i = 0; i < gameObjects_.size(); i++) {
-		gameObjects_[i] = object3d_->GetGameObject(i);
-		object3d_->SetGameObject(i, gameObjects_[i]);
-	}
 	object3d_->Update();
 
 	frustum_->Update();
@@ -99,7 +98,7 @@ void TestPlayScene::Debug() {
 		ImGui::PushID(i);
 
 		if (ImGui::TreeNode(("object" + std::to_string(i)).c_str())) {
-			ImGuiManager::DebugGameObject(gameObjects_[i]);
+			ImGuiManager::DragTransform(gameObjects_[i]->GetTransform());
 			ImGui::TreePop();
 		}
 

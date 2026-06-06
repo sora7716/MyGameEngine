@@ -1,5 +1,5 @@
 #pragma once
-#include "GameObjectData.h"
+#include "GameObject.h"
 #include "PhysicsData.h"
 #include "PrimitiveData.h"
 #include <cstdint>

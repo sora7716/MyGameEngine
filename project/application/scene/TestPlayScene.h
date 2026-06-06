@@ -1,6 +1,5 @@
 #pragma once
 #include "BaseScene.h"
-#include "GameObjectData.h"
 #include "ColliderData.h"
 #include "Input.h"
 #include <vector>
@@ -8,6 +7,7 @@
 //前方宣言
 class Box;
 class Object3d;
+class GameObject;
 
 namespace Primitive {
 	class Cube;
@@ -62,7 +62,7 @@ private://メンバ変数
 	std::unique_ptr<Box>box_ = nullptr;
 
 	std::unique_ptr<Object3d>object3d_ = nullptr;
-	std::vector<GameObject>gameObjects_;
+	std::vector<std::unique_ptr<GameObject>>gameObjects_;
 
 	std::vector<Transform2d>transform2ds_;
 

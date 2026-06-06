@@ -69,24 +69,6 @@ void ImGuiManager::Draw() {
 #endif // USE_IMGUI
 }
 
-//デバッグで動かせるものをツリー上に配置
-void ImGuiManager::TreeNodeForEntityGroup(const std::string& label, EntityGroup& entityGroup) {
-#ifdef USE_IMGUI
-	for (int32_t i = 0; i < entityGroup.objectCount; i++) {
-		ImGui::PushID(i);
-
-		if (ImGui::TreeNode((label + std::to_string(i)).c_str())) {
-			ImGuiManager::DebugGameObject(entityGroup.entity[i].gameObject);
-			ImGui::DragFloat3("velocity", &entityGroup.entity[i].physicsData.velocity.x, 0.1f);
-			ImGui::DragFloat3("acceleration", &entityGroup.entity[i].physicsData.acceleration.x, 0.1f);
-			ImGui::TreePop();
-		}
-
-		ImGui::PopID();
-	}
-#endif // USE_IMGUI
-}
-
 //トランスフォームデータ用のImGui
 void ImGuiManager::DragTransform(Transform& transformData) {
 #ifdef USE_IMGUI
@@ -130,14 +112,6 @@ void ImGuiManager::DragSphere(PrimitiveData::Sphere& sphere) {
 #ifdef USE_IMGUI
 	ImGui::DragFloat3("center", &sphere.center.x, 0.1f);
 	ImGui::DragFloat("radius", &sphere.radius, 0.01f);
-#endif // USE_IMGUI
-}
-
-//ゲームオブジェクトのデバッグ
-void ImGuiManager::DebugGameObject(GameObject& gameObject) {
-#ifdef USE_IMGUI
-	ImGui::Checkbox("isAlive", &gameObject.isActive);
-	DragTransform(gameObject.transform);
 #endif // USE_IMGUI
 }
 

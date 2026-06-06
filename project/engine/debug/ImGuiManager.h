@@ -1,5 +1,4 @@
 #pragma once
-#include "GameObjectData.h"
 #include "ActorData.h"
 #ifdef USE_IMGUI
 #include "imgui/imgui.h"
@@ -48,13 +47,6 @@ public://メンバ関数
 	void Draw();
 
 	/// <summary>
-	/// デバッグで動かせるものをツリー上に配置
-	/// </summary>
-	/// <param name="label">ラベル</param>
-	/// <param name="entityGroup">エンティティグループ</param>
-	static void TreeNodeForEntityGroup(const std::string& label,EntityGroup& entityGroup);
-
-	/// <summary>
 	/// トランスフォームデータ用のImGui
 	/// </summary>
 	/// <param name="transformData">トランスフォームデータ</param>
@@ -77,12 +69,6 @@ public://メンバ関数
 	/// </summary>
 	/// <param name="sphere">球</param>
 	static void DragSphere(PrimitiveData::Sphere& sphere);
-
-	/// <summary>
-	/// ゲームオブジェクトのデバッグ
-	/// </summary>
-	/// <param name="gameObject">ゲームオブジェクト</param>
-	static void DebugGameObject(GameObject& gameObject);
 
 	/// <summary>
 	/// int型でcheckBoxを表示する

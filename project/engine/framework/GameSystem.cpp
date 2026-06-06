@@ -5,7 +5,8 @@
 void GameSystem::Initialize() {
 	Framework::Initialize();
 	//タイトルシーンを呼び出す
-	core_->GetSceneManager()->ChangeScene("Title");
+	//core_->GetSceneManager()->ChangeScene("Title");
+	core_->GetSceneManager()->ChangeScene("TestPlay");
 #ifdef _DEBUG
 	//シーンの管理
 	core_->GetSceneManager()->Update();

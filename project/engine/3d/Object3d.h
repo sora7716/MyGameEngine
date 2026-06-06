@@ -1,6 +1,5 @@
 #pragma once
 #include "ResourceData.h"
-#include "GameObjectData.h"
 #include "BlendMode.h"
 #include "WorldTransform.h"
 #include "PrimitiveData.h"
@@ -16,6 +15,20 @@ class SRVManager;
 class Object3dCommon;
 class Camera;
 class Model;
+class GameObject;
+
+//3dオブジェクトのインスタンスデータ
+struct Object3dInstance {
+	GameObject* gameObject;
+	bool isEnabled;
+	uint32_t currentLOD;
+
+	/// <summary>
+	/// 初期化
+	/// </summary>
+	/// <param name="gameObject">ゲームオブジェクト</param>
+	void Initialize(GameObject*gameObject);
+};
 
 /// <summary>
 /// 3Dオブジェクト
@@ -39,9 +52,9 @@ public://メンバ関数
 	/// </summary>
 	/// <param name="object3dCommon">3dオブジェクトの共通部分</param>
 	/// <param name="renderCamera">描画で使用するカメラ</param>
-	/// <param name="instanceCount">オブジェクトの表示したい数</param>
+	/// <param name="maxInstanceCount">オブジェクトの最大数</param>
 	/// <param name="transformMode">トランスフォームモード</param>
-	void Initialize(Object3dCommon* object3dCommon, Camera* renderCamera, uint32_t instanceCount = 1, Transform3dMode transform3dMode = Transform3dMode::kNormal);
+	void Initialize(Object3dCommon* object3dCommon, Camera* renderCamera, uint32_t maxInstanceCount = 1, Transform3dMode transform3dMode = Transform3dMode::kNormal);
 
 	/// <summary>
 	/// 更新
@@ -54,10 +67,11 @@ public://メンバ関数
 	void Draw();
 
 	/// <summary>
-	/// モデルの設定
+	/// インスタンスの追加
 	/// </summary>
-	/// <param name="name">モデルの名前</param>
-	//void SetModel(const std::string& name);
+	/// <param name="gameObject">ゲームオブジェクト</param>
+	/// <returns></returns>
+	uint32_t AddInstance(GameObject* gameObject);
 
 	/// <summary>
 	/// LODモデルの設定
@@ -71,34 +85,6 @@ public://メンバ関数
 	/// </summary>
 	/// <param name="gameCamera">ゲームで使用するカメラ</param>
 	void SetGameCamera(Camera* gameCamera);
-
-	/// <summary>
-	/// スケールの設定
-	/// </summary>
-	/// <param name="index">インデックス</param>
-	/// <param name="scale">スケール</param>
-	void SetScale(uint32_t index, const Vector3& scale);
-
-	/// <summary>
-	/// クォータニオンの設定
-	/// </summary>
-	/// <param name="index">インデックス</param>
-	/// <param name="quaternion">クォータニオン</param>
-	void SetQuaternion(uint32_t index, const Quaternion& quaternion);
-
-	/// <summary>
-	/// 平行移動の設定
-	/// </summary>
-	/// <param name="index">インデックス</param>
-	/// <param name="translate">平行移動</param>
-	void SetTranslate(uint32_t index, const Vector3& translate);
-
-	/// <summary>
-	/// ゲームオブジェクトの設定
-	/// </summary>
-	/// <param name="index">インデックス</param>
-	/// <param name="gameObject">ゲームオブジェクト</param>
-	void SetGameObject(uint32_t index, const GameObject& gameObject);
 
 	/// <summary>
 	/// uvスケールの設定
@@ -155,27 +141,6 @@ public://メンバ関数
 	void SetBlendMode(const BlendMode& blendMode);
 
 	/// <summary>
-	/// スケールの取得
-	/// </summary>
-	/// <param name="index">インデックス</param>
-	/// <returns>スケール</returns>
-	const Vector3& GetScale(uint32_t index)const;
-
-	/// <summary>
-	/// クォータニオンの取得
-	/// </summary>
-	/// <param name="index">インデックス</param>
-	/// <returns>クォータニオン</returns>
-	const Quaternion& GetQuaternion(uint32_t index)const;
-
-	/// <summary>
-	/// 平行移動の取得
-	/// </summary>
-	/// <param name="index">インデックス</param>
-	/// <returns>平行移動</returns>
-	const Vector3& GetTranslate(uint32_t index)const;
-
-	/// <summary>
 	/// uvスケールの取得
 	/// </summary>
 	/// <param name="index">インデックス</param>
@@ -209,13 +174,6 @@ public://メンバ関数
 	/// <param name="index">インデックス</param>
 	/// <returns>色</returns>
 	const Vector4& GetColor(uint32_t index)const;
-
-	/// <summary>
-	/// ゲームオブジェクトの取得
-	/// </summary>
-	/// <param name="index">インデックス</param>
-	/// <returns>ゲームオブジェクト</returns>
-	const GameObject& GetGameObject(uint32_t index)const;
 
 	/// <summary>
 	/// モデルの取得
@@ -319,9 +277,13 @@ private://メンバ変数
 	//ゲームで使用するカメラ
 	Camera* gameCamera_ = nullptr;
 
-	//ワールド座標
-	std::vector<GameObject> gameObjects_ = {};
+	//インスタンスデータ
+	std::vector<Object3dInstance> instanceData_ = {};
+	//インスタンスの最大数
+	uint32_t maxInstanceCount_ = 0;
+	//オブジェクトの見た目
 	Transform3dMode transform3dMode_ = Transform3dMode::kNormal;
+	//ワールド行列
 	Matrix4x4 worldMatrix_ = Matrix4x4::Identity4x4();
 	//親
 	const WorldTransform* parent_ = nullptr;

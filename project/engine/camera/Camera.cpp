@@ -1,17 +1,26 @@
 #include "Camera.h"
-#include "algorithms/Math.h"
 #include "WinApi.h"
+#include "algorithms/Math.h"
 
-/// <summary>
-/// コンストラクタ
-/// </summary>
+
+//コンストラクタ
 Camera::Camera() {
+}
+
+//デストラクタ
+Camera::~Camera() {
+}
+
+//初期化
+void Camera::Initialize(DirectXBase* directXBase) {
 	transform_.Initialize();
 	transform_.translate.z = -10.0f;
 	fovY_ = 0.45f;
 	aspectRation_ = float(WinApi::kClientWidth) / float(WinApi::kClientHeight);
 	nearClip_ = 0.1f;
 	farClip_ = 100.0f;
+	//視錐台のローカルの頂点を作成
+	frustum_.localCorners = Math::CreateFrustumVertex(nearClip_, farClip_, fovY_, aspectRation_);
 }
 
 //更新
@@ -24,6 +33,10 @@ void Camera::Update() {
 	projectionMatrix_ = Rendering::MakePerspectiveFovMatrix(fovY_, aspectRation_, nearClip_, farClip_);
 	//ビュープロジェクション行列の作成
 	viewProjectionMatrix_ = viewMatrix_ * projectionMatrix_;
+
+	//視錐台のデータを作成
+	frustum_ = Math::CreateFrustumData(frustum_.localCorners, worldMatrix_);
+
 }
 
 //オイラー角の設定
@@ -107,6 +120,12 @@ const Vector3& Camera::GetTranslate() const {
 //ワールド座標の取得
 Vector3 Camera::GetWorldPos() const {
 	return { worldMatrix_.m[3][0],worldMatrix_.m[3][1],worldMatrix_.m[3][2] };
+}
+
+//視錐台の取得
+PrimitiveData::Frustum& Camera::GetFrustum() {
+	// TODO: return ステートメントをここに挿入します
+	return frustum_;
 }
 
 //ニアクリップ距離の取得

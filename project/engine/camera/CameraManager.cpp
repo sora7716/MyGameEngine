@@ -6,6 +6,11 @@ CameraManager::~CameraManager() {
 
 }
 
+//初期化
+void CameraManager::Initialize(DirectXBase* directXBase) {
+	directXBase_ = directXBase;
+}
+
 //更新
 void CameraManager::Update(){
 	for (auto& [name, camera] : cameras_) {
@@ -22,6 +27,7 @@ void CameraManager::CreateCamera(const std::string& name){
 	}
 	//カメラの生成
 	std::unique_ptr<Camera>camera = std::make_unique<Camera>();
+	camera->Initialize(directXBase_);
 
 	//カメラをmapコンテナに格納する
 	cameras_.insert(std::make_pair(name, std::move(camera)));

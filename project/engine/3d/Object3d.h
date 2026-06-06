@@ -27,7 +27,7 @@ public://メンバ関数
 	/// <summary>
 	/// コンストラクタ
 	/// </summary>
-	Object3d() = default;
+	Object3d();
 
 	/// <summary>
 	/// デストラクタ
@@ -38,10 +38,10 @@ public://メンバ関数
 	/// 初期化
 	/// </summary>
 	/// <param name="object3dCommon">3dオブジェクトの共通部分</param>
-	/// <param name="camera">カメラ</param>
+	/// <param name="renderCamera">描画で使用するカメラ</param>
 	/// <param name="instanceCount">オブジェクトの表示したい数</param>
 	/// <param name="transformMode">トランスフォームモード</param>
-	void Initialize(Object3dCommon* object3dCommon, Camera* camera, uint32_t instanceCount = 1, Transform3dMode transform3dMode = Transform3dMode::kNormal);
+	void Initialize(Object3dCommon* object3dCommon, Camera* renderCamera, uint32_t instanceCount = 1, Transform3dMode transform3dMode = Transform3dMode::kNormal);
 
 	/// <summary>
 	/// 更新
@@ -57,7 +57,7 @@ public://メンバ関数
 	/// モデルの設定
 	/// </summary>
 	/// <param name="name">モデルの名前</param>
-	void SetModel(const std::string& name);
+	//void SetModel(const std::string& name);
 
 	/// <summary>
 	/// LODモデルの設定
@@ -67,10 +67,10 @@ public://メンバ関数
 	void SetLODModel(uint32_t lodIndex, const std::string& modelName);
 
 	/// <summary>
-	/// カメラの設定
+	/// ゲームで使用するカメラの設定
 	/// </summary>
-	/// <param name="camera">カメラ</param>
-	void SetCamera(Camera* camera);
+	/// <param name="gameCamera">ゲームで使用するカメラ</param>
+	void SetGameCamera(Camera* gameCamera);
 
 	/// <summary>
 	/// スケールの設定
@@ -153,12 +153,6 @@ public://メンバ関数
 	/// </summary>
 	/// <param name="blendMode"></param>
 	void SetBlendMode(const BlendMode& blendMode);
-
-	/// <summary>
-	/// 視錐台の設定
-	/// </summary>
-	/// <param name="frustum">視錐台</param>
-	void SetFrustum(PrimitiveData::Frustum* frustum);
 
 	/// <summary>
 	/// スケールの取得
@@ -253,7 +247,6 @@ private://メンバ関数
 	/// </summary>
 	void CreateStructuredBufferForWvp();
 	
-
 	/// <summary>
 	/// ワールド行列を作成
 	/// </summary>
@@ -321,8 +314,11 @@ private://メンバ変数
 	std::array<TransformationMatrix*, kLODCount>lodWvpPtrs_;
 	std::array<uint32_t, kLODCount>lodSrvIndices_;
 	std::array<uint32_t, kLODCount>lodDrawCount_;
-	//カメラ
-	Camera* camera_ = nullptr;
+	//描画用のカメラ
+	Camera* renderCamera_ = nullptr;
+	//ゲームで使用するカメラ
+	Camera* gameCamera_ = nullptr;
+
 	//ワールド座標
 	std::vector<GameObject> gameObjects_ = {};
 	Transform3dMode transform3dMode_ = Transform3dMode::kNormal;
@@ -336,8 +332,5 @@ private://メンバ変数
 
 	//マテリアル
 	Material material_ = {};
-
-	//視錐台
-	PrimitiveData::Frustum* frustum_ = nullptr;
 };
 

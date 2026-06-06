@@ -185,3 +185,59 @@ PrimitiveData::Plane Math::MakePlane(const Vector3& p0, const Vector3& p1, const
 
 	return plane;
 }
+
+//視錐台の頂点の作成
+std::array<Vector3, 8> Math::CreateFrustumVertex(float nearClip, float farClip, float fovY, float aspect) {
+	std::array<Vector3, 8>vertexes = {};
+	float nearZ = nearClip;
+	float farZ = farClip;
+
+	float nearH = std::tan(fovY * 0.5f) * nearZ;
+	float nearW = nearH * aspect;
+
+	float farH = std::tan(fovY * 0.5f) * farZ;
+	float farW = farH * aspect;
+
+	//near
+	vertexes[0] = { -nearW,-nearH,nearZ };
+	vertexes[1] = { -nearW,nearH,nearZ };
+	vertexes[2] = { nearW,nearH,nearZ };
+	vertexes[3] = { nearW,-nearH,nearZ };
+
+	//far
+	vertexes[4] = { -farW,-farH,farZ };
+	vertexes[5] = { -farW,farH,farZ };
+	vertexes[6] = { farW,farH,farZ };
+	vertexes[7] = { farW,-farH,farZ };
+
+	return vertexes;
+}
+
+//視錐台の作成
+PrimitiveData::Frustum Math::CreateFrustumData(const std::array<Vector3, 8>& vertexes, const Matrix4x4& worldMatrix) {
+	PrimitiveData::Frustum frustum = {};
+	frustum.localCorners = vertexes;
+	for (uint32_t i = 0; i < frustum.worldCorners.size(); i++) {
+		Vector3 local = vertexes[i];
+
+		Vector3 world = local * worldMatrix;
+
+		frustum.worldCorners[i] = world;
+	}
+
+	const auto& c = frustum.worldCorners;
+
+	frustum.planes[PrimitiveData::Frustum::kLeft] = Math::MakePlane(c[0], c[1], c[4]);
+
+	frustum.planes[PrimitiveData::Frustum::kRight] = Math::MakePlane(c[3], c[7], c[2]);
+
+	frustum.planes[PrimitiveData::Frustum::kTop] = Math::MakePlane(c[1], c[2], c[5]);
+
+	frustum.planes[PrimitiveData::Frustum::kBottom] = Math::MakePlane(c[0], c[4], c[3]);
+
+	frustum.planes[PrimitiveData::Frustum::kNear] = Math::MakePlane(c[0], c[2], c[1]);
+
+	frustum.planes[PrimitiveData::Frustum::kFar] = Math::MakePlane(c[4], c[5], c[6]);
+
+	return frustum;
+}

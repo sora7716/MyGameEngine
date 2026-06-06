@@ -1,5 +1,9 @@
 #pragma once
 #include "algorithms/Rendering.h"
+#include "PrimitiveData.h"
+#include <memory>
+
+class DirectXBase;
 
 /// <summary>
 /// カメラ
@@ -14,7 +18,13 @@ public://メンバ関数
 	/// <summary>
 	/// デストラクタ
 	/// </summary>
-	~Camera() = default;
+	~Camera();
+
+	/// <summary>
+	/// 初期化
+	/// </summary>
+	/// <param name="directXBase">DirectXの基盤部分</param>
+	void Initialize(DirectXBase*directXBase);
 
 	/// <summary>
 	/// 更新
@@ -112,6 +122,12 @@ public://メンバ関数
 	Vector3 GetWorldPos()const;
 
 	/// <summary>
+	/// 視錐台の取得
+	/// </summary>
+	/// <returns>視錐台</returns>
+	PrimitiveData::Frustum& GetFrustum();
+
+	/// <summary>
 	/// ニアクリップ距離の取得
 	/// </summary>
 	/// <returns></returns>
@@ -153,5 +169,7 @@ private://メンバ変数
 	float farClip_ = 100.0f;
 	//ビュープロジェクション行列
 	Matrix4x4 viewProjectionMatrix_ = {};
+	//視錐台
+	PrimitiveData::Frustum frustum_ = {};
 };
 

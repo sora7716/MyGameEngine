@@ -25,6 +25,7 @@ void Core::Initialize() {
 	imguiManager_->Initialize(winApi_.get(), directXBase_.get(), srvManager_.get());
 	//カメラマナージャー
 	cameraManager_ = std::make_unique<CameraManager>(CameraManager::ConstructorKey{});
+	cameraManager_->Initialize(directXBase_.get());
 	//スプライトの共通部分
 	spriteCommon_ = std::make_unique<SpriteCommon>(SpriteCommon::ConstructorKey{});
 	spriteCommon_->Initialize(directXBase_.get(), textureManager_.get());

@@ -38,12 +38,6 @@ namespace Primitive {
 		/// </summary>
 		/// <param name="targetCamera">対象となるカメラ</param>
 		void SetTargetCamera(Camera*targetCamera);
-
-		/// <summary>
-		/// 視錐台を取得
-		/// </summary>
-		/// <returns>視錐台</returns>
-		const PrimitiveData::Frustum& GetFrustum()const;
 	private://メンバ変数
 		/// <summary>
 		/// 頂点の設定
@@ -54,16 +48,9 @@ namespace Primitive {
 		/// インデックスの設定
 		/// </summary>
 		void SettingIndexData()override;
-
-		/// <summary>
-		/// 視錐台の作成
-		/// </summary>
-		void CreateFrustumData();
 	private://メンバ変数
 		//対象となるカメラ
 		Camera* targetCamera_ = nullptr;
-		//視錐台
-		PrimitiveData::Frustum frustum_ = {};
 	};
 }
 

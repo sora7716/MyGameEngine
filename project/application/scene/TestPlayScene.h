@@ -68,7 +68,5 @@ private://メンバ変数
 
 	std::unique_ptr<Primitive::Frustum>frustum_ = nullptr;
 
-	Camera* testPlayCamera = nullptr;
-
 	std::unique_ptr<Primitive::Cube>cube_ = nullptr;
 };

@@ -68,6 +68,7 @@ namespace PrimitiveData {
 			kCount
 		};
 		std::array<Plane, kCount>planes;//面
-		std::array<Vector3, 8>corners;//頂点
+		std::array<Vector3, 8>localCorners;//ローカルの頂点
+		std::array<Vector3, 8>worldCorners;//ワールドの頂点
 	};
 }

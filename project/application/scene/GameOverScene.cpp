@@ -15,7 +15,7 @@ GameOverScene::~GameOverScene() {};
 void GameOverScene::Initialize(const SceneContext& sceneContext) {
 	//シーンのインタフェースの初期化
 	BaseScene::Initialize(sceneContext);
-	camera_ = *sceneContext_.cameraManager->FindCamera("titleCamera");
+	renderCamera_ = *sceneContext_.cameraManager->FindCamera("titleCamera");
 
 	//タイトル名
 	gameOver_ = std::make_unique<Text>();
@@ -23,7 +23,7 @@ void GameOverScene::Initialize(const SceneContext& sceneContext) {
 	gameOver_->SetText("GameOver");
 	gameOver_->SetScale({ 500,500 });
 	gameOverPos_ = { 51.0f,250.0f };
-	gameOver_->SetCamera(&camera_);
+	gameOver_->SetCamera(&renderCamera_);
 
 	//スタート
 	pressReturn_ = std::make_unique<Text>();
@@ -31,7 +31,7 @@ void GameOverScene::Initialize(const SceneContext& sceneContext) {
 	pressReturn_->SetText("Press : B");
 	pressReturn_->SetScale({ 500.0f,500.0f });
 	pressStartPos_ = { 250.0f,600.0f };
-	pressReturn_->SetCamera(&camera_);
+	pressReturn_->SetCamera(&renderCamera_);
 }
 
 //更新ww
@@ -73,9 +73,9 @@ void GameOverScene::Update() {
 
 #ifdef _DEBUG
 	if (debugCamera_->IsDebug()) {
-		camera_ = *debugCamera_->GetCamera();
+		renderCamera_ = *debugCamera_->GetCamera();
 	} else {
-		camera_ = *sceneContext_.cameraManager->FindCamera("titleCamera");
+		renderCamera_ = *sceneContext_.cameraManager->FindCamera("titleCamera");
 	}
 #endif // _DEBUG
 }

@@ -17,12 +17,16 @@ void(Object3d::* Object3d::UpdateWorldMatrixTable[])(uint32_t index) = {
 	&MakeBillboardWorldMatrix,
 };
 
+//コンストラクタ
+Object3d::Object3d() {
+}
+
 //デストラクタ
 Object3d::~Object3d() {
 }
 
 //初期化
-void Object3d::Initialize(Object3dCommon* object3dCommon, Camera* camera, uint32_t instanceCount, Transform3dMode transform3dMode) {
+void Object3d::Initialize(Object3dCommon* object3dCommon, Camera* renderCamera, uint32_t instanceCount, Transform3dMode transform3dMode) {
 	//3Dオブジェクトの共通部分
 	object3dCommon_ = object3dCommon;
 	//DirectXの基盤部分を受け取る
@@ -33,10 +37,6 @@ void Object3d::Initialize(Object3dCommon* object3dCommon, Camera* camera, uint32
 	transform3dMode_ = transform3dMode;
 	//ゲームオブジェクトの数を決定
 	gameObjects_.resize(instanceCount);
-	//UV座標のサイズ決定
-	for (std::vector<Transform2d>& uvTransform2d : lodUvTransforms_) {
-		uvTransform2d.resize(gameObjects_.size());
-	}
 	//ゲームオブジェクトの初期化
 	for (GameObject& gameObject : gameObjects_) {
 		gameObject.Initialize();
@@ -57,10 +57,10 @@ void Object3d::Initialize(Object3dCommon* object3dCommon, Camera* camera, uint32
 	CreateStructuredBufferForWvp();
 
 	//カメラにデフォルトカメラを代入
-	camera_ = camera;
+	renderCamera_ = renderCamera;
 	//カメラをセット
-	object3dCommon_->CreateCameraResource(camera_->GetTranslate());
-	object3dCommon_->SetCameraForGPU(camera->GetTranslate());
+	object3dCommon_->CreateCameraResource(renderCamera_->GetTranslate());
+	object3dCommon_->SetCameraForGPU(renderCamera->GetTranslate());
 
 	//マテリアルの初期化
 	material_.color = { 1.0f,1.0f,1.0f,1.0f };
@@ -107,12 +107,13 @@ void Object3d::Update() {
 		}
 
 		//LODの計算
-		Vector3 cameraWorldPos = camera_->GetWorldPos();
+		Vector3 cameraWorldPos = gameCamera_->GetWorldPos();
 		Vector3 objectWorldPos = GetWorldPos(i);
 
 		float distance = (objectWorldPos - cameraWorldPos).Length();
 
 		uint32_t lodIndex = SelectLOD(distance, gameObjects_[i].currentLOD);
+		gameObjects_[i].currentLOD = lodIndex;
 		//lodIndex番目がlodModelsに無かったら
 		if (!lodModels_[lodIndex]) {
 			continue;
@@ -131,13 +132,20 @@ void Object3d::Update() {
 		//描画カウントを加算
 		lodDrawCount_[lodIndex]++;
 
-		////モデルが存在したらメッシュごとにUV座標を適応
-		//if (lodModels_[lodIndex]) {
-		//	for (uint32_t i = 0; i < lodModels_[lodIndex]->GetMeshes().size(); i++) {
-		//		uint32_t materialIndex = lodModels_[lodIndex]->GetMeshes()[i]->GetMaterialIndex();
-		//		lodModels_[lodIndex]->UVTransform(materialIndex, lodUvTransforms_[lodIndex][i]);
-		//	}
-		//}
+		//モデルが存在したらメッシュごとにUV座標を適応
+		if (lodModels_[lodIndex]) {
+			for (uint32_t i = 0; i < lodModels_[lodIndex]->GetMeshes().size(); i++) {
+				uint32_t materialIndex = lodModels_[lodIndex]->GetMeshes()[i]->GetMaterialIndex();
+
+				//マテリアルの検索キーがUV座標の配列の要素数を超えたら
+				if (materialIndex >= lodUvTransforms_[lodIndex].size()) {
+					continue;
+				}
+
+
+				lodModels_[lodIndex]->UVTransform(materialIndex, lodUvTransforms_[lodIndex][materialIndex]);
+			}
+		}
 	}
 
 }
@@ -170,7 +178,7 @@ void Object3d::Draw() {
 			continue;
 		}
 
-		//LOD語とのWVP SRVを設定
+		//LODごとのWVP SRVを設定
 		directXBase_->GetCommandList()->SetGraphicsRootDescriptorTable(1, srvManager_->GetGPUDescriptorHandle(lodSrvIndices_[lod]));
 
 		//ドローコール
@@ -186,12 +194,23 @@ void Object3d::SetLODModel(uint32_t lodIndex, const std::string& modelName) {
 	}
 
 	lodModels_[lodIndex] = object3dCommon_->GetModelManager()->FindModel(modelName);
+
+
+	//Uマテリアル数を取得
+	const uint32_t materialCount = static_cast<uint32_t>(lodModels_[lodIndex]->GetModelData().material.size());
+
+	//UV座標をマテリアルサイズに合わせる
+	lodUvTransforms_[lodIndex].resize(materialCount);
+
+	//UV座標の初期化
+	for (Transform2d& uvTransform : lodUvTransforms_[lodIndex]) {
+		uvTransform.Initialize();
+	}
 }
 
 //カメラの設定
-void Object3d::SetCamera(Camera* camera) {
-	camera_ = camera;
-	object3dCommon_->SetCameraForGPU(camera->GetTranslate());
+void Object3d::SetGameCamera(Camera* gameCamera) {
+	gameCamera_ = gameCamera;
 }
 
 // スケールの設定
@@ -268,11 +287,6 @@ void Object3d::SetUVTransform(uint32_t index, const Transform2d& uvTransform) {
 //ブレンドモードの設定
 void Object3d::SetBlendMode(const BlendMode& blendMode) {
 	blendMode_ = blendMode;
-}
-
-//視錐台の設定
-void Object3d::SetFrustum(PrimitiveData::Frustum* frustum) {
-	frustum_ = frustum;
 }
 
 //スケールの取得
@@ -401,7 +415,7 @@ void Object3d::MakeWorldMatrix(uint32_t index) {
 //ビルボード行列の作成
 void Object3d::MakeBillboardWorldMatrix(uint32_t index) {
 	//このオブジェクト本来のワールド行列を求める
-	worldMatrix_ = Rendering::MakeBillboardAffineMatrix(camera_->GetWorldMatrix(), gameObjects_[index].transform);
+	worldMatrix_ = Rendering::MakeBillboardAffineMatrix(renderCamera_->GetWorldMatrix(), gameObjects_[index].transform);
 
 	if (parent_) {
 		worldMatrix_ = worldMatrix_ * parent_->GetWorldMatrix();
@@ -414,8 +428,8 @@ void Object3d::MakeBillboardWorldMatrix(uint32_t index) {
 void Object3d::UpdateWorldTransform(uint32_t lodIndex, uint32_t drawIndex, const Matrix4x4& worldMatrix) {
 	lodWvpData_[lodIndex][drawIndex].world = worldMatrix;
 
-	if (camera_) {
-		lodWvpData_[lodIndex][drawIndex].wvp = worldMatrix * camera_->GetViewProjectionMatrix();
+	if (renderCamera_) {
+		lodWvpData_[lodIndex][drawIndex].wvp = worldMatrix * renderCamera_->GetViewProjectionMatrix();
 	} else {
 		lodWvpData_[lodIndex][drawIndex].wvp = worldMatrix;
 	}
@@ -429,12 +443,12 @@ void Object3d::UpdateWorldTransform(uint32_t lodIndex, uint32_t drawIndex, const
 void Object3d::UpdateVisibility(uint32_t index, const Matrix4x4& worldMatrix) {
 	//表示するかのフラグ
 	bool isVisible = true;
-	if (frustum_ && lodModels_[0]) {
+	if (gameCamera_ && lodModels_[0]) {
 		isVisible = false;
 		for (const std::unique_ptr<Mesh>& mesh : lodModels_[0]->GetMeshes()) {
 			PrimitiveData::AABB worldAABB = mesh->GetAABB() * worldMatrix;
 
-			if (Collision::IsCollision(*frustum_, worldAABB)) {
+			if (Collision::IsCollision(gameCamera_->GetFrustum(), worldAABB)) {
 				isVisible = true;
 				break;
 			}
@@ -451,6 +465,16 @@ uint32_t Object3d::SelectLOD(float distance, uint32_t currentLOD) const {
 		return 0;
 	}
 
+	//距離協会が足りない場合
+	if (lodDistances_.size() < kLODCount - 1) {
+		return 0;
+	}
+
+	//currentLODが範囲外なら戻す
+	if (currentLOD >= lodModels_.size()) {
+		currentLOD = 0;
+	}
+
 	//LODモデル番号
 	uint32_t result = currentLOD;
 	//ヒステリシス幅
@@ -459,19 +483,23 @@ uint32_t Object3d::SelectLOD(float distance, uint32_t currentLOD) const {
 	//現在のLODをみて
 	switch (currentLOD) {
 	case 0:
-		if (distance >= lodDistances_[0]) {
+		//LOD0 -> LOD1
+		if (distance >= lodDistances_[0] + hysteresis) {
 			result = 1;
 		}
 		break;
 	case 1:
-		if (distance < lodDistances_[0]) {
+		//LOD1 -> LOD0
+		if (distance < lodDistances_[0] - hysteresis) {
 			result = 0;
-		} else if (result >= lodDistances_[1]) {
+		} else if (distance >= lodDistances_[1] + hysteresis) {
+			//LOD1 -> LOD2
 			result = 2;
 		}
 		break;
 	case 2:
-		if (distance < lodDistances_[1]) {
+		//LOD2 -> LOD1
+		if (distance < lodDistances_[1] - hysteresis) {
 			result = 1;
 		}
 		break;

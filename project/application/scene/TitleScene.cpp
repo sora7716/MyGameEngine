@@ -17,7 +17,7 @@ TitleScene::~TitleScene() {
 void TitleScene::Initialize(const SceneContext& sceneContext) {
 	//シーンのインタフェースの初期化
 	BaseScene::Initialize(sceneContext);
-	camera_ = *sceneContext_.cameraManager->FindCamera("titleCamera");
+	renderCamera_ = *sceneContext_.cameraManager->FindCamera("titleCamera");
 
 	//タイトル名
 	titleName_ = std::make_unique<Text>();
@@ -25,7 +25,7 @@ void TitleScene::Initialize(const SceneContext& sceneContext) {
 	titleName_->SetText("Sample");
 	titleName_->SetScale({ 500,500 });
 	titleNamePos_ = { 80.0f,116.0f };
-	titleName_->SetCamera(&camera_);
+	titleName_->SetCamera(&renderCamera_);
 
 	//スタート
 	pressStart_ = std::make_unique<Text>();
@@ -33,7 +33,7 @@ void TitleScene::Initialize(const SceneContext& sceneContext) {
 	pressStart_->SetText("Press : B");
 	pressStart_->SetScale({ 500.0f,500.0f });
 	pressStartPos_ = {250.0f,600.0f};
-	pressStart_->SetCamera(&camera_);
+	pressStart_->SetCamera(&renderCamera_);
 }
 
 //更新ww
@@ -75,9 +75,9 @@ void TitleScene::Update() {
 
 #ifdef _DEBUG
 	if (debugCamera_->IsDebug()) {
-		camera_ = *debugCamera_->GetCamera();
+		renderCamera_ = *debugCamera_->GetCamera();
 	} else {
-		camera_ = *sceneContext_.cameraManager->FindCamera("titleCamera");
+		renderCamera_ = *sceneContext_.cameraManager->FindCamera("titleCamera");
 	}
 #endif // _DEBUG
 }

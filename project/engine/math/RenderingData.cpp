@@ -14,7 +14,7 @@ void Transform::Initialize() {
 
 //初期化
 void Transform2d::Initialize() {
-	this->scale = Vector2::MakeAllOne();
-	this->rotate = 0.0f;
-	this->translate = { 0.0f,0.0f };
+	scale = Vector2::MakeAllOne();
+	rotate = 0.0f;
+	translate = { 0.0f,0.0f };
 }

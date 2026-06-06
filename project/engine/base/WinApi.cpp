@@ -40,7 +40,7 @@ void WinApi::Initialize() {
 	hwnds_.resize(2);
 
 	Vector2Int windowPos = {
-		.x = 0,
+		.x = 500,
 		.y = -1000
 	};
 
@@ -48,8 +48,8 @@ void WinApi::Initialize() {
 		wndClass_.lpszClassName,//利用するクラス
 		label.c_str(),
 		WS_OVERLAPPEDWINDOW,//よく見るウィンドウのスタイル
-		CW_USEDEFAULT,//ウィンドウの表示位置(X座標)
-		CW_USEDEFAULT,//ウィンドウの表示位置(Y座標)
+		windowPos.x,//ウィンドウの表示位置(X座標)
+		windowPos.y,//ウィンドウの表示位置(Y座標)
 		windowRect_.right - windowRect_.left,//ウィンドウの横幅
 		windowRect_.bottom - windowRect_.top,//ウィンドウの縦幅
 		nullptr,

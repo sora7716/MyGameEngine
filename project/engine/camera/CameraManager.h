@@ -4,6 +4,9 @@
 #include <string>
 #include <memory>
 
+//前方宣言
+class DirectXBase;
+
 /// <summary>
 /// カメラの管理
 /// </summary>
@@ -13,6 +16,12 @@ public://メンバ関数
 	/// デストラクタ
 	/// </summary>
 	~CameraManager();
+	
+	/// <summary>
+	/// 初期化
+	/// </summary>
+	/// <param name="directXBase">DirectXの基盤部分</param>
+	void Initialize(DirectXBase*directXBase);
 
 	/// <summary>
 	/// 更新
@@ -49,6 +58,8 @@ private://メンバ関数
 	//代入演算子を禁止
 	CameraManager operator=(const CameraManager&) = delete;
 private://メンバ変数
+	//DirectXの基盤部分
+	DirectXBase* directXBase_ = nullptr;
 	//カメラ
 	std::map<std::string, std::unique_ptr<Camera>>cameras_;
 };

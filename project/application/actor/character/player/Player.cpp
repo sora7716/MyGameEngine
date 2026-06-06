@@ -84,7 +84,7 @@ void Player::Draw() {
 
 //カメラのセッター
 void Player::SetCamera(Camera* camera) {
-	entityGroup_.renderObject.object3d->SetCamera(camera);
+	entityGroup_.renderObject.object3d->SetGameCamera(camera);
 	entityGroup_.renderObject.hitBox->SetCamera(camera);
 }
 

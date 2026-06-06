@@ -2,9 +2,11 @@
 #include "Vector3.h"
 #include "Matrix4x4.h"
 #include "Vector2.h"
+#include "Vector4.h"
 #include "PrimitiveData.h"
 #include <vector>
 #include <cmath>
+#include <array>
 #include <numbers>
 #include <algorithm>
 
@@ -106,6 +108,24 @@ public:
 	/// <param name="p2">平面上の点2</param>
 	/// <returns>平面</returns>
 	static PrimitiveData::Plane MakePlane(const Vector3& p0, const Vector3& p1, const Vector3& p2);
+
+	/// <summary>
+	/// 視錐台の頂点の作成
+	/// </summary>
+	/// <param name="nearClip">ニアクリップ距離</param>
+	/// <param name="farClip">ファークリップ距離</param>
+	/// <param name="fovY">fovY</param>
+	/// <param name="aspect">アスペクト比</param>
+	/// <returns>視錐台の頂点</returns>
+	static std::array<Vector3, 8>CreateFrustumVertex(float nearClip, float farClip, float fovY, float aspect);
+
+	/// <summary>
+	/// 視錐台の作成
+	/// </summary>
+	/// <param name="vertexes">頂点</param>
+	/// <param name="worldMatrix">ワールド行列</param>
+	/// <returns>視錐台</returns>
+	static PrimitiveData::Frustum CreateFrustumData(const std::array<Vector3, 8>& vertexes,const Matrix4x4& worldMatrix);
 public://定数
 	//デルタタイム
 	static inline const float kDeltaTime = 1.0f / 60.0f;

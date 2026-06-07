@@ -107,13 +107,13 @@ WNDCLASS WinApi::GetWndClass()const {
 WinApi::WinApi(ConstructorKey) {}
 
 //ウィンドウプロシージャ
-LRESULT WinApi::WindowProc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam) {
+LRESULT WinApi::WindowProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam) {
 	//if (hwnd == debugHwnd_) {
-	//	if (ImGui_ImplWin32_WndProcHandler(hwnd, msg, wparam, lparam)) {
+	//	if (ImGui_ImplWin32_WndProcHandler(hwnd, msg, wParam, lParam)) {
 	//		return true;
 	//	}
 	//}
-	if (ImGui_ImplWin32_WndProcHandler(hwnd, msg, wparam, lparam)) {
+	if (ImGui_ImplWin32_WndProcHandler(hwnd, msg, wParam, lParam)) {
 		return true;
 	}
 	//メッセージに応じてゲーム固有の処理を行う
@@ -125,5 +125,5 @@ LRESULT WinApi::WindowProc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam) {
 		return 0;
 	}
 	//標準のメッセージ処理を行う
-	return DefWindowProc(hwnd, msg, wparam, lparam);
+	return DefWindowProc(hwnd, msg, wParam, lParam);
 }

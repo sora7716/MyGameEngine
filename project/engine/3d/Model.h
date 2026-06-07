@@ -46,6 +46,11 @@ public://メンバ関数
 	void Draw(uint32_t objectCount = 1);
 
 	/// <summary>
+	/// キューブの作成
+	/// </summary>
+	MeshData CreateCube();
+
+	/// <summary>
 	/// UV変換
 	/// </summary>
 	/// <param name="index">インデックス</param>

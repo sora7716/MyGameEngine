@@ -26,7 +26,7 @@ void TestPlayScene::Initialize(const SceneContext& sceneContext) {
 	BaseScene::Initialize(sceneContext);
 	renderCamera_ = *sceneContext_.cameraManager->FindCamera("testPlayCamera");
 	gameCamera_ = sceneContext_.cameraManager->FindCamera("testPlayCamera");
-
+		
 	//box_ = std::make_unique<Box>();
 	//box_->Initialize(sceneContext_.directXBase, sceneContext_.textureManager, &camera_);
 	//box_->SetModel("cube");
@@ -34,9 +34,9 @@ void TestPlayScene::Initialize(const SceneContext& sceneContext) {
 	object3d_->Initialize(sceneContext_.object3dCommon, &renderCamera_, 1);
 	object3d_->SetGameCamera(gameCamera_);
 	//object3d_->SetModel("multiMaterial");
-	object3d_->SetLODModel(0, "dekanu");
-	object3d_->SetLODModel(1, "dekanu");
-	object3d_->SetLODModel(2, "dekanu");
+	object3d_->SetLODModel(0, "cube");
+	object3d_->SetLODModel(1, "cube");
+	object3d_->SetLODModel(2, "cube");
 
 	std::unique_ptr<GameObject>tree = std::make_unique<GameObject>();
 	tree->Initialize("tree");

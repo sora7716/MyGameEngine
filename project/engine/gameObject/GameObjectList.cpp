@@ -75,7 +75,7 @@ void GameObjectList::LoadModel() {
 	core_->GetModelManager()->LoadModel("low", "low", "low.obj");
 
 	//デカヌ
-	core_->GetModelManager()->LoadModel("dekanu", "dekanu", "dekanu.obj");
+	//core_->GetModelManager()->LoadModel("dekanu", "dekanu", "dekanu.obj");
 }
 
 //カメラの生成

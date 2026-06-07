@@ -59,7 +59,7 @@ void Model::Initialize(ModelCommon* modelCommon, const std::string& directoryPat
 	//メッシュの生成と初期化
 	for (const MeshData& meshData : modelData_.meshes) {
 		std::unique_ptr<Mesh>mesh = std::make_unique<Mesh>();
-		mesh->Initialize(directXBase_, meshData);
+		mesh->Initialize(directXBase_, CreateCube());
 		meshes_.push_back(std::move(mesh));
 	}
 	//マテリアルリソースとポインタのサイズ設定
@@ -92,6 +92,263 @@ void Model::Draw(uint32_t objectCount) {
 		directXBase_->GetCommandList()->SetGraphicsRootDescriptorTable(2, modelCommon_->GetTextureManager()->GetSRVHandleGPU(materialData.textureFilePath));
 		mesh->Draw(objectCount);
 	}
+}
+
+MeshData Model::CreateCube() {
+	//面のデータ
+	struct FaceData {
+		Vector3 normal;
+		Vector4 position[4];
+	};
+
+	//どこの面
+	enum FaceType :uint32_t {
+		kFront,
+		kBack,
+		kRight,
+		kLeft,
+		kTop,
+		kBottom,
+		kFaceCount
+	};
+
+	//頂点の場所
+	enum FaceRect :uint32_t {
+		kLeftUp,
+		kRightUp,
+		kLeftBottom,
+		kRightBottom,
+		kFaceRectCount
+	};
+
+	//メッシュデータの頂点とインデックスのサイズ決定
+	MeshData mesh = {};
+	const uint32_t kVertexCount = 24;
+	const uint32_t kIndexCount = 36;
+	mesh.vertices.resize(24);
+	mesh.indices.resize(36);
+
+	//テクスチャを設定
+	mesh.materialIndex = 0;
+	modelData_.material[mesh.materialIndex].textureFilePath = "engine/resources/textures/white1x1.png";
+
+	//UV座標
+	Vector2 uv[kFaceRectCount] = {};
+	uv[kLeft] = { 0.0f,0.0f };//左上
+	uv[kRight] = { 1.0f,0.0f };//右上
+	uv[kLeftBottom] = { 0.0f,1.0f };//左下
+	uv[kRightBottom] = { 1.0f,1.0f };//右下
+
+	//法線と位置
+	FaceData face[kFaceCount]{};
+
+	//正面
+	face[kFront].normal = { 0.0f, 0.0f, 1.0f };
+	face[kFront].position[kLeftUp] = { -1.0f, 1.0f, 1.0f, 1.0f };
+	face[kFront].position[kRightUp] = { 1.0f, 1.0f, 1.0f, 1.0f };
+	face[kFront].position[kLeftBottom] = { 1.0f, -1.0f, 1.0f, 1.0f };
+	face[kFront].position[kRightBottom] = { 1.0f, -1.0f, 1.0f, 1.0f };
+
+	//背面
+	face[kBack].normal = { 0.0f, 0.0f, 1.0f };
+	face[kBack].position[kLeftUp] = { -1.0f, 1.0f, -1.0f, 1.0f };
+	face[kBack].position[kRightUp] = { 1.0f, 1.0f, -1.0f, 1.0f };
+	face[kBack].position[kLeftBottom] = { -1.0f, -1.0f, -1.0f, 1.0f };
+	face[kBack].position[kRightBottom] = { 1.0f, -1.0f, -1.0f, 1.0f };
+
+	//Z-
+	// 左上
+	mesh.vertices[4] = {
+		.position = {-1.0f, 1.0f, -1.0f, 1.0f},
+		.texcoord = {0.0f, 0.0f},
+		.normal = {0.0f, 0.0f, -1.0f}
+	};
+
+	//右上
+	mesh.vertices[5] = {
+		.position = {1.0f, 1.0f, -1.0f, 1.0f},
+		.texcoord = {1.0f, 0.0f},
+		.normal = {0.0f, 0.0f, -1.0f}
+	};
+
+	//左下
+	mesh.vertices[6] = {
+			.position = {-1.0f, -1.0f, -1.0f, 1.0f},
+			.texcoord = {0.0f, 1.0f},
+			.normal = {0.0f, 0.0f, -1.0f}
+	};
+
+	//右下
+	mesh.vertices[7] = {
+			.position = {1.0f, -1.0f, -1.0f, 1.0f},
+			.texcoord = {1.0f, 1.0f},
+			.normal = {0.0f, 0.0f, -1.0f}
+	};
+
+	//X+
+	// 左上
+	mesh.vertices[8] = {
+		.position = {1.0f, -1.0f, 1.0f, 1.0f},
+		.texcoord = {0.0f, 0.0f},
+		.normal = {1.0f, 0.0f, 0.0f}
+	};
+
+	//右上
+	mesh.vertices[9] = {
+		.position = {1.0f, 1.0f, 1.0f, 1.0f},
+		.texcoord = {1.0f, 0.0f},
+		.normal = {1.0f, 0.0f, 0.0f}
+	};
+
+	//左下
+	mesh.vertices[10] = {
+			.position = {1.0f, -1.0f, -1.0f, 1.0f},
+			.texcoord = {0.0f, 1.0f},
+			.normal = {1.0f, 0.0f, 0.0f}
+	};
+
+	//右下
+	mesh.vertices[11] = {
+			.position = {1.0f, 1.0f, -1.0f, 1.0f},
+			.texcoord = {1.0f, 1.0f},
+			.normal = {1.0f, 0.0f, 0.0f}
+	};
+
+	//X-
+	// 左上
+	mesh.vertices[12] = {
+		.position = {-1.0f, -1.0f, 1.0f, 1.0f},
+		.texcoord = {0.0f, 0.0f},
+		.normal = {-1.0f, 0.0f, 0.0f}
+	};
+
+	//右上
+	mesh.vertices[13] = {
+		.position = {-1.0f, 1.0f, 1.0f, 1.0f},
+		.texcoord = {1.0f, 0.0f},
+		.normal = {-1.0f, 0.0f, 0.0f}
+	};
+
+	//左下
+	mesh.vertices[14] = {
+			.position = {-1.0f, -1.0f, -1.0f, 1.0f},
+			.texcoord = {0.0f, 1.0f},
+			.normal = {-1.0f, 0.0f, 0.0f}
+	};
+
+	//右下
+	mesh.vertices[15] = {
+			.position = {-1.0f, 1.0f, -1.0f, 1.0f},
+			.texcoord = {1.0f, 1.0f},
+			.normal = {-1.0f, 0.0f, 0.0f}
+	};
+
+	//Y+
+	// 左上
+	mesh.vertices[16] = {
+		.position = {-1.0f, 1.0f, 1.0f, 1.0f},
+		.texcoord = {0.0f, 0.0f},
+		.normal = {0.0f, 1.0f, 0.0f}
+	};
+
+	//右上
+	mesh.vertices[17] = {
+		.position = {1.0f, 1.0f, 1.0f, 1.0f},
+		.texcoord = {1.0f, 0.0f},
+		.normal = {0.0f, 1.0f, 0.0f}
+	};
+
+	//左下
+	mesh.vertices[18] = {
+			.position = {-1.0f, 1.0f, -1.0f, 1.0f},
+			.texcoord = {0.0f, 1.0f},
+			.normal = {0.0f, 1.0f, 0.0f}
+	};
+
+	//右下
+	mesh.vertices[19] = {
+			.position = {1.0f, 1.0f, -1.0f, 1.0f},
+			.texcoord = {1.0f, 1.0f},
+			.normal = {0.0f, 1.0f, 0.0f}
+	};
+
+	//Y-
+	// 左上
+	mesh.vertices[20] = {
+		.position = {-1.0f, -1.0f, 1.0f, 1.0f},
+		.texcoord = {0.0f, 0.0f},
+		.normal = {0.0f, -1.0f, 0.0f}
+	};
+
+	//右上
+	mesh.vertices[21] = {
+		.position = {1.0f, -1.0f, 1.0f, 1.0f},
+		.texcoord = {1.0f, 0.0f},
+		.normal = {0.0f, -1.0f, 0.0f}
+	};
+
+	//左下
+	mesh.vertices[22] = {
+			.position = {-1.0f, -1.0f, -1.0f, 1.0f},
+			.texcoord = {0.0f, 1.0f},
+			.normal = {0.0f, -1.0f, 0.0f}
+	};
+
+	//右下
+	mesh.vertices[23] = {
+			.position = {1.0f, -1.0f, -1.0f, 1.0f},
+			.texcoord = {1.0f, 1.0f},
+			.normal = {0.0f, -1.0f, 0.0f}
+	};
+
+	// Z+  正面
+	mesh.indices[0] = 0;
+	mesh.indices[1] = 2;
+	mesh.indices[2] = 1;
+	mesh.indices[3] = 2;
+	mesh.indices[4] = 3;
+	mesh.indices[5] = 1;
+
+	// Z-  背面
+	mesh.indices[6] = 4;
+	mesh.indices[7] = 5;
+	mesh.indices[8] = 6;
+	mesh.indices[9] = 6;
+	mesh.indices[10] = 5;
+	mesh.indices[11] = 7;
+
+	// X+  右面
+	mesh.indices[12] = 8;
+	mesh.indices[13] = 10;
+	mesh.indices[14] = 9;
+	mesh.indices[15] = 10;
+	mesh.indices[16] = 11;
+	mesh.indices[17] = 9;
+
+	// X-  左面
+	mesh.indices[18] = 12;
+	mesh.indices[19] = 13;
+	mesh.indices[20] = 14;
+	mesh.indices[21] = 14;
+	mesh.indices[22] = 13;
+	mesh.indices[23] = 15;
+
+	// Y+  上面
+	mesh.indices[24] = 16;
+	mesh.indices[25] = 17;
+	mesh.indices[26] = 18;
+	mesh.indices[27] = 18;
+	mesh.indices[28] = 17;
+	mesh.indices[29] = 19;
+
+	// Y-  下面
+	mesh.indices[30] = 20;
+	mesh.indices[31] = 22;
+	mesh.indices[32] = 21;
+	mesh.indices[33] = 22;
+	mesh.indices[34] = 23;
+	mesh.indices[35] = 21;
+	return mesh;
 }
 
 //uv変換

@@ -261,7 +261,7 @@ private://メンバ変数
 	Model* model_ = nullptr;
 	
 	//LOD用のモデル
-	std::vector <Model*>lodModels_;
+	std::array <Model*,kLODCount>lodModels_;
 	//LODの距離
 	std::vector<float>lodDistances_;
 

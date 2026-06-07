@@ -15,6 +15,7 @@
 //初期化
 void Object3dInstance::Initialize(GameObject* gameObject) {
 	this->gameObject = gameObject;
+	isEnabled = true;
 	currentLOD = 0;
 }
 
@@ -44,7 +45,7 @@ void Object3d::Initialize(Object3dCommon* object3dCommon, Camera* renderCamera, 
 	transform3dMode_ = transform3dMode;
 	//ゲームオブジェクトの数を決定
 	maxInstanceCount_ = maxInstanceCount;
-	instanceData_.resize(maxInstanceCount);
+	//instanceData_.resize(maxInstanceCount);
 	for (uint32_t lod = 0; lod < kLODCount; lod++) {
 		//wvpのデータ数を決定
 		lodWvpData_[lod].resize(maxInstanceCount);
@@ -214,12 +215,11 @@ uint32_t Object3d::AddInstance(GameObject* gameObject) {
 
 //LODモデルの設定
 void Object3d::SetLODModel(uint32_t lodIndex, const std::string& modelName) {
-	if (lodModels_.size() <= lodIndex) {
-		lodModels_.resize(lodIndex + 1);
-	}
+	assert(lodIndex < kLODCount);
 
-	lodModels_[lodIndex] = object3dCommon_->GetModelManager()->FindModel(modelName);
+	Model* model = object3dCommon_->GetModelManager()->FindModel(modelName);
 
+	lodModels_[lodIndex] = model;
 
 	//Uマテリアル数を取得
 	const uint32_t materialCount = static_cast<uint32_t>(lodModels_[lodIndex]->GetModelData().material.size());
@@ -351,15 +351,16 @@ Vector3 Object3d::GetWorldPos(uint32_t index) {
 //座標変換行列リソースの生成
 void Object3d::CreateTransformationMatrixResource() {
 	for (uint32_t lod = 0; lod < kLODCount; lod++) {
-		lodWvpData_[lod].resize(instanceData_.size());
+		//インスタンスの最大数で確保
+		lodWvpData_[lod].resize(maxInstanceCount_);
 
 		// 配列サイズで確保
-		lodWvpResources_[lod] = directXBase_->CreateBufferResource(sizeof(TransformationMatrix) * instanceData_.size());
+		lodWvpResources_[lod] = directXBase_->CreateBufferResource(sizeof(TransformationMatrix) * maxInstanceCount_);
 		//座標変換行列リソースにデータを書き込むためのアドレスを取得してtransformationMatrixDataに割り当てる
 		//書き込むためのアドレス
 		lodWvpResources_[lod]->Map(0, nullptr, reinterpret_cast<void**>(&lodWvpPtrs_[lod]));
 		//単位行列を書き込んでおく
-		for (uint32_t i = 0; i < static_cast<uint32_t>(instanceData_.size()); i++) {
+		for (uint32_t i = 0; i < static_cast<uint32_t>(maxInstanceCount_); i++) {
 			lodWvpPtrs_[lod][i].wvp = Matrix4x4::Identity4x4();
 			lodWvpPtrs_[lod][i].world = Matrix4x4::Identity4x4();
 			lodWvpPtrs_[lod][i].worldInverseTranspose = Matrix4x4::Identity4x4();
@@ -375,7 +376,7 @@ void Object3d::CreateStructuredBufferForWvp() {
 		srvManager_->CreateSRVForStructuredBuffer(
 			lodSrvIndices_[lod],
 			lodWvpResources_[lod].Get(),
-			static_cast<uint32_t>(instanceData_.size()),
+			static_cast<uint32_t>(maxInstanceCount_),
 			sizeof(TransformationMatrix)
 		);
 	}
@@ -449,12 +450,7 @@ void Object3d::UpdateVisibility(uint32_t index, const Matrix4x4& worldMatrix) {
 
 //距離によってLODモデルの添え字を取得
 uint32_t Object3d::SelectLOD(float distance, uint32_t currentLOD) const {
-	//LODモデルが無かった場合
-	if (lodModels_.empty()) {
-		return 0;
-	}
-
-	//距離協会が足りない場合
+	//距離境界が足りない場合
 	if (lodDistances_.size() < kLODCount - 1) {
 		return 0;
 	}
@@ -492,6 +488,11 @@ uint32_t Object3d::SelectLOD(float distance, uint32_t currentLOD) const {
 			result = 1;
 		}
 		break;
+	}
+
+	//選ばれたLODがなければ
+	if (!lodModels_[result]) {
+		return 0;
 	}
 
 	return result;

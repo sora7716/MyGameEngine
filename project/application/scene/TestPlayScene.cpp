@@ -31,12 +31,12 @@ void TestPlayScene::Initialize(const SceneContext& sceneContext) {
 	//box_->Initialize(sceneContext_.directXBase, sceneContext_.textureManager, &camera_);
 	//box_->SetModel("cube");
 	object3d_ = std::make_unique<Object3d>();
-	object3d_->Initialize(sceneContext_.object3dCommon, &renderCamera_, 100);
+	object3d_->Initialize(sceneContext_.object3dCommon, &renderCamera_, 1);
 	object3d_->SetGameCamera(gameCamera_);
 	//object3d_->SetModel("multiMaterial");
-	object3d_->SetLODModel(0, "height");
-	object3d_->SetLODModel(1, "medium");
-	object3d_->SetLODModel(2, "low");
+	object3d_->SetLODModel(0, "dekanu");
+	object3d_->SetLODModel(1, "dekanu");
+	object3d_->SetLODModel(2, "dekanu");
 
 	std::unique_ptr<GameObject>tree = std::make_unique<GameObject>();
 	tree->Initialize("tree");

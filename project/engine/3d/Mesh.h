@@ -10,7 +10,7 @@ class DirectXBase;
 /// <summary>
 /// メッシュ
 /// </summary>
-class Mesh{
+class Mesh {
 private://エイリアステンプレート
 	template <class T>using ComPtr = Microsoft::WRL::ComPtr<T>;
 public://メンバ関数
@@ -25,11 +25,11 @@ public://メンバ関数
 	~Mesh();
 
 	/// <summary>
-    /// 初期化
-    /// </summary>
-    /// <param name="directXBase">DirectXの基盤部分</param>
+	/// 初期化
+	/// </summary>
+	/// <param name="directXBase">DirectXの基盤部分</param>
 	/// <param name="meshData">メッシュデータ</param>
-	void Initialize(DirectXBase*directXBase,const MeshData& meshData);
+	void Initialize(DirectXBase* directXBase, const MeshData& meshData);
 
 	/// <summary>
 	/// 描画
@@ -48,6 +48,12 @@ public://メンバ関数
 	/// </summary>
 	/// <returns></returns>
 	const PrimitiveData::AABB& GetAABB()const;
+
+	/// <summary>
+	/// 読み込み直後のメッシュデータの取得
+	/// </summary>
+	/// <returns>読み込み直後のメッシュデータ</returns>
+	const MeshData& GetOrinalMeshData()const;
 private://メンバ関数
 	/// <summary>
 	/// 頂点リソースの生成
@@ -75,7 +81,9 @@ private://メンバ変数
 	//IndexBufferView
 	D3D12_INDEX_BUFFER_VIEW indexBufferView_ = {};
 	//メッシュデータ
-	MeshData meshData_;
+	MeshData meshData_ = {};
+	//読み込み直後のメッシュデータ
+	MeshData originalMeshData_ = {};
 	//AABB
 	PrimitiveData::AABB aabb_ = {};
 };

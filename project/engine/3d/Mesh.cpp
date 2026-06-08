@@ -21,6 +21,8 @@ void Mesh::Initialize(DirectXBase* directXBase, const MeshData& meshData) {
 	CreateIndexResource();
 	//AABBの作成
 	CreateAABB();
+	//読み込み直後のメッシュデータ
+	originalMeshData_ = meshData_;
 }
 
 //描画
@@ -47,6 +49,12 @@ uint32_t Mesh::GetMaterialIndex() {
 const PrimitiveData::AABB& Mesh::GetAABB() const {
 	// TODO: return ステートメントをここに挿入します
 	return aabb_;
+}
+
+//読み込み直後のメッシュデータの取得
+const MeshData& Mesh::GetOrinalMeshData() const {
+	// TODO: return ステートメントをここに挿入します
+	return originalMeshData_;
 }
 
 //頂点リソースの生成

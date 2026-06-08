@@ -114,10 +114,10 @@ void Model::RebuildMeshes(const std::vector<MeshData>& meshes, float rate) {
 void Model::ReduceTriangles(float rate) {
 	//三角形を構成するインデックスの数
 	const uint32_t kTriangleIndexCount = 3;
-	for (MeshData& meshData : modelData_.meshes) {
-		
+	for (auto& mesh : meshes_) {
+
 		//元のインデックスのサイズを元に三角形の数を減らした
-		uint32_t triangleCount = static_cast<uint32_t>(meshData.indices.size() / kTriangleIndexCount);
+		uint32_t triangleCount = static_cast<uint32_t>(mesh->GetOrinalMeshData().indices.size() / kTriangleIndexCount);
 
 		//減らした三角形から更に割合分減らす
 		uint32_t targetTriangleCount = static_cast<uint32_t>(triangleCount * rate);
@@ -127,17 +127,20 @@ void Model::ReduceTriangles(float rate) {
 			targetTriangleCount = 1;
 		}
 
-		//インデックスの生成とサイズ決定
-		std::vector<uint32_t>reducedIndices;
-		for (uint32_t i = 0; i < targetTriangleCount; i += 2) {
-			uint32_t startIndex = i * kTriangleIndexCount;
-			reducedIndices.push_back(meshData.indices[startIndex + 0]);
-			reducedIndices.push_back(meshData.indices[startIndex + 1]);
-			reducedIndices.push_back(meshData.indices[startIndex + 2]);
-		}
+		//メッシュデータを書き換え
+		for (MeshData& meshData : modelData_.meshes) {
+			//インデックスの生成とサイズ決定
+			std::vector<uint32_t>reducedIndices;
+			for (uint32_t i = 0; i < targetTriangleCount; i += 2) {
+				uint32_t startIndex = i * kTriangleIndexCount;
+				reducedIndices.push_back(meshData.indices[startIndex + 0]);
+				reducedIndices.push_back(meshData.indices[startIndex + 1]);
+				reducedIndices.push_back(meshData.indices[startIndex + 2]);
+			}
 
-		//減らしたインデックスを代入
-		meshData.indices = reducedIndices;
+			//減らしたインデックスを代入
+			meshData.indices = reducedIndices;
+		}
 	}
 }
 
@@ -525,8 +528,30 @@ void Model::CreateFromModel(const std::string& storedFilePath, const std::string
 	//モデルの読み込み
 	modelData_ = LoadModelFile("engine/resources/models", storedFilePath, filename);
 	//メッシュの構築
-	RebuildMeshes(modelData_.meshes);
-	//各種リソースの生成
+	//メッシュデータのクリア
+	meshes_.clear();
+	//マテリアルが存在するか
+	if (!modelData_.material.empty()) {
+		for (uint32_t i = 0; i < modelData_.meshes.size(); i++) {
+			if (modelData_.meshes[i].materialIndex >= modelData_.material.size()) {
+				modelData_.meshes[i].materialIndex = 0;
+			}
+		}
+	} else {
+		//マテリアルが存在しなかった場合
+		MaterialData material;
+#ifdef _DEBUG
+		material.textureFilePath = "engine/resources/textures/magenta1x1.png";
+#else
+		material.textureFilePath = "engine/resources/textures/white1x1.png";
+#endif // _DEBUG
+		modelData_.material.push_back(material);
+	}
+	//メッシュを構築
+	BuildMesh();
+	//マテリアルリソースとポインタのサイズ設定
+	materialResources_.resize(modelData_.material.size());
+	materialPtrs_.resize(modelData_.material.size());	//各種リソースの生成
 	CreateResourcees();
 }
 

@@ -6,9 +6,8 @@
 ModelManager::~ModelManager() {}
 
 //初期化
-void ModelManager::Initialize(DirectXBase* directXBase, TextureManager* textureManager) {
-	modelCommon_ = new ModelCommon();
-	modelCommon_->Initialize(directXBase, textureManager);
+void ModelManager::Initialize(ModelCommon*modelCommon) {
+	modelCommon_ = modelCommon;
 }
 
 // objモデルの読み込み
@@ -19,8 +18,7 @@ void ModelManager::LoadModel(const std::string& name, const std::string& storedF
 		return;
 	}
 	//モデルの生成とファイル読み込み、初期化
-	std::unique_ptr<Model>model = std::make_unique<Model>();
-	model->Initialize(modelCommon_, "engine/resources/models", storedFileName, filePath);
+	std::unique_ptr<Model>model = Model::CreateFromModel(modelCommon_, storedFileName, filePath);
 
 	//モデルをmapコンテナに格納する
 	models_.insert(std::make_pair(name, std::move(model)));

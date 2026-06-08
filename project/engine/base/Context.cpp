@@ -11,6 +11,7 @@ void SceneContext::operator=(Core* core) {
 	spriteCommon = core->GetSpriteCommon();
 	wireframeObject3dCommon = core->GetWireframeObject3dCommon();
 	particleCommon = core->GetParticleCommon();
+	modelCommon = core->GetModelCommon();
 	sceneManager = core->GetSceneManager();
 	cameraManager = core->GetCameraManager();
 	particleManager = core->GetParticleManager();

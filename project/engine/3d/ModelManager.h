@@ -22,9 +22,8 @@ public://メンバ関数
 	/// <summary>
 	/// 初期化
 	/// </summary>
-	/// <param name="directXBase">DirectXの基盤部分</param>
-	/// <param name="textureManager">テクスチャマネージャー</param>
-	void Initialize(DirectXBase* directXBase,TextureManager*textureManager);
+	/// <param name="modelCommon">モデルの共通部分</param>
+	void Initialize(ModelCommon* modelCommon);
 
 	/// <summary>
 	/// objモデルの読み込み
@@ -46,7 +45,7 @@ public://メンバ関数
 	/// </summary>
 	/// <returns>モデルの共通部分</returns>
 	ModelCommon* GetModelCommon();
-public://PrassKey
+public://PassKey
 	class ConstructorKey {
 		ConstructorKey() = default;
 		friend class Core;
@@ -54,7 +53,7 @@ public://PrassKey
 	/// <summary>
 	/// コンストラクタ
 	/// </summary>
-	/// <param name="">PrassKeyを受け取る</param>
+	/// <param name="">PassKeyを受け取る</param>
 	explicit ModelManager(ConstructorKey);
 private://メンバ関数
 	//コピーコンストラクタ禁止

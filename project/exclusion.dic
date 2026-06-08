@@ -143,3 +143,8 @@ Phong
 Texcoord
 assimp
 hwnds
+assimp
+Texcoord
+dekanu
+gltf
+countof

@@ -30,25 +30,38 @@ public://メンバ関数
 	~Model();
 
 	/// <summary>
+	/// モデルの生成(ファイルを読み込み)
+	/// </summary>
+	/// <param name="modelCommon">モデルの共通部分</param>
+	/// <param name="storedFilePath">モデルを保管しているファイル名(最初と最後に"/"入らない)</param>
+	/// <param name="filename">ファイル名(最初に"/"入らない</param>
+	/// <returns>モデル</returns>
+	static std::unique_ptr<Model> CreateFromModel(ModelCommon* modelCommon, const std::string& storedFilePath, const std::string& filename);
+
+	/// <summary>
+	/// モデルの生成(キューブ)
+	/// </summary>
+	/// <param name="modelCommon">モデルの共通部分</param>
+	/// <returns>モデル</returns>
+	static std::unique_ptr<Model> CreateCube(ModelCommon*modelCommon);
+
+	/// <summary>
 	/// 初期化
 	/// </summary>
 	/// <param name="modelCommon">モデルの共通部分</param>
-	/// <param name="directoryPath">ディレクトリファイルパス(最後に"/"はいらない)</param>
-	/// <param name="storedFilePath">モデルを保管しているファイル名(最初と最後に"/"入らない)</param>
-	/// <param name="filename">ファイル名(最初に"/"入らない</param>
-	void Initialize(ModelCommon* modelCommon, const std::string& directoryPath, const std::string& storedFilePath, const std::string& filename);
+	void Initialize(ModelCommon* modelCommon);
 
+	/// <summary>
+	/// メッシュの再構成
+	/// </summary>
+	/// <param name="meshes">メッシュ</param>
+	void RebuildMeshes(const std::vector<MeshData>& meshes);
 
 	/// <summary>
 	/// 描画
 	/// </summary>
 	/// <param name="objectCount">表示したいオブジェクト数</param>
 	void Draw(uint32_t objectCount = 1);
-
-	/// <summary>
-	/// キューブの作成
-	/// </summary>
-	MeshData CreateCube();
 
 	/// <summary>
 	/// UV変換
@@ -129,6 +142,33 @@ private://メンバ関数
 	/// リムライトのリソースを生成
 	/// </summary>
 	void CreateRimLightResource();
+
+	/// <summary>
+	/// メッシュの構築
+	/// </summary>
+	void BuildMesh();
+
+	/// <summary>
+	/// キューブの作成
+	/// </summary>
+	MeshData MakeCubeData();
+
+	/// <summary>
+	/// キューブの生成
+	/// </summary>
+	void CreateCube();
+
+	/// <summary>
+	/// モデルの生成
+	/// </summary>
+	/// <param name="storedFilePath">モデルを保管しているファイル名(最初と最後に"/"入らない)</param>
+	/// <param name="filename">ファイル名(最初に"/"入らない</param>
+	void CreateFromModel(const std::string& storedFilePath, const std::string& filename);
+
+	/// <summary>
+	/// 各種リソースの生成
+	/// </summary>
+	void CreateResourcees();
 private://メンバ変数
 	//ModelCommonのポインタ
 	ModelCommon* modelCommon_ = nullptr;

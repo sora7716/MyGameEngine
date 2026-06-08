@@ -12,6 +12,7 @@
 #include "Object3dCommon.h"
 #include "WireframeObject3dCommon.h"
 #include "ParticleCommon.h"
+#include "ModelCommon.h"
 #include "SceneManager.h"
 #include "AudioManager.h"
 #include "ParticleManager.h"
@@ -41,7 +42,7 @@ public://メンバ関数
 	void Initialize();
 
 	/// <summary>
-	/// WinApiのゲッター
+	/// WinApiの取得
 	/// </summary>
 	/// <returns>WinApi</returns>
 	WinApi* GetWinApi()const;
@@ -53,97 +54,103 @@ public://メンバ関数
 	DirectXBase* GetDirectXBase()const;
 
 	/// <summary>
-	/// SRVマネージャーのゲッター
+	/// SRVマネージャーの取得
 	/// </summary>
 	/// <returns>SRVマネージャー</returns>
 	SRVManager* GetSRVManager()const;
 
 	/// <summary>
-	/// 入力のゲッター
+	/// 入力の取得
 	/// </summary>
 	/// <returns>入力</returns>
 	Input* GetInput()const;
 
 	/// <summary>
-	/// テクスチャマネージャーのゲッター
+	/// テクスチャマネージャーの取得
 	/// </summary>
 	/// <returns></returns>
 	TextureManager* GetTextureManager()const;
 
 	/// <summary>
-	/// モデルマネージャーのゲッター
+	/// モデルマネージャーの取得
 	/// </summary>
 	/// <returns>モデルマネージャー</returns>
 	ModelManager* GetModelManager()const;
 
 	/// <summary>
-	/// ImGuiマネージャーのゲッター
+	/// ImGuiマネージャーの取得
 	/// </summary>
 	/// <returns>ImGuiマネージャー</returns>
 	ImGuiManager* GetImGuiManager()const;
 
 	/// <summary>
-	/// カメラマネージャーのゲッター
+	/// カメラマネージャーの取得
 	/// </summary>
 	/// <returns>カメラマネージャー</returns>
 	CameraManager* GetCameraManager()const;
 
 	/// <summary>
-	/// スプライトの共通部分のゲッター
+	/// スプライトの共通部分の取得
 	/// </summary>
 	/// <returns>スプライトの共通部分</returns>
 	SpriteCommon* GetSpriteCommon()const;
 
 	/// <summary>
-	/// 2Dオブジェクトの共通部分のゲッター
+	/// 2Dオブジェクトの共通部分の取得
 	/// </summary>
 	/// <returns>2Dオブジェクトの共通部分</returns>
 	Object2dCommon* GetObject2dCommon()const;
 
 	/// <summary>
-	/// 3Dオブジェクトの共通部分のゲッター
+	/// 3Dオブジェクトの共通部分の取得
 	/// </summary>
 	/// <returns>3Dオブジェクトの共通部分</returns>
 	Object3dCommon* GetObject3dCommon()const;
 
 	/// <summary>
-	/// ワイヤーフレームオブジェクトの共通部分のゲッター
+	/// ワイヤーフレームオブジェクトの共通部分の取得
 	/// </summary>
 	/// <returns>ワイヤーフレームオブジェクト</returns>
 	WireframeObject3dCommon* GetWireframeObject3dCommon()const;
 
 	/// <summary>
-	/// パーティクルの共通部分のゲッター
+	/// パーティクルの共通部分の取得
 	/// </summary>
 	/// <returns>パーティクルの共通部分</returns>
 	ParticleCommon* GetParticleCommon()const;
 
 	/// <summary>
-	/// シーンマネージャーのゲッター
+	/// モデルの共通部分の取得
+	/// </summary>
+	/// <returns>モデルの共通部分</returns>
+	ModelCommon* GetModelCommon()const;
+
+	/// <summary>
+	/// シーンマネージャーの取得
 	/// </summary>
 	/// <returns>シーンマネージャー</returns>
 	SceneManager* GetSceneManager()const;
 
 	/// <summary>
-	/// オーディオマネージャーのゲッター
+	/// オーディオマネージャーの取得
 	/// </summary>
 	/// <returns>オーディオマネージャー</returns>
 	AudioManager* GetAudioManager()const;
 
 	/// <summary>
-	/// パーティクルのマネージャーのゲッター
+	/// パーティクルのマネージャーの取得
 	/// </summary>
 	/// <returns>パーティクルマネージャー</returns>
 	ParticleManager* GetParticleManager()const;
 
 	/// <summary>
-	/// ゲームオブジェクトのリストのゲッター
+	/// ゲームオブジェクトのリストの取得
 	/// </summary>
-	/// <returns>ゲームオブジェクトのリストのゲッター</returns>
+	/// <returns>ゲームオブジェクトのリストの取得</returns>
 	GameObjectList* GetGameObjectList()const;
 
 	/// <summary>
-	/// シーンファクトリのゲッター
+	/// シーンファクトリの取得
 	/// </summary>
 	/// <returns>シーンファクトリ</returns>
 	AbstractSceneFactory* GetSceneFactory()const;
@@ -174,6 +181,8 @@ private://メンバ変数
 	std::unique_ptr<WireframeObject3dCommon>wireframeObject3dCommon_ = nullptr;
 	//パーティクルの共通部分
 	std::unique_ptr<ParticleCommon>particleCommon_ = nullptr;
+	//モデルの共通部分
+	std::unique_ptr<ModelCommon> modelCommon_ = nullptr;
 	//シーンマネージャー
 	std::unique_ptr<SceneManager>sceneManager_ = nullptr;
 	//オーディオマネージャー
@@ -185,6 +194,6 @@ private://メンバ変数
 	//シーンファクトリ
 	std::unique_ptr< AbstractSceneFactory> sceneFactory_ = nullptr;
 	//シーンで必要なもの
-	SceneContext sceneContex_ = {};
+	SceneContext sceneContext_ = {};
 };
 

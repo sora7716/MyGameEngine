@@ -27,7 +27,7 @@ struct Object3dInstance {
 	/// 初期化
 	/// </summary>
 	/// <param name="gameObject">ゲームオブジェクト</param>
-	void Initialize(GameObject*gameObject);
+	void Initialize(GameObject* gameObject);
 };
 
 /// <summary>
@@ -74,11 +74,10 @@ public://メンバ関数
 	uint32_t AddInstance(GameObject* gameObject);
 
 	/// <summary>
-	/// LODモデルの設定
+	/// モデルの設定
 	/// </summary>
-	/// <param name="lodIndex">インデックス</param>
-	/// <param name="modelName">モデル名</param>
-	void SetLODModel(uint32_t lodIndex, const std::string& modelName);
+	/// <param name="name">モデル名</param>
+	void SetModel(const std::string& name);
 
 	/// <summary>
 	/// ゲームで使用するカメラの設定
@@ -204,7 +203,7 @@ private://メンバ関数
 	/// 座標変換行列リソースのストラクチャバッファの生成
 	/// </summary>
 	void CreateStructuredBufferForWvp();
-	
+
 	/// <summary>
 	/// ワールド行列を作成
 	/// </summary>
@@ -222,56 +221,51 @@ private://メンバ関数
 	/// <summary>
 	/// 座標の更新
 	/// </summary>
-	/// <param name="lodIndex">LODの検索キー</param>
 	/// <param name="drawIndex">描画の検索キー</param>
 	/// <param name="worldMatrix">ワールド行列</param>
-	void UpdateWorldTransform(uint32_t lodIndex,uint32_t drawIndex,const Matrix4x4& worldMatrix);
+	void UpdateWorldTransform(uint32_t drawIndex, const Matrix4x4& worldMatrix);
 
 	/// <summary>
 	/// オブジェクトの表示状態の更新
 	/// </summary>
 	/// <param name="index">インデックス</param>
 	/// <param name="worldMatrix">ワールド行列</param>
-	void UpdateVisibility(uint32_t index,const Matrix4x4& worldMatrix);
-	
+	void UpdateVisibility(uint32_t index, const Matrix4x4& worldMatrix);
+
 	/// <summary>
 	/// 距離によってLODモデルの添え字を取得
 	/// </summary>
 	/// <param name="distance">距離</param>
 	/// <param name="currentLOD">現在のLOD</param>
 	/// <returns>LODモデルの添え字</returns>
-	uint32_t SelectLOD(float distance,uint32_t currentLOD)const;
+	//uint32_t SelectLOD(float distance,uint32_t currentLOD)const;
 private://メンバ関数テーブル
 	//座標の更新をまとめた
 	static void (Object3d::* UpdateWorldMatrixTable[])(uint32_t index);
-	//定数
-private:
-	//LODの数
-	static inline const uint32_t kLODCount = 3;
 private://メンバ変数
 	//3Dオブジェクトの共通部分
 	Object3dCommon* object3dCommon_ = nullptr;
 	//UV座標
-	std::array<std::vector<Transform2d>,kLODCount> lodUvTransforms_;
+	std::vector<Transform2d> uvTransforms_;
 	//DirectXの基盤部分
 	DirectXBase* directXBase_ = nullptr;
 	//SRVマネージャー
 	SRVManager* srvManager_ = nullptr;
 	//モデル
 	Model* model_ = nullptr;
-	
-	//LOD用のモデル
-	std::array <Model*,kLODCount>lodModels_;
-	//LODの距離
-	std::vector<float>lodDistances_;
 
-	std::array<std::vector<TransformationMatrix>, kLODCount>lodWvpData_;
+	////LOD用のモデル
+	//std::array <Model*,kLODCount>lodModels_;
+	////LODの距離
+	//std::vector<float>lodDistances_;
+
+	std::vector<TransformationMatrix>wvpData_ = {};
 	//ワールドビュープロジェクションのリソース
-	std::array<ComPtr<ID3D12Resource>, kLODCount> lodWvpResources_;
+	ComPtr<ID3D12Resource>wvpResources_ = nullptr;
 	//ワールドビュープロジェクションのポインタ
-	std::array<TransformationMatrix*, kLODCount>lodWvpPtrs_;
-	std::array<uint32_t, kLODCount>lodSrvIndices_;
-	std::array<uint32_t, kLODCount>lodDrawCount_;
+	TransformationMatrix* wvpPtrs_ = nullptr;
+	uint32_t svIndices_ = 0;
+	uint32_t drawCount_ = 0;
 	//描画用のカメラ
 	Camera* renderCamera_ = nullptr;
 	//ゲームで使用するカメラ

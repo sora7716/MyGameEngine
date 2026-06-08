@@ -79,7 +79,7 @@ void Model::Initialize(ModelCommon* modelCommon) {
 }
 
 //メッシュの再構成
-void Model::RebuildMeshes(const std::vector<MeshData>& meshes) {
+void Model::RebuildMeshes(const std::vector<MeshData>& meshes, float rate) {
 	//メッシュデータのクリア
 	meshes_.clear();
 	//受け取ったメッシュデータに書き換え
@@ -102,7 +102,7 @@ void Model::RebuildMeshes(const std::vector<MeshData>& meshes) {
 		modelData_.material.push_back(material);
 	}
 	//インデックスの修正
-	ReduceTriangles();
+	ReduceTriangles(rate);
 	//メッシュを構築
 	BuildMesh();
 	//マテリアルリソースとポインタのサイズ設定
@@ -111,19 +111,34 @@ void Model::RebuildMeshes(const std::vector<MeshData>& meshes) {
 }
 
 //三角形を減らす
-void Model::ReduceTriangles() {
-	uint32_t reducedIndexCount = static_cast<uint32_t>(modelData_.meshes[0].indices.size() / 3);
-	//インデックスの生成とサイズ決定
-	std::vector<uint32_t>reducedIndices;
-	for (uint32_t i = 0; i < reducedIndexCount; i += 2) {
-		uint32_t startIndex = i * 3;
-		reducedIndices.push_back(modelData_.meshes[0].indices[startIndex + 0]);
-		reducedIndices.push_back(modelData_.meshes[0].indices[startIndex + 1]);
-		reducedIndices.push_back(modelData_.meshes[0].indices[startIndex + 2]);
-	}
+void Model::ReduceTriangles(float rate) {
+	//三角形を構成するインデックスの数
+	const uint32_t kTriangleIndexCount = 3;
+	for (MeshData& meshData : modelData_.meshes) {
+		
+		//元のインデックスのサイズを元に三角形の数を減らした
+		uint32_t triangleCount = static_cast<uint32_t>(meshData.indices.size() / kTriangleIndexCount);
 
-	//減らしたインデックスを代入
-	modelData_.meshes[0].indices = reducedIndices;
+		//減らした三角形から更に割合分減らす
+		uint32_t targetTriangleCount = static_cast<uint32_t>(triangleCount * rate);
+
+		//割合分減らしたのちに0になったら
+		if (targetTriangleCount == 0) {
+			targetTriangleCount = 1;
+		}
+
+		//インデックスの生成とサイズ決定
+		std::vector<uint32_t>reducedIndices;
+		for (uint32_t i = 0; i < targetTriangleCount; i += 2) {
+			uint32_t startIndex = i * kTriangleIndexCount;
+			reducedIndices.push_back(meshData.indices[startIndex + 0]);
+			reducedIndices.push_back(meshData.indices[startIndex + 1]);
+			reducedIndices.push_back(meshData.indices[startIndex + 2]);
+		}
+
+		//減らしたインデックスを代入
+		meshData.indices = reducedIndices;
+	}
 }
 
 //描画

@@ -43,7 +43,7 @@ public://メンバ関数
 	/// </summary>
 	/// <param name="modelCommon">モデルの共通部分</param>
 	/// <returns>モデル</returns>
-	static std::unique_ptr<Model> CreateCube(ModelCommon*modelCommon);
+	static std::unique_ptr<Model> CreateCube(ModelCommon* modelCommon);
 
 	/// <summary>
 	/// 初期化
@@ -55,12 +55,14 @@ public://メンバ関数
 	/// メッシュの再構成
 	/// </summary>
 	/// <param name="meshes">メッシュ</param>
-	void RebuildMeshes(const std::vector<MeshData>& meshes);
+	/// <param name="rate">どれくらい三角形を残すかの割合</param>
+	void RebuildMeshes(const std::vector<MeshData>& meshes, float rate = 1.0f);
 
 	/// <summary>
 	/// 三角形を減らす
 	/// </summary>
-	void ReduceTriangles();
+	/// <param name="rate">どれくらい三角形を残すかの割合</param>
+	void ReduceTriangles(float rate);
 
 	/// <summary>
 	/// 描画

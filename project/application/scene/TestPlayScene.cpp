@@ -34,11 +34,9 @@ void TestPlayScene::Initialize(const SceneContext& sceneContext) {
 	object3d_->Initialize(sceneContext_.object3dCommon, &renderCamera_, 1);
 	object3d_->SetGameCamera(gameCamera_);
 	//object3d_->SetModel("multiMaterial");
-	object3d_->SetLODModel(0, "dekanu");
-	object3d_->SetLODModel(1, "dekanu");
-	object3d_->SetLODModel(2, "dekanu");
+	object3d_->SetModel("dekanu");
 
-	object3d_->GetModel()->RebuildMeshes(object3d_->GetModel()->GetModelData().meshes);
+	//object3d_->GetModel()->RebuildMeshes(object3d_->GetModel()->GetModelData().meshes);
 
 	std::unique_ptr<GameObject>tree = std::make_unique<GameObject>();
 	tree->Initialize("tree");
@@ -129,6 +127,12 @@ void TestPlayScene::Debug() {
 	ImGui::DragFloat3("size", &obb.size.x, 0.1f);
 	ImGui::DragFloat3("translate", &obb.center.x, 0.1f);
 	cube_->SetOBB(obb);
+	ImGui::End();
+
+	ImGui::Begin("dekanu");
+	if (ImGui::DragFloat("rate", &rate, 0.01f)) {
+		object3d_->GetModel()->RebuildMeshes(object3d_->GetModel()->GetModelData().meshes, rate);
+	}
 	ImGui::End();
 #endif // USE_IMGUI
 

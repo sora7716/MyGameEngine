@@ -45,17 +45,13 @@ void Object3d::Initialize(Object3dCommon* object3dCommon, Camera* renderCamera, 
 	transform3dMode_ = transform3dMode;
 	//ゲームオブジェクトの数を決定
 	maxInstanceCount_ = maxInstanceCount;
-	//instanceData_.resize(maxInstanceCount);
-	for (uint32_t lod = 0; lod < kLODCount; lod++) {
-		//wvpのデータ数を決定
-		lodWvpData_[lod].resize(maxInstanceCount);
-		for (TransformationMatrix& wvp : lodWvpData_[lod]) {
-			wvp.world = Matrix4x4::Identity4x4();
-			wvp.wvp = Matrix4x4::Identity4x4();
-			wvp.worldInverseTranspose = Matrix4x4::Identity4x4();
-		}
+	//wvpのデータ数を決定
+	wvpData_.resize(maxInstanceCount);
+	for (TransformationMatrix& wvp : wvpData_) {
+		wvp.world = Matrix4x4::Identity4x4();
+		wvp.wvp = Matrix4x4::Identity4x4();
+		wvp.worldInverseTranspose = Matrix4x4::Identity4x4();
 	}
-
 	//wvpリソースの初期化
 	CreateTransformationMatrixResource();
 	//座標変換行列リソースのストラクチャバッファの生成
@@ -73,10 +69,10 @@ void Object3d::Initialize(Object3dCommon* object3dCommon, Camera* renderCamera, 
 	material_.uvMatrix = Matrix4x4::Identity4x4();
 	material_.shininess = 10.0f;
 
-	lodDistances_ = {
-		20.0f,
-		50.0f
-	};
+	//lodDistances_ = {
+	//	20.0f,
+	//	50.0f
+	//};
 }
 
 //更新
@@ -84,15 +80,11 @@ void Object3d::Update() {
 	//Object3dの共通部分の更新
 	object3dCommon_->Update();
 
-	//LOD語との描画数をリセット
-	for (uint32_t lod = 0; lod < kLODCount; lod++) {
-		lodDrawCount_[lod] = 0;
-	}
+	//描画数をリセット
+	drawCount_ = 0;
 
-	//RootNodeはLOD0を基準にする
-	if (lodModels_[0]) {
-		node_ = lodModels_[0]->GetModelData().rootNode;
-	}
+	//RootNodeの設定
+	node_ = model_->GetModelData().rootNode;
 
 	for (int32_t i = 0; i < instanceData_.size(); i++) {
 		GameObject* gameObject = instanceData_[i].gameObject;
@@ -117,44 +109,44 @@ void Object3d::Update() {
 			continue;
 		}
 
-		//LODの計算
-		Vector3 cameraWorldPos = gameCamera_->GetWorldPos();
-		Vector3 objectWorldPos = GetWorldPos(i);
+		////LODの計算
+		//Vector3 cameraWorldPos = gameCamera_->GetWorldPos();
+		//Vector3 objectWorldPos = GetWorldPos(i);
 
-		float distance = (objectWorldPos - cameraWorldPos).Length();
+		//float distance = (objectWorldPos - cameraWorldPos).Length();
 
-		uint32_t lodIndex = SelectLOD(distance, instanceData_[i].currentLOD);
-		instanceData_[i].currentLOD = lodIndex;
-		//lodIndex番目がlodModelsに無かったら
-		if (!lodModels_[lodIndex]) {
-			continue;
-		}
+		//uint32_t lodIndex = SelectLOD(distance, instanceData_[i].currentLOD);
+		//instanceData_[i].currentLOD = lodIndex;
+		////lodIndex番目がlodModelsに無かったら
+		//if (!lodModels_[lodIndex]) {
+		//	continue;
+		//}
 
 		//LOD語とのWVP配列に詰める
-		uint32_t drawIndex = lodDrawCount_[lodIndex];
+		uint32_t drawIndex = drawCount_;
 		//検索キーがデータのサイズより大きかった場合
-		if (drawIndex >= lodWvpData_[lodIndex].size()) {
+		if (drawIndex >= wvpData_.size()) {
 			continue;
 		}
 
 		//座標の更新
-		UpdateWorldTransform(lodIndex, drawIndex, worldMatrix_);
+		UpdateWorldTransform(drawIndex, worldMatrix_);
 
 		//描画カウントを加算
-		lodDrawCount_[lodIndex]++;
+		drawCount_++;
 
 		//モデルが存在したらメッシュごとにUV座標を適応
-		if (lodModels_[lodIndex]) {
-			for (uint32_t i = 0; i < lodModels_[lodIndex]->GetMeshes().size(); i++) {
-				uint32_t materialIndex = lodModels_[lodIndex]->GetMeshes()[i]->GetMaterialIndex();
+		if (model_) {
+			for (uint32_t i = 0; i < model_->GetMeshes().size(); i++) {
+				uint32_t materialIndex = model_->GetMeshes()[i]->GetMaterialIndex();
 
 				//マテリアルの検索キーがUV座標の配列の要素数を超えたら
-				if (materialIndex >= lodUvTransforms_[lodIndex].size()) {
+				if (materialIndex >= uvTransforms_.size()) {
 					continue;
 				}
 
 
-				lodModels_[lodIndex]->UVTransform(materialIndex, lodUvTransforms_[lodIndex][materialIndex]);
+				model_->UVTransform(materialIndex, uvTransforms_[materialIndex]);
 			}
 		}
 	}
@@ -177,24 +169,16 @@ void Object3d::Draw() {
 	directXBase_->GetCommandList()->SetGraphicsRootDescriptorTable(5, object3dCommon_->GetSRVManager()->GetGPUDescriptorHandle(object3dCommon_->GetSrvIndexPoint()));
 	//スポットライトのStructuredBufferを設定
 	directXBase_->GetCommandList()->SetGraphicsRootDescriptorTable(6, object3dCommon_->GetSRVManager()->GetGPUDescriptorHandle(object3dCommon_->GetSrvIndexSpot()));
+	//WVP SRVを設定
+	directXBase_->GetCommandList()->SetGraphicsRootDescriptorTable(1, srvManager_->GetGPUDescriptorHandle(svIndices_));
 
-	for (uint32_t lod = 0; lod < kLODCount; lod++) {
-		//LODモデルが存在してなかったら
-		if (!lodModels_[lod]) {
-			continue;
-		}
-
+	//LODモデルが存在してなかったら
+	if (model_) {
 		//LOD描画カウントが0だったら
-		if (lodDrawCount_[lod] == 0) {
-			continue;
+		if (drawCount_ > 0) {
+			//ドローコール
+			model_->Draw(drawCount_);
 		}
-
-		//LODごとのWVP SRVを設定
-		directXBase_->GetCommandList()->SetGraphicsRootDescriptorTable(1, srvManager_->GetGPUDescriptorHandle(lodSrvIndices_[lod]));
-
-		//ドローコール
-		lodModels_[lod]->Draw(lodDrawCount_[lod]);
-
 	}
 }
 
@@ -213,23 +197,13 @@ uint32_t Object3d::AddInstance(GameObject* gameObject) {
 	return static_cast<uint32_t>(instanceData_.size() - 1);
 }
 
-//LODモデルの設定
-void Object3d::SetLODModel(uint32_t lodIndex, const std::string& modelName) {
-	assert(lodIndex < kLODCount);
-
-	Model* model = object3dCommon_->GetModelManager()->FindModel(modelName);
-
-	lodModels_[lodIndex] = model;
-
-	//Uマテリアル数を取得
-	const uint32_t materialCount = static_cast<uint32_t>(lodModels_[lodIndex]->GetModelData().material.size());
-
-	//UV座標をマテリアルサイズに合わせる
-	lodUvTransforms_[lodIndex].resize(materialCount);
-
-	//UV座標の初期化
-	for (Transform2d& uvTransform : lodUvTransforms_[lodIndex]) {
-		uvTransform.Initialize();
+//モデルの設定
+void Object3d::SetModel(const std::string& name) {
+	model_ = object3dCommon_->GetModelManager()->FindModel(name);
+	//uv座標
+	uvTransforms_.resize(model_->GetModelData().material.size());
+	for (Transform2d& uvTransform : uvTransforms_) {
+		uvTransform = { {1.0f,1.0f},0.0f,{0.0f,0.0f} };
 	}
 }
 
@@ -240,32 +214,22 @@ void Object3d::SetGameCamera(Camera* gameCamera) {
 
 // uvスケールの設定
 void Object3d::SetUVScale(uint32_t index, const Vector2& uvScale) {
-	for (std::vector<Transform2d>& uvTransforms : lodUvTransforms_) {
-		uvTransforms[index].scale = uvScale;
-	}
+	uvTransforms_[index].scale = uvScale;
 }
 
 // uv回転の設定
 void Object3d::SetUVRotate(uint32_t index, float uvRotate) {
-	for (std::vector<Transform2d>& uvTransforms : lodUvTransforms_) {
-		uvTransforms[index].rotate = uvRotate;
-	}
+	uvTransforms_[index].rotate = uvRotate;
 }
 
 // uv平行移動の設定
 void Object3d::SetUVTranslate(uint32_t index, const Vector2& uvTranslate) {
-	for (std::vector<Transform2d>& uvTransforms : lodUvTransforms_) {
-		uvTransforms[index].translate = uvTranslate;
-	}
+	uvTransforms_[index].translate = uvTranslate;
 }
 
 //色の設定
 void Object3d::SetColor(uint32_t materialIndex, const Vector4& color) {
-	for (Model* model : lodModels_) {
-		if (model) {
-			model->SetColor(materialIndex, color);
-		}
-	}
+	model_->SetColor(materialIndex, color);
 }
 
 //親の設定
@@ -275,18 +239,12 @@ void Object3d::SetParent(const WorldTransform* parent) {
 
 //テクスチャの変更
 void Object3d::SetTexture(uint32_t materialIndex, const std::string& filePath) {
-	for (Model* model : lodModels_) {
-		if (model) {
-			model->SetTexture(materialIndex, filePath);
-		}
-	}
+	model_->SetTexture(materialIndex, filePath);
 }
 
 //UV座標の設定
 void Object3d::SetUVTransform(uint32_t index, const Transform2d& uvTransform) {
-	for (std::vector<Transform2d>& uvTransforms : lodUvTransforms_) {
-		uvTransforms[index] = uvTransform;
-	}
+	uvTransforms_[index] = uvTransform;
 }
 
 //ブレンドモードの設定
@@ -297,41 +255,41 @@ void Object3d::SetBlendMode(const BlendMode& blendMode) {
 //uvスケールの取得
 const Vector2& Object3d::GetUVScale(uint32_t index) const {
 	// TODO: return ステートメントをここに挿入します
-	return lodUvTransforms_[0][index].scale;
+	return uvTransforms_[index].scale;
 }
 
 //uv回転の取得
 const float Object3d::GetUVRotate(uint32_t index) const {
 	// TODO: return ステートメントをここに挿入します
-	return lodUvTransforms_[0][index].rotate;
+	return uvTransforms_[index].rotate;
 }
 
 //uv平行移動の取得
 const Vector2& Object3d::GetUVTranslate(uint32_t index) const {
 	// TODO: return ステートメントをここに挿入します
-	return lodUvTransforms_[0][index].translate;
+	return uvTransforms_[index].translate;
 }
 
 //UV座標の取得
 const Transform2d& Object3d::GetUVTransform(uint32_t index) const {
 	// TODO: return ステートメントをここに挿入します
-	return lodUvTransforms_[0][index];
+	return uvTransforms_[index];
 }
 
 //色の取得
 const Vector4& Object3d::GetColor(uint32_t index) const {
 	// TODO: return ステートメントをここに挿入します
 	static const Vector4 defaultColor(0.0f, 0.0f, 0.0f, 0.0f);
-	if (lodModels_[0]) {
-		return lodModels_[0]->GetColor(index);
+	if (model_) {
+		return model_->GetColor(index);
 	}
 	return defaultColor;
 }
 
 //モデルの取得
 Model* Object3d::GetModel() {
-	if (lodModels_[0]) {
-		return lodModels_[0];
+	if (model_) {
+		return model_;
 	}
 	return nullptr;
 }
@@ -350,36 +308,32 @@ Vector3 Object3d::GetWorldPos(uint32_t index) {
 
 //座標変換行列リソースの生成
 void Object3d::CreateTransformationMatrixResource() {
-	for (uint32_t lod = 0; lod < kLODCount; lod++) {
-		//インスタンスの最大数で確保
-		lodWvpData_[lod].resize(maxInstanceCount_);
+	//インスタンスの最大数で確保
+	wvpData_.resize(maxInstanceCount_);
 
-		// 配列サイズで確保
-		lodWvpResources_[lod] = directXBase_->CreateBufferResource(sizeof(TransformationMatrix) * maxInstanceCount_);
-		//座標変換行列リソースにデータを書き込むためのアドレスを取得してtransformationMatrixDataに割り当てる
-		//書き込むためのアドレス
-		lodWvpResources_[lod]->Map(0, nullptr, reinterpret_cast<void**>(&lodWvpPtrs_[lod]));
-		//単位行列を書き込んでおく
-		for (uint32_t i = 0; i < static_cast<uint32_t>(maxInstanceCount_); i++) {
-			lodWvpPtrs_[lod][i].wvp = Matrix4x4::Identity4x4();
-			lodWvpPtrs_[lod][i].world = Matrix4x4::Identity4x4();
-			lodWvpPtrs_[lod][i].worldInverseTranspose = Matrix4x4::Identity4x4();
-		}
+	// 配列サイズで確保
+	wvpResources_ = directXBase_->CreateBufferResource(sizeof(TransformationMatrix) * maxInstanceCount_);
+	//座標変換行列リソースにデータを書き込むためのアドレスを取得してtransformationMatrixDataに割り当てる
+	//書き込むためのアドレス
+	wvpResources_->Map(0, nullptr, reinterpret_cast<void**>(&wvpPtrs_));
+	//単位行列を書き込んでおく
+	for (uint32_t i = 0; i < static_cast<uint32_t>(maxInstanceCount_); i++) {
+		wvpPtrs_[i].wvp = Matrix4x4::Identity4x4();
+		wvpPtrs_[i].world = Matrix4x4::Identity4x4();
+		wvpPtrs_[i].worldInverseTranspose = Matrix4x4::Identity4x4();
 	}
 }
 
 //座標変換行列リソースのストラクチャバッファの生成
 void Object3d::CreateStructuredBufferForWvp() {
-	for (uint32_t lod = 0; lod < kLODCount; lod++) {
-		//ストラクチャバッファを生成
-		lodSrvIndices_[lod] = srvManager_->Allocate() + TextureManager::kSRVIndexTop;
-		srvManager_->CreateSRVForStructuredBuffer(
-			lodSrvIndices_[lod],
-			lodWvpResources_[lod].Get(),
-			static_cast<uint32_t>(maxInstanceCount_),
-			sizeof(TransformationMatrix)
-		);
-	}
+	//ストラクチャバッファを生成
+	svIndices_ = srvManager_->Allocate() + TextureManager::kSRVIndexTop;
+	srvManager_->CreateSRVForStructuredBuffer(
+		svIndices_,
+		wvpResources_.Get(),
+		static_cast<uint32_t>(maxInstanceCount_),
+		sizeof(TransformationMatrix)
+	);
 }
 
 //ワールド行列を作成
@@ -415,27 +369,27 @@ void Object3d::MakeBillboardWorldMatrix(uint32_t index) {
 }
 
 //座標の更新
-void Object3d::UpdateWorldTransform(uint32_t lodIndex, uint32_t drawIndex, const Matrix4x4& worldMatrix) {
-	lodWvpData_[lodIndex][drawIndex].world = worldMatrix;
+void Object3d::UpdateWorldTransform(uint32_t drawIndex, const Matrix4x4& worldMatrix) {
+	wvpData_[drawIndex].world = worldMatrix;
 
 	if (renderCamera_) {
-		lodWvpData_[lodIndex][drawIndex].wvp = worldMatrix * renderCamera_->GetViewProjectionMatrix();
+		wvpData_[drawIndex].wvp = worldMatrix * renderCamera_->GetViewProjectionMatrix();
 	} else {
-		lodWvpData_[lodIndex][drawIndex].wvp = worldMatrix;
+		wvpData_[drawIndex].wvp = worldMatrix;
 	}
 
-	lodWvpData_[lodIndex][drawIndex].worldInverseTranspose = lodWvpData_[lodIndex][drawIndex].world.InverseTranspose();
+	wvpData_[drawIndex].worldInverseTranspose = wvpData_[drawIndex].world.InverseTranspose();
 
-	lodWvpPtrs_[lodIndex][drawIndex] = lodWvpData_[lodIndex][drawIndex];
+	wvpPtrs_[drawIndex] = wvpData_[drawIndex];
 }
 
 //オブジェクトの表示状態の更新
 void Object3d::UpdateVisibility(uint32_t index, const Matrix4x4& worldMatrix) {
 	//表示するかのフラグ
 	bool isVisible = true;
-	if (gameCamera_ && lodModels_[0]) {
+	if (gameCamera_ && model_) {
 		isVisible = false;
-		for (const std::unique_ptr<Mesh>& mesh : lodModels_[0]->GetMeshes()) {
+		for (const std::unique_ptr<Mesh>& mesh : model_->GetMeshes()) {
 			PrimitiveData::AABB worldAABB = mesh->GetAABB() * worldMatrix;
 
 			if (Collision::IsCollision(gameCamera_->GetFrustum(), worldAABB)) {
@@ -448,52 +402,52 @@ void Object3d::UpdateVisibility(uint32_t index, const Matrix4x4& worldMatrix) {
 	instanceData_[index].isEnabled = isVisible;
 }
 
-//距離によってLODモデルの添え字を取得
-uint32_t Object3d::SelectLOD(float distance, uint32_t currentLOD) const {
-	//距離境界が足りない場合
-	if (lodDistances_.size() < kLODCount - 1) {
-		return 0;
-	}
-
-	//currentLODが範囲外なら戻す
-	if (currentLOD >= lodModels_.size()) {
-		currentLOD = 0;
-	}
-
-	//LODモデル番号
-	uint32_t result = currentLOD;
-	//ヒステリシス幅
-	const float hysteresis = 5.0f;
-
-	//現在のLODをみて
-	switch (currentLOD) {
-	case 0:
-		//LOD0 -> LOD1
-		if (distance >= lodDistances_[0] + hysteresis) {
-			result = 1;
-		}
-		break;
-	case 1:
-		//LOD1 -> LOD0
-		if (distance < lodDistances_[0] - hysteresis) {
-			result = 0;
-		} else if (distance >= lodDistances_[1] + hysteresis) {
-			//LOD1 -> LOD2
-			result = 2;
-		}
-		break;
-	case 2:
-		//LOD2 -> LOD1
-		if (distance < lodDistances_[1] - hysteresis) {
-			result = 1;
-		}
-		break;
-	}
-
-	//選ばれたLODがなければ
-	if (!lodModels_[result]) {
-		return 0;
-	}
-
-	return result;
-}
+////距離によってLODモデルの添え字を取得
+//uint32_t Object3d::SelectLOD(float distance, uint32_t currentLOD) const {
+//	//距離境界が足りない場合
+//	if (lodDistances_.size() < kLODCount - 1) {
+//		return 0;
+//	}
+//
+//	//currentLODが範囲外なら戻す
+//	if (currentLOD >= lodModels_.size()) {
+//		currentLOD = 0;
+//	}
+//
+//	//LODモデル番号
+//	uint32_t result = currentLOD;
+//	//ヒステリシス幅
+//	const float hysteresis = 5.0f;
+//
+//	//現在のLODをみて
+//	switch (currentLOD) {
+//	case 0:
+//		//LOD0 -> LOD1
+//		if (distance >= lodDistances_[0] + hysteresis) {
+//			result = 1;
+//		}
+//		break;
+//	case 1:
+//		//LOD1 -> LOD0
+//		if (distance < lodDistances_[0] - hysteresis) {
+//			result = 0;
+//		} else if (distance >= lodDistances_[1] + hysteresis) {
+//			//LOD1 -> LOD2
+//			result = 2;
+//		}
+//		break;
+//	case 2:
+//		//LOD2 -> LOD1
+//		if (distance < lodDistances_[1] - hysteresis) {
+//			result = 1;
+//		}
+//		break;
+//	}
+//
+//	//選ばれたLODがなければ
+//	if (!lodModels_[result]) {
+//		return 0;
+//	}
+//
+//	return result;
+//}

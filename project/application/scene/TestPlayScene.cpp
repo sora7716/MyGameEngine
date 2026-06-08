@@ -38,8 +38,7 @@ void TestPlayScene::Initialize(const SceneContext& sceneContext) {
 	object3d_->SetLODModel(1, "dekanu");
 	object3d_->SetLODModel(2, "dekanu");
 
-	std::unique_ptr<Model> model = Model::CreateCube(sceneContext_.modelCommon);
-	object3d_->GetModel()->RebuildMeshes(model->GetModelData().meshes);
+	object3d_->GetModel()->RebuildMeshes(object3d_->GetModel()->GetModelData().meshes);
 
 	std::unique_ptr<GameObject>tree = std::make_unique<GameObject>();
 	tree->Initialize("tree");

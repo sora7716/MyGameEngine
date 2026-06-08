@@ -84,11 +84,6 @@ void Model::RebuildMeshes(const std::vector<MeshData>& meshes) {
 	meshes_.clear();
 	//受け取ったメッシュデータに書き換え
 	modelData_.meshes = meshes;
-	//メッシュを構築
-	BuildMesh();
-	//マテリアルリソースとポインタのサイズ設定
-	materialResources_.resize(modelData_.material.size());
-	materialPtrs_.resize(modelData_.material.size());
 	//マテリアルが存在するか
 	if (!modelData_.material.empty()) {
 		for (uint32_t i = 0; i < modelData_.meshes.size(); i++) {
@@ -106,6 +101,29 @@ void Model::RebuildMeshes(const std::vector<MeshData>& meshes) {
 #endif // _DEBUG
 		modelData_.material.push_back(material);
 	}
+	//インデックスの修正
+	ReduceTriangles();
+	//メッシュを構築
+	BuildMesh();
+	//マテリアルリソースとポインタのサイズ設定
+	materialResources_.resize(modelData_.material.size());
+	materialPtrs_.resize(modelData_.material.size());
+}
+
+//三角形を減らす
+void Model::ReduceTriangles() {
+	uint32_t reducedIndexCount = static_cast<uint32_t>(modelData_.meshes[0].indices.size() / 3);
+	//インデックスの生成とサイズ決定
+	std::vector<uint32_t>reducedIndices;
+	for (uint32_t i = 0; i < reducedIndexCount; i += 2) {
+		uint32_t startIndex = i * 3;
+		reducedIndices.push_back(modelData_.meshes[0].indices[startIndex + 0]);
+		reducedIndices.push_back(modelData_.meshes[0].indices[startIndex + 1]);
+		reducedIndices.push_back(modelData_.meshes[0].indices[startIndex + 2]);
+	}
+
+	//減らしたインデックスを代入
+	modelData_.meshes[0].indices = reducedIndices;
 }
 
 //描画
@@ -359,10 +377,6 @@ MeshData Model::MakeCubeData() {
 	mesh.vertices.resize(24);
 	mesh.indices.resize(36);
 
-	//テクスチャを設定
-	mesh.materialIndex = 0;
-	modelData_.material[mesh.materialIndex].textureFilePath = "engine/resources/textures/white1x1.png";
-
 	//UV座標
 	Vector2 uv[kFaceRectCount] = {};
 	uv[kLeftUp] = { 0.0f,0.0f };//左上
@@ -479,6 +493,12 @@ MeshData Model::MakeCubeData() {
 
 //キューブの生成
 void Model::CreateCube() {
+	//マテリアルの初期化
+	MaterialData material;
+	material.srvIndex = 0;
+	material.textureFilePath = "engine/resources/textures/white1x1.png";
+	//マテリアルを設定
+	modelData_.material.push_back(material);
 	//メッシュの再構築
 	RebuildMeshes({ MakeCubeData() });
 	//各種リソースの生成

@@ -58,6 +58,11 @@ public://メンバ関数
 	void RebuildMeshes(const std::vector<MeshData>& meshes);
 
 	/// <summary>
+	/// 三角形を減らす
+	/// </summary>
+	void ReduceTriangles();
+
+	/// <summary>
 	/// 描画
 	/// </summary>
 	/// <param name="objectCount">表示したいオブジェクト数</param>

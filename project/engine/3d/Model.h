@@ -55,14 +55,7 @@ public://メンバ関数
 	/// メッシュの再構成
 	/// </summary>
 	/// <param name="meshes">メッシュ</param>
-	/// <param name="rate">どれくらい三角形を残すかの割合</param>
-	void RebuildMeshes(const std::vector<MeshData>& meshes, float rate = 1.0f);
-
-	/// <summary>
-	/// 三角形を減らす
-	/// </summary>
-	/// <param name="rate">どれくらい三角形を残すかの割合</param>
-	void ReduceTriangles(float rate);
+	void RebuildMeshes(const std::vector<MeshData>& meshes);
 
 	/// <summary>
 	/// 描画
@@ -176,6 +169,13 @@ private://メンバ関数
 	/// 各種リソースの生成
 	/// </summary>
 	void CreateResourcees();
+
+public:
+	/// <summary>
+	/// 近くにある頂点をまとめる
+	/// </summary>
+	/// <returns>メッシュデータ</returns>
+	std::vector<MeshData> VertexClustering();
 private://メンバ変数
 	//ModelCommonのポインタ
 	ModelCommon* modelCommon_ = nullptr;

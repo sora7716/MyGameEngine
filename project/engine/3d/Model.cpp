@@ -3,6 +3,8 @@
 #include "ModelCommon.h"
 #include "Mesh.h"
 #include "TextureManager.h"
+#include "Log.h"
+#include <map>
 #include <cassert>
 #include <fstream>
 #include <sstream>
@@ -79,7 +81,7 @@ void Model::Initialize(ModelCommon* modelCommon) {
 }
 
 //メッシュの再構成
-void Model::RebuildMeshes(const std::vector<MeshData>& meshes, float rate) {
+void Model::RebuildMeshes(const std::vector<MeshData>& meshes) {
 	//メッシュデータのクリア
 	meshes_.clear();
 	//受け取ったメッシュデータに書き換え
@@ -101,47 +103,11 @@ void Model::RebuildMeshes(const std::vector<MeshData>& meshes, float rate) {
 #endif // _DEBUG
 		modelData_.material.push_back(material);
 	}
-	//インデックスの修正
-	ReduceTriangles(rate);
 	//メッシュを構築
 	BuildMesh();
 	//マテリアルリソースとポインタのサイズ設定
 	materialResources_.resize(modelData_.material.size());
 	materialPtrs_.resize(modelData_.material.size());
-}
-
-//三角形を減らす
-void Model::ReduceTriangles(float rate) {
-	//三角形を構成するインデックスの数
-	const uint32_t kTriangleIndexCount = 3;
-	for (auto& mesh : meshes_) {
-
-		//元のインデックスのサイズを元に三角形の数を減らした
-		uint32_t triangleCount = static_cast<uint32_t>(mesh->GetOrinalMeshData().indices.size() / kTriangleIndexCount);
-
-		//減らした三角形から更に割合分減らす
-		uint32_t targetTriangleCount = static_cast<uint32_t>(triangleCount * rate);
-
-		//割合分減らしたのちに0になったら
-		if (targetTriangleCount == 0) {
-			targetTriangleCount = 1;
-		}
-
-		//メッシュデータを書き換え
-		for (MeshData& meshData : modelData_.meshes) {
-			//インデックスの生成とサイズ決定
-			std::vector<uint32_t>reducedIndices;
-			for (uint32_t i = 0; i < targetTriangleCount; i += 2) {
-				uint32_t startIndex = i * kTriangleIndexCount;
-				reducedIndices.push_back(meshData.indices[startIndex + 0]);
-				reducedIndices.push_back(meshData.indices[startIndex + 1]);
-				reducedIndices.push_back(meshData.indices[startIndex + 2]);
-			}
-
-			//減らしたインデックスを代入
-			meshData.indices = reducedIndices;
-		}
-	}
 }
 
 //描画
@@ -527,31 +493,9 @@ void Model::CreateCube() {
 void Model::CreateFromModel(const std::string& storedFilePath, const std::string& filename) {
 	//モデルの読み込み
 	modelData_ = LoadModelFile("engine/resources/models", storedFilePath, filename);
-	//メッシュの構築
-	//メッシュデータのクリア
-	meshes_.clear();
-	//マテリアルが存在するか
-	if (!modelData_.material.empty()) {
-		for (uint32_t i = 0; i < modelData_.meshes.size(); i++) {
-			if (modelData_.meshes[i].materialIndex >= modelData_.material.size()) {
-				modelData_.meshes[i].materialIndex = 0;
-			}
-		}
-	} else {
-		//マテリアルが存在しなかった場合
-		MaterialData material;
-#ifdef _DEBUG
-		material.textureFilePath = "engine/resources/textures/magenta1x1.png";
-#else
-		material.textureFilePath = "engine/resources/textures/white1x1.png";
-#endif // _DEBUG
-		modelData_.material.push_back(material);
-	}
-	//メッシュを構築
-	BuildMesh();
-	//マテリアルリソースとポインタのサイズ設定
-	materialResources_.resize(modelData_.material.size());
-	materialPtrs_.resize(modelData_.material.size());	//各種リソースの生成
+	//メッシュの再構築
+	RebuildMeshes(modelData_.meshes);
+	//各種リソースの生成
 	CreateResourcees();
 }
 
@@ -565,4 +509,78 @@ void Model::CreateResourcees() {
 	for (MaterialData& materialData : modelData_.material) {
 		modelCommon_->GetTextureManager()->LoadTexture(materialData.textureFilePath);
 	}
+}
+
+//近くの頂点をまとめる
+std::vector<MeshData> Model::VertexClustering() {
+	for (MeshData& meshData : modelData_.meshes) {
+		//Gridサイズの設定
+		float gridSize = 0.1f;
+		//GridKeyの一覧表
+		std::map<Vector3Int, uint32_t>gridToNewIndex;
+		//前のインデックスから新しいインデックスを取得するための対応表
+		std::vector<uint32_t>oldToNewIndex(meshData.vertices.size(), UINT32_MAX);
+		//新しい頂点
+		std::vector<VertexData>newVertices;
+		//新しインデックス
+		uint32_t newIndex = 0;
+		//GridKeyの作成
+		for (uint32_t oldIndex = 0; oldIndex < meshData.vertices.size(); oldIndex++) {
+			//一つの頂点
+			VertexData vertex = meshData.vertices[oldIndex];
+
+			//GridKeyを作成
+			Vector3Int gridKey = {
+				static_cast<int32_t>(std::floor(vertex.position.x / gridSize)),
+				static_cast<int32_t>(std::floor(vertex.position.y / gridSize)),
+				static_cast<int32_t>(std::floor(vertex.position.z / gridSize)),
+			};
+
+			//gridKeyが一覧表に登録されていたら
+			if (gridToNewIndex.contains(gridKey)) {
+				//登録済みのインデックスを追加
+				oldToNewIndex[oldIndex] = gridToNewIndex[gridKey];
+				continue;
+			}
+
+			//未登録なら
+			//新しい頂点に追加
+			newVertices.push_back(vertex);
+			//グリッドの一覧表に新しいインデックスを追加
+			gridToNewIndex[gridKey] = newIndex;
+			//対応表に新しいインデックスを追加
+			oldToNewIndex[oldIndex] = newIndex;
+			//新しいインデックスの加算
+			newIndex++;
+		}
+
+		//インデックスの張替え
+		std::vector<uint32_t>newIndices;
+		for (uint32_t i = 0; i < meshData.indices.size(); i += 3) {
+			uint32_t a = oldToNewIndex[meshData.indices[i]];
+			uint32_t b = oldToNewIndex[meshData.indices[i + 1]];
+			uint32_t c = oldToNewIndex[meshData.indices[i + 2]];
+
+			//三角形が作れない場合は省く
+			if (a == b) {
+				continue;
+			} else if (a == c) {
+				continue;
+			} else if (b == c) {
+				continue;
+			}
+
+			//新しいインデックスを追加
+			newIndices.push_back(a);
+			newIndices.push_back(b);
+			newIndices.push_back(c);
+		}
+
+		//頂点に代入
+		meshData.vertices = newVertices;
+		//インデックスに代入
+		meshData.indices = newIndices;
+	}
+
+	return modelData_.meshes;
 }

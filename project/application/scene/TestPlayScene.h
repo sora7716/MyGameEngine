@@ -70,5 +70,5 @@ private://メンバ変数
 
 	std::unique_ptr<Primitive::Cube>cube_ = nullptr;
 
-	float rate = 1.0f;
+	float rate = 0.5f;
 };

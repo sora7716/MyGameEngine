@@ -224,3 +224,14 @@ bool Vector3::operator<(const Vector3& v) {
 const Vector3 operator*(float n, const Vector3& v) {
 	return v * n;
 }
+
+//Vector3Int同士の比較
+bool Vector3Int::operator<(const Vector3Int& v) const {
+	if (x != v.x) {
+		return x < v.x;
+	} else if (y != v.y) {
+		return y < v.y;
+	} else {
+		return z < v.z;
+	}
+}

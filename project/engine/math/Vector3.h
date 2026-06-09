@@ -1,5 +1,6 @@
 #pragma once
 #include "Matrix4x4.h"
+#include <cstdint>
 /// <summary>
 /// 3次元ベクトル
 /// </summary>
@@ -110,3 +111,15 @@ struct Vector3 final {
 };
 //float*Vector3
 const Vector3 operator*(float n, const Vector3& v);
+
+/// <summary>
+/// 3次元ベクトルの整数型
+/// </summary>
+struct Vector3Int {
+	int32_t x;
+	int32_t y;
+	int32_t z;
+
+	//Vector3Int同士の比較
+	bool operator<(const Vector3Int& v)const;
+};

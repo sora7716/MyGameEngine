@@ -48,12 +48,6 @@ public://メンバ関数
 	/// </summary>
 	/// <returns></returns>
 	const PrimitiveData::AABB& GetAABB()const;
-
-	/// <summary>
-	/// 読み込み直後のメッシュデータの取得
-	/// </summary>
-	/// <returns>読み込み直後のメッシュデータ</returns>
-	const MeshData& GetOrinalMeshData()const;
 private://メンバ関数
 	/// <summary>
 	/// 頂点リソースの生成
@@ -82,8 +76,6 @@ private://メンバ変数
 	D3D12_INDEX_BUFFER_VIEW indexBufferView_ = {};
 	//メッシュデータ
 	MeshData meshData_ = {};
-	//読み込み直後のメッシュデータ
-	MeshData originalMeshData_ = {};
 	//AABB
 	PrimitiveData::AABB aabb_ = {};
 };

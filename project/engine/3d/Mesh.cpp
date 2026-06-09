@@ -21,8 +21,6 @@ void Mesh::Initialize(DirectXBase* directXBase, const MeshData& meshData) {
 	CreateIndexResource();
 	//AABBの作成
 	CreateAABB();
-	//読み込み直後のメッシュデータ
-	originalMeshData_ = meshData_;
 }
 
 //描画
@@ -51,12 +49,6 @@ const PrimitiveData::AABB& Mesh::GetAABB() const {
 	return aabb_;
 }
 
-//読み込み直後のメッシュデータの取得
-const MeshData& Mesh::GetOrinalMeshData() const {
-	// TODO: return ステートメントをここに挿入します
-	return originalMeshData_;
-}
-
 //頂点リソースの生成
 void Mesh::CreateVertexResource() {
 	//頂点リソースを生成
@@ -79,6 +71,10 @@ void Mesh::CreateVertexResource() {
 
 //インデックスリソースの生成
 void Mesh::CreateIndexResource() {
+	//インデックスのサイズが0だったら作らないようにする
+	if (meshData_.indices.empty()) {
+		return;
+	}
 	//Index用(3dGameObject)
 	indexResource_ = directXBase_->CreateBufferResource(sizeof(uint32_t) * meshData_.indices.size());
 	//リソースの先頭のアドレスから使う
@@ -116,10 +112,10 @@ void Mesh::CreateAABB() {
 	//AABBを作成
 	for (const VertexData& vertex : meshData_.vertices) {
 		Vector3 vertexPosition = { vertex.position.x,vertex.position.y,vertex.position.z };
-		
+
 		//最小値を求める
-		aabb_.min= aabb_.min.Min(vertexPosition);
+		aabb_.min = aabb_.min.Min(vertexPosition);
 		//最大値を求める
-		aabb_.max= aabb_.max.Max(vertexPosition);
+		aabb_.max = aabb_.max.Max(vertexPosition);
 	}
 }

@@ -90,7 +90,7 @@
     <ClCompile Include="engine\base\WinApi.cpp">
       <Filter>engine\base</Filter>
     </ClCompile>
-    <ClCompile Include="engine\debug\Log.cpp">
+    <ClCompile Include="engine\debug\Logger.cpp">
       <Filter>engine\debug</Filter>
     </ClCompile>
     <ClCompile Include="engine\debug\DebugCamera.cpp">
@@ -326,7 +326,7 @@
     <ClInclude Include="engine\math\ResourceData.h">
       <Filter>engine\math</Filter>
     </ClInclude>
-    <ClInclude Include="engine\debug\Log.h">
+    <ClInclude Include="engine\debug\Logger.h">
       <Filter>engine\debug</Filter>
     </ClInclude>
     <ClInclude Include="engine\audio\Audio.h">

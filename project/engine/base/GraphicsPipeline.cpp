@@ -1,6 +1,6 @@
 #include "GraphicsPipeline.h"
 #include "DirectXBase.h"
-#include "Log.h"
+#include "Logger.h"
 #include "StringUtility.h"
 #include <cassert>
 #pragma comment(lib,"d3d12.lib")
@@ -65,7 +65,7 @@ void GraphicsPipeline::CreateRootSignatureBlobForSprite() {
 	//シリアライズしてバイナリにする
 	HRESULT hr = D3D12SerializeRootSignature(&descriptionRootSignature, D3D_ROOT_SIGNATURE_VERSION_1, &signatureBlob_, &errorBlob);
 	if (FAILED(hr)) {
-		Log::ConsolePrintf(reinterpret_cast<char*>(errorBlob->GetBufferPointer()));
+		Logger::ConsolePrintf(reinterpret_cast<char*>(errorBlob->GetBufferPointer()));
 		assert(false);
 	}
 }
@@ -166,7 +166,7 @@ void GraphicsPipeline::CreateRootSignatureBlobForObject3d() {
 	//シリアライズしてバイナリにする
 	HRESULT hr = D3D12SerializeRootSignature(&descriptionRootSignature, D3D_ROOT_SIGNATURE_VERSION_1, &signatureBlob_, &errorBlob);
 	if (FAILED(hr)) {
-		Log::ConsolePrintf(reinterpret_cast<char*>(errorBlob->GetBufferPointer()));
+		Logger::ConsolePrintf(reinterpret_cast<char*>(errorBlob->GetBufferPointer()));
 		assert(false);
 	}
 }
@@ -221,7 +221,7 @@ void GraphicsPipeline::CreateRootSignatureBlobForParticle() {
 	//シリアライズしてバイナリにする
 	HRESULT hr = D3D12SerializeRootSignature(&descriptionRootSignature, D3D_ROOT_SIGNATURE_VERSION_1, &signatureBlob_, &errorBlob);
 	if (FAILED(hr)) {
-		Log::ConsolePrintf(reinterpret_cast<char*>(errorBlob->GetBufferPointer()));
+		Logger::ConsolePrintf(reinterpret_cast<char*>(errorBlob->GetBufferPointer()));
 		assert(false);
 	}
 }

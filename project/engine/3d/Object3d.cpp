@@ -233,6 +233,11 @@ void Object3d::SetLODModel(uint32_t lodIndex, const std::string& modelName) {
 	}
 }
 
+//LODモデルの設定
+void Object3d::SetLODModel(uint32_t lodIndex, Model* model) {
+	lodModels_[lodIndex] = model;
+}
+
 //カメラの設定
 void Object3d::SetGameCamera(Camera* gameCamera) {
 	gameCamera_ = gameCamera;

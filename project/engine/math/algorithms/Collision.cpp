@@ -1,7 +1,7 @@
 #define NOMINMAX
 #include "Collision.h"
 #include "Rendering.h"
-#include "Log.h"
+#include "Logger.h"
 #include <format>
 #include <algorithm>
 #include <array>

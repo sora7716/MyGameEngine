@@ -3,7 +3,7 @@
 #include "algorithms/Rendering.h"
 #include "algorithms/Math.h"
 #include "TextureManager.h"
-#include "Log.h"
+#include "Logger.h"
 #include "Camera.h"
 #include "ImGuiManager.h"
 using namespace Microsoft::WRL;
@@ -468,7 +468,7 @@ void Box::CreateRootSignatureBlob() {
 	//シリアライズしてバイナリにする
 	HRESULT hr = D3D12SerializeRootSignature(&descriptionRootSignature, D3D_ROOT_SIGNATURE_VERSION_1, &signatureBlob_, &errorBlob);
 	if (FAILED(hr)) {
-		Log::ConsolePrintf(reinterpret_cast<char*>(errorBlob->GetBufferPointer()));
+		Logger::ConsolePrintf(reinterpret_cast<char*>(errorBlob->GetBufferPointer()));
 		assert(false);
 	}
 }

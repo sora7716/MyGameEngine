@@ -58,6 +58,15 @@ public://メンバ関数
 	void RebuildMeshes(const std::vector<MeshData>& meshes);
 
 	/// <summary>
+	/// 頂点を合成する
+	/// </summary>
+	/// <param name="rate">どれくらい合成するかの割合</param>
+	/// <param name="minGridSize">グリッドサイズの最小値</param>
+	/// <param name="maxGridSize">グリッドサイズの最大値</param>
+	/// <returns>合成後のメッシュデータ</returns>
+	std::vector<MeshData> VertexClustering(float rate, float min = 0.001f, float max = 1.0f);
+
+	/// <summary>
 	/// 描画
 	/// </summary>
 	/// <param name="objectCount">表示したいオブジェクト数</param>
@@ -170,12 +179,12 @@ private://メンバ関数
 	/// </summary>
 	void CreateResourcees();
 
-public:
 	/// <summary>
 	/// 近くにある頂点をまとめる
 	/// </summary>
+	/// <param name="size">グリッドサイズ</param>
 	/// <returns>メッシュデータ</returns>
-	std::vector<MeshData> VertexClustering();
+	MeshData VertexClusteringByGridSize(const MeshData& meshData, float size);
 private://メンバ変数
 	//ModelCommonのポインタ
 	ModelCommon* modelCommon_ = nullptr;

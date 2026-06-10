@@ -3,7 +3,8 @@
 #include "ModelCommon.h"
 #include "Mesh.h"
 #include "TextureManager.h"
-#include "Log.h"
+#include "Logger.h"
+#include <format>
 #include <map>
 #include <cassert>
 #include <fstream>
@@ -108,6 +109,71 @@ void Model::RebuildMeshes(const std::vector<MeshData>& meshes) {
 	//マテリアルリソースとポインタのサイズ設定
 	materialResources_.resize(modelData_.material.size());
 	materialPtrs_.resize(modelData_.material.size());
+}
+
+//頂点を合成する
+std::vector<MeshData> Model::VertexClustering(float rate, float min, float max) {
+	//メッシュ
+	std::vector<MeshData>baseMeshes = modelData_.meshes;
+
+	//新しいメッシュ
+	std::vector<MeshData>newMeshes;
+
+	//割合が1.0fより大きかったら
+	if (rate > 1.0f) {
+		Logger::ConsolePrintf("[Model::VertexClustering] rate is 1.0f. Skip clustering and return original meshes.\n");
+		return baseMeshes;
+	}
+
+	//割合が0.0fより小さかった場合
+	if (rate < 0.0f) {
+		Logger::ConsolePrintf("[Model::VertexClustering] rate is 0.0f or less. Invalid rate. Return original meshes.\n");
+		return baseMeshes;
+	}
+
+	//割合をもとに取得したい頂点数を出す
+	for (const MeshData& meshData : baseMeshes) {
+		uint32_t goalVertexCount = uint32_t(float(meshData.vertices.size()) * rate);
+		//グリッドサイズ
+		float minGridSize = min;//最小値
+		float maxGridSize = max;//最大値
+
+		//目標の頂点数に一番違いメッシュ
+		MeshData bestMesh = meshData;
+		uint32_t bestMeshVertexCount = uint32_t(bestMesh.vertices.size());
+		float gridSize = 0;
+		//試行回数
+		const uint32_t kTrialCount = 20;
+		//二分探索
+		for (uint32_t i = 0; i < kTrialCount; i++) {
+			//gridSizeはminとmaxの中間
+			gridSize = (minGridSize + maxGridSize) / 2.0f;
+
+			//元メッシュをgridSizeでクラスタリング
+			MeshData trialMesh = VertexClusteringByGridSize(meshData, gridSize);
+			//クラスタリングしたメッシュの頂点数を取得
+			uint32_t trialMeshVertexCount = uint32_t(trialMesh.vertices.size());
+
+			//目標の頂点数より差分が小さいほうのメッシュを入れる
+			if (std::fabs(float(goalVertexCount) - float(bestMeshVertexCount)) > std::fabs(float(goalVertexCount) - float(trialMeshVertexCount))) {
+				//ベストメッシュの置き換え
+				bestMesh = trialMesh;
+				//頂点の数の記録
+				bestMeshVertexCount = uint32_t(bestMesh.vertices.size());
+			}
+
+			//範囲を狭めていく
+			if (trialMeshVertexCount > goalVertexCount) {
+				minGridSize = gridSize;
+			} else if (trialMeshVertexCount < goalVertexCount) {
+				maxGridSize = gridSize;
+			}
+		}
+		//新しいメッシュに追加する
+		newMeshes.push_back(bestMesh);
+	}
+
+	return newMeshes;
 }
 
 //描画
@@ -512,75 +578,76 @@ void Model::CreateResourcees() {
 }
 
 //近くの頂点をまとめる
-std::vector<MeshData> Model::VertexClustering() {
-	for (MeshData& meshData : modelData_.meshes) {
-		//Gridサイズの設定
-		float gridSize = 0.1f;
-		//GridKeyの一覧表
-		std::map<Vector3Int, uint32_t>gridToNewIndex;
-		//前のインデックスから新しいインデックスを取得するための対応表
-		std::vector<uint32_t>oldToNewIndex(meshData.vertices.size(), UINT32_MAX);
-		//新しい頂点
-		std::vector<VertexData>newVertices;
-		//新しインデックス
-		uint32_t newIndex = 0;
-		//GridKeyの作成
-		for (uint32_t oldIndex = 0; oldIndex < meshData.vertices.size(); oldIndex++) {
-			//一つの頂点
-			VertexData vertex = meshData.vertices[oldIndex];
+MeshData Model::VertexClusteringByGridSize(const MeshData& meshData, float size) {
+	//メッシュを取得
+	MeshData mesh = meshData;
 
-			//GridKeyを作成
-			Vector3Int gridKey = {
-				static_cast<int32_t>(std::floor(vertex.position.x / gridSize)),
-				static_cast<int32_t>(std::floor(vertex.position.y / gridSize)),
-				static_cast<int32_t>(std::floor(vertex.position.z / gridSize)),
-			};
+	//Gridサイズの設定
+	float gridSize = size;
+	//GridKeyの一覧表
+	std::map<Vector3Int, uint32_t>gridToNewIndex;
+	//前のインデックスから新しいインデックスを取得するための対応表
+	std::vector<uint32_t>oldToNewIndex(mesh.vertices.size(), UINT32_MAX);
+	//新しい頂点
+	std::vector<VertexData>newVertices;
+	//新しインデックス
+	uint32_t newIndex = 0;
+	//GridKeyの作成
+	for (uint32_t oldIndex = 0; oldIndex < mesh.vertices.size(); oldIndex++) {
+		//一つの頂点
+		VertexData vertex = mesh.vertices[oldIndex];
 
-			//gridKeyが一覧表に登録されていたら
-			if (gridToNewIndex.contains(gridKey)) {
-				//登録済みのインデックスを追加
-				oldToNewIndex[oldIndex] = gridToNewIndex[gridKey];
-				continue;
-			}
+		//GridKeyを作成
+		Vector3Int gridKey = {
+			static_cast<int32_t>(std::floor(vertex.position.x / gridSize)),
+			static_cast<int32_t>(std::floor(vertex.position.y / gridSize)),
+			static_cast<int32_t>(std::floor(vertex.position.z / gridSize)),
+		};
 
-			//未登録なら
-			//新しい頂点に追加
-			newVertices.push_back(vertex);
-			//グリッドの一覧表に新しいインデックスを追加
-			gridToNewIndex[gridKey] = newIndex;
-			//対応表に新しいインデックスを追加
-			oldToNewIndex[oldIndex] = newIndex;
-			//新しいインデックスの加算
-			newIndex++;
+		//gridKeyが一覧表に登録されていたら
+		if (gridToNewIndex.contains(gridKey)) {
+			//登録済みのインデックスを追加
+			oldToNewIndex[oldIndex] = gridToNewIndex[gridKey];
+			continue;
 		}
 
-		//インデックスの張替え
-		std::vector<uint32_t>newIndices;
-		for (uint32_t i = 0; i < meshData.indices.size(); i += 3) {
-			uint32_t a = oldToNewIndex[meshData.indices[i]];
-			uint32_t b = oldToNewIndex[meshData.indices[i + 1]];
-			uint32_t c = oldToNewIndex[meshData.indices[i + 2]];
-
-			//三角形が作れない場合は省く
-			if (a == b) {
-				continue;
-			} else if (a == c) {
-				continue;
-			} else if (b == c) {
-				continue;
-			}
-
-			//新しいインデックスを追加
-			newIndices.push_back(a);
-			newIndices.push_back(b);
-			newIndices.push_back(c);
-		}
-
-		//頂点に代入
-		meshData.vertices = newVertices;
-		//インデックスに代入
-		meshData.indices = newIndices;
+		//未登録なら
+		//新しい頂点に追加
+		newVertices.push_back(vertex);
+		//グリッドの一覧表に新しいインデックスを追加
+		gridToNewIndex[gridKey] = newIndex;
+		//対応表に新しいインデックスを追加
+		oldToNewIndex[oldIndex] = newIndex;
+		//新しいインデックスの加算
+		newIndex++;
 	}
 
-	return modelData_.meshes;
+	//インデックスの張替え
+	std::vector<uint32_t>newIndices;
+	for (uint32_t i = 0; i < mesh.indices.size(); i += 3) {
+		uint32_t a = oldToNewIndex[mesh.indices[i]];
+		uint32_t b = oldToNewIndex[mesh.indices[i + 1]];
+		uint32_t c = oldToNewIndex[mesh.indices[i + 2]];
+
+		//三角形が作れない場合は省く
+		if (a == b) {
+			continue;
+		} else if (a == c) {
+			continue;
+		} else if (b == c) {
+			continue;
+		}
+
+		//新しいインデックスを追加
+		newIndices.push_back(a);
+		newIndices.push_back(b);
+		newIndices.push_back(c);
+	}
+
+	//頂点に代入
+	mesh.vertices = newVertices;
+	//インデックスに代入
+	mesh.indices = newIndices;
+
+	return mesh;
 }

@@ -81,6 +81,13 @@ public://メンバ関数
 	void SetLODModel(uint32_t lodIndex, const std::string& modelName);
 
 	/// <summary>
+	/// LODモデルの設定
+	/// </summary>
+	/// <param name="lodIndex">インデックス</param>
+	/// <param name="model">モデル</param>
+	void SetLODModel(uint32_t lodIndex, Model* model);
+
+	/// <summary>
 	/// ゲームで使用するカメラの設定
 	/// </summary>
 	/// <param name="gameCamera">ゲームで使用するカメラ</param>

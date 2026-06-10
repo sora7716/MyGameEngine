@@ -1,6 +1,6 @@
 #include "Rendering.h"
 #include "algorithms/Math.h"
-#include "Log.h"
+#include "Logger.h"
 #include "StringUtility.h"
 #include <cassert>
 using namespace std;

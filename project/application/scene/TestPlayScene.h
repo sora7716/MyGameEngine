@@ -8,6 +8,7 @@
 class Box;
 class Object3d;
 class GameObject;
+class Audio;
 
 namespace Primitive {
 	class Cube;
@@ -69,6 +70,4 @@ private://メンバ変数
 	std::unique_ptr<Primitive::Frustum>frustum_ = nullptr;
 
 	std::unique_ptr<Primitive::Cube>cube_ = nullptr;
-
-	float rate = 0.5f;
 };

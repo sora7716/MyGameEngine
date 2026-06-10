@@ -2,7 +2,7 @@
 #include "DirectXBase.h"
 #include "algorithms/Rendering.h"
 #include "algorithms/Math.h"
-#include "Log.h"
+#include "Logger.h"
 #include "GraphicsPipeline.h"
 #include "Camera.h"
 #include "ImGuiManager.h"
@@ -185,7 +185,7 @@ void BaseShape::CreateRootSignatureBlob() {
 	//シリアライズしてバイナリにする
 	HRESULT hr = D3D12SerializeRootSignature(&descriptionRootSignature, D3D_ROOT_SIGNATURE_VERSION_1, &signatureBlob_, &errorBlob);
 	if (FAILED(hr)) {
-		Log::ConsolePrintf(reinterpret_cast<char*>(errorBlob->GetBufferPointer()));
+		Logger::ConsolePrintf(reinterpret_cast<char*>(errorBlob->GetBufferPointer()));
 		assert(false);
 	}
 }

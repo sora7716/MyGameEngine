@@ -579,13 +579,20 @@ void Model::CreateResourcees() {
 
 //近くの頂点をまとめる
 MeshData Model::VertexClusteringByGridSize(const MeshData& meshData, float size) {
+	//GridKeyの構造体
+	struct GridKey {
+		Vector3Int vertexKey;
+		Vector2Int uvKey;
+		Vector3Int normalKey;
+	};
+
 	//メッシュを取得
 	MeshData mesh = meshData;
 
 	//Gridサイズの設定
 	float gridSize = size;
 	//GridKeyの一覧表
-	std::map<Vector3Int, uint32_t>gridToNewIndex;
+	std::map<GridKey, uint32_t>gridToNewIndex;
 	//前のインデックスから新しいインデックスを取得するための対応表
 	std::vector<uint32_t>oldToNewIndex(mesh.vertices.size(), UINT32_MAX);
 	//新しい頂点
@@ -597,12 +604,18 @@ MeshData Model::VertexClusteringByGridSize(const MeshData& meshData, float size)
 		//一つの頂点
 		VertexData vertex = mesh.vertices[oldIndex];
 
-		//GridKeyを作成
-		Vector3Int gridKey = {
+		//GridKeyの作成
+		GridKey gridKey = {};
+
+		//頂点のキーを作成
+		gridKey.vertexKey  = {
 			static_cast<int32_t>(std::floor(vertex.position.x / gridSize)),
 			static_cast<int32_t>(std::floor(vertex.position.y / gridSize)),
 			static_cast<int32_t>(std::floor(vertex.position.z / gridSize)),
 		};
+
+		//UVのキーを作成
+		//法線のキーを作成
 
 		//gridKeyが一覧表に登録されていたら
 		if (gridToNewIndex.contains(gridKey)) {

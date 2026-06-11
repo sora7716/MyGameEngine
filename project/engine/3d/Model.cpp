@@ -552,7 +552,7 @@ void Model::CreateCube() {
 	//メッシュの再構築
 	RebuildMeshes({ MakeCubeData() });
 	//各種リソースの生成
-	CreateResourcees();
+	CreateResources();
 }
 
 //モデルの生成
@@ -562,11 +562,11 @@ void Model::CreateFromModel(const std::string& storedFilePath, const std::string
 	//メッシュの再構築
 	RebuildMeshes(modelData_.meshes);
 	//各種リソースの生成
-	CreateResourcees();
+	CreateResources();
 }
 
 //各種リソースの生成
-void Model::CreateResourcees() {
+void Model::CreateResources() {
 	//マテリアルリソースの生成
 	CreateMaterialResource();
 	//リムライトリソースの生成
@@ -582,8 +582,18 @@ MeshData Model::VertexClusteringByGridSize(const MeshData& meshData, float size)
 	//GridKeyの構造体
 	struct GridKey {
 		Vector3Int vertexKey;
-		Vector2Int uvKey;
+		Vector2Int texcoordKey;
 		Vector3Int normalKey;
+
+		//GridKeyの比較
+		bool operator<(const GridKey& g) const {
+			if (vertexKey != g.vertexKey) {
+				return vertexKey < g.vertexKey;
+			} else if (texcoordKey != g.texcoordKey) {
+				return texcoordKey < g.texcoordKey;
+			}
+			return normalKey < g.normalKey;
+		}
 	};
 
 	//メッシュを取得
@@ -608,14 +618,21 @@ MeshData Model::VertexClusteringByGridSize(const MeshData& meshData, float size)
 		GridKey gridKey = {};
 
 		//頂点のキーを作成
-		gridKey.vertexKey  = {
+		gridKey.vertexKey = {
 			static_cast<int32_t>(std::floor(vertex.position.x / gridSize)),
 			static_cast<int32_t>(std::floor(vertex.position.y / gridSize)),
 			static_cast<int32_t>(std::floor(vertex.position.z / gridSize)),
 		};
 
-		//UVのキーを作成
+		//Texcoordのキーを作成
+		float uvStep = 0.05f;
+		gridKey.texcoordKey = (vertex.texcoord / uvStep).Floor();
+
 		//法線のキーを作成
+		float normalStep = 0.2f;
+		//一応正規化
+		Vector3 normal = normal.Normalize();
+		gridKey.normalKey = ((normal + 1.0f) / normalStep).Floor();
 
 		//gridKeyが一覧表に登録されていたら
 		if (gridToNewIndex.contains(gridKey)) {

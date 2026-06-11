@@ -13,7 +13,13 @@ struct Vector2 final {
 	/// 正規化
 	/// </summary>
 	/// <returns>正規化ベクトル</returns>
-	Vector2 Normalize();
+	Vector2 Normalize()const;
+
+	/// <summary>
+	/// 小数点切り捨て
+	/// </summary>
+	/// <returns>小数点切り捨て</returns>
+	Vector2 Floor()const;
 
 	/// <summary>
 	/// Vector2のメンバ変数すべてに1.0fを代入したVector2を作成
@@ -39,6 +45,8 @@ struct Vector2 final {
 	Vector2& operator/=(const Vector2& v);
 	//スカラー倍
 	Vector2 operator*(float n)const;
+	//除算
+	Vector2 operator/(float n)const;
 	//スカラー倍(複合)
 	Vector2& operator*=(float n);
 	//Vector3を代入
@@ -51,4 +59,13 @@ struct Vector2 final {
 struct Vector2Int final {
 	int32_t x;
 	int32_t y;
+
+	//Vector2Int同士の比較
+	bool operator<(const Vector2Int& v)const;
+
+	//Vector2Int同士が一致してないか
+	bool operator!=(const Vector2Int& v)const;
+
+	//Vector2からVector2Intへ変換
+	Vector2Int& operator=(const Vector2& v);
 };

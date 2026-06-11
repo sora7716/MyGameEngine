@@ -38,7 +38,7 @@ void TestPlayScene::Initialize(const SceneContext& sceneContext) {
 	object3d_->SetLODModel(1, "dekanu");
 	object3d_->SetLODModel(2, "dekanu");
 
-	object3d_->GetModel()->RebuildMeshes(object3d_->GetModel()->VertexClustering(1.0f));
+	object3d_->GetModel()->RebuildMeshes(object3d_->GetModel()->VertexClustering(0.5f));
 
 	std::unique_ptr<GameObject>tree = std::make_unique<GameObject>();
 	tree->Initialize("tree");

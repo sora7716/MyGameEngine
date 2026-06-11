@@ -177,7 +177,7 @@ private://メンバ関数
 	/// <summary>
 	/// 各種リソースの生成
 	/// </summary>
-	void CreateResourcees();
+	void CreateResources();
 
 	/// <summary>
 	/// 近くにある頂点をまとめる

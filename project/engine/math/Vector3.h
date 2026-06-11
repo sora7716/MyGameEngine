@@ -36,6 +36,12 @@ struct Vector3 final {
 	Vector3 Abs()const;
 
 	/// <summary>
+	/// 小数点切り捨て
+	/// </summary>
+	/// <returns>小数点切り捨て</returns>
+	Vector3 Floor()const;
+
+	/// <summary>
 	/// 長さ(ノルム)
 	/// </summary>
 	/// <returns>長さ(ノルム)</returns>
@@ -122,4 +128,10 @@ struct Vector3Int {
 
 	//Vector3Int同士の比較
 	bool operator<(const Vector3Int& v)const;
+
+	//Vector3Intが一致しているか
+	bool operator!=(const Vector3Int& v)const;
+
+	//Vector3からVector3Intへ変換
+	Vector3Int& operator=(const Vector3& v);
 };

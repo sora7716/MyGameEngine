@@ -38,6 +38,16 @@ Vector3 Vector3::Abs() const {
 	return result;
 }
 
+//小数点切り捨て
+Vector3 Vector3::Floor() const {
+	Vector3 result = {};
+	result.x = std::floor(x);
+	result.y = std::floor(y);
+	result.z = std::floor(z);
+
+	return result;
+}
+
 //長さ(ノルム)
 float Vector3::Length() {
 	float result = std::sqrt(Vector3(x, y, z).Dot(Vector3(x, y, z)));
@@ -231,7 +241,19 @@ bool Vector3Int::operator<(const Vector3Int& v) const {
 		return x < v.x;
 	} else if (y != v.y) {
 		return y < v.y;
-	} else {
-		return z < v.z;
 	}
+	return z < v.z;
+}
+//Vector3Intが一致しているか
+bool Vector3Int::operator!=(const Vector3Int& v) const {
+	return v.x != x || v.y != y || v.z != z;
+}
+
+//Vector3からVector3Intへ変換
+Vector3Int& Vector3Int::operator=(const Vector3& v) {
+	// TODO: return ステートメントをここに挿入します
+	x = static_cast<int32_t>(v.x);
+	y = static_cast<int32_t>(v.y);
+	z = static_cast<int32_t>(v.z);
+	return *this;
 }

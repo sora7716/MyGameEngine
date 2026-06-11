@@ -3,13 +3,21 @@
 #include <cmath>
 
 //正規化
-Vector2 Vector2::Normalize() {
+Vector2 Vector2::Normalize()const {
 	Vector2 result = {};
 	float len = std::sqrt(std::pow(x, 2.0f) + std::pow(y, 2.0f));
 	if (len != 0.0f) {
 		result.x = x / len;
 		result.y = y / len;
 	}
+	return result;
+}
+
+//小数点切り捨て
+Vector2 Vector2::Floor()const {
+	Vector2 result = {};
+	result.x = std::floor(result.x);
+	result.y = std::floor(result.y);
 	return result;
 }
 
@@ -75,6 +83,14 @@ Vector2 Vector2::operator*(float n) const {
 	return { x * n,y * n };
 }
 
+//除算
+Vector2 Vector2::operator/(float n) const {
+	Vector2 result = {};
+	result.x = x / n;
+	result.y = y / n;
+	return result;
+}
+
 //スカラー倍複合
 Vector2& Vector2::operator*=(float n) {
 	// TODO: return ステートメントをここに挿入します
@@ -88,5 +104,26 @@ Vector2& Vector2::operator=(const Vector3& v) {
 	// TODO: return ステートメントをここに挿入します
 	x = v.x;
 	y = v.y;
+	return *this;
+}
+
+//Vector2Int同士の比較
+bool Vector2Int::operator<(const Vector2Int& v) const {
+	if (x != v.x) {
+		return x < v.x;
+	}
+	return y < v.y;
+}
+
+//Vector2Int同士が一致してないか
+bool Vector2Int::operator!=(const Vector2Int& v) const {
+	return v.x != x || v.y != y;
+}
+
+//Vector2からVector3へ変換
+Vector2Int& Vector2Int::operator=(const Vector2& v) {
+	// TODO: return ステートメントをここに挿入します
+	x = static_cast<int32_t>(v.x);
+	y = static_cast<int32_t>(v.y);
 	return *this;
 }

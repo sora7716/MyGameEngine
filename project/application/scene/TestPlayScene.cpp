@@ -30,15 +30,13 @@ void TestPlayScene::Initialize(const SceneContext& sceneContext) {
 	//box_ = std::make_unique<Box>();
 	//box_->Initialize(sceneContext_.directXBase, sceneContext_.textureManager, &camera_);
 	//box_->SetModel("cube");
+
+
+
 	object3d_ = std::make_unique<Object3d>();
 	object3d_->Initialize(sceneContext_.object3dCommon, &renderCamera_, 1);
 	object3d_->SetGameCamera(gameCamera_);
-	//object3d_->SetModel("multiMaterial");
-	object3d_->SetLODModel(0, "staff");
-	object3d_->SetLODModel(1, "staff");
-	object3d_->SetLODModel(2, "staff");
-
-	object3d_->GetModel()->RebuildMeshes(object3d_->GetModel()->VertexClustering(1.0f));
+	object3d_->SetModel("dekanu");
 
 	std::unique_ptr<GameObject>tree = std::make_unique<GameObject>();
 	tree->Initialize("tree");
@@ -113,6 +111,8 @@ void TestPlayScene::Debug() {
 	//	ImGui::DragFloat2("uvTranslate", &transform2ds_[i].translate.x, 0.1f);
 	//	ImGui::PopID();
 	//}
+	Vector3 cameraTranslate2 = gameCamera_->GetTranslate();
+	ImGui::Text("cameraToPlayer:%f", gameObjects_[0]->GetTransform().translate - cameraTranslate2);
 	ImGui::End();
 
 	ImGui::Begin("camera");

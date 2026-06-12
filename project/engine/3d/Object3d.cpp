@@ -45,7 +45,6 @@ void Object3d::Initialize(Object3dCommon* object3dCommon, Camera* renderCamera, 
 	transform3dMode_ = transform3dMode;
 	//ゲームオブジェクトの数を決定
 	maxInstanceCount_ = maxInstanceCount;
-	//instanceData_.resize(maxInstanceCount);
 	for (uint32_t lod = 0; lod < kLODCount; lod++) {
 		//wvpのデータ数を決定
 		lodWvpData_[lod].resize(maxInstanceCount);
@@ -73,9 +72,10 @@ void Object3d::Initialize(Object3dCommon* object3dCommon, Camera* renderCamera, 
 	material_.uvMatrix = Matrix4x4::Identity4x4();
 	material_.shininess = 10.0f;
 
+	//LODの切り替え距離
 	lodDistances_ = {
-		20.0f,
-		50.0f
+		50.0f,
+		80.0f
 	};
 }
 
@@ -198,6 +198,19 @@ void Object3d::Draw() {
 	}
 }
 
+//モデルの設定
+void Object3d::SetModel(const std::string& modelName) {
+	model_ = object3dCommon_->GetModelManager()->FindModel(modelName);
+
+	for (uint32_t i = 0; i < kLODCount; i++) {
+		lodModels_[i] = Model::CreateModelFromModelData(model_->GetModelCommon(), model_->GetModelData());
+	}
+
+	lodModels_[0]->RebuildMeshes(lodModels_[0]->VertexClustering(1.0f));
+	lodModels_[1]->RebuildMeshes(lodModels_[1]->VertexClustering(0.75f));
+	lodModels_[2]->RebuildMeshes(lodModels_[2]->VertexClustering(0.25f));
+}
+
 //インスタンスの追加
 uint32_t Object3d::AddInstance(GameObject* gameObject) {
 	//ゲームオブジェクトがNullじゃないか
@@ -211,31 +224,6 @@ uint32_t Object3d::AddInstance(GameObject* gameObject) {
 	instanceData_.push_back(instance);
 
 	return static_cast<uint32_t>(instanceData_.size() - 1);
-}
-
-//LODモデルの設定
-void Object3d::SetLODModel(uint32_t lodIndex, const std::string& modelName) {
-	assert(lodIndex < kLODCount);
-
-	Model* model = object3dCommon_->GetModelManager()->FindModel(modelName);
-
-	lodModels_[lodIndex] = model;
-
-	//Uマテリアル数を取得
-	const uint32_t materialCount = static_cast<uint32_t>(lodModels_[lodIndex]->GetModelData().material.size());
-
-	//UV座標をマテリアルサイズに合わせる
-	lodUvTransforms_[lodIndex].resize(materialCount);
-
-	//UV座標の初期化
-	for (Transform2d& uvTransform : lodUvTransforms_[lodIndex]) {
-		uvTransform.Initialize();
-	}
-}
-
-//LODモデルの設定
-void Object3d::SetLODModel(uint32_t lodIndex, Model* model) {
-	lodModels_[lodIndex] = model;
 }
 
 //カメラの設定
@@ -266,11 +254,11 @@ void Object3d::SetUVTranslate(uint32_t index, const Vector2& uvTranslate) {
 
 //色の設定
 void Object3d::SetColor(uint32_t materialIndex, const Vector4& color) {
-	for (Model* model : lodModels_) {
-		if (model) {
-			model->SetColor(materialIndex, color);
-		}
-	}
+	//for (Model* model : lodModels_) {
+	//	if (model) {
+	//		model->SetColor(materialIndex, color);
+	//	}
+	//}
 }
 
 //親の設定
@@ -280,11 +268,11 @@ void Object3d::SetParent(const WorldTransform* parent) {
 
 //テクスチャの変更
 void Object3d::SetTexture(uint32_t materialIndex, const std::string& filePath) {
-	for (Model* model : lodModels_) {
-		if (model) {
-			model->SetTexture(materialIndex, filePath);
-		}
-	}
+	//for (Model* model : lodModels_) {
+	//	if (model) {
+	//		model->SetTexture(materialIndex, filePath);
+	//	}
+	//}
 }
 
 //UV座標の設定
@@ -335,10 +323,11 @@ const Vector4& Object3d::GetColor(uint32_t index) const {
 
 //モデルの取得
 Model* Object3d::GetModel() {
-	if (lodModels_[0]) {
-		return lodModels_[0];
-	}
-	return nullptr;
+	//if (lodModels_[0]) {
+	//	return lodModels_[0];
+	//}
+	//return nullptr;
+	return model_;
 }
 
 //ワールドマトリックスの取得

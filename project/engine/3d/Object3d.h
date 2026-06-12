@@ -9,6 +9,7 @@
 #include <wrl.h>
 #include <d3d12.h>
 #include <array>
+#include <memory>
 //前方宣言
 class DirectXBase;
 class SRVManager;
@@ -67,25 +68,17 @@ public://メンバ関数
 	void Draw();
 
 	/// <summary>
+	/// モデルの設定
+	/// </summary>
+	/// <param name="modelName">モデル名</param>
+	void SetModel(const std::string& modelName);
+
+	/// <summary>
 	/// インスタンスの追加
 	/// </summary>
 	/// <param name="gameObject">ゲームオブジェクト</param>
 	/// <returns></returns>
 	uint32_t AddInstance(GameObject* gameObject);
-
-	/// <summary>
-	/// LODモデルの設定
-	/// </summary>
-	/// <param name="lodIndex">インデックス</param>
-	/// <param name="modelName">モデル名</param>
-	void SetLODModel(uint32_t lodIndex, const std::string& modelName);
-
-	/// <summary>
-	/// LODモデルの設定
-	/// </summary>
-	/// <param name="lodIndex">インデックス</param>
-	/// <param name="model">モデル</param>
-	void SetLODModel(uint32_t lodIndex, Model* model);
 
 	/// <summary>
 	/// ゲームで使用するカメラの設定
@@ -268,7 +261,7 @@ private://メンバ変数
 	Model* model_ = nullptr;
 
 	//LOD用のモデル
-	std::array <Model*, kLODCount>lodModels_;
+	std::array <std::unique_ptr<Model>, kLODCount>lodModels_;
 	//LODの距離
 	std::vector<float>lodDistances_;
 

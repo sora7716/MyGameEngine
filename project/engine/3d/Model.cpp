@@ -52,7 +52,7 @@ Model::~Model() {
 }
 
 //モデルの生成(ファイルを読み込んでの)
-std::unique_ptr<Model> Model::CreateFromModel(ModelCommon* modelCommon, const std::string& storedFilePath, const std::string& filename) {
+std::unique_ptr<Model>Model::CreateFromModel(ModelCommon* modelCommon, const std::string& storedFilePath, const std::string& filename) {
 	//インスタンスの生成
 	std::unique_ptr<Model>instance = std::make_unique<Model>();
 	//初期化
@@ -73,6 +73,17 @@ std::unique_ptr<Model> Model::CreateCube(ModelCommon* modelCommon) {
 	return instance;
 }
 
+//モデルの生成(モデルデータ)
+std::unique_ptr<Model> Model::CreateModelFromModelData(ModelCommon* modelCommon, const ModelData& modelData) {
+	//インスタンスの生成
+	std::unique_ptr<Model>instance = std::make_unique<Model>();
+	//初期化
+	instance->Initialize(modelCommon);
+	//モデルの生成
+	instance->CreateModelFromModelData(modelData);
+	return instance;
+}
+
 //初期化
 void Model::Initialize(ModelCommon* modelCommon) {
 	//ModelCommonのポインタを引数からメンバ変数を記録する
@@ -84,7 +95,9 @@ void Model::Initialize(ModelCommon* modelCommon) {
 //メッシュの再構成
 void Model::RebuildMeshes(const std::vector<MeshData>& meshes) {
 	//メッシュデータのクリア
-	meshes_.clear();
+	if (!meshes_.empty()) {
+		meshes_.clear();
+	}
 	//受け取ったメッシュデータに書き換え
 	modelData_.meshes = meshes;
 	//マテリアルが存在するか
@@ -353,6 +366,11 @@ const std::vector<std::unique_ptr<Mesh>>& Model::GetMeshes() const {
 	return meshes_;
 }
 
+//モデルの共通部分の取得
+ModelCommon* Model::GetModelCommon() {
+	return modelCommon_;
+}
+
 //マテリアルリソースの生成
 void Model::CreateMaterialResource() {
 	for (uint32_t i = 0; i < modelData_.material.size(); i++) {
@@ -565,6 +583,15 @@ void Model::CreateFromModel(const std::string& storedFilePath, const std::string
 	CreateResources();
 }
 
+//モデルの生成(モデルデータ)
+void Model::CreateModelFromModelData(const ModelData& modelData) {
+	modelData_ = modelData;
+	//メッシュの再構成
+	RebuildMeshes(modelData_.meshes);
+	//各種リソースの生成
+	CreateResources();
+}
+
 //各種リソースの生成
 void Model::CreateResources() {
 	//マテリアルリソースの生成
@@ -631,7 +658,7 @@ MeshData Model::VertexClusteringByGridSize(const MeshData& meshData, float size)
 		//法線のキーを作成
 		float normalStep = 0.2f;
 		//一応正規化
-		Vector3 normal = normal.Normalize();
+		Vector3 normal = vertex.normal.Normalize();
 		gridKey.normalKey = ((normal + 1.0f) / normalStep).Floor();
 
 		//gridKeyが一覧表に登録されていたら

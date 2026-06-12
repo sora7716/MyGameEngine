@@ -46,6 +46,14 @@ public://メンバ関数
 	static std::unique_ptr<Model> CreateCube(ModelCommon* modelCommon);
 
 	/// <summary>
+	/// モデルの生成(モデルデータ)
+	/// </summary>
+	/// <param name="modelCommon">モデルの共通部分</param>
+	/// <param name="modelData">モデルデータ</param>
+	/// <returns>モデル</returns>
+	static std::unique_ptr<Model> CreateModelFromModelData(ModelCommon* modelCommon, const ModelData& modelData);
+
+	/// <summary>
 	/// 初期化
 	/// </summary>
 	/// <param name="modelCommon">モデルの共通部分</param>
@@ -141,6 +149,12 @@ public://メンバ関数
 	/// </summary>
 	/// <returns>メッシュ達</returns>
 	const std::vector<std::unique_ptr<Mesh>>& GetMeshes()const;
+
+	/// <summary>
+	/// モデルの共通部分の取得
+	/// </summary>
+	/// <returns>モデルの共通部分</returns>
+	ModelCommon* GetModelCommon();
 private://メンバ関数
 	/// <summary>
 	/// マテリアルリソースの生成
@@ -173,6 +187,12 @@ private://メンバ関数
 	/// <param name="storedFilePath">モデルを保管しているファイル名(最初と最後に"/"入らない)</param>
 	/// <param name="filename">ファイル名(最初に"/"入らない</param>
 	void CreateFromModel(const std::string& storedFilePath, const std::string& filename);
+
+	/// <summary>
+	/// モデルの生成(モデルデータ)
+	/// </summary>
+	/// <param name="modelData">モデルデータ</param>
+	void CreateModelFromModelData(const ModelData& modelData);
 
 	/// <summary>
 	/// 各種リソースの生成

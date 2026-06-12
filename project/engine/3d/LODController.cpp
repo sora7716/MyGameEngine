@@ -36,13 +36,13 @@ uint32_t LODController::SelectLOD(float distance, uint32_t currentLOD) const {
 	//今の位置から見て
 	//前に戻す
 	if (currentLOD > 0) {
-		if (distance < lodDistances_[currentLOD] - hysteresis) {
+		if (distance < lodDistances_[currentLOD - 1] - hysteresis) {
 			result = currentLOD - 1;
 		}
 	}
 
 	//先に進める
-	if (distance >= lodDistances_[currentLOD + 1] + hysteresis) {
+	if (distance >= lodDistances_[currentLOD] + hysteresis) {
 		result = currentLOD + 1;
 	}
 

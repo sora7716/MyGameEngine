@@ -50,6 +50,6 @@ void LODBuilder::SetTexture(uint32_t materialIndex, const std::string& filePath)
 }
 
 //モデルのサイズ
-uint32_t LODBuilder::LODModelSize() {
+uint32_t LODBuilder::LODModelSize()const {
 	return static_cast<uint32_t>(lodModels_.size());
 }

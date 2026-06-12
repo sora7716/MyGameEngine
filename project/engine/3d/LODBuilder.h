@@ -55,7 +55,7 @@ public://メンバ関数
 	/// モデルのサイズを取得
 	/// </summary>
 	/// <returns>モデルのサイズ</returns>
-	uint32_t LODModelSize();
+	uint32_t LODModelSize()const;
 private://メンバ変数
 	//LOD用のモデル
 	std::vector<std::unique_ptr<Model>>lodModels_;

@@ -276,9 +276,6 @@
     <ClCompile Include="engine\debug\wireframe\Sphere.cpp">
       <Filter>engine\debug\wireframe</Filter>
     </ClCompile>
-    <ClCompile Include="engine\3d\Box.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
     <ClCompile Include="engine\gameObject\GameObject.cpp">
       <Filter>application\gameObject</Filter>
     </ClCompile>
@@ -298,6 +295,12 @@
       <Filter>engine\math</Filter>
     </ClCompile>
     <ClCompile Include="engine\debug\wireframe\Plane.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="engine\3d\LODBuilder.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="engine\3d\LODController.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
   </ItemGroup>
@@ -512,9 +515,6 @@
     <ClInclude Include="engine\debug\wireframe\Sphere.h">
       <Filter>engine\debug\wireframe</Filter>
     </ClInclude>
-    <ClInclude Include="engine\3d\Box.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
     <ClInclude Include="engine\gameObject\GameObject.h">
       <Filter>application\gameObject</Filter>
     </ClInclude>
@@ -531,6 +531,12 @@
       <Filter>engine\debug\wireframe</Filter>
     </ClInclude>
     <ClInclude Include="engine\debug\wireframe\Plane.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="engine\3d\LODBuilder.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="engine\3d\LODController.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
   </ItemGroup>
@@ -559,12 +565,6 @@
     <FxCompile Include="engine\resources\shaders\Shape.PS.hlsl">
       <Filter>shaders</Filter>
     </FxCompile>
-    <FxCompile Include="engine\resources\shaders\Box.VS.hlsl">
-      <Filter>shaders</Filter>
-    </FxCompile>
-    <FxCompile Include="engine\resources\shaders\Box.PS.hlsl">
-      <Filter>shaders</Filter>
-    </FxCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="engine\resources\shaders\Object3d.hlsli">
@@ -577,9 +577,6 @@
       <Filter>shaders</Filter>
     </None>
     <None Include="engine\resources\shaders\Shape.hlsli">
-      <Filter>shaders</Filter>
-    </None>
-    <None Include="engine\resources\shaders\Box.hlsli">
       <Filter>shaders</Filter>
     </None>
     <None Include="engine\resources\shaders\CommonTypes.hlsli">

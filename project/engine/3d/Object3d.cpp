@@ -11,6 +11,7 @@
 #include "SRVManager.h"
 #include "TextureManager.h"
 #include "algorithms/Collision.h"
+#include "LODBuilder.h"
 #include <cassert>
 //初期化
 void Object3dInstance::Initialize(GameObject* gameObject) {
@@ -72,6 +73,9 @@ void Object3d::Initialize(Object3dCommon* object3dCommon, Camera* renderCamera, 
 	material_.uvMatrix = Matrix4x4::Identity4x4();
 	material_.shininess = 10.0f;
 
+	//LODビルダーの生成
+	lodBuilder_ = std::make_unique<LODBuilder>();
+
 	//LODの切り替え距離
 	lodDistances_ = {
 		50.0f,
@@ -89,9 +93,9 @@ void Object3d::Update() {
 		lodDrawCount_[lod] = 0;
 	}
 
-	//RootNodeはLOD0を基準にする
-	if (lodModels_[0]) {
-		node_ = lodModels_[0]->GetModelData().rootNode;
+	//RootNodeはmodelを基準にする
+	if (model_) {
+		node_ = model_->GetModelData().rootNode;
 	}
 
 	for (int32_t i = 0; i < instanceData_.size(); i++) {
@@ -108,6 +112,11 @@ void Object3d::Update() {
 
 		//ワールド行列の作成
 		(this->*UpdateWorldMatrixTable[static_cast<uint32_t>(transform3dMode_)])(i);;
+
+		//モデルが存在してなかったら
+		if (!model_) {
+			continue;
+		}
 
 		//表示状態の更新
 		UpdateVisibility(i, worldMatrix_);
@@ -126,7 +135,7 @@ void Object3d::Update() {
 		uint32_t lodIndex = SelectLOD(distance, instanceData_[i].currentLOD);
 		instanceData_[i].currentLOD = lodIndex;
 		//lodIndex番目がlodModelsに無かったら
-		if (!lodModels_[lodIndex]) {
+		if (!lodBuilder_->GetLODModel(lodIndex)) {
 			continue;
 		}
 
@@ -144,9 +153,9 @@ void Object3d::Update() {
 		lodDrawCount_[lodIndex]++;
 
 		//モデルが存在したらメッシュごとにUV座標を適応
-		if (lodModels_[lodIndex]) {
-			for (uint32_t i = 0; i < lodModels_[lodIndex]->GetMeshes().size(); i++) {
-				uint32_t materialIndex = lodModels_[lodIndex]->GetMeshes()[i]->GetMaterialIndex();
+		if (lodBuilder_->GetLODModel(lodIndex)) {
+			for (uint32_t i = 0; i < lodBuilder_->GetLODModel(lodIndex)->GetMeshes().size(); i++) {
+				uint32_t materialIndex = lodBuilder_->GetLODModel(lodIndex)->GetMeshes()[i]->GetMaterialIndex();
 
 				//マテリアルの検索キーがUV座標の配列の要素数を超えたら
 				if (materialIndex >= lodUvTransforms_[lodIndex].size()) {
@@ -154,7 +163,7 @@ void Object3d::Update() {
 				}
 
 
-				lodModels_[lodIndex]->UVTransform(materialIndex, lodUvTransforms_[lodIndex][materialIndex]);
+				lodBuilder_->GetLODModel(lodIndex)->UVTransform(materialIndex, lodUvTransforms_[lodIndex][materialIndex]);
 			}
 		}
 	}
@@ -178,22 +187,22 @@ void Object3d::Draw() {
 	//スポットライトのStructuredBufferを設定
 	directXBase_->GetCommandList()->SetGraphicsRootDescriptorTable(6, object3dCommon_->GetSRVManager()->GetGPUDescriptorHandle(object3dCommon_->GetSrvIndexSpot()));
 
-	for (uint32_t lod = 0; lod < kLODCount; lod++) {
+	for (uint32_t lodIndex = 0; lodIndex < kLODCount; lodIndex++) {
 		//LODモデルが存在してなかったら
-		if (!lodModels_[lod]) {
+		if (!lodBuilder_->GetLODModel(lodIndex)) {
 			continue;
 		}
 
 		//LOD描画カウントが0だったら
-		if (lodDrawCount_[lod] == 0) {
+		if (lodDrawCount_[lodIndex] == 0) {
 			continue;
 		}
 
 		//LODごとのWVP SRVを設定
-		directXBase_->GetCommandList()->SetGraphicsRootDescriptorTable(1, srvManager_->GetGPUDescriptorHandle(lodSrvIndices_[lod]));
+		directXBase_->GetCommandList()->SetGraphicsRootDescriptorTable(1, srvManager_->GetGPUDescriptorHandle(lodSrvIndices_[lodIndex]));
 
 		//ドローコール
-		lodModels_[lod]->Draw(lodDrawCount_[lod]);
+		lodBuilder_->GetLODModel(lodIndex)->Draw(lodDrawCount_[lodIndex]);
 
 	}
 }
@@ -202,13 +211,8 @@ void Object3d::Draw() {
 void Object3d::SetModel(const std::string& modelName) {
 	model_ = object3dCommon_->GetModelManager()->FindModel(modelName);
 
-	for (uint32_t i = 0; i < kLODCount; i++) {
-		lodModels_[i] = Model::CreateModelFromModelData(model_->GetModelCommon(), model_->GetModelData());
-	}
-
-	lodModels_[0]->RebuildMeshes(lodModels_[0]->VertexClustering(1.0f));
-	lodModels_[1]->RebuildMeshes(lodModels_[1]->VertexClustering(0.75f));
-	lodModels_[2]->RebuildMeshes(lodModels_[2]->VertexClustering(0.25f));
+	//LODモデルの生成
+	lodBuilder_->CreateLODModel(model_, { 1.0f,0.75f,0.25f });
 }
 
 //インスタンスの追加
@@ -254,11 +258,9 @@ void Object3d::SetUVTranslate(uint32_t index, const Vector2& uvTranslate) {
 
 //色の設定
 void Object3d::SetColor(uint32_t materialIndex, const Vector4& color) {
-	//for (Model* model : lodModels_) {
-	//	if (model) {
-	//		model->SetColor(materialIndex, color);
-	//	}
-	//}
+	model_->SetColor(materialIndex, color);
+	//LODモデルにも適応
+	lodBuilder_->SetColor(materialIndex, color);
 }
 
 //親の設定
@@ -268,11 +270,9 @@ void Object3d::SetParent(const WorldTransform* parent) {
 
 //テクスチャの変更
 void Object3d::SetTexture(uint32_t materialIndex, const std::string& filePath) {
-	//for (Model* model : lodModels_) {
-	//	if (model) {
-	//		model->SetTexture(materialIndex, filePath);
-	//	}
-	//}
+	model_->SetTexture(materialIndex, filePath);
+	//LODモデルにも適応
+	lodBuilder_->SetTexture(materialIndex, filePath);
 }
 
 //UV座標の設定
@@ -315,19 +315,19 @@ const Transform2d& Object3d::GetUVTransform(uint32_t index) const {
 const Vector4& Object3d::GetColor(uint32_t index) const {
 	// TODO: return ステートメントをここに挿入します
 	static const Vector4 defaultColor(0.0f, 0.0f, 0.0f, 0.0f);
-	if (lodModels_[0]) {
-		return lodModels_[0]->GetColor(index);
+	if (model_) {
+		return model_->GetColor(index);
 	}
 	return defaultColor;
 }
 
 //モデルの取得
 Model* Object3d::GetModel() {
-	//if (lodModels_[0]) {
-	//	return lodModels_[0];
-	//}
-	//return nullptr;
-	return model_;
+	if (model_) {
+		return model_;
+	}
+
+	return nullptr;
 }
 
 //ワールドマトリックスの取得
@@ -427,9 +427,9 @@ void Object3d::UpdateWorldTransform(uint32_t lodIndex, uint32_t drawIndex, const
 void Object3d::UpdateVisibility(uint32_t index, const Matrix4x4& worldMatrix) {
 	//表示するかのフラグ
 	bool isVisible = true;
-	if (gameCamera_ && lodModels_[0]) {
+	if (gameCamera_) {
 		isVisible = false;
-		for (const std::unique_ptr<Mesh>& mesh : lodModels_[0]->GetMeshes()) {
+		for (const std::unique_ptr<Mesh>& mesh : model_->GetMeshes()) {
 			PrimitiveData::AABB worldAABB = mesh->GetAABB() * worldMatrix;
 
 			if (Collision::IsCollision(gameCamera_->GetFrustum(), worldAABB)) {
@@ -445,12 +445,12 @@ void Object3d::UpdateVisibility(uint32_t index, const Matrix4x4& worldMatrix) {
 //距離によってLODモデルの添え字を取得
 uint32_t Object3d::SelectLOD(float distance, uint32_t currentLOD) const {
 	//距離境界が足りない場合
-	if (lodDistances_.size() < kLODCount - 1) {
+	if (lodDistances_.size() < lodBuilder_->LODModelSize() - 1) {
 		return 0;
 	}
 
 	//currentLODが範囲外なら戻す
-	if (currentLOD >= lodModels_.size()) {
+	if (currentLOD >= lodBuilder_->LODModelSize()) {
 		currentLOD = 0;
 	}
 
@@ -485,7 +485,7 @@ uint32_t Object3d::SelectLOD(float distance, uint32_t currentLOD) const {
 	}
 
 	//選ばれたLODがなければ
-	if (!lodModels_[result]) {
+	if (!lodBuilder_->GetLODModel(result)) {
 		return 0;
 	}
 

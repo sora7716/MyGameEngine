@@ -3,7 +3,6 @@
 #include "CameraManager.h"
 #include "ImGuiManager.h"
 #include "GameObject.h"
-#include "Box.h"
 #include "Object3d.h"
 #include "Model.h"
 #include "Mesh.h"
@@ -26,12 +25,6 @@ void TestPlayScene::Initialize(const SceneContext& sceneContext) {
 	BaseScene::Initialize(sceneContext);
 	renderCamera_ = *sceneContext_.cameraManager->FindCamera("testPlayCamera");
 	gameCamera_ = sceneContext_.cameraManager->FindCamera("testPlayCamera");
-
-	//box_ = std::make_unique<Box>();
-	//box_->Initialize(sceneContext_.directXBase, sceneContext_.textureManager, &camera_);
-	//box_->SetModel("cube");
-
-
 
 	object3d_ = std::make_unique<Object3d>();
 	object3d_->Initialize(sceneContext_.object3dCommon, &renderCamera_, 1);
@@ -82,16 +75,11 @@ void TestPlayScene::Update() {
 	} else {
 		cube_->SetColor(Vector4::MakeWhiteColor());
 	}
-	//box_->Update();
 }
 
 //デバッグ
 void TestPlayScene::Debug() {
 #ifdef USE_IMGUI
-	//ImGui::Begin("box");
-	//box_->Debug();
-	//ImGui::End();
-
 	ImGui::Begin("object3d");
 
 	for (int32_t i = 0; i < gameObjects_.size(); i++) {
@@ -143,8 +131,6 @@ void TestPlayScene::Debug() {
 
 //描画
 void TestPlayScene::Draw() {
-	//box_->Draw();
-
 	object3d_->Draw();
 
 	frustum_->Draw();

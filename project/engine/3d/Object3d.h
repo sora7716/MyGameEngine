@@ -17,6 +17,7 @@ class Object3dCommon;
 class Camera;
 class Model;
 class GameObject;
+class LODBuilder;
 
 //3dオブジェクトのインスタンスデータ
 struct Object3dInstance {
@@ -260,8 +261,8 @@ private://メンバ変数
 	//モデル
 	Model* model_ = nullptr;
 
-	//LOD用のモデル
-	std::array <std::unique_ptr<Model>, kLODCount>lodModels_;
+	//LODビルダー
+	std::unique_ptr<LODBuilder>lodBuilder_ = nullptr;
 	//LODの距離
 	std::vector<float>lodDistances_;
 

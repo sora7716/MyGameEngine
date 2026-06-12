@@ -5,7 +5,6 @@
 #include <vector>
 
 //前方宣言
-class Box;
 class Object3d;
 class GameObject;
 class Audio;
@@ -60,8 +59,6 @@ public://メンバ関数
 	/// </summary>
 	void Finalize()override;
 private://メンバ変数
-	std::unique_ptr<Box>box_ = nullptr;
-
 	std::unique_ptr<Object3d>object3d_ = nullptr;
 	std::vector<std::unique_ptr<GameObject>>gameObjects_;
 

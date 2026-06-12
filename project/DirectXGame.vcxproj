@@ -21,7 +21,8 @@
     <ClCompile Include="engine\2d\Text.cpp" />
     <ClCompile Include="engine\2d\TextRasterizer.cpp" />
     <ClCompile Include="engine\2d\TextureManager.cpp" />
-    <ClCompile Include="engine\3d\Box.cpp" />
+    <ClCompile Include="engine\3d\LODBuilder.cpp" />
+    <ClCompile Include="engine\3d\LODController.cpp" />
     <ClCompile Include="engine\3d\Mesh.cpp" />
     <ClCompile Include="engine\3d\Model.cpp" />
     <ClCompile Include="engine\3d\ModelCommon.cpp" />
@@ -96,7 +97,8 @@
     <ClInclude Include="engine\2d\TextData.h" />
     <ClInclude Include="engine\2d\TextRasterizer.h" />
     <ClInclude Include="engine\2d\TextureManager.h" />
-    <ClInclude Include="engine\3d\Box.h" />
+    <ClInclude Include="engine\3d\LODBuilder.h" />
+    <ClInclude Include="engine\3d\LODController.h" />
     <ClInclude Include="engine\3d\Mesh.h" />
     <ClInclude Include="engine\3d\Model.h" />
     <ClInclude Include="engine\3d\ModelCommon.h" />
@@ -163,7 +165,6 @@
     <ClInclude Include="engine\worldTransform\WorldTransform.h" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="engine\resources\shaders\Box.hlsli" />
     <None Include="engine\resources\shaders\CommonTypes.hlsli" />
     <None Include="engine\resources\shaders\Object3d.hlsli">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
@@ -185,18 +186,6 @@
     </None>
   </ItemGroup>
   <ItemGroup>
-    <FxCompile Include="engine\resources\shaders\Box.PS.hlsl">
-      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Pixel</ShaderType>
-      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Pixel</ShaderType>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
-    </FxCompile>
-    <FxCompile Include="engine\resources\shaders\Box.VS.hlsl">
-      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Vertex</ShaderType>
-      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Vertex</ShaderType>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
-    </FxCompile>
     <FxCompile Include="engine\resources\shaders\Object3d.PS.hlsl">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>

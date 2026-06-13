@@ -12,6 +12,7 @@
 #include "TextureManager.h"
 #include "algorithms/Collision.h"
 #include "LODBuilder.h"
+#include "LODController.h"
 #include <cassert>
 //初期化
 void Object3dInstance::Initialize(GameObject* gameObject) {
@@ -75,12 +76,8 @@ void Object3d::Initialize(Object3dCommon* object3dCommon, Camera* renderCamera, 
 
 	//LODビルダーの生成
 	lodBuilder_ = std::make_unique<LODBuilder>();
-
-	//LODの切り替え距離
-	lodDistances_ = {
-		50.0f,
-		80.0f
-	};
+	//LODコントローラの生成
+	lodController_ = std::make_unique<LODController>();
 }
 
 //更新
@@ -132,7 +129,7 @@ void Object3d::Update() {
 
 		float distance = (objectWorldPos - cameraWorldPos).Length();
 
-		uint32_t lodIndex = SelectLOD(distance, instanceData_[i].currentLOD);
+		uint32_t lodIndex = lodController_->SelectLOD(distance, instanceData_[i].currentLOD);
 		instanceData_[i].currentLOD = lodIndex;
 		//lodIndex番目がlodModelsに無かったら
 		if (!lodBuilder_->GetLODModel(lodIndex)) {
@@ -213,6 +210,8 @@ void Object3d::SetModel(const std::string& modelName) {
 
 	//LODモデルの生成
 	lodBuilder_->CreateLODModel(model_, { 1.0f,0.75f,0.25f });
+	//LODの制御の初期化
+	lodController_->Initialize(lodBuilder_.get());
 }
 
 //インスタンスの追加
@@ -233,6 +232,11 @@ uint32_t Object3d::AddInstance(GameObject* gameObject) {
 //カメラの設定
 void Object3d::SetGameCamera(Camera* gameCamera) {
 	gameCamera_ = gameCamera;
+}
+
+//LODの切り替え距離
+void Object3d::SetLODDistances(const std::vector<float>& lodDistances) {
+	lodController_->SetLODDistances(lodDistances);
 }
 
 // uvスケールの設定
@@ -440,54 +444,4 @@ void Object3d::UpdateVisibility(uint32_t index, const Matrix4x4& worldMatrix) {
 	}
 
 	instanceData_[index].isEnabled = isVisible;
-}
-
-//距離によってLODモデルの添え字を取得
-uint32_t Object3d::SelectLOD(float distance, uint32_t currentLOD) const {
-	//距離境界が足りない場合
-	if (lodDistances_.size() < lodBuilder_->LODModelSize() - 1) {
-		return 0;
-	}
-
-	//currentLODが範囲外なら戻す
-	if (currentLOD >= lodBuilder_->LODModelSize()) {
-		currentLOD = 0;
-	}
-
-	//LODモデル番号
-	uint32_t result = currentLOD;
-	//ヒステリシス幅
-	const float hysteresis = 5.0f;
-
-	//現在のLODをみて
-	switch (currentLOD) {
-	case 0:
-		//LOD0 -> LOD1
-		if (distance >= lodDistances_[0] + hysteresis) {
-			result = 1;
-		}
-		break;
-	case 1:
-		//LOD1 -> LOD0
-		if (distance < lodDistances_[0] - hysteresis) {
-			result = 0;
-		} else if (distance >= lodDistances_[1] + hysteresis) {
-			//LOD1 -> LOD2
-			result = 2;
-		}
-		break;
-	case 2:
-		//LOD2 -> LOD1
-		if (distance < lodDistances_[1] - hysteresis) {
-			result = 1;
-		}
-		break;
-	}
-
-	//選ばれたLODがなければ
-	if (!lodBuilder_->GetLODModel(result)) {
-		return 0;
-	}
-
-	return result;
 }

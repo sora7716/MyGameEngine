@@ -34,7 +34,7 @@ void GameObjectList::LoadModel() {
 	////球
 	//core_->GetModelManager()->LoadModel("sphere", "sphere", "sphere.gltf");
 	////キューブ
-	//core_->GetModelManager()->LoadModel("cube", "cube", "cube.obj");
+	core_->GetModelManager()->LoadModel("cube2", "cube", "cube.obj");
 	////マルチメッシュ
 	core_->GetModelManager()->LoadModel("multiMaterial", "base", "multiMaterial.obj");
 

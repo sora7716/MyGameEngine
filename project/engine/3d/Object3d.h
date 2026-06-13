@@ -18,6 +18,7 @@ class Camera;
 class Model;
 class GameObject;
 class LODBuilder;
+class LODController;
 
 //3dオブジェクトのインスタンスデータ
 struct Object3dInstance {
@@ -86,6 +87,12 @@ public://メンバ関数
 	/// </summary>
 	/// <param name="gameCamera">ゲームで使用するカメラ</param>
 	void SetGameCamera(Camera* gameCamera);
+
+	/// <summary>
+	/// LODの切り替え距離の設定
+	/// </summary>
+	/// <param name="lodDistances">lod切り替え距離</param>
+	void SetLODDistances(const std::vector<float>& lodDistances);
 
 	/// <summary>
 	/// uvスケールの設定
@@ -234,14 +241,6 @@ private://メンバ関数
 	/// <param name="index">インデックス</param>
 	/// <param name="worldMatrix">ワールド行列</param>
 	void UpdateVisibility(uint32_t index, const Matrix4x4& worldMatrix);
-
-	/// <summary>
-	/// 距離によってLODモデルの添え字を取得
-	/// </summary>
-	/// <param name="distance">距離</param>
-	/// <param name="currentLOD">現在のLOD</param>
-	/// <returns>LODモデルの添え字</returns>
-	uint32_t SelectLOD(float distance, uint32_t currentLOD)const;
 private://メンバ関数テーブル
 	//座標の更新をまとめた
 	static void (Object3d::* UpdateWorldMatrixTable[])(uint32_t index);
@@ -263,8 +262,8 @@ private://メンバ変数
 
 	//LODビルダー
 	std::unique_ptr<LODBuilder>lodBuilder_ = nullptr;
-	//LODの距離
-	std::vector<float>lodDistances_;
+	//LODの制御
+	std::unique_ptr<LODController>lodController_ = nullptr;
 
 	std::array<std::vector<TransformationMatrix>, kLODCount>lodWvpData_;
 	//ワールドビュープロジェクションのリソース

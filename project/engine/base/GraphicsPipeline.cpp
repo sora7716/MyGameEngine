@@ -53,7 +53,7 @@ void GraphicsPipeline::CreateRootSignatureBlobForSprite() {
 	rootParameters[1].ShaderVisibility = D3D12_SHADER_VISIBILITY_VERTEX;//VertexShaderを使う
 	rootParameters[1].Descriptor.ShaderRegister = 0;//レジスタ番号
 
-	//DescriptorTable(DescriptorRangeをまとめたもの)
+	//テクスチャ情報
 	rootParameters[2].ParameterType = D3D12_ROOT_PARAMETER_TYPE_DESCRIPTOR_TABLE;//DescriptorTableを使う
 	rootParameters[2].ShaderVisibility = D3D12_SHADER_VISIBILITY_PIXEL;//PixelShaderを使う
 	rootParameters[2].DescriptorTable.pDescriptorRanges = descriptorRange;//Tableの中身の配列を指定
@@ -127,7 +127,7 @@ void GraphicsPipeline::CreateRootSignatureBlobForObject3d() {
 	rootParameters[1].DescriptorTable.pDescriptorRanges = &descriptorRange[3];//Tableの中身の配列を指定
 	rootParameters[1].DescriptorTable.NumDescriptorRanges = 1;
 
-	//DescriptorTable(DescriptorRangeをまとめたもの)
+	//テクスチャ情報
 	rootParameters[2].ParameterType = D3D12_ROOT_PARAMETER_TYPE_DESCRIPTOR_TABLE;//DescriptorTableを使う
 	rootParameters[2].ShaderVisibility = D3D12_SHADER_VISIBILITY_PIXEL;//PixelShaderを使う
 	rootParameters[2].DescriptorTable.pDescriptorRanges = &descriptorRange[0];//Tableの中身の配列を指定

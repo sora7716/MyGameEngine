@@ -30,6 +30,8 @@ void TestPlayScene::Initialize(const SceneContext& sceneContext) {
 	object3d_->Initialize(sceneContext_.object3dCommon, &renderCamera_, 1);
 	object3d_->SetGameCamera(gameCamera_);
 	object3d_->SetModel("dekanu");
+	//object3d_->SetModel("cube");
+	std::unique_ptr<Model> model = Model::CreateCube(sceneContext_.modelCommon);
 
 	std::unique_ptr<GameObject>tree = std::make_unique<GameObject>();
 	tree->Initialize("tree");

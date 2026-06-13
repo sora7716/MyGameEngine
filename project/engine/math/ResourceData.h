@@ -61,7 +61,6 @@ struct SpotLight {
 //マテリアルデータ
 struct MaterialData {
 	std::string textureFilePath;
-	uint32_t srvIndex;
 };
 
 //メッシュデータ

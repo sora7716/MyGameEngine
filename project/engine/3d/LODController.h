@@ -13,8 +13,7 @@ public://メンバ関数
 	/// 初期化
 	/// </summary>
 	/// <param name="lodBuilder">LODビルダー</param>
-	/// <param name="lodDistances">LODの距離</param>
-	void Initialize(LODBuilder* lodBuilder, const std::vector<float>& lodDistances);
+	void Initialize(LODBuilder* lodBuilder);
 
 	/// <summary>
 	/// 距離によってLODモデルの添え字を取得
@@ -23,6 +22,12 @@ public://メンバ関数
 	/// <param name="currentLOD">現在のLOD</param>
 	/// <returns>LODモデルの添え字</returns>
 	uint32_t SelectLOD(float distance, uint32_t currentLOD)const;
+
+	/// <summary>
+    /// LODの切り替え距離の設定
+    /// </summary>
+	/// <param name="lodDistances">LODの切り替え距離</param>
+	void SetLODDistances(const std::vector<float>& lodDistances);
 private://メンバ変数
 	//LODビルダー
 	LODBuilder* lodBuilder_ = nullptr;

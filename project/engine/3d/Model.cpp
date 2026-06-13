@@ -563,14 +563,18 @@ MeshData Model::MakeCubeData() {
 void Model::CreateCube() {
 	//マテリアルの初期化
 	MaterialData material;
-	material.srvIndex = 0;
 	material.textureFilePath = "engine/resources/textures/white1x1.png";
+	modelCommon_->GetTextureManager()->LoadTexture(material.textureFilePath);
 	//マテリアルを設定
 	modelData_.material.push_back(material);
 	//メッシュの再構築
 	RebuildMeshes({ MakeCubeData() });
 	//各種リソースの生成
 	CreateResources();
+	//ノードの初期化
+	Node& node = modelData_.rootNode;
+	node.name = "cube";
+	node.localMatrix = Matrix4x4::Identity4x4();
 }
 
 //モデルの生成

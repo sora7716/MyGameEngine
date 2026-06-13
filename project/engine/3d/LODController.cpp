@@ -3,12 +3,10 @@
 #include <cassert>
 
 //初期化
-void LODController::Initialize(LODBuilder* lodBuilder, const std::vector<float>& lodDistances) {
+void LODController::Initialize(LODBuilder* lodBuilder) {
 	//LODビルダーの記録
 	assert(lodBuilder);
 	lodBuilder_ = lodBuilder;
-	//LOD距離の記録
-	lodDistances_ = lodDistances;
 }
 
 //距離によってLODモデルの添え字を取得
@@ -42,8 +40,10 @@ uint32_t LODController::SelectLOD(float distance, uint32_t currentLOD) const {
 	}
 
 	//先に進める
-	if (distance >= lodDistances_[currentLOD] + hysteresis) {
-		result = currentLOD + 1;
+	if (currentLOD < 2) {
+		if (distance >= lodDistances_[currentLOD] + hysteresis) {
+			result = currentLOD + 1;
+		}
 	}
 
 	//選ばれたLODがなければ
@@ -52,4 +52,9 @@ uint32_t LODController::SelectLOD(float distance, uint32_t currentLOD) const {
 	}
 
 	return result;
+}
+
+//LODの切り替え距離の設定
+void LODController::SetLODDistances(const std::vector<float>& lodDistances) {
+	lodDistances_ = lodDistances;
 }

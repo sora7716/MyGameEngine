@@ -50,13 +50,13 @@
     <ClCompile Include="engine\debug\Logger.cpp" />
     <ClCompile Include="engine\debug\WireframeObject3d.cpp" />
     <ClCompile Include="engine\debug\WireframeObject3dCommon.cpp" />
-    <ClCompile Include="engine\debug\wireframe\BaseShape.cpp" />
-    <ClCompile Include="engine\debug\wireframe\Circle.cpp" />
-    <ClCompile Include="engine\debug\wireframe\Cube.cpp" />
-    <ClCompile Include="engine\debug\wireframe\Frustum.cpp" />
-    <ClCompile Include="engine\debug\wireframe\Line.cpp" />
-    <ClCompile Include="engine\debug\wireframe\Plane.cpp" />
-    <ClCompile Include="engine\debug\wireframe\Sphere.cpp" />
+    <ClCompile Include="engine\debug\wireframes\BaseShape.cpp" />
+    <ClCompile Include="engine\debug\wireframes\Circle.cpp" />
+    <ClCompile Include="engine\debug\wireframes\Cube.cpp" />
+    <ClCompile Include="engine\debug\wireframes\Frustum.cpp" />
+    <ClCompile Include="engine\debug\wireframes\Line.cpp" />
+    <ClCompile Include="engine\debug\wireframes\Plane.cpp" />
+    <ClCompile Include="engine\debug\wireframes\Sphere.cpp" />
     <ClCompile Include="engine\framework\Framework.cpp" />
     <ClCompile Include="engine\framework\GameSystem.cpp" />
     <ClCompile Include="engine\gameObject\GameObject.cpp" />
@@ -128,13 +128,13 @@
     <ClInclude Include="engine\debug\Logger.h" />
     <ClInclude Include="engine\debug\WireframeObject3d.h" />
     <ClInclude Include="engine\debug\WireframeObject3dCommon.h" />
-    <ClInclude Include="engine\debug\wireframe\BaseShape.h" />
-    <ClInclude Include="engine\debug\wireframe\Circle.h" />
-    <ClInclude Include="engine\debug\wireframe\Cube.h" />
-    <ClInclude Include="engine\debug\wireframe\Frustum.h" />
-    <ClInclude Include="engine\debug\wireframe\Line.h" />
-    <ClInclude Include="engine\debug\wireframe\Plane.h" />
-    <ClInclude Include="engine\debug\wireframe\Sphere.h" />
+    <ClInclude Include="engine\debug\wireframes\BaseShape.h" />
+    <ClInclude Include="engine\debug\wireframes\Circle.h" />
+    <ClInclude Include="engine\debug\wireframes\Cube.h" />
+    <ClInclude Include="engine\debug\wireframes\Frustum.h" />
+    <ClInclude Include="engine\debug\wireframes\Line.h" />
+    <ClInclude Include="engine\debug\wireframes\Plane.h" />
+    <ClInclude Include="engine\debug\wireframes\Sphere.h" />
     <ClInclude Include="engine\framework\Framework.h" />
     <ClInclude Include="engine\framework\GameSystem.h" />
     <ClInclude Include="engine\gameObject\GameObject.h" />
@@ -290,7 +290,7 @@
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
       <TreatWarningAsError>true</TreatWarningAsError>
-      <AdditionalIncludeDirectories>$(ProjectDir);$(ProjectDir)engine\base;$(ProjectDir)engine\2d;$(ProjectDir)externals;$(ProjectDir)engine\math;$(ProjectDir)engine\debug;$(ProjectDir)engine\input;$(ProjectDir)engine\audio;$(SolutionDir)DirectXTex;$(SolutionDir)imgui;$(ProjectDir)engine\resource;$(ProjectDir)application;$(ProjectDir)application\scene;$(ProjectDir)application\actor;$(ProjectDir)externals\assimp\include;$(ProjectDir)engine\3d;$(ProjectDir)engine\framework;$(ProjectDir)engine\camera;$(ProjectDir)engine\scene;$(ProjectDir)engine\worldTransform;$(ProjectDir)engine\gameObject;%(AdditionalIncludeDirectories);$(ProjectDir)engine\debug\wireframe;$(ProjectDir)engine\particle</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir);$(ProjectDir)engine\base;$(ProjectDir)engine\2d;$(ProjectDir)externals;$(ProjectDir)engine\math;$(ProjectDir)engine\debug;$(ProjectDir)engine\input;$(ProjectDir)engine\audio;$(SolutionDir)DirectXTex;$(SolutionDir)imgui;$(ProjectDir)engine\resource;$(ProjectDir)application;$(ProjectDir)application\scene;$(ProjectDir)application\actor;$(ProjectDir)externals\assimp\include;$(ProjectDir)engine\3d;$(ProjectDir)engine\framework;$(ProjectDir)engine\camera;$(ProjectDir)engine\scene;$(ProjectDir)engine\worldTransform;$(ProjectDir)engine\gameObject;%(AdditionalIncludeDirectories);$(ProjectDir)engine\debug\wireframes;$(ProjectDir)engine\particle</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -324,7 +324,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
       <AdditionalOptions>/utf-8 %(AdditionalOptions)</AdditionalOptions>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
-      <AdditionalIncludeDirectories>$(ProjectDir);$(ProjectDir)engine\base;$(ProjectDir)engine\2d;$(ProjectDir)externals;$(ProjectDir)engine\math;$(ProjectDir)engine\debug;$(ProjectDir)engine\input;$(ProjectDir)engine\audio;$(SolutionDir)DirectXTex;$(SolutionDir)imgui;$(ProjectDir)engine\resource;$(ProjectDir)application;$(ProjectDir)application\scene;$(ProjectDir)application\actor;$(ProjectDir)externals\assimp\include;$(ProjectDir)engine\3d;$(ProjectDir)engine\framework;$(ProjectDir)engine\camera;$(ProjectDir)engine\scene;$(ProjectDir)engine\worldTransform;$(ProjectDir)engine\gameObject;%(AdditionalIncludeDirectories);$(ProjectDir)engine\debug\wireframe;$(ProjectDir)engine\particle</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir);$(ProjectDir)engine\base;$(ProjectDir)engine\2d;$(ProjectDir)externals;$(ProjectDir)engine\math;$(ProjectDir)engine\debug;$(ProjectDir)engine\input;$(ProjectDir)engine\audio;$(SolutionDir)DirectXTex;$(SolutionDir)imgui;$(ProjectDir)engine\resource;$(ProjectDir)application;$(ProjectDir)application\scene;$(ProjectDir)application\actor;$(ProjectDir)externals\assimp\include;$(ProjectDir)engine\3d;$(ProjectDir)engine\framework;$(ProjectDir)engine\camera;$(ProjectDir)engine\scene;$(ProjectDir)engine\worldTransform;$(ProjectDir)engine\gameObject;%(AdditionalIncludeDirectories);$(ProjectDir)engine\debug\wireframes;$(ProjectDir)engine\particle</AdditionalIncludeDirectories>
       <Optimization>MinSpace</Optimization>
       <TreatWarningAsError>true</TreatWarningAsError>
     </ClCompile>

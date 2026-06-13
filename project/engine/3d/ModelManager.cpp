@@ -1,12 +1,14 @@
 #include "ModelManager.h"
 #include "engine/3d/ModelCommon.h"
 #include "engine/3d/Model.h"
+#include <cassert>
 
 //デストラクタ
 ModelManager::~ModelManager() {}
 
 //初期化
 void ModelManager::Initialize(ModelCommon*modelCommon) {
+	assert(modelCommon);
 	modelCommon_ = modelCommon;
 }
 

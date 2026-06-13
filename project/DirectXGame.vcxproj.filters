@@ -73,11 +73,11 @@
     <Filter Include="application\actor\character">
       <UniqueIdentifier>{e4c0b8d1-d6ef-4fb1-b2ec-c827f4987ed5}</UniqueIdentifier>
     </Filter>
-    <Filter Include="engine\debug\wireframe">
-      <UniqueIdentifier>{a630cca5-20b8-4df5-ae4e-e26027a95569}</UniqueIdentifier>
-    </Filter>
     <Filter Include="engine\math\algorithms">
       <UniqueIdentifier>{f4a79ad1-4ad4-48c3-b59c-2cb96d487971}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="engine\debug\wireframes">
+      <UniqueIdentifier>{a630cca5-20b8-4df5-ae4e-e26027a95569}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -261,21 +261,6 @@
     <ClCompile Include="engine\math\algorithms\Rendering.cpp">
       <Filter>engine\math\algorithms</Filter>
     </ClCompile>
-    <ClCompile Include="engine\debug\wireframe\BaseShape.cpp">
-      <Filter>engine\debug\wireframe</Filter>
-    </ClCompile>
-    <ClCompile Include="engine\debug\wireframe\Circle.cpp">
-      <Filter>engine\debug\wireframe</Filter>
-    </ClCompile>
-    <ClCompile Include="engine\debug\wireframe\Cube.cpp">
-      <Filter>engine\debug\wireframe</Filter>
-    </ClCompile>
-    <ClCompile Include="engine\debug\wireframe\Line.cpp">
-      <Filter>engine\debug\wireframe</Filter>
-    </ClCompile>
-    <ClCompile Include="engine\debug\wireframe\Sphere.cpp">
-      <Filter>engine\debug\wireframe</Filter>
-    </ClCompile>
     <ClCompile Include="engine\gameObject\GameObject.cpp">
       <Filter>application\gameObject</Filter>
     </ClCompile>
@@ -288,20 +273,35 @@
     <ClCompile Include="engine\3d\Mesh.cpp">
       <Filter>engine\3d</Filter>
     </ClCompile>
-    <ClCompile Include="engine\debug\wireframe\Frustum.cpp">
-      <Filter>engine\debug\wireframe</Filter>
-    </ClCompile>
     <ClCompile Include="engine\math\PrimitiveData.cpp">
       <Filter>engine\math</Filter>
     </ClCompile>
-    <ClCompile Include="engine\debug\wireframe\Plane.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
     <ClCompile Include="engine\3d\LODBuilder.cpp">
-      <Filter>ソース ファイル</Filter>
+      <Filter>engine\3d</Filter>
     </ClCompile>
     <ClCompile Include="engine\3d\LODController.cpp">
-      <Filter>ソース ファイル</Filter>
+      <Filter>engine\3d</Filter>
+    </ClCompile>
+    <ClCompile Include="engine\debug\wireframes\BaseShape.cpp">
+      <Filter>engine\debug\wireframes</Filter>
+    </ClCompile>
+    <ClCompile Include="engine\debug\wireframes\Circle.cpp">
+      <Filter>engine\debug\wireframes</Filter>
+    </ClCompile>
+    <ClCompile Include="engine\debug\wireframes\Cube.cpp">
+      <Filter>engine\debug\wireframes</Filter>
+    </ClCompile>
+    <ClCompile Include="engine\debug\wireframes\Frustum.cpp">
+      <Filter>engine\debug\wireframes</Filter>
+    </ClCompile>
+    <ClCompile Include="engine\debug\wireframes\Line.cpp">
+      <Filter>engine\debug\wireframes</Filter>
+    </ClCompile>
+    <ClCompile Include="engine\debug\wireframes\Plane.cpp">
+      <Filter>engine\debug\wireframes</Filter>
+    </ClCompile>
+    <ClCompile Include="engine\debug\wireframes\Sphere.cpp">
+      <Filter>engine\debug\wireframes</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -500,21 +500,6 @@
     <ClInclude Include="engine\math\algorithms\Rendering.h">
       <Filter>engine\math\algorithms</Filter>
     </ClInclude>
-    <ClInclude Include="engine\debug\wireframe\BaseShape.h">
-      <Filter>engine\debug\wireframe</Filter>
-    </ClInclude>
-    <ClInclude Include="engine\debug\wireframe\Circle.h">
-      <Filter>engine\debug\wireframe</Filter>
-    </ClInclude>
-    <ClInclude Include="engine\debug\wireframe\Cube.h">
-      <Filter>engine\debug\wireframe</Filter>
-    </ClInclude>
-    <ClInclude Include="engine\debug\wireframe\Line.h">
-      <Filter>engine\debug\wireframe</Filter>
-    </ClInclude>
-    <ClInclude Include="engine\debug\wireframe\Sphere.h">
-      <Filter>engine\debug\wireframe</Filter>
-    </ClInclude>
     <ClInclude Include="engine\gameObject\GameObject.h">
       <Filter>application\gameObject</Filter>
     </ClInclude>
@@ -527,17 +512,32 @@
     <ClInclude Include="engine\3d\Mesh.h">
       <Filter>engine\3d</Filter>
     </ClInclude>
-    <ClInclude Include="engine\debug\wireframe\Frustum.h">
-      <Filter>engine\debug\wireframe</Filter>
-    </ClInclude>
-    <ClInclude Include="engine\debug\wireframe\Plane.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
     <ClInclude Include="engine\3d\LODBuilder.h">
-      <Filter>ヘッダー ファイル</Filter>
+      <Filter>engine\3d</Filter>
     </ClInclude>
     <ClInclude Include="engine\3d\LODController.h">
-      <Filter>ヘッダー ファイル</Filter>
+      <Filter>engine\3d</Filter>
+    </ClInclude>
+    <ClInclude Include="engine\debug\wireframes\BaseShape.h">
+      <Filter>engine\debug\wireframes</Filter>
+    </ClInclude>
+    <ClInclude Include="engine\debug\wireframes\Circle.h">
+      <Filter>engine\debug\wireframes</Filter>
+    </ClInclude>
+    <ClInclude Include="engine\debug\wireframes\Cube.h">
+      <Filter>engine\debug\wireframes</Filter>
+    </ClInclude>
+    <ClInclude Include="engine\debug\wireframes\Frustum.h">
+      <Filter>engine\debug\wireframes</Filter>
+    </ClInclude>
+    <ClInclude Include="engine\debug\wireframes\Line.h">
+      <Filter>engine\debug\wireframes</Filter>
+    </ClInclude>
+    <ClInclude Include="engine\debug\wireframes\Plane.h">
+      <Filter>engine\debug\wireframes</Filter>
+    </ClInclude>
+    <ClInclude Include="engine\debug\wireframes\Sphere.h">
+      <Filter>engine\debug\wireframes</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

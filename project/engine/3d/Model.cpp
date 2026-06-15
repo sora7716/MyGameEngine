@@ -219,9 +219,9 @@ void Model::SetColor(uint32_t index, const Vector4& color) {
 }
 
 //テクスチャの変更
-void Model::SetTexture(uint32_t index, const std::string& filePath) {
-	modelData_.material[index].textureFilePath = "engine/resources/textures/" + filePath;
-	modelCommon_->GetTextureManager()->LoadTexture(modelData_.material[index].textureFilePath);
+void Model::SetTexture(uint32_t materialIndex, const std::string& imageName) {
+	modelData_.material[materialIndex].textureFilePath = "engine/resources/textures/" + imageName;
+	modelCommon_->GetTextureManager()->LoadTexture(modelData_.material[materialIndex].textureFilePath);
 }
 
 //色を取得
@@ -561,16 +561,14 @@ MeshData Model::MakeCubeData() {
 
 //キューブの生成
 void Model::CreateCube() {
-	//マテリアルの初期化
-	MaterialData material;
-	material.textureFilePath = "engine/resources/textures/white1x1.png";
-	modelCommon_->GetTextureManager()->LoadTexture(material.textureFilePath);
-	//マテリアルを設定
-	modelData_.material.push_back(material);
+	//モデルの読み込み
+	modelData_.meshes = { MakeCubeData() };
 	//メッシュの再構築
-	RebuildMeshes({ MakeCubeData() });
+	RebuildMeshes(modelData_.meshes);
 	//各種リソースの生成
 	CreateResources();
+	//テクスチャの適応
+	SetTexture(modelData_.meshes[0].materialIndex, "white1x1.png");
 	//ノードの初期化
 	Node& node = modelData_.rootNode;
 	node.name = "cube";

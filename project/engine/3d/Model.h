@@ -97,9 +97,9 @@ public://メンバ関数
 	/// <summary>
 	/// テクスチャの変更
 	/// </summary>
-	/// <param name="index">インデックス</param>
-	/// <param name="filePath">ファイルパス</param>
-	void SetTexture(uint32_t index, const std::string& filePath);
+	/// <param name="materialIndex">マテリアルインデックス</param>
+	/// <param name="imageName">画像の名前</param>
+	void SetTexture(uint32_t materialIndex, const std::string& imageName);
 
 	/// <summary>
 	/// 色を取得

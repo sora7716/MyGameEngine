@@ -7,9 +7,14 @@
 ModelManager::~ModelManager() {}
 
 //初期化
-void ModelManager::Initialize(ModelCommon*modelCommon) {
+void ModelManager::Initialize(ModelCommon* modelCommon) {
 	assert(modelCommon);
 	modelCommon_ = modelCommon;
+	//モデルの生成とファイル読み込み、初期化
+	std::unique_ptr<Model>model = Model::CreateCube(modelCommon_);
+
+	//モデルをmapコンテナに格納する
+	models_.insert(std::make_pair("cube", std::move(model)));
 }
 
 // objモデルの読み込み

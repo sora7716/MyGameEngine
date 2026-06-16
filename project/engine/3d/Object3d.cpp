@@ -205,11 +205,11 @@ void Object3d::Draw() {
 }
 
 //モデルの設定
-void Object3d::SetModel(const std::string& modelName) {
+void Object3d::SetModel(const std::string& modelName, const std::vector<float>& keepRates) {
 	model_ = object3dCommon_->GetModelManager()->FindModel(modelName);
 
 	//LODモデルの生成
-	lodBuilder_->CreateLODModel(model_, { 1.0f,0.75f,0.25f });
+	lodBuilder_->CreateLODModel(model_, keepRates);
 	//LODの制御の初期化
 	lodController_->Initialize(lodBuilder_.get());
 }

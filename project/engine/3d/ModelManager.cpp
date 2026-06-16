@@ -10,6 +10,10 @@ ModelManager::~ModelManager() {}
 void ModelManager::Initialize(ModelCommon* modelCommon) {
 	assert(modelCommon);
 	modelCommon_ = modelCommon;
+}
+
+//プリミティブなモデルの生成
+void ModelManager::CreatePrimitiveModel() {
 	//モデルの生成とファイル読み込み、初期化
 	std::unique_ptr<Model>model = Model::CreateCube(modelCommon_);
 

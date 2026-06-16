@@ -26,6 +26,11 @@ public://メンバ関数
 	void Initialize(ModelCommon* modelCommon);
 
 	/// <summary>
+	/// プリミティブなモデルの生成
+	/// </summary>
+	void CreatePrimitiveModel();
+
+	/// <summary>
 	/// objモデルの読み込み
 	/// </summary>
 	/// <param name="name">名前</param>

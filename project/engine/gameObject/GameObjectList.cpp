@@ -29,14 +29,16 @@ void GameObjectList::LoadAudio() {
 
 //OBJファイルの読み込み
 void GameObjectList::LoadModel() {
+	//プリミティブなモデルの生成
+	core_->GetModelManager()->CreatePrimitiveModel();
 	////モデルの読み込み
 	////デバッグ用
 	////球
 	//core_->GetModelManager()->LoadModel("sphere", "sphere", "sphere.gltf");
 	////キューブ
-	core_->GetModelManager()->LoadModel("cube2", "cube", "cube.obj");
-	////マルチメッシュ
-	core_->GetModelManager()->LoadModel("multiMaterial", "base", "multiMaterial.obj");
+	//core_->GetModelManager()->LoadModel("cube2", "cube", "cube.obj");
+	//マルチメッシュ
+	//core_->GetModelManager()->LoadModel("multiMaterial", "base", "multiMaterial.obj");
 
 	////ゲームで使用するモデル
 	////プレイヤー

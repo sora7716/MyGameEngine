@@ -1,3 +1,4 @@
+#define NOMINMAX
 #include "Model.h"
 #include "DirectXBase.h"
 #include "ModelCommon.h"
@@ -9,6 +10,7 @@
 #include <cassert>
 #include <fstream>
 #include <sstream>
+#include <algorithm>
 #include <assimp/Importer.hpp>
 #include <assimp/scene.h>
 #include <assimp/postprocess.h>
@@ -99,12 +101,12 @@ void Model::RebuildMeshes(const std::vector<MeshData>& meshes) {
 		meshes_.clear();
 	}
 	//受け取ったメッシュデータに書き換え
-	modelData_.meshes = meshes;
+	modelData_.mesheDatas = meshes;
 	//マテリアルが存在するか
 	if (!modelData_.material.empty()) {
-		for (uint32_t i = 0; i < modelData_.meshes.size(); i++) {
-			if (modelData_.meshes[i].materialIndex >= modelData_.material.size()) {
-				modelData_.meshes[i].materialIndex = 0;
+		for (uint32_t i = 0; i < modelData_.mesheDatas.size(); i++) {
+			if (modelData_.mesheDatas[i].materialIndex >= modelData_.material.size()) {
+				modelData_.mesheDatas[i].materialIndex = 0;
 			}
 		}
 	} else {
@@ -127,7 +129,7 @@ void Model::RebuildMeshes(const std::vector<MeshData>& meshes) {
 //頂点を合成する
 std::vector<MeshData> Model::VertexClustering(float rate, float min, float max) {
 	//メッシュ
-	std::vector<MeshData>baseMeshes = modelData_.meshes;
+	std::vector<MeshData>baseMeshes = modelData_.mesheDatas;
 
 	//新しいメッシュ
 	std::vector<MeshData>newMeshes;
@@ -146,14 +148,14 @@ std::vector<MeshData> Model::VertexClustering(float rate, float min, float max) 
 
 	//割合をもとに取得したい頂点数を出す
 	for (const MeshData& meshData : baseMeshes) {
-		uint32_t goalVertexCount = uint32_t(float(meshData.vertices.size()) * rate);
+		uint32_t goalVertexCount = static_cast<uint32_t>(static_cast<float>(meshData.vertices.size()) * rate);
 		//グリッドサイズ
 		float minGridSize = min;//最小値
 		float maxGridSize = max;//最大値
 
 		//目標の頂点数に一番違いメッシュ
 		MeshData bestMesh = meshData;
-		uint32_t bestMeshVertexCount = uint32_t(bestMesh.vertices.size());
+		uint32_t bestMeshVertexCount = static_cast<uint32_t>(bestMesh.vertices.size());
 		float gridSize = 0;
 		//試行回数
 		const uint32_t kTrialCount = 20;
@@ -165,14 +167,14 @@ std::vector<MeshData> Model::VertexClustering(float rate, float min, float max) 
 			//元メッシュをgridSizeでクラスタリング
 			MeshData trialMesh = VertexClusteringByGridSize(meshData, gridSize);
 			//クラスタリングしたメッシュの頂点数を取得
-			uint32_t trialMeshVertexCount = uint32_t(trialMesh.vertices.size());
+			uint32_t trialMeshVertexCount = static_cast<uint32_t>(trialMesh.vertices.size());
 
 			//目標の頂点数より差分が小さいほうのメッシュを入れる
-			if (std::fabs(float(goalVertexCount) - float(bestMeshVertexCount)) > std::fabs(float(goalVertexCount) - float(trialMeshVertexCount))) {
+			if (std::fabs(static_cast<float>(goalVertexCount) - static_cast<float>(bestMeshVertexCount)) > std::fabs(static_cast<float>(goalVertexCount) - static_cast<float>(trialMeshVertexCount))) {
 				//ベストメッシュの置き換え
 				bestMesh = trialMesh;
 				//頂点の数の記録
-				bestMeshVertexCount = uint32_t(bestMesh.vertices.size());
+				bestMeshVertexCount = static_cast<uint32_t>(bestMesh.vertices.size());
 			}
 
 			//範囲を狭めていく
@@ -187,6 +189,44 @@ std::vector<MeshData> Model::VertexClustering(float rate, float min, float max) 
 	}
 
 	return newMeshes;
+}
+
+//辺縮約
+std::vector<MeshData> Model::EdgeCollapse() {
+	//メッシュデータを記録
+	MeshData meshData = modelData_.mesheDatas[0];
+	//インデックスのサイズが3の倍数じゃなかった場合
+	if (meshData.indices.size() / 3 != 0) {
+		return;
+	}
+	//現在の頂点数
+	const uint32_t currentVertexCount = meshData.vertices.size();
+	//最終的な頂点数
+	const uint32_t goalVertexCount = static_cast<uint32_t>(static_cast<float>(meshData.vertices.size()) * 0.8f);
+	//辺の一覧表(検索キーを辺の組み合わせ、valueをそのキーの出現回数)
+	std::map<std::array<uint32_t, 2>, uint32_t>edgeList;
+	for (uint32_t i = 0; i < meshData.indices.size(); i += 3) {
+		//三角形を作る
+		uint32_t a = meshData.indices[i];
+		uint32_t b = meshData.indices[i + 1];
+		uint32_t c = meshData.indices[i + 2];
+		//三角形の辺を作成(min,maxの順で)
+		std::array<std::array<uint32_t, 2>, 3>triangleEdges;
+		triangleEdges[0] = { std::min(a,b),std::max(a,b) };
+		triangleEdges[1] = { std::min(b,c),std::max(b,c) };
+		triangleEdges[2] = { std::min(c,a),std::max(c,a) };
+
+		//辺の一覧に追加
+		for (const std::array<uint32_t, 2>&triangleEdge : triangleEdges) {
+			if (edgeList.contains(triangleEdge)) {
+				//出現回数を増やす
+				edgeList[triangleEdge]++;
+				continue;
+			}
+			//そのキーの出現回数を設定
+			edgeList[triangleEdge] = 1;
+		}
+	}
 }
 
 //描画
@@ -312,7 +352,7 @@ ModelData Model::LoadModelFile(const std::string& directoryPath, const std::stri
 		}
 
 		//モデルデータにメッシュデータを移動
-		modelData.meshes.push_back(std::move(meshData));
+		modelData.mesheDatas.push_back(std::move(meshData));
 	}
 
 	//RootNodeの解析
@@ -403,7 +443,7 @@ void Model::CreateRimLightResource() {
 //メッシュの構築
 void Model::BuildMesh() {
 	//メッシュの生成と初期化
-	for (const MeshData& meshData : modelData_.meshes) {
+	for (const MeshData& meshData : modelData_.mesheDatas) {
 		std::unique_ptr<Mesh>mesh = std::make_unique<Mesh>();
 		mesh->Initialize(directXBase_, meshData);
 		meshes_.push_back(std::move(mesh));
@@ -562,13 +602,13 @@ MeshData Model::MakeCubeData() {
 //キューブの生成
 void Model::CreateCube() {
 	//モデルの読み込み
-	modelData_.meshes = { MakeCubeData() };
+	modelData_.mesheDatas = { MakeCubeData() };
 	//メッシュの再構築
-	RebuildMeshes(modelData_.meshes);
+	RebuildMeshes(modelData_.mesheDatas);
 	//各種リソースの生成
 	CreateResources();
 	//テクスチャの適応
-	SetTexture(modelData_.meshes[0].materialIndex, "white1x1.png");
+	SetTexture(modelData_.mesheDatas[0].materialIndex, "white1x1.png");
 	//ノードの初期化
 	Node& node = modelData_.rootNode;
 	node.name = "cube";
@@ -580,7 +620,7 @@ void Model::CreateFromModel(const std::string& storedFilePath, const std::string
 	//モデルの読み込み
 	modelData_ = LoadModelFile("engine/resources/models", storedFilePath, filename);
 	//メッシュの再構築
-	RebuildMeshes(modelData_.meshes);
+	RebuildMeshes(modelData_.mesheDatas);
 	//各種リソースの生成
 	CreateResources();
 }
@@ -589,7 +629,7 @@ void Model::CreateFromModel(const std::string& storedFilePath, const std::string
 void Model::CreateModelFromModelData(const ModelData& modelData) {
 	modelData_ = modelData;
 	//メッシュの再構成
-	RebuildMeshes(modelData_.meshes);
+	RebuildMeshes(modelData_.mesheDatas);
 	//各種リソースの生成
 	CreateResources();
 }

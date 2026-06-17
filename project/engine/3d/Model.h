@@ -75,6 +75,12 @@ public://メンバ関数
 	std::vector<MeshData> VertexClustering(float rate, float min = 0.001f, float max = 1.0f);
 
 	/// <summary>
+	/// 辺縮約
+	/// </summary>
+	/// <returns>辺縮約したメッシュデータ</returns>
+	std::vector<MeshData> EdgeCollapse();
+
+	/// <summary>
 	/// 描画
 	/// </summary>
 	/// <param name="objectCount">表示したいオブジェクト数</param>

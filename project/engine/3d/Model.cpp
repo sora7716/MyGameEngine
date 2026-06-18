@@ -7,6 +7,7 @@
 #include "Logger.h"
 #include <format>
 #include <map>
+#include <queue>
 #include <cassert>
 #include <fstream>
 #include <sstream>
@@ -195,6 +196,21 @@ std::vector<MeshData> Model::VertexClustering(float rate, float min, float max) 
 std::vector<MeshData> Model::EdgeCollapse() {
 	//メッシュデータを記録
 	std::vector<MeshData> baseMeshDatas = modelData_.mesheDatas;
+	//辺の消しやすさのスコアを作成
+	struct EdgeCandidate {
+		std::array<uint32_t, 2>edgeIndices;
+		float score;
+		uint32_t useCount;
+		std::array<uint32_t, 2>edgeIndexVersions;
+	};
+
+	//スコアが小さいものから出す
+	struct EdgeScoreCompare {
+		bool operator()(const EdgeCandidate& a, const EdgeCandidate& b)const {
+			return a.score > b.score;
+		}
+	};
+
 	for (MeshData& baseMeshData : baseMeshDatas) {
 		//インデックスのサイズが3の倍数じゃなかった場合
 		if (baseMeshData.indices.size() % 3 != 0) {
@@ -204,23 +220,18 @@ std::vector<MeshData> Model::EdgeCollapse() {
 		uint32_t currentVertexCount = static_cast<uint32_t>(baseMeshData.vertices.size());
 		//最終的な頂点数
 		const uint32_t goalVertexCount = static_cast<uint32_t>(static_cast<float>(baseMeshData.vertices.size()) * 0.8f);
-
-		//辺の消しやすさのスコアを作成
-		struct EdgeScore {
-			std::array<uint32_t, 2>edgeIndices;
-			float score;
-			uint32_t useCount;
-		};
+		//優先度付きキュー(入れるデータ型、内部で使う入れ物、並び順のルール)
+		std::priority_queue<EdgeCandidate, std::vector<EdgeCandidate>, EdgeScoreCompare>edgeQueue;
 		//辺の一覧表(検索キーを辺の組み合わせ、valueをそのキーの出現回数)
 		std::map<std::array<uint32_t, 2>, uint32_t>edgeList;
-		//辺にスコアをつけた表
-		std::vector<EdgeScore> edgeScoreList = {};
 
 		while (currentVertexCount > goalVertexCount) {
 			//辺の一覧表のリセット
 			edgeList.clear();
-			//辺のスコア表のリセット
-			edgeScoreList.clear();
+			//辺のキューをリセット
+			while (!edgeQueue.empty()) {
+				edgeQueue.pop();
+			}
 
 			for (uint32_t i = 0; i < baseMeshData.indices.size(); i += 3) {
 				//三角形を作る
@@ -255,7 +266,7 @@ std::vector<MeshData> Model::EdgeCollapse() {
 				//辺の検索キーを取得
 				std::array<uint32_t, 2>edgeIndices = edge.first;
 				//辺のスコアを記録
-				EdgeScore edgeScore = {};
+				EdgeCandidate edgeScore = {};
 
 				//インデックスの記録
 				edgeScore.edgeIndices = edgeIndices;
@@ -278,23 +289,19 @@ std::vector<MeshData> Model::EdgeCollapse() {
 				//出現回数の保持
 				edgeScore.useCount = edge.second;
 
-				//Listに追加
-				edgeScoreList.push_back(edgeScore);
+				//キューに追加
+				edgeQueue.push(edgeScore);
 
 			}
 
 			//辺のスコア表が空だったら
-			if (edgeScoreList.empty()) {
+			if (edgeQueue.empty()) {
 				break;
 			}
 
 			//一番Scoreが小さい辺を選ぶ
-			EdgeScore minScoreEdge = edgeScoreList[0];
-			for (const EdgeScore& edgeScore : edgeScoreList) {
-				if (minScoreEdge.score > edgeScore.score) {
-					minScoreEdge = edgeScore;
-				}
-			}
+			EdgeCandidate minScoreEdge = edgeQueue.top();
+			edgeQueue.pop();
 
 			//Collpaseする
 			uint32_t v0 = minScoreEdge.edgeIndices[0];

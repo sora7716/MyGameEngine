@@ -22,7 +22,8 @@ void LODBuilder::CreateLODModel(Model* model, const std::vector<float>& keepRate
 	//モデルの作成
 	for (uint32_t i = 0; i < keepRates.size(); i++) {
 		lodModels_[i] = Model::CreateModelFromModelData(model->GetModelCommon(), model->GetModelData());
-		lodModels_[i]->RebuildMeshes(lodModels_[i]->VertexClustering(keepRates[i]));
+		//lodModels_[i]->RebuildMeshes(lodModels_[i]->VertexClustering(keepRates[i]));
+		lodModels_[i]->RebuildMeshes(lodModels_[i]->EdgeCollapse());
 	}
 }
 

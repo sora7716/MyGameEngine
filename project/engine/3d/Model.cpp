@@ -194,39 +194,179 @@ std::vector<MeshData> Model::VertexClustering(float rate, float min, float max) 
 //辺縮約
 std::vector<MeshData> Model::EdgeCollapse() {
 	//メッシュデータを記録
-	MeshData meshData = modelData_.mesheDatas[0];
-	//インデックスのサイズが3の倍数じゃなかった場合
-	if (meshData.indices.size() / 3 != 0) {
-		return;
-	}
-	//現在の頂点数
-	const uint32_t currentVertexCount = meshData.vertices.size();
-	//最終的な頂点数
-	const uint32_t goalVertexCount = static_cast<uint32_t>(static_cast<float>(meshData.vertices.size()) * 0.8f);
-	//辺の一覧表(検索キーを辺の組み合わせ、valueをそのキーの出現回数)
-	std::map<std::array<uint32_t, 2>, uint32_t>edgeList;
-	for (uint32_t i = 0; i < meshData.indices.size(); i += 3) {
-		//三角形を作る
-		uint32_t a = meshData.indices[i];
-		uint32_t b = meshData.indices[i + 1];
-		uint32_t c = meshData.indices[i + 2];
-		//三角形の辺を作成(min,maxの順で)
-		std::array<std::array<uint32_t, 2>, 3>triangleEdges;
-		triangleEdges[0] = { std::min(a,b),std::max(a,b) };
-		triangleEdges[1] = { std::min(b,c),std::max(b,c) };
-		triangleEdges[2] = { std::min(c,a),std::max(c,a) };
+	std::vector<MeshData> baseMeshDatas = modelData_.mesheDatas;
+	for (MeshData& baseMeshData : baseMeshDatas) {
+		//インデックスのサイズが3の倍数じゃなかった場合
+		if (baseMeshData.indices.size() % 3 != 0) {
+			continue;
+		}
+		//現在の頂点数
+		uint32_t currentVertexCount = static_cast<uint32_t>(baseMeshData.vertices.size());
+		//最終的な頂点数
+		const uint32_t goalVertexCount = static_cast<uint32_t>(static_cast<float>(baseMeshData.vertices.size()) * 0.8f);
 
-		//辺の一覧に追加
-		for (const std::array<uint32_t, 2>&triangleEdge : triangleEdges) {
-			if (edgeList.contains(triangleEdge)) {
-				//出現回数を増やす
-				edgeList[triangleEdge]++;
-				continue;
+		//辺の消しやすさのスコアを作成
+		struct EdgeScore {
+			std::array<uint32_t, 2>edgeIndices;
+			float score;
+			uint32_t useCount;
+		};
+		//辺の一覧表(検索キーを辺の組み合わせ、valueをそのキーの出現回数)
+		std::map<std::array<uint32_t, 2>, uint32_t>edgeList;
+		//辺にスコアをつけた表
+		std::vector<EdgeScore> edgeScoreList = {};
+
+		while (currentVertexCount > goalVertexCount) {
+			//辺の一覧表のリセット
+			edgeList.clear();
+			//辺のスコア表のリセット
+			edgeScoreList.clear();
+
+			for (uint32_t i = 0; i < baseMeshData.indices.size(); i += 3) {
+				//三角形を作る
+				uint32_t a = baseMeshData.indices[i];
+				uint32_t b = baseMeshData.indices[i + 1];
+				uint32_t c = baseMeshData.indices[i + 2];
+				//三角形の辺を作成(min,maxの順で)
+				std::array<std::array<uint32_t, 2>, 3>triangleEdges;
+				triangleEdges[0] = { std::min(a,b),std::max(a,b) };
+				triangleEdges[1] = { std::min(b,c),std::max(b,c) };
+				triangleEdges[2] = { std::min(c,a),std::max(c,a) };
+
+				//辺の一覧に追加
+				for (const std::array<uint32_t, 2>&triangleEdge : triangleEdges) {
+					if (edgeList.contains(triangleEdge)) {
+						//出現回数を増やす
+						edgeList[triangleEdge]++;
+						continue;
+					}
+					//そのキーの出現回数を設定
+					edgeList[triangleEdge] = 1;
+				}
 			}
-			//そのキーの出現回数を設定
-			edgeList[triangleEdge] = 1;
+
+			//スコア付けをしていく
+			for (const auto& edge : edgeList) {
+				//普通の内部辺以外の場合
+				if (edge.second != 2) {
+					continue;
+				}
+
+				//辺の検索キーを取得
+				std::array<uint32_t, 2>edgeIndices = edge.first;
+				//辺のスコアを記録
+				EdgeScore edgeScore = {};
+
+				//インデックスの記録
+				edgeScore.edgeIndices = edgeIndices;
+
+				//比較用のスコアを取得
+				Vector3 p0 = {
+					baseMeshData.vertices[edgeIndices[0]].position.x,
+					baseMeshData.vertices[edgeIndices[0]].position.y,
+					baseMeshData.vertices[edgeIndices[0]].position.z,
+				};
+				Vector3 p1 = {
+					baseMeshData.vertices[edgeIndices[1]].position.x,
+					baseMeshData.vertices[edgeIndices[1]].position.y,
+					baseMeshData.vertices[edgeIndices[1]].position.z,
+				};
+				//距離
+				Vector3 distance = p1 - p0;
+				edgeScore.score = distance.LengthSquared();
+
+				//出現回数の保持
+				edgeScore.useCount = edge.second;
+
+				//Listに追加
+				edgeScoreList.push_back(edgeScore);
+
+			}
+
+			//辺のスコア表が空だったら
+			if (edgeScoreList.empty()) {
+				break;
+			}
+
+			//一番Scoreが小さい辺を選ぶ
+			EdgeScore minScoreEdge = edgeScoreList[0];
+			for (const EdgeScore& edgeScore : edgeScoreList) {
+				if (minScoreEdge.score > edgeScore.score) {
+					minScoreEdge = edgeScore;
+				}
+			}
+
+			//Collpaseする
+			uint32_t v0 = minScoreEdge.edgeIndices[0];
+			uint32_t v1 = minScoreEdge.edgeIndices[1];
+			//v0位置をv1とV0の中点にする
+			Vector4 vertexPos0 = baseMeshData.vertices[v0].position;
+			Vector4 vertexPos1 = baseMeshData.vertices[v1].position;
+			Vector4 mid = (vertexPos0 + vertexPos1) / 2.0f;
+			mid.w = 1.0f;
+			baseMeshData.vertices[v0].position = mid;
+			//インデックスも置き換え
+			for (uint32_t& index : baseMeshData.indices) {
+				if (index == v1) {
+					index = v0;
+				}
+			}
+			//使用されている頂点のフラグ
+			std::vector<bool>isUseVertices(currentVertexCount, false);
+			//昔のインデックスを新しいインデックスに変更する対応表
+			std::vector<uint32_t>oldToNewIndices(currentVertexCount, UINT32_MAX);
+			//新しい頂点
+			std::vector<VertexData>newVertices;
+			//頂点の配列を使用されている奴だけにする
+			for (uint32_t index : baseMeshData.indices) {
+				//使用されている頂点をtrueに
+				isUseVertices[index] = true;
+			}
+
+			//新しい頂点を生成
+			uint32_t newIndex = 0;
+			for (uint32_t oldIndex = 0; oldIndex < isUseVertices.size(); oldIndex++) {
+				if (!isUseVertices[oldIndex]) {
+					continue;
+				}
+				newVertices.push_back(baseMeshData.vertices[oldIndex]);
+				//昔のインデックスのところに新しいインデックスを代入
+				oldToNewIndices[oldIndex] = newIndex;
+				newIndex++;
+			}
+
+			//インデックスの張替え
+			std::vector<uint32_t>newIndices;
+			for (uint32_t i = 0; i < baseMeshData.indices.size(); i += 3) {
+				uint32_t a = oldToNewIndices[baseMeshData.indices[i]];
+				uint32_t b = oldToNewIndices[baseMeshData.indices[i + 1]];
+				uint32_t c = oldToNewIndices[baseMeshData.indices[i + 2]];
+
+				//三角形が作れない場合は省く
+				if (a == b) {
+					continue;
+				} else if (a == c) {
+					continue;
+				} else if (b == c) {
+					continue;
+				}
+
+				//新しいインデックスを追加
+				newIndices.push_back(a);
+				newIndices.push_back(b);
+				newIndices.push_back(c);
+			}
+
+			//頂点データの更新
+			baseMeshData.vertices = newVertices;
+			//インデックスデータの更新
+			baseMeshData.indices = newIndices;
+
+			//現在の頂点の数を保存
+			currentVertexCount = static_cast<uint32_t>(baseMeshData.vertices.size());
 		}
 	}
+	return baseMeshDatas;
 }
 
 //描画
@@ -666,22 +806,22 @@ MeshData Model::VertexClusteringByGridSize(const MeshData& meshData, float size)
 	};
 
 	//メッシュを取得
-	MeshData mesh = meshData;
+	MeshData baseMeshData = meshData;
 
 	//Gridサイズの設定
 	float gridSize = size;
 	//GridKeyの一覧表
-	std::map<GridKey, uint32_t>gridToNewIndex;
+	std::map<GridKey, uint32_t>gridToNewIndices;
 	//前のインデックスから新しいインデックスを取得するための対応表
-	std::vector<uint32_t>oldToNewIndex(mesh.vertices.size(), UINT32_MAX);
+	std::vector<uint32_t>oldToNewIndices(baseMeshData.vertices.size(), UINT32_MAX);
 	//新しい頂点
 	std::vector<VertexData>newVertices;
 	//新しインデックス
 	uint32_t newIndex = 0;
 	//GridKeyの作成
-	for (uint32_t oldIndex = 0; oldIndex < mesh.vertices.size(); oldIndex++) {
+	for (uint32_t oldIndex = 0; oldIndex < baseMeshData.vertices.size(); oldIndex++) {
 		//一つの頂点
-		VertexData vertex = mesh.vertices[oldIndex];
+		VertexData vertex = baseMeshData.vertices[oldIndex];
 
 		//GridKeyの作成
 		GridKey gridKey = {};
@@ -704,9 +844,9 @@ MeshData Model::VertexClusteringByGridSize(const MeshData& meshData, float size)
 		gridKey.normalKey = ((normal + 1.0f) / normalStep).Floor();
 
 		//gridKeyが一覧表に登録されていたら
-		if (gridToNewIndex.contains(gridKey)) {
+		if (gridToNewIndices.contains(gridKey)) {
 			//登録済みのインデックスを追加
-			oldToNewIndex[oldIndex] = gridToNewIndex[gridKey];
+			oldToNewIndices[oldIndex] = gridToNewIndices[gridKey];
 			continue;
 		}
 
@@ -714,19 +854,19 @@ MeshData Model::VertexClusteringByGridSize(const MeshData& meshData, float size)
 		//新しい頂点に追加
 		newVertices.push_back(vertex);
 		//グリッドの一覧表に新しいインデックスを追加
-		gridToNewIndex[gridKey] = newIndex;
+		gridToNewIndices[gridKey] = newIndex;
 		//対応表に新しいインデックスを追加
-		oldToNewIndex[oldIndex] = newIndex;
+		oldToNewIndices[oldIndex] = newIndex;
 		//新しいインデックスの加算
 		newIndex++;
 	}
 
 	//インデックスの張替え
 	std::vector<uint32_t>newIndices;
-	for (uint32_t i = 0; i < mesh.indices.size(); i += 3) {
-		uint32_t a = oldToNewIndex[mesh.indices[i]];
-		uint32_t b = oldToNewIndex[mesh.indices[i + 1]];
-		uint32_t c = oldToNewIndex[mesh.indices[i + 2]];
+	for (uint32_t i = 0; i < baseMeshData.indices.size(); i += 3) {
+		uint32_t a = oldToNewIndices[baseMeshData.indices[i]];
+		uint32_t b = oldToNewIndices[baseMeshData.indices[i + 1]];
+		uint32_t c = oldToNewIndices[baseMeshData.indices[i + 2]];
 
 		//三角形が作れない場合は省く
 		if (a == b) {
@@ -744,9 +884,9 @@ MeshData Model::VertexClusteringByGridSize(const MeshData& meshData, float size)
 	}
 
 	//頂点に代入
-	mesh.vertices = newVertices;
+	baseMeshData.vertices = newVertices;
 	//インデックスに代入
-	mesh.indices = newIndices;
+	baseMeshData.indices = newIndices;
 
-	return mesh;
+	return baseMeshData;
 }

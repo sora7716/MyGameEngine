@@ -74,6 +74,20 @@ struct Vector4 final {
 	Vector4 operator=(const Vector3& v);
 
 	/// <summary>
+	/// 加法
+	/// </summary>
+	/// <param name="v">ベクトル</param>
+	/// <returns>4次元ベクトル</returns>
+	Vector4 operator+(const Vector4& v);
+
+	/// <summary>
+	/// 除算
+	/// </summary>
+	/// <param name="num">浮動小数</param>
+	/// <returns>4次元ベクトル</returns>
+	Vector4 operator/(float num);
+
+	/// <summary>
 	/// スカラー倍
 	/// </summary>
 	/// <param name="n">浮動小数</param>

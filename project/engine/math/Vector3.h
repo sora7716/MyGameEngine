@@ -48,6 +48,12 @@ struct Vector3 final {
 	float Length();
 
 	/// <summary>
+	/// 長さ(平方根を使用しない)
+	/// </summary>
+	/// <returns>長さ(平方根を使用しない)</returns>
+	float LengthSquared();
+
+	/// <summary>
 	/// 正規化
 	/// </summary>
 	/// <returns>正規化</returns>

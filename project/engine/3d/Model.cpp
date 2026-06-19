@@ -7,6 +7,7 @@
 #include "Logger.h"
 #include <format>
 #include <map>
+#include <unordered_map>
 #include <queue>
 #include <cassert>
 #include <fstream>
@@ -136,8 +137,7 @@ std::vector<MeshData> Model::VertexClustering(float rate, float min, float max) 
 	std::vector<MeshData>newMeshes;
 
 	//割合が1.0fより大きかったら
-	if (rate > 1.0f) {
-		Logger::ConsolePrintf("[Model::VertexClustering] rate is 1.0f. Skip clustering and return original meshes.\n");
+	if (rate >= 1.0f) {
 		return baseMeshes;
 	}
 
@@ -192,10 +192,21 @@ std::vector<MeshData> Model::VertexClustering(float rate, float min, float max) 
 	return newMeshes;
 }
 
+//uint32_tの変数を二つ切り詰めてuint64_tの検索キーを作成
+uint64_t MakeEdgeKey(uint32_t a, uint32_t b) {
+	std::array<uint32_t, 2>edge = {};
+	edge = { std::min(a,b),std::max(a,b) };
+	return static_cast<uint64_t>(edge[0]) << 32 | static_cast<uint64_t>(edge[1]);
+}
+
 //辺縮約
-std::vector<MeshData> Model::EdgeCollapse() {
+std::vector<MeshData> Model::EdgeCollapse(float rate) {
 	//メッシュデータを記録
 	std::vector<MeshData> baseMeshDatas = modelData_.mesheDatas;
+	//割合が1より大きかったら辺縮約しない
+	if (rate >= 1.0f) {
+		return baseMeshDatas;
+	}
 	//辺の消しやすさのスコアを作成
 	struct EdgeCandidate {
 		std::array<uint32_t, 2>edgeIndices;
@@ -211,6 +222,7 @@ std::vector<MeshData> Model::EdgeCollapse() {
 		}
 	};
 
+	//各メッシュごとに処理をする
 	for (MeshData& baseMeshData : baseMeshDatas) {
 		//インデックスのサイズが3の倍数じゃなかった場合
 		if (baseMeshData.indices.size() % 3 != 0) {
@@ -219,13 +231,15 @@ std::vector<MeshData> Model::EdgeCollapse() {
 		//現在の頂点数
 		uint32_t currentVertexCount = static_cast<uint32_t>(baseMeshData.vertices.size());
 		//最終的な頂点数
-		const uint32_t goalVertexCount = static_cast<uint32_t>(static_cast<float>(baseMeshData.vertices.size()) * 0.8f);
+		const uint32_t goalVertexCount = static_cast<uint32_t>(static_cast<float>(baseMeshData.vertices.size()) * rate);
 		//優先度付きキュー(入れるデータ型、内部で使う入れ物、並び順のルール)
 		std::priority_queue<EdgeCandidate, std::vector<EdgeCandidate>, EdgeScoreCompare>edgeQueue;
 		//辺の一覧表(検索キーを辺の組み合わせ、valueをそのキーの出現回数)
-		std::map<std::array<uint32_t, 2>, uint32_t>edgeList;
+		std::unordered_map<uint64_t, uint32_t>edgeList;
 
 		while (currentVertexCount > goalVertexCount) {
+			//Collapse開始する前の頂点数を記録
+			uint32_t startVertexCount = static_cast<uint32_t>(baseMeshData.vertices.size());
 			//辺の一覧表のリセット
 			edgeList.clear();
 			//辺のキューをリセット
@@ -238,38 +252,31 @@ std::vector<MeshData> Model::EdgeCollapse() {
 				uint32_t a = baseMeshData.indices[i];
 				uint32_t b = baseMeshData.indices[i + 1];
 				uint32_t c = baseMeshData.indices[i + 2];
-				//三角形の辺を作成(min,maxの順で)
-				std::array<std::array<uint32_t, 2>, 3>triangleEdges;
-				triangleEdges[0] = { std::min(a,b),std::max(a,b) };
-				triangleEdges[1] = { std::min(b,c),std::max(b,c) };
-				triangleEdges[2] = { std::min(c,a),std::max(c,a) };
-
-				//辺の一覧に追加
-				for (const std::array<uint32_t, 2>&triangleEdge : triangleEdges) {
-					if (edgeList.contains(triangleEdge)) {
-						//出現回数を増やす
-						edgeList[triangleEdge]++;
-						continue;
-					}
-					//そのキーの出現回数を設定
-					edgeList[triangleEdge] = 1;
-				}
+				//出現回数を増やしながら辺一覧に追加
+				edgeList[MakeEdgeKey(a, b)]++;
+				edgeList[MakeEdgeKey(b, c)]++;
+				edgeList[MakeEdgeKey(c, a)]++;
 			}
 
 			//スコア付けをしていく
 			for (const auto& edge : edgeList) {
+				//辺の検索キーを取得
+				uint64_t edgeKey = edge.first;
+				uint32_t v0 = static_cast<uint32_t>(edgeKey >> 32);
+				uint32_t v1 = static_cast<uint32_t>(edgeKey & UINT32_MAX);
+
 				//普通の内部辺以外の場合
 				if (edge.second != 2) {
 					continue;
 				}
 
 				//辺の検索キーを取得
-				std::array<uint32_t, 2>edgeIndices = edge.first;
+				std::array<uint32_t, 2>edgeIndices = { v0,v1 };
 				//辺のスコアを記録
-				EdgeCandidate edgeScore = {};
+				EdgeCandidate edgeCandidate = {};
 
 				//インデックスの記録
-				edgeScore.edgeIndices = edgeIndices;
+				edgeCandidate.edgeIndices = edgeIndices;
 
 				//比較用のスコアを取得
 				Vector3 p0 = {
@@ -284,13 +291,13 @@ std::vector<MeshData> Model::EdgeCollapse() {
 				};
 				//距離
 				Vector3 distance = p1 - p0;
-				edgeScore.score = distance.LengthSquared();
+				edgeCandidate.score = distance.LengthSquared();
 
 				//出現回数の保持
-				edgeScore.useCount = edge.second;
+				edgeCandidate.useCount = edge.second;
 
 				//キューに追加
-				edgeQueue.push(edgeScore);
+				edgeQueue.push(edgeCandidate);
 
 			}
 
@@ -299,31 +306,135 @@ std::vector<MeshData> Model::EdgeCollapse() {
 				break;
 			}
 
-			//一番Scoreが小さい辺を選ぶ
-			EdgeCandidate minScoreEdge = edgeQueue.top();
-			edgeQueue.pop();
+			//Collapseしたい数
+			uint32_t batchCount = 50;
+			float batchRate = 0.01f;
+			//割合ごとにCollapseしたい数と割合も変更
+			if (rate <= 0.25f) {
+				batchCount = 300;
+				batchRate = 0.05f;
+			} else if (rate <= 0.5f) {
+				batchCount = 200;
+				batchRate = 0.03f;
+			} else if (rate <= 0.8f) {
+				batchCount = 100;
+				batchRate = 0.02f;
+			}
+			//現在の頂点数と目標の頂点数の差分
+			uint32_t remainingCount = currentVertexCount - goalVertexCount;
+			//現在の頂点数の何割かを取得
+			uint32_t rateBasedBatchCount = static_cast<uint32_t>(static_cast<float>(currentVertexCount) * batchRate);
+			//もし0以下になっていたら
+			if (rateBasedBatchCount == 0) {
+				rateBasedBatchCount = 1;
+			}
+			//Collapseできる数
+			uint32_t candidateCount = std::min({ remainingCount, rateBasedBatchCount, batchCount });
+			std::vector<EdgeCandidate> minCandidates;
+			minCandidates.reserve(candidateCount);//容量の確保
+			//候補に入れたかどうかのフラグ表
+			std::vector<bool>isUseThisPass(currentVertexCount, false);
+			//法線を考慮する
+			float normalDotThreshold = 0.7f;
+			while (minCandidates.size() < candidateCount) {
+				//キューが空になったら
+				if (edgeQueue.empty()) {
+					break;
+				}
 
-			//Collpaseする
-			uint32_t v0 = minScoreEdge.edgeIndices[0];
-			uint32_t v1 = minScoreEdge.edgeIndices[1];
-			//v0位置をv1とV0の中点にする
-			Vector4 vertexPos0 = baseMeshData.vertices[v0].position;
-			Vector4 vertexPos1 = baseMeshData.vertices[v1].position;
-			Vector4 mid = (vertexPos0 + vertexPos1) / 2.0f;
-			mid.w = 1.0f;
-			baseMeshData.vertices[v0].position = mid;
-			//インデックスも置き換え
+				//一番Scoreが小さい辺を選ぶ
+				EdgeCandidate minCandidate = edgeQueue.top();
+				edgeQueue.pop();
+
+				//法線を比べる
+				Vector3 normal0 = baseMeshData.vertices[minCandidate.edgeIndices[0]].normal;
+				Vector3 normal1 = baseMeshData.vertices[minCandidate.edgeIndices[1]].normal;
+				float normalDot = normal0.Dot(normal1);
+				//法線の内積がnormalDotThresholdより小さければ飛ばす(同じ方向を見ていないってことなので)
+				if (normalDot < normalDotThreshold) {
+					continue;
+				}
+
+				//辺の点が候補に選ばれたか
+				//edgeIndices[0]またはedgeIndices[1]どちらか候補に挙がってたか
+				if (isUseThisPass[minCandidate.edgeIndices[0]] || isUseThisPass[minCandidate.edgeIndices[1]]) {
+					continue;
+				}
+				//edgeIndices[0]またはedgeIndices[1]が候補に挙がってなかった場合
+				isUseThisPass[minCandidate.edgeIndices[0]] = true;
+				isUseThisPass[minCandidate.edgeIndices[1]] = true;
+
+				//候補に追加
+				minCandidates.push_back(minCandidate);
+			}
+
+			//Collapseする候補が空だったら
+			if (minCandidates.empty()) {
+				break;
+			}
+
+			//CollapseしたIndexを保存する対応表
+			std::vector<uint32_t>collapseTo(currentVertexCount, UINT32_MAX);
+			for (const EdgeCandidate& minCandidate : minCandidates) {
+				//Collapseする
+				uint32_t v0 = minCandidate.edgeIndices[0];
+				uint32_t v1 = minCandidate.edgeIndices[1];
+				//v0位置をv1とV0の中点にする
+				Vector4 vertexPos0 = baseMeshData.vertices[v0].position;
+				Vector4 vertexPos1 = baseMeshData.vertices[v1].position;
+				Vector4 mid = (vertexPos0 + vertexPos1) / 2.0f;
+				mid.w = 1.0f;
+				baseMeshData.vertices[v0].position = mid;
+				//対応用に追加
+				collapseTo[v1] = v0;
+			}
+
+			//対応表からインデックスを適応
 			for (uint32_t& index : baseMeshData.indices) {
-				if (index == v1) {
-					index = v0;
+				//UINT_MAXじゃなければindexに追加
+				if (collapseTo[index] != UINT32_MAX) {
+					index = collapseTo[index];
 				}
 			}
+
+			//インデックスの張替え
+			std::vector<uint32_t>collapseToNewIndices;
+			collapseToNewIndices.reserve(baseMeshData.indices.size());
+			for (uint32_t i = 0; i < baseMeshData.indices.size(); i += 3) {
+				uint32_t a = baseMeshData.indices[i];
+				uint32_t b = baseMeshData.indices[i + 1];
+				uint32_t c = baseMeshData.indices[i + 2];
+
+				//三角形が作れない場合は省く
+				if (a == b) {
+					continue;
+				} else if (a == c) {
+					continue;
+				} else if (b == c) {
+					continue;
+				}
+
+				//新しいインデックスを追加
+				collapseToNewIndices.push_back(a);
+				collapseToNewIndices.push_back(b);
+				collapseToNewIndices.push_back(c);
+			}
+
+			//Collapseした後のインデックスが空だった場合
+			if (collapseToNewIndices.empty()) {
+				break;
+			}
+
+			//インデックスの更新
+			baseMeshData.indices = collapseToNewIndices;
+
 			//使用されている頂点のフラグ
 			std::vector<bool>isUseVertices(currentVertexCount, false);
 			//昔のインデックスを新しいインデックスに変更する対応表
 			std::vector<uint32_t>oldToNewIndices(currentVertexCount, UINT32_MAX);
 			//新しい頂点
 			std::vector<VertexData>newVertices;
+			newVertices.reserve(isUseVertices.size());
 			//頂点の配列を使用されている奴だけにする
 			for (uint32_t index : baseMeshData.indices) {
 				//使用されている頂点をtrueに
@@ -341,13 +452,17 @@ std::vector<MeshData> Model::EdgeCollapse() {
 				oldToNewIndices[oldIndex] = newIndex;
 				newIndex++;
 			}
-
 			//インデックスの張替え
 			std::vector<uint32_t>newIndices;
+			newIndices.reserve(baseMeshData.indices.size());
 			for (uint32_t i = 0; i < baseMeshData.indices.size(); i += 3) {
 				uint32_t a = oldToNewIndices[baseMeshData.indices[i]];
 				uint32_t b = oldToNewIndices[baseMeshData.indices[i + 1]];
 				uint32_t c = oldToNewIndices[baseMeshData.indices[i + 2]];
+				//a,b,cのどれかがUINT32_MAXになっていたらスキップ
+				if (a == UINT32_MAX || b == UINT32_MAX || c == UINT32_MAX) {
+					continue;
+				}
 
 				//三角形が作れない場合は省く
 				if (a == b) {
@@ -364,6 +479,11 @@ std::vector<MeshData> Model::EdgeCollapse() {
 				newIndices.push_back(c);
 			}
 
+			//新しく作ったインデックスが空だったら
+			if (newIndices.empty()) {
+				break;
+			}
+
 			//頂点データの更新
 			baseMeshData.vertices = newVertices;
 			//インデックスデータの更新
@@ -371,6 +491,11 @@ std::vector<MeshData> Model::EdgeCollapse() {
 
 			//現在の頂点の数を保存
 			currentVertexCount = static_cast<uint32_t>(baseMeshData.vertices.size());
+
+			//Collapseした後の頂点とする前の頂点を以上になっていたら
+			if (currentVertexCount >= startVertexCount) {
+				break;
+			}
 		}
 	}
 	return baseMeshDatas;
@@ -590,6 +715,7 @@ void Model::CreateRimLightResource() {
 //メッシュの構築
 void Model::BuildMesh() {
 	//メッシュの生成と初期化
+	meshes_.reserve(modelData_.mesheDatas.size());
 	for (const MeshData& meshData : modelData_.mesheDatas) {
 		std::unique_ptr<Mesh>mesh = std::make_unique<Mesh>();
 		mesh->Initialize(directXBase_, meshData);

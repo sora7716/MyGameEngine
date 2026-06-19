@@ -77,8 +77,9 @@ public://メンバ関数
 	/// <summary>
 	/// 辺縮約
 	/// </summary>
+	/// <param name="rate">どれくらい頂点を減らすかの割合</param>
 	/// <returns>辺縮約したメッシュデータ</returns>
-	std::vector<MeshData> EdgeCollapse();
+	std::vector<MeshData> EdgeCollapse(float rate);
 
 	/// <summary>
 	/// 描画

@@ -29,9 +29,10 @@ void TestPlayScene::Initialize(const SceneContext& sceneContext) {
 	object3d_ = std::make_unique<Object3d>();
 	object3d_->Initialize(sceneContext_.object3dCommon, &renderCamera_, 1);
 	object3d_->SetGameCamera(gameCamera_);
+	//object3d_->SetModel("sphere");
 	object3d_->SetModel("dekanu");
 	//object3d_->SetModel("cube");
-	object3d_->SetLODDistances({ 0.0f,80.0f });
+	object3d_->SetLODDistances({ 20.0f,50.0f,80.0f });
 
 	std::unique_ptr<GameObject>tree = std::make_unique<GameObject>();
 	tree->Initialize("tree");

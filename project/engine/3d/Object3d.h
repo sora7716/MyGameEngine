@@ -74,7 +74,7 @@ public://メンバ関数
     /// </summary>
     /// <param name="modelName">モデル名</param>
 	/// <param name="keepRates">モデルの保持する倍率</param>
-	void SetModel(const std::string& modelName, const std::vector<float>& keepRates={1.0f,0.75f,0.25f});
+	void SetModel(const std::string& modelName, const std::vector<float>& keepRates={1.0f,0.75f,0.5f,0.25f});
 
 	/// <summary>
 	/// インスタンスの追加

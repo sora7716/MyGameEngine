@@ -346,6 +346,15 @@ std::vector<MeshData> Model::EdgeCollapse(float rate) {
 				EdgeCandidate minCandidate = edgeQueue.top();
 				edgeQueue.pop();
 
+				//取り出した辺が有効か調べる
+				if (minCandidate.edgeIndexVersions[0] == minCandidate.edgeIndices[0] ||
+					minCandidate.edgeIndexVersions[1] == minCandidate.edgeIndices[1]) {
+					continue;	
+				}
+				//前のインデックスを追加
+				minCandidate.edgeIndexVersions[0] = minCandidate.edgeIndices[0];
+				minCandidate.edgeIndexVersions[1] = minCandidate.edgeIndices[1];
+
 				//法線を比べる
 				Vector3 normal0 = baseMeshData.vertices[minCandidate.edgeIndices[0]].normal;
 				Vector3 normal1 = baseMeshData.vertices[minCandidate.edgeIndices[1]].normal;

@@ -236,6 +236,8 @@ std::vector<MeshData> Model::EdgeCollapse(float rate) {
 		std::priority_queue<EdgeCandidate, std::vector<EdgeCandidate>, EdgeScoreCompare>edgeQueue;
 		//辺の一覧表(検索キーを辺の組み合わせ、valueをそのキーの出現回数)
 		std::unordered_map<uint64_t, uint32_t>edgeList;
+		//頂点のバージョン
+		std::vector<uint32_t>vertexVersion(baseMeshData.vertices.size(), 0);
 
 		while (currentVertexCount > goalVertexCount) {
 			//Collapse開始する前の頂点数を記録
@@ -295,6 +297,10 @@ std::vector<MeshData> Model::EdgeCollapse(float rate) {
 
 				//出現回数の保持
 				edgeCandidate.useCount = edge.second;
+				
+				//辺のバージョンを保存
+				edgeCandidate.edgeIndexVersions[0] = vertexVersion[v0];
+				edgeCandidate.edgeIndexVersions[1] = vertexVersion[v1];
 
 				//キューに追加
 				edgeQueue.push(edgeCandidate);
@@ -346,15 +352,6 @@ std::vector<MeshData> Model::EdgeCollapse(float rate) {
 				EdgeCandidate minCandidate = edgeQueue.top();
 				edgeQueue.pop();
 
-				//取り出した辺が有効か調べる
-				if (minCandidate.edgeIndexVersions[0] == minCandidate.edgeIndices[0] ||
-					minCandidate.edgeIndexVersions[1] == minCandidate.edgeIndices[1]) {
-					continue;	
-				}
-				//前のインデックスを追加
-				minCandidate.edgeIndexVersions[0] = minCandidate.edgeIndices[0];
-				minCandidate.edgeIndexVersions[1] = minCandidate.edgeIndices[1];
-
 				//法線を比べる
 				Vector3 normal0 = baseMeshData.vertices[minCandidate.edgeIndices[0]].normal;
 				Vector3 normal1 = baseMeshData.vertices[minCandidate.edgeIndices[1]].normal;
@@ -396,6 +393,9 @@ std::vector<MeshData> Model::EdgeCollapse(float rate) {
 				baseMeshData.vertices[v0].position = mid;
 				//対応用に追加
 				collapseTo[v1] = v0;
+				//頂点バージョンの更新
+				vertexVersion[v0]++;
+				vertexVersion[v1]++;
 			}
 
 			//対応表からインデックスを適応
@@ -444,6 +444,9 @@ std::vector<MeshData> Model::EdgeCollapse(float rate) {
 			//新しい頂点
 			std::vector<VertexData>newVertices;
 			newVertices.reserve(isUseVertices.size());
+			//新しい頂点のバージョン
+			std::vector<uint32_t>newVerticesVersion;
+			newVerticesVersion.reserve(isUseVertices.size());
 			//頂点の配列を使用されている奴だけにする
 			for (uint32_t index : baseMeshData.indices) {
 				//使用されている頂点をtrueに
@@ -456,7 +459,10 @@ std::vector<MeshData> Model::EdgeCollapse(float rate) {
 				if (!isUseVertices[oldIndex]) {
 					continue;
 				}
+				//新しい頂点を挿入
 				newVertices.push_back(baseMeshData.vertices[oldIndex]);
+				//新しい頂点の番号に合わせてバージョンも挿入
+				newVerticesVersion.push_back(vertexVersion[oldIndex]);
 				//昔のインデックスのところに新しいインデックスを代入
 				oldToNewIndices[oldIndex] = newIndex;
 				newIndex++;
@@ -495,6 +501,8 @@ std::vector<MeshData> Model::EdgeCollapse(float rate) {
 
 			//頂点データの更新
 			baseMeshData.vertices = newVertices;
+			//頂点のバージョンの更新
+			vertexVersion = newVerticesVersion;
 			//インデックスデータの更新
 			baseMeshData.indices = newIndices;
 

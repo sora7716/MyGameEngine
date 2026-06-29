@@ -30,10 +30,10 @@ void TestPlayScene::Initialize(const SceneContext& sceneContext) {
 	object3d_->Initialize(sceneContext_.object3dCommon, &renderCamera_, 1);
 	object3d_->SetGameCamera(gameCamera_);
 	//object3d_->SetModel("sphere");
-	object3d_->SetModel("dekanu");
-	for (uint32_t i = 0; i < 33; i++) {
-		object3d_->SetTexture(i, "magenta1x1.png");
-	}
+	object3d_->SetModel("sphere");
+	//for (uint32_t i = 0; i < 33; i++) {
+	//	object3d_->SetTexture(i, "magenta1x1.png");
+	//}
 	//object3d_->SetModel("cube");
 	object3d_->SetLODDistances({ 20.0f,50.0f,80.0f });
 
@@ -81,6 +81,19 @@ void TestPlayScene::Update() {
 	} else {
 		cube_->SetColor(Vector4::MakeWhiteColor());
 	}
+
+	if (debugCamera_->IsDebug()) {
+		renderCamera_ = *debugCamera_->GetCamera();
+	} else {
+		renderCamera_ = *sceneContext_.cameraManager->FindCamera("testPlayCamera");
+	}
+
+	if (sceneContext_.input->PressKey(DIK_UP)) {
+		gameObjects_[0]->GetTransform().translate.z -= 1.0f;
+	} else if (sceneContext_.input->PressKey(DIK_DOWN)) {
+		gameObjects_[0]->GetTransform().translate.z += 1.0f;
+	}
+	;
 }
 
 //デバッグ
@@ -126,13 +139,13 @@ void TestPlayScene::Debug() {
 	ImGui::End();
 #endif // USE_IMGUI
 
-#ifdef _DEBUG
+//#ifdef _DEBUG
 	if (debugCamera_->IsDebug()) {
 		renderCamera_ = *debugCamera_->GetCamera();
 	} else {
 		renderCamera_ = *sceneContext_.cameraManager->FindCamera("testPlayCamera");
 	}
-#endif // _DEBUG
+//#endif // _DEBUG
 }
 
 //描画

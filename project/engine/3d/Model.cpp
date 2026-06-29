@@ -282,6 +282,54 @@ std::vector<MeshData> Model::EdgeCollapse(float rate) {
 					continue;
 				}
 
+				//共通近傍チェック
+				std::vector<std::vector<uint32_t>>neighbors;
+				neighbors.resize(baseMeshData.vertices.size());
+				//三角形を追加
+				for (uint32_t i = 0; i < baseMeshData.indices.size(); i += 3) {
+					uint32_t a = baseMeshData.indices[i];
+					uint32_t b = baseMeshData.indices[i + 1];
+					uint32_t c = baseMeshData.indices[i + 2];
+					neighbors[a].push_back(b);
+					neighbors[a].push_back(c);
+
+					neighbors[b].push_back(a);
+					neighbors[b].push_back(c);
+
+					neighbors[c].push_back(a);
+					neighbors[c].push_back(b);
+				}
+
+				//重複を削除
+				for (std::vector<uint32_t>& neighbor : neighbors) {
+					//ソート
+					std::sort(neighbor.begin(), neighbor.end());
+
+					//重複を削除
+					neighbor.erase(std::unique(neighbor.begin(), neighbor.end()), neighbor.end());
+				}
+
+				//v0-v1で共有している頂点数のカウント
+				uint32_t sharedNeighborCount = 0;
+				for (uint32_t i = 0; i < neighbors[v0].size(); i++) {
+					//共有している点が2より大きくなったら
+					if (sharedNeighborCount > 2) {
+						break;
+					}
+					for (uint32_t j = 0; j < neighbors[v1].size(); j++) {
+						//共有している頂点があったら
+						if (neighbors[v0][i] == neighbors[v1][j]) {
+							sharedNeighborCount++;
+							break;
+						}
+					}
+				}
+
+				//共有している頂点が2つ以上あったら
+				if (sharedNeighborCount != 2) {
+					continue;
+				}
+
 				//辺の検索キーを取得
 				std::array<uint32_t, 2>edgeIndices = { v0,v1 };
 				//辺のスコアを記録
@@ -311,9 +359,6 @@ std::vector<MeshData> Model::EdgeCollapse(float rate) {
 				//辺のバージョンを保存
 				edgeCandidate.edgeIndexVersions[0] = vertexVersion[v0];
 				edgeCandidate.edgeIndexVersions[1] = vertexVersion[v1];
-
-				//共通近傍チェック
-
 
 				//キューに追加
 				edgeQueue.push(edgeCandidate);

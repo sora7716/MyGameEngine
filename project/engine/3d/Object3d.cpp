@@ -273,8 +273,8 @@ void Object3d::SetParent(const WorldTransform* parent) {
 }
 
 //テクスチャの変更
-void Object3d::SetTexture(uint32_t materialIndex, const std::string& filePath) {
-	model_->SetTexture(materialIndex, filePath);
+void Object3d::SetTexture(uint32_t meshIndex, const std::string& filePath) {
+	uint32_t materialIndex = model_->GetMeshes()[meshIndex]->GetMaterialIndex();
 	//LODモデルにも適応
 	lodBuilder_->SetTexture(materialIndex, filePath);
 }

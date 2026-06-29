@@ -132,9 +132,9 @@ public://メンバ関数
 	/// <summary>
 	/// テクスチャの変更
 	/// </summary>
-	/// <param name="materialIndex">マテリアルの検索キー</param>
+	/// <param name="meshIndex">メッシュの検索キー</param>
 	/// <param name="filePath">ファイルパス</param>
-	void SetTexture(uint32_t materialIndex, const std::string& filePath);
+	void SetTexture(uint32_t meshIndex, const std::string& filePath);
 
 	/// <summary>
 	/// UV座標の設定

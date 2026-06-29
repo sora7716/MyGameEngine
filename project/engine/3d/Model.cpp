@@ -5,6 +5,7 @@
 #include "Mesh.h"
 #include "TextureManager.h"
 #include "Logger.h"
+#include "algorithms/Math.h"
 #include <format>
 #include <map>
 #include <unordered_map>
@@ -260,6 +261,8 @@ std::vector<MeshData> Model::EdgeCollapse(float rate) {
 				edgeList[MakeEdgeKey(c, a)]++;
 			}
 
+			//境界っぽい辺を格納する配列
+			std::vector<uint32_t>boundaryVertices(baseMeshData.vertices.size(), false);
 			//スコア付けをしていく
 			for (const auto& edge : edgeList) {
 				//辺の検索キーを取得
@@ -269,6 +272,13 @@ std::vector<MeshData> Model::EdgeCollapse(float rate) {
 
 				//普通の内部辺以外の場合
 				if (edge.second != 2) {
+					boundaryVertices[v0] = true;
+					boundaryVertices[v1] = true;
+					continue;
+				}
+
+				//境界頂点がtrueだったらスキップする
+				if (boundaryVertices[v0] || boundaryVertices[v1]) {
 					continue;
 				}
 
@@ -297,10 +307,13 @@ std::vector<MeshData> Model::EdgeCollapse(float rate) {
 
 				//出現回数の保持
 				edgeCandidate.useCount = edge.second;
-				
+
 				//辺のバージョンを保存
 				edgeCandidate.edgeIndexVersions[0] = vertexVersion[v0];
 				edgeCandidate.edgeIndexVersions[1] = vertexVersion[v1];
+
+				//共通近傍チェック
+
 
 				//キューに追加
 				edgeQueue.push(edgeCandidate);
@@ -336,6 +349,7 @@ std::vector<MeshData> Model::EdgeCollapse(float rate) {
 			}
 			//Collapseできる数
 			uint32_t candidateCount = std::min({ remainingCount, rateBasedBatchCount, batchCount });
+			//uint32_t candidateCount = 1;
 			std::vector<EdgeCandidate> minCandidates;
 			minCandidates.reserve(candidateCount);//容量の確保
 			//候補に入れたかどうかのフラグ表
@@ -358,6 +372,78 @@ std::vector<MeshData> Model::EdgeCollapse(float rate) {
 				float normalDot = normal0.Dot(normal1);
 				//法線の内積がnormalDotThresholdより小さければ飛ばす(同じ方向を見ていないってことなので)
 				if (normalDot < normalDotThreshold) {
+					continue;
+				}
+
+				//三角形を作ってみてCollapseしても破綻してないかを見る
+				//Collapseしても安全か
+				bool isCollapseUnsafe = false;
+				//Collapseする予定の辺の頂点
+				uint32_t v0 = minCandidate.edgeIndices[0];
+				uint32_t v1 = minCandidate.edgeIndices[1];
+				//v1-v0の中点を取得
+				Vector3 vertexV0 = baseMeshData.vertices[v0].position.ToVector3();
+				Vector3 vertexV1 = baseMeshData.vertices[v1].position.ToVector3();
+				Vector3 midPoint = (vertexV0 + vertexV1) / 2.0f;
+				for (uint32_t i = 0; i < baseMeshData.indices.size(); i += 3) {
+					//各メッシュの三角形を作成
+					uint32_t a = baseMeshData.indices[i];
+					uint32_t b = baseMeshData.indices[i + 1];
+					uint32_t c = baseMeshData.indices[i + 2];
+
+					//両方含まれている場合はCollapseで消える予定の三角形なのでスキップ
+					//両方含まれていない場合は関係ない三角形なのでスキップ
+					bool containsV0 = a == v0 || b == v0 || c == v0;
+					bool containsV1 = a == v1 || b == v1 || c == v1;
+					if ((containsV0 && containsV1) ||
+						(!containsV0 && !containsV1)) {
+						continue;
+					}
+
+					//Collapsesする予定の辺の頂点ごとに見る
+					Vector3 vertexA = baseMeshData.vertices[a].position.ToVector3();
+					Vector3 vertexB = baseMeshData.vertices[b].position.ToVector3();
+					Vector3 vertexC = baseMeshData.vertices[c].position.ToVector3();
+					std::array<Vector3, 3>baseTriangle = { vertexA ,vertexB,vertexC };
+					std::array<Vector3, 3>collapseTriangle = baseTriangle;
+
+					//v0が含まれているか
+					if (a == v0) {
+						collapseTriangle[0] = midPoint;
+					} else if (b == v0) {
+						collapseTriangle[1] = midPoint;
+					} else if (c == v0) {
+						collapseTriangle[2] = midPoint;
+					}
+
+					//v1が含まれているか
+					if (a == v1) {
+						collapseTriangle[0] = midPoint;
+					} else if (b == v1) {
+						collapseTriangle[1] = midPoint;
+					} else if (c == v1) {
+						collapseTriangle[2] = midPoint;
+					}
+
+					//Collapseする前とした後の面積の比較
+					float baseArea = Math::CalcParallelogramAreaSquared(baseTriangle);
+					float collapseArea = Math::CalcParallelogramAreaSquared(collapseTriangle);
+					//baseAreaが小さすぎる場合はスキップ
+					if (baseArea <= 0.00001f) {
+						isCollapseUnsafe = true;
+						break;
+					}
+
+					//面積の割合を取得
+					float areaRate = collapseArea / baseArea;
+					if (areaRate < 0.01f) {
+						isCollapseUnsafe = true;
+						break;
+					}
+				}
+
+				//三角形がおかしくなるので候補に入れない
+				if (isCollapseUnsafe) {
 					continue;
 				}
 

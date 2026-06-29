@@ -2,7 +2,7 @@
 #include "Vector3.h"
 #include "Matrix4x4.h"
 #include <string>
-struct RGB final{
+struct RGB final {
 	float r;
 	float g;
 	float b;
@@ -65,6 +65,12 @@ struct Vector4 final {
 	/// <param name="colorCode">カラーコード</param>
 	/// <returns>Vector4</returns>
 	static Vector4 ColorCodeTransform(const std::string& colorCode);
+
+	/// <summary>
+	/// Vector3に変換
+	/// </summary>
+	/// <returns>Vector3</returns>
+	const Vector3 ToVector3()const;
 
 	/// <summary>
 	/// Vector3をVector4に代入

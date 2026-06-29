@@ -214,11 +214,11 @@ std::array<Vector3, 8> Math::CreateFrustumVertex(float nearClip, float farClip, 
 }
 
 //視錐台の作成
-PrimitiveData::Frustum Math::CreateFrustumData(const std::array<Vector3, 8>& vertexes, const Matrix4x4& worldMatrix) {
+PrimitiveData::Frustum Math::CreateFrustumData(const std::array<Vector3, 8>& vertices, const Matrix4x4& worldMatrix) {
 	PrimitiveData::Frustum frustum = {};
-	frustum.localCorners = vertexes;
+	frustum.localCorners = vertices;
 	for (uint32_t i = 0; i < frustum.worldCorners.size(); i++) {
-		Vector3 local = vertexes[i];
+		Vector3 local = vertices[i];
 
 		Vector3 world = local * worldMatrix;
 
@@ -240,4 +240,47 @@ PrimitiveData::Frustum Math::CreateFrustumData(const std::array<Vector3, 8>& ver
 	frustum.planes[PrimitiveData::Frustum::kFar] = Math::MakePlane(c[4], c[5], c[6]);
 
 	return frustum;
+}
+
+//平行四辺形の面積を求める
+float Math::CalcParallelogramArea(const std::array<Vector3, 3>& vertices) {
+	//各頂点を取得
+	Vector3 v0 = vertices[0];
+	Vector3 v1 = vertices[1];
+	Vector3 v2 = vertices[2];
+
+	//v1-v0ベクトル
+	Vector3 v01 = v1 - v0;//底辺の長さベクトル
+	//v2-v0ベクトル
+	Vector3 v02 = v2 - v0;//高さ
+
+	//底辺の長さ x 高さ
+	Vector3 cross = v01.Cross(v02);
+	float crossLength = cross.Length();
+
+	return crossLength;
+}
+
+//三角形の面積を求める
+float Math::CalcTriangleArea(const std::array<Vector3, 3>& vertices) {
+	return CalcParallelogramArea(vertices) / 2.0f;
+}
+
+//平行四辺形の面積を処理を早くして(正確じゃない)
+float Math::CalcParallelogramAreaSquared(const std::array<Vector3, 3>& vertices) {
+	//三角形の面積
+	Vector3 v0 = vertices[0];
+	Vector3 v1 = vertices[1];
+	Vector3 v2 = vertices[2];
+
+	//v1-v0ベクトル
+	Vector3 v01 = v1 - v0;//底辺の長さベクトル
+	//v2-v0ベクトル
+	Vector3 v02 = v2 - v0;//高さ
+
+	//底辺の長さ x 高さ
+	Vector3 cross = v01.Cross(v02);
+	float crossLength = cross.LengthSquared();
+
+	return crossLength;
 }

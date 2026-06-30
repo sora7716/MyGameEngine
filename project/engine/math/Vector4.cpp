@@ -47,6 +47,11 @@ Vector4 Vector4::ColorCodeTransform(const std::string& colorCode) {
 	return Vector4(r / 255.0f, g / 255.0f, b / 255.0f, alpha / 255.0f);
 }
 
+//Vector3に変換
+const Vector3 Vector4::ToVector3() const {
+	return { x,y,z };
+}
+
 // Vector3をVector4に代入
 Vector4 Vector4::operator=(const Vector3& v) {
 	x = v.x;
@@ -54,6 +59,26 @@ Vector4 Vector4::operator=(const Vector3& v) {
 	z = v.z;
 	w = 1.0f;
 	return *this;
+}
+
+//加法
+Vector4 Vector4::operator+(const Vector4& v) {
+	Vector4 result = {};
+	result.x = x + v.x;
+	result.y = y + v.y;
+	result.z = z + v.z;
+	result.w = w + v.w;
+	return result;
+}
+
+//除算
+Vector4 Vector4::operator/(float num) {
+	Vector4 result = {};
+	result.x = x / num;
+	result.y = y / num;
+	result.z = z / num;
+	result.w = w / num;
+	return result;
 }
 
 //スカラー倍

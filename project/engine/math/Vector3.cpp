@@ -54,6 +54,12 @@ float Vector3::Length() {
 	return result;
 }
 
+//長さ(平方根を使用しない)
+float Vector3::LengthSquared() {
+	float result = Vector3(x, y, z).Dot(Vector3(x, y, z));
+	return result;
+}
+
 //正規化
 Vector3 Vector3::Normalize()const {
 	Vector3 result = {};

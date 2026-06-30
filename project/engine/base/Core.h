@@ -10,7 +10,6 @@
 #include "SpriteCommon.h"
 #include "Object2dCommon.h"
 #include "Object3dCommon.h"
-#include "WireframeObject3dCommon.h"
 #include "ParticleCommon.h"
 #include "ModelCommon.h"
 #include "SceneManager.h"
@@ -108,12 +107,6 @@ public://メンバ関数
 	Object3dCommon* GetObject3dCommon()const;
 
 	/// <summary>
-	/// ワイヤーフレームオブジェクトの共通部分の取得
-	/// </summary>
-	/// <returns>ワイヤーフレームオブジェクト</returns>
-	WireframeObject3dCommon* GetWireframeObject3dCommon()const;
-
-	/// <summary>
 	/// パーティクルの共通部分の取得
 	/// </summary>
 	/// <returns>パーティクルの共通部分</returns>
@@ -177,8 +170,6 @@ private://メンバ変数
 	std::unique_ptr<Object2dCommon>object2dCommon_ = nullptr;
 	//3Dオブジェクトの共通部分
 	std::unique_ptr<Object3dCommon>object3dCommon_ = nullptr;
-	//ワイヤーフレームオブジェクトの共通部分
-	std::unique_ptr<WireframeObject3dCommon>wireframeObject3dCommon_ = nullptr;
 	//パーティクルの共通部分
 	std::unique_ptr<ParticleCommon>particleCommon_ = nullptr;
 	//モデルの共通部分

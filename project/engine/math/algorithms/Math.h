@@ -122,10 +122,31 @@ public:
 	/// <summary>
 	/// 視錐台の作成
 	/// </summary>
-	/// <param name="vertexes">頂点</param>
+	/// <param name="vertices">頂点</param>
 	/// <param name="worldMatrix">ワールド行列</param>
 	/// <returns>視錐台</returns>
-	static PrimitiveData::Frustum CreateFrustumData(const std::array<Vector3, 8>& vertexes,const Matrix4x4& worldMatrix);
+	static PrimitiveData::Frustum CreateFrustumData(const std::array<Vector3, 8>& vertices, const Matrix4x4& worldMatrix);
+
+	/// <summary>
+	/// 平行四辺形の面積を求める
+	/// </summary>
+	/// <param name="vertices">頂点</param>
+	/// <returns>平行四辺形の面積</returns>
+	static float CalcParallelogramArea(const std::array<Vector3, 3>& vertices);
+
+	/// <summary>
+	/// 三角形の面積を求める
+	/// </summary>
+	/// <param name="vertices">頂点</param>
+	/// <returns>三角形の面積</returns>
+	static float CalcTriangleArea(const std::array<Vector3, 3>& vertices);
+
+	/// <summary>
+	/// 平行四辺形の面積を処理を早くして(正確じゃない)
+	/// </summary>
+	/// <param name="vertices">頂点</param>
+	/// <returns>三角形の面積(正確じゃない)</returns>
+	static float CalcParallelogramAreaSquared(const std::array<Vector3, 3>& vertices);
 public://定数
 	//デルタタイム
 	static inline const float kDeltaTime = 1.0f / 60.0f;

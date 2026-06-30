@@ -6,7 +6,6 @@ class TextureManager;
 class Object3dCommon;
 class Object2dCommon;
 class SpriteCommon;
-class WireframeObject3dCommon;
 class ParticleCommon;
 class ModelCommon;
 class SceneManager;
@@ -24,7 +23,6 @@ struct SceneContext {
 	Object3dCommon* object3dCommon;
 	Object2dCommon* object2dCommon;
 	SpriteCommon* spriteCommon;
-	WireframeObject3dCommon* wireframeObject3dCommon;
 	ParticleCommon* particleCommon;
 	ModelCommon* modelCommon;
 	SceneManager* sceneManager;

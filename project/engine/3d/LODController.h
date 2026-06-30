@@ -28,10 +28,18 @@ public://メンバ関数
     /// </summary>
 	/// <param name="lodDistances">LODの切り替え距離</param>
 	void SetLODDistances(const std::vector<float>& lodDistances);
+
+	/// <summary>
+	/// ヒステリシス幅の設定
+	/// </summary>
+	/// <param name="histeresis"></param>
+	void SetHysteresis(float hysteresis);
 private://メンバ変数
 	//LODビルダー
 	LODBuilder* lodBuilder_ = nullptr;
 	//LODの距離
 	std::vector<float>lodDistances_;
+	//ヒステリシス幅
+	float hysteresis_ = 5.0f;
 };
 

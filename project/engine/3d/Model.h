@@ -75,6 +75,13 @@ public://メンバ関数
 	std::vector<MeshData> VertexClustering(float rate, float min = 0.001f, float max = 1.0f);
 
 	/// <summary>
+	/// 辺縮約
+	/// </summary>
+	/// <param name="rate">どれくらい頂点を減らすかの割合</param>
+	/// <returns>辺縮約したメッシュデータ</returns>
+	std::vector<MeshData> EdgeCollapse(float rate);
+
+	/// <summary>
 	/// 描画
 	/// </summary>
 	/// <param name="objectCount">表示したいオブジェクト数</param>
@@ -132,11 +139,18 @@ public://メンバ関数
 	static ModelData LoadModelFile(const std::string& directoryPath, const std::string& storedFilePath, const std::string& filename);
 
 	/// <summary>
-	/// マテリアルのセッター
+	/// ライティングの設定
 	/// </summary>
 	/// <param name="index">インデックス</param>
-	/// <param name="materialData">マテリアルデータ</param>
-	void SetMaterial(uint32_t index, const Material& materialData);
+	/// <param name="materialData">ライティングフラグ</param>
+	void SetIsLighting(uint32_t index, bool isLighting);
+
+	/// <summary>
+	/// 輝度の設定
+	/// </summary>
+	/// <param name="index">インデックス</param>
+	/// <param name="shininess">輝度</param>
+	void SetShininess(uint32_t index, float shininess);
 
 	/// <summary>
 	/// リムライトのセッター

@@ -45,8 +45,8 @@ void GameObjectList::LoadModel() {
 	//core_->GetModelManager()->LoadModel("player", "player", "player.gltf");
 	////敵
 	//core_->GetModelManager()->LoadModel("enemy", "enemy", "enemy.gltf");
-	////球
-	//core_->GetModelManager()->LoadModel("sphere", "sphere", "sphere.gltf");
+	//球
+	core_->GetModelManager()->LoadModel("sphere", "sphere", "sphere.gltf");
 	////弾
 	//core_->GetModelManager()->LoadModel("bullet", "sphere", "sphere.gltf");
 	////カメラ

@@ -29,10 +29,10 @@ void TestPlayScene::Initialize(const SceneContext& sceneContext) {
 	object3d_ = std::make_unique<Object3d>();
 	object3d_->Initialize(sceneContext_.object3dCommon, &renderCamera_, 1);
 	object3d_->SetGameCamera(gameCamera_);
+	//object3d_->SetModel("sphere");
 	object3d_->SetModel("dekanu");
 	//object3d_->SetModel("cube");
-	object3d_->SetLODDistances({ 50.0f,80.0f });
-
+	object3d_->SetLODDistances({ 20.0f,30.0f,50.0f,80.0f });
 	std::unique_ptr<GameObject>tree = std::make_unique<GameObject>();
 	tree->Initialize("tree");
 	tree->GetTransform().translate = { 0.0f,0.0f,10.0f };
@@ -77,6 +77,19 @@ void TestPlayScene::Update() {
 	} else {
 		cube_->SetColor(Vector4::MakeWhiteColor());
 	}
+
+	if (debugCamera_->IsDebug()) {
+		renderCamera_ = *debugCamera_->GetCamera();
+	} else {
+		renderCamera_ = *sceneContext_.cameraManager->FindCamera("testPlayCamera");
+	}
+
+	if (sceneContext_.input->PressKey(DIK_UP)) {
+		gameObjects_[0]->GetTransform().translate.z -= 1.0f;
+	} else if (sceneContext_.input->PressKey(DIK_DOWN)) {
+		gameObjects_[0]->GetTransform().translate.z += 1.0f;
+	}
+	;
 }
 
 //デバッグ
@@ -112,6 +125,10 @@ void TestPlayScene::Debug() {
 	ImGui::DragFloat3("translate", &cameraTranslate.x, 0.1f);
 	gameCamera_->SetEulerAngle(cameraRotate);
 	gameCamera_->SetTranslate(cameraTranslate);
+
+	float farClip = gameCamera_->GetFarClip();
+	ImGui::DragFloat("farClip", &farClip);
+	gameCamera_->SetFarClip(farClip);
 	ImGui::End();
 
 	ImGui::Begin("cube");
@@ -122,13 +139,13 @@ void TestPlayScene::Debug() {
 	ImGui::End();
 #endif // USE_IMGUI
 
-#ifdef _DEBUG
+	//#ifdef _DEBUG
 	if (debugCamera_->IsDebug()) {
 		renderCamera_ = *debugCamera_->GetCamera();
 	} else {
 		renderCamera_ = *sceneContext_.cameraManager->FindCamera("testPlayCamera");
 	}
-#endif // _DEBUG
+	//#endif // _DEBUG
 }
 
 //描画

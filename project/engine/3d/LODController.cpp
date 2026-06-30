@@ -28,20 +28,18 @@ uint32_t LODController::SelectLOD(float distance, uint32_t currentLOD) const {
 
 	//LODモデル番号
 	uint32_t result = currentLOD;
-	//ヒステリシス幅
-	const float hysteresis = 5.0f;
 
 	//今の位置から見て
 	//前に戻す
 	if (currentLOD > 0) {
-		if (distance < lodDistances_[currentLOD - 1] - hysteresis) {
+		if (distance < lodDistances_[currentLOD - 1] - hysteresis_) {
 			result = currentLOD - 1;
 		}
 	}
 
 	//先に進める
-	if (currentLOD < 2) {
-		if (distance >= lodDistances_[currentLOD] + hysteresis) {
+	if (currentLOD < lodBuilder_->LODModelSize() - 1) {
+		if (distance >= lodDistances_[currentLOD] + hysteresis_) {
 			result = currentLOD + 1;
 		}
 	}
@@ -57,4 +55,9 @@ uint32_t LODController::SelectLOD(float distance, uint32_t currentLOD) const {
 //LODの切り替え距離の設定
 void LODController::SetLODDistances(const std::vector<float>& lodDistances) {
 	lodDistances_ = lodDistances;
+}
+
+//ヒステリシス幅の設定
+void LODController::SetHysteresis(float hysteresis) {
+	hysteresis_ = hysteresis;
 }

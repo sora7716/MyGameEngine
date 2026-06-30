@@ -10,7 +10,6 @@ void Framework::Initialize() {
 	//カメラの設定
 	core_->GetObject2dCommon()->SetDefaultCamera(core_->GetCameraManager()->FindCamera("defaultCamera"));
 	core_->GetObject3dCommon()->SetDefaultCamera(core_->GetCameraManager()->FindCamera("defaultCamera"));
-	core_->GetWireframeObject3dCommon()->SetDefaultCamera(core_->GetCameraManager()->FindCamera("defaultCamera"));
 	core_->GetParticleCommon()->SetDefaultCamera(core_->GetCameraManager()->FindCamera("defaultCamera"));
 }
 

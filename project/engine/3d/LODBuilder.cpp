@@ -22,7 +22,8 @@ void LODBuilder::CreateLODModel(Model* model, const std::vector<float>& keepRate
 	//モデルの作成
 	for (uint32_t i = 0; i < keepRates.size(); i++) {
 		lodModels_[i] = Model::CreateModelFromModelData(model->GetModelCommon(), model->GetModelData());
-		lodModels_[i]->RebuildMeshes(lodModels_[i]->VertexClustering(keepRates[i]));
+		//lodModels_[i]->RebuildMeshes(lodModels_[i]->VertexClustering(keepRates[i]));
+		lodModels_[i]->RebuildMeshes(lodModels_[i]->EdgeCollapse(keepRates[i]));
 	}
 }
 
@@ -45,6 +46,24 @@ void LODBuilder::SetTexture(uint32_t materialIndex, const std::string& filePath)
 	for (std::unique_ptr<Model>& lodModel : lodModels_) {
 		if (lodModel) {
 			lodModel->SetTexture(materialIndex, filePath);
+		}
+	}
+}
+
+//ライティングフラグの設定
+void LODBuilder::SetIsLighting(uint32_t materialIndex, bool isLighting) {
+	for (std::unique_ptr<Model>& lodModel : lodModels_) {
+		if (lodModel) {
+			lodModel->SetIsLighting(materialIndex, isLighting);
+		}
+	}
+}
+
+//輝度の設定
+void LODBuilder::SetShininess(uint32_t materialIndex, float shininess) {
+	for (std::unique_ptr<Model>& lodModel : lodModels_) {
+		if (lodModel) {
+			lodModel->SetShininess(materialIndex, shininess);
 		}
 	}
 }

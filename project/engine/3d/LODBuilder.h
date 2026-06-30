@@ -52,6 +52,20 @@ public://メンバ関数
 	void SetTexture(uint32_t materialIndex, const std::string& filePath);
 
 	/// <summary>
+	/// ライティングフラグの設定
+	/// </summary>
+	/// <param name="materialIndex">マテリアルの検索キー</param>
+	/// <param name="isLighting">ライティングフラグ</param>
+	void SetIsLighting(uint32_t materialIndex, bool isLighting);
+
+	/// <summary>
+	/// 輝度の設定
+	/// </summary>
+	/// <param name="materialIndex">マテリアルの検索キー</param>
+	/// <param name="shininess">輝度</param>
+	void SetShininess(uint32_t materialIndex, float shininess);
+
+	/// <summary>
 	/// モデルのサイズを取得
 	/// </summary>
 	/// <returns>モデルのサイズ</returns>

@@ -100,6 +100,12 @@ struct Vector4 final {
 	void operator*=(float n);
 
 	/// <summary>
+	/// 乗算
+	/// </summary>
+	/// <param name="v">ベクトル</param>
+	void operator+=(const Vector4& v);
+
+	/// <summary>
 	/// 乗法
 	/// </summary>
 	/// <param name="m">行列</param>

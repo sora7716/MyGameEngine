@@ -1037,6 +1037,10 @@ MeshData Model::VertexClusteringByGridSize(const MeshData& meshData, float size)
 	float gridSize = size;
 	//GridKeyの一覧表
 	std::map<GridKey, uint32_t>gridToNewIndices;
+	//GridKeyを見て頂点の位置を加算
+	std::map<GridKey, Vector4>gridKeyPositionSums;
+	//同じ頂点キーが出てきた数をカウント
+	std::map<GridKey, uint32_t>gridKeyCounts;
 	//前のインデックスから新しいインデックスを取得するための対応表
 	std::vector<uint32_t>oldToNewIndices(baseMeshData.vertices.size(), UINT32_MAX);
 	//新しい頂点
@@ -1068,16 +1072,35 @@ MeshData Model::VertexClusteringByGridSize(const MeshData& meshData, float size)
 		Vector3 normal = vertex.normal.Normalize();
 		gridKey.normalKey = ((normal + 1.0f) / normalStep).Floor();
 
+		//頂点を加算する
+		gridKeyPositionSums[gridKey] += vertex.position;
+		//同じGridKeyが出てきた数分加算
+		gridKeyCounts[gridKey]++;
+
+		//新しい頂点作成
+		Vector4 newVertexPos = {
+			gridKeyPositionSums[gridKey].x / gridKeyCounts[gridKey] ,
+			gridKeyPositionSums[gridKey].y / gridKeyCounts[gridKey] ,
+			gridKeyPositionSums[gridKey].z / gridKeyCounts[gridKey] ,
+			1.0f
+		};
 		//gridKeyが一覧表に登録されていたら
 		if (gridToNewIndices.contains(gridKey)) {
 			//登録済みのインデックスを追加
 			oldToNewIndices[oldIndex] = gridToNewIndices[gridKey];
+			//前の頂点を更新
+			newVertices[gridToNewIndices[gridKey]].position = newVertexPos;
 			continue;
 		}
 
 		//未登録なら
-		//新しい頂点に追加
-		newVertices.push_back(vertex);
+		VertexData newVertex = {
+			.position = newVertexPos,
+			.texcoord = vertex.texcoord,
+			.normal = vertex.normal
+		};
+		//新しい頂点を追加
+		newVertices.push_back(newVertex);
 		//グリッドの一覧表に新しいインデックスを追加
 		gridToNewIndices[gridKey] = newIndex;
 		//対応表に新しいインデックスを追加

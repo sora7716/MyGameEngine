@@ -70,11 +70,11 @@ public://メンバ関数
 	void Draw();
 
 	/// <summary>
-    /// モデルの設定
-    /// </summary>
-    /// <param name="modelName">モデル名</param>
+	/// モデルの設定
+	/// </summary>
+	/// <param name="modelName">モデル名</param>
 	/// <param name="keepRates">モデルの保持する倍率</param>
-	void SetModel(const std::string& modelName, const std::vector<float>& keepRates={1.0f,0.75f,0.5f,0.25f});
+	void SetModel(const std::string& modelName, const std::vector<float>& keepRates = { 1.0f,0.75f,0.5f,0.25f });
 
 	/// <summary>
 	/// インスタンスの追加
@@ -94,6 +94,12 @@ public://メンバ関数
 	/// </summary>
 	/// <param name="lodDistances">lod切り替え距離</param>
 	void SetLODDistances(const std::vector<float>& lodDistances);
+
+	/// <summary>
+	/// ヒステリシス幅の設定
+	/// </summary>
+	/// <param name="hysteresis">ヒステリシス幅</param>
+	void SetHysteresis(float hysteresis);
 
 	/// <summary>
 	/// uvスケールの設定
@@ -135,6 +141,18 @@ public://メンバ関数
 	/// <param name="meshIndex">メッシュの検索キー</param>
 	/// <param name="filePath">ファイルパス</param>
 	void SetTexture(uint32_t meshIndex, const std::string& filePath);
+
+	/// <summary>
+	/// ライティングフラグの設定
+	/// </summary>
+	/// <param name="isLighting">ライティングフラグ</param>
+	void SetIsLighting(uint32_t meshIndex, bool isLighting);
+
+	/// <summary>
+	/// 輝度の設定
+	/// </summary>
+	/// <param name="shininess">輝度</param>
+	void SetShininess(uint32_t meshIndex, float shininess);
 
 	/// <summary>
 	/// UV座標の設定
@@ -183,12 +201,6 @@ public://メンバ関数
 	/// <param name="index">インデックス</param>
 	/// <returns>色</returns>
 	const Vector4& GetColor(uint32_t index)const;
-
-	/// <summary>
-	/// モデルの取得
-	/// </summary>
-	/// <returns>モデル</returns>
-	Model* GetModel();
 
 	/// <summary>
 	/// ワールドマトリックスの取得
@@ -259,7 +271,7 @@ private://メンバ変数
 	//SRVマネージャー
 	SRVManager* srvManager_ = nullptr;
 	//モデル
-	Model* model_ = nullptr;
+	Model* baseModel_ = nullptr;
 
 	//LODビルダー
 	std::unique_ptr<LODBuilder>lodBuilder_ = nullptr;

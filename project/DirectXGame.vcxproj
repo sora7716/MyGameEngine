@@ -48,8 +48,6 @@
     <ClCompile Include="engine\debug\GlobalVariables.cpp" />
     <ClCompile Include="engine\debug\ImGuiManager.cpp" />
     <ClCompile Include="engine\debug\Logger.cpp" />
-    <ClCompile Include="engine\debug\WireframeObject3d.cpp" />
-    <ClCompile Include="engine\debug\WireframeObject3dCommon.cpp" />
     <ClCompile Include="engine\debug\wireframes\BaseShape.cpp" />
     <ClCompile Include="engine\debug\wireframes\Circle.cpp" />
     <ClCompile Include="engine\debug\wireframes\Cube.cpp" />
@@ -126,8 +124,6 @@
     <ClInclude Include="engine\debug\GlobalVariables.h" />
     <ClInclude Include="engine\debug\ImGuiManager.h" />
     <ClInclude Include="engine\debug\Logger.h" />
-    <ClInclude Include="engine\debug\WireframeObject3d.h" />
-    <ClInclude Include="engine\debug\WireframeObject3dCommon.h" />
     <ClInclude Include="engine\debug\wireframes\BaseShape.h" />
     <ClInclude Include="engine\debug\wireframes\Circle.h" />
     <ClInclude Include="engine\debug\wireframes\Cube.h" />

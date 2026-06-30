@@ -50,6 +50,24 @@ void LODBuilder::SetTexture(uint32_t materialIndex, const std::string& filePath)
 	}
 }
 
+//ライティングフラグの設定
+void LODBuilder::SetIsLighting(uint32_t materialIndex, bool isLighting) {
+	for (std::unique_ptr<Model>& lodModel : lodModels_) {
+		if (lodModel) {
+			lodModel->SetIsLighting(materialIndex, isLighting);
+		}
+	}
+}
+
+//輝度の設定
+void LODBuilder::SetShininess(uint32_t materialIndex, float shininess) {
+	for (std::unique_ptr<Model>& lodModel : lodModels_) {
+		if (lodModel) {
+			lodModel->SetShininess(materialIndex, shininess);
+		}
+	}
+}
+
 //モデルのサイズ
 uint32_t LODBuilder::LODModelSize()const {
 	return static_cast<uint32_t>(lodModels_.size());

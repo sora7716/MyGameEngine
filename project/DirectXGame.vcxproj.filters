@@ -210,12 +210,6 @@
     <ClCompile Include="engine\debug\GlobalVariables.cpp">
       <Filter>engine\debug</Filter>
     </ClCompile>
-    <ClCompile Include="engine\debug\WireframeObject3dCommon.cpp">
-      <Filter>engine\debug</Filter>
-    </ClCompile>
-    <ClCompile Include="engine\debug\WireframeObject3d.cpp">
-      <Filter>engine\debug</Filter>
-    </ClCompile>
     <ClCompile Include="engine\2d\TextRasterizer.cpp">
       <Filter>engine\2d</Filter>
     </ClCompile>
@@ -441,12 +435,6 @@
       <Filter>engine\scene</Filter>
     </ClInclude>
     <ClInclude Include="engine\debug\GlobalVariables.h">
-      <Filter>engine\debug</Filter>
-    </ClInclude>
-    <ClInclude Include="engine\debug\WireframeObject3d.h">
-      <Filter>engine\debug</Filter>
-    </ClInclude>
-    <ClInclude Include="engine\debug\WireframeObject3dCommon.h">
       <Filter>engine\debug</Filter>
     </ClInclude>
     <ClInclude Include="engine\math\PrimitiveData.h">

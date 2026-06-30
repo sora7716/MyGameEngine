@@ -139,11 +139,18 @@ public://メンバ関数
 	static ModelData LoadModelFile(const std::string& directoryPath, const std::string& storedFilePath, const std::string& filename);
 
 	/// <summary>
-	/// マテリアルのセッター
+	/// ライティングの設定
 	/// </summary>
 	/// <param name="index">インデックス</param>
-	/// <param name="materialData">マテリアルデータ</param>
-	void SetMaterial(uint32_t index, const Material& materialData);
+	/// <param name="materialData">ライティングフラグ</param>
+	void SetIsLighting(uint32_t index, bool isLighting);
+
+	/// <summary>
+	/// 輝度の設定
+	/// </summary>
+	/// <param name="index">インデックス</param>
+	/// <param name="shininess">輝度</param>
+	void SetShininess(uint32_t index, float shininess);
 
 	/// <summary>
 	/// リムライトのセッター

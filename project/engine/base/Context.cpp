@@ -9,7 +9,6 @@ void SceneContext::operator=(Core* core) {
 	object3dCommon = core->GetObject3dCommon();
 	object2dCommon = core->GetObject2dCommon();
 	spriteCommon = core->GetSpriteCommon();
-	wireframeObject3dCommon = core->GetWireframeObject3dCommon();
 	particleCommon = core->GetParticleCommon();
 	modelCommon = core->GetModelCommon();
 	sceneManager = core->GetSceneManager();

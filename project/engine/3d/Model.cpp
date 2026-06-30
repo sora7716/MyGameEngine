@@ -261,8 +261,51 @@ std::vector<MeshData> Model::EdgeCollapse(float rate) {
 				edgeList[MakeEdgeKey(c, a)]++;
 			}
 
-			//境界っぽい辺を格納する配列
-			std::vector<uint32_t>boundaryVertices(baseMeshData.vertices.size(), false);
+			//境界っぽい辺があるかを判断するフラグ
+			std::vector<uint8_t>isBoundaryVertices(baseMeshData.vertices.size(), false);
+
+			//共通近傍チェック用の配列作成
+			//各頂点ごとに隣り合う頂点を取得
+			std::vector<std::vector<uint32_t>>neighbors;
+			neighbors.resize(baseMeshData.vertices.size());
+			//三角形を追加
+			for (uint32_t i = 0; i < baseMeshData.indices.size(); i += 3) {
+				uint32_t a = baseMeshData.indices[i];
+				uint32_t b = baseMeshData.indices[i + 1];
+				uint32_t c = baseMeshData.indices[i + 2];
+				neighbors[a].push_back(b);
+				neighbors[a].push_back(c);
+
+				neighbors[b].push_back(a);
+				neighbors[b].push_back(c);
+
+				neighbors[c].push_back(a);
+				neighbors[c].push_back(b);
+			}
+
+			//重複を削除
+			for (std::vector<uint32_t>& neighbor : neighbors) {
+				//ソート
+				std::sort(neighbor.begin(), neighbor.end());
+
+				//重複を削除
+				neighbor.erase(std::unique(neighbor.begin(), neighbor.end()), neighbor.end());
+			}
+
+			//境界頂点をtrueにする
+			for (const auto& edge : edgeList) {
+				//辺の検索キーを取得
+				uint64_t edgeKey = edge.first;
+				uint32_t v0 = static_cast<uint32_t>(edgeKey >> 32);
+				uint32_t v1 = static_cast<uint32_t>(edgeKey & UINT32_MAX);
+
+				//普通の内部辺以外の場合
+				if (edge.second != 2) {
+					isBoundaryVertices[v0] = true;
+					isBoundaryVertices[v1] = true;
+				}
+			}
+
 			//スコア付けをしていく
 			for (const auto& edge : edgeList) {
 				//辺の検索キーを取得
@@ -272,43 +315,15 @@ std::vector<MeshData> Model::EdgeCollapse(float rate) {
 
 				//普通の内部辺以外の場合
 				if (edge.second != 2) {
-					boundaryVertices[v0] = true;
-					boundaryVertices[v1] = true;
 					continue;
 				}
 
 				//境界頂点がtrueだったらスキップする
-				if (boundaryVertices[v0] || boundaryVertices[v1]) {
+				if (isBoundaryVertices[v0] || isBoundaryVertices[v1]) {
 					continue;
 				}
 
 				//共通近傍チェック
-				std::vector<std::vector<uint32_t>>neighbors;
-				neighbors.resize(baseMeshData.vertices.size());
-				//三角形を追加
-				for (uint32_t i = 0; i < baseMeshData.indices.size(); i += 3) {
-					uint32_t a = baseMeshData.indices[i];
-					uint32_t b = baseMeshData.indices[i + 1];
-					uint32_t c = baseMeshData.indices[i + 2];
-					neighbors[a].push_back(b);
-					neighbors[a].push_back(c);
-
-					neighbors[b].push_back(a);
-					neighbors[b].push_back(c);
-
-					neighbors[c].push_back(a);
-					neighbors[c].push_back(b);
-				}
-
-				//重複を削除
-				for (std::vector<uint32_t>& neighbor : neighbors) {
-					//ソート
-					std::sort(neighbor.begin(), neighbor.end());
-
-					//重複を削除
-					neighbor.erase(std::unique(neighbor.begin(), neighbor.end()), neighbor.end());
-				}
-
 				//v0-v1で共有している頂点数のカウント
 				uint32_t sharedNeighborCount = 0;
 				for (uint32_t i = 0; i < neighbors[v0].size(); i++) {
@@ -325,7 +340,7 @@ std::vector<MeshData> Model::EdgeCollapse(float rate) {
 					}
 				}
 
-				//共有している頂点が2つ以上あったら
+				//共有している頂点が2つでなければスキップ
 				if (sharedNeighborCount != 2) {
 					continue;
 				}
@@ -398,7 +413,7 @@ std::vector<MeshData> Model::EdgeCollapse(float rate) {
 			std::vector<EdgeCandidate> minCandidates;
 			minCandidates.reserve(candidateCount);//容量の確保
 			//候補に入れたかどうかのフラグ表
-			std::vector<bool>isUseThisPass(currentVertexCount, false);
+			std::vector<uint8_t>isUseThisPass(currentVertexCount, false);
 			//法線を考慮する
 			float normalDotThreshold = 0.7f;
 			while (minCandidates.size() < candidateCount) {
@@ -417,78 +432,6 @@ std::vector<MeshData> Model::EdgeCollapse(float rate) {
 				float normalDot = normal0.Dot(normal1);
 				//法線の内積がnormalDotThresholdより小さければ飛ばす(同じ方向を見ていないってことなので)
 				if (normalDot < normalDotThreshold) {
-					continue;
-				}
-
-				//三角形を作ってみてCollapseしても破綻してないかを見る
-				//Collapseしても安全か
-				bool isCollapseUnsafe = false;
-				//Collapseする予定の辺の頂点
-				uint32_t v0 = minCandidate.edgeIndices[0];
-				uint32_t v1 = minCandidate.edgeIndices[1];
-				//v1-v0の中点を取得
-				Vector3 vertexV0 = baseMeshData.vertices[v0].position.ToVector3();
-				Vector3 vertexV1 = baseMeshData.vertices[v1].position.ToVector3();
-				Vector3 midPoint = (vertexV0 + vertexV1) / 2.0f;
-				for (uint32_t i = 0; i < baseMeshData.indices.size(); i += 3) {
-					//各メッシュの三角形を作成
-					uint32_t a = baseMeshData.indices[i];
-					uint32_t b = baseMeshData.indices[i + 1];
-					uint32_t c = baseMeshData.indices[i + 2];
-
-					//両方含まれている場合はCollapseで消える予定の三角形なのでスキップ
-					//両方含まれていない場合は関係ない三角形なのでスキップ
-					bool containsV0 = a == v0 || b == v0 || c == v0;
-					bool containsV1 = a == v1 || b == v1 || c == v1;
-					if ((containsV0 && containsV1) ||
-						(!containsV0 && !containsV1)) {
-						continue;
-					}
-
-					//Collapsesする予定の辺の頂点ごとに見る
-					Vector3 vertexA = baseMeshData.vertices[a].position.ToVector3();
-					Vector3 vertexB = baseMeshData.vertices[b].position.ToVector3();
-					Vector3 vertexC = baseMeshData.vertices[c].position.ToVector3();
-					std::array<Vector3, 3>baseTriangle = { vertexA ,vertexB,vertexC };
-					std::array<Vector3, 3>collapseTriangle = baseTriangle;
-
-					//v0が含まれているか
-					if (a == v0) {
-						collapseTriangle[0] = midPoint;
-					} else if (b == v0) {
-						collapseTriangle[1] = midPoint;
-					} else if (c == v0) {
-						collapseTriangle[2] = midPoint;
-					}
-
-					//v1が含まれているか
-					if (a == v1) {
-						collapseTriangle[0] = midPoint;
-					} else if (b == v1) {
-						collapseTriangle[1] = midPoint;
-					} else if (c == v1) {
-						collapseTriangle[2] = midPoint;
-					}
-
-					//Collapseする前とした後の面積の比較
-					float baseArea = Math::CalcParallelogramAreaSquared(baseTriangle);
-					float collapseArea = Math::CalcParallelogramAreaSquared(collapseTriangle);
-					//baseAreaが小さすぎる場合はスキップ
-					if (baseArea <= 0.00001f) {
-						isCollapseUnsafe = true;
-						break;
-					}
-
-					//面積の割合を取得
-					float areaRate = collapseArea / baseArea;
-					if (areaRate < 0.01f) {
-						isCollapseUnsafe = true;
-						break;
-					}
-				}
-
-				//三角形がおかしくなるので候補に入れない
-				if (isCollapseUnsafe) {
 					continue;
 				}
 
@@ -569,7 +512,7 @@ std::vector<MeshData> Model::EdgeCollapse(float rate) {
 			baseMeshData.indices = collapseToNewIndices;
 
 			//使用されている頂点のフラグ
-			std::vector<bool>isUseVertices(currentVertexCount, false);
+			std::vector<uint8_t>isUseVertices(currentVertexCount, false);
 			//昔のインデックスを新しいインデックスに変更する対応表
 			std::vector<uint32_t>oldToNewIndices(currentVertexCount, UINT32_MAX);
 			//新しい頂点
@@ -803,14 +746,15 @@ ModelData Model::LoadModelFile(const std::string& directoryPath, const std::stri
 	return modelData;
 }
 
-//マテリアルのセッター
-void Model::SetMaterial(uint32_t index, const Material& materialData) {
-	materialPtrs_[index]->color = materialData.color;
-	materialPtrs_[index]->enableLighting = materialData.enableLighting;
-	materialPtrs_[index]->shininess = materialData.shininess;
-	materialPtrs_[index]->uvMatrix = materialData.uvMatrix;
+//ライティングの設定
+void Model::SetIsLighting(uint32_t index, bool isLighting) {
+	materialPtrs_[index]->enableLighting = isLighting;
 }
 
+//輝度の設定
+void Model::SetShininess(uint32_t index, float shininess) {
+	materialPtrs_[index]->shininess = shininess;
+}
 
 //リムライトのセッター
 void Model::SetRimLight(const RimLight& rimLight) {

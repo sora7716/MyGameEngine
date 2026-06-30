@@ -91,8 +91,8 @@ void Object3d::Update() {
 	}
 
 	//RootNodeはmodelを基準にする
-	if (model_) {
-		node_ = model_->GetModelData().rootNode;
+	if (baseModel_) {
+		node_ = baseModel_->GetModelData().rootNode;
 	}
 
 	for (int32_t i = 0; i < instanceData_.size(); i++) {
@@ -111,7 +111,7 @@ void Object3d::Update() {
 		(this->*UpdateWorldMatrixTable[static_cast<uint32_t>(transform3dMode_)])(i);;
 
 		//モデルが存在してなかったら
-		if (!model_) {
+		if (!baseModel_) {
 			continue;
 		}
 
@@ -206,10 +206,10 @@ void Object3d::Draw() {
 
 //モデルの設定
 void Object3d::SetModel(const std::string& modelName, const std::vector<float>& keepRates) {
-	model_ = object3dCommon_->GetModelManager()->FindModel(modelName);
+	baseModel_ = object3dCommon_->GetModelManager()->FindModel(modelName);
 
 	//LODモデルの生成
-	lodBuilder_->CreateLODModel(model_, keepRates);
+	lodBuilder_->CreateLODModel(baseModel_, keepRates);
 	//LODの制御の初期化
 	lodController_->Initialize(lodBuilder_.get());
 }
@@ -239,6 +239,11 @@ void Object3d::SetLODDistances(const std::vector<float>& lodDistances) {
 	lodController_->SetLODDistances(lodDistances);
 }
 
+//ヒステリシス幅の設定
+void Object3d::SetHysteresis(float hysteresis) {
+	lodController_->SetHysteresis(hysteresis);
+}
+
 // uvスケールの設定
 void Object3d::SetUVScale(uint32_t index, const Vector2& uvScale) {
 	for (std::vector<Transform2d>& uvTransforms : lodUvTransforms_) {
@@ -262,7 +267,8 @@ void Object3d::SetUVTranslate(uint32_t index, const Vector2& uvTranslate) {
 
 //色の設定
 void Object3d::SetColor(uint32_t materialIndex, const Vector4& color) {
-	model_->SetColor(materialIndex, color);
+	//元モデルにも適応
+	baseModel_->SetColor(materialIndex, color);
 	//LODモデルにも適応
 	lodBuilder_->SetColor(materialIndex, color);
 }
@@ -274,9 +280,29 @@ void Object3d::SetParent(const WorldTransform* parent) {
 
 //テクスチャの変更
 void Object3d::SetTexture(uint32_t meshIndex, const std::string& filePath) {
-	uint32_t materialIndex = model_->GetMeshes()[meshIndex]->GetMaterialIndex();
+	uint32_t materialIndex = baseModel_->GetMeshes()[meshIndex]->GetMaterialIndex();
+	//元モデルにも適応
+	baseModel_->SetTexture(materialIndex, filePath);
 	//LODモデルにも適応
 	lodBuilder_->SetTexture(materialIndex, filePath);
+}
+
+//ライティングフラグの設定
+void Object3d::SetIsLighting(uint32_t meshIndex, bool isLighting) {
+	uint32_t materialIndex = baseModel_->GetMeshes()[meshIndex]->GetMaterialIndex();
+	//元モデルにも適応
+	baseModel_->SetIsLighting(materialIndex, isLighting);
+	//LODモデルにも適応
+	lodBuilder_->SetIsLighting(materialIndex, isLighting);
+}
+
+//輝度の設定
+void Object3d::SetShininess(uint32_t meshIndex, float shininess) {
+	uint32_t materialIndex = baseModel_->GetMeshes()[meshIndex]->GetMaterialIndex();
+	//元モデルにも適応
+	baseModel_->SetShininess(materialIndex, shininess);
+	//LODモデルにも適応
+	lodBuilder_->SetShininess(materialIndex, shininess);
 }
 
 //UV座標の設定
@@ -319,19 +345,10 @@ const Transform2d& Object3d::GetUVTransform(uint32_t index) const {
 const Vector4& Object3d::GetColor(uint32_t index) const {
 	// TODO: return ステートメントをここに挿入します
 	static const Vector4 defaultColor(0.0f, 0.0f, 0.0f, 0.0f);
-	if (model_) {
-		return model_->GetColor(index);
+	if (baseModel_) {
+		return baseModel_->GetColor(index);
 	}
 	return defaultColor;
-}
-
-//モデルの取得
-Model* Object3d::GetModel() {
-	if (model_) {
-		return model_;
-	}
-
-	return nullptr;
 }
 
 //ワールドマトリックスの取得
@@ -433,7 +450,7 @@ void Object3d::UpdateVisibility(uint32_t index, const Matrix4x4& worldMatrix) {
 	bool isVisible = true;
 	if (gameCamera_) {
 		isVisible = false;
-		for (const std::unique_ptr<Mesh>& mesh : model_->GetMeshes()) {
+		for (const std::unique_ptr<Mesh>& mesh : baseModel_->GetMeshes()) {
 			PrimitiveData::AABB worldAABB = mesh->GetAABB() * worldMatrix;
 
 			if (Collision::IsCollision(gameCamera_->GetFrustum(), worldAABB)) {

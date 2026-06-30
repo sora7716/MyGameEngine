@@ -12,7 +12,6 @@ class SRVManager;
 class GraphicsPipeline;
 class TextureManager;
 class ModelManager;
-class WireframeObject3dCommon;
 class Camera;
 class Blend;
 
@@ -35,7 +34,7 @@ public://メンバ関数
 	/// <param name="srvManager">srvマネージャー</param>
 	/// <param name="textureManager">テクスチャマネージャー</param>
 	/// <param name="modelManager">モデルマネージャー/param>
-	void Initialize(DirectXBase* directXBase, SRVManager* srvManager, TextureManager* textureManager, ModelManager* modelManager, WireframeObject3dCommon* wireframeObject3dCommon);
+	void Initialize(DirectXBase* directXBase, SRVManager* srvManager, TextureManager* textureManager, ModelManager* modelManager);
 
 	/// <summary>
 	/// 更新
@@ -104,12 +103,6 @@ public://メンバ関数
 	/// </summary>
 	/// <returns>モデルマネージャー</returns>
 	ModelManager* GetModelManager()const;
-
-	/// <summary>
-	/// ワイヤーフレームオブジェクトの共通部分のゲッター
-	/// </summary>
-	/// <returns>ワイヤーフレームオブジェクトの共通部分</returns>
-	WireframeObject3dCommon* GetWireframeObject3dCommon()const;
 
 	/// <summary>
 	/// グラフィックパイプラインのゲッター
@@ -236,9 +229,6 @@ private://メンバ変数
 
 	//テクスチャマネジャー
 	TextureManager* textureManager_ = nullptr;
-
-	//ワイヤーフレームオブジェクトの共通部分
-	WireframeObject3dCommon* wireframeObject3dCommon_ = nullptr;
 
 	//バッファリソース
 	ComPtr<ID3D12Resource> directionalLightResource_ = nullptr;//平行光源

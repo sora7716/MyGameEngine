@@ -35,12 +35,9 @@ void Core::Initialize() {
 	//2Dオブジェクトの共通部分
 	object2dCommon_ = std::make_unique<Object2dCommon>(Object2dCommon::ConstructorKey{});
 	object2dCommon_->Initialize(directXBase_.get(), textureManager_.get());
-	//ワイヤーフレームオブジェクトのきょつう部分
-	wireframeObject3dCommon_ = std::make_unique<WireframeObject3dCommon>(WireframeObject3dCommon::ConstructorKey{});
-	wireframeObject3dCommon_->Initialize(directXBase_.get(), srvManager_.get(), modelManager_.get());
 	//3Dオブジェクトの共通部分
 	object3dCommon_ = std::make_unique<Object3dCommon>(Object3dCommon::ConstructorKey{});
-	object3dCommon_->Initialize(directXBase_.get(), srvManager_.get(), textureManager_.get(), modelManager_.get(), wireframeObject3dCommon_.get());
+	object3dCommon_->Initialize(directXBase_.get(), srvManager_.get(), textureManager_.get(), modelManager_.get());
 	//パーティクルの共通部分
 	particleCommon_ = std::make_unique<ParticleCommon>(ParticleCommon::ConstructorKey{});
 	particleCommon_->Initialize(directXBase_.get(), srvManager_.get(), textureManager_.get());
@@ -122,11 +119,6 @@ Object2dCommon* Core::GetObject2dCommon() const {
 //3Dオブジェクトの共通部分のゲッター
 Object3dCommon* Core::GetObject3dCommon() const {
 	return object3dCommon_.get();
-}
-
-//ワイヤーフレームオブジェクトの共通部分のゲッター
-WireframeObject3dCommon* Core::GetWireframeObject3dCommon() const {
-	return wireframeObject3dCommon_.get();
 }
 
 //パーティクルの共通部分のゲッター

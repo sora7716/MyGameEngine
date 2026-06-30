@@ -217,6 +217,11 @@ public://メンバ関数
 	Vector3 GetWorldPos(uint32_t index);
 private://メンバ関数
 	/// <summary>
+	/// LOD関係のセットアップ
+	/// </summary>
+	void SetupLOD();
+
+	/// <summary>
 	/// 座標変換行列リソースの生成
 	/// </summary>
 	void CreateTransformationMatrixResource();
@@ -257,15 +262,9 @@ private://メンバ関数
 private://メンバ関数テーブル
 	//座標の更新をまとめた
 	static void (Object3d::* UpdateWorldMatrixTable[])(uint32_t index);
-	//定数
-private:
-	//LODの数
-	static inline const uint32_t kLODCount = 3;
 private://メンバ変数
 	//3Dオブジェクトの共通部分
 	Object3dCommon* object3dCommon_ = nullptr;
-	//UV座標
-	std::array<std::vector<Transform2d>, kLODCount> lodUvTransforms_;
 	//DirectXの基盤部分
 	DirectXBase* directXBase_ = nullptr;
 	//SRVマネージャー
@@ -273,18 +272,23 @@ private://メンバ変数
 	//モデル
 	Model* baseModel_ = nullptr;
 
+	//LODの数
+	uint32_t lodCount_ = 1;
 	//LODビルダー
 	std::unique_ptr<LODBuilder>lodBuilder_ = nullptr;
 	//LODの制御
 	std::unique_ptr<LODController>lodController_ = nullptr;
-
-	std::array<std::vector<TransformationMatrix>, kLODCount>lodWvpData_;
+	//LODWvpデータ
+	std::vector<std::vector<TransformationMatrix>>lodWvpData_;
 	//ワールドビュープロジェクションのリソース
-	std::array<ComPtr<ID3D12Resource>, kLODCount> lodWvpResources_;
+	std::vector<ComPtr<ID3D12Resource>> lodWvpResources_;
 	//ワールドビュープロジェクションのポインタ
-	std::array<TransformationMatrix*, kLODCount>lodWvpPtrs_;
-	std::array<uint32_t, kLODCount>lodSrvIndices_;
-	std::array<uint32_t, kLODCount>lodDrawCount_;
+	std::vector<TransformationMatrix*>lodWvpPtrs_;
+	std::vector<uint32_t>lodSrvIndices_;
+	std::vector<uint32_t>lodDrawCounts_;
+	//UV座標
+	std::vector<std::vector<Transform2d>> lodUvTransforms_;
+
 	//描画用のカメラ
 	Camera* renderCamera_ = nullptr;
 	//ゲームで使用するカメラ

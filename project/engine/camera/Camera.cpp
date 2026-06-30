@@ -34,6 +34,8 @@ void Camera::Update() {
 	//ビュープロジェクション行列の作成
 	viewProjectionMatrix_ = viewMatrix_ * projectionMatrix_;
 
+	//視錐台のローカルの頂点を作成
+	frustum_.localCorners = Math::CreateFrustumVertex(nearClip_, farClip_, fovY_, aspectRation_);
 	//視錐台のデータを作成
 	frustum_ = Math::CreateFrustumData(frustum_.localCorners, worldMatrix_);
 

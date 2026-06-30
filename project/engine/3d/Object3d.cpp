@@ -47,20 +47,13 @@ void Object3d::Initialize(Object3dCommon* object3dCommon, Camera* renderCamera, 
 	transform3dMode_ = transform3dMode;
 	//ゲームオブジェクトの数を決定
 	maxInstanceCount_ = maxInstanceCount;
-	for (uint32_t lod = 0; lod < kLODCount; lod++) {
-		//wvpのデータ数を決定
-		lodWvpData_[lod].resize(maxInstanceCount);
-		for (TransformationMatrix& wvp : lodWvpData_[lod]) {
-			wvp.world = Matrix4x4::Identity4x4();
-			wvp.wvp = Matrix4x4::Identity4x4();
-			wvp.worldInverseTranspose = Matrix4x4::Identity4x4();
-		}
-	}
-
-	//wvpリソースの初期化
-	CreateTransformationMatrixResource();
-	//座標変換行列リソースのストラクチャバッファの生成
-	CreateStructuredBufferForWvp();
+	
+	//LOD関係のセットアップ
+	SetupLOD();
+	//LODビルダーの生成
+	lodBuilder_ = std::make_unique<LODBuilder>();
+	//LODコントローラの生成
+	lodController_ = std::make_unique<LODController>();
 
 	//カメラにデフォルトカメラを代入
 	renderCamera_ = renderCamera;
@@ -73,11 +66,6 @@ void Object3d::Initialize(Object3dCommon* object3dCommon, Camera* renderCamera, 
 	material_.enableLighting = true;
 	material_.uvMatrix = Matrix4x4::Identity4x4();
 	material_.shininess = 10.0f;
-
-	//LODビルダーの生成
-	lodBuilder_ = std::make_unique<LODBuilder>();
-	//LODコントローラの生成
-	lodController_ = std::make_unique<LODController>();
 }
 
 //更新
@@ -86,8 +74,8 @@ void Object3d::Update() {
 	object3dCommon_->Update();
 
 	//LOD語との描画数をリセット
-	for (uint32_t lod = 0; lod < kLODCount; lod++) {
-		lodDrawCount_[lod] = 0;
+	for (uint32_t& lodDrawCount : lodDrawCounts_) {
+		lodDrawCount = 0;
 	}
 
 	//RootNodeはmodelを基準にする
@@ -137,7 +125,7 @@ void Object3d::Update() {
 		}
 
 		//LOD語とのWVP配列に詰める
-		uint32_t drawIndex = lodDrawCount_[lodIndex];
+		uint32_t drawIndex = lodDrawCounts_[lodIndex];
 		//検索キーがデータのサイズより大きかった場合
 		if (drawIndex >= lodWvpData_[lodIndex].size()) {
 			continue;
@@ -147,7 +135,7 @@ void Object3d::Update() {
 		UpdateWorldTransform(lodIndex, drawIndex, worldMatrix_);
 
 		//描画カウントを加算
-		lodDrawCount_[lodIndex]++;
+		lodDrawCounts_[lodIndex]++;
 
 		//モデルが存在したらメッシュごとにUV座標を適応
 		if (lodBuilder_->GetLODModel(lodIndex)) {
@@ -184,14 +172,14 @@ void Object3d::Draw() {
 	//スポットライトのStructuredBufferを設定
 	directXBase_->GetCommandList()->SetGraphicsRootDescriptorTable(6, object3dCommon_->GetSRVManager()->GetGPUDescriptorHandle(object3dCommon_->GetSrvIndexSpot()));
 
-	for (uint32_t lodIndex = 0; lodIndex < kLODCount; lodIndex++) {
+	for (uint32_t lodIndex = 0; lodIndex < lodCount_; lodIndex++) {
 		//LODモデルが存在してなかったら
 		if (!lodBuilder_->GetLODModel(lodIndex)) {
 			continue;
 		}
 
 		//LOD描画カウントが0だったら
-		if (lodDrawCount_[lodIndex] == 0) {
+		if (lodDrawCounts_[lodIndex] == 0) {
 			continue;
 		}
 
@@ -199,15 +187,20 @@ void Object3d::Draw() {
 		directXBase_->GetCommandList()->SetGraphicsRootDescriptorTable(1, srvManager_->GetGPUDescriptorHandle(lodSrvIndices_[lodIndex]));
 
 		//ドローコール
-		lodBuilder_->GetLODModel(lodIndex)->Draw(lodDrawCount_[lodIndex]);
+		lodBuilder_->GetLODModel(lodIndex)->Draw(lodDrawCounts_[lodIndex]);
 
 	}
 }
 
 //モデルの設定
 void Object3d::SetModel(const std::string& modelName, const std::vector<float>& keepRates) {
+	//元になるモデルを取得
 	baseModel_ = object3dCommon_->GetModelManager()->FindModel(modelName);
 
+	//LODカウントの初期化
+	lodCount_ = static_cast<uint32_t>(keepRates.size());
+	//LOD関係のセットアップ
+	SetupLOD();
 	//LODモデルの生成
 	lodBuilder_->CreateLODModel(baseModel_, keepRates);
 	//LODの制御の初期化
@@ -363,9 +356,36 @@ Vector3 Object3d::GetWorldPos(uint32_t index) {
 
 }
 
+//LOD関係のセットアップ
+void Object3d::SetupLOD() {
+	//UV座標
+	lodUvTransforms_.resize(lodCount_);
+	//LODWvpデータ
+	lodWvpData_.resize(lodCount_);
+	//ワールドビュープロジェクションのリソース
+	lodWvpResources_.resize(lodCount_);
+	//ワールドビュープロジェクションのポインタ
+	lodWvpPtrs_.resize(lodCount_);
+	lodSrvIndices_.resize(lodCount_);
+	lodDrawCounts_.resize(lodCount_);
+	for (uint32_t lod = 0; lod < lodCount_; lod++) {
+		//wvpのデータ数を決定
+		lodWvpData_[lod].resize(maxInstanceCount_);
+		for (TransformationMatrix& wvp : lodWvpData_[lod]) {
+			wvp.world = Matrix4x4::Identity4x4();
+			wvp.wvp = Matrix4x4::Identity4x4();
+			wvp.worldInverseTranspose = Matrix4x4::Identity4x4();
+		}
+	}
+	//wvpリソースの初期化
+	CreateTransformationMatrixResource();
+	//座標変換行列リソースのストラクチャバッファの生成
+	CreateStructuredBufferForWvp();
+}
+
 //座標変換行列リソースの生成
 void Object3d::CreateTransformationMatrixResource() {
-	for (uint32_t lod = 0; lod < kLODCount; lod++) {
+	for (uint32_t lod = 0; lod < lodCount_; lod++) {
 		//インスタンスの最大数で確保
 		lodWvpData_[lod].resize(maxInstanceCount_);
 
@@ -385,7 +405,7 @@ void Object3d::CreateTransformationMatrixResource() {
 
 //座標変換行列リソースのストラクチャバッファの生成
 void Object3d::CreateStructuredBufferForWvp() {
-	for (uint32_t lod = 0; lod < kLODCount; lod++) {
+	for (uint32_t lod = 0; lod < lodCount_; lod++) {
 		//ストラクチャバッファを生成
 		lodSrvIndices_[lod] = srvManager_->Allocate() + TextureManager::kSRVIndexTop;
 		srvManager_->CreateSRVForStructuredBuffer(

@@ -32,7 +32,7 @@ void TestPlayScene::Initialize(const SceneContext& sceneContext) {
 	//object3d_->SetModel("sphere");
 	object3d_->SetModel("dekanu");
 	//object3d_->SetModel("cube");
-	object3d_->SetLODDistances({ 20.0f,30.0f,50.0f });
+	object3d_->SetLODDistances({ 20.0f,30.0f,50.0f,80.0f });
 	std::unique_ptr<GameObject>tree = std::make_unique<GameObject>();
 	tree->Initialize("tree");
 	tree->GetTransform().translate = { 0.0f,0.0f,10.0f };
@@ -125,6 +125,10 @@ void TestPlayScene::Debug() {
 	ImGui::DragFloat3("translate", &cameraTranslate.x, 0.1f);
 	gameCamera_->SetEulerAngle(cameraRotate);
 	gameCamera_->SetTranslate(cameraTranslate);
+
+	float farClip = gameCamera_->GetFarClip();
+	ImGui::DragFloat("farClip", &farClip);
+	gameCamera_->SetFarClip(farClip);
 	ImGui::End();
 
 	ImGui::Begin("cube");

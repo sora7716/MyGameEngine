@@ -390,13 +390,13 @@ std::vector<MeshData> Model::EdgeCollapse(float rate) {
 			float batchRate = 0.01f;
 			//割合ごとにCollapseしたい数と割合も変更
 			if (rate <= 0.25f) {
-				batchCount = 300;
-				batchRate = 0.05f;
+				batchCount = 1000;
+				batchRate = 0.2f;
 			} else if (rate <= 0.5f) {
-				batchCount = 200;
-				batchRate = 0.03f;
+				batchCount = 800;
+				batchRate = 0.1f;
 			} else if (rate <= 0.8f) {
-				batchCount = 100;
+				batchCount = 200;
 				batchRate = 0.02f;
 			}
 			//現在の頂点数と目標の頂点数の差分

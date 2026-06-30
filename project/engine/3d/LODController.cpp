@@ -38,7 +38,7 @@ uint32_t LODController::SelectLOD(float distance, uint32_t currentLOD) const {
 	}
 
 	//先に進める
-	if (currentLOD < 2) {
+	if (currentLOD < lodBuilder_->LODModelSize() - 1) {
 		if (distance >= lodDistances_[currentLOD] + hysteresis_) {
 			result = currentLOD + 1;
 		}

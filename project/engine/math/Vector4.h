@@ -3,19 +3,19 @@
 #include "Matrix4x4.h"
 #include <string>
 struct RGB final {
-	float r;
-	float g;
-	float b;
+	float r = 0.0f;
+	float g = 0.0f;
+	float b = 0.0f;
 };
 
 /// <summary>
 /// 4次元ベクトル
 /// </summary>
 struct Vector4 final {
-	float x;
-	float y;
-	float z;
-	float w;
+	float x = 0.0f;
+	float y = 0.0f;
+	float z = 0.0f;
+	float w = 0.0f;
 
 	/// <summary>
 	/// RGB値のゲッター

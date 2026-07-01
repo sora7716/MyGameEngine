@@ -5,7 +5,8 @@
 #include "Mesh.h"
 #include "TextureManager.h"
 #include "Logger.h"
-#include "algorithms/Math.h"
+#include "Math.h"
+#include "HashUtility.h"
 #include <format>
 #include <map>
 #include <unordered_map>
@@ -194,7 +195,7 @@ std::vector<MeshData> Model::VertexClustering(float rate, float min, float max) 
 }
 
 //uint32_tの変数を二つ切り詰めてuint64_tの検索キーを作成
-uint64_t MakeEdgeKey(uint32_t a, uint32_t b) {
+static uint64_t MakeEdgeKey(uint32_t a, uint32_t b) {
 	std::array<uint32_t, 2>edge = {};
 	edge = { std::min(a,b),std::max(a,b) };
 	return static_cast<uint64_t>(edge[0]) << 32 | static_cast<uint64_t>(edge[1]);
@@ -1028,6 +1029,55 @@ MeshData Model::VertexClusteringByGridSize(const MeshData& meshData, float size)
 			}
 			return normalKey < g.normalKey;
 		}
+
+		//キーがすべて同じかを判定
+		bool operator==(const GridKey& other)const {
+			//頂点のキーが一致してるか
+			bool isMatchVertexKey =
+				vertexKey.x == other.vertexKey.x &&
+				vertexKey.y == other.vertexKey.y &&
+				vertexKey.z == other.vertexKey.z;
+
+			//Texcoordのキーが一致してるか
+			bool isMatchTexcoordKey =
+				texcoordKey.x == other.texcoordKey.x &&
+				texcoordKey.y == other.texcoordKey.y;
+
+			//法線のキーが一致してるか
+			bool isMatchNormalKey =
+				normalKey.x == other.normalKey.x &&
+				normalKey.y == other.normalKey.y &&
+				normalKey.z == other.normalKey.z;
+
+			return isMatchVertexKey && isMatchTexcoordKey && isMatchNormalKey;
+		}
+	};
+
+	//グリッドキーごとの情報をまとめた
+	struct GridCluster {
+		Vector4 vertexPosSum = {};//GridKeyに入った頂点の位置の合計
+		uint32_t vertexCount = 0;//GridKeyに入った頂点数
+		uint32_t newIndex = 0;//代表頂点のインデックス
+	};
+
+	//グリッドキーのハッシュ
+	struct GridKeyHash {
+		size_t operator()(const GridKey& key)const {
+			size_t seed = 0;
+
+			HashUtility::CreateHash(seed, key.vertexKey.x);
+			HashUtility::CreateHash(seed, key.vertexKey.y);
+			HashUtility::CreateHash(seed, key.vertexKey.z);
+
+			HashUtility::CreateHash(seed, key.texcoordKey.x);
+			HashUtility::CreateHash(seed, key.texcoordKey.y);
+
+			HashUtility::CreateHash(seed, key.normalKey.x);
+			HashUtility::CreateHash(seed, key.normalKey.y);
+			HashUtility::CreateHash(seed, key.normalKey.z);
+
+			return seed;
+		}
 	};
 
 	//メッシュを取得
@@ -1035,16 +1085,14 @@ MeshData Model::VertexClusteringByGridSize(const MeshData& meshData, float size)
 
 	//Gridサイズの設定
 	float gridSize = size;
-	//GridKeyの一覧表
-	std::map<GridKey, uint32_t>gridToNewIndices;
-	//GridKeyを見て頂点の位置を加算
-	std::map<GridKey, Vector4>gridKeyPositionSums;
-	//同じ頂点キーが出てきた数をカウント
-	std::map<GridKey, uint32_t>gridKeyCounts;
+	//Gridごとの処理
+	std::unordered_map<GridKey, GridCluster, GridKeyHash>gridClusters;
+	gridClusters.reserve(baseMeshData.vertices.size());
 	//前のインデックスから新しいインデックスを取得するための対応表
 	std::vector<uint32_t>oldToNewIndices(baseMeshData.vertices.size(), UINT32_MAX);
 	//新しい頂点
 	std::vector<VertexData>newVertices;
+	newVertices.reserve(baseMeshData.vertices.size());
 	//新しインデックス
 	uint32_t newIndex = 0;
 	//GridKeyの作成
@@ -1072,41 +1120,50 @@ MeshData Model::VertexClusteringByGridSize(const MeshData& meshData, float size)
 		Vector3 normal = vertex.normal.Normalize();
 		gridKey.normalKey = ((normal + 1.0f) / normalStep).Floor();
 
-		//頂点を加算する
-		gridKeyPositionSums[gridKey] += vertex.position;
-		//同じGridKeyが出てきた数分加算
-		gridKeyCounts[gridKey]++;
+		//gridKeyがgridClustersに登録されてるか
+		auto [it, inserted] = gridClusters.try_emplace(gridKey);
+		GridCluster& gridCluster = it->second;
+		if (inserted) {
+			//未登録
+			gridCluster.vertexPosSum = vertex.position;
+			gridCluster.vertexCount = 1;
+			gridCluster.newIndex = newIndex;
 
-		//新しい頂点作成
-		Vector4 newVertexPos = {
-			gridKeyPositionSums[gridKey].x / gridKeyCounts[gridKey] ,
-			gridKeyPositionSums[gridKey].y / gridKeyCounts[gridKey] ,
-			gridKeyPositionSums[gridKey].z / gridKeyCounts[gridKey] ,
-			1.0f
-		};
-		//gridKeyが一覧表に登録されていたら
-		if (gridToNewIndices.contains(gridKey)) {
-			//登録済みのインデックスを追加
-			oldToNewIndices[oldIndex] = gridToNewIndices[gridKey];
-			//前の頂点を更新
-			newVertices[gridToNewIndices[gridKey]].position = newVertexPos;
-			continue;
+			//新しい頂点データを作成
+			VertexData newVertex = {
+				.position = vertex.position,
+				.texcoord = vertex.texcoord,
+				.normal = vertex.normal
+			};
+
+			//新しい頂点を追加
+			newVertices.push_back(newVertex);
+			//対応表に新しいインデックスを追加
+			oldToNewIndices[oldIndex] = newIndex;
+			//新しいインデックスの加算
+			newIndex++;
+
+		} else {
+			//登録済み
+
+			//頂点を加算
+			gridCluster.vertexPosSum += vertex.position;
+			//頂点数の数を加算
+			gridCluster.vertexCount++;
+
+			//頂点の平均値を求める
+			Vector4 averagePos = {
+				gridCluster.vertexPosSum.x / static_cast<float>(gridCluster.vertexCount),
+				gridCluster.vertexPosSum.y / static_cast<float>(gridCluster.vertexCount),
+				gridCluster.vertexPosSum.z / static_cast<float>(gridCluster.vertexCount),
+				1.0f
+			};
+
+			//頂点の更新
+			newVertices[gridCluster.newIndex].position = averagePos;
+			//頂点の対応表に登録	
+			oldToNewIndices[oldIndex] = gridCluster.newIndex;
 		}
-
-		//未登録なら
-		VertexData newVertex = {
-			.position = newVertexPos,
-			.texcoord = vertex.texcoord,
-			.normal = vertex.normal
-		};
-		//新しい頂点を追加
-		newVertices.push_back(newVertex);
-		//グリッドの一覧表に新しいインデックスを追加
-		gridToNewIndices[gridKey] = newIndex;
-		//対応表に新しいインデックスを追加
-		oldToNewIndices[oldIndex] = newIndex;
-		//新しいインデックスの加算
-		newIndex++;
 	}
 
 	//インデックスの張替え

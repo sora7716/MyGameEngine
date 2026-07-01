@@ -7,6 +7,8 @@ class Model;
 #include <string>
 #include <Vector4.h>
 
+//enum class 
+
 /// <summary>
 /// LODモデルの生成
 /// </summary>

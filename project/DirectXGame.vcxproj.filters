@@ -79,6 +79,9 @@
     <Filter Include="engine\debug\wireframes">
       <UniqueIdentifier>{a630cca5-20b8-4df5-ae4e-e26027a95569}</UniqueIdentifier>
     </Filter>
+    <Filter Include="engine\Utilitys">
+      <UniqueIdentifier>{9ba85470-97c6-4eb2-ae2a-5410a759a491}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="engine\main.cpp">
@@ -133,9 +136,6 @@
       <Filter>engine\3d</Filter>
     </ClCompile>
     <ClCompile Include="engine\base\SRVManager.cpp">
-      <Filter>engine\base</Filter>
-    </ClCompile>
-    <ClCompile Include="engine\base\StringUtility.cpp">
       <Filter>engine\base</Filter>
     </ClCompile>
     <ClCompile Include="engine\audio\AudioManager.cpp">
@@ -297,6 +297,12 @@
     <ClCompile Include="engine\debug\wireframes\Sphere.cpp">
       <Filter>engine\debug\wireframes</Filter>
     </ClCompile>
+    <ClCompile Include="engine\utilitys\HashUtility.cpp">
+      <Filter>engine\Utilitys</Filter>
+    </ClCompile>
+    <ClCompile Include="engine\utilitys\StringUtility.cpp">
+      <Filter>engine\Utilitys</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="engine\math\Matrix4x4.h">
@@ -357,9 +363,6 @@
       <Filter>engine\3d</Filter>
     </ClInclude>
     <ClInclude Include="engine\base\SRVManager.h">
-      <Filter>engine\base</Filter>
-    </ClInclude>
-    <ClInclude Include="engine\base\StringUtility.h">
       <Filter>engine\base</Filter>
     </ClInclude>
     <ClInclude Include="engine\audio\AudioManager.h">
@@ -526,6 +529,12 @@
     </ClInclude>
     <ClInclude Include="engine\debug\wireframes\Sphere.h">
       <Filter>engine\debug\wireframes</Filter>
+    </ClInclude>
+    <ClInclude Include="engine\utilitys\HashUtility.h">
+      <Filter>engine\Utilitys</Filter>
+    </ClInclude>
+    <ClInclude Include="engine\utilitys\StringUtility.h">
+      <Filter>engine\Utilitys</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

@@ -69,6 +69,7 @@ fence
 barrier
 descs
 countof
+Texcoord
 texcoord
 
 // HLSL & Shaders (often used in C++ setup)

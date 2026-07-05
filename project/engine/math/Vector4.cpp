@@ -89,6 +89,11 @@ void Vector4::operator*=(float n) {
 	w *= n;
 }
 
+//乗算
+void Vector4::operator+=(const Vector4& v) {
+	*this = *this + v;
+}
+
 //乗法
 Vector4 Vector4::operator*(const Matrix4x4& m) {
 	Vector4 result{};

@@ -2,6 +2,8 @@
 #include <map>
 #include <string>
 #include <memory>
+#include "PrimitiveMeshCreate.h"
+#include <vector>
 
 //前方宣言
 class DirectXBase;
@@ -70,5 +72,9 @@ private://メンバ変数
 	std::map<std::string, std::unique_ptr<Model>>models_;
 	//モデルの共通部分
 	ModelCommon* modelCommon_ = nullptr;
+	//プリミティブメッシュの生成時に使用する設定
+	std::vector<PrimitiveMeshCreateDesc>primitiveMeshCreateDescs;
+	//プリミティブメッシュの名前一覧
+	std::vector<std::string>primitiveMeshNameList;
 };
 

@@ -49,6 +49,11 @@ static Node ReadNode(aiNode* node) {
 	return result;
 }
 
+//プリミティブのメッシュ作成関数をまとめたテーブル
+MeshData(Model::* Model::PrimitiveMeshFactoryTable[])() = {
+	&MakeCubeData,
+};
+
 //コンストラクタ
 Model::Model() {
 }
@@ -69,13 +74,13 @@ std::unique_ptr<Model>Model::CreateFromModel(ModelCommon* modelCommon, const std
 }
 
 //モデルの生成(キューブ)
-std::unique_ptr<Model> Model::CreateCube(ModelCommon* modelCommon) {
+std::unique_ptr<Model> Model::CreatePrimitiveModel(ModelCommon* modelCommon, const PrimitiveMeshCreateDesc& meshCreateDesc) {
 	//インスタンスの生成
 	std::unique_ptr<Model>instance = std::make_unique<Model>();
 	//初期化
 	instance->Initialize(modelCommon);
 	//モデルの生成
-	instance->CreateCube();
+	instance->InitializePrimitiveModel(meshCreateDesc);
 	return instance;
 }
 
@@ -502,10 +507,10 @@ MeshData Model::MakeCubeData() {
 	return mesh;
 }
 
-//キューブの生成
-void Model::CreateCube() {
+//プリミティブモデルの初期化
+void Model::InitializePrimitiveModel(const PrimitiveMeshCreateDesc& meshCreateDesc) {
 	//モデルの読み込み
-	modelData_.mesheDatas = { MakeCubeData() };
+	modelData_.mesheDatas = { (this->*PrimitiveMeshFactoryTable[static_cast<uint32_t>(meshCreateDesc.meshType)])() };
 	//メッシュの再構築
 	RebuildMeshes(modelData_.mesheDatas);
 	//各種リソースの生成
@@ -514,7 +519,7 @@ void Model::CreateCube() {
 	SetTexture(modelData_.mesheDatas[0].materialIndex, "white1x1.png");
 	//ノードの初期化
 	Node& node = modelData_.rootNode;
-	node.name = "cube";
+	node.name = meshCreateDesc.nodeName;
 	node.localMatrix = Matrix4x4::Identity4x4();
 }
 

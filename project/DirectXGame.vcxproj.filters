@@ -536,6 +536,9 @@
     <ClInclude Include="engine\utilitys\StringUtility.h">
       <Filter>engine\Utilitys</Filter>
     </ClInclude>
+    <ClInclude Include="engine\3d\PrimitiveMeshCreate.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="engine\resources\shaders\Object3d.PS.hlsl">

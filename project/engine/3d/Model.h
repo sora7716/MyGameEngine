@@ -1,6 +1,7 @@
 #pragma once
 #include "ResourceData.h"
 #include "algorithms/Rendering.h"
+#include "PrimitiveMeshCreate.h"
 #include <string>
 #include <vector>
 #include <wrl.h>
@@ -39,11 +40,12 @@ public://メンバ関数
 	static std::unique_ptr<Model> CreateFromModel(ModelCommon* modelCommon, const std::string& storedFilePath, const std::string& filename);
 
 	/// <summary>
-	/// モデルの生成(キューブ)
-	/// </summary>
-	/// <param name="modelCommon">モデルの共通部分</param>
-	/// <returns>モデル</returns>
-	static std::unique_ptr<Model> CreateCube(ModelCommon* modelCommon);
+    /// モデルの生成(キューブ)
+    /// </summary>
+    /// <param name="modelCommon">モデルの共通部分</param>
+	/// <param name="meshCreateDesc">プリミティブメッシュを作成する際に使用する設定</param>
+    /// <returns>モデル</returns>
+	static std::unique_ptr<Model> CreatePrimitiveModel(ModelCommon* modelCommon, const PrimitiveMeshCreateDesc& meshCreateDesc);
 
 	/// <summary>
 	/// モデルの生成(モデルデータ)
@@ -175,9 +177,10 @@ private://メンバ関数
 	MeshData MakeCubeData();
 
 	/// <summary>
-	/// キューブの生成
+	/// プリミティブモデルの初期化
 	/// </summary>
-	void CreateCube();
+	/// <param name="meshCreateDesc">メッシュ生成に使用する設定</param>
+	void InitializePrimitiveModel(const PrimitiveMeshCreateDesc& meshCreateDesc);
 
 	/// <summary>
 	/// モデルの生成
@@ -196,6 +199,9 @@ private://メンバ関数
 	/// 各種リソースの生成
 	/// </summary>
 	void CreateResources();
+private://静的メンバ変数
+	//プリミティブのメッシュ作成関数をまとめたテーブル
+	static MeshData(Model::* PrimitiveMeshFactoryTable[])();
 private://メンバ変数
 	//ModelCommonのポインタ
 	ModelCommon* modelCommon_ = nullptr;

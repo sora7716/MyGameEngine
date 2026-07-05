@@ -46,7 +46,7 @@ void GameObjectList::LoadModel() {
 	////敵
 	//core_->GetModelManager()->LoadModel("enemy", "enemy", "enemy.gltf");
 	//球
-	core_->GetModelManager()->LoadModel("sphere", "sphere", "sphere.gltf");
+	//core_->GetModelManager()->LoadModel("sphere", "sphere", "sphere.gltf");
 	////弾
 	//core_->GetModelManager()->LoadModel("bullet", "sphere", "sphere.gltf");
 	////カメラ
@@ -76,7 +76,7 @@ void GameObjectList::LoadModel() {
 	//core_->GetModelManager()->LoadModel("low", "low", "low.obj");
 
 	//デカヌ
-	core_->GetModelManager()->LoadModel("dekanu", "dekanu", "dekanu.gltf");
+	//core_->GetModelManager()->LoadModel("dekanu", "dekanu", "dekanu.gltf");
 	
 	//杖
 	//core_->GetModelManager()->LoadModel("staff", "staff", "staff.obj");

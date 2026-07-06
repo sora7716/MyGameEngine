@@ -507,6 +507,14 @@ MeshData Model::MakeCubeData() {
 	return mesh;
 }
 
+//プリミティブメッシュタイプからメッシュ名を取得する
+std::string Model::GetNameFromPrimitiveMeshType(PrimitiveMeshType meshType) {
+	std::vector<std::string>meshNameList{
+		"cube"
+	};
+	return meshNameList[static_cast<uint32_t>(meshType)];
+}
+
 //プリミティブモデルの初期化
 void Model::InitializePrimitiveModel(const PrimitiveMeshCreateDesc& meshCreateDesc) {
 	//モデルの読み込み

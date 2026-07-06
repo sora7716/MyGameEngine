@@ -16,5 +16,4 @@ struct PrimitiveMeshCreateDesc {
 	PrimitiveMeshType meshType = PrimitiveMeshType::kNone;
 	Vector3 size = Vector3::MakeAllOne();
 	uint32_t sphereSubdivision = 16;
-	std::string nodeName = "";
 };

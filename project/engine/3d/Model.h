@@ -177,6 +177,13 @@ private://メンバ関数
 	MeshData MakeCubeData();
 
 	/// <summary>
+	/// プリミティブメッシュタイプからメッシュ名を取得する
+	/// </summary>
+	/// <param name="meshType">プリミティブメッシュタイプ</param>
+	/// <returns>メッシュ名</returns>
+	std::string GetNameFromPrimitiveMeshType(PrimitiveMeshType meshType);
+
+	/// <summary>
 	/// プリミティブモデルの初期化
 	/// </summary>
 	/// <param name="meshCreateDesc">メッシュ生成に使用する設定</param>

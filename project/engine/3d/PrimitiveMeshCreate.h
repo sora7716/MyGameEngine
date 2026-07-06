@@ -7,7 +7,6 @@
 enum class PrimitiveMeshType : uint32_t {
 	kCube,
 	kSphere,
-	kPlane,
 	kNone
 };
 

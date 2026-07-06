@@ -5,7 +5,7 @@
 #include "Mesh.h"
 #include "TextureManager.h"
 #include "Logger.h"
-#include "Math.h"
+#include "algorithms/Math.h"
 #include "HashUtility.h"
 #include <format>
 #include <map>
@@ -52,6 +52,7 @@ static Node ReadNode(aiNode* node) {
 //プリミティブのメッシュ作成関数をまとめたテーブル
 MeshData(Model::* Model::PrimitiveMeshFactoryTable[])() = {
 	&MakeCubeData,
+	&MakeSphereData,
 };
 
 //コンストラクタ
@@ -318,6 +319,15 @@ ModelCommon* Model::GetModelCommon() {
 	return modelCommon_;
 }
 
+//プリミティブメッシュタイプからメッシュ名を取得する
+std::string Model::GetNameFromPrimitiveMeshType(PrimitiveMeshType meshType) {
+	std::vector<std::string>meshNameList{
+		"cube",
+		"sphere"
+	};
+	return meshNameList[static_cast<uint32_t>(meshType)];
+}
+
 //マテリアルリソースの生成
 void Model::CreateMaterialResource() {
 	for (uint32_t i = 0; i < modelData_.material.size(); i++) {
@@ -507,12 +517,87 @@ MeshData Model::MakeCubeData() {
 	return mesh;
 }
 
-//プリミティブメッシュタイプからメッシュ名を取得する
-std::string Model::GetNameFromPrimitiveMeshType(PrimitiveMeshType meshType) {
-	std::vector<std::string>meshNameList{
-		"cube"
-	};
-	return meshNameList[static_cast<uint32_t>(meshType)];
+//球の作成
+MeshData Model::MakeSphereData() {
+	//メッシュ
+	MeshData meshData = {};
+	const uint32_t kSubdivision = 16;
+	meshData.vertices.resize(kSubdivision * kSubdivision * 6);
+
+	//経度分割1つ分の角度φd
+	float pi = Math::kPi;
+	const float kLonEvery = pi * 2.0f / static_cast<float>(kSubdivision);
+	//緯度分割1つぶんの角度θd
+	const float kLatEvery = pi / static_cast<float>(kSubdivision);
+	//緯度方向に分割
+	for (uint32_t latIndex = 0; latIndex < kSubdivision; latIndex++) {
+		//θ
+		float lat = -pi / 2.0f + kLatEvery * static_cast<float>(latIndex);
+		//緯度方向に分割しながら線を描く
+		for (uint32_t lonIndex = 0; lonIndex < kSubdivision; lonIndex++) {
+			uint32_t start = (latIndex * kSubdivision + lonIndex) * 6;
+			//φ
+			float lon = lonIndex * kLonEvery;
+			//頂点データを入力する
+			//基準点a
+			meshData.vertices[start].position.x = std::cos(lat) * std::cos(lon);
+			meshData.vertices[start].position.y = std::sin(lat);
+			meshData.vertices[start].position.z = std::cos(lat) * std::sin(lon);
+			meshData.vertices[start].position.w = 1.0f;
+			meshData.vertices[start].texcoord.x = static_cast<float>(lonIndex) / static_cast<float>(kSubdivision);
+			meshData.vertices[start].texcoord.y = 1.0f - static_cast<float>(latIndex) / static_cast<float>(kSubdivision);
+			meshData.vertices[start].normal.x = meshData.vertices[start].position.x;
+			meshData.vertices[start].normal.y = meshData.vertices[start].position.y;
+			meshData.vertices[start].normal.z = meshData.vertices[start].position.z;
+
+			//b
+			meshData.vertices[start + 1].position.x = std::cos(lat + kLatEvery) * std::cos(lon);
+			meshData.vertices[start + 1].position.y = std::sin(lat + kLatEvery);
+			meshData.vertices[start + 1].position.z = std::cos(lat + kLatEvery) * std::sin(lon);
+			meshData.vertices[start + 1].position.w = 1.0f;
+			meshData.vertices[start + 1].texcoord.x = static_cast<float>(lonIndex) / static_cast<float>(kSubdivision);
+			meshData.vertices[start + 1].texcoord.y = 1.0f - static_cast<float>(latIndex + 1) / static_cast<float>(kSubdivision);
+			meshData.vertices[start + 1].normal.x = meshData.vertices[start + 1].position.x;
+			meshData.vertices[start + 1].normal.y = meshData.vertices[start + 1].position.y;
+			meshData.vertices[start + 1].normal.z = meshData.vertices[start + 1].position.z;
+
+			//c
+			meshData.vertices[start + 2].position.x = std::cos(lat) * std::cos(lon + kLonEvery);
+			meshData.vertices[start + 2].position.y = std::sin(lat);
+			meshData.vertices[start + 2].position.z = std::cos(lat) * std::sin(lon + kLonEvery);
+			meshData.vertices[start + 2].position.w = 1.0f;
+			meshData.vertices[start + 2].texcoord.x = static_cast<float>(lonIndex + 1) / static_cast<float>(kSubdivision);
+			meshData.vertices[start + 2].texcoord.y = 1.0f - static_cast<float>(latIndex) / static_cast<float>(kSubdivision);
+			meshData.vertices[start + 2].normal.x = meshData.vertices[start + 2].position.x;
+			meshData.vertices[start + 2].normal.y = meshData.vertices[start + 2].position.y;
+			meshData.vertices[start + 2].normal.z = meshData.vertices[start + 2].position.z;
+
+			//d
+			meshData.vertices[start + 3].position.x = std::cos(lat + kLatEvery) * std::cos(lon + kLonEvery);
+			meshData.vertices[start + 3].position.y = std::sin(lat + kLatEvery);
+			meshData.vertices[start + 3].position.z = std::cos(lat + kLatEvery) * std::sin(lon + kLonEvery);
+			meshData.vertices[start + 3].position.w = 1.0f;
+			meshData.vertices[start + 3].texcoord.x = static_cast<float>(lonIndex + 1) / static_cast<float>(kSubdivision);
+			meshData.vertices[start + 3].texcoord.y = 1.0f - static_cast<float>(latIndex + 1) / static_cast<float>(kSubdivision);
+			meshData.vertices[start + 3].normal.x = meshData.vertices[start + 3].position.x;
+			meshData.vertices[start + 3].normal.y = meshData.vertices[start + 3].position.y;
+			meshData.vertices[start + 3].normal.z = meshData.vertices[start + 3].position.z;
+		}
+	}
+
+	//インデックス
+	meshData.indices.resize(meshData.vertices.size());
+	for (uint32_t i = 0; i < meshData.vertices.size() / 6; i++) {
+		uint32_t start = i * 6;
+		meshData.indices[start] = start;
+		meshData.indices[start + 1] = start + 1;
+		meshData.indices[start + 2] = start + 2;
+		meshData.indices[start + 3] = start + 1;
+		meshData.indices[start + 4] = start + 3;
+		meshData.indices[start + 5] = start + 2;
+	}
+
+	return meshData;
 }
 
 //プリミティブモデルの初期化
@@ -527,7 +612,7 @@ void Model::InitializePrimitiveModel(const PrimitiveMeshCreateDesc& meshCreateDe
 	SetTexture(modelData_.mesheDatas[0].materialIndex, "white1x1.png");
 	//ノードの初期化
 	Node& node = modelData_.rootNode;
-	node.name = meshCreateDesc.nodeName;
+	node.name = GetNameFromPrimitiveMeshType(meshCreateDesc.meshType);
 	node.localMatrix = Matrix4x4::Identity4x4();
 }
 

@@ -155,6 +155,13 @@ public://メンバ関数
 	/// </summary>
 	/// <returns>モデルの共通部分</returns>
 	ModelCommon* GetModelCommon();
+
+	/// <summary>
+	/// プリミティブメッシュタイプからメッシュ名を取得する
+	/// </summary>
+	/// <param name="meshType">プリミティブメッシュタイプ</param>
+	/// <returns>メッシュ名</returns>
+	std::string GetNameFromPrimitiveMeshType(PrimitiveMeshType meshType);
 private://メンバ関数
 	/// <summary>
 	/// マテリアルリソースの生成
@@ -177,11 +184,9 @@ private://メンバ関数
 	MeshData MakeCubeData();
 
 	/// <summary>
-	/// プリミティブメッシュタイプからメッシュ名を取得する
+	/// 球の作成
 	/// </summary>
-	/// <param name="meshType">プリミティブメッシュタイプ</param>
-	/// <returns>メッシュ名</returns>
-	std::string GetNameFromPrimitiveMeshType(PrimitiveMeshType meshType);
+	MeshData MakeSphereData();
 
 	/// <summary>
 	/// プリミティブモデルの初期化

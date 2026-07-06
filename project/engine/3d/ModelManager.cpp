@@ -10,19 +10,13 @@ ModelManager::~ModelManager() {}
 void ModelManager::Initialize(ModelCommon* modelCommon) {
 	assert(modelCommon);
 	modelCommon_ = modelCommon;
-	//プリミティブメッシュの名前一覧
-	primitiveMeshNameList.reserve(static_cast<uint32_t>(PrimitiveMeshType::kNone));
-	primitiveMeshNameList.push_back("cube");
-	//primitiveMeshNameList.push_back("sphere");
-	//primitiveMeshNameList.push_back("plane");
 	//プリミティブモデルの生成時に使用する設定の初期化
 	primitiveMeshCreateDescs.reserve(static_cast<uint32_t>(PrimitiveMeshType::kNone));
-	for (uint32_t i = 0; i < primitiveMeshNameList.size(); i++) {
+	for (uint32_t i = 0; i < static_cast<uint32_t>(PrimitiveMeshType::kNone); i++) {
 		PrimitiveMeshCreateDesc meshCreateDesc = {
 		.meshType = static_cast<PrimitiveMeshType>(i),
 		.size = Vector3::MakeAllOne(),
 		.sphereSubdivision = 16,
-		.nodeName = primitiveMeshNameList[i]
 		};
 		primitiveMeshCreateDescs.push_back(meshCreateDesc);
 	}
@@ -35,7 +29,7 @@ void ModelManager::CreatePrimitiveModel() {
 		std::unique_ptr<Model>model = Model::CreatePrimitiveModel(modelCommon_, meshCreateDesc);
 
 		//モデルをmapコンテナに格納する
-		models_.insert(std::make_pair(meshCreateDesc.nodeName, std::move(model)));
+		models_.insert(std::make_pair(model->GetNameFromPrimitiveMeshType(meshCreateDesc.meshType), std::move(model)));
 	}
 }
 

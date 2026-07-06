@@ -74,7 +74,5 @@ private://メンバ変数
 	ModelCommon* modelCommon_ = nullptr;
 	//プリミティブメッシュの生成時に使用する設定
 	std::vector<PrimitiveMeshCreateDesc>primitiveMeshCreateDescs;
-	//プリミティブメッシュの名前一覧
-	std::vector<std::string>primitiveMeshNameList;
 };
 

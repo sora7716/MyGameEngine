@@ -31,10 +31,10 @@ void TestPlayScene::Initialize(const SceneContext& sceneContext) {
 	object3d_->SetGameCamera(gameCamera_);
 	object3d_->SetModel("sphere");
 	//object3d_->SetModel("cube");
-	object3d_->SetModel("dekanu");
-	for (uint32_t i = 0; i < 33; i++) {
-		object3d_->SetTexture(i, "white1x1.png");
-	}
+	//object3d_->SetModel("dekanu");
+	//for (uint32_t i = 0; i < 33; i++) {
+	//	object3d_->SetTexture(i, "white1x1.png");
+	//}
 
 	object3d_->SetLODDistances({ 20.0f,30.0f,50.0f,80.0f });
 	std::unique_ptr<GameObject>tree = std::make_unique<GameObject>();

@@ -166,8 +166,8 @@ void Model::SetColor(uint32_t index, const Vector4& color) {
 }
 
 //テクスチャの変更
-void Model::SetTexture(uint32_t materialIndex, const std::string& imageName) {
-	modelData_.material[materialIndex].textureFilePath = "engine/resources/textures/" + imageName;
+void Model::SetTexture(uint32_t materialIndex, const std::string& imageFileName) {
+	modelData_.material[materialIndex].textureFilePath = "engine/resources/textures/" + imageFileName;
 	modelCommon_->GetTextureManager()->LoadTexture(modelData_.material[materialIndex].textureFilePath);
 }
 

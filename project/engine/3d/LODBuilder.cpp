@@ -282,18 +282,18 @@ std::vector<MeshData> LODBuilder::EdgeCollapse(const std::vector<MeshData>& mesh
 			}
 
 			//Collapseしたい数
-			uint32_t batchCount = 50;
-			float batchRate = 0.01f;
+			uint32_t batchCount = 50000;
+			float batchRate = 50.0f;
 			//割合ごとにCollapseしたい数と割合も変更
 			if (rate <= 0.25f) {
-				batchCount = 1000;
-				batchRate = 0.2f;
+				batchCount = 700000;
+				batchRate = 200.0f;
 			} else if (rate <= 0.5f) {
-				batchCount = 800;
-				batchRate = 0.1f;
+				batchCount = 500000;
+				batchRate = 100.f;
 			} else if (rate <= 0.8f) {
-				batchCount = 200;
-				batchRate = 0.02f;
+				batchCount = 300000;
+				batchRate = 80.0f;
 			}
 			//現在の頂点数と目標の頂点数の差分
 			uint32_t remainingCount = currentVertexCount - goalVertexCount;

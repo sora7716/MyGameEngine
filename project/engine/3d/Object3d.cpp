@@ -272,12 +272,12 @@ void Object3d::SetParent(const WorldTransform* parent) {
 }
 
 //テクスチャの変更
-void Object3d::SetTexture(uint32_t meshIndex, const std::string& filePath) {
+void Object3d::SetTexture(uint32_t meshIndex, const std::string& imageFileName) {
 	uint32_t materialIndex = baseModel_->GetMeshes()[meshIndex]->GetMaterialIndex();
 	//元モデルにも適応
-	baseModel_->SetTexture(materialIndex, filePath);
+	baseModel_->SetTexture(materialIndex, imageFileName);
 	//LODモデルにも適応
-	lodBuilder_->SetTexture(materialIndex, filePath);
+	lodBuilder_->SetTexture(materialIndex, imageFileName);
 }
 
 //ライティングフラグの設定

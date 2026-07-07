@@ -139,8 +139,8 @@ public://メンバ関数
 	/// テクスチャの変更
 	/// </summary>
 	/// <param name="meshIndex">メッシュの検索キー</param>
-	/// <param name="filePath">ファイルパス</param>
-	void SetTexture(uint32_t meshIndex, const std::string& filePath);
+	/// <param name="imageFileName">画像のファイル名</param>
+	void SetTexture(uint32_t meshIndex, const std::string& imageFileName);
 
 	/// <summary>
 	/// ライティングフラグの設定

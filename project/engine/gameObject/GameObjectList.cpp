@@ -76,7 +76,7 @@ void GameObjectList::LoadModel() {
 	//core_->GetModelManager()->LoadModel("low", "low", "low.obj");
 
 	//デカヌ
-	//core_->GetModelManager()->LoadModel("dekanu", "dekanu", "dekanu.gltf");
+	core_->GetModelManager()->LoadModel("dekanu", "dekanu", "dekanu.gltf");
 	
 	//杖
 	//core_->GetModelManager()->LoadModel("staff", "staff", "staff.obj");

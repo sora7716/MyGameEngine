@@ -256,6 +256,24 @@ void GraphicsPipeline::InitializeInputLayoutDesc() {
 	inputLayoutDesc_.NumElements = _countof(inputElementDescs);
 }
 
+//スカイボックスで使用するインプットレイアウトの初期化
+void GraphicsPipeline::InitializeInputLayoutDescForSkyBox() {
+	//InputElementDesc
+	static D3D12_INPUT_ELEMENT_DESC inputElementDescs[2] = {};
+	inputElementDescs[0].SemanticName = "POSITION";
+	inputElementDescs[0].SemanticIndex = 0;
+	inputElementDescs[0].Format = DXGI_FORMAT_R32G32B32A32_FLOAT;
+	inputElementDescs[0].AlignedByteOffset = D3D12_APPEND_ALIGNED_ELEMENT;
+
+	inputElementDescs[1].SemanticName = "TEXCOORD";
+	inputElementDescs[1].SemanticIndex = 0;
+	inputElementDescs[1].Format = DXGI_FORMAT_R32G32B32_FLOAT;
+	inputElementDescs[1].AlignedByteOffset = D3D12_APPEND_ALIGNED_ELEMENT;
+	//InputLayout
+	inputLayoutDesc_.pInputElementDescs = inputElementDescs;
+	inputLayoutDesc_.NumElements = _countof(inputElementDescs);
+}
+
 //インプットレイアウトの初期化(スプライト)
 void GraphicsPipeline::InitializeInputLayoutDescForSprite() {
 	//InputElementDesc

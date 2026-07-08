@@ -1,6 +1,6 @@
 #pragma once
-#include "engine/math/ResourceData.h"
-#include "engine/base/blendMode.h"
+#include "ResourceData.h"
+#include "blendMode.h"
 #include <wrl.h>
 #include <d3d12.h>
 #include <array>

@@ -12,6 +12,8 @@
 #include "Plane.h"
 #include "Sphere.h"
 #include "algorithms/Collision.h"
+#include "TextureManager.h"
+#include "SkyBox.h"
 
 //コンストラクタ
 TestPlayScene::TestPlayScene() {};
@@ -30,6 +32,7 @@ void TestPlayScene::Initialize(const SceneContext& sceneContext) {
 	object3d_->Initialize(sceneContext_.object3dCommon, &renderCamera_, 1);
 	object3d_->SetGameCamera(gameCamera_);
 	object3d_->SetModel("sphere");
+	object3d_->SetTexture(0, "uvChecker.png");
 	//object3d_->SetModel("cube");
 	//object3d_->SetModel("dekanu");
 	//for (uint32_t i = 0; i < 33; i++) {
@@ -57,6 +60,12 @@ void TestPlayScene::Initialize(const SceneContext& sceneContext) {
 
 	cube_ = std::make_unique<Primitive::Cube>();
 	cube_->Initialize(sceneContext_.directXBase, &renderCamera_);
+
+	//std::string ddsFileName = "engine/resources/textures/rostock_laage_airport_4k.dds";
+	//sceneContext_.textureManager->LoadTexture(ddsFileName);
+
+	skyBox_ = std::make_unique<SkyBox>();
+	skyBox_->Initialize(sceneContext_.directXBase, sceneContext.textureManager, "rostock_laage_airport_4k.dds", gameCamera_);
 }
 
 //更新
@@ -75,6 +84,8 @@ void TestPlayScene::Update() {
 	frustum_->Update();
 
 	cube_->Update();
+
+	skyBox_->Update();
 
 	if (Collision::IsCollision(gameCamera_->GetFrustum(), cube_->GetAABB())) {
 		cube_->SetColor(Vector4::MakeRedColor());
@@ -141,6 +152,10 @@ void TestPlayScene::Debug() {
 	ImGui::DragFloat3("translate", &obb.center.x, 0.1f);
 	cube_->SetOBB(obb);
 	ImGui::End();
+
+	ImGui::Begin("skyBox");
+	skyBox_->Debug();
+	ImGui::End();
 #endif // USE_IMGUI
 
 	//#ifdef _DEBUG
@@ -159,6 +174,8 @@ void TestPlayScene::Draw() {
 	frustum_->Draw();
 
 	cube_->Draw();
+
+	skyBox_->Draw();
 }
 
 //終了

@@ -8,6 +8,7 @@
 class Object3d;
 class GameObject;
 class Audio;
+class SkyBox;
 
 namespace Primitive {
 	class Cube;
@@ -67,4 +68,6 @@ private://メンバ変数
 	std::unique_ptr<Primitive::Frustum>frustum_ = nullptr;
 
 	std::unique_ptr<Primitive::Cube>cube_ = nullptr;
+
+	std::unique_ptr<SkyBox>skyBox_ = nullptr;
 };

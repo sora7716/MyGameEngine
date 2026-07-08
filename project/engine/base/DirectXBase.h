@@ -73,6 +73,11 @@ public://メンバ関数
 	void InitializeDepthStencilForParticle();
 
 	/// <summary>
+	/// 深度ステンシルビューの初期化(スカイボックス用)
+	/// </summary>
+	void InitializeDepthStencilForSkyBox();
+
+	/// <summary>
 	/// フェンスの初期化
 	/// </summary>
 	void InitializeFence();

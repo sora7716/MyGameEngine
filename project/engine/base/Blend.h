@@ -10,12 +10,12 @@ public://メンバ関数
 	/// <summary>
 	/// コンストラクタ
 	/// </summary>
-	Blend() = default;
+	Blend();
 
 	/// <summary>
 	/// デストラクタ
 	/// </summary>
-	~Blend() = default;
+	~Blend();
 
 	/// <summary>
 	/// ブレンドデスクをセット

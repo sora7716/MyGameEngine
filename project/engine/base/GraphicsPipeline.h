@@ -54,6 +54,11 @@ public://メンバ関数
 	void InitializeInputLayoutDesc();
 
 	/// <summary>
+	/// スカイボックスで使用するインプットレイアウトの初期化
+	/// </summary>
+	void InitializeInputLayoutDescForSkyBox();
+
+	/// <summary>
 	/// インプットレイアウトの初期化(スプライト)
 	/// </summary>
 	void InitializeInputLayoutDescForSprite();

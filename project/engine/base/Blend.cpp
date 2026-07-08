@@ -11,6 +11,14 @@ D3D12_BLEND_DESC(Blend::* Blend::BlendModeTable[])() = {
 	&BlendScreen
 };
 
+//コンストラクタ
+Blend::Blend() {
+}
+
+//デストラクタ
+Blend::~Blend() {
+}
+
 //ブレンドデスクをセット
 D3D12_BLEND_DESC Blend::SetBlendDesc(BlendMode blendMode) {
 	return (this->*BlendModeTable[(int32_t)blendMode])();

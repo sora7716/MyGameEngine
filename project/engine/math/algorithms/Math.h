@@ -2,8 +2,11 @@
 #include "Vector3.h"
 #include "Matrix4x4.h"
 #include "Vector2.h"
+#include "Vector4.h"
+#include "PrimitiveData.h"
 #include <vector>
 #include <cmath>
+#include <array>
 #include <numbers>
 #include <algorithm>
 
@@ -95,14 +98,55 @@ public:
 	/// <param name="center">中心</param>
 	/// <param name="radius">円運動の半径</param>
 	/// <param name="theta">角度</param>
-	static Vector3 CircularMoveXZ(const Vector3& center,const Vector2& radius,float theta);
+	static Vector3 CircularMoveXZ(const Vector3& center, const Vector2& radius, float theta);
 
-	///// <summary>
-	///// 弧度法を度数法に変換
-	///// </summary>
-	///// <param name="rad"></param>
-	///// <returns></returns>
-	//static float Degree(float rad);
+	/// <summary>
+	/// 平面を作成(無限平面)
+	/// </summary>
+	/// <param name="p0">平面上の点0</param>
+	/// <param name="p1">平面上の点1</param>
+	/// <param name="p2">平面上の点2</param>
+	/// <returns>平面</returns>
+	static PrimitiveData::Plane MakePlane(const Vector3& p0, const Vector3& p1, const Vector3& p2);
+
+	/// <summary>
+	/// 視錐台の頂点の作成
+	/// </summary>
+	/// <param name="nearClip">ニアクリップ距離</param>
+	/// <param name="farClip">ファークリップ距離</param>
+	/// <param name="fovY">fovY</param>
+	/// <param name="aspect">アスペクト比</param>
+	/// <returns>視錐台の頂点</returns>
+	static std::array<Vector3, 8>CreateFrustumVertex(float nearClip, float farClip, float fovY, float aspect);
+
+	/// <summary>
+	/// 視錐台の作成
+	/// </summary>
+	/// <param name="vertices">頂点</param>
+	/// <param name="worldMatrix">ワールド行列</param>
+	/// <returns>視錐台</returns>
+	static PrimitiveData::Frustum CreateFrustumData(const std::array<Vector3, 8>& vertices, const Matrix4x4& worldMatrix);
+
+	/// <summary>
+	/// 平行四辺形の面積を求める
+	/// </summary>
+	/// <param name="vertices">頂点</param>
+	/// <returns>平行四辺形の面積</returns>
+	static float CalcParallelogramArea(const std::array<Vector3, 3>& vertices);
+
+	/// <summary>
+	/// 三角形の面積を求める
+	/// </summary>
+	/// <param name="vertices">頂点</param>
+	/// <returns>三角形の面積</returns>
+	static float CalcTriangleArea(const std::array<Vector3, 3>& vertices);
+
+	/// <summary>
+	/// 平行四辺形の面積を処理を早くして(正確じゃない)
+	/// </summary>
+	/// <param name="vertices">頂点</param>
+	/// <returns>三角形の面積(正確じゃない)</returns>
+	static float CalcParallelogramAreaSquared(const std::array<Vector3, 3>& vertices);
 public://定数
 	//デルタタイム
 	static inline const float kDeltaTime = 1.0f / 60.0f;

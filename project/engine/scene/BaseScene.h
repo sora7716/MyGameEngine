@@ -50,6 +50,8 @@ public://メンバ関数
 	//純粋仮想関数
 	virtual void Draw() = 0;
 protected://メンバ変数
+	//Xboxの番号
+	DWORD xBoxPadNumber_ = 0;
 	//シーンで必要なもの
 	SceneContext sceneContext_ = {};
 	//デバックカメラ
@@ -57,8 +59,10 @@ protected://メンバ変数
 	//シーンファクトリー
 	AbstractSceneFactory* sceneFactory_ = nullptr;
 	//コライダーマネージャー
-	std::unique_ptr<ColliderManager>colliderManager_ = nullptr;
-	//カメラ
-	Camera camera_;
+	//std::unique_ptr<ColliderManager>colliderManager_ = nullptr;
+	//描画用のカメラ
+	Camera renderCamera_;
+	//ゲームプレイ用のカメラ
+	Camera* gameCamera_ = nullptr;
 };
 

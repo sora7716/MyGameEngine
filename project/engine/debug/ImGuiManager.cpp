@@ -69,26 +69,8 @@ void ImGuiManager::Draw() {
 #endif // USE_IMGUI
 }
 
-//デバッグで動かせるものをツリー上に配置
-void ImGuiManager::TreeNodeForEntityGroup(const std::string& label, EntityGroup& entityGroup) {
-#ifdef USE_IMGUI
-	for (int32_t i = 0; i < entityGroup.objectCount; i++) {
-		ImGui::PushID(i);
-
-		if (ImGui::TreeNode((label + std::to_string(i)).c_str())) {
-			ImGuiManager::DebugGameObject(entityGroup.entity[i].gameObject);
-			ImGui::DragFloat3("velocity", &entityGroup.entity[i].physicsData.velocity.x, 0.1f);
-			ImGui::DragFloat3("acceleration", &entityGroup.entity[i].physicsData.acceleration.x, 0.1f);
-			ImGui::TreePop();
-		}
-
-		ImGui::PopID();
-	}
-#endif // USE_IMGUI
-}
-
 //トランスフォームデータ用のImGui
-void ImGuiManager::DragTransform(TransformData& transformData) {
+void ImGuiManager::DragTransform(Transform& transformData) {
 #ifdef USE_IMGUI
 	ImGui::Checkbox("isUsingQuaternion", &transformData.isUsingQuaternion);
 	ImGui::DragFloat3("scale", &transformData.scale.x, 0.1f);
@@ -130,14 +112,6 @@ void ImGuiManager::DragSphere(PrimitiveData::Sphere& sphere) {
 #ifdef USE_IMGUI
 	ImGui::DragFloat3("center", &sphere.center.x, 0.1f);
 	ImGui::DragFloat("radius", &sphere.radius, 0.01f);
-#endif // USE_IMGUI
-}
-
-//ゲームオブジェクトのデバッグ
-void ImGuiManager::DebugGameObject(GameObject& gameObject) {
-#ifdef USE_IMGUI
-	ImGui::Checkbox("isAlive", &gameObject.isAlive);
-	DragTransform(gameObject.transformData);
 #endif // USE_IMGUI
 }
 
@@ -190,6 +164,15 @@ void ImGuiManager::FloatText(float num, const char* label) {
 	ImGui::SeparatorText(label);
 	ImGui::Text("%5.3f", num);
 #endif // USE_IMGUI
+}
+
+//AABBの表示
+void ImGuiManager::AABBText(const PrimitiveData::AABB& aabb, const char* label) {
+#ifdef _DEBUG
+	ImGuiManager::Vector3Text(aabb.min, (static_cast<std::string>(label) + ".min").c_str());
+	ImGuiManager::Vector3Text(aabb.max, (static_cast<std::string>(label) + ".max").c_str());
+#endif // _DEBUG
+
 }
 
 //コンストラクタ

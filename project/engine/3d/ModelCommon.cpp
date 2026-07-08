@@ -1,6 +1,9 @@
 #include "ModelCommon.h"
 #include "engine/base/DirectXBase.h"
 #include "engine/2d/TextureManager.h"
+//デストラクタ
+ModelCommon::~ModelCommon() {
+}
 
 //初期化
 void ModelCommon::Initialize(DirectXBase* directXBase, TextureManager* textureManager) {
@@ -18,4 +21,8 @@ DirectXBase* ModelCommon::GetDirectXBase() const {
 //テクスチャマネージャーのゲッター
 TextureManager* ModelCommon::GetTextureManager() {
 	return textureManager_;
+}
+
+//コンストラクタ
+ModelCommon::ModelCommon(ConstructorKey) {
 }

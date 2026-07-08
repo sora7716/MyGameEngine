@@ -1,5 +1,9 @@
 #pragma once
 #include "algorithms/Rendering.h"
+#include "PrimitiveData.h"
+#include <memory>
+
+class DirectXBase;
 
 /// <summary>
 /// カメラ
@@ -14,7 +18,13 @@ public://メンバ関数
 	/// <summary>
 	/// デストラクタ
 	/// </summary>
-	~Camera() = default;
+	~Camera();
+
+	/// <summary>
+	/// 初期化
+	/// </summary>
+	/// <param name="directXBase">DirectXの基盤部分</param>
+	void Initialize(DirectXBase*directXBase);
 
 	/// <summary>
 	/// 更新
@@ -22,55 +32,67 @@ public://メンバ関数
 	void Update();
 
 	/// <summary>
-	/// クォータニオンのセッター
+	/// オイラー角の設定
+	/// </summary>
+	/// <param name="eulerAngle">オイラー角</param>
+	void SetEulerAngle(const Vector3& eulerAngle);
+
+	/// <summary>
+	/// クォータニオンの設定
 	/// </summary>
 	/// <param name="quaternion">クォータニオン</param>
 	void SetQuaternion(const Quaternion& quaternion);
 
 	/// <summary>
-	/// 平行移動のセッター
+	/// 平行移動の設定
 	/// </summary>
 	/// <param name="translate">平行移動</param>
 	void SetTranslate(const Vector3& translate);
 
 	/// <summary>
-	/// 水平方向視野角のセッター
+	/// 水平方向視野角の設定
 	/// </summary>
 	/// <param name="fovY">水平方向視野角</param>
 	void SetFovY(const float fovY);
 
 	/// <summary>
-	/// アスペクト比のセッター
+	/// アスペクト比の設定
 	/// </summary>
 	/// <param name="aspectRation">アスペクト比</param>
 	void SetAspectRation(const float aspectRation);
 
 	/// <summary>
-	/// ニアクリップ距離のセッター
+	/// ニアクリップ距離の設定
 	/// </summary>
 	/// <param name="nearClip">ニアクリップ距離</param>
 	void SetNearClip(const float nearClip);
 
 	/// <summary>
-	/// ファークリップ距離のセッター
+	/// ファークリップ距離の設定
 	/// </summary>
 	/// <param name="farClip">ファークリップ距離</param>
 	void SetFarClip(const float farClip);
 
 	/// <summary>
-	/// ワールド行列のゲッター
+	/// ワールド行列の取得
 	/// </summary>
 	/// <returns>ワールド行列</returns>
 	const Matrix4x4& GetWorldMatrix()const;
 
 	/// <summary>
-	/// ビュー行列のゲッター
+	/// オイラー角の取得
+	/// </summary>
+	/// <returns>オイラー角</returns>
+	const Vector3& GetEulerAngle()const;
+
+	/// <summary>
+	/// ビュー行列の取得
 	/// </summary>
 	/// <returns>ビュー行列</returns>
 	const Matrix4x4& GetViewMatrix()const;
 
 	/// <summary>
-	/// 透視投影行列のゲッター
+	/// 透視投影行列の取得
 	/// </summary>
 	/// <returns>透視投影行列</returns>
 	const Matrix4x4& GetProjectionMatrix()const;
@@ -82,37 +104,55 @@ public://メンバ関数
 	const Matrix4x4& GetViewProjectionMatrix()const;
 
 	/// <summary>
-	/// クォータニオンのゲッター
+	/// クォータニオンの取得
 	/// </summary>
 	/// <returns>回転</returns>
 	const Quaternion& GetQuaternion()const;
 
 	/// <summary>
-	/// 平行移動のゲッター
+	/// 平行移動の取得
 	/// </summary>
 	/// <returns>平行移動</returns>
 	const Vector3& GetTranslate()const;
 
 	/// <summary>
-	/// ニアクリップ距離のゲッター
+	/// ワールド座標の取得
+	/// </summary>
+	/// <returns>ワールド座標</returns>
+	Vector3 GetWorldPos()const;
+
+	/// <summary>
+	/// 視錐台の取得
+	/// </summary>
+	/// <returns>視錐台</returns>
+	PrimitiveData::Frustum& GetFrustum();
+
+	/// <summary>
+	/// ニアクリップ距離の取得
 	/// </summary>
 	/// <returns></returns>
 	const float GetNearClip()const;
 
 	/// <summary>
-	/// ファークリップ距離のゲッター
+	/// ファークリップ距離の取得
 	/// </summary>
 	/// <returns></returns>
 	const float GetFarClip()const;
 
 	/// <summary>
-	/// FovYのゲッター
+	/// FovYの取得
 	/// </summary>
 	/// <returns>FovY</returns>
 	const float GetFovY()const;
+
+	/// <summary>
+	/// アスペクト比の取得
+	/// </summary>
+	/// <returns></returns>
+	const float GetAspectRation()const;
 private://メンバ変数
 	//ローカル座標
-	TransformData transform_ = {};
+	Transform transform_ = {};
 	//ワールド行列
 	Matrix4x4 worldMatrix_ = {};
 	//ビュー行列
@@ -129,5 +169,7 @@ private://メンバ変数
 	float farClip_ = 100.0f;
 	//ビュープロジェクション行列
 	Matrix4x4 viewProjectionMatrix_ = {};
+	//視錐台
+	PrimitiveData::Frustum frustum_ = {};
 };
 

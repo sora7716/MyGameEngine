@@ -62,7 +62,7 @@ void SpriteCommon::DrawSetting() {
 }
 
 //テクスチャの読み込み
-void SpriteCommon::LoadTexture(const std::string& filename) {
+void SpriteCommon::LoadTexture(std::string& filename) {
 	textureManager_->LoadTexture(filename);
 }
 

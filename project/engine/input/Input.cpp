@@ -133,11 +133,11 @@ Vector3 Input::GetWorldMousePosition(Camera* camera) const {
 	Matrix4x4 matInverseVP = (camera->GetViewMatrix() * camera->GetProjectionMatrix()).Inverse();
 
 	// NDCからワールド座標系への変換（遠平面）
-	Vector3 posFar = Rendering::Transform(posNDC, matInverseVP);
+	Vector3 posFar = posNDC * matInverseVP;
 
 	// NDCを近平面(z = 0)に調整
 	posNDC.z = 0.0f;
-	Vector3 posNear = Rendering::Transform(posNDC, matInverseVP);
+	Vector3 posNear = posNDC * matInverseVP;
 
 	// マウスレイの方向を計算
 	Vector3 mouseDirection = (posFar - posNear).Normalize();

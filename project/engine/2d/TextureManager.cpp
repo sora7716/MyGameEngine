@@ -23,7 +23,16 @@ void TextureManager::Initialize(DirectXBase* directXBase, SRVManager* srvManager
 }
 
 //テクスチャファイルの読み込み
-void TextureManager::LoadTexture(const std::string& filePath) {
+void TextureManager::LoadTexture(std::string& filePath) {
+	//テクスチャのファイルパスが空だった場合
+	if (filePath.empty()) {
+#ifdef _DEBUG
+		filePath = "engine/resources/textures/magenta1x1.png";
+#else
+		filePath = "engine/resources/textures/white1x1.png";
+#endif // _DEBUG
+	}
+
 	//読み込み済みテクスチャを検索
 	if (textureDatas_.contains(filePath)) {
 		//読み込み済みなら早期リターン

@@ -62,10 +62,10 @@ public://静的メンバ関数
 	/// </summary>
 	/// <param name="hwnd">メッセージが送信されたウィンドウのハンドル</param>
 	/// <param name="msg">メッセージの識別子</param>
-	/// <param name="wparam">メッセージの追加情報</param>
-	/// <param name="lparam">メッセージの追加情報</param>
+	/// <param name="wParam">メッセージの追加情報</param>
+	/// <param name="lParam">メッセージの追加情報</param>
 	/// <returns></returns>
-	static LRESULT CALLBACK WindowProc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam);
+	static LRESULT CALLBACK WindowProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam);
 public://定数
 	//画面の横幅
 	static inline const int32_t kClientWidth = 1280;

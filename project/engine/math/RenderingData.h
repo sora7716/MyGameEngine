@@ -6,20 +6,20 @@
 #include <string>
 #include <vector>
 //Transform情報
-struct TransformData {
-	Vector3 scale;
-	Quaternion quaternion;
-	Vector3 translate;
+struct Transform {
+	Vector3 scale = {};
+	Quaternion quaternion = {};
+	Vector3 translate = {};
 
 	//デバック用
 	//軸
-	Vector3 axis;
+	Vector3 axis = {};
 	//角度
-	float angle;
+	float angle=0.0f;
 	//オイラー角
-	Vector3 eulerAngle;
+	Vector3 eulerAngle = {};
 	//クォータニオンかオイラーか
-	bool isUsingQuaternion;
+	bool isUsingQuaternion = false;
 
 	/// <summary>
 	/// 初期化
@@ -28,27 +28,27 @@ struct TransformData {
 };
 
 //Transform2D情報
-struct Transform2dData {
-	Vector2 scale;
-	float rotate;
-	Vector2 translate;
-	
+struct Transform2d {
+	Vector2 scale = {};
+	float rotate = 0.0f;
+	Vector2 translate = {};
+
 	/// <summary>
-    /// 初期化
-    /// </summary>
+	/// 初期化
+	/// </summary>
 	void Initialize();
 };
 
 //TransformationMatrix
 struct TransformationMatrix {
-	Matrix4x4 wvp;
-	Matrix4x4 world;
-	Matrix4x4 worldInverseTranspose;
+	Matrix4x4 wvp = {};
+	Matrix4x4 world = {};
+	Matrix4x4 worldInverseTranspose = {};
 };
 
 //ノード構造体
 struct Node {
-	Matrix4x4 localMatrix;
-	std::string name;
+	Matrix4x4 localMatrix = {};
+	std::string name = "";
 	std::vector<Node> children;
 };

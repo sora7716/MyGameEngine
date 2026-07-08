@@ -69,6 +69,7 @@ fence
 barrier
 descs
 countof
+Texcoord
 texcoord
 
 // HLSL & Shaders (often used in C++ setup)
@@ -134,3 +135,18 @@ wireframe
 fullscreen
 vsync
 Datas
+
+//externals
+assimp
+texcoord
+aabb
+Phong
+Texcoord
+assimp
+hwnds
+assimp
+Texcoord
+dekanu
+gltf
+countof
+Collpase

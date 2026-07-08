@@ -17,26 +17,27 @@ void Core::Initialize() {
 	//テクスチャマネージャー
 	textureManager_ = std::make_unique<TextureManager>(TextureManager::ConstructorKey{});
 	textureManager_->Initialize(directXBase_.get(), srvManager_.get());
+	//モデルの共通部分
+	modelCommon_ = std::make_unique<ModelCommon>(ModelCommon::ConstructorKey{});
+	modelCommon_->Initialize(directXBase_.get(), textureManager_.get());
 	//モデルマネージャー
 	modelManager_ = std::make_unique<ModelManager>(ModelManager::ConstructorKey{});
-	modelManager_->Initialize(directXBase_.get(), textureManager_.get());
+	modelManager_->Initialize(modelCommon_.get());
 	//ImGuiマネージャー
 	imguiManager_ = std::make_unique<ImGuiManager>(ImGuiManager::ConstructorKey{});
 	imguiManager_->Initialize(winApi_.get(), directXBase_.get(), srvManager_.get());
 	//カメラマナージャー
 	cameraManager_ = std::make_unique<CameraManager>(CameraManager::ConstructorKey{});
+	cameraManager_->Initialize(directXBase_.get());
 	//スプライトの共通部分
 	spriteCommon_ = std::make_unique<SpriteCommon>(SpriteCommon::ConstructorKey{});
 	spriteCommon_->Initialize(directXBase_.get(), textureManager_.get());
 	//2Dオブジェクトの共通部分
 	object2dCommon_ = std::make_unique<Object2dCommon>(Object2dCommon::ConstructorKey{});
 	object2dCommon_->Initialize(directXBase_.get(), textureManager_.get());
-	//ワイヤーフレームオブジェクトのきょつう部分
-	wireframeObject3dCommon_ = std::make_unique<WireframeObject3dCommon>(WireframeObject3dCommon::ConstructorKey{});
-	wireframeObject3dCommon_->Initialize(directXBase_.get(), srvManager_.get(), modelManager_.get());
 	//3Dオブジェクトの共通部分
 	object3dCommon_ = std::make_unique<Object3dCommon>(Object3dCommon::ConstructorKey{});
-	object3dCommon_->Initialize(directXBase_.get(), srvManager_.get(), textureManager_.get(), modelManager_.get(), wireframeObject3dCommon_.get());
+	object3dCommon_->Initialize(directXBase_.get(), srvManager_.get(), textureManager_.get(), modelManager_.get());
 	//パーティクルの共通部分
 	particleCommon_ = std::make_unique<ParticleCommon>(ParticleCommon::ConstructorKey{});
 	particleCommon_->Initialize(directXBase_.get(), srvManager_.get(), textureManager_.get());
@@ -50,18 +51,18 @@ void Core::Initialize() {
 	gameObjectList_ = std::make_unique<GameObjectList>(GameObjectList::ConstructorKey{});
 	gameObjectList_->Initialize(this);
 	//シーンで必要なものをまとめる
-	sceneContex_.input = input_.get();
-	sceneContex_.directXBase = directXBase_.get();
-	sceneContex_.textureManager = textureManager_.get();
-	sceneContex_.cameraManager = cameraManager_.get();
-	sceneContex_.audioManager = audioManager_.get();
-	sceneContex_.imguiManager = imguiManager_.get();
-	sceneContex_.object2dCommon = object2dCommon_.get();
+	sceneContext_.input = input_.get();
+	sceneContext_.directXBase = directXBase_.get();
+	sceneContext_.textureManager = textureManager_.get();
+	sceneContext_.cameraManager = cameraManager_.get();
+	sceneContext_.audioManager = audioManager_.get();
+	sceneContext_.imguiManager = imguiManager_.get();
+	sceneContext_.object2dCommon = object2dCommon_.get();
 	//シーンでの必要なものを取得
-	sceneContex_ = this;
+	sceneContext_ = this;
 	//シーンマネージャー
 	sceneManager_ = std::make_unique<SceneManager>(SceneManager::ConstructorKey{});
-	sceneManager_->Initialize(sceneContex_);
+	sceneManager_->Initialize(sceneContext_);
 	sceneManager_->SetSceneFactory(sceneFactory_.get());
 }
 
@@ -120,14 +121,14 @@ Object3dCommon* Core::GetObject3dCommon() const {
 	return object3dCommon_.get();
 }
 
-//ワイヤーフレームオブジェクトの共通部分のゲッター
-WireframeObject3dCommon* Core::GetWireframeObject3dCommon() const {
-	return wireframeObject3dCommon_.get();
-}
-
 //パーティクルの共通部分のゲッター
 ParticleCommon* Core::GetParticleCommon() const {
 	return particleCommon_.get();
+}
+
+//モデルの共通部分
+ModelCommon* Core::GetModelCommon() const {
+	return modelCommon_.get();
 }
 
 //シーンマネージャーのゲッター

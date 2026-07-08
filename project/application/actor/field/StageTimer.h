@@ -55,7 +55,7 @@ private://メンバ変数
 	std::unique_ptr<Text> text_ = nullptr;
 	TextStyle textStyle_ = {};
 	//トランスフォーム
-	Transform2dData transformData_ = {};
+	Transform2d transformData_ = {};
 	//タイマー
 	//時間切れ
 	bool isTimeUp_ = false;

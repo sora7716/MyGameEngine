@@ -75,7 +75,7 @@ public://メンバ関数
 	/// トランスフォームデータのセッター
 	/// </summary>
 	/// <param name="transformData">トランスフォームデータ</param>
-	void SetTransformDate(const Transform2dData& transformData);
+	void SetTransformDate(const Transform2d& transformData);
 
 	/// <summary>
 	/// 文字の大きさ
@@ -163,13 +163,13 @@ private://メンバ変数
 	//ワールドトランスフォーム
 	WorldTransform* worldTransform_ = nullptr;
 	//UV座標
-	Transform2dData uvTransform_ = {
+	Transform2d uvTransform_ = {
 		.scale = { 1.0f,1.0f },
 		.rotate = 0.0f,
 		.translate = {0.0f,0.0f}
 	};
 	//ワールド座標
-	Transform2dData transform_ = {
+	Transform2d transform_ = {
 		.scale = {100.0f,100.0f},
 		.rotate = 0.0f,
 		.translate = {0.0f,0.0f}

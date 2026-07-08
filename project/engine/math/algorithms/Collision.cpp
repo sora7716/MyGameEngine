@@ -1,10 +1,11 @@
 #define NOMINMAX
 #include "Collision.h"
 #include "Rendering.h"
-#include "Log.h"
+#include "Logger.h"
 #include <format>
 #include <algorithm>
 #include <array>
+#include <cmath>
 
 using namespace PrimitiveData;
 
@@ -65,7 +66,7 @@ bool Collision::IsCollision(const OBB& obb, const Sphere& sphere) {
 	Matrix4x4 obbWorldMatrixInverse = Rendering::MakeOBBWorldMatrix(obb.orientations, obb.center).Inverse();
 
 	//球の中心をOBB空間上に持っていく
-	Vector3 centerInOBBLocalSpace = Rendering::Transform(sphere.center, obbWorldMatrixInverse);
+	Vector3 centerInOBBLocalSpace = sphere.center * obbWorldMatrixInverse;
 
 	//AABBをOBBのサイズをもとに作成
 	AABB aabbOBBLocal = { -obb.size,obb.size };
@@ -201,6 +202,60 @@ bool Collision::IsCollision(const OBB& obb1, const OBB& obb2) {
 
 		if (length < longSpan) {
 			//分離軸が見つかったので衝突していない
+			return false;
+		}
+	}
+
+	return true;
+}
+
+//平面と球の衝突判定
+bool Collision::IsCollision(const PrimitiveData::Plane& plane, const PrimitiveData::Sphere& sphere) {
+	//球の中心点と平面との距離
+	float distance = std::abs(plane.normal.Dot(sphere.center) - plane.distance);
+
+	//衝突判定
+	return distance <= sphere.radius;
+}
+
+//平面とAABBの衝突判定
+bool Collision::IsCollision(const PrimitiveData::Plane& plane, const PrimitiveData::AABB& aabb) {
+	//AABBの中心と半径を取得
+	Vector3 center = (aabb.min + aabb.max) / 2.0f;
+	Vector3 halfSize = (aabb.max - aabb.min) / 2.0f;
+
+	//AABBの中心点と平面との距離
+	float distance = plane.normal.Dot(center) - plane.distance;
+
+	//半径を求める
+	float radius = plane.normal.Abs().Dot(halfSize);
+
+	return std::abs(distance) <= radius;
+}
+
+//AABBが平面の外側に完全に出ているか
+bool IsOutsidePlaneAABB(const PrimitiveData::Plane& plane, const PrimitiveData::AABB& aabb) {
+	//AABBの中心
+	Vector3 center = (aabb.min + aabb.max) / 2.0f;
+
+	//AABBの半径
+	Vector3 halfSize = (aabb.max - aabb.min) / 2.0f;
+
+	//平面からAABB中心までの符号付距離
+	float signedDistance = plane.normal.Dot(center) - plane.distance;
+
+	//AABBを平面法線方向に投影した半径
+	float radius = plane.normal.Abs().Dot(halfSize);
+
+	//法線が視錐台の内側を向いている場合
+	return signedDistance < -radius;
+}
+
+//視錐台と衝突判定
+bool Collision::IsCollision(const PrimitiveData::Frustum& frustum, const PrimitiveData::AABB& aabb) {
+	for (const PrimitiveData::Plane& plane : frustum.planes) {
+		//平面の外にAABBがいた場合
+		if (IsOutsidePlaneAABB(plane, aabb)) {
 			return false;
 		}
 	}
@@ -352,8 +407,8 @@ HitInfo Collision::GetHitInfo(const OBB& obb1, const OBB& obb2) {
 
 	hitInfo.isCollision = true;
 
-	Vector3 cenerDelta = obb2.center - obb1.center;
-	if (cenerDelta.Dot(hitInfo.normal) < 0.0f) {
+	Vector3 cornerDelta = obb2.center - obb1.center;
+	if (cornerDelta.Dot(hitInfo.normal) < 0.0f) {
 		hitInfo.normal = -hitInfo.normal;
 	}
 

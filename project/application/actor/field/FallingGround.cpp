@@ -20,8 +20,8 @@ void FallingGround::Initialize(Object3dCommon* object3dCommon, Camera* camera) {
 	//基底クラスの初期化
 	BaseGround::Initialize(object3dCommon, camera);
 	//位置を調整
-	entityGroup_.entity[0].gameObject.transformData.translate = { 9.0f,7.5f,18.0f };
-	entityGroup_.entity[1].gameObject.transformData.translate = { 6.2f,8.1f,13.5f };
+	entityGroup_.entity[0].gameObject.transform.translate = { 9.0f,7.5f,18.0f };
+	entityGroup_.entity[1].gameObject.transform.translate = { 6.2f,8.1f,13.5f };
 }
 
 //更新

@@ -31,7 +31,7 @@ void Player::Initialize(Object3dCommon* object3dCommon, Camera* camera, Input* i
 	entityGroup_.entity.resize(entityGroup_.objectCount);
 
 	entityGroup_.renderObject.object3d->Initialize(object3dCommon, camera, entityGroup_.objectCount);
-	entityGroup_.renderObject.object3d->SetModel(entityGroup_.modelName);
+	//entityGroup_.renderObject.object3d->SetModel(entityGroup_.modelName);
 	entityGroup_.renderObject.hitBox->Initialize(object3dCommon->GetWireframeObject3dCommon(), camera, ModelType::kCube, entityGroup_.objectCount);
 
 	//初期化
@@ -39,7 +39,7 @@ void Player::Initialize(Object3dCommon* object3dCommon, Camera* camera, Input* i
 		entity.gameObject.Initialize();
 		entity.gameObject.tag = Tag::kPlayer;
 		entity.physicsData.acceleration = Physics::kGravity;
-		entity.colliderState.Initialize(entity.gameObject, entity.physicsData, entity.gameObject.transformData.scale);
+		entity.colliderState.Initialize(entity.gameObject, entity.physicsData, entity.gameObject.transform.scale);
 		entity.collider.owner = &entity.colliderState;
 		entity.collider.isEnabled = true;
 		entity.collider.isTrigger = false;
@@ -56,14 +56,14 @@ void Player::Update() {
 	Jump();
 	for (int32_t i = 0; i < entityGroup_.objectCount; i++) {
 		entityGroup_.entity[i].physicsData.velocity += entityGroup_.entity[i].physicsData.acceleration * Math::kDeltaTime;
-		entityGroup_.entity[i].gameObject.transformData.translate += entityGroup_.entity[i].physicsData.velocity * Math::kDeltaTime;
+		entityGroup_.entity[i].gameObject.transform.translate += entityGroup_.entity[i].physicsData.velocity * Math::kDeltaTime;
 
 		entityGroup_.renderObject.object3d->SetGameObject(i, entityGroup_.entity[i].gameObject);
-		entityGroup_.renderObject.hitBox->SetTransformData(i, entityGroup_.entity[i].gameObject.transformData);
+		entityGroup_.renderObject.hitBox->SetTransformData(i, entityGroup_.entity[i].gameObject.transform);
 
 		//プレイヤーが落ちたら
-		if (entityGroup_.entity[i].gameObject.transformData.translate.y < -10.0f) {
-			entityGroup_.entity[i].gameObject.isAlive = false;
+		if (entityGroup_.entity[i].gameObject.transform.translate.y < -10.0f) {
+			entityGroup_.entity[i].gameObject.isActive = false;
 		}
 	}
 
@@ -84,7 +84,7 @@ void Player::Draw() {
 
 //カメラのセッター
 void Player::SetCamera(Camera* camera) {
-	entityGroup_.renderObject.object3d->SetCamera(camera);
+	entityGroup_.renderObject.object3d->SetGameCamera(camera);
 	entityGroup_.renderObject.hitBox->SetCamera(camera);
 }
 
@@ -96,7 +96,7 @@ std::vector<Entity>& Player::GetEntity() {
 
 //平行移動のゲッター
 Vector3 Player::GetTranslate() {
-	return entityGroup_.entity[0].gameObject.transformData.translate;
+	return entityGroup_.entity[0].gameObject.transform.translate;
 }
 
 //ゴールしたかどうか

@@ -2,6 +2,8 @@
 #include <map>
 #include <string>
 #include <memory>
+#include "PrimitiveMeshCreate.h"
+#include <vector>
 
 //前方宣言
 class DirectXBase;
@@ -22,9 +24,13 @@ public://メンバ関数
 	/// <summary>
 	/// 初期化
 	/// </summary>
-	/// <param name="directXBase">DirectXの基盤部分</param>
-	/// <param name="textureManager">テクスチャマネージャー</param>
-	void Initialize(DirectXBase* directXBase,TextureManager*textureManager);
+	/// <param name="modelCommon">モデルの共通部分</param>
+	void Initialize(ModelCommon* modelCommon);
+
+	/// <summary>
+	/// プリミティブなモデルの生成
+	/// </summary>
+	void CreatePrimitiveModel();
 
 	/// <summary>
 	/// objモデルの読み込み
@@ -46,7 +52,7 @@ public://メンバ関数
 	/// </summary>
 	/// <returns>モデルの共通部分</returns>
 	ModelCommon* GetModelCommon();
-public://PrassKey
+public://PassKey
 	class ConstructorKey {
 		ConstructorKey() = default;
 		friend class Core;
@@ -54,7 +60,7 @@ public://PrassKey
 	/// <summary>
 	/// コンストラクタ
 	/// </summary>
-	/// <param name="">PrassKeyを受け取る</param>
+	/// <param name="">PassKeyを受け取る</param>
 	explicit ModelManager(ConstructorKey);
 private://メンバ関数
 	//コピーコンストラクタ禁止
@@ -66,5 +72,7 @@ private://メンバ変数
 	std::map<std::string, std::unique_ptr<Model>>models_;
 	//モデルの共通部分
 	ModelCommon* modelCommon_ = nullptr;
+	//プリミティブメッシュの生成時に使用する設定
+	std::vector<PrimitiveMeshCreateDesc>primitiveMeshCreateDescs;
 };
 

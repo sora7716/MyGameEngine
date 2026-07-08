@@ -29,7 +29,7 @@ Vector3 Math::Slerp(const Vector3& v1, const Vector3& v2, float t) {
 	nv1 = nv1.Normalize();
 	Vector3 nv2 = v2; // v2 の正規化ベクトル
 	nv2 = nv2.Normalize();
-	float dot =nv1.Dot(nv2);   // 正規化されたベクトル同士の内積
+	float dot = nv1.Dot(nv2);   // 正規化されたベクトル同士の内積
 
 	// 誤差により1.0fを超えるのを防ぐ
 	dot = std::clamp(dot, -1.0f, 1.0f);
@@ -166,4 +166,121 @@ Vector3 Math::CircularMoveXZ(const Vector3& center, const Vector2& radius, float
 	result.y = center.y;
 	result.z = center.z + sin(theta) * radius.y;
 	return result;
+}
+
+//平面の作成(無限平面)
+PrimitiveData::Plane Math::MakePlane(const Vector3& p0, const Vector3& p1, const Vector3& p2) {
+	//平面
+	PrimitiveData::Plane plane = {};
+
+	//p0　-> p1へ向かうベクトル
+	Vector3 v01 = p1 - p0;
+	//p0　-> p2へ向かうベクトル
+	Vector3 v02 = p2 - p0;
+	//法線
+	plane.normal = v01.Cross(v02).Normalize();
+
+	//距離
+	plane.distance = plane.normal.Dot(p0);
+
+	return plane;
+}
+
+//視錐台の頂点の作成
+std::array<Vector3, 8> Math::CreateFrustumVertex(float nearClip, float farClip, float fovY, float aspect) {
+	std::array<Vector3, 8>vertexes = {};
+	float nearZ = nearClip;
+	float farZ = farClip;
+
+	float nearH = std::tan(fovY * 0.5f) * nearZ;
+	float nearW = nearH * aspect;
+
+	float farH = std::tan(fovY * 0.5f) * farZ;
+	float farW = farH * aspect;
+
+	//near
+	vertexes[0] = { -nearW,-nearH,nearZ };
+	vertexes[1] = { -nearW,nearH,nearZ };
+	vertexes[2] = { nearW,nearH,nearZ };
+	vertexes[3] = { nearW,-nearH,nearZ };
+
+	//far
+	vertexes[4] = { -farW,-farH,farZ };
+	vertexes[5] = { -farW,farH,farZ };
+	vertexes[6] = { farW,farH,farZ };
+	vertexes[7] = { farW,-farH,farZ };
+
+	return vertexes;
+}
+
+//視錐台の作成
+PrimitiveData::Frustum Math::CreateFrustumData(const std::array<Vector3, 8>& vertices, const Matrix4x4& worldMatrix) {
+	PrimitiveData::Frustum frustum = {};
+	frustum.localCorners = vertices;
+	for (uint32_t i = 0; i < frustum.worldCorners.size(); i++) {
+		Vector3 local = vertices[i];
+
+		Vector3 world = local * worldMatrix;
+
+		frustum.worldCorners[i] = world;
+	}
+
+	const auto& c = frustum.worldCorners;
+
+	frustum.planes[PrimitiveData::Frustum::kLeft] = Math::MakePlane(c[0], c[1], c[4]);
+
+	frustum.planes[PrimitiveData::Frustum::kRight] = Math::MakePlane(c[3], c[7], c[2]);
+
+	frustum.planes[PrimitiveData::Frustum::kTop] = Math::MakePlane(c[1], c[2], c[5]);
+
+	frustum.planes[PrimitiveData::Frustum::kBottom] = Math::MakePlane(c[0], c[4], c[3]);
+
+	frustum.planes[PrimitiveData::Frustum::kNear] = Math::MakePlane(c[0], c[2], c[1]);
+
+	frustum.planes[PrimitiveData::Frustum::kFar] = Math::MakePlane(c[4], c[5], c[6]);
+
+	return frustum;
+}
+
+//平行四辺形の面積を求める
+float Math::CalcParallelogramArea(const std::array<Vector3, 3>& vertices) {
+	//各頂点を取得
+	Vector3 v0 = vertices[0];
+	Vector3 v1 = vertices[1];
+	Vector3 v2 = vertices[2];
+
+	//v1-v0ベクトル
+	Vector3 v01 = v1 - v0;//底辺の長さベクトル
+	//v2-v0ベクトル
+	Vector3 v02 = v2 - v0;//高さ
+
+	//底辺の長さ x 高さ
+	Vector3 cross = v01.Cross(v02);
+	float crossLength = cross.Length();
+
+	return crossLength;
+}
+
+//三角形の面積を求める
+float Math::CalcTriangleArea(const std::array<Vector3, 3>& vertices) {
+	return CalcParallelogramArea(vertices) / 2.0f;
+}
+
+//平行四辺形の面積を処理を早くして(正確じゃない)
+float Math::CalcParallelogramAreaSquared(const std::array<Vector3, 3>& vertices) {
+	//三角形の面積
+	Vector3 v0 = vertices[0];
+	Vector3 v1 = vertices[1];
+	Vector3 v2 = vertices[2];
+
+	//v1-v0ベクトル
+	Vector3 v01 = v1 - v0;//底辺の長さベクトル
+	//v2-v0ベクトル
+	Vector3 v02 = v2 - v0;//高さ
+
+	//底辺の長さ x 高さ
+	Vector3 cross = v01.Cross(v02);
+	float crossLength = cross.LengthSquared();
+
+	return crossLength;
 }

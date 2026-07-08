@@ -1,5 +1,4 @@
 #pragma once
-#include "GameObjectData.h"
 #include "ActorData.h"
 #ifdef USE_IMGUI
 #include "imgui/imgui.h"
@@ -7,8 +6,8 @@
 #include "imgui/imgui_impl_win32.h"
 #endif // USE_IMGUI
 #include <string>
-#include <Vector3.h>
-#include <PrimitiveData.h>
+#include "Vector3.h"
+#include "PrimitiveData.h"
 //前方宣言
 class DirectXBase;
 class SRVManager;
@@ -48,17 +47,10 @@ public://メンバ関数
 	void Draw();
 
 	/// <summary>
-	/// デバッグで動かせるものをツリー上に配置
-	/// </summary>
-	/// <param name="label">ラベル</param>
-	/// <param name="entityGroup">エンティティグループ</param>
-	static void TreeNodeForEntityGroup(const std::string& label,EntityGroup& entityGroup);
-
-	/// <summary>
 	/// トランスフォームデータ用のImGui
 	/// </summary>
-	/// <param name="transfromData">トランスフォームデータ</param>
-	static void DragTransform(TransformData& transfromData);
+	/// <param name="transformData">トランスフォームデータ</param>
+	static void DragTransform(Transform& transformData);
 
 	/// <summary>
 	/// OBBデータ用のImGui
@@ -77,12 +69,6 @@ public://メンバ関数
 	/// </summary>
 	/// <param name="sphere">球</param>
 	static void DragSphere(PrimitiveData::Sphere& sphere);
-
-	/// <summary>
-	/// ゲームオブジェクトのデバッグ
-	/// </summary>
-	/// <param name="gameObject">ゲームオブジェクト</param>
-	static void DebugGameObject(GameObject& gameObject);
 
 	/// <summary>
 	/// int型でcheckBoxを表示する
@@ -119,6 +105,13 @@ public://メンバ関数
 	/// <param name="num">浮動小数</param>
 	/// <param name="label">ラベル</param>
 	static void FloatText(float num, const char* label);
+
+	/// <summary>
+	/// AABBの表示
+	/// </summary>
+	/// <param name="aabb">aabb</param>
+	/// <param name="label">ラベル</param>
+	static void AABBText(const PrimitiveData::AABB& aabb, const char* label);
 public://PassKey
 	class ConstructorKey {
 	private:

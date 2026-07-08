@@ -1,11 +1,13 @@
 #pragma once
+#include "Matrix4x4.h"
+#include <cstdint>
 /// <summary>
 /// 3次元ベクトル
 /// </summary>
 struct Vector3 final {
-	float x;
-	float y;
-	float z;
+	float x = 0.0f;
+	float y = 0.0f;
+	float z = 0.0f;
 
 	/// <summary>
 	/// Vector3のメンバ変数すべてに1.0fを代入したVector3を作成
@@ -13,9 +15,48 @@ struct Vector3 final {
 	/// <returns>Vector3</returns>
 	static Vector3 MakeAllOne();
 
-	//長さ(ノルム)
+	/// <summary>
+	/// 最小値
+	/// </summary>
+	/// <param name="v">ベクトル</param>
+	/// <returns>最小値</returns>
+	Vector3 Min(const Vector3& v)const;
+
+	/// <summary>
+	/// 最大値
+	/// </summary>
+	/// <param name="v">ベクトル</param>
+	/// <returns>最大値</returns>
+	Vector3 Max(const Vector3& v)const;
+
+	/// <summary>
+	/// 絶対値
+	/// </summary>
+	/// <returns>絶対値</returns>
+	Vector3 Abs()const;
+
+	/// <summary>
+	/// 小数点切り捨て
+	/// </summary>
+	/// <returns>小数点切り捨て</returns>
+	Vector3 Floor()const;
+
+	/// <summary>
+	/// 長さ(ノルム)
+	/// </summary>
+	/// <returns>長さ(ノルム)</returns>
 	float Length();
-	// 正規化
+
+	/// <summary>
+	/// 長さ(平方根を使用しない)
+	/// </summary>
+	/// <returns>長さ(平方根を使用しない)</returns>
+	float LengthSquared();
+
+	/// <summary>
+	/// 正規化
+	/// </summary>
+	/// <returns>正規化</returns>
 	Vector3 Normalize()const;
 
 	/// <summary>
@@ -48,6 +89,8 @@ struct Vector3 final {
 	Vector3 operator-(const Vector3& v)const;
 	//乗法
 	Vector3 operator*(const Vector3& v)const;
+	//乗法(行列)
+	Vector3 operator*(const Matrix4x4& m)const;
 	//除法
 	Vector3 operator/(const Vector3& v)const;
 	//加法(複合)
@@ -56,6 +99,7 @@ struct Vector3 final {
 	Vector3& operator-=(const Vector3& v);
 	//乗法(複合)
 	Vector3& operator*=(const Vector3& v);
+
 	//除法(複合)
 	Vector3& operator/=(const Vector3& v);
 	// スカラー倍
@@ -79,3 +123,21 @@ struct Vector3 final {
 };
 //float*Vector3
 const Vector3 operator*(float n, const Vector3& v);
+
+/// <summary>
+/// 3次元ベクトルの整数型
+/// </summary>
+struct Vector3Int {
+	int32_t x = 0;
+	int32_t y = 0;
+	int32_t z = 0;
+
+	//Vector3Int同士の比較
+	bool operator<(const Vector3Int& v)const;
+
+	//Vector3Intが一致しているか
+	bool operator!=(const Vector3Int& v)const;
+
+	//Vector3からVector3Intへ変換
+	Vector3Int& operator=(const Vector3& v);
+};

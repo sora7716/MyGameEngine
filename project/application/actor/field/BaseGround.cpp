@@ -25,13 +25,13 @@ void BaseGround::Initialize(Object3dCommon* object3dCommon, Camera* camera) {
 		.Build();
 
 	entityGroup_.renderObject.object3d->Initialize(object3dCommon, camera, entityGroup_.objectCount);
-	entityGroup_.renderObject.object3d->SetModel(entityGroup_.modelName);
+	//entityGroup_.renderObject.object3d->SetModel(entityGroup_.modelName);
 	entityGroup_.renderObject.hitBox->Initialize(object3dCommon->GetWireframeObject3dCommon(), camera, ModelType::kCube, entityGroup_.objectCount);
 
 	//初期化
 	for (uint32_t i = 0; i < static_cast<uint32_t>(entityGroup_.entity.size()); i++) {
 		entityGroup_.entity[i].gameObject.Initialize();
-		entityGroup_.entity[i].colliderState.Initialize(entityGroup_.entity[i].gameObject, entityGroup_.entity[i].physicsData, entityGroup_.entity[i].gameObject.transformData.scale);
+		entityGroup_.entity[i].colliderState.Initialize(entityGroup_.entity[i].gameObject, entityGroup_.entity[i].physicsData, entityGroup_.entity[i].gameObject.transform.scale);
 		entityGroup_.entity[i].collider.owner = &entityGroup_.entity[i].colliderState;
 		entityGroup_.entity[i].collider.isEnabled = true;
 		entityGroup_.entity[i].collider.isTrigger = false;
@@ -47,9 +47,9 @@ void BaseGround::Update() {
 	//ゲームオブジェクトなどの設定
 	for (int32_t i = 0; i < entityGroup_.objectCount; i++) {
 		entityGroup_.entity[i].physicsData.velocity += entityGroup_.entity[i].physicsData.acceleration * Math::kDeltaTime;
-		entityGroup_.entity[i].gameObject.transformData.translate += entityGroup_.entity[i].physicsData.velocity * Math::kDeltaTime;
+		entityGroup_.entity[i].gameObject.transform.translate += entityGroup_.entity[i].physicsData.velocity * Math::kDeltaTime;
 		entityGroup_.renderObject.object3d->SetGameObject(i, entityGroup_.entity[i].gameObject);
-		entityGroup_.renderObject.hitBox->SetTransformData(i, entityGroup_.entity[i].gameObject.transformData);
+		entityGroup_.renderObject.hitBox->SetTransformData(i, entityGroup_.entity[i].gameObject.transform);
 	}
 
 	//描画オブジェクトの更新
@@ -74,7 +74,7 @@ void BaseGround::OnCollision(uint32_t index, ColliderState* other) {
 
 //カメラのセッター
 void BaseGround::SetCamera(Camera* camera) {
-	entityGroup_.renderObject.object3d->SetCamera(camera);
+	entityGroup_.renderObject.object3d->SetGameCamera(camera);
 	entityGroup_.renderObject.hitBox->SetCamera(camera);
 }
 

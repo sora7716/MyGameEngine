@@ -29,41 +29,57 @@ void GameObjectList::LoadAudio() {
 
 //OBJファイルの読み込み
 void GameObjectList::LoadModel() {
-	//モデルの読み込み
+	//プリミティブなモデルの生成
+	core_->GetModelManager()->CreatePrimitiveModel();
+	////モデルの読み込み
+	////デバッグ用
+	////球
+	//core_->GetModelManager()->LoadModel("sphere", "sphere", "sphere.gltf");
+	////キューブ
+	//core_->GetModelManager()->LoadModel("cube2", "cube", "cube.obj");
+	//マルチメッシュ
+	//core_->GetModelManager()->LoadModel("multiMaterial", "base", "multiMaterial.obj");
 
-	//デバッグ用
+	////ゲームで使用するモデル
+	////プレイヤー
+	//core_->GetModelManager()->LoadModel("player", "player", "player.gltf");
+	////敵
+	//core_->GetModelManager()->LoadModel("enemy", "enemy", "enemy.gltf");
 	//球
-	core_->GetModelManager()->LoadModel("sphere", "sphere", "sphere.gltf");
-	//キューブ
-	core_->GetModelManager()->LoadModel("cube", "cube", "cube.obj");
+	//core_->GetModelManager()->LoadModel("sphere", "sphere", "sphere.gltf");
+	////弾
+	//core_->GetModelManager()->LoadModel("bullet", "sphere", "sphere.gltf");
+	////カメラ
+	//core_->GetModelManager()->LoadModel("camera", "cube", "cube.obj");
+	////地面
+	//core_->GetModelManager()->LoadModel("ground", "ground", "ground.gltf");
+	////フィールド
+	//core_->GetModelManager()->LoadModel("field", "terrain", "terrain.obj");
+	////平面
+	//core_->GetModelManager()->LoadModel("plane", "base", "plane.gltf");
+	////HPバー
+	//core_->GetModelManager()->LoadModel("hpBar", "base", "plane.gltf");
+	////HPアウトライン
+	//core_->GetModelManager()->LoadModel("hpOutLine", "base", "plane.gltf");
+	////スポットライト
+	//core_->GetModelManager()->LoadModel("spotLight", "plane", "plane.obj");
+	////軸
+	//core_->GetModelManager()->LoadModel("test", "base", "axis.obj");
+	////壁
+	//core_->GetModelManager()->LoadModel("wall", "cube", "cube.obj");
 
-	//ゲームで使用するモデル
-	//プレイヤー
-	core_->GetModelManager()->LoadModel("player", "player", "player.gltf");
-	//敵
-	core_->GetModelManager()->LoadModel("enemy", "enemy", "enemy.gltf");
-	//球
-	core_->GetModelManager()->LoadModel("sphere", "sphere", "sphere.gltf");
-	//弾
-	core_->GetModelManager()->LoadModel("bullet", "sphere", "sphere.gltf");
-	//カメラ
-	core_->GetModelManager()->LoadModel("camera", "cube", "cube.obj");
-	//地面
-	core_->GetModelManager()->LoadModel("ground", "ground", "ground.gltf");
-	//フィールド
-	core_->GetModelManager()->LoadModel("field", "terrain", "terrain.obj");
-	//平面
-	core_->GetModelManager()->LoadModel("plane", "base", "plane.gltf");
-	//HPバー
-	core_->GetModelManager()->LoadModel("hpBar", "base", "plane.gltf");
-	//HPアウトライン
-	core_->GetModelManager()->LoadModel("hpOutLine", "base", "plane.gltf");
-	//スポットライト
-	core_->GetModelManager()->LoadModel("spotLight", "plane", "plane.obj");
-	//軸
-	core_->GetModelManager()->LoadModel("test", "base", "axis.obj");
-	//壁
-	core_->GetModelManager()->LoadModel("wall", "cube", "cube.obj");
+	////高
+	//core_->GetModelManager()->LoadModel("height", "height", "height.obj");
+	////中
+	//core_->GetModelManager()->LoadModel("medium", "medium", "medium.obj");
+	////低
+	//core_->GetModelManager()->LoadModel("low", "low", "low.obj");
+
+	//デカヌ
+	core_->GetModelManager()->LoadModel("dekanu", "dekanu", "dekanu.gltf");
+	
+	//杖
+	//core_->GetModelManager()->LoadModel("staff", "staff", "staff.obj");
 }
 
 //カメラの生成

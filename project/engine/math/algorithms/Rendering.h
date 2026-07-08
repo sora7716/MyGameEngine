@@ -1,5 +1,5 @@
 #pragma once
-#include "engine/math/RenderingData.h"
+#include "RenderingData.h"
 #include <Quaternion.h>
 
 /// <summary>
@@ -20,14 +20,6 @@ public://メンバ関数
 	/// <param name="translate">移動</param>
 	/// <returns>移動のmatrix</returns>
 	static Matrix4x4 MakeTranslateMatrix(const Vector3& translate);
-
-	/// <summary>
-	/// 同次座標系で計算し、デカルト座標系で返す
-	/// </summary>
-	/// <param name="vector">vector</param>
-	/// <param name="matrix">matrix</param>
-	/// <returns>デカルト座標系</returns>
-	static Vector3 Transform(const Vector3& vector, const Matrix4x4& matrix);
 
 	/// <summary>
 	/// x座標を軸に回転
@@ -116,7 +108,7 @@ public://メンバ関数
 	/// </summary>
 	/// <param name="transform">トランスフォーム</param>
 	/// <returns>アフィン行列</returns>
-	static Matrix4x4 MakeAffineMatrix(const TransformData& transform);
+	static Matrix4x4 MakeAffineMatrix(const Transform& transform);
 
 	/// <summary>
 	/// アフィン行列
@@ -141,7 +133,7 @@ public://メンバ関数
 	/// </summary>
 	/// <param name="uvTransform">uv座標</param>
 	/// <returns>アフィン行列</returns>
-	static Matrix4x4 MakeUVAffineMatrix(const Transform2dData& uvTransform);
+	static Matrix4x4 MakeUVAffineMatrix(const Transform2d& uvTransform);
 
 	/// <summary>
 	/// 正射影行列
@@ -199,13 +191,13 @@ public://メンバ関数
 	/// <param name="cameraWorldMatrix">カメラのワールド行列</param>
 	/// <param name="transform">トランスフォーム</param>
 	/// <returns>ビルボード行列を含んだアフィン行列</returns>
-	static Matrix4x4 MakeBillboardAffineMatrix(const Matrix4x4& cameraWorldMatrix, const TransformData& transform);
+	static Matrix4x4 MakeBillboardAffineMatrix(const Matrix4x4& cameraWorldMatrix, const Transform& transform);
 
 	/// <summary>
 	/// 行列をTransformDataに分解
 	/// </summary>
 	/// <param name="mat">行列</param>
 	/// <returns>TransformData</returns>
-	static TransformData DecomposeMatrix(const Matrix4x4& mat);
+	static Transform DecomposeMatrix(const Matrix4x4& mat);
 };
 

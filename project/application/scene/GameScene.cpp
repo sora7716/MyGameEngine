@@ -26,26 +26,26 @@ void GameScene::Initialize(const SceneContext& sceneContext) {
 	//シーンのインタフェースの初期化
 	BaseScene::Initialize(sceneContext);
 	//カメラの設定
-	camera_ = *sceneContext_.cameraManager->FindCamera("gameCamera");
+	renderCamera_ = *sceneContext_.cameraManager->FindCamera("gameCamera");
 
 	//ゲームカメラ
 	gameCamera_ = std::make_unique<GameCamera>();
-	gameCamera_->Initialize(sceneContext_.input, &camera_);
+	gameCamera_->Initialize(sceneContext_.input, &renderCamera_);
 
 	ground_ = std::make_unique<Ground>();
-	ground_->Initialize(sceneContext_.object3dCommon, &camera_);
+	ground_->Initialize(sceneContext_.object3dCommon, &renderCamera_);
 
 	player_ = std::make_unique<Player>();
-	player_->Initialize(sceneContext_.object3dCommon, &camera_, sceneContext_.input);
+	player_->Initialize(sceneContext_.object3dCommon, &renderCamera_, sceneContext_.input);
 
 	fallingGround_ = std::make_unique<FallingGround>();
-	fallingGround_->Initialize(sceneContext_.object3dCommon, &camera_);
+	fallingGround_->Initialize(sceneContext_.object3dCommon, &renderCamera_);
 
 	jumpPad_ = std::make_unique<JumpPad>();
-	jumpPad_->Initialize(sceneContext_.object3dCommon, &camera_);
+	jumpPad_->Initialize(sceneContext_.object3dCommon, &renderCamera_);
 
 	seesawPlatform_ = std::make_unique<SeesawPlatform>();
-	seesawPlatform_->Initialize(sceneContext_.object3dCommon, &camera_);
+	seesawPlatform_->Initialize(sceneContext_.object3dCommon, &renderCamera_);
 
 	for (Entity& entity : seesawPlatform_->GetEntity()) {
 		colliderManager_->AddCollider(&entity.collider);
@@ -93,7 +93,7 @@ void GameScene::Update() {
 	jumpPad_->Update();
 	ground_->Update();
 
-	if (!player_->GetEntity()[0].gameObject.isAlive) {
+	if (!player_->GetEntity()[0].gameObject.isActive) {
 		sceneContext_.sceneManager->ChangeScene("GameOver");
 	}
 
@@ -141,10 +141,10 @@ void GameScene::Update() {
 #ifdef _DEBUG
 	//カメラの切り替え
 	if (debugCamera_->IsDebug()) {
-		camera_ = *debugCamera_->GetCamera();
+		renderCamera_ = *debugCamera_->GetCamera();
 	} else {
 		//camera_ = gameCamera_->GetCamera();
-		camera_ = *sceneContext_.cameraManager->FindCamera("gameCamera");
+		renderCamera_ = *sceneContext_.cameraManager->FindCamera("gameCamera");
 	}
 #endif // _DEBUG
 

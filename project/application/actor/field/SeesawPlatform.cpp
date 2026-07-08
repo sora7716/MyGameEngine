@@ -22,7 +22,7 @@ void SeesawPlatform::Initialize(Object3dCommon* object3dCommon, Camera* camera) 
 void SeesawPlatform::Update() {
 	float leftWeight = 0.0f;
 	float rightWeight = 0.0f;
-	Vector3 platformPos = entityGroup_.entity[collisionBlockIndex_].gameObject.transformData.translate;
+	Vector3 platformPos = entityGroup_.entity[collisionBlockIndex_].gameObject.transform.translate;
 
 	if (playerPos_.x < platformPos.x) {
 		leftWeight += 1.0f;
@@ -35,7 +35,7 @@ void SeesawPlatform::Update() {
 	// じわっと近づける
 	seesawAngle_ += (targetAngle - seesawAngle_) * 0.1f;
 
-	entityGroup_.entity[collisionBlockIndex_].gameObject.transformData.quaternion =
+	entityGroup_.entity[collisionBlockIndex_].gameObject.transform.quaternion =
 		Rendering::MakeRotateAxisAngleQuaternion({ 0.0f,0.0f,1.0f }, seesawAngle_);	//更新
 	BaseGround::Update();
 }

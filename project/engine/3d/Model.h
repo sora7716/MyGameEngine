@@ -1,16 +1,21 @@
 #pragma once
 #include "ResourceData.h"
 #include "algorithms/Rendering.h"
+#include "PrimitiveMeshCreate.h"
 #include <string>
 #include <vector>
 #include <wrl.h>
 #include <d3d12.h>
+#include <memory>
 
 //前方宣言
 class ModelCommon;
 class DirectXBase;
+class Mesh;
 
-//3dモデル
+/// <summary>
+/// モデル
+/// </summary>
 class Model {
 private://エイリアステンプレート
 	template <class T>using ComPtr = Microsoft::WRL::ComPtr<T>;
@@ -18,22 +23,49 @@ public://メンバ関数
 	/// <summary>
 	/// コンストラクタ
 	/// </summary>
-	Model() = default;
+	Model();
 
 	/// <summary>
 	/// デストラクタ
 	/// </summary>
-	~Model() = default;
+	~Model();
+
+	/// <summary>
+	/// モデルの生成(ファイルを読み込み)
+	/// </summary>
+	/// <param name="modelCommon">モデルの共通部分</param>
+	/// <param name="storedFilePath">モデルを保管しているファイル名(最初と最後に"/"入らない)</param>
+	/// <param name="filename">ファイル名(最初に"/"入らない</param>
+	/// <returns>モデル</returns>
+	static std::unique_ptr<Model> CreateFromModel(ModelCommon* modelCommon, const std::string& storedFilePath, const std::string& filename);
+
+	/// <summary>
+    /// モデルの生成(キューブ)
+    /// </summary>
+    /// <param name="modelCommon">モデルの共通部分</param>
+	/// <param name="meshCreateDesc">プリミティブメッシュを作成する際に使用する設定</param>
+    /// <returns>モデル</returns>
+	static std::unique_ptr<Model> CreatePrimitiveModel(ModelCommon* modelCommon, const PrimitiveMeshCreateDesc& meshCreateDesc);
+
+	/// <summary>
+	/// モデルの生成(モデルデータ)
+	/// </summary>
+	/// <param name="modelCommon">モデルの共通部分</param>
+	/// <param name="modelData">モデルデータ</param>
+	/// <returns>モデル</returns>
+	static std::unique_ptr<Model> CreateModelFromModelData(ModelCommon* modelCommon, const ModelData& modelData);
 
 	/// <summary>
 	/// 初期化
 	/// </summary>
 	/// <param name="modelCommon">モデルの共通部分</param>
-	/// <param name="directoryPath">ディレクトリファイルパス(最後に"/"はいらない)</param>
-	/// <param name="storedFilePath">モデルを保管しているファイル名(最初と最後に"/"入らない)</param>
-	/// <param name="filename">ファイル名(最初に"/"入らない</param>
-	void Initialize(ModelCommon* modelCommon, const std::string& directoryPath, const std::string& storedFilePath, const std::string& filename);
+	void Initialize(ModelCommon* modelCommon);
 
+	/// <summary>
+	/// メッシュの再構成
+	/// </summary>
+	/// <param name="meshes">メッシュ</param>
+	void RebuildMeshes(const std::vector<MeshData>& meshes);
 
 	/// <summary>
 	/// 描画
@@ -42,28 +74,32 @@ public://メンバ関数
 	void Draw(uint32_t objectCount = 1);
 
 	/// <summary>
-	/// uv変換
+	/// UV変換
 	/// </summary>
+	/// <param name="index">インデックス</param>
 	/// <param name="uvTransform">uv座標</param>
-	void UVTransform(Transform2dData uvTransform);
+	void UVTransform(uint32_t index, Transform2d uvTransform);
 
 	/// <summary>
 	/// 色を変更
 	/// </summary>
+	/// <param name="index">インデックス</param>
 	/// <param name="color">色</param>
-	void SetColor(const Vector4& color);
+	void SetColor(uint32_t index, const Vector4& color);
 
 	/// <summary>
 	/// テクスチャの変更
 	/// </summary>
-	/// <param name="filePath">ファイルパス</param>
-	void SetTexture(const std::string& filePath);
+	/// <param name="materialIndex">マテリアルインデックス</param>
+	/// <param name="imageFileName">画像のファイル名</param>
+	void SetTexture(uint32_t materialIndex, const std::string& imageFileName);
 
 	/// <summary>
 	/// 色を取得
 	/// </summary>
+	/// <param name="index">インデックス</param>
 	/// <returns>色</returns>
-	const Vector4& GetColor()const;
+	const Vector4& GetColor(uint32_t index)const;
 
 	/// <summary>
 	/// モデルデータのゲッター
@@ -89,27 +125,44 @@ public://メンバ関数
 	static ModelData LoadModelFile(const std::string& directoryPath, const std::string& storedFilePath, const std::string& filename);
 
 	/// <summary>
-	/// マテリアルのセッター
+	/// ライティングの設定
 	/// </summary>
-	/// <param name="materialData">マテリアルデータ</param>
-	void SetMaterial(const Material& materialData);
+	/// <param name="index">インデックス</param>
+	/// <param name="materialData">ライティングフラグ</param>
+	void SetIsLighting(uint32_t index, bool isLighting);
+
+	/// <summary>
+	/// 輝度の設定
+	/// </summary>
+	/// <param name="index">インデックス</param>
+	/// <param name="shininess">輝度</param>
+	void SetShininess(uint32_t index, float shininess);
 
 	/// <summary>
 	/// リムライトのセッター
 	/// </summary>
 	/// <param name="rimLight">リムライト</param>
 	void SetRimLight(const RimLight& rimLight);
+
+	/// <summary>
+	/// メッシュ達の取得
+	/// </summary>
+	/// <returns>メッシュ達</returns>
+	const std::vector<std::unique_ptr<Mesh>>& GetMeshes()const;
+
+	/// <summary>
+	/// モデルの共通部分の取得
+	/// </summary>
+	/// <returns>モデルの共通部分</returns>
+	ModelCommon* GetModelCommon();
+
+	/// <summary>
+	/// プリミティブメッシュタイプからメッシュ名を取得する
+	/// </summary>
+	/// <param name="meshType">プリミティブメッシュタイプ</param>
+	/// <returns>メッシュ名</returns>
+	std::string GetNameFromPrimitiveMeshType(PrimitiveMeshType meshType);
 private://メンバ関数
-	/// <summary>
-	/// 頂点リソースの生成
-	/// </summary>
-	void CreateVertexResource();
-
-	/// <summary>
-	/// インデックスリソースの生成
-	/// </summary>
-	void CreateIndexResource();
-
 	/// <summary>
 	/// マテリアルリソースの生成
 	/// </summary>
@@ -119,29 +172,61 @@ private://メンバ関数
 	/// リムライトのリソースを生成
 	/// </summary>
 	void CreateRimLightResource();
+
+	/// <summary>
+	/// メッシュの構築
+	/// </summary>
+	void BuildMesh();
+
+	/// <summary>
+	/// キューブの作成
+	/// </summary>
+	MeshData MakeCubeData();
+
+	/// <summary>
+	/// 球の作成
+	/// </summary>
+	MeshData MakeSphereData();
+
+	/// <summary>
+	/// プリミティブモデルの初期化
+	/// </summary>
+	/// <param name="meshCreateDesc">メッシュ生成に使用する設定</param>
+	void InitializePrimitiveModel(const PrimitiveMeshCreateDesc& meshCreateDesc);
+
+	/// <summary>
+	/// モデルの生成
+	/// </summary>
+	/// <param name="storedFilePath">モデルを保管しているファイル名(最初と最後に"/"入らない)</param>
+	/// <param name="filename">ファイル名(最初に"/"入らない</param>
+	void CreateFromModel(const std::string& storedFilePath, const std::string& filename);
+
+	/// <summary>
+	/// モデルの生成(モデルデータ)
+	/// </summary>
+	/// <param name="modelData">モデルデータ</param>
+	void CreateModelFromModelData(const ModelData& modelData);
+
+	/// <summary>
+	/// 各種リソースの生成
+	/// </summary>
+	void CreateResources();
+private://静的メンバ変数
+	//プリミティブのメッシュ作成関数をまとめたテーブル
+	static MeshData(Model::* PrimitiveMeshFactoryTable[])();
 private://メンバ変数
 	//ModelCommonのポインタ
 	ModelCommon* modelCommon_ = nullptr;
 	//DirectXの基盤部分
 	DirectXBase* directXBase_ = nullptr;
+	//メッシュ
+	std::vector<std::unique_ptr<Mesh>>meshes_;
 	//Objファイルデータ
 	ModelData modelData_ = {};
-	//VertexResource
-	ComPtr<ID3D12Resource>vertexResource_ = nullptr;
-	//VertexBufferView
-	D3D12_VERTEX_BUFFER_VIEW vertexBufferView_ = {};
-	//VertexResourceにデータを書き込むためのポインタ
-	VertexData* vertexData_ = nullptr;
 	//マテリアルリソース
-	ComPtr<ID3D12Resource>materialResource_ = nullptr;
+	std::vector<ComPtr<ID3D12Resource>>materialResources_;
 	//マテリアルリソースにデータを書き込むためのポインタ
-	Material* materialPtr_ = nullptr;
-	//IndexResource
-	ComPtr<ID3D12Resource>indexResource_ = nullptr;
-	//IndexResourceにデータを書き込むためのポインタ
-	uint32_t* indexData_ = nullptr;
-	//IndexBufferView
-	D3D12_INDEX_BUFFER_VIEW indexBufferView_ = {};//インデックス
+	std::vector<Material*> materialPtrs_;
 	//リムライト
 	RimLight* rimLightPtr_ = nullptr;
 	//リムライトリソース

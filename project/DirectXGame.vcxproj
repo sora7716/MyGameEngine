@@ -11,20 +11,9 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="application\actor\ActorData.cpp" />
     <ClCompile Include="application\actor\camera\GameCamera.cpp" />
-    <ClCompile Include="application\actor\character\player\Player.cpp" />
-    <ClCompile Include="application\actor\field\BaseGround.cpp" />
-    <ClCompile Include="application\actor\field\FallingGround.cpp" />
-    <ClCompile Include="application\actor\field\Ground.cpp" />
-    <ClCompile Include="application\actor\field\JumpPad.cpp" />
-    <ClCompile Include="application\actor\field\SeesawPlatform.cpp" />
     <ClCompile Include="application\actor\field\StageTimer.cpp" />
-    <ClCompile Include="application\scene\GameOverScene.cpp" />
-    <ClCompile Include="application\scene\GameScene.cpp" />
-    <ClCompile Include="application\scene\ResultScene.cpp" />
     <ClCompile Include="application\scene\TestPlayScene.cpp" />
-    <ClCompile Include="application\scene\TitleScene.cpp" />
     <ClCompile Include="engine\2d\Object2d.cpp" />
     <ClCompile Include="engine\2d\Object2dCommon.cpp" />
     <ClCompile Include="engine\2d\Sprite.cpp" />
@@ -32,7 +21,9 @@
     <ClCompile Include="engine\2d\Text.cpp" />
     <ClCompile Include="engine\2d\TextRasterizer.cpp" />
     <ClCompile Include="engine\2d\TextureManager.cpp" />
-    <ClCompile Include="engine\3d\Box.cpp" />
+    <ClCompile Include="engine\3d\LODBuilder.cpp" />
+    <ClCompile Include="engine\3d\LODController.cpp" />
+    <ClCompile Include="engine\3d\Mesh.cpp" />
     <ClCompile Include="engine\3d\Model.cpp" />
     <ClCompile Include="engine\3d\ModelCommon.cpp" />
     <ClCompile Include="engine\3d\ModelManager.cpp" />
@@ -48,7 +39,6 @@
     <ClCompile Include="engine\base\FixFPS.cpp" />
     <ClCompile Include="engine\base\GraphicsPipeline.cpp" />
     <ClCompile Include="engine\base\SRVManager.cpp" />
-    <ClCompile Include="engine\base\StringUtility.cpp" />
     <ClCompile Include="engine\base\WinApi.cpp" />
     <ClCompile Include="engine\camera\Camera.cpp" />
     <ClCompile Include="engine\camera\CameraManager.cpp" />
@@ -56,28 +46,27 @@
     <ClCompile Include="engine\debug\DebugCamera.cpp" />
     <ClCompile Include="engine\debug\GlobalVariables.cpp" />
     <ClCompile Include="engine\debug\ImGuiManager.cpp" />
-    <ClCompile Include="engine\debug\Log.cpp" />
-    <ClCompile Include="engine\debug\WireframeObject3d.cpp" />
-    <ClCompile Include="engine\debug\WireframeObject3dCommon.cpp" />
-    <ClCompile Include="engine\debug\wireframe\BaseShape.cpp" />
-    <ClCompile Include="engine\debug\wireframe\Circle.cpp" />
-    <ClCompile Include="engine\debug\wireframe\Cube.cpp" />
-    <ClCompile Include="engine\debug\wireframe\Line.cpp" />
-    <ClCompile Include="engine\debug\wireframe\Sphere.cpp" />
+    <ClCompile Include="engine\debug\Logger.cpp" />
+    <ClCompile Include="engine\debug\wireframes\BaseShape.cpp" />
+    <ClCompile Include="engine\debug\wireframes\Circle.cpp" />
+    <ClCompile Include="engine\debug\wireframes\Cube.cpp" />
+    <ClCompile Include="engine\debug\wireframes\Frustum.cpp" />
+    <ClCompile Include="engine\debug\wireframes\Line.cpp" />
+    <ClCompile Include="engine\debug\wireframes\Plane.cpp" />
+    <ClCompile Include="engine\debug\wireframes\Sphere.cpp" />
     <ClCompile Include="engine\framework\Framework.cpp" />
     <ClCompile Include="engine\framework\GameSystem.cpp" />
-    <ClCompile Include="engine\gameObject\ColliderData.cpp" />
-    <ClCompile Include="engine\gameObject\GameObjectData.cpp" />
+    <ClCompile Include="engine\gameObject\GameObject.cpp" />
     <ClCompile Include="engine\gameObject\GameObjectList.cpp" />
     <ClCompile Include="engine\input\Input.cpp" />
     <ClCompile Include="engine\main.cpp" />
-    <ClCompile Include="engine\math\algorithms\ColliderManager.cpp" />
     <ClCompile Include="engine\math\algorithms\Collision.cpp" />
     <ClCompile Include="engine\math\algorithms\Math.cpp" />
     <ClCompile Include="engine\math\algorithms\Physics.cpp" />
     <ClCompile Include="engine\math\algorithms\Rendering.cpp" />
     <ClCompile Include="engine\math\Matrix4x4.cpp" />
     <ClCompile Include="engine\math\PhysicsData.cpp" />
+    <ClCompile Include="engine\math\PrimitiveData.cpp" />
     <ClCompile Include="engine\math\Quaternion.cpp" />
     <ClCompile Include="engine\math\RenderingData.cpp" />
     <ClCompile Include="engine\math\Vector2.cpp" />
@@ -91,23 +80,14 @@
     <ClCompile Include="engine\scene\BaseScene.cpp" />
     <ClCompile Include="engine\scene\SceneFactory.cpp" />
     <ClCompile Include="engine\scene\SceneManager.cpp" />
+    <ClCompile Include="engine\utilitys\HashUtility.cpp" />
+    <ClCompile Include="engine\utilitys\StringUtility.cpp" />
     <ClCompile Include="engine\worldTransform\WorldTransform.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="application\actor\ActorData.h" />
     <ClInclude Include="application\actor\camera\GameCamera.h" />
-    <ClInclude Include="application\actor\character\player\Player.h" />
-    <ClInclude Include="application\actor\field\BaseGround.h" />
-    <ClInclude Include="application\actor\field\FallingGround.h" />
-    <ClInclude Include="application\actor\field\Ground.h" />
-    <ClInclude Include="application\actor\field\JumpPad.h" />
-    <ClInclude Include="application\actor\field\SeesawPlatform.h" />
     <ClInclude Include="application\actor\field\StageTimer.h" />
-    <ClInclude Include="application\scene\GameOverScene.h" />
-    <ClInclude Include="application\scene\GameScene.h" />
-    <ClInclude Include="application\scene\ResultScene.h" />
     <ClInclude Include="application\scene\TestPlayScene.h" />
-    <ClInclude Include="application\scene\TitleScene.h" />
     <ClInclude Include="engine\2d\Object2d.h" />
     <ClInclude Include="engine\2d\Object2dCommon.h" />
     <ClInclude Include="engine\2d\Sprite.h" />
@@ -116,12 +96,15 @@
     <ClInclude Include="engine\2d\TextData.h" />
     <ClInclude Include="engine\2d\TextRasterizer.h" />
     <ClInclude Include="engine\2d\TextureManager.h" />
-    <ClInclude Include="engine\3d\Box.h" />
+    <ClInclude Include="engine\3d\LODBuilder.h" />
+    <ClInclude Include="engine\3d\LODController.h" />
+    <ClInclude Include="engine\3d\Mesh.h" />
     <ClInclude Include="engine\3d\Model.h" />
     <ClInclude Include="engine\3d\ModelCommon.h" />
     <ClInclude Include="engine\3d\ModelManager.h" />
     <ClInclude Include="engine\3d\Object3d.h" />
     <ClInclude Include="engine\3d\Object3dCommon.h" />
+    <ClInclude Include="engine\3d\PrimitiveMeshCreate.h" />
     <ClInclude Include="engine\audio\Audio.h" />
     <ClInclude Include="engine\audio\AudioManager.h" />
     <ClInclude Include="engine\base\Blend.h" />
@@ -134,7 +117,6 @@
     <ClInclude Include="engine\base\GraphicsPipeline.h" />
     <ClInclude Include="engine\base\GraphicsPipelineData.h" />
     <ClInclude Include="engine\base\SRVManager.h" />
-    <ClInclude Include="engine\base\StringUtility.h" />
     <ClInclude Include="engine\base\WinApi.h" />
     <ClInclude Include="engine\camera\Camera.h" />
     <ClInclude Include="engine\camera\CameraManager.h" />
@@ -142,21 +124,19 @@
     <ClInclude Include="engine\debug\DebugCamera.h" />
     <ClInclude Include="engine\debug\GlobalVariables.h" />
     <ClInclude Include="engine\debug\ImGuiManager.h" />
-    <ClInclude Include="engine\debug\Log.h" />
-    <ClInclude Include="engine\debug\WireframeObject3d.h" />
-    <ClInclude Include="engine\debug\WireframeObject3dCommon.h" />
-    <ClInclude Include="engine\debug\wireframe\BaseShape.h" />
-    <ClInclude Include="engine\debug\wireframe\Circle.h" />
-    <ClInclude Include="engine\debug\wireframe\Cube.h" />
-    <ClInclude Include="engine\debug\wireframe\Line.h" />
-    <ClInclude Include="engine\debug\wireframe\Sphere.h" />
+    <ClInclude Include="engine\debug\Logger.h" />
+    <ClInclude Include="engine\debug\wireframes\BaseShape.h" />
+    <ClInclude Include="engine\debug\wireframes\Circle.h" />
+    <ClInclude Include="engine\debug\wireframes\Cube.h" />
+    <ClInclude Include="engine\debug\wireframes\Frustum.h" />
+    <ClInclude Include="engine\debug\wireframes\Line.h" />
+    <ClInclude Include="engine\debug\wireframes\Plane.h" />
+    <ClInclude Include="engine\debug\wireframes\Sphere.h" />
     <ClInclude Include="engine\framework\Framework.h" />
     <ClInclude Include="engine\framework\GameSystem.h" />
-    <ClInclude Include="engine\gameObject\ColliderData.h" />
-    <ClInclude Include="engine\gameObject\GameObjectData.h" />
+    <ClInclude Include="engine\gameObject\GameObject.h" />
     <ClInclude Include="engine\gameObject\GameObjectList.h" />
     <ClInclude Include="engine\input\Input.h" />
-    <ClInclude Include="engine\math\algorithms\ColliderManager.h" />
     <ClInclude Include="engine\math\algorithms\Collision.h" />
     <ClInclude Include="engine\math\algorithms\Math.h" />
     <ClInclude Include="engine\math\algorithms\Physics.h" />
@@ -179,10 +159,11 @@
     <ClInclude Include="engine\scene\BaseScene.h" />
     <ClInclude Include="engine\scene\SceneFactory.h" />
     <ClInclude Include="engine\scene\SceneManager.h" />
+    <ClInclude Include="engine\utilitys\HashUtility.h" />
+    <ClInclude Include="engine\utilitys\StringUtility.h" />
     <ClInclude Include="engine\worldTransform\WorldTransform.h" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="engine\resources\shaders\Box.hlsli" />
     <None Include="engine\resources\shaders\CommonTypes.hlsli" />
     <None Include="engine\resources\shaders\Object3d.hlsli">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
@@ -204,18 +185,6 @@
     </None>
   </ItemGroup>
   <ItemGroup>
-    <FxCompile Include="engine\resources\shaders\Box.PS.hlsl">
-      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Pixel</ShaderType>
-      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Pixel</ShaderType>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
-    </FxCompile>
-    <FxCompile Include="engine\resources\shaders\Box.VS.hlsl">
-      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Vertex</ShaderType>
-      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Vertex</ShaderType>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
-    </FxCompile>
     <FxCompile Include="engine\resources\shaders\Object3d.PS.hlsl">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
@@ -271,7 +240,7 @@
     <ProjectGuid>{aa6fac56-b861-4335-a158-5fa8252f2b8a}</ProjectGuid>
     <RootNamespace>DirectXGame</RootNamespace>
     <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
-    <ProjectName>CG3</ProjectName>
+    <ProjectName>GameEngine</ProjectName>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
@@ -320,7 +289,7 @@
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
       <TreatWarningAsError>true</TreatWarningAsError>
-      <AdditionalIncludeDirectories>$(ProjectDir);$(ProjectDir)engine\base;$(ProjectDir)engine\2d;$(ProjectDir)externals;$(ProjectDir)engine\math;$(ProjectDir)engine\debug;$(ProjectDir)engine\input;$(ProjectDir)engine\audio;$(SolutionDir)DirectXTex;$(SolutionDir)imgui;$(ProjectDir)engine\resource;$(ProjectDir)application;$(ProjectDir)application\scene;$(ProjectDir)application\actor;$(ProjectDir)externals\assimp\include;$(ProjectDir)engine\3d;$(ProjectDir)engine\framework;$(ProjectDir)engine\camera;$(ProjectDir)engine\scene;$(ProjectDir)engine\worldTransform;$(ProjectDir)engine\gameObject;%(AdditionalIncludeDirectories);$(ProjectDir)engine\debug\wireframe;$(ProjectDir)engine\particle</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir);$(ProjectDir)engine\base;$(ProjectDir)engine\2d;$(ProjectDir)externals;$(ProjectDir)engine\math;$(ProjectDir)engine\debug;$(ProjectDir)engine\input;$(ProjectDir)engine\audio;$(SolutionDir)DirectXTex;$(SolutionDir)imgui;$(ProjectDir)engine\resource;$(ProjectDir)application;$(ProjectDir)application\scene;$(ProjectDir)application\actor;$(ProjectDir)externals\assimp\include;$(ProjectDir)engine\3d;$(ProjectDir)engine\framework;$(ProjectDir)engine\camera;$(ProjectDir)engine\scene;$(ProjectDir)engine\worldTransform;$(ProjectDir)engine\gameObject;%(AdditionalIncludeDirectories);$(ProjectDir)engine\debug\wireframes;$(ProjectDir)engine\particle;$(ProjectDir)engine\utilitys</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -354,7 +323,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
       <AdditionalOptions>/utf-8 %(AdditionalOptions)</AdditionalOptions>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
-      <AdditionalIncludeDirectories>$(ProjectDir);$(ProjectDir)engine\base;$(ProjectDir)engine\2d;$(ProjectDir)externals;$(ProjectDir)engine\math;$(ProjectDir)engine\debug;$(ProjectDir)engine\input;$(ProjectDir)engine\audio;$(SolutionDir)DirectXTex;$(SolutionDir)imgui;$(ProjectDir)engine\resource;$(ProjectDir)application;$(ProjectDir)application\scene;$(ProjectDir)application\actor;$(ProjectDir)externals\assimp\include;$(ProjectDir)engine\3d;$(ProjectDir)engine\framework;$(ProjectDir)engine\camera;$(ProjectDir)engine\scene;$(ProjectDir)engine\worldTransform;$(ProjectDir)engine\gameObject;%(AdditionalIncludeDirectories);$(ProjectDir)engine\debug\wireframe;$(ProjectDir)engine\particle</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir);$(ProjectDir)engine\base;$(ProjectDir)engine\2d;$(ProjectDir)externals;$(ProjectDir)engine\math;$(ProjectDir)engine\debug;$(ProjectDir)engine\input;$(ProjectDir)engine\audio;$(SolutionDir)DirectXTex;$(SolutionDir)imgui;$(ProjectDir)engine\resource;$(ProjectDir)application;$(ProjectDir)application\scene;$(ProjectDir)application\actor;$(ProjectDir)externals\assimp\include;$(ProjectDir)engine\3d;$(ProjectDir)engine\framework;$(ProjectDir)engine\camera;$(ProjectDir)engine\scene;$(ProjectDir)engine\worldTransform;$(ProjectDir)engine\gameObject;%(AdditionalIncludeDirectories);$(ProjectDir)engine\debug\wireframes;$(ProjectDir)engine\particle;$(ProjectDir)engine\utilitys</AdditionalIncludeDirectories>
       <Optimization>MinSpace</Optimization>
       <TreatWarningAsError>true</TreatWarningAsError>
     </ClCompile>

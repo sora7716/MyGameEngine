@@ -64,7 +64,7 @@ public://メンバ関数
 	/// UVの座標変換の更新
 	/// </summary>
 	/// <param name="uvTransform">uv座標</param>
-	void UpdateUVTransform(Transform2dData uvTransform);
+	void UpdateUVTransform(Transform2d uvTransform);
 
 	/// <summary>
 	/// 色のゲッター
@@ -82,7 +82,7 @@ public://メンバ関数
 	/// トランスフォームのセッター
 	/// </summary>
 	/// <param name="transformData">トランスフォームデータ(scaleは100,100に初期設定してる)</param>
-	void SetTransformData(const Transform2dData& transformData);
+	void SetTransformData(const Transform2d& transformData);
 
 	/// <summary>
 	/// ブレンドモードのセッター
@@ -121,7 +121,7 @@ private://メンバ関数
 private://メンバ変数
 	//テクスチャ番号
 	std::string spriteName_ = {};
-	TransformData transform_ = { {100.0f,100.0f ,1.0f},{},{} };//トランスフォームの情報
+	Transform transform_ = { {100.0f,100.0f ,1.0f},{},{} };//トランスフォームの情報
 	//DirectXの基盤
 	DirectXBase* directXBase_ = nullptr;
 	

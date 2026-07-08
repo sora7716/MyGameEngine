@@ -61,14 +61,20 @@ struct SpotLight {
 //マテリアルデータ
 struct MaterialData {
 	std::string textureFilePath;
-	uint32_t srvIndex;
+};
+
+//メッシュデータ
+struct MeshData {
+	std::vector<VertexData>vertices;
+	std::vector<uint32_t>indices;
+	uint32_t materialIndex = 0;
 };
 
 
 //モデルデータの構造体
 struct ModelData {
-	std::vector<VertexData> vertices;
-	MaterialData material;
+	std::vector<MeshData> mesheDatas;
+	std::vector<MaterialData> material;
 	Node rootNode;
 };
 

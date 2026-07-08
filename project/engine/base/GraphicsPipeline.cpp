@@ -1,6 +1,6 @@
 #include "GraphicsPipeline.h"
 #include "DirectXBase.h"
-#include "Log.h"
+#include "Logger.h"
 #include "StringUtility.h"
 #include <cassert>
 #pragma comment(lib,"d3d12.lib")
@@ -53,7 +53,7 @@ void GraphicsPipeline::CreateRootSignatureBlobForSprite() {
 	rootParameters[1].ShaderVisibility = D3D12_SHADER_VISIBILITY_VERTEX;//VertexShaderを使う
 	rootParameters[1].Descriptor.ShaderRegister = 0;//レジスタ番号
 
-	//DescriptorTable(DescriptorRangeをまとめたもの)
+	//テクスチャ情報
 	rootParameters[2].ParameterType = D3D12_ROOT_PARAMETER_TYPE_DESCRIPTOR_TABLE;//DescriptorTableを使う
 	rootParameters[2].ShaderVisibility = D3D12_SHADER_VISIBILITY_PIXEL;//PixelShaderを使う
 	rootParameters[2].DescriptorTable.pDescriptorRanges = descriptorRange;//Tableの中身の配列を指定
@@ -65,7 +65,7 @@ void GraphicsPipeline::CreateRootSignatureBlobForSprite() {
 	//シリアライズしてバイナリにする
 	HRESULT hr = D3D12SerializeRootSignature(&descriptionRootSignature, D3D_ROOT_SIGNATURE_VERSION_1, &signatureBlob_, &errorBlob);
 	if (FAILED(hr)) {
-		Log::ConsolePrintf(reinterpret_cast<char*>(errorBlob->GetBufferPointer()));
+		Logger::ConsolePrintf(reinterpret_cast<char*>(errorBlob->GetBufferPointer()));
 		assert(false);
 	}
 }
@@ -127,7 +127,7 @@ void GraphicsPipeline::CreateRootSignatureBlobForObject3d() {
 	rootParameters[1].DescriptorTable.pDescriptorRanges = &descriptorRange[3];//Tableの中身の配列を指定
 	rootParameters[1].DescriptorTable.NumDescriptorRanges = 1;
 
-	//DescriptorTable(DescriptorRangeをまとめたもの)
+	//テクスチャ情報
 	rootParameters[2].ParameterType = D3D12_ROOT_PARAMETER_TYPE_DESCRIPTOR_TABLE;//DescriptorTableを使う
 	rootParameters[2].ShaderVisibility = D3D12_SHADER_VISIBILITY_PIXEL;//PixelShaderを使う
 	rootParameters[2].DescriptorTable.pDescriptorRanges = &descriptorRange[0];//Tableの中身の配列を指定
@@ -166,7 +166,7 @@ void GraphicsPipeline::CreateRootSignatureBlobForObject3d() {
 	//シリアライズしてバイナリにする
 	HRESULT hr = D3D12SerializeRootSignature(&descriptionRootSignature, D3D_ROOT_SIGNATURE_VERSION_1, &signatureBlob_, &errorBlob);
 	if (FAILED(hr)) {
-		Log::ConsolePrintf(reinterpret_cast<char*>(errorBlob->GetBufferPointer()));
+		Logger::ConsolePrintf(reinterpret_cast<char*>(errorBlob->GetBufferPointer()));
 		assert(false);
 	}
 }
@@ -221,7 +221,7 @@ void GraphicsPipeline::CreateRootSignatureBlobForParticle() {
 	//シリアライズしてバイナリにする
 	HRESULT hr = D3D12SerializeRootSignature(&descriptionRootSignature, D3D_ROOT_SIGNATURE_VERSION_1, &signatureBlob_, &errorBlob);
 	if (FAILED(hr)) {
-		Log::ConsolePrintf(reinterpret_cast<char*>(errorBlob->GetBufferPointer()));
+		Logger::ConsolePrintf(reinterpret_cast<char*>(errorBlob->GetBufferPointer()));
 		assert(false);
 	}
 }

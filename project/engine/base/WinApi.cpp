@@ -1,6 +1,7 @@
 #include "WinApi.h"
 #pragma comment(lib,"winmm.lib")
 #include "imgui/imgui_impl_win32.h"
+#include "Vector2.h"
 extern IMGUI_IMPL_API LRESULT ImGui_ImplWin32_WndProcHandler(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam);
 
 //デストラクタ
@@ -38,12 +39,17 @@ void WinApi::Initialize() {
 	//ウィンドウハンドルの数を設定
 	hwnds_.resize(2);
 
+	Vector2Int windowPos = {
+		.x = 500,
+		.y = -1000
+	};
+
 	hwnds_[0] = CreateWindow(
 		wndClass_.lpszClassName,//利用するクラス
 		label.c_str(),
 		WS_OVERLAPPEDWINDOW,//よく見るウィンドウのスタイル
-		CW_USEDEFAULT,//表示X座標(Windowに任せる)
-		CW_USEDEFAULT,//表示Y座標(Windowに任せる)
+		CW_USEDEFAULT,//ウィンドウの表示位置(X座標)
+		CW_USEDEFAULT,//ウィンドウの表示位置(Y座標)
 		windowRect_.right - windowRect_.left,//ウィンドウの横幅
 		windowRect_.bottom - windowRect_.top,//ウィンドウの縦幅
 		nullptr,
@@ -101,13 +107,13 @@ WNDCLASS WinApi::GetWndClass()const {
 WinApi::WinApi(ConstructorKey) {}
 
 //ウィンドウプロシージャ
-LRESULT WinApi::WindowProc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam) {
+LRESULT WinApi::WindowProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam) {
 	//if (hwnd == debugHwnd_) {
-	//	if (ImGui_ImplWin32_WndProcHandler(hwnd, msg, wparam, lparam)) {
+	//	if (ImGui_ImplWin32_WndProcHandler(hwnd, msg, wParam, lParam)) {
 	//		return true;
 	//	}
 	//}
-	if (ImGui_ImplWin32_WndProcHandler(hwnd, msg, wparam, lparam)) {
+	if (ImGui_ImplWin32_WndProcHandler(hwnd, msg, wParam, lParam)) {
 		return true;
 	}
 	//メッセージに応じてゲーム固有の処理を行う
@@ -119,5 +125,5 @@ LRESULT WinApi::WindowProc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam) {
 		return 0;
 	}
 	//標準のメッセージ処理を行う
-	return DefWindowProc(hwnd, msg, wparam, lparam);
+	return DefWindowProc(hwnd, msg, wParam, lParam);
 }

@@ -34,9 +34,10 @@ void SkyBox::Initialize(DirectXBase* directXBase, TextureManager* textureManager
 	//シェーダを設定
 	makeGraphicsPipeline_->SetVertexShaderFileName(L"SkyBox.VS.hlsl");
 	makeGraphicsPipeline_->SetPixelShaderFileName(L"SkyBox.PS.hlsl");
-	//デプスステンシルステート
-	directXBase_->InitializeDepthStencilForSkyBox();
+	//DirectXBaseの記録
 	makeGraphicsPipeline_->SetDirectXBase(directXBase);
+	//深度バッファ
+	makeGraphicsPipeline_->CreateDepthStencilResourceForParticle();
 	//シグネイチャBlobの初期化
 	makeGraphicsPipeline_->CreateRootSignatureBlobForSprite();
 	//ルートシグネイチャの保存
@@ -44,7 +45,7 @@ void SkyBox::Initialize(DirectXBase* directXBase, TextureManager* textureManager
 	//インプットレイアウト
 	makeGraphicsPipeline_->InitializeInputLayoutDescForSkyBox();
 	//ラスタライザステート
-	makeGraphicsPipeline_->InitializeRasterizerSatate();
+	makeGraphicsPipeline_->InitializeRasterizerState();
 	//頂点シェーダBlob
 	makeGraphicsPipeline_->CompileVertexShader();
 	//ピクセルシェーダBlob
@@ -54,7 +55,7 @@ void SkyBox::Initialize(DirectXBase* directXBase, TextureManager* textureManager
 		//ブレンドステート
 		makeGraphicsPipeline_->InitializeBlendState(i);
 		//グラフィックスパイプラインの生成
-		graphicsPipelineStates_[i] = makeGraphicsPipeline_->CreateGraphicsPipeline(directXBase_->GetDepthStencil());
+		graphicsPipelineStates_[i] = makeGraphicsPipeline_->CreateGraphicsPipeline();
 	}
 	//ルートシグネイチャの記録
 	rootSignature_ = makeGraphicsPipeline_->GetRootSignature();

@@ -28,14 +28,10 @@ void DirectXBase::Initialize(WinApi* winApi) {
 	InitializeCommand();
 	//スワップチェーンの生成
 	CreateSwapChain();
-	//深度バッファの生成
-	CreateDepthBuffer();
 	//各種デスクリプタヒープの生成
 	CreateDescriptorHeap();
 	//レンダーターゲットビューの初期化
 	InitializeRTV();
-	//深度ステンシルビューの初期化
-	InitializeDepthStencilForObject3d();
 	//フェンスの初期化
 	InitializeFence();
 	//ビューポート矩形の初期化
@@ -76,11 +72,6 @@ void DirectXBase::CreateSwapChain() {
 	swapChain_ = MakeSwapChain();
 }
 
-// 深度バッファの生成
-void DirectXBase::CreateDepthBuffer() {
-	depthStencilResource_ = MakeDepthStencilTextureResource(WinApi::kClientWidth, WinApi::kClientHeight);
-}
-
 //各種デスクリプターヒープの生成
 void DirectXBase::CreateDescriptorHeap() {
 	//DescriptorSize
@@ -113,57 +104,6 @@ void DirectXBase::InitializeRTV() {
 		//レンダーターゲットビューの生成
 		device_->CreateRenderTargetView(swapChainResources_[i].Get(), &rtvDesc_, rtvHandles_[i]);
 	}
-}
-
-//深度ステンシルビューの初期化(3Dオブジェクト用)
-void DirectXBase::InitializeDepthStencilForObject3d() {
-	//Depthの機能を有効化
-	depthStencilDesc_.DepthEnable = true;
-	//書き込みをする
-	depthStencilDesc_.DepthWriteMask = D3D12_DEPTH_WRITE_MASK_ALL;
-	//比較関数はLessEqual。つまり、近ければ描画される
-	depthStencilDesc_.DepthFunc = D3D12_COMPARISON_FUNC_LESS_EQUAL;
-
-	//DSVの設定
-	D3D12_DEPTH_STENCIL_VIEW_DESC dsvDesc{};
-	dsvDesc.Format = DXGI_FORMAT_D24_UNORM_S8_UINT;//Format。基本的にはResourceに合わせる
-	dsvDesc.ViewDimension = D3D12_DSV_DIMENSION_TEXTURE2D;//2dTexture
-	//DSVHeapの先頭にDSVを作る
-	device_->CreateDepthStencilView(depthStencilResource_.Get(), &dsvDesc, dsvDescriptorHeap_->GetCPUDescriptorHandleForHeapStart());
-}
-
-//深度ステンシルビューの初期化(パーティクル用)
-void DirectXBase::InitializeDepthStencilForParticle() {
-	//Depthの機能を有効化
-	depthStencilDesc_.DepthEnable = true;
-	//書き込みをする
-	depthStencilDesc_.DepthWriteMask = D3D12_DEPTH_WRITE_MASK_ZERO;
-	//比較関数はLessEqual。つまり、近ければ描画される
-	depthStencilDesc_.DepthFunc = D3D12_COMPARISON_FUNC_LESS_EQUAL;
-
-	//DSVの設定
-	D3D12_DEPTH_STENCIL_VIEW_DESC dsvDesc{};
-	dsvDesc.Format = DXGI_FORMAT_D24_UNORM_S8_UINT;//Format。基本的にはResourceに合わせる
-	dsvDesc.ViewDimension = D3D12_DSV_DIMENSION_TEXTURE2D;//2dTexture
-	//DSVHeapの先頭にDSVを作る
-	device_->CreateDepthStencilView(depthStencilResource_.Get(), &dsvDesc, dsvDescriptorHeap_->GetCPUDescriptorHandleForHeapStart());
-}
-
-//深度ステンシルビューの初期化(スカイボックス用)
-void DirectXBase::InitializeDepthStencilForSkyBox() {
-	//Depthの機能を有効化
-	depthStencilDesc_.DepthEnable = true;
-	//書き込みをする
-	depthStencilDesc_.DepthWriteMask = D3D12_DEPTH_WRITE_MASK_ZERO;
-	//比較関数はLessEqual。つまり、近ければ描画される
-	depthStencilDesc_.DepthFunc = D3D12_COMPARISON_FUNC_LESS_EQUAL;
-
-	//DSVの設定
-	D3D12_DEPTH_STENCIL_VIEW_DESC dsvDesc{};
-	dsvDesc.Format = DXGI_FORMAT_D24_UNORM_S8_UINT;//Format。基本的にはResourceに合わせる
-	dsvDesc.ViewDimension = D3D12_DSV_DIMENSION_TEXTURE2D;//2dTexture
-	//DSVHeapの先頭にDSVを作る
-	device_->CreateDepthStencilView(depthStencilResource_.Get(), &dsvDesc, dsvDescriptorHeap_->GetCPUDescriptorHandleForHeapStart());
 }
 
 //フェンスの初期化
@@ -496,11 +436,6 @@ ID3D12Device* DirectXBase::GetDevice() const {
 //コマンドリストのゲッター
 ID3D12GraphicsCommandList* DirectXBase::GetCommandList() const {
 	return commandList_.Get();
-}
-
-//深度ステンシルのゲッター
-D3D12_DEPTH_STENCIL_DESC DirectXBase::GetDepthStencil() const {
-	return depthStencilDesc_;
 }
 
 // スワップチェーンのリソース数のゲッター

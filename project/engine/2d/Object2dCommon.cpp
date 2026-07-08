@@ -27,10 +27,10 @@ void Object2dCommon::Initialize(DirectXBase* directXBase, TextureManager* textur
 	//シェーダを設定
 	makeGraphicsPipeline_->SetVertexShaderFileName(L"Sprite.VS.hlsl");
 	makeGraphicsPipeline_->SetPixelShaderFileName(L"Sprite.PS.hlsl");
-	//デプスステンシルステート
-	directXBase_->InitializeDepthStencilForObject3d();
-	//makeGraphicsPipeline_->Initialize(directXBase_);
+	//DirectXBaseの記録
 	makeGraphicsPipeline_->SetDirectXBase(directXBase);
+	//深度バッファ
+	makeGraphicsPipeline_->CreateDepthStencilResourceForObject3d();
 	//シグネイチャBlobの初期化
 	makeGraphicsPipeline_->CreateRootSignatureBlobForSprite();
 	//ルートシグネイチャの保存
@@ -38,7 +38,7 @@ void Object2dCommon::Initialize(DirectXBase* directXBase, TextureManager* textur
 	//インプットレイアウト
 	makeGraphicsPipeline_->InitializeInputLayoutDesc();
 	//ラスタライザステート
-	makeGraphicsPipeline_->InitializeRasterizerSatate();
+	makeGraphicsPipeline_->InitializeRasterizerState();
 	//頂点シェーダBlob
 	makeGraphicsPipeline_->CompileVertexShader();
 	//ピクセルシェーダBlob
@@ -48,7 +48,7 @@ void Object2dCommon::Initialize(DirectXBase* directXBase, TextureManager* textur
 		//ブレンドステート
 		makeGraphicsPipeline_->InitializeBlendState(i);
 		//グラフィックスパイプラインの生成
-		graphicsPipelineStates_[i] = makeGraphicsPipeline_->CreateGraphicsPipeline(directXBase_->GetDepthStencil());
+		graphicsPipelineStates_[i] = makeGraphicsPipeline_->CreateGraphicsPipeline();
 	}
 	//ルートシグネイチャの記録
 	rootSignature_ = makeGraphicsPipeline_->GetRootSignature();

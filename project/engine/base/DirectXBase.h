@@ -48,11 +48,6 @@ public://メンバ関数
 	void CreateSwapChain();
 
 	/// <summary>
-	/// 深度バッファの生成
-	/// </summary>
-	void CreateDepthBuffer();
-
-	/// <summary>
 	/// 各種デスクリプターヒープの生成
 	/// </summary>
 	void CreateDescriptorHeap();
@@ -61,21 +56,6 @@ public://メンバ関数
 	/// RTVの初期化
 	/// </summary>
 	void InitializeRTV();
-
-	/// <summary>
-	/// 深度ステンシルビューの初期化(3Dオブジェクト用)
-	/// </summary>
-	void InitializeDepthStencilForObject3d();
-
-	/// <summary>
-	/// 深度ステンシルビューの初期化(パーティクル用)
-	/// </summary>
-	void InitializeDepthStencilForParticle();
-
-	/// <summary>
-	/// 深度ステンシルビューの初期化(スカイボックス用)
-	/// </summary>
-	void InitializeDepthStencilForSkyBox();
 
 	/// <summary>
 	/// フェンスの初期化
@@ -196,12 +176,6 @@ public://メンバ関数
 	ID3D12GraphicsCommandList* GetCommandList()const;
 
 	/// <summary>
-	/// 深度ステンシルのゲッター
-	/// </summary>
-	/// <returns>深度ステンシル</returns>
-	D3D12_DEPTH_STENCIL_DESC GetDepthStencil()const;
-
-	/// <summary>
 	/// スワップチェーンのリソース数のゲッター
 	/// </summary>
 	/// <returns>スワップチェーンのリソース数</returns>
@@ -314,7 +288,6 @@ private://メンバ変数
 	ComPtr<ID3D12CommandAllocator> commandAllocator_ = nullptr;//コマンドアローケータ
 	ComPtr<ID3D12GraphicsCommandList> commandList_ = nullptr;//コマンドリスト
 	DXGI_SWAP_CHAIN_DESC1 swapChainDesc_ = {};
-	ComPtr<ID3D12Resource> depthStencilResource_ = nullptr;//深度バッファ
 	ComPtr<ID3D12DescriptorHeap> rtvDescriptorHeap_ = nullptr;//RTV
 	D3D12_RENDER_TARGET_VIEW_DESC rtvDesc_{};//rtvDesc
 	D3D12_CPU_DESCRIPTOR_HANDLE dsvHandle = {};//DSVハンドル
@@ -330,7 +303,6 @@ private://メンバ変数
 	ComPtr<IDxcUtils> dxcUtils_ = nullptr;//DXCユーティリティ
 	ComPtr<IDxcCompiler3> dxcCompiler_ = nullptr;//DXCコンパイラ
 	ComPtr<IDxcIncludeHandler> includeHandler_ = nullptr;//デフォルトインクルードハンドラ
-	D3D12_DEPTH_STENCIL_DESC depthStencilDesc_{};
 	ComPtr<ID3D12DescriptorHeap> dsvDescriptorHeap_ = nullptr;//DSV
 	uint32_t descriptorSizeDSV_ = 0;
 	std::vector<D3D12_CPU_DESCRIPTOR_HANDLE> rtvHandles_ = {};//RTVを2つ作るのでディスクリプタを2つ用意

@@ -23,6 +23,9 @@ void BaseShape::Initialize(DirectXBase* directXBase, Camera* camera) {
 	directXBase_ = directXBase;
 	//カメラの記録
 	camera_ = camera;
+	makeGraphicsPipeline_ = std::make_unique<GraphicsPipeline>();
+	//DirectXBaseを記録
+	makeGraphicsPipeline_->SetDirectXBase(directXBase_);
 
 	//グラフィックスパイプラインの作成
 	BuildGraphicsPipeline();
@@ -279,7 +282,7 @@ ComPtr<ID3D12PipelineState> BaseShape::CreateGraphicsPipeline() {
 	graphicsPipelineStateDesc.SampleDesc.Count = 1;
 	graphicsPipelineStateDesc.SampleMask = D3D12_DEFAULT_SAMPLE_MASK;
 	//DepthStencilの設定
-	graphicsPipelineStateDesc.DepthStencilState = directXBase_->GetDepthStencil();
+	graphicsPipelineStateDesc.DepthStencilState = makeGraphicsPipeline_->GetDepthStencilDesc();
 	graphicsPipelineStateDesc.DSVFormat = DXGI_FORMAT_D24_UNORM_S8_UINT;
 	//実際に生成
 	ComPtr<ID3D12PipelineState>graphicsPipelineState;
@@ -290,10 +293,10 @@ ComPtr<ID3D12PipelineState> BaseShape::CreateGraphicsPipeline() {
 
 //グラフィックスパイプラインの構築
 void BaseShape::BuildGraphicsPipeline() {
-	//デプスステンシルステート
-	directXBase_->InitializeDepthStencilForObject3d();
 	//ルートシグネイチャBlobの生成
 	CreateRootSignatureBlob();
+	//深度バッファ
+	makeGraphicsPipeline_->CreateDepthStencilResourceForObject3d();
 	//ルートシグネイチャの保存
 	CreateRootSignature();
 	//インプットレイアウト

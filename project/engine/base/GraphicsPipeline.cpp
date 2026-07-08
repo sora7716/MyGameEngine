@@ -301,7 +301,7 @@ void GraphicsPipeline::InitializeBlendState(int32_t blendMode) {
 }
 
 //ラスタライザステートの初期化
-void GraphicsPipeline::InitializeRasterizerSatate(FillMode fillMode) {
+void GraphicsPipeline::InitializeRasterizerState(FillMode fillMode) {
 	//裏面(時計周り)を表示しない
 	rasterizerDesc_.CullMode = D3D12_CULL_MODE_BACK;
 	//三角形の中を塗りつぶす
@@ -323,7 +323,7 @@ void GraphicsPipeline::CompilePixelShader() {
 }
 
 //PSOの生成
-ComPtr<ID3D12PipelineState> GraphicsPipeline::CreateGraphicsPipeline(D3D12_DEPTH_STENCIL_DESC depthStencilDesc) {
+ComPtr<ID3D12PipelineState> GraphicsPipeline::CreateGraphicsPipeline() {
 	HRESULT result = S_FALSE;
 	//PSOを生成
 	D3D12_GRAPHICS_PIPELINE_STATE_DESC graphicsPipelineStateDesc{};
@@ -347,7 +347,7 @@ ComPtr<ID3D12PipelineState> GraphicsPipeline::CreateGraphicsPipeline(D3D12_DEPTH
 	graphicsPipelineStateDesc.SampleDesc.Count = 1;
 	graphicsPipelineStateDesc.SampleMask = D3D12_DEFAULT_SAMPLE_MASK;
 	//DepthStencilの設定
-	graphicsPipelineStateDesc.DepthStencilState = depthStencilDesc;
+	graphicsPipelineStateDesc.DepthStencilState = depthStencilDesc_;
 	graphicsPipelineStateDesc.DSVFormat = DXGI_FORMAT_D24_UNORM_S8_UINT;
 	//実際に生成
 	ComPtr<ID3D12PipelineState>graphicsPipelineState;
@@ -356,13 +356,52 @@ ComPtr<ID3D12PipelineState> GraphicsPipeline::CreateGraphicsPipeline(D3D12_DEPTH
 	return graphicsPipelineState;
 }
 
+//深度バッファの生成(Object3d)
+void GraphicsPipeline::CreateDepthStencilResourceForObject3d() {
+	//Depthの機能を有効化
+	depthStencilDesc_.DepthEnable = true;
+	//書き込みをする
+	depthStencilDesc_.DepthWriteMask = D3D12_DEPTH_WRITE_MASK_ALL;
+	//比較関数はLessEqual。つまり、近ければ描画される
+	depthStencilDesc_.DepthFunc = D3D12_COMPARISON_FUNC_LESS_EQUAL;
+
+	//DSVの設定
+	D3D12_DEPTH_STENCIL_VIEW_DESC dsvDesc{};
+	dsvDesc.Format = DXGI_FORMAT_D24_UNORM_S8_UINT;//Format。基本的にはResourceに合わせる
+	dsvDesc.ViewDimension = D3D12_DSV_DIMENSION_TEXTURE2D;//2dTexture
+	//DSVHeapの先頭にDSVを作る
+	directXBase_->GetDevice()->CreateDepthStencilView(depthStencilResource_.Get(), &dsvDesc, directXBase_->GetDSVCPUDescriptorHandle(0));
+}
+
+//深度バッファの生成(パーティクル)
+void GraphicsPipeline::CreateDepthStencilResourceForParticle() {
+	//Depthの機能を有効化
+	depthStencilDesc_.DepthEnable = true;
+	//書き込みをする
+	depthStencilDesc_.DepthWriteMask = D3D12_DEPTH_WRITE_MASK_ZERO;
+	//比較関数はLessEqual。つまり、近ければ描画される
+	depthStencilDesc_.DepthFunc = D3D12_COMPARISON_FUNC_LESS_EQUAL;
+
+	//DSVの設定
+	D3D12_DEPTH_STENCIL_VIEW_DESC dsvDesc{};
+	dsvDesc.Format = DXGI_FORMAT_D24_UNORM_S8_UINT;//Format。基本的にはResourceに合わせる
+	dsvDesc.ViewDimension = D3D12_DSV_DIMENSION_TEXTURE2D;//2dTexture
+	//DSVHeapの先頭にDSVを作る
+	directXBase_->GetDevice()->CreateDepthStencilView(depthStencilResource_.Get(), &dsvDesc, directXBase_->GetDSVCPUDescriptorHandle(0));
+}
+
 //ルートシグネイチャのゲッター
 ComPtr<ID3D12RootSignature> GraphicsPipeline::GetRootSignature() {
 	return rootSignature_;
 }
 
+//デプスステンシルの取得
+D3D12_DEPTH_STENCIL_DESC GraphicsPipeline::GetDepthStencilDesc() {
+	return depthStencilDesc_;
+}
+
 //DirectXの基盤のセッター
-void GraphicsPipeline::SetDirectXBase(DirectXBase* directXBase){
+void GraphicsPipeline::SetDirectXBase(DirectXBase* directXBase) {
 	directXBase_ = directXBase;
 }
 

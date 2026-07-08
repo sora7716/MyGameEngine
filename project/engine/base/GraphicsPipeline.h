@@ -73,7 +73,7 @@ public://メンバ関数
     /// ラスタライザステートの初期化
     /// </summary>
 	/// <param name="fillMode">ポリゴンをどう描画するかの設定</param>
-	void InitializeRasterizerSatate(FillMode fillMode = FillMode::kSolid);
+	void InitializeRasterizerState(FillMode fillMode = FillMode::kSolid);
 
 	/// <summary>
 	/// 頂点シェーダのコンパイル
@@ -86,15 +86,31 @@ public://メンバ関数
 	void CompilePixelShader();
 
 	/// <summary>
+	/// 深度バッファの生成(Object3d)
+	/// </summary>
+	void CreateDepthStencilResourceForObject3d();
+
+	/// <summary>
+	/// 深度バッファの生成(パーティクル)
+	/// </summary>
+	void CreateDepthStencilResourceForParticle();
+
+	/// <summary>
 	/// PSOの生成
 	/// </summary>
-	ComPtr<ID3D12PipelineState> CreateGraphicsPipeline(D3D12_DEPTH_STENCIL_DESC depthStencilDesc);
+	ComPtr<ID3D12PipelineState> CreateGraphicsPipeline();
 
 	/// <summary>
 	/// ルートシグネイチャのゲッター
 	/// </summary>
 	/// <returns>ルートシグネイチャ</returns>
 	ComPtr<ID3D12RootSignature>GetRootSignature();
+
+	/// <summary>
+	/// デプスステンシルの取得
+	/// </summary>
+	/// <returns>デプス支店汁</returns>
+	D3D12_DEPTH_STENCIL_DESC GetDepthStencilDesc();
 
 	/// <summary>
 	/// DirectXの基盤のセッター
@@ -133,4 +149,7 @@ protected://メンバ変数
 	std::wstring pixelShaderFileName_ = L"Object3d.PS.hlsl";//ピクセル
 	//ルートシグネイチャBlob
 	ComPtr<ID3DBlob>signatureBlob_ = nullptr;
+	//深度バッファ
+	ComPtr<ID3D12Resource> depthStencilResource_ = nullptr;
+	D3D12_DEPTH_STENCIL_DESC depthStencilDesc_{};
 };

@@ -180,6 +180,12 @@ public://メンバ関数
 	/// </summary>
 	/// <returns>スワップチェーンのリソース数</returns>
 	size_t GetSwapChainResourceNum()const;
+
+	/// <summary>
+	/// デプスステンシルテクスチャの取得
+	/// </summary>
+	/// <returns>デプスステンシルテクスチャ</returns>
+	ID3D12Resource* GetDepthStencilTexture()const;
 public://PressKey
 	class ConstructorKey {
 		ConstructorKey() = default;
@@ -291,6 +297,8 @@ private://メンバ変数
 	ComPtr<ID3D12DescriptorHeap> rtvDescriptorHeap_ = nullptr;//RTV
 	D3D12_RENDER_TARGET_VIEW_DESC rtvDesc_{};//rtvDesc
 	D3D12_CPU_DESCRIPTOR_HANDLE dsvHandle = {};//DSVハンドル
+	//深度バッファ
+	ComPtr<ID3D12Resource> depthStencilResource_ = nullptr;
 	//DescriptorSize
 	uint32_t descriptorSizeRTV_;
 	std::array<ComPtr<ID3D12Resource>, 2> swapChainResources_ = { nullptr };//スワップチェーンからリソースを引っ張ってくる

@@ -358,6 +358,8 @@ ComPtr<ID3D12PipelineState> GraphicsPipeline::CreateGraphicsPipeline() {
 
 //深度バッファの生成(Object3d)
 void GraphicsPipeline::CreateDepthStencilResourceForObject3d() {
+	//深度バッファを取得
+	depthStencilResource_ = directXBase_->GetDepthStencilTexture();
 	//Depthの機能を有効化
 	depthStencilDesc_.DepthEnable = true;
 	//書き込みをする
@@ -375,6 +377,8 @@ void GraphicsPipeline::CreateDepthStencilResourceForObject3d() {
 
 //深度バッファの生成(パーティクル)
 void GraphicsPipeline::CreateDepthStencilResourceForParticle() {
+	//深度バッファを取得
+	depthStencilResource_ = directXBase_->GetDepthStencilTexture();
 	//Depthの機能を有効化
 	depthStencilDesc_.DepthEnable = true;
 	//書き込みをする

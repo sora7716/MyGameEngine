@@ -28,6 +28,8 @@ void DirectXBase::Initialize(WinApi* winApi) {
 	InitializeCommand();
 	//スワップチェーンの生成
 	CreateSwapChain();
+	//深度バッファの生成
+	depthStencilResource_ = MakeDepthStencilTextureResource(WinApi::kClientWidth, WinApi::kClientHeight);
 	//各種デスクリプタヒープの生成
 	CreateDescriptorHeap();
 	//レンダーターゲットビューの初期化
@@ -441,6 +443,11 @@ ID3D12GraphicsCommandList* DirectXBase::GetCommandList() const {
 // スワップチェーンのリソース数のゲッター
 size_t DirectXBase::GetSwapChainResourceNum() const {
 	return swapChainResources_.size();
+}
+
+//デプスステンシルテクスチャの取得
+ID3D12Resource* DirectXBase::GetDepthStencilTexture() const {
+	return depthStencilResource_.Get();
 }
 
 //コンストラクタ

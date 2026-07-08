@@ -1,5 +1,5 @@
 #pragma once
-#include "ResourceData.h"
+#include "RenderData.h"
 #include "BlendMode.h"
 #include "RenderingData.h"
 #include <d3d12.h>

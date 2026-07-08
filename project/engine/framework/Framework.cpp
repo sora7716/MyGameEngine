@@ -1,5 +1,5 @@
 #include "Framework.h"
-#include "algorithms/Math.h"
+#include "MathUtility.h"
 #include "Input.h"
 
 //初期化
@@ -8,7 +8,6 @@ void Framework::Initialize() {
 	core_ = std::make_unique<Core>();
 	core_->Initialize();
 	//カメラの設定
-	core_->GetObject2dCommon()->SetDefaultCamera(core_->GetCameraManager()->FindCamera("defaultCamera"));
 	core_->GetObject3dCommon()->SetDefaultCamera(core_->GetCameraManager()->FindCamera("defaultCamera"));
 	core_->GetParticleCommon()->SetDefaultCamera(core_->GetCameraManager()->FindCamera("defaultCamera"));
 }

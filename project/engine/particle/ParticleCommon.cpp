@@ -1,7 +1,7 @@
 #include "ParticleCommon.h"
-#include "engine/base/DirectXBase.h"
-#include "engine/camera/Camera.h"
-#include "engine/base/GraphicsPipeline.h"
+#include "DirectXBase.h"
+#include "Camera.h"
+#include "GraphicsPipeline.h"
 #include "Blend.h"
 #include <cassert>
 using namespace Microsoft::WRL;
@@ -30,8 +30,6 @@ void ParticleCommon::Initialize(DirectXBase* directXBase, SRVManager* srvManager
 	makeGraphicsPipeline_->SetPixelShaderFileName(L"Particle.PS.hlsl");
 	//シグネイチャBlobの初期化
 	makeGraphicsPipeline_->CreateRootSignatureBlobForParticle();
-	//ルートシグネイチャの保存
-	makeGraphicsPipeline_->CreateRootSignature();
 	//インプットレイアウト
 	makeGraphicsPipeline_->InitializeInputLayoutDesc();
 	//ラスタライザステート

@@ -32,9 +32,6 @@ void Core::Initialize() {
 	//スプライトの共通部分
 	spriteCommon_ = std::make_unique<SpriteCommon>(SpriteCommon::ConstructorKey{});
 	spriteCommon_->Initialize(directXBase_.get(), textureManager_.get());
-	//2Dオブジェクトの共通部分
-	object2dCommon_ = std::make_unique<Object2dCommon>(Object2dCommon::ConstructorKey{});
-	object2dCommon_->Initialize(directXBase_.get(), textureManager_.get());
 	//3Dオブジェクトの共通部分
 	object3dCommon_ = std::make_unique<Object3dCommon>(Object3dCommon::ConstructorKey{});
 	object3dCommon_->Initialize(directXBase_.get(), srvManager_.get(), textureManager_.get(), modelManager_.get());
@@ -57,7 +54,6 @@ void Core::Initialize() {
 	sceneContext_.cameraManager = cameraManager_.get();
 	sceneContext_.audioManager = audioManager_.get();
 	sceneContext_.imguiManager = imguiManager_.get();
-	sceneContext_.object2dCommon = object2dCommon_.get();
 	//シーンでの必要なものを取得
 	sceneContext_ = this;
 	//シーンマネージャー
@@ -109,11 +105,6 @@ CameraManager* Core::GetCameraManager()const {
 //スプライトの共通部分のゲッター
 SpriteCommon* Core::GetSpriteCommon() const {
 	return spriteCommon_.get();
-}
-
-//2Dオブジェクトの共通部分
-Object2dCommon* Core::GetObject2dCommon() const {
-	return object2dCommon_.get();
 }
 
 //3Dオブジェクトの共通部分のゲッター

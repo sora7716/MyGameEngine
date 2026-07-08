@@ -1,7 +1,7 @@
 #include "BaseShape.h"
 #include "DirectXBase.h"
-#include "algorithms/Rendering.h"
-#include "algorithms/Math.h"
+#include "MatrixUtility.h"
+#include "MathUtility.h"
 #include "Logger.h"
 #include "GraphicsPipeline.h"
 #include "Camera.h"
@@ -316,7 +316,7 @@ void BaseShape::BuildGraphicsPipeline() {
 
 //座標の更新
 void BaseShape::UpdateTransform() {
-	worldMatrix_ = Rendering::MakeAffineMatrix(transform_);
+	worldMatrix_ = MatrixUtility::MakeAffineMatrix(transform_);
 	//TransformからWorldMatrixを作る
 	//if (parent_) {
 	//	worldMatrix_ = worldMatrix_ * parent_->worldMatrix_;

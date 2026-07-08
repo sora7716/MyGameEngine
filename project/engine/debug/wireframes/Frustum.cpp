@@ -1,6 +1,6 @@
 #include "Frustum.h"
 #include "Camera.h"
-#include "algorithms/Math.h"
+#include "MathUtility.h"
 #include <cmath>
 
 //コンストラクタ

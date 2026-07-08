@@ -1,12 +1,12 @@
 #define NOMINMAX
 #include <algorithm>
 #include "ParticleSystem.h"
-#include "engine/base/DirectXBase.h"
-#include "engine/particle/ParticleCommon.h"
-#include "engine/camera/Camera.h"
-#include "engine/2d/TextureManager.h"
-#include "engine/base/SRVManager.h"
-#include "engine/3d/Model.h"
+#include "DirectXBase.h"
+#include "ParticleCommon.h"
+#include "Camera.h"
+#include "TextureManager.h"
+#include "SRVManager.h"
+#include "Model.h"
 
 //初期化
 void ParticleSystem::Initialize(ParticleCommon* particleCommon, const std::string& textureName, Model* model) {

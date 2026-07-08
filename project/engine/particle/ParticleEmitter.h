@@ -1,8 +1,8 @@
 #pragma once
 #include <list>
 #include <random>
-#include "engine/math/RenderingData.h"
-#include "engine/math/Vector4.h"
+#include "RenderingData.h"
+#include "Vector4.h"
 #include "PrimitiveData.h"
 
 //前方宣言
@@ -12,33 +12,33 @@ class Model;
 
 //パーティクルの情報をGPUに送るための構造体
 struct ParticleForGPU {
-	Matrix4x4 WVP;
-	Matrix4x4 World;
-	Vector4 color;
+	Matrix4x4 WVP=Matrix4x4::Identity4x4();
+	Matrix4x4 World= Matrix4x4::Identity4x4();
+	Vector4 color=Vector4::MakeWhiteColor();
 };
 
 //パーティクル単体のデータ
 struct Particle {
-	Transform transform;//SRVの情報
-	Vector3 velocity;//方向
-	Vector4 color;//色
-	float lifeTime;//生存時間
-	float currentTime;//発生してからの
+	Transform transform = {};//SRVの情報
+	Vector3 velocity = {};//方向
+	Vector4 color=Vector4::MakeWhiteColor();//色
+	float lifeTime=0.0f;//生存時間
+	float currentTime=0.0f;//発生してからの
 };
 
 //発生源
 struct Emitter {
-	Transform transform;//エミッターのTransform
-	uint32_t count;//発生数
-	float frequency;//発生頻度
-	float frequencyTime;//頻度用時刻
-	float range;//発生範囲
+	Transform transform = {};//エミッターのTransform
+	uint32_t count=0;//発生数
+	float frequency=0.0f;//発生頻度
+	float frequencyTime=0.0f;//頻度用時刻
+	float range=0.0f;//発生範囲
 };
 
 //フィールドの加速度
 struct AccelerationField {
-	Vector3 acceleration;//加速度
-	PrimitiveData::AABB area;//範囲
+	Vector3 acceleration = {};//加速度
+	PrimitiveData::AABB area = {};//範囲
 };
 
 /// <summary>

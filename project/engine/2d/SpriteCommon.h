@@ -1,5 +1,5 @@
 #pragma once
-#include "ResourceData.h"
+#include "RenderData.h"
 #include "blendMode.h"
 #include <wrl.h>
 #include <d3d12.h>
@@ -86,11 +86,6 @@ public://メンバ関数
 	/// </summary>
 	/// <returns>グラフィックパイプライン</returns>
 	std::array<ComPtr<ID3D12PipelineState>, static_cast<int32_t>(BlendMode::kCountOfBlendMode)>GetGraphicsPipelineStates()const;
-
-	/// <summary>
-	/// 終了
-	/// </summary>
-	void Finalize();
 public://PressKeyIdiom
 	class ConstructorKey {
 	private:

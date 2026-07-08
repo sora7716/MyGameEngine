@@ -11,7 +11,7 @@
 #include "Line.h"
 #include "Plane.h"
 #include "Sphere.h"
-#include "algorithms/Collision.h"
+#include "Collision.h"
 #include "TextureManager.h"
 #include "SkyBox.h"
 

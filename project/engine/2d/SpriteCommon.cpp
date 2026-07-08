@@ -32,8 +32,6 @@ void SpriteCommon::Initialize(DirectXBase* directXBase, TextureManager* textureM
 	makeGraphicsPipeline_->CreateRootSignatureBlobForObject3d();
 	//シグネイチャBlobの初期化
 	makeGraphicsPipeline_->CreateRootSignatureBlobForSprite();
-	//ルートシグネイチャの保存
-	makeGraphicsPipeline_->CreateRootSignature();
 	//インプットレイアウト
 	makeGraphicsPipeline_->InitializeInputLayoutDesc();
 	//ラスタライザステート

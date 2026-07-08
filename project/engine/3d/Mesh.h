@@ -1,5 +1,5 @@
 #pragma once
-#include "ResourceData.h"
+#include "RenderData.h"
 #include "PrimitiveData.h"
 #include <wrl.h>
 #include <d3d12.h>

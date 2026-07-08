@@ -1,6 +1,6 @@
 #pragma once
-#include "engine/math/ResourceData.h"
-#include "engine/base/BlendMode.h"
+#include "RenderData.h"
+#include "BlendMode.h"
 #include "ParticleEmitter.h"
 #include <memory>
 #include <d3d12.h>

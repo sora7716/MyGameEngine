@@ -3,14 +3,14 @@
 #include "DirectXBase.h"
 #include "Camera.h"
 #include "ModelManager.h"
-#include "algorithms/Rendering.h"
+#include "MatrixUtility.h"
 #include "GameObject.h"
 #include "ImGuiManager.h"
 #include "Model.h"
 #include "Mesh.h"
 #include "SRVManager.h"
 #include "TextureManager.h"
-#include "algorithms/Collision.h"
+#include "Collision.h"
 #include "LODBuilder.h"
 #include "LODController.h"
 #include <cassert>
@@ -424,7 +424,7 @@ void Object3d::MakeWorldMatrix(uint32_t index) {
 	assert(gameObject);
 
 	//このオブジェクト本来のワールド行列を求める
-	worldMatrix_ = Rendering::MakeAffineMatrix(gameObject->GetTransform());
+	worldMatrix_ = MatrixUtility::MakeAffineMatrix(gameObject->GetTransform());
 
 	if (parent_) {
 		worldMatrix_ = worldMatrix_ * parent_->GetWorldMatrix();
@@ -440,7 +440,7 @@ void Object3d::MakeBillboardWorldMatrix(uint32_t index) {
 	assert(gameObject);
 
 	//このオブジェクト本来のワールド行列を求める
-	worldMatrix_ = Rendering::MakeBillboardAffineMatrix(renderCamera_->GetWorldMatrix(), gameObject->GetTransform());
+	worldMatrix_ = MatrixUtility::MakeBillboardAffineMatrix(renderCamera_->GetWorldMatrix(), gameObject->GetTransform());
 
 	if (parent_) {
 		worldMatrix_ = worldMatrix_ * parent_->GetWorldMatrix();

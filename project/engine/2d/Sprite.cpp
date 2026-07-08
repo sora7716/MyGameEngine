@@ -1,7 +1,7 @@
 #include "Sprite.h"
 #include "SpriteCommon.h"
 #include <cassert>
-#include "algorithms/Math.h"
+#include "MatrixUtility.h"
 #include "TextureManager.h"
 #include "DirectXBase.h"
 #include "WinApi.h"
@@ -83,7 +83,7 @@ void Sprite::ChangeTexture(const std::string& spriteName) {
 // UVの座標変換の更新
 void Sprite::UpdateUVTransform(Transform2d uvTransform) {
 	//UVTransform
-	materialData_->uvMatrix = Rendering::MakeUVAffineMatrix(uvTransform);
+	materialData_->uvMatrix = MatrixUtility::MakeUVAffineMatrix(uvTransform);
 }
 
 //色のゲッター

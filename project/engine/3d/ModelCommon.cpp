@@ -1,6 +1,6 @@
 #include "ModelCommon.h"
-#include "engine/base/DirectXBase.h"
-#include "engine/2d/TextureManager.h"
+#include "DirectXBase.h"
+#include "TextureManager.h"
 //デストラクタ
 ModelCommon::~ModelCommon() {
 }

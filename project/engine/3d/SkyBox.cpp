@@ -1,10 +1,10 @@
 #include "SkyBox.h"
-#include "algorithms/Math.h"
+#include "MathUtility.h"
 #include "TextureManager.h"
 #include "DirectXBase.h"
 #include "WinApi.h"
 #include "ImGuiManager.h"
-#include "algorithms/Rendering.h"
+#include "MatrixUtility.h"
 #include "TextureManager.h"
 #include "Camera.h"
 #include "GraphicsPipeline.h"
@@ -40,8 +40,6 @@ void SkyBox::Initialize(DirectXBase* directXBase, TextureManager* textureManager
 	makeGraphicsPipeline_->CreateDepthStencilResourceForParticle();
 	//シグネイチャBlobの初期化
 	makeGraphicsPipeline_->CreateRootSignatureBlobForSprite();
-	//ルートシグネイチャの保存
-	makeGraphicsPipeline_->CreateRootSignature();
 	//インプットレイアウト
 	makeGraphicsPipeline_->InitializeInputLayoutDescForSkyBox();
 	//ラスタライザステート
@@ -78,7 +76,7 @@ void SkyBox::Initialize(DirectXBase* directXBase, TextureManager* textureManager
 //更新
 void SkyBox::Update() {
 	//TransformからWorldMatrixを作る
-	wvpData_->world = Rendering::MakeAffineMatrix(transform_);
+	wvpData_->world = MatrixUtility::MakeAffineMatrix(transform_);
 	//wvpの書き込み
 	const Matrix4x4& viewProjectionMatrix = camera_->GetViewProjectionMatrix();
 	wvpData_->wvp = wvpData_->world * viewProjectionMatrix;
@@ -115,7 +113,7 @@ void SkyBox::Draw() {
 // UVの座標変換の更新
 void SkyBox::UpdateUVTransform(Transform2d uvTransform) {
 	//UVTransform
-	materialData_->uvMatrix = Rendering::MakeUVAffineMatrix(uvTransform);
+	materialData_->uvMatrix = MatrixUtility::MakeUVAffineMatrix(uvTransform);
 }
 
 //頂点データの初期化

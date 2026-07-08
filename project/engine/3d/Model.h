@@ -1,6 +1,6 @@
 #pragma once
-#include "ResourceData.h"
-#include "algorithms/Rendering.h"
+#include "RenderData.h"
+#include "MatrixUtility.h"
 #include "PrimitiveMeshCreate.h"
 #include <string>
 #include <vector>

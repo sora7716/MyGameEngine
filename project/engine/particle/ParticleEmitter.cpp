@@ -1,6 +1,6 @@
 #define NOMINMAX
 #include "ParticleEmitter.h"
-#include "algorithms/Math.h"
+#include "MathUtility.h"
 #include "Camera.h"
 #include "ParticleCommon.h"
 #include "Model.h"
@@ -35,9 +35,9 @@ void ParticleEmitter::Update(ParticleForGPU* instancingData) {
 			// パーティクルの色を設定
 			instancingData[numInstance_].color.SetRGB((*it).color.GetRGB());
 			//移動
-			(*it).transform.translate += (*it).velocity * Math::kDeltaTime;
+			(*it).transform.translate += (*it).velocity * MathUtility::kDeltaTime;
 			//経過時間を足す
-			(*it).currentTime += Math::kDeltaTime;
+			(*it).currentTime += MathUtility::kDeltaTime;
 			float alpha = 1.0f - ((*it).currentTime / (*it).lifeTime);
 			instancingData[numInstance_].color.w = alpha;
 			//ワールドトランスフォームの更新
@@ -54,13 +54,13 @@ void ParticleEmitter::Update(ParticleForGPU* instancingData) {
 	for (auto it = particles_.begin(); it != particles_.end();) {
 		//Field内のParticleには加速度を適用する
 		if (IsCollision(accelerationField_.area, (*it).transform.translate)) {
-			(*it).velocity += accelerationField_.acceleration * Math::kDeltaTime;
+			(*it).velocity += accelerationField_.acceleration * MathUtility::kDeltaTime;
 		}
 		it++;
 	}
 
 	//Emitterの更新
-	emitter_.frequencyTime += Math::kDeltaTime;
+	emitter_.frequencyTime += MathUtility::kDeltaTime;
 	if (emitter_.frequency <= emitter_.frequencyTime) {
 		particles_.splice(particles_.end(), Emit());
 		emitter_.frequencyTime -= emitter_.frequency;//余計に過ぎた時間も加味して頻度を計算する
@@ -122,7 +122,7 @@ Particle ParticleEmitter::MakeNormalParticle() {
 	particle.transform.scale = { 1.0f, 1.0f, 1.0f };
 
 	//回転
-	particle.transform.quaternion = { 0.0f, Math::kPi, 0.0f };
+	particle.transform.quaternion = { 0.0f, MathUtility::kPi, 0.0f };
 
 	//位置の値をemitRange_の範囲でランダムに設定
 	std::uniform_real_distribution<float>distributionPosition(-emitter_.range, emitter_.range);
@@ -155,10 +155,10 @@ void ParticleEmitter::UpdateWorldTransform(uint32_t numInstance, auto iterator, 
 	if (camera_) {
 		if (model_) {
 			//モデルがあったらAffine行列を入れる
-			worldMatrix_ = Rendering::MakeAffineMatrix((*iterator).transform);
+			worldMatrix_ = MatrixUtility::MakeAffineMatrix((*iterator).transform);
 		} else {
 			//モデルがないならビルボード行列を入れる
-			worldMatrix_ = Rendering::MakeBillboardAffineMatrix(camera_->GetWorldMatrix(), (*iterator).transform);
+			worldMatrix_ = MatrixUtility::MakeBillboardAffineMatrix(camera_->GetWorldMatrix(), (*iterator).transform);
 		}
 		const Matrix4x4& viewProjectionMatrix = camera_->GetViewProjectionMatrix();
 

@@ -5,7 +5,7 @@
 #include "Mesh.h"
 #include "TextureManager.h"
 #include "Logger.h"
-#include "algorithms/Math.h"
+#include "MathUtility.h"
 #include "HashUtility.h"
 #include <format>
 #include <map>
@@ -157,7 +157,7 @@ void Model::Draw(uint32_t objectCount) {
 
 //uv変換
 void Model::UVTransform(uint32_t index, Transform2d uvTransform) {
-	materialPtrs_[index]->uvMatrix = Rendering::MakeUVAffineMatrix(uvTransform);
+	materialPtrs_[index]->uvMatrix = MatrixUtility::MakeUVAffineMatrix(uvTransform);
 }
 
 // 色を変更
@@ -525,7 +525,7 @@ MeshData Model::MakeSphereData() {
 	meshData.vertices.resize(kSubdivision * kSubdivision * 6);
 
 	//経度分割1つ分の角度φd
-	float pi = Math::kPi;
+	float pi = MathUtility::kPi;
 	const float kLonEvery = pi * 2.0f / static_cast<float>(kSubdivision);
 	//緯度分割1つぶんの角度θd
 	const float kLatEvery = pi / static_cast<float>(kSubdivision);

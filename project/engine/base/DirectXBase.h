@@ -33,19 +33,9 @@ public://メンバ関数
 	void Initialize(WinApi* winApi);
 
 	/// <summary>
-	/// デバイスの初期化
+	/// コマンド関連の生成
 	/// </summary>
-	void InitializeDevice();
-
-	/// <summary>
-	/// コマンド関連の初期化
-	/// </summary>
-	void InitializeCommand();
-
-	/// <summary>
-	/// スワップチェーンの生成
-	/// </summary>
-	void CreateSwapChain();
+	void CreateCommands();
 
 	/// <summary>
 	/// 各種デスクリプターヒープの生成
@@ -53,14 +43,9 @@ public://メンバ関数
 	void CreateDescriptorHeap();
 
 	/// <summary>
-	/// RTVの初期化
+	/// RTVの生成
 	/// </summary>
-	void InitializeRTV();
-
-	/// <summary>
-	/// フェンスの初期化
-	/// </summary>
-	void InitializeFence();
+	void CreateRenderTargetView();
 
 	/// <summary>
 	/// ビューポート矩形の初期化
@@ -88,21 +73,13 @@ public://メンバ関数
 	void PostDraw();
 
 	/// <summary>
-	/// 深度バッファリソースの設定
-	/// </summary>
-	/// <param name="width">横幅</param>
-	/// <param name="height">縦幅</param>
-	/// <returns></returns>
-	ComPtr<ID3D12Resource> MakeDepthStencilTextureResource(int32_t width, int32_t height);
-
-	/// <summary>
 	/// DescriptorHeapの作成
 	/// </summary>
 	/// <param name="heapType">ヒープタイプ</param>
 	/// <param name="numDescriptors">デスクリプターの番号</param>
 	/// <param name="shaderVisible">シェーダを使うか</param>
 	/// <returns>デスクリプターヒープ</returns>
-	ComPtr<ID3D12DescriptorHeap> MakeDescriptorHeap(D3D12_DESCRIPTOR_HEAP_TYPE heapType, UINT numDescriptors, bool	shaderVisible);
+	ComPtr<ID3D12DescriptorHeap> CreateDescriptorHeap(D3D12_DESCRIPTOR_HEAP_TYPE heapType, UINT numDescriptors, bool	shaderVisible);
 
 	/// <summary>
 	/// シェーダーのコンパイラ
@@ -186,7 +163,7 @@ public://メンバ関数
 	/// </summary>
 	/// <returns>デプスステンシルテクスチャ</returns>
 	ID3D12Resource* GetDepthStencilTexture()const;
-public://PressKey
+public://PassKey
 	class ConstructorKey {
 		ConstructorKey() = default;
 		friend class Core;
@@ -221,10 +198,18 @@ private://メンバ関数
 	//代入演算子を禁止
 	const DirectXBase operator=(const DirectXBase&) = delete;
 	/// <summary>
+    /// 深度バッファリソースの設定
+    /// </summary>
+    /// <param name="width">横幅</param>
+    /// <param name="height">縦幅</param>
+    /// <returns></returns>
+	ComPtr<ID3D12Resource> CreateDepthStencilTextureResource(int32_t width, int32_t height);
+
+	/// <summary>
 	/// IDXIファクトリーの生成
 	/// </summary>
 	/// <returns>IDXIファクトリー</returns>
-	ComPtr<IDXGIFactory7> MakeIDXGIFactory();
+	ComPtr<IDXGIFactory7> CreateIDXGIFactory();
 
 	/// <summary>
 	/// 使用するアダプタを決定
@@ -236,31 +221,31 @@ private://メンバ関数
 	/// D3D12デバイスの生成
 	/// </summary>
 	/// <returns>D3D12デバイス</returns>
-	ComPtr<ID3D12Device> MakeD3D12Device();
+	ComPtr<ID3D12Device> CreateD3D12Device();
 
 	/// <summary>
 	/// コマンドキューの生成
 	/// </summary>
 	/// <returns>コマンドキュー</returns>
-	ComPtr<ID3D12CommandQueue> MakeCommandQueue();
+	ComPtr<ID3D12CommandQueue> CreateCommandQueue();
 
 	/// <summary>
 	/// コマンドアローケータの生成 
 	/// </summary>
 	/// <returns>コマンドアローケータ</returns>
-	ComPtr<ID3D12CommandAllocator> MakeCommandAllocator();
+	ComPtr<ID3D12CommandAllocator> CreateCommandAllocator();
 
 	/// <summary>
 	/// コマンドリストの生成
 	/// </summary>
 	/// <returns>コマンドリスト</returns>
-	ComPtr<ID3D12GraphicsCommandList> MakeCommandList();
+	ComPtr<ID3D12GraphicsCommandList> CreateCommandList();
 
 	/// <summary>
 	/// スワップチェーンの生成
 	/// </summary>
 	/// <returns>スワップチェーン</returns>
-	ComPtr<IDXGISwapChain4> MakeSwapChain();
+	ComPtr<IDXGISwapChain4> CreateSwapChain();
 
 	/// <summary>
 	/// SwapChainからResourceを引っ張ってくる
@@ -273,7 +258,7 @@ private://メンバ関数
 	/// Fenceを作成する
 	/// </summary>
 	/// <returns></returns>
-	ComPtr<ID3D12Fence> MakeFence();
+	ComPtr<ID3D12Fence> CreateFence();
 
 	/// <summary>
 	/// デバックレイヤー
@@ -285,34 +270,51 @@ private://メンバ関数
 	/// </summary>
 	void StopExecution();
 private://メンバ変数
-	D3D12_RESOURCE_BARRIER barrier_{};//TransitionBarrierの設定
-	WinApi* winApi_ = nullptr;//ウィンドウズAPI
-	ComPtr<IDXGIFactory7> dxgiFactory_ = nullptr;//IDXIファクトリー
-	ComPtr<IDXGIAdapter4> useAdapter_ = nullptr;//使用するアダプタ
-	ComPtr<ID3D12Device> device_ = nullptr;//デバイス
-	ComPtr<ID3D12CommandQueue> commandQueue_ = nullptr;//コマンドキュー
-	ComPtr<ID3D12CommandAllocator> commandAllocator_ = nullptr;//コマンドアローケータ
-	ComPtr<ID3D12GraphicsCommandList> commandList_ = nullptr;//コマンドリスト
-	DXGI_SWAP_CHAIN_DESC1 swapChainDesc_ = {};
-	ComPtr<ID3D12DescriptorHeap> rtvDescriptorHeap_ = nullptr;//RTV
-	D3D12_RENDER_TARGET_VIEW_DESC rtvDesc_{};//rtvDesc
-	D3D12_CPU_DESCRIPTOR_HANDLE dsvHandle = {};//DSVハンドル
+	//WindowAPI
+	WinApi* winApi_ = nullptr;
+	//デバックコントローラー
+	ComPtr<ID3D12Debug1> debugController_ = nullptr;
+	//IDXIファクトリー
+	ComPtr<IDXGIFactory7> dxgiFactory_ = nullptr;
+	//使用するアダプタ
+	ComPtr<IDXGIAdapter4> useAdapter_ = nullptr;
+	//デバイス
+	ComPtr<ID3D12Device> device_ = nullptr;
+	//コマンドキュー
+	ComPtr<ID3D12CommandQueue> commandQueue_ = nullptr;
+	//コマンドアローケータ
+	ComPtr<ID3D12CommandAllocator> commandAllocator_ = nullptr;
+	//コマンドリスト
+	ComPtr<ID3D12GraphicsCommandList> commandList_ = nullptr;
+	//スワップチェーン
+	ComPtr<IDXGISwapChain4> swapChain_ = nullptr;
+	//スワップチェーンからリソースを引っ張ってくる
+	std::array<ComPtr<ID3D12Resource>, 2> swapChainResources_ = { nullptr };
+	//RTVを2つ作るのでディスクリプタを2つ用意
+	std::vector<D3D12_CPU_DESCRIPTOR_HANDLE> rtvHandles_ = {};
+	//RTV(描画情報の使い方)
+	ComPtr<ID3D12DescriptorHeap> rtvDescriptorHeap_ = nullptr;
+	//DSV(深度情報の使い方)
+	ComPtr<ID3D12DescriptorHeap> dsvDescriptorHeap_ = nullptr;
+	//DescriptorSize
+	uint32_t descriptorSizeRTV_ = 0;//RTV
+	uint32_t descriptorSizeDSV_ = 0;//DSV
 	//深度バッファ
 	ComPtr<ID3D12Resource> depthStencilResource_ = nullptr;
-	//DescriptorSize
-	uint32_t descriptorSizeRTV_;
-	std::array<ComPtr<ID3D12Resource>, 2> swapChainResources_ = { nullptr };//スワップチェーンからリソースを引っ張ってくる
-	ComPtr<ID3D12Debug1> debugController_ = nullptr;//デバックコントローラー
-	ComPtr<ID3D12Fence> fence_ = nullptr;//Fence
-	uint64_t fenceValue_ = 0;//FenceValue
-	HANDLE fenceEvent_ = 0;//FenceEvent	
-	D3D12_VIEWPORT viewport_{};//ビューポート
-	D3D12_RECT scissorRect_{};//シーザー矩形
-	ComPtr<IDxcUtils> dxcUtils_ = nullptr;//DXCユーティリティ
-	ComPtr<IDxcCompiler3> dxcCompiler_ = nullptr;//DXCコンパイラ
-	ComPtr<IDxcIncludeHandler> includeHandler_ = nullptr;//デフォルトインクルードハンドラ
-	ComPtr<ID3D12DescriptorHeap> dsvDescriptorHeap_ = nullptr;//DSV
-	uint32_t descriptorSizeDSV_ = 0;
-	std::vector<D3D12_CPU_DESCRIPTOR_HANDLE> rtvHandles_ = {};//RTVを2つ作るのでディスクリプタを2つ用意
-	ComPtr<IDXGISwapChain4> swapChain_ = nullptr;//スワップチェーン
+	//Fence
+	ComPtr<ID3D12Fence> fence_ = nullptr;
+	//FenceEvent	
+	HANDLE fenceEvent_ = 0;
+	//DXCユーティリティ
+	ComPtr<IDxcUtils> dxcUtils_ = nullptr;
+	//DXCコンパイラ
+	ComPtr<IDxcCompiler3> dxcCompiler_ = nullptr;
+	//デフォルトインクルードハンドラ
+	ComPtr<IDxcIncludeHandler> includeHandler_ = nullptr;
+	//FenceValue
+	uint64_t fenceValue_ = 0;
+	//ビューポート
+	D3D12_VIEWPORT viewport_{};
+	//シーザー矩形
+	D3D12_RECT scissorRect_{};
 };

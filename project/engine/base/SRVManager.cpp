@@ -13,7 +13,7 @@ void SRVManager::Initialize(DirectXBase* directXBase) {
 	//DirectXの基盤部分を記憶する
 	directXBase_ = directXBase;
 	//デスクリプタヒープの生成
-	descriptorHeap_ = directXBase_->MakeDescriptorHeap(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV, kMaxSRVCount, true);
+	descriptorHeap_ = directXBase_->CreateDescriptorHeap(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV, kMaxSRVCount, true);
 	//デスクリプタ1個分のサイズを取得
 	descriptorSize_ = directXBase_->GetDevice()->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV);
 }

@@ -8,13 +8,15 @@
 using namespace PrimitiveData;
 
 //初期化
-void ParticleEmitter::Initialize(ParticleCommon* particleCommon, Model* model) {
+void ParticleEmitter::Initialize(ParticleCommon* particleCommon, Camera* renderCamera, Model* model) {
 	//パーティクルの共通部分
 	particleCommon_ = particleCommon;
 	//カメラを設定
-	camera_ = particleCommon_->GetDefaultCamera();
+	gameCamera_ = particleCommon_->GetDefaultCamera();
 	//モデルを設定
 	model_ = model;
+	//描画用カメラの記録
+	renderCamera_ = renderCamera;
 	//乱数エンジンの初期化
 	std::random_device seedGenerator;
 	randomEngine_.seed(seedGenerator());
@@ -84,8 +86,8 @@ const uint32_t ParticleEmitter::GetNumInstance() const {
 }
 
 //カメラのセッター
-void ParticleEmitter::SetCamera(Camera* camera) {
-	camera_ = camera;
+void ParticleEmitter::SetGameCamera(Camera* camera) {
+	gameCamera_ = camera;
 }
 
 //トランスフォームデータのセッター
@@ -94,8 +96,8 @@ void ParticleEmitter::SetTransformData(const Transform& transfrom) {
 }
 
 //パーティクルの数のセッター
-void ParticleEmitter::SetParticleCount(uint32_t cont) {
-	emitter_.count = cont;
+void ParticleEmitter::SetParticleCount(uint32_t count) {
+	emitter_.count = count;
 }
 
 //発生範囲のセッター
@@ -106,6 +108,11 @@ void ParticleEmitter::SetEmitRange(float range) {
 //加速度が起こるフィールドのセッター
 void ParticleEmitter::SetAccelerationField(const AccelerationField& field) {
 	accelerationField_ = field;
+}
+
+//パーティクルの発生感覚の設定
+void ParticleEmitter::SetFrequency(float frequency) {
+	emitter_.frequency = frequency;
 }
 
 //パーティクルの生成
@@ -120,9 +127,6 @@ Particle ParticleEmitter::MakeNormalParticle() {
 
 	//拡縮
 	particle.transform.scale = { 1.0f, 1.0f, 1.0f };
-
-	//回転
-	particle.transform.quaternion = { 0.0f, MathUtility::kPi, 0.0f };
 
 	//位置の値をemitRange_の範囲でランダムに設定
 	std::uniform_real_distribution<float>distributionPosition(-emitter_.range, emitter_.range);
@@ -152,15 +156,15 @@ Particle ParticleEmitter::MakeNormalParticle() {
 //ワールドトランスフォームの更新
 void ParticleEmitter::UpdateWorldTransform(uint32_t numInstance, auto iterator, ParticleForGPU* instancingData) {
 	//wvpの書き込み
-	if (camera_) {
+	if (gameCamera_) {
 		if (model_) {
 			//モデルがあったらAffine行列を入れる
 			worldMatrix_ = MatrixUtility::MakeAffineMatrix((*iterator).transform);
 		} else {
 			//モデルがないならビルボード行列を入れる
-			worldMatrix_ = MatrixUtility::MakeBillboardAffineMatrix(camera_->GetWorldMatrix(), (*iterator).transform);
+			worldMatrix_ = MatrixUtility::MakeBillboardAffineMatrix(renderCamera_->GetWorldMatrix(), (*iterator).transform);
 		}
-		const Matrix4x4& viewProjectionMatrix = camera_->GetViewProjectionMatrix();
+		const Matrix4x4& viewProjectionMatrix = renderCamera_->GetViewProjectionMatrix();
 
 		instancingData[numInstance].WVP = worldMatrix_ * viewProjectionMatrix;
 	} else {

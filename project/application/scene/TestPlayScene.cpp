@@ -14,6 +14,7 @@
 #include "Collision.h"
 #include "TextureManager.h"
 #include "SkyBox.h"
+#include "ParticleSystem.h"
 #include <numbers>
 
 //コンストラクタ
@@ -75,6 +76,11 @@ void TestPlayScene::Initialize(const SceneContext& sceneContext) {
 	for (uint32_t i = 0; i < object3d_->GetMeshSize(); i++) {
 		object3d_->SetEnvironmentMap(i, "rostock_laage_airport_4k.dds");
 	}
+
+	particleSystem_ = std::make_unique<ParticleSystem>();
+	particleSystem_->Initialize(sceneContext_.particleCommon, &renderCamera_, "circle.png");
+	particleSystem_->SetGameCamera(gameCamera_);
+	particleSystem_->SetFrequency(0.3f);
 }
 
 //更新
@@ -95,6 +101,8 @@ void TestPlayScene::Update() {
 	cube_->Update();
 
 	skyBox_->Update();
+
+	particleSystem_->Update();
 
 	if (Collision::IsCollision(gameCamera_->GetFrustum(), cube_->GetAABB())) {
 		cube_->SetColor(Vector4::MakeRedColor());
@@ -189,7 +197,9 @@ void TestPlayScene::Draw() {
 
 	cube_->Draw();
 
-	skyBox_->Draw();
+	//skyBox_->Draw();
+
+	particleSystem_->Draw();
 }
 
 //終了

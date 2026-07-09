@@ -9,6 +9,7 @@ class Object3d;
 class GameObject;
 class Audio;
 class SkyBox;
+class ParticleSystem;
 
 namespace Primitive {
 	class Cube;
@@ -73,4 +74,6 @@ private://メンバ変数
 	std::unique_ptr<Primitive::Cube>cube_ = nullptr;
 
 	std::unique_ptr<SkyBox>skyBox_ = nullptr;
+
+	std::unique_ptr<ParticleSystem>particleSystem_ = nullptr;
 };

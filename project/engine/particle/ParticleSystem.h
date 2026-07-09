@@ -5,10 +5,12 @@
 #include <memory>
 #include <d3d12.h>
 #include <wrl.h>
+#include <vector>
 
 //前方宣言
 class DirectXBase;
 class ParticleCommon;
+class Mesh;
 
 /// <summary>
 /// パーティクルシステム
@@ -20,20 +22,21 @@ public://メンバ関数
 	/// <summary>
 	/// コンストラクタ
 	/// </summary>
-	ParticleSystem() = default;
+	ParticleSystem();
 
 	/// <summary>
 	/// デストラクタ
 	/// </summary>
-	~ParticleSystem() = default;
+	~ParticleSystem();
 
 	/// <summary>
 	/// 初期化
 	/// </summary>
 	/// <param name="particleCommon">パーティクルの共通部分</param>
+	/// <param name="renderCamera">描画用カメラ</param>
 	/// <param name="textureName">テクスチャ名</param>
 	/// <param name="model">モデル</param>
-	void Initialize(ParticleCommon* particleCommon, const std::string& textureName, Model* model = nullptr);
+	void Initialize(ParticleCommon* particleCommon, Camera* renderCamera, const std::string& textureName, Model* model = nullptr);
 
 	/// <summary>
 	/// 更新
@@ -51,21 +54,10 @@ public://メンバ関数
 	void Debug();
 
 	/// <summary>
-	/// 終了
-	/// </summary>
-	void Finalize();
-
-	/// <summary>
-	/// テクスチャ名のゲッター
-	/// </summary>
-	/// <returns>テクスチャ名</returns>
-	std::string GetTextureName();
-
-	/// <summary>
 	/// カメラのセッター
 	/// </summary>
 	/// <param name="camera">カメラ</param>
-	void SetCamera(Camera* camera);
+	void SetGameCamera(Camera* camera);
 
 	/// <summary>
 	/// ブレンドモードのセッター
@@ -76,7 +68,7 @@ public://メンバ関数
 	/// <summary>
 	/// トランスフォームデータのセッター
 	/// </summary>
-	/// <param name="transfrom">トランスフォーム</param>
+	/// <param name="transform">トランスフォーム</param>
 	void SetTransformData(const Transform& transfrom);
 
 	/// <summary>
@@ -96,11 +88,19 @@ public://メンバ関数
 	/// </summary>
 	/// <param name="field">フィールド</param>
 	void SetAccelerationField(const AccelerationField& field);
-private://メンバ関数
+
 	/// <summary>
-	/// モデルデータの初期化
+	/// パーティクルの発生感覚[秒]の設定
 	/// </summary>
-	void InitializeQuadModelData();
+	/// <param name="frequency">発生感覚</param>
+	void SetFrequency(float frequency);
+private://メンバ関数
+
+	/// <summary>
+	/// メッシュデータの初期化
+	/// </summary>
+	/// <returns>メッシュデータ</returns>
+	MeshData InitializePlaneModelData();
 
 	/// <summary>
 	/// マテリアルデータの初期化
@@ -108,19 +108,9 @@ private://メンバ関数
 	void InitializeMaterialData();
 
 	/// <summary>
-	/// 頂点リソースの生成
-	/// </summary>
-	void CreateVertexResource();
-
-	/// <summary>
 	/// マテリアルリソースの生成
 	/// </summary>
 	void CreateMaterialResource();
-
-	/// <summary>
-	/// インデックスリソースの生成
-	/// </summary>
-	void CreateIndexResource();
 
 	/// <summary>
 	/// ワールドトランスフォームのリソースの生成
@@ -142,10 +132,10 @@ private://メンバ変数
 	ParticleForGPU* instancingData_ = {};
 	//モデルデータ
 	ModelData modelData_ = {};
+	//メッシュ
+	std::vector<std::unique_ptr<Mesh>>meshes_;
 	//マテリアルデータ
 	Material* materialData_ = nullptr;
-	//インデックスデータ
-	uint32_t* indexData_ = nullptr;
 	//バッファリソース
 	ComPtr<ID3D12Resource>vertexResource_ = nullptr;//頂点
 	ComPtr<ID3D12Resource>materialResource_ = nullptr;//マテリアル

@@ -12,27 +12,27 @@ class Model;
 
 //パーティクルの情報をGPUに送るための構造体
 struct ParticleForGPU {
-	Matrix4x4 WVP=Matrix4x4::Identity4x4();
-	Matrix4x4 World= Matrix4x4::Identity4x4();
-	Vector4 color=Vector4::MakeWhiteColor();
+	Matrix4x4 WVP = Matrix4x4::Identity4x4();
+	Matrix4x4 World = Matrix4x4::Identity4x4();
+	Vector4 color = Vector4::MakeWhiteColor();
 };
 
 //パーティクル単体のデータ
 struct Particle {
 	Transform transform = {};//SRVの情報
 	Vector3 velocity = {};//方向
-	Vector4 color=Vector4::MakeWhiteColor();//色
-	float lifeTime=0.0f;//生存時間
-	float currentTime=0.0f;//発生してからの
+	Vector4 color = Vector4::MakeWhiteColor();//色
+	float lifeTime = 0.0f;//生存時間
+	float currentTime = 0.0f;//発生してからの
 };
 
 //発生源
 struct Emitter {
 	Transform transform = {};//エミッターのTransform
-	uint32_t count=0;//発生数
-	float frequency=0.0f;//発生頻度
-	float frequencyTime=0.0f;//頻度用時刻
-	float range=0.0f;//発生範囲
+	uint32_t count = 0;//発生数
+	float frequency = 0.0f;//発生頻度
+	float frequencyTime = 0.0f;//頻度用時刻
+	float range = 0.0f;//発生範囲
 };
 
 //フィールドの加速度
@@ -57,11 +57,12 @@ public://メンバ関数
 	~ParticleEmitter() = default;
 
 	/// <summary>
-	/// 初期化
-	/// </summary>
-	/// <param name="particleCommon">パーティクルの共通部分</param>
-	/// <param name="model">モデル</param>
-	void Initialize(ParticleCommon* particleCommon, Model* model);
+    /// 初期化
+    /// </summary>
+    /// <param name="particleCommon">パーティクルの共通部分</param>
+	/// <param name="renderCamera">描画用カメラ</param>
+    /// <param name="model">モデル</param>
+	void Initialize(ParticleCommon* particleCommon, Camera* renderCamera, Model* model);
 
 	/// <summary>
 	/// 更新
@@ -90,12 +91,12 @@ public://メンバ関数
 	/// カメラのセッター
 	/// </summary>
 	/// <param name="camera"></param>
-	void SetCamera(Camera* camera);
+	void SetGameCamera(Camera* gameCamera);
 
 	/// <summary>
 	/// トランスフォームデータのセッター
 	/// </summary>
-	/// <param name="transfrom">トランスフォーム</param>
+	/// <param name="transform">トランスフォーム</param>
 	void SetTransformData(const Transform& transfrom);
 
 	/// <summary>
@@ -115,6 +116,12 @@ public://メンバ関数
 	/// </summary>
 	/// <param name="field">フィールド</param>
 	void SetAccelerationField(const AccelerationField& field);
+	
+	/// <summary>
+	/// パーティクルの発生感覚[秒]の設定
+	/// </summary>
+	/// <param name="frequency">パーティクルの発生感覚</param>
+	void SetFrequency(float frequency);
 private://メンバ関数
 	/// <summary>
 	/// パーティクルの生成
@@ -156,7 +163,9 @@ private://メンバ変数
 	//パーティクルの共通部分
 	ParticleCommon* particleCommon_ = nullptr;
 	//カメラ
-	Camera* camera_ = nullptr;
+	Camera* gameCamera_ = nullptr;
+	//描画用のカメラ
+	Camera* renderCamera_ = nullptr;
 	//モデル
 	Model* model_ = nullptr;
 	//ランダムエンジン
@@ -172,14 +181,14 @@ private://メンバ変数
 	Emitter emitter_ = {
 		.transform = {{1.0f,1.0f,1.0f},{0.0f,0.0f,0.0f},{0.0f,0.0f,0.0f}},
 		.count = 1,
-		.frequency = 0.1f,//発生頻度
+		.frequency = 1.0f,//発生頻度
 		.frequencyTime = 0.0f,//発生頻度用の時刻,0.0fで初期化
 		.range = 1.0f
 	};
 
 	//フィールドの加速度
 	AccelerationField accelerationField_ = {
-		.acceleration = {15.0f,0.0f,0.0f},
+		.acceleration = {0.0f,0.0f,0.0f},
 		.area = {{-1.0f,-1.0f,-1.0f},1.0f,1.0f,1.0f}
 	};
 };

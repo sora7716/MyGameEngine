@@ -17,9 +17,17 @@ struct VertexData {
 struct Material {
 	Vector4 color = Vector4::MakeWhiteColor();//色
 	int32_t enableLighting = 0;//ライティングするかどうかのフラグ
-	float padding[3] = {};
+	float padding1[3] = {};
 	Matrix4x4 uvMatrix = Matrix4x4::Identity4x4();//UVTransform
 	float shininess = 1.0f;//光沢度
+	float environmentCoefficient;//映り込み度を調整
+	float padding2[2] = {};
+};
+
+//マテリアル
+struct MaterialForSprite {
+	Vector4 color = Vector4::MakeWhiteColor();//色
+	Matrix4x4 uvMatrix = Matrix4x4::Identity4x4();//UVTransform
 };
 
 //平行光源
@@ -59,8 +67,9 @@ struct SpotLight {
 };
 
 //マテリアルデータ
-struct MaterialData {
+struct MaterialTexturePaths {
 	std::string textureFilePath = "";
+	std::string environmentMap = "";
 };
 
 //メッシュデータ
@@ -74,7 +83,7 @@ struct MeshData {
 //モデルデータの構造体
 struct ModelData {
 	std::vector<MeshData> mesheDatas;
-	std::vector<MaterialData> material;
+	std::vector<MaterialTexturePaths> material;
 	Node rootNode = {};
 };
 

@@ -85,7 +85,7 @@ void ImGuiManager::DragTransform(Transform& transformData) {
 		transformData.quaternion = Quaternion::MakeQuaternionForEulerAngle(transformData.eulerAngle);
 	}
 	ImGui::DragFloat4("rotate", &transformData.quaternion.x, 0.0f);
-	ImGui::DragFloat3("translate", &transformData.translate.x, 0.1f);
+	ImGui::DragFloat3("translate", &transformData.translate.x, 0.01f);
 #endif // USE_IMGUI
 }
 

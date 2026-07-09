@@ -13,6 +13,7 @@
 #include "Collision.h"
 #include "LODBuilder.h"
 #include "LODController.h"
+#include <algorithm>
 #include <cassert>
 //初期化
 void Object3dInstance::Initialize(GameObject* gameObject) {
@@ -279,6 +280,14 @@ void Object3d::SetTexture(uint32_t meshIndex, const std::string& imageFileName) 
 	//LODモデルにも適応
 	lodBuilder_->SetTexture(materialIndex, imageFileName);
 }
+//環境マップの変更
+void Object3d::SetEnvironmentMap(uint32_t meshIndex, const std::string& environmentMapFileName) {
+	uint32_t materialIndex = baseModel_->GetMeshes()[meshIndex]->GetMaterialIndex();
+	//元モデルにも適応
+	baseModel_->SetEnvironmentMap(materialIndex, environmentMapFileName);
+	//LODモデルにも適応
+	lodBuilder_->SetEnvironmentMap(materialIndex, environmentMapFileName);
+}
 
 //ライティングフラグの設定
 void Object3d::SetIsLighting(uint32_t meshIndex, bool isLighting) {
@@ -296,6 +305,18 @@ void Object3d::SetShininess(uint32_t meshIndex, float shininess) {
 	baseModel_->SetShininess(materialIndex, shininess);
 	//LODモデルにも適応
 	lodBuilder_->SetShininess(materialIndex, shininess);
+}
+
+//環境マップの映り込み度を調整
+void Object3d::SetEnvironmentCoefficient(uint32_t meshIndex, float& environmentCoefficient) {
+	//環境マップの映り込み度を0~1にクランプ
+	environmentCoefficient = std::clamp(environmentCoefficient, 0.0f, 1.0f);
+	//マテリアルインデックス
+	uint32_t materialIndex = baseModel_->GetMeshes()[meshIndex]->GetMaterialIndex();
+	//元モデルにも適応
+	baseModel_->SetEnvironmentCoefficient(materialIndex, environmentCoefficient);
+	//LODモデルにも適応
+	lodBuilder_->SetEnvironmentCoefficient(materialIndex, environmentCoefficient);
 }
 
 //UV座標の設定
@@ -354,6 +375,11 @@ Vector3 Object3d::GetWorldPos(uint32_t index) {
 	return { worldMatrix_.m[3][0],worldMatrix_.m[3][1],worldMatrix_.m[3][2] };
 	return Vector3{};
 
+}
+
+//メッシュのサイズの取得
+uint32_t Object3d::GetMeshSize() {
+	return static_cast<uint32_t>(baseModel_->GetModelData().mesheDatas.size());
 }
 
 //LOD関係のセットアップ

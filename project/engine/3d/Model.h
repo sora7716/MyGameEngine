@@ -95,6 +95,13 @@ public://メンバ関数
 	void SetTexture(uint32_t materialIndex, const std::string& imageFileName);
 
 	/// <summary>
+	/// 環境マップの変更
+	/// </summary>
+	/// <param name="materialIndex">マテリアルインデックス</param>
+	/// <param name="environmentMapFileName">環境マップのファイル名</param>
+	void SetEnvironmentMap(uint32_t materialIndex, const std::string& environmentMapFileName);
+
+	/// <summary>
 	/// 色を取得
 	/// </summary>
 	/// <param name="index">インデックス</param>
@@ -113,7 +120,7 @@ public://メンバ関数
 	/// <param name="directoryPath">ディレクトリファイルパス</param>
 	/// <param name="filename">ファイル名</param>
 	/// <returns>マテリアルデータ</returns>
-	static MaterialData LoadMaterialTemplateFile(const std::string& directoryPath, const std::string& filename);
+	static MaterialTexturePaths LoadMaterialTemplateFile(const std::string& directoryPath, const std::string& filename);
 
 	/// <summary>
 	/// モデルファイルの読み込み
@@ -127,16 +134,23 @@ public://メンバ関数
 	/// <summary>
 	/// ライティングの設定
 	/// </summary>
-	/// <param name="index">インデックス</param>
+	/// <param name="index">マテリアルの検索キー</param>
 	/// <param name="materialData">ライティングフラグ</param>
-	void SetIsLighting(uint32_t index, bool isLighting);
+	void SetIsLighting(uint32_t materialIndex, bool isLighting);
 
 	/// <summary>
 	/// 輝度の設定
 	/// </summary>
-	/// <param name="index">インデックス</param>
+	/// <param name="index">マテリアルの検索キー</param>
 	/// <param name="shininess">輝度</param>
-	void SetShininess(uint32_t index, float shininess);
+	void SetShininess(uint32_t materialIndex, float shininess);
+
+	/// <summary>
+	/// 環境マップの映り込み度を調整
+	/// </summary>
+	/// <param name="materialIndex">マテリアルの検索キー</param>
+	/// <param name="environmentCoefficient">環境マップの映り込み度</param>
+	void SetEnvironmentCoefficient(uint32_t materialIndex, float environmentCoefficient);
 
 	/// <summary>
 	/// リムライトのセッター

@@ -18,12 +18,12 @@ private://エイリアステンプレート
 private://構造体
 	//テクスチャデータ
 	struct TextureData {
-		DirectX::TexMetadata metadata;//画像の幅や高さなどの情報
-		ComPtr<ID3D12Resource>resource;//テクスチャリソース
+		DirectX::TexMetadata metadata = {};//画像の幅や高さなどの情報
+		ComPtr<ID3D12Resource>resource = {};//テクスチャリソース
 		uint32_t srvIndex;//SRVインデックス
-		ComPtr<ID3D12Resource>intermediateResource;//アップロードするリソース
-		D3D12_CPU_DESCRIPTOR_HANDLE srvHandleCPU;//SRV作成時に必要なCPUハンドル
-		D3D12_GPU_DESCRIPTOR_HANDLE srvHandleGPU;//描画コマンドに必要なGPUハンドル
+		ComPtr<ID3D12Resource>intermediateResource = nullptr;//アップロードするリソース
+		D3D12_CPU_DESCRIPTOR_HANDLE srvHandleCPU = {};//SRV作成時に必要なCPUハンドル
+		D3D12_GPU_DESCRIPTOR_HANDLE srvHandleGPU = {};//描画コマンドに必要なGPUハンドル
 
 		D3D12_RESOURCE_STATES state = D3D12_RESOURCE_STATE_COPY_DEST; // ←生成直後はこれ
 	};
@@ -38,7 +38,7 @@ public://メンバ関数
 	/// </summary>
 	/// <param name="directXBase">DirectXの基盤</param>
 	/// <param name="srvManager">SRVマネージャー</param>
-	void Initialize(DirectXBase* directXBase,SRVManager*srvManager);
+	void Initialize(DirectXBase* directXBase, SRVManager* srvManager);
 
 	/// <summary>
 	/// テクスチャファイルの読み込み

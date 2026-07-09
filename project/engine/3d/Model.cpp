@@ -121,7 +121,7 @@ void Model::RebuildMeshes(const std::vector<MeshData>& meshes) {
 		}
 	} else {
 		//マテリアルが存在しなかった場合
-		MaterialData material;
+		MaterialTexturePaths material;
 #ifdef _DEBUG
 		material.textureFilePath = "engine/resources/textures/magenta1x1.png";
 #else
@@ -147,10 +147,13 @@ void Model::Draw(uint32_t objectCount) {
 		//マテリアルCBufferの場所を設定
 		directXBase_->GetCommandList()->SetGraphicsRootConstantBufferView(0, materialResources_[materialIndex]->GetGPUVirtualAddress());
 
-		MaterialData& materialData = modelData_.material[materialIndex];
+		MaterialTexturePaths& materialTexturePath = modelData_.material[materialIndex];
 
 		//テクスチャをセット
-		directXBase_->GetCommandList()->SetGraphicsRootDescriptorTable(2, modelCommon_->GetTextureManager()->GetSRVHandleGPU(materialData.textureFilePath));
+		directXBase_->GetCommandList()->SetGraphicsRootDescriptorTable(2, modelCommon_->GetTextureManager()->GetSRVHandleGPU(materialTexturePath.textureFilePath));
+
+		//環境マップのセット
+		directXBase_->GetCommandList()->SetGraphicsRootDescriptorTable(8, modelCommon_->GetTextureManager()->GetSRVHandleGPU(materialTexturePath.environmentMap));
 		mesh->Draw(objectCount);
 	}
 }
@@ -165,10 +168,16 @@ void Model::SetColor(uint32_t index, const Vector4& color) {
 	materialPtrs_[index]->color = color;
 }
 
-//テクスチャの変更
+//テクスチャの設定
 void Model::SetTexture(uint32_t materialIndex, const std::string& imageFileName) {
 	modelData_.material[materialIndex].textureFilePath = "engine/resources/textures/" + imageFileName;
 	modelCommon_->GetTextureManager()->LoadTexture(modelData_.material[materialIndex].textureFilePath);
+}
+
+//環境マップの設定
+void Model::SetEnvironmentMap(uint32_t materialIndex, const std::string& environmentMapFileName) {
+	modelData_.material[materialIndex].environmentMap = "engine/resources/textures/" + environmentMapFileName;
+	modelCommon_->GetTextureManager()->LoadTexture(modelData_.material[materialIndex].environmentMap);
 }
 
 //色を取得
@@ -184,9 +193,9 @@ const ModelData& Model::GetModelData() const {
 }
 
 //.mtlファイルの読み取り	
-MaterialData Model::LoadMaterialTemplateFile(const std::string& directoryPath, const std::string& filename) {
+MaterialTexturePaths Model::LoadMaterialTemplateFile(const std::string& directoryPath, const std::string& filename) {
 	//1.中で必要となる変数の宣言
-	MaterialData materialData;//構築するMaterialData
+	MaterialTexturePaths materialData;//構築するMaterialData
 	std::string line;//ファイルから読んだ1行を格納するもの
 	//2.ファイルを開く
 	std::ifstream file(directoryPath + "/" + filename);//ファイルを開く
@@ -270,7 +279,7 @@ ModelData Model::LoadModelFile(const std::string& directoryPath, const std::stri
 		aiMaterial* material = scene->mMaterials[materialIndex];
 
 		//マテリアルデータ
-		MaterialData materialData;
+		MaterialTexturePaths materialData;
 
 		if (material->GetTextureCount(aiTextureType_BASE_COLOR) != 0) {
 			aiString textureFilePath;
@@ -291,13 +300,18 @@ ModelData Model::LoadModelFile(const std::string& directoryPath, const std::stri
 }
 
 //ライティングの設定
-void Model::SetIsLighting(uint32_t index, bool isLighting) {
-	materialPtrs_[index]->enableLighting = isLighting;
+void Model::SetIsLighting(uint32_t materialIndex, bool isLighting) {
+	materialPtrs_[materialIndex]->enableLighting = isLighting;
 }
 
 //輝度の設定
-void Model::SetShininess(uint32_t index, float shininess) {
-	materialPtrs_[index]->shininess = shininess;
+void Model::SetShininess(uint32_t materialIndex, float shininess) {
+	materialPtrs_[materialIndex]->shininess = shininess;
+}
+
+//環境マップの映り込み度を調整
+void Model::SetEnvironmentCoefficient(uint32_t materialIndex, float environmentCoefficient) {
+	materialPtrs_[materialIndex]->environmentCoefficient = environmentCoefficient;
 }
 
 //リムライトのセッター
@@ -340,6 +354,7 @@ void Model::CreateMaterialResource() {
 		materialPtrs_[i]->enableLighting = true;
 		materialPtrs_[i]->uvMatrix = Matrix4x4::Identity4x4();
 		materialPtrs_[i]->shininess = 10.0f;
+		materialPtrs_[i]->environmentCoefficient = 1.0f;
 	}
 }
 
@@ -642,7 +657,7 @@ void Model::CreateResources() {
 	//リムライトリソースの生成
 	CreateRimLightResource();
 	//テクスチャの読み込み
-	for (MaterialData& materialData : modelData_.material) {
+	for (MaterialTexturePaths& materialData : modelData_.material) {
 		modelCommon_->GetTextureManager()->LoadTexture(materialData.textureFilePath);
 	}
 }

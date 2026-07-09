@@ -55,10 +55,28 @@ void LODBuilder::SetColor(uint32_t materialIndex, const Vector4& color) {
 }
 
 //テクスチャの設定
-void LODBuilder::SetTexture(uint32_t materialIndex, const std::string& filePath) {
+void LODBuilder::SetTexture(uint32_t materialIndex, const std::string& imageFileName) {
 	for (std::unique_ptr<Model>& lodModel : lodModels_) {
 		if (lodModel) {
-			lodModel->SetTexture(materialIndex, filePath);
+			lodModel->SetTexture(materialIndex, imageFileName);
+		}
+	}
+}
+
+//環境マップの映り込み度を調整
+void LODBuilder::SetEnvironmentCoefficient(uint32_t materialIndex, float environmentCoefficient) {
+	for (std::unique_ptr<Model>& lodModel : lodModels_) {
+		if (lodModel) {
+			lodModel->SetEnvironmentCoefficient(materialIndex, environmentCoefficient);
+		}
+	}
+}
+
+//環境マップの設定
+void LODBuilder::SetEnvironmentMap(uint32_t materialIndex, const std::string& environmentMapFileName) {
+	for (std::unique_ptr<Model>& lodModel : lodModels_) {
+		if (lodModel) {
+			lodModel->SetEnvironmentMap(materialIndex, environmentMapFileName);
 		}
 	}
 }

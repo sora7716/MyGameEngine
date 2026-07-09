@@ -175,14 +175,13 @@ void Sprite::CreateIndexResource() {
 void Sprite::InitializeMaterialData() {
 	//色を書き込む
 	materialData_->color = { 1.0f, 1.0f, 1.0f, 1.0f };
-	materialData_->enableLighting = false;
 	materialData_->uvMatrix = Matrix4x4::Identity4x4();
 }
 
 //マテリアルリソースの生成
 void Sprite::CreateMaterialResource() {
 	//マテリアルリソースを作る
-	materialResource_ = directXBase_->CreateBufferResource(sizeof(Material));
+	materialResource_ = directXBase_->CreateBufferResource(sizeof(MaterialForSprite));
 	//マテリアルリソースにデータを書き込むためのアドレスを取得してmaterialDataに割り当てる
 	//書き込むためのアドレスを取得
 	materialResource_->Map(0, nullptr, reinterpret_cast<void**>(&materialData_));

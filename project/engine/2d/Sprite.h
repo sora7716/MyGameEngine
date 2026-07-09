@@ -136,7 +136,7 @@ private://メンバ変数
 	//バッファリソース内のデータを指すポインタ
 	VertexData* vertexData_ = nullptr;//頂点
 	uint32_t* indexData_ = nullptr;//インデックス
-	Material* materialData_ = nullptr;//マテリアル
+	MaterialForSprite* materialData_ = nullptr;//マテリアル
 	
 	//バッファリソースの使い道を補足するバッファビュー
 	D3D12_VERTEX_BUFFER_VIEW vertexBufferView_ = {};//頂点

@@ -60,6 +60,7 @@ void TestPlayScene::Initialize(const SceneContext& sceneContext) {
 	frustum_ = std::make_unique<Primitive::Frustum>();
 	frustum_->Initialize(sceneContext_.directXBase, &renderCamera_);
 	frustum_->SetTargetCamera(gameCamera_);
+	frustum_->SetColor({ 1.0f,0.0f,0.0f,1.0f });
 
 	cube_ = std::make_unique<Primitive::Cube>();
 	cube_->Initialize(sceneContext_.directXBase, &renderCamera_);
@@ -71,6 +72,9 @@ void TestPlayScene::Initialize(const SceneContext& sceneContext) {
 	skyBox_->Initialize(sceneContext_.directXBase, sceneContext.textureManager, "rostock_laage_airport_4k.dds", gameCamera_);
 	skyBoxObject_->GetTransform().scale = { 10.0f,10.0f,10.0f };
 	skyBox_->SetGameObject(skyBoxObject_.get());
+	for (uint32_t i = 0; i < object3d_->GetMeshSize(); i++) {
+		object3d_->SetEnvironmentMap(i, "rostock_laage_airport_4k.dds");
+	}
 }
 
 //更新
@@ -122,6 +126,8 @@ void TestPlayScene::Debug() {
 
 		if (ImGui::TreeNode(("object" + std::to_string(i)).c_str())) {
 			ImGuiManager::DragTransform(gameObjects_[i]->GetTransform());
+			ImGui::SliderFloat("evironmentCoefficient", &environmentCoefficient_, 0.0f, 1.0f);
+			object3d_->SetEnvironmentCoefficient(0, environmentCoefficient_);
 			ImGui::TreePop();
 		}
 

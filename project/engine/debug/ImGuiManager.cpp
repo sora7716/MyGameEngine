@@ -1,7 +1,8 @@
 #include "ImGuiManager.h"
 #include "DirectXBase.h"
 #include "SRVManager.h"
-#include "algorithms/Rendering.h"
+#include "MatrixUtility.h"
+#include "MathUtility.h"
 #include "WinApi.h"
 
 //デストラクタ
@@ -77,13 +78,14 @@ void ImGuiManager::DragTransform(Transform& transformData) {
 	if (transformData.isUsingQuaternion) {
 		ImGui::DragFloat3("axis", &transformData.axis.x, 0.01f, -1.0f, 1.0f);
 		ImGui::SliderAngle("angle", &transformData.angle);
-		transformData.quaternion = Rendering::MakeRotateAxisAngleQuaternion(transformData.axis, transformData.angle);
+		transformData.quaternion = MatrixUtility::MakeRotateAxisAngleQuaternion(transformData.axis, transformData.angle);
+		transformData.eulerAngle = MathUtility::MakeEulerAngleForQuaternion(transformData.quaternion);
 	} else {
 		ImGui::DragFloat3("eulerAngle", &transformData.eulerAngle.x, 0.1f);
 		transformData.quaternion = Quaternion::MakeQuaternionForEulerAngle(transformData.eulerAngle);
 	}
 	ImGui::DragFloat4("rotate", &transformData.quaternion.x, 0.0f);
-	ImGui::DragFloat3("translate", &transformData.translate.x, 0.1f);
+	ImGui::DragFloat3("translate", &transformData.translate.x, 0.01f);
 #endif // USE_IMGUI
 }
 

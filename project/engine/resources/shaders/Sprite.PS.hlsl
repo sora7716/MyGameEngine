@@ -3,9 +3,7 @@
 //マテリアル
 struct Material {
     float32_t4 color;
-    int32_t enableLighring;
     float32_t4x4 uvMatrix;
-    float32_t shininess;
 };
 
 ConstantBuffer<Material> gMaterial : register(b0);

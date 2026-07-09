@@ -1,6 +1,6 @@
 #pragma once
-#include "engine/math/ResourceData.h"
-#include "engine/math/RenderingData.h"
+#include "RenderData.h"
+#include "RenderingData.h"
 #include <string>
 #include <wrl.h>
 #include <d3d12.h>

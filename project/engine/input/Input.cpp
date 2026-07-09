@@ -1,8 +1,8 @@
 #include "Input.h"
 #include "WinApi.h"
 #include "Camera.h"
-#include "algorithms/Rendering.h"
-#include "algorithms/Math.h"
+#include "MatrixUtility.h"
+#include "MathUtility.h"
 #include <cassert>
 #include <climits>
 #pragma comment(lib,"dinput8.lib")

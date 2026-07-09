@@ -20,8 +20,8 @@ float Quaternion::Dot(const Quaternion& q) const {
 	return { x * q.x + y * q.y + z * q.z + w * q.w };
 }
 
-//ノルム
-float Quaternion::Norm()const {
+//長さ(ノルム)
+float Quaternion::Length()const {
 	return std::sqrt(std::pow(x, 2.0f) + std::pow(y, 2.0f) + std::pow(z, 2.0f) + std::pow(w, 2.0f));
 }
 
@@ -30,7 +30,7 @@ Quaternion Quaternion::Inverse()const {
 	//共役
 	Quaternion conjugate = this->Conjugate();
 	//ノルム
-	float norm = this->Norm();
+	float norm = this->Length();
 	//逆Quaternion
 	Quaternion inverse = conjugate / std::pow(norm, 2.0f);
 	return inverse;
@@ -39,7 +39,7 @@ Quaternion Quaternion::Inverse()const {
 //単位クォータニオン
 Quaternion Quaternion::Normalize()const {
 	Quaternion normalize = *this;
-	float norm = this->Norm();
+	float norm = this->Length();
 	if (norm != 0.0f) {
 		normalize = normalize / norm;
 	}

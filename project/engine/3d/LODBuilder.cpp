@@ -34,7 +34,7 @@ void LODBuilder::CreateLODModel(Model* model, const std::vector<float>& keepRate
 	lodModels_.resize(keepRates.size());
 	//モデルの作成
 	for (uint32_t i = 0; i < keepRates.size(); i++) {
-		lodModels_[i] = Model::CreateModelFromModelData(model->GetModelCommon(), model->GetModelData());
+		lodModels_[i] = Model::CreateModel(model->GetModelCommon(), model->GetModelData());
 		//lodModels_[i]->RebuildMeshes(VertexClustering(lodModels_[i]->GetModelData().mesheDatas, keepRates[i]));
 		lodModels_[i]->RebuildMeshes(EdgeCollapse(lodModels_[i]->GetModelData().mesheDatas, keepRates[i]));
 	}
@@ -55,10 +55,28 @@ void LODBuilder::SetColor(uint32_t materialIndex, const Vector4& color) {
 }
 
 //テクスチャの設定
-void LODBuilder::SetTexture(uint32_t materialIndex, const std::string& filePath) {
+void LODBuilder::SetTexture(uint32_t materialIndex, const std::string& imageFileName) {
 	for (std::unique_ptr<Model>& lodModel : lodModels_) {
 		if (lodModel) {
-			lodModel->SetTexture(materialIndex, filePath);
+			lodModel->SetTexture(materialIndex, imageFileName);
+		}
+	}
+}
+
+//環境マップの映り込み度を調整
+void LODBuilder::SetEnvironmentCoefficient(uint32_t materialIndex, float environmentCoefficient) {
+	for (std::unique_ptr<Model>& lodModel : lodModels_) {
+		if (lodModel) {
+			lodModel->SetEnvironmentCoefficient(materialIndex, environmentCoefficient);
+		}
+	}
+}
+
+//環境マップの設定
+void LODBuilder::SetEnvironmentMap(uint32_t materialIndex, const std::string& environmentMapFileName) {
+	for (std::unique_ptr<Model>& lodModel : lodModels_) {
+		if (lodModel) {
+			lodModel->SetEnvironmentMap(materialIndex, environmentMapFileName);
 		}
 	}
 }
@@ -282,18 +300,18 @@ std::vector<MeshData> LODBuilder::EdgeCollapse(const std::vector<MeshData>& mesh
 			}
 
 			//Collapseしたい数
-			uint32_t batchCount = 50;
-			float batchRate = 0.01f;
+			uint32_t batchCount = 50000;
+			float batchRate = 50.0f;
 			//割合ごとにCollapseしたい数と割合も変更
 			if (rate <= 0.25f) {
-				batchCount = 1000;
-				batchRate = 0.2f;
+				batchCount = 700000;
+				batchRate = 200.0f;
 			} else if (rate <= 0.5f) {
-				batchCount = 800;
-				batchRate = 0.1f;
+				batchCount = 500000;
+				batchRate = 100.f;
 			} else if (rate <= 0.8f) {
-				batchCount = 200;
-				batchRate = 0.02f;
+				batchCount = 300000;
+				batchRate = 80.0f;
 			}
 			//現在の頂点数と目標の頂点数の差分
 			uint32_t remainingCount = currentVertexCount - goalVertexCount;

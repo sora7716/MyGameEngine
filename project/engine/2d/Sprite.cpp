@@ -1,7 +1,7 @@
 #include "Sprite.h"
 #include "SpriteCommon.h"
 #include <cassert>
-#include "algorithms/Math.h"
+#include "MatrixUtility.h"
 #include "TextureManager.h"
 #include "DirectXBase.h"
 #include "WinApi.h"
@@ -83,7 +83,7 @@ void Sprite::ChangeTexture(const std::string& spriteName) {
 // UVの座標変換の更新
 void Sprite::UpdateUVTransform(Transform2d uvTransform) {
 	//UVTransform
-	materialData_->uvMatrix = Rendering::MakeUVAffineMatrix(uvTransform);
+	materialData_->uvMatrix = MatrixUtility::MakeUVAffineMatrix(uvTransform);
 }
 
 //色のゲッター
@@ -175,14 +175,13 @@ void Sprite::CreateIndexResource() {
 void Sprite::InitializeMaterialData() {
 	//色を書き込む
 	materialData_->color = { 1.0f, 1.0f, 1.0f, 1.0f };
-	materialData_->enableLighting = false;
 	materialData_->uvMatrix = Matrix4x4::Identity4x4();
 }
 
 //マテリアルリソースの生成
 void Sprite::CreateMaterialResource() {
 	//マテリアルリソースを作る
-	materialResource_ = directXBase_->CreateBufferResource(sizeof(Material));
+	materialResource_ = directXBase_->CreateBufferResource(sizeof(MaterialForSprite));
 	//マテリアルリソースにデータを書き込むためのアドレスを取得してmaterialDataに割り当てる
 	//書き込むためのアドレスを取得
 	materialResource_->Map(0, nullptr, reinterpret_cast<void**>(&materialData_));

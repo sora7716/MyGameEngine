@@ -4,20 +4,14 @@
 #include "ModelCommon.h"
 #include "Mesh.h"
 #include "TextureManager.h"
-#include "Logger.h"
-#include "Math.h"
-#include "HashUtility.h"
-#include <format>
-#include <map>
-#include <unordered_map>
-#include <queue>
+#include "PrimitiveMeshFactory.h"
 #include <cassert>
 #include <fstream>
 #include <sstream>
-#include <algorithm>
 #include <assimp/Importer.hpp>
 #include <assimp/scene.h>
 #include <assimp/postprocess.h>
+#include <filesystem>
 /// <summary>
 /// assimpのノードを読み取る
 /// </summary>
@@ -49,138 +43,43 @@ static Node ReadNode(aiNode* node) {
 	return result;
 }
 
-//コンストラクタ
-Model::Model() {
-}
-
-//デストラクタ
-Model::~Model() {
-}
-
 //モデルの生成(ファイルを読み込んでの)
-std::unique_ptr<Model>Model::CreateFromModel(ModelCommon* modelCommon, const std::string& storedFilePath, const std::string& filename) {
+std::unique_ptr<Model>Model::CreateModel(ModelCommon* modelCommon, const std::string& modelFileName) {
 	//インスタンスの生成
 	std::unique_ptr<Model>instance = std::make_unique<Model>();
 	//初期化
 	instance->Initialize(modelCommon);
 	//モデルの生成
-	instance->CreateFromModel(storedFilePath, filename);
+	instance->CreateModel(modelFileName);
 	return instance;
 }
 
 //モデルの生成(キューブ)
-std::unique_ptr<Model> Model::CreateCube(ModelCommon* modelCommon) {
+std::unique_ptr<Model> Model::CreateModel(ModelCommon* modelCommon, const std::vector<MeshData>& meshDatas) {
 	//インスタンスの生成
 	std::unique_ptr<Model>instance = std::make_unique<Model>();
 	//初期化
 	instance->Initialize(modelCommon);
 	//モデルの生成
-	instance->CreateCube();
+	instance->CreateModel(meshDatas);
 	return instance;
 }
 
 //モデルの生成(モデルデータ)
-std::unique_ptr<Model> Model::CreateModelFromModelData(ModelCommon* modelCommon, const ModelData& modelData) {
+std::unique_ptr<Model> Model::CreateModel(ModelCommon* modelCommon, const ModelData& modelData) {
 	//インスタンスの生成
 	std::unique_ptr<Model>instance = std::make_unique<Model>();
 	//初期化
 	instance->Initialize(modelCommon);
 	//モデルの生成
-	instance->CreateModelFromModelData(modelData);
+	instance->CreateModel(modelData);
 	return instance;
 }
 
-//初期化
-void Model::Initialize(ModelCommon* modelCommon) {
-	//ModelCommonのポインタを引数からメンバ変数を記録する
-	modelCommon_ = modelCommon;
-	//DirectXの基盤部分を受け取る
-	directXBase_ = modelCommon_->GetDirectXBase();
-}
-
-//メッシュの再構成
-void Model::RebuildMeshes(const std::vector<MeshData>& meshes) {
-	//メッシュデータのクリア
-	if (!meshes_.empty()) {
-		meshes_.clear();
-	}
-	//受け取ったメッシュデータに書き換え
-	modelData_.mesheDatas = meshes;
-	//マテリアルが存在するか
-	if (!modelData_.material.empty()) {
-		for (uint32_t i = 0; i < modelData_.mesheDatas.size(); i++) {
-			if (modelData_.mesheDatas[i].materialIndex >= modelData_.material.size()) {
-				modelData_.mesheDatas[i].materialIndex = 0;
-			}
-		}
-	} else {
-		//マテリアルが存在しなかった場合
-		MaterialData material;
-#ifdef _DEBUG
-		material.textureFilePath = "engine/resources/textures/magenta1x1.png";
-#else
-		material.textureFilePath = "engine/resources/textures/white1x1.png";
-#endif // _DEBUG
-		modelData_.material.push_back(material);
-	}
-	//メッシュを構築
-	BuildMesh();
-	//マテリアルリソースとポインタのサイズ設定
-	materialResources_.resize(modelData_.material.size());
-	materialPtrs_.resize(modelData_.material.size());
-}
-
-//描画
-void Model::Draw(uint32_t objectCount) {
-	//リムライトのCBufferの場所を設定
-	directXBase_->GetCommandList()->SetGraphicsRootConstantBufferView(7, rimLightResource_->GetGPUVirtualAddress());
-	//メッシュの描画
-	for (std::unique_ptr<Mesh>& mesh : meshes_) {
-		uint32_t materialIndex = mesh->GetMaterialIndex();
-
-		//マテリアルCBufferの場所を設定
-		directXBase_->GetCommandList()->SetGraphicsRootConstantBufferView(0, materialResources_[materialIndex]->GetGPUVirtualAddress());
-
-		MaterialData& materialData = modelData_.material[materialIndex];
-
-		//テクスチャをセット
-		directXBase_->GetCommandList()->SetGraphicsRootDescriptorTable(2, modelCommon_->GetTextureManager()->GetSRVHandleGPU(materialData.textureFilePath));
-		mesh->Draw(objectCount);
-	}
-}
-
-//uv変換
-void Model::UVTransform(uint32_t index, Transform2d uvTransform) {
-	materialPtrs_[index]->uvMatrix = Rendering::MakeUVAffineMatrix(uvTransform);
-}
-
-// 色を変更
-void Model::SetColor(uint32_t index, const Vector4& color) {
-	materialPtrs_[index]->color = color;
-}
-
-//テクスチャの変更
-void Model::SetTexture(uint32_t materialIndex, const std::string& imageName) {
-	modelData_.material[materialIndex].textureFilePath = "engine/resources/textures/" + imageName;
-	modelCommon_->GetTextureManager()->LoadTexture(modelData_.material[materialIndex].textureFilePath);
-}
-
-//色を取得
-const Vector4& Model::GetColor(uint32_t index) const {
-	// TODO: return ステートメントをここに挿入します
-	return materialPtrs_[index]->color;
-}
-
-//モデルデータのゲッター
-const ModelData& Model::GetModelData() const {
-	// TODO: return ステートメントをここに挿入します
-	return modelData_;
-}
-
 //.mtlファイルの読み取り	
-MaterialData Model::LoadMaterialTemplateFile(const std::string& directoryPath, const std::string& filename) {
+MaterialTexturePaths Model::LoadMaterialTemplateFile(const std::string& directoryPath, const std::string& filename) {
 	//1.中で必要となる変数の宣言
-	MaterialData materialData;//構築するMaterialData
+	MaterialTexturePaths materialData;//構築するMaterialData
 	std::string line;//ファイルから読んだ1行を格納するもの
 	//2.ファイルを開く
 	std::ifstream file(directoryPath + "/" + filename);//ファイルを開く
@@ -203,13 +102,13 @@ MaterialData Model::LoadMaterialTemplateFile(const std::string& directoryPath, c
 }
 
 //モデルファイルの読み込み
-ModelData Model::LoadModelFile(const std::string& directoryPath, const std::string& storedFilePath, const std::string& filename) {
+ModelData Model::LoadModelFile(const std::string& directoryPath, const std::string& fileName) {
 	//構築するModelData
 	ModelData modelData;
 
 	//assimpでobjファイルを読み込む
 	Assimp::Importer importer;
-	std::string filePath = directoryPath + "/" + storedFilePath + "/" + filename;
+	std::string filePath = directoryPath + "/" + fileName;
 	const aiScene* scene = importer.ReadFile(filePath, aiProcess_FlipWindingOrder | aiProcess_FlipUVs);
 	assert(scene->HasMeshes());//メッシュがない場合は終了
 
@@ -260,38 +159,149 @@ ModelData Model::LoadModelFile(const std::string& directoryPath, const std::stri
 	modelData.rootNode = ReadNode(scene->mRootNode);
 
 	//materialを解析
+	//ディレクトリパスを作成
+	std::filesystem::path folderPath = static_cast<std::filesystem::path>(fileName).parent_path();
 	for (uint32_t materialIndex = 0; materialIndex < scene->mNumMaterials; materialIndex++) {
 		aiMaterial* material = scene->mMaterials[materialIndex];
 
 		//マテリアルデータ
-		MaterialData materialData;
+		MaterialTexturePaths materialData;
 
 		if (material->GetTextureCount(aiTextureType_BASE_COLOR) != 0) {
 			aiString textureFilePath;
 			material->GetTexture(aiTextureType_BASE_COLOR, 0, &textureFilePath);
 
-			materialData.textureFilePath = directoryPath + "/" + storedFilePath + "/" + textureFilePath.C_Str();
+			materialData.textureFilePath = directoryPath + "/" + folderPath.string() + "/" + textureFilePath.C_Str();
 		} else if (material->GetTextureCount(aiTextureType_DIFFUSE) != 0) {
 			aiString textureFilePath;
 			material->GetTexture(aiTextureType_DIFFUSE, 0, &textureFilePath);
-			materialData.textureFilePath = directoryPath + "/" + storedFilePath + "/" + textureFilePath.C_Str();
+			materialData.textureFilePath = directoryPath + "/" + folderPath.string() + "/" + textureFilePath.C_Str();
 		}
 
 		//モデルデータのマテリアルにマテリアルデータを移動
-		modelData.material.push_back(std::move(materialData));
+		modelData.materialTexturePath.push_back(std::move(materialData));
 	}
 
 	return modelData;
 }
 
+//コンストラクタ
+Model::Model() {
+}
+
+//デストラクタ
+Model::~Model() {
+}
+
+//初期化
+void Model::Initialize(ModelCommon* modelCommon) {
+	//ModelCommonのポインタを引数からメンバ変数を記録する
+	modelCommon_ = modelCommon;
+	//DirectXの基盤部分を受け取る
+	directXBase_ = modelCommon_->GetDirectXBase();
+}
+
+//描画
+void Model::Draw(uint32_t objectCount) {
+	//リムライトのCBufferの場所を設定
+	directXBase_->GetCommandList()->SetGraphicsRootConstantBufferView(7, rimLightResource_->GetGPUVirtualAddress());
+	//メッシュの描画
+	for (std::unique_ptr<Mesh>& mesh : meshes_) {
+		uint32_t materialIndex = mesh->GetMaterialIndex();
+
+		//マテリアルCBufferの場所を設定
+		directXBase_->GetCommandList()->SetGraphicsRootConstantBufferView(0, materialResources_[materialIndex]->GetGPUVirtualAddress());
+
+		MaterialTexturePaths& materialTexturePath = modelData_.materialTexturePath[materialIndex];
+
+		//テクスチャをセット
+		directXBase_->GetCommandList()->SetGraphicsRootDescriptorTable(2, modelCommon_->GetTextureManager()->GetSRVHandleGPU(materialTexturePath.textureFilePath));
+
+		//環境マップのセット
+		directXBase_->GetCommandList()->SetGraphicsRootDescriptorTable(8, modelCommon_->GetTextureManager()->GetSRVHandleGPU(materialTexturePath.environmentMap));
+		mesh->Draw(objectCount);
+	}
+}
+
+//メッシュの再構成
+void Model::RebuildMeshes(const std::vector<MeshData>& meshes) {
+	//メッシュデータのクリア
+	if (!meshes_.empty()) {
+		meshes_.clear();
+	}
+	//受け取ったメッシュデータに書き換え
+	modelData_.mesheDatas = meshes;
+	//マテリアルが存在するか
+	if (!modelData_.materialTexturePath.empty()) {
+		for (uint32_t i = 0; i < modelData_.mesheDatas.size(); i++) {
+			if (modelData_.mesheDatas[i].materialIndex >= modelData_.materialTexturePath.size()) {
+				modelData_.mesheDatas[i].materialIndex = 0;
+			}
+		}
+	} else {
+		//マテリアルが存在しなかった場合
+		MaterialTexturePaths material;
+#ifdef _DEBUG
+		material.textureFilePath = "engine/resources/textures/magenta1x1.png";
+#else
+		material.textureFilePath = "engine/resources/textures/white1x1.png";
+#endif // _DEBUG
+		modelData_.materialTexturePath.push_back(material);
+	}
+	//メッシュを構築
+	BuildMesh();
+	//マテリアルリソースとポインタのサイズ設定
+	materialResources_.resize(modelData_.materialTexturePath.size());
+	materialPtrs_.resize(modelData_.materialTexturePath.size());
+}
+
+//uv変換
+void Model::UVTransform(uint32_t index, Transform2d uvTransform) {
+	materialPtrs_[index]->uvMatrix = MatrixUtility::MakeUVAffineMatrix(uvTransform);
+}
+
+// 色を変更
+void Model::SetColor(uint32_t index, const Vector4& color) {
+	materialPtrs_[index]->color = color;
+}
+
+//テクスチャの設定
+void Model::SetTexture(uint32_t materialIndex, const std::string& imageFileName) {
+	modelData_.materialTexturePath[materialIndex].textureFilePath = "engine/resources/textures/" + imageFileName;
+	modelCommon_->GetTextureManager()->LoadTexture(modelData_.materialTexturePath[materialIndex].textureFilePath);
+}
+
+//環境マップの設定
+void Model::SetEnvironmentMap(uint32_t materialIndex, const std::string& environmentMapFileName) {
+	modelData_.materialTexturePath[materialIndex].environmentMap = "engine/resources/textures/" + environmentMapFileName;
+	modelCommon_->GetTextureManager()->LoadTexture(modelData_.materialTexturePath[materialIndex].environmentMap);
+}
+
+//色を取得
+const Vector4& Model::GetColor(uint32_t index) const {
+	// TODO: return ステートメントをここに挿入します
+	return materialPtrs_[index]->color;
+}
+
+//モデルデータのゲッター
+const ModelData& Model::GetModelData() const {
+	// TODO: return ステートメントをここに挿入します
+	return modelData_;
+}
+
 //ライティングの設定
-void Model::SetIsLighting(uint32_t index, bool isLighting) {
-	materialPtrs_[index]->enableLighting = isLighting;
+void Model::SetIsLighting(uint32_t materialIndex, bool isLighting) {
+	materialPtrs_[materialIndex]->enableLighting = isLighting;
 }
 
 //輝度の設定
-void Model::SetShininess(uint32_t index, float shininess) {
-	materialPtrs_[index]->shininess = shininess;
+void Model::SetShininess(uint32_t materialIndex, float shininess) {
+	materialPtrs_[materialIndex]->shininess = shininess;
+}
+
+//環境マップの映り込み度を調整
+void Model::SetEnvironmentCoefficient(uint32_t materialIndex, float environmentCoefficient) {
+	materialPtrs_[materialIndex]->environmentCoefficient = environmentCoefficient;
 }
 
 //リムライトのセッター
@@ -315,7 +325,7 @@ ModelCommon* Model::GetModelCommon() {
 
 //マテリアルリソースの生成
 void Model::CreateMaterialResource() {
-	for (uint32_t i = 0; i < modelData_.material.size(); i++) {
+	for (uint32_t i = 0; i < modelData_.materialTexturePath.size(); i++) {
 		//マテリアル用のリソースを作る
 		materialResources_[i] = directXBase_->CreateBufferResource(sizeof(Material));
 		//書き込むためのアドレスを取得
@@ -325,6 +335,7 @@ void Model::CreateMaterialResource() {
 		materialPtrs_[i]->enableLighting = true;
 		materialPtrs_[i]->uvMatrix = Matrix4x4::Identity4x4();
 		materialPtrs_[i]->shininess = 10.0f;
+		materialPtrs_[i]->environmentCoefficient = 0.0f;
 	}
 }
 
@@ -353,175 +364,28 @@ void Model::BuildMesh() {
 	}
 }
 
-//キューブの作成
-MeshData Model::MakeCubeData() {
-	//面のデータ
-	struct FaceData {
-		Vector3 normal;
-		Vector4 position[4];
-	};
-
-	//どこの面
-	enum FaceType :uint32_t {
-		kFront,
-		kBack,
-		kRight,
-		kLeft,
-		kTop,
-		kBottom,
-		kFaceCount
-	};
-
-	//頂点の場所
-	enum FaceRect :uint32_t {
-		kLeftUp,
-		kRightUp,
-		kLeftBottom,
-		kRightBottom,
-		kFaceRectCount
-	};
-
-	//メッシュデータの頂点とインデックスのサイズ決定
-	MeshData mesh = {};
-	const uint32_t kVertexCount = 24;
-	const uint32_t kIndexCount = 36;
-	mesh.vertices.resize(24);
-	mesh.indices.resize(36);
-
-	//UV座標
-	Vector2 uv[kFaceRectCount] = {};
-	uv[kLeftUp] = { 0.0f,0.0f };//左上
-	uv[kRightUp] = { 1.0f,0.0f };//右上
-	uv[kLeftBottom] = { 0.0f,1.0f };//左下
-	uv[kRightBottom] = { 1.0f,1.0f };//右下
-
-	//法線と位置
-	FaceData face[kFaceCount]{};
-
-	//正面
-	face[kFront].normal = { 0.0f, 0.0f, 1.0f };
-	face[kFront].position[kLeftUp] = { -1.0f, 1.0f, 1.0f, 1.0f };
-	face[kFront].position[kRightUp] = { 1.0f, 1.0f, 1.0f, 1.0f };
-	face[kFront].position[kLeftBottom] = { -1.0f, -1.0f, 1.0f, 1.0f };
-	face[kFront].position[kRightBottom] = { 1.0f, -1.0f, 1.0f, 1.0f };
-
-	//背面
-	face[kBack].normal = { 0.0f, 0.0f, 1.0f };
-	face[kBack].position[kLeftUp] = { -1.0f, 1.0f, -1.0f, 1.0f };
-	face[kBack].position[kRightUp] = { 1.0f, 1.0f, -1.0f, 1.0f };
-	face[kBack].position[kLeftBottom] = { -1.0f, -1.0f, -1.0f, 1.0f };
-	face[kBack].position[kRightBottom] = { 1.0f, -1.0f, -1.0f, 1.0f };
-
-	//右面
-	face[kRight].normal = { 1.0f, 0.0f, 0.0f };
-	face[kRight].position[kLeftUp] = { 1.0f, -1.0f, 1.0f, 1.0f };
-	face[kRight].position[kRightUp] = { 1.0f, 1.0f, 1.0f, 1.0f };
-	face[kRight].position[kLeftBottom] = { 1.0f, -1.0f, -1.0f, 1.0f };
-	face[kRight].position[kRightBottom] = { 1.0f, 1.0f, -1.0f, 1.0f };
-
-	//左面
-	face[kLeft].normal = { -1.0f, 0.0f, 0.0f };
-	face[kLeft].position[kLeftUp] = { -1.0f, 1.0f, 1.0f, 1.0f };
-	face[kLeft].position[kRightUp] = { -1.0f, 1.0f, -1.0f, 1.0f };
-	face[kLeft].position[kLeftBottom] = { -1.0f, -1.0f, 1.0f, 1.0f };
-	face[kLeft].position[kRightBottom] = { -1.0f, -1.0f, -1.0f, 1.0f };
-
-	//上面
-	face[kTop].normal = { 0.0f, 1.0f, 0.0f };
-	face[kTop].position[kLeftUp] = { -1.0f, 1.0f, 1.0f, 1.0f };
-	face[kTop].position[kRightUp] = { 1.0f, 1.0f, 1.0f, 1.0f };
-	face[kTop].position[kLeftBottom] = { -1.0f, 1.0f, -1.0f, 1.0f };
-	face[kTop].position[kRightBottom] = { 1.0f, 1.0f, -1.0f, 1.0f };
-
-	//下面
-	face[kBottom].normal = { 0.0f, -1.0f, 0.0f };
-	face[kBottom].position[kLeftUp] = { -1.0f, -1.0f, 1.0f, 1.0f };
-	face[kBottom].position[kRightUp] = { 1.0f, -1.0f, 1.0f, 1.0f };
-	face[kBottom].position[kLeftBottom] = { -1.0f, -1.0f, -1.0f, 1.0f };
-	face[kBottom].position[kRightBottom] = { 1.0f, -1.0f, -1.0f, 1.0f };
-
-	//頂点データの入力
-	for (uint32_t faceIndex = 0; faceIndex < kFaceCount; faceIndex++) {
-		for (uint32_t faceRectIndex = 0; faceRectIndex < kFaceRectCount; faceRectIndex++) {
-			uint32_t index = faceIndex * 4 + faceRectIndex;
-			mesh.vertices[index] = {
-				.position = face[faceIndex].position[faceRectIndex],
-				.texcoord = uv[faceRectIndex],
-				.normal = face[faceIndex].normal,
-			};
-		}
-	}
-
-	// Z+  正面
-	mesh.indices[0] = 0;
-	mesh.indices[1] = 2;
-	mesh.indices[2] = 1;
-	mesh.indices[3] = 2;
-	mesh.indices[4] = 3;
-	mesh.indices[5] = 1;
-
-	// Z-  背面
-	mesh.indices[6] = 4;
-	mesh.indices[7] = 5;
-	mesh.indices[8] = 6;
-	mesh.indices[9] = 6;
-	mesh.indices[10] = 5;
-	mesh.indices[11] = 7;
-
-	// X+  右面
-	mesh.indices[12] = 8;
-	mesh.indices[13] = 10;
-	mesh.indices[14] = 9;
-	mesh.indices[15] = 10;
-	mesh.indices[16] = 11;
-	mesh.indices[17] = 9;
-
-	// X-  左面
-	mesh.indices[18] = 12;
-	mesh.indices[19] = 13;
-	mesh.indices[20] = 14;
-	mesh.indices[21] = 14;
-	mesh.indices[22] = 13;
-	mesh.indices[23] = 15;
-
-	// Y+  上面
-	mesh.indices[24] = 16;
-	mesh.indices[25] = 17;
-	mesh.indices[26] = 18;
-	mesh.indices[27] = 18;
-	mesh.indices[28] = 17;
-	mesh.indices[29] = 19;
-
-	// Y-  下面
-	mesh.indices[30] = 20;
-	mesh.indices[31] = 22;
-	mesh.indices[32] = 21;
-	mesh.indices[33] = 22;
-	mesh.indices[34] = 23;
-	mesh.indices[35] = 21;
-	return mesh;
-}
-
-//キューブの生成
-void Model::CreateCube() {
+//プリミティブモデルの初期化
+void Model::CreateModel(const std::vector<MeshData>& meshDatas, const std::string& nodeName) {
 	//モデルの読み込み
-	modelData_.mesheDatas = { MakeCubeData() };
+	modelData_.mesheDatas = { PrimitiveMeshFactory::CreatePlane() };
 	//メッシュの再構築
 	RebuildMeshes(modelData_.mesheDatas);
 	//各種リソースの生成
 	CreateResources();
 	//テクスチャの適応
 	SetTexture(modelData_.mesheDatas[0].materialIndex, "white1x1.png");
+	//環境マッピング
+	SetEnvironmentMap(modelData_.mesheDatas[0].materialIndex, "rostock_laage_airport_4k.dds");
 	//ノードの初期化
 	Node& node = modelData_.rootNode;
-	node.name = "cube";
+	node.name = nodeName;
 	node.localMatrix = Matrix4x4::Identity4x4();
 }
 
 //モデルの生成
-void Model::CreateFromModel(const std::string& storedFilePath, const std::string& filename) {
+void Model::CreateModel(const std::string& objectFileName) {
 	//モデルの読み込み
-	modelData_ = LoadModelFile("engine/resources/models", storedFilePath, filename);
+	modelData_ = LoadModelFile("engine/resources/models", objectFileName);
 	//メッシュの再構築
 	RebuildMeshes(modelData_.mesheDatas);
 	//各種リソースの生成
@@ -529,7 +393,7 @@ void Model::CreateFromModel(const std::string& storedFilePath, const std::string
 }
 
 //モデルの生成(モデルデータ)
-void Model::CreateModelFromModelData(const ModelData& modelData) {
+void Model::CreateModel(const ModelData& modelData) {
 	modelData_ = modelData;
 	//メッシュの再構成
 	RebuildMeshes(modelData_.mesheDatas);
@@ -544,7 +408,7 @@ void Model::CreateResources() {
 	//リムライトリソースの生成
 	CreateRimLightResource();
 	//テクスチャの読み込み
-	for (MaterialData& materialData : modelData_.material) {
+	for (MaterialTexturePaths& materialData : modelData_.materialTexturePath) {
 		modelCommon_->GetTextureManager()->LoadTexture(materialData.textureFilePath);
 	}
 }

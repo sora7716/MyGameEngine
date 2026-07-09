@@ -1,6 +1,6 @@
 #pragma once
-#include "ResourceData.h"
-#include "algorithms/Rendering.h"
+#include "RenderData.h"
+#include "MatrixUtility.h"
 #include <string>
 #include <vector>
 #include <wrl.h>
@@ -18,6 +18,47 @@ class Mesh;
 class Model {
 private://エイリアステンプレート
 	template <class T>using ComPtr = Microsoft::WRL::ComPtr<T>;
+public://静的メンバ関数
+	/// <summary>
+	/// モデルの生成(ファイルを読み込み)
+	/// </summary>
+	/// <param name="modelCommon">モデルの共通部分</param>
+	/// <param name="modelFileName">モデルのファイル名</param>
+	/// <returns>モデル</returns>
+	static std::unique_ptr<Model> CreateModel(ModelCommon* modelCommon, const std::string& modelFileName);
+
+	/// <summary>
+    /// モデルの生成(メッシュデータ)
+    /// </summary>
+    /// <param name="modelCommon">モデルの共通部分</param>
+	/// <param name="meshDatas">メッシュデータ</param>
+    /// <returns>モデル</returns>
+	static std::unique_ptr<Model> CreateModel(ModelCommon* modelCommon,const std::vector<MeshData>&meshDatas);
+
+	/// <summary>
+	/// モデルの生成(モデルデータ)
+	/// </summary>
+	/// <param name="modelCommon">モデルの共通部分</param>
+	/// <param name="modelData">モデルデータ</param>
+	/// <returns>モデル</returns>
+	static std::unique_ptr<Model> CreateModel(ModelCommon* modelCommon, const ModelData& modelData);
+
+	/// <summary>
+	/// .mtlファイルの読み取り	
+	/// </summary>
+	/// <param name="directoryPath">ディレクトリファイルパス</param>
+	/// <param name="filename">ファイル名</param>
+	/// <returns>マテリアルデータ</returns>
+	static MaterialTexturePaths LoadMaterialTemplateFile(const std::string& directoryPath, const std::string& filename);
+
+	/// <summary>
+	/// モデルファイルの読み込み
+	/// </summary>
+	/// <param name="directoryPath">ディレクトリファイルパス(最後に"/"はいらない)</param>
+	/// <param name="fileName">ファイル名</param>
+	/// <returns>モデルデータ</returns>
+	static ModelData LoadModelFile(const std::string& directoryPath, const std::string& fileName);
+
 public://メンバ関数
 	/// <summary>
 	/// コンストラクタ
@@ -30,46 +71,22 @@ public://メンバ関数
 	~Model();
 
 	/// <summary>
-	/// モデルの生成(ファイルを読み込み)
-	/// </summary>
-	/// <param name="modelCommon">モデルの共通部分</param>
-	/// <param name="storedFilePath">モデルを保管しているファイル名(最初と最後に"/"入らない)</param>
-	/// <param name="filename">ファイル名(最初に"/"入らない</param>
-	/// <returns>モデル</returns>
-	static std::unique_ptr<Model> CreateFromModel(ModelCommon* modelCommon, const std::string& storedFilePath, const std::string& filename);
-
-	/// <summary>
-	/// モデルの生成(キューブ)
-	/// </summary>
-	/// <param name="modelCommon">モデルの共通部分</param>
-	/// <returns>モデル</returns>
-	static std::unique_ptr<Model> CreateCube(ModelCommon* modelCommon);
-
-	/// <summary>
-	/// モデルの生成(モデルデータ)
-	/// </summary>
-	/// <param name="modelCommon">モデルの共通部分</param>
-	/// <param name="modelData">モデルデータ</param>
-	/// <returns>モデル</returns>
-	static std::unique_ptr<Model> CreateModelFromModelData(ModelCommon* modelCommon, const ModelData& modelData);
-
-	/// <summary>
 	/// 初期化
 	/// </summary>
 	/// <param name="modelCommon">モデルの共通部分</param>
 	void Initialize(ModelCommon* modelCommon);
 
 	/// <summary>
-	/// メッシュの再構成
-	/// </summary>
-	/// <param name="meshes">メッシュ</param>
-	void RebuildMeshes(const std::vector<MeshData>& meshes);
-
-	/// <summary>
 	/// 描画
 	/// </summary>
 	/// <param name="objectCount">表示したいオブジェクト数</param>
 	void Draw(uint32_t objectCount = 1);
+
+	/// <summary>
+	/// メッシュの再構成
+	/// </summary>
+	/// <param name="meshes">メッシュ</param>
+	void RebuildMeshes(const std::vector<MeshData>& meshes);
 
 	/// <summary>
 	/// UV変換
@@ -89,8 +106,15 @@ public://メンバ関数
 	/// テクスチャの変更
 	/// </summary>
 	/// <param name="materialIndex">マテリアルインデックス</param>
-	/// <param name="imageName">画像の名前</param>
-	void SetTexture(uint32_t materialIndex, const std::string& imageName);
+	/// <param name="imageFileName">画像のファイル名</param>
+	void SetTexture(uint32_t materialIndex, const std::string& imageFileName);
+
+	/// <summary>
+	/// 環境マップの変更
+	/// </summary>
+	/// <param name="materialIndex">マテリアルインデックス</param>
+	/// <param name="environmentMapFileName">環境マップのファイル名</param>
+	void SetEnvironmentMap(uint32_t materialIndex, const std::string& environmentMapFileName);
 
 	/// <summary>
 	/// 色を取得
@@ -106,35 +130,25 @@ public://メンバ関数
 	const ModelData& GetModelData()const;
 
 	/// <summary>
-	/// .mtlファイルの読み取り	
-	/// </summary>
-	/// <param name="directoryPath">ディレクトリファイルパス</param>
-	/// <param name="filename">ファイル名</param>
-	/// <returns>マテリアルデータ</returns>
-	static MaterialData LoadMaterialTemplateFile(const std::string& directoryPath, const std::string& filename);
-
-	/// <summary>
-	/// モデルファイルの読み込み
-	/// </summary>
-	/// <param name="directoryPath">ディレクトリファイルパス(最後に"/"はいらない)</param>
-	/// <param name="storedFilePath">モデルを保管しているファイル名(最初と最後に"/"入らない)</param>
-	/// <param name="filename">ファイル名(最初に"/"入らない</param>
-	/// <returns>モデルデータ</returns>
-	static ModelData LoadModelFile(const std::string& directoryPath, const std::string& storedFilePath, const std::string& filename);
-
-	/// <summary>
 	/// ライティングの設定
 	/// </summary>
-	/// <param name="index">インデックス</param>
+	/// <param name="index">マテリアルの検索キー</param>
 	/// <param name="materialData">ライティングフラグ</param>
-	void SetIsLighting(uint32_t index, bool isLighting);
+	void SetIsLighting(uint32_t materialIndex, bool isLighting);
 
 	/// <summary>
 	/// 輝度の設定
 	/// </summary>
-	/// <param name="index">インデックス</param>
+	/// <param name="index">マテリアルの検索キー</param>
 	/// <param name="shininess">輝度</param>
-	void SetShininess(uint32_t index, float shininess);
+	void SetShininess(uint32_t materialIndex, float shininess);
+
+	/// <summary>
+	/// 環境マップの映り込み度を調整
+	/// </summary>
+	/// <param name="materialIndex">マテリアルの検索キー</param>
+	/// <param name="environmentCoefficient">環境マップの映り込み度</param>
+	void SetEnvironmentCoefficient(uint32_t materialIndex, float environmentCoefficient);
 
 	/// <summary>
 	/// リムライトのセッター
@@ -170,27 +184,22 @@ private://メンバ関数
 	void BuildMesh();
 
 	/// <summary>
-	/// キューブの作成
+	/// モデルの作成(メッシュデータから1)
 	/// </summary>
-	MeshData MakeCubeData();
+	/// <param name="meshDatas">メッシュデータ</param>
+	void CreateModel(const std::vector<MeshData>& meshDatas,const std::string& nodeName = "primitive");
 
 	/// <summary>
-	/// キューブの生成
+	/// モデルの生成(モデルのファイルから)
 	/// </summary>
-	void CreateCube();
-
-	/// <summary>
-	/// モデルの生成
-	/// </summary>
-	/// <param name="storedFilePath">モデルを保管しているファイル名(最初と最後に"/"入らない)</param>
-	/// <param name="filename">ファイル名(最初に"/"入らない</param>
-	void CreateFromModel(const std::string& storedFilePath, const std::string& filename);
+	/// <param name="objectFileName">オブジェクトのファイル名</param>
+	void CreateModel(const std::string& objectFileName);
 
 	/// <summary>
 	/// モデルの生成(モデルデータ)
 	/// </summary>
 	/// <param name="modelData">モデルデータ</param>
-	void CreateModelFromModelData(const ModelData& modelData);
+	void CreateModel(const ModelData& modelData);
 
 	/// <summary>
 	/// 各種リソースの生成

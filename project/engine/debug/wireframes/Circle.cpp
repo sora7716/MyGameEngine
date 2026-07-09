@@ -1,5 +1,5 @@
 #include "Circle.h"
-#include "algorithms/Math.h"
+#include "MathUtility.h"
 using namespace Primitive;
 
 //コンストラクタ
@@ -41,7 +41,7 @@ PrimitiveData::Circle Circle::GetCircle() {
 void Circle::SettingVertexData() {
 	for (int32_t i = 0; i < vertexCount_; i++) {
 		float t = static_cast<float>(i) / static_cast<float>(vertexCount_);
-		float angle = t * Math::kPi * 2.0f;
+		float angle = t * MathUtility::kPi * 2.0f;
 
 		vertexData_[i] = {
 			std::cos(angle) * circle_.radius,

@@ -1,5 +1,5 @@
 #include "Sphere.h"
-#include "algorithms/Math.h"
+#include "MathUtility.h"
 #include "ImGuiManager.h"
 using namespace Primitive;
 
@@ -42,7 +42,7 @@ PrimitiveData::Sphere Sphere::GetSphere() {
 void Sphere::SettingVertexData() {
 	for (int32_t i = 0; i < kCircleVertexCount; i++) {
 		float t = static_cast<float>(i) / static_cast<float>(kCircleVertexCount);
-		float angle = t * Math::kPi * 2.0f;
+		float angle = t * MathUtility::kPi * 2.0f;
 
 		int32_t xy = i;
 		int32_t xz = kCircleVertexCount + i;

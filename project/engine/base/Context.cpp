@@ -7,7 +7,6 @@ void SceneContext::operator=(Core* core) {
 	directXBase = core->GetDirectXBase();
 	textureManager = core->GetTextureManager();
 	object3dCommon = core->GetObject3dCommon();
-	object2dCommon = core->GetObject2dCommon();
 	spriteCommon = core->GetSpriteCommon();
 	particleCommon = core->GetParticleCommon();
 	modelCommon = core->GetModelCommon();

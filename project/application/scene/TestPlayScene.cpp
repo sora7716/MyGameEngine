@@ -11,7 +11,11 @@
 #include "Line.h"
 #include "Plane.h"
 #include "Sphere.h"
-#include "algorithms/Collision.h"
+#include "Collision.h"
+#include "TextureManager.h"
+#include "SkyBox.h"
+#include "ParticleSystem.h"
+#include <numbers>
 
 //コンストラクタ
 TestPlayScene::TestPlayScene() {};
@@ -29,13 +33,20 @@ void TestPlayScene::Initialize(const SceneContext& sceneContext) {
 	object3d_ = std::make_unique<Object3d>();
 	object3d_->Initialize(sceneContext_.object3dCommon, &renderCamera_, 1);
 	object3d_->SetGameCamera(gameCamera_);
-	//object3d_->SetModel("sphere");
-	object3d_->SetModel("dekanu");
+	object3d_->SetModel("sneakWalk");
+	//object3d_->SetTexture(0, "uvChecker.png");
 	//object3d_->SetModel("cube");
+	//object3d_->SetModel("dekanu");
+	//for (uint32_t i = 0; i < 33; i++) {
+	//	object3d_->SetTexture(i, "white1x1.png");
+	//}
+
 	object3d_->SetLODDistances({ 20.0f,30.0f,50.0f,80.0f });
 	std::unique_ptr<GameObject>tree = std::make_unique<GameObject>();
 	tree->Initialize("tree");
-	tree->GetTransform().translate = { 0.0f,0.0f,10.0f };
+	tree->GetTransform().translate = { 0.0f,0.0f,-9.9f };
+	tree->GetTransform().eulerAngle = { -std::numbers::pi_v<float> / 2.0f,0.0f,0.0f };
+	tree->GetTransform().quaternion = Quaternion::MakeQuaternionForEulerAngle(tree->GetTransform().eulerAngle);
 	tree->GetTransform().scale = Vector3::MakeAllOne();
 
 	GameObject* treePtr = tree.get();
@@ -50,9 +61,27 @@ void TestPlayScene::Initialize(const SceneContext& sceneContext) {
 	frustum_ = std::make_unique<Primitive::Frustum>();
 	frustum_->Initialize(sceneContext_.directXBase, &renderCamera_);
 	frustum_->SetTargetCamera(gameCamera_);
+	frustum_->SetColor({ 1.0f,0.0f,0.0f,1.0f });
 
 	cube_ = std::make_unique<Primitive::Cube>();
 	cube_->Initialize(sceneContext_.directXBase, &renderCamera_);
+
+
+	skyBoxObject_ = std::make_unique<GameObject>();
+	skyBoxObject_->Initialize("skyBox");
+	skyBox_ = std::make_unique<SkyBox>();
+	skyBox_->Initialize(sceneContext_.directXBase, sceneContext.textureManager, "rostock_laage_airport_4k.dds", gameCamera_);
+	skyBoxObject_->GetTransform().scale = { 10.0f,10.0f,10.0f };
+	skyBox_->SetGameObject(skyBoxObject_.get());
+	for (uint32_t i = 0; i < object3d_->GetMeshSize(); i++) {
+		object3d_->SetEnvironmentMap(i, "rostock_laage_airport_4k.dds");
+	}
+
+	particleSystem_ = std::make_unique<ParticleSystem>();
+	particleSystem_->Initialize(sceneContext_.particleCommon, &renderCamera_, "circle2.png");
+	particleSystem_->SetGameCamera(gameCamera_);
+	particleSystem_->SetParticleCount(2);
+	particleSystem_->SetFrequency(0.3f);
 }
 
 //更新
@@ -71,6 +100,10 @@ void TestPlayScene::Update() {
 	frustum_->Update();
 
 	cube_->Update();
+
+	skyBox_->Update();
+
+	particleSystem_->Update();
 
 	if (Collision::IsCollision(gameCamera_->GetFrustum(), cube_->GetAABB())) {
 		cube_->SetColor(Vector4::MakeRedColor());
@@ -95,13 +128,15 @@ void TestPlayScene::Update() {
 //デバッグ
 void TestPlayScene::Debug() {
 #ifdef USE_IMGUI
-	ImGui::Begin("object3d");
+	ImGui::Begin("Object");
 
 	for (int32_t i = 0; i < gameObjects_.size(); i++) {
 		ImGui::PushID(i);
 
 		if (ImGui::TreeNode(("object" + std::to_string(i)).c_str())) {
 			ImGuiManager::DragTransform(gameObjects_[i]->GetTransform());
+			ImGui::SliderFloat("evironmentCoefficient", &environmentCoefficient_, 0.0f, 1.0f);
+			object3d_->SetEnvironmentCoefficient(0, environmentCoefficient_);
 			ImGui::TreePop();
 		}
 
@@ -114,38 +149,45 @@ void TestPlayScene::Debug() {
 	//	ImGui::DragFloat2("uvTranslate", &transform2ds_[i].translate.x, 0.1f);
 	//	ImGui::PopID();
 	//}
-	Vector3 cameraTranslate2 = gameCamera_->GetTranslate();
-	ImGui::Text("cameraToPlayer:%f", gameObjects_[0]->GetTransform().translate - cameraTranslate2);
-	ImGui::End();
 
-	ImGui::Begin("camera");
-	Vector3 cameraTranslate = gameCamera_->GetTranslate();
-	Vector3 cameraRotate = gameCamera_->GetEulerAngle();
-	ImGui::DragFloat3("rotate", &cameraRotate.x, 0.1f);
-	ImGui::DragFloat3("translate", &cameraTranslate.x, 0.1f);
-	gameCamera_->SetEulerAngle(cameraRotate);
-	gameCamera_->SetTranslate(cameraTranslate);
+	if (ImGui::TreeNode("camera")) {
+		Vector3 cameraTranslate = gameCamera_->GetTranslate();
+		Vector3 cameraRotate = gameCamera_->GetEulerAngle();
+		ImGui::DragFloat3("rotate", &cameraRotate.x, 0.1f);
+		ImGui::DragFloat3("translate", &cameraTranslate.x, 0.1f);
+		gameCamera_->SetEulerAngle(cameraRotate);
+		gameCamera_->SetTranslate(cameraTranslate);
 
-	float farClip = gameCamera_->GetFarClip();
-	ImGui::DragFloat("farClip", &farClip);
-	gameCamera_->SetFarClip(farClip);
-	ImGui::End();
+		float farClip = gameCamera_->GetFarClip();
+		ImGui::DragFloat("farClip", &farClip);
+		gameCamera_->SetFarClip(farClip);
+		ImGui::TreePop();
+	}
 
-	ImGui::Begin("cube");
-	PrimitiveData::OBB obb = cube_->GetOBB();
-	ImGui::DragFloat3("size", &obb.size.x, 0.1f);
-	ImGui::DragFloat3("translate", &obb.center.x, 0.1f);
-	cube_->SetOBB(obb);
+	if (ImGui::TreeNode("skyBox")) {
+		ImGuiManager::DragTransform(skyBoxObject_->GetTransform());
+		ImGui::TreePop();
+	}
+
+	if (ImGui::TreeNode("particle")) {
+		ImGui::DragFloat3("emitter", &emitterPos_.x, 0.01f);
+		particleSystem_->SetEmitterPosition(emitterPos_);
+		PrimitiveData::OBB obb = cube_->GetOBB();
+		obb.center = emitterPos_;
+		cube_->SetOBB(obb);
+		ImGui::TreePop();
+	}
+
 	ImGui::End();
 #endif // USE_IMGUI
 
-	//#ifdef _DEBUG
+#ifdef _DEBUG
 	if (debugCamera_->IsDebug()) {
 		renderCamera_ = *debugCamera_->GetCamera();
 	} else {
 		renderCamera_ = *sceneContext_.cameraManager->FindCamera("testPlayCamera");
 	}
-	//#endif // _DEBUG
+#endif // _DEBUG
 }
 
 //描画
@@ -155,6 +197,10 @@ void TestPlayScene::Draw() {
 	frustum_->Draw();
 
 	cube_->Draw();
+
+	//skyBox_->Draw();
+
+	particleSystem_->Draw();
 }
 
 //終了

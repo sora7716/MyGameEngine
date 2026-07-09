@@ -2,6 +2,7 @@
 #include <map>
 #include <string>
 #include <memory>
+#include <vector>
 
 //前方宣言
 class DirectXBase;
@@ -34,9 +35,8 @@ public://メンバ関数
 	/// objモデルの読み込み
 	/// </summary>
 	/// <param name="name">名前</param>
-    /// <param name="storedFileName">保管しているファイル名("/"は書かなくていい)</param>
-	/// <param name="filePath">ファイル名("/"と".obj"は書かなくていい)</param>
-	void LoadModel(const std::string& name, const std::string& storedFileName, const std::string& filePath);
+	/// <param name="modelFileName">モデルのファイル名</param>
+	void LoadModel(const std::string& name, const std::string& modelFileName);
 
 	/// <summary>
 	/// モデルの検索(.objはいらない)

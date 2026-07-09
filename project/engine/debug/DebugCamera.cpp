@@ -1,6 +1,6 @@
 #include "DebugCamera.h"
 #include "Input.h"
-#include "algorithms/Math.h"
+#include "MathUtility.h"
 #include "CameraManager.h"
 #include "ImGuiManager.h"
 #include <algorithm>
@@ -173,10 +173,10 @@ void DebugCamera::TranslateUpdate() {
 	}
 
 	//カメラの角度をもとに回転行列を求める
-	Matrix4x4 rotMat = Rendering::MakeRotateMatrix(Quaternion::MakeQuaternionForEulerAngle(rotate_));
+	Matrix4x4 rotMat = MatrixUtility::MakeRotateMatrix(Quaternion::MakeQuaternionForEulerAngle(rotate_));
 
 	//カメラの向いてる方向を正にする(XとZ軸限定)
-	Vector3 moveDirXZ = Math::TransformNormal(Vector3(moveDir_.x, 0.0f, moveDir_.z), rotMat);
+	Vector3 moveDirXZ = MathUtility::TransformNormal(Vector3(moveDir_.x, 0.0f, moveDir_.z), rotMat);
 
 	//Y軸のそのまま
 	moveDir_ = { moveDirXZ.x,moveDir_.y,moveDirXZ.z };

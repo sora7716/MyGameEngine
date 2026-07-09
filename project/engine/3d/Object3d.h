@@ -1,5 +1,5 @@
 #pragma once
-#include "ResourceData.h"
+#include "MatrixUtility.h"
 #include "BlendMode.h"
 #include "WorldTransform.h"
 #include "PrimitiveData.h"
@@ -19,6 +19,7 @@ class Model;
 class GameObject;
 class LODBuilder;
 class LODController;
+class Culling;
 
 //3dオブジェクトのインスタンスデータ
 struct Object3dInstance {
@@ -136,23 +137,39 @@ public://メンバ関数
 	void SetParent(const WorldTransform* parent);
 
 	/// <summary>
-	/// テクスチャの変更
+	/// テクスチャの設定
 	/// </summary>
 	/// <param name="meshIndex">メッシュの検索キー</param>
-	/// <param name="filePath">ファイルパス</param>
-	void SetTexture(uint32_t meshIndex, const std::string& filePath);
+	/// <param name="imageFileName">画像のファイル名</param>
+	void SetTexture(uint32_t meshIndex, const std::string& imageFileName);
+
+	/// <summary>
+	/// 環境マップの設定
+	/// </summary>
+	/// <param name="meshIndex">メッシュの検索キー</param>
+	/// <param name="environmentMapFileName">環境マップのファイル名</param>
+	void SetEnvironmentMap(uint32_t meshIndex, const std::string& environmentMapFileName);
 
 	/// <summary>
 	/// ライティングフラグの設定
 	/// </summary>
+	/// <param name="meshIndex">メッシュの検索キー</param>
 	/// <param name="isLighting">ライティングフラグ</param>
 	void SetIsLighting(uint32_t meshIndex, bool isLighting);
 
 	/// <summary>
 	/// 輝度の設定
+	/// <param name="meshIndex">メッシュの検索キー</param>
 	/// </summary>
 	/// <param name="shininess">輝度</param>
 	void SetShininess(uint32_t meshIndex, float shininess);
+
+	/// <summary>
+	/// 環境マップの映り込み度を調整
+	/// </summary>
+	/// <param name="meshIndex">メッシュの検索キー</param>
+	/// <param name="environmentCoefficient">k環境マップの映り込み度</param>
+	void SetEnvironmentCoefficient(uint32_t meshIndex, float& environmentCoefficient);
 
 	/// <summary>
 	/// UV座標の設定
@@ -215,6 +232,12 @@ public://メンバ関数
 	/// <param name="index">インデックス</param>
 	/// <returns>ワールド座標</returns>
 	Vector3 GetWorldPos(uint32_t index);
+
+	/// <summary>
+	/// メッシュのサイズの取得
+	/// </summary>
+	/// <returns>メッシュのサイズ</returns>
+	uint32_t GetMeshSize();
 private://メンバ関数
 	/// <summary>
 	/// LOD関係のセットアップ
@@ -252,13 +275,6 @@ private://メンバ関数
 	/// <param name="drawIndex">描画の検索キー</param>
 	/// <param name="worldMatrix">ワールド行列</param>
 	void UpdateWorldTransform(uint32_t lodIndex, uint32_t drawIndex, const Matrix4x4& worldMatrix);
-
-	/// <summary>
-	/// オブジェクトの表示状態の更新
-	/// </summary>
-	/// <param name="index">インデックス</param>
-	/// <param name="worldMatrix">ワールド行列</param>
-	void UpdateVisibility(uint32_t index, const Matrix4x4& worldMatrix);
 private://メンバ関数テーブル
 	//座標の更新をまとめた
 	static void (Object3d::* UpdateWorldMatrixTable[])(uint32_t index);
@@ -311,4 +327,7 @@ private://メンバ変数
 
 	//マテリアル
 	Material material_ = {};
+
+	//カリング
+	std::unique_ptr<Culling>culling_ = nullptr;
 };

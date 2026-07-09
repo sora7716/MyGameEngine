@@ -1,6 +1,6 @@
 #pragma once
-#include "ResourceData.h"
-#include "algorithms/Rendering.h"
+#include "RenderData.h"
+#include "MatrixUtility.h"
 #include "BlendMode.h"
 #include <d3d12.h>
 #include <dxgi1_6.h>
@@ -136,7 +136,7 @@ private://メンバ変数
 	//バッファリソース内のデータを指すポインタ
 	VertexData* vertexData_ = nullptr;//頂点
 	uint32_t* indexData_ = nullptr;//インデックス
-	Material* materialData_ = nullptr;//マテリアル
+	MaterialForSprite* materialData_ = nullptr;//マテリアル
 	
 	//バッファリソースの使い道を補足するバッファビュー
 	D3D12_VERTEX_BUFFER_VIEW vertexBufferView_ = {};//頂点

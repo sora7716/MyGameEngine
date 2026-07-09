@@ -1,7 +1,7 @@
 #include "ParticleCommon.h"
-#include "engine/base/DirectXBase.h"
-#include "engine/camera/Camera.h"
-#include "engine/base/GraphicsPipeline.h"
+#include "DirectXBase.h"
+#include "Camera.h"
+#include "GraphicsPipeline.h"
 #include "Blend.h"
 #include <cassert>
 using namespace Microsoft::WRL;
@@ -30,24 +30,22 @@ void ParticleCommon::Initialize(DirectXBase* directXBase, SRVManager* srvManager
 	makeGraphicsPipeline_->SetPixelShaderFileName(L"Particle.PS.hlsl");
 	//シグネイチャBlobの初期化
 	makeGraphicsPipeline_->CreateRootSignatureBlobForParticle();
-	//ルートシグネイチャの保存
-	makeGraphicsPipeline_->CreateRootSignature();
 	//インプットレイアウト
 	makeGraphicsPipeline_->InitializeInputLayoutDesc();
 	//ラスタライザステート
-	makeGraphicsPipeline_->InitializeRasterizerSatate();
+	makeGraphicsPipeline_->InitializeRasterizerState();
 	//頂点シェーダBlob
 	makeGraphicsPipeline_->CompileVertexShader();
 	//ピクセルシェーダBlob
 	makeGraphicsPipeline_->CompilePixelShader();
-	//デプスステンシルステート
-	directXBase_->InitializeDepthStencilForParticle();
+	//深度バッファ
+	makeGraphicsPipeline_->CreateDepthStencilResourceForParticle();
 	//PSO
 	for (uint32_t i = 0; i < static_cast<int32_t>(BlendMode::kCountOfBlendMode); i++) {
 		//ブレンドステート
 		makeGraphicsPipeline_->InitializeBlendState(i);
 		//グラフィックスパイプラインの生成[
-		graphicsPipelineStates_[i] = makeGraphicsPipeline_->CreateGraphicsPipeline(directXBase_->GetDepthStencil());
+		graphicsPipelineStates_[i] = makeGraphicsPipeline_->CreateGraphicsPipeline();
 	}	//ルートシグネイチャの記録
 	rootSignature_ = makeGraphicsPipeline_->GetRootSignature();
 }

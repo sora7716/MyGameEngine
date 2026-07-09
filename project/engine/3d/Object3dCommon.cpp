@@ -6,7 +6,7 @@
 #include "SRVManager.h"
 #include "TextureManager.h"
 #include <cassert>
-#include "algorithms/Math.h"
+#include "MathUtility.h"
 #include "Blend.h"
 using namespace Microsoft::WRL;
 
@@ -33,18 +33,16 @@ void Object3dCommon::Initialize(DirectXBase* directXBase, SRVManager* srvManager
 	//シェーダを設定
 	makeGraphicsPipeline_->SetVertexShaderFileName(L"Object3d.VS.hlsl");
 	makeGraphicsPipeline_->SetPixelShaderFileName(L"Object3d.PS.hlsl");
-	//デプスステンシルステート
-	directXBase_->InitializeDepthStencilForObject3d();
 	//DirectXを記録
 	makeGraphicsPipeline_->SetDirectXBase(directXBase);
+	//深度バッファ
+	makeGraphicsPipeline_->CreateDepthStencilResourceForObject3d();
 	//シグネイチャBlobの初期化
 	makeGraphicsPipeline_->CreateRootSignatureBlobForObject3d();
-	//ルートシグネイチャの保存
-	makeGraphicsPipeline_->CreateRootSignature();
 	//インプットレイアウト
 	makeGraphicsPipeline_->InitializeInputLayoutDesc();
 	//ラスタライザステート
-	makeGraphicsPipeline_->InitializeRasterizerSatate(FillMode::kSolid);
+	makeGraphicsPipeline_->InitializeRasterizerState(FillMode::kSolid);
 	//頂点シェーダBlob
 	makeGraphicsPipeline_->CompileVertexShader();
 	//ピクセルシェーダBlob
@@ -54,7 +52,7 @@ void Object3dCommon::Initialize(DirectXBase* directXBase, SRVManager* srvManager
 		//ブレンドステート
 		makeGraphicsPipeline_->InitializeBlendState(i);
 		//グラフィックスパイプラインの生成
-		graphicsPipelineStates_[i] = makeGraphicsPipeline_->CreateGraphicsPipeline(directXBase_->GetDepthStencil());
+		graphicsPipelineStates_[i] = makeGraphicsPipeline_->CreateGraphicsPipeline();
 	}	//ルートシグネイチャの記録
 	rootSignature_ = makeGraphicsPipeline_->GetRootSignature();
 
@@ -93,7 +91,7 @@ void Object3dCommon::Initialize(DirectXBase* directXBase, SRVManager* srvManager
 	//	spotLightDataList_[i].intensity = 4.0f;
 	//	spotLightDataList_[i].decay = 2.0f;
 		//spotLightDataList_[i].cosFollOffStart = 1.0f;
-	//	spotLightDataList_[i].cosAngle = std::cos(Math::kPi / 3.0f);
+	//	spotLightDataList_[i].cosAngle = std::cos(MathUtility::kPi / 3.0f);
 	//	spotLightDataList_[i].isBlinnPhong = false;
 	//	spotLightDataList_[i].enableSpotLighting = false;
 	//}
@@ -320,7 +318,7 @@ void Object3dCommon::CreateSpotLight() {
 		spotLightPtr_[i].direction = Vector3({ -1.0f,-1.0f,0.0f }).Normalize();
 		spotLightPtr_[i].intensity = 4.0f;
 		spotLightPtr_[i].decay = 2.0f;
-		spotLightPtr_[i].cosAngle = std::cos(Math::kPi / 3.0f);
+		spotLightPtr_[i].cosAngle = std::cos(MathUtility::kPi / 3.0f);
 		spotLightPtr_[i].cosFalloffStart = 1.0f;
 		spotLightPtr_[i].isBlinnPhong = true;
 		spotLightPtr_[i].enableSpotLighting = false;

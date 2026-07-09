@@ -3,16 +3,16 @@
 #include "DirectXBase.h"
 #include "Camera.h"
 #include "ModelManager.h"
-#include "algorithms/Rendering.h"
+#include "MatrixUtility.h"
 #include "GameObject.h"
-#include "ImGuiManager.h"
 #include "Model.h"
 #include "Mesh.h"
 #include "SRVManager.h"
 #include "TextureManager.h"
-#include "algorithms/Collision.h"
+#include "Culling.h"
 #include "LODBuilder.h"
 #include "LODController.h"
+#include <algorithm>
 #include <cassert>
 //初期化
 void Object3dInstance::Initialize(GameObject* gameObject) {
@@ -47,7 +47,7 @@ void Object3d::Initialize(Object3dCommon* object3dCommon, Camera* renderCamera, 
 	transform3dMode_ = transform3dMode;
 	//ゲームオブジェクトの数を決定
 	maxInstanceCount_ = maxInstanceCount;
-	
+
 	//LOD関係のセットアップ
 	SetupLOD();
 	//LODビルダーの生成
@@ -104,7 +104,9 @@ void Object3d::Update() {
 		}
 
 		//表示状態の更新
-		UpdateVisibility(i, worldMatrix_);
+		for (const std::unique_ptr<Mesh>& mesh : baseModel_->GetMeshes()) {
+			instanceData_[i].isEnabled = culling_->IsVisibleInFrustum(mesh->GetAABB(), worldMatrix_);
+		}
 
 		//表示しなかったら
 		if (!instanceData_[i].isEnabled) {
@@ -225,6 +227,8 @@ uint32_t Object3d::AddInstance(GameObject* gameObject) {
 //カメラの設定
 void Object3d::SetGameCamera(Camera* gameCamera) {
 	gameCamera_ = gameCamera;
+	//カリングの初期化
+	culling_ = Culling::Create(gameCamera_);
 }
 
 //LODの切り替え距離
@@ -272,12 +276,20 @@ void Object3d::SetParent(const WorldTransform* parent) {
 }
 
 //テクスチャの変更
-void Object3d::SetTexture(uint32_t meshIndex, const std::string& filePath) {
+void Object3d::SetTexture(uint32_t meshIndex, const std::string& imageFileName) {
 	uint32_t materialIndex = baseModel_->GetMeshes()[meshIndex]->GetMaterialIndex();
 	//元モデルにも適応
-	baseModel_->SetTexture(materialIndex, filePath);
+	baseModel_->SetTexture(materialIndex, imageFileName);
 	//LODモデルにも適応
-	lodBuilder_->SetTexture(materialIndex, filePath);
+	lodBuilder_->SetTexture(materialIndex, imageFileName);
+}
+//環境マップの変更
+void Object3d::SetEnvironmentMap(uint32_t meshIndex, const std::string& environmentMapFileName) {
+	uint32_t materialIndex = baseModel_->GetMeshes()[meshIndex]->GetMaterialIndex();
+	//元モデルにも適応
+	baseModel_->SetEnvironmentMap(materialIndex, environmentMapFileName);
+	//LODモデルにも適応
+	lodBuilder_->SetEnvironmentMap(materialIndex, environmentMapFileName);
 }
 
 //ライティングフラグの設定
@@ -296,6 +308,18 @@ void Object3d::SetShininess(uint32_t meshIndex, float shininess) {
 	baseModel_->SetShininess(materialIndex, shininess);
 	//LODモデルにも適応
 	lodBuilder_->SetShininess(materialIndex, shininess);
+}
+
+//環境マップの映り込み度を調整
+void Object3d::SetEnvironmentCoefficient(uint32_t meshIndex, float& environmentCoefficient) {
+	//環境マップの映り込み度を0~1にクランプ
+	environmentCoefficient = std::clamp(environmentCoefficient, 0.0f, 1.0f);
+	//マテリアルインデックス
+	uint32_t materialIndex = baseModel_->GetMeshes()[meshIndex]->GetMaterialIndex();
+	//元モデルにも適応
+	baseModel_->SetEnvironmentCoefficient(materialIndex, environmentCoefficient);
+	//LODモデルにも適応
+	lodBuilder_->SetEnvironmentCoefficient(materialIndex, environmentCoefficient);
 }
 
 //UV座標の設定
@@ -354,6 +378,11 @@ Vector3 Object3d::GetWorldPos(uint32_t index) {
 	return { worldMatrix_.m[3][0],worldMatrix_.m[3][1],worldMatrix_.m[3][2] };
 	return Vector3{};
 
+}
+
+//メッシュのサイズの取得
+uint32_t Object3d::GetMeshSize() {
+	return static_cast<uint32_t>(baseModel_->GetModelData().mesheDatas.size());
 }
 
 //LOD関係のセットアップ
@@ -424,7 +453,7 @@ void Object3d::MakeWorldMatrix(uint32_t index) {
 	assert(gameObject);
 
 	//このオブジェクト本来のワールド行列を求める
-	worldMatrix_ = Rendering::MakeAffineMatrix(gameObject->GetTransform());
+	worldMatrix_ = MatrixUtility::MakeAffineMatrix(gameObject->GetTransform());
 
 	if (parent_) {
 		worldMatrix_ = worldMatrix_ * parent_->GetWorldMatrix();
@@ -440,7 +469,7 @@ void Object3d::MakeBillboardWorldMatrix(uint32_t index) {
 	assert(gameObject);
 
 	//このオブジェクト本来のワールド行列を求める
-	worldMatrix_ = Rendering::MakeBillboardAffineMatrix(renderCamera_->GetWorldMatrix(), gameObject->GetTransform());
+	worldMatrix_ = MatrixUtility::MakeBillboardAffineMatrix(renderCamera_->GetWorldMatrix(), gameObject->GetTransform());
 
 	if (parent_) {
 		worldMatrix_ = worldMatrix_ * parent_->GetWorldMatrix();
@@ -462,23 +491,4 @@ void Object3d::UpdateWorldTransform(uint32_t lodIndex, uint32_t drawIndex, const
 	lodWvpData_[lodIndex][drawIndex].worldInverseTranspose = lodWvpData_[lodIndex][drawIndex].world.InverseTranspose();
 
 	lodWvpPtrs_[lodIndex][drawIndex] = lodWvpData_[lodIndex][drawIndex];
-}
-
-//オブジェクトの表示状態の更新
-void Object3d::UpdateVisibility(uint32_t index, const Matrix4x4& worldMatrix) {
-	//表示するかのフラグ
-	bool isVisible = true;
-	if (gameCamera_) {
-		isVisible = false;
-		for (const std::unique_ptr<Mesh>& mesh : baseModel_->GetMeshes()) {
-			PrimitiveData::AABB worldAABB = mesh->GetAABB() * worldMatrix;
-
-			if (Collision::IsCollision(gameCamera_->GetFrustum(), worldAABB)) {
-				isVisible = true;
-				break;
-			}
-		}
-	}
-
-	instanceData_[index].isEnabled = isVisible;
 }

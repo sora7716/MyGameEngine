@@ -12,15 +12,9 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="application\actor\camera\GameCamera.cpp" />
-    <ClCompile Include="application\actor\field\StageTimer.cpp" />
     <ClCompile Include="application\scene\TestPlayScene.cpp" />
-    <ClCompile Include="engine\2d\Object2d.cpp" />
-    <ClCompile Include="engine\2d\Object2dCommon.cpp" />
     <ClCompile Include="engine\2d\Sprite.cpp" />
     <ClCompile Include="engine\2d\SpriteCommon.cpp" />
-    <ClCompile Include="engine\2d\Text.cpp" />
-    <ClCompile Include="engine\2d\TextRasterizer.cpp" />
-    <ClCompile Include="engine\2d\TextureManager.cpp" />
     <ClCompile Include="engine\3d\LODBuilder.cpp" />
     <ClCompile Include="engine\3d\LODController.cpp" />
     <ClCompile Include="engine\3d\Mesh.cpp" />
@@ -29,19 +23,18 @@
     <ClCompile Include="engine\3d\ModelManager.cpp" />
     <ClCompile Include="engine\3d\Object3d.cpp" />
     <ClCompile Include="engine\3d\Object3dCommon.cpp" />
+    <ClCompile Include="engine\3d\SkyBox.cpp" />
     <ClCompile Include="engine\audio\Audio.cpp" />
     <ClCompile Include="engine\audio\AudioManager.cpp" />
-    <ClCompile Include="engine\base\Blend.cpp" />
     <ClCompile Include="engine\base\Context.cpp" />
     <ClCompile Include="engine\base\Core.cpp" />
     <ClCompile Include="engine\base\D3DResourceLeakChecker.cpp" />
     <ClCompile Include="engine\base\DirectXBase.cpp" />
     <ClCompile Include="engine\base\FixFPS.cpp" />
-    <ClCompile Include="engine\base\GraphicsPipeline.cpp" />
-    <ClCompile Include="engine\base\SRVManager.cpp" />
     <ClCompile Include="engine\base\WinApi.cpp" />
     <ClCompile Include="engine\camera\Camera.cpp" />
     <ClCompile Include="engine\camera\CameraManager.cpp" />
+    <ClCompile Include="engine\collision\Collision.cpp" />
     <ClCompile Include="engine\debug\CrashHandler.cpp" />
     <ClCompile Include="engine\debug\DebugCamera.cpp" />
     <ClCompile Include="engine\debug\GlobalVariables.cpp" />
@@ -56,19 +49,23 @@
     <ClCompile Include="engine\debug\wireframes\Sphere.cpp" />
     <ClCompile Include="engine\framework\Framework.cpp" />
     <ClCompile Include="engine\framework\GameSystem.cpp" />
+    <ClCompile Include="engine\gameObject\ColliderData.cpp" />
     <ClCompile Include="engine\gameObject\GameObject.cpp" />
     <ClCompile Include="engine\gameObject\GameObjectList.cpp" />
+    <ClCompile Include="engine\geometry\Culling.cpp" />
+    <ClCompile Include="engine\geometry\PrimitiveData.cpp" />
+    <ClCompile Include="engine\geometry\PrimitiveMeshFactory.cpp" />
+    <ClCompile Include="engine\graphics\data\RenderingData.cpp" />
+    <ClCompile Include="engine\graphics\descriptor\SRVManager.cpp" />
+    <ClCompile Include="engine\graphics\pipeline\Blend.cpp" />
+    <ClCompile Include="engine\graphics\pipeline\GraphicsPipeline.cpp" />
+    <ClCompile Include="engine\graphics\texture\TextureManager.cpp" />
     <ClCompile Include="engine\input\Input.cpp" />
     <ClCompile Include="engine\main.cpp" />
-    <ClCompile Include="engine\math\algorithms\Collision.cpp" />
-    <ClCompile Include="engine\math\algorithms\Math.cpp" />
-    <ClCompile Include="engine\math\algorithms\Physics.cpp" />
-    <ClCompile Include="engine\math\algorithms\Rendering.cpp" />
+    <ClCompile Include="engine\math\MathUtility.cpp" />
     <ClCompile Include="engine\math\Matrix4x4.cpp" />
-    <ClCompile Include="engine\math\PhysicsData.cpp" />
-    <ClCompile Include="engine\math\PrimitiveData.cpp" />
+    <ClCompile Include="engine\math\MatrixUtility.cpp" />
     <ClCompile Include="engine\math\Quaternion.cpp" />
-    <ClCompile Include="engine\math\RenderingData.cpp" />
     <ClCompile Include="engine\math\Vector2.cpp" />
     <ClCompile Include="engine\math\Vector3.cpp" />
     <ClCompile Include="engine\math\Vector4.cpp" />
@@ -76,26 +73,21 @@
     <ClCompile Include="engine\particle\ParticleEmitter.cpp" />
     <ClCompile Include="engine\particle\ParticleManager.cpp" />
     <ClCompile Include="engine\particle\ParticleSystem.cpp" />
+    <ClCompile Include="engine\physics\Physics.cpp" />
+    <ClCompile Include="engine\physics\PhysicsData.cpp" />
     <ClCompile Include="engine\scene\AbstractSceneFactory.cpp" />
     <ClCompile Include="engine\scene\BaseScene.cpp" />
     <ClCompile Include="engine\scene\SceneFactory.cpp" />
     <ClCompile Include="engine\scene\SceneManager.cpp" />
-    <ClCompile Include="engine\utilitys\HashUtility.cpp" />
-    <ClCompile Include="engine\utilitys\StringUtility.cpp" />
+    <ClCompile Include="engine\utility\HashUtility.cpp" />
+    <ClCompile Include="engine\utility\StringUtility.cpp" />
     <ClCompile Include="engine\worldTransform\WorldTransform.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="application\actor\camera\GameCamera.h" />
-    <ClInclude Include="application\actor\field\StageTimer.h" />
     <ClInclude Include="application\scene\TestPlayScene.h" />
-    <ClInclude Include="engine\2d\Object2d.h" />
-    <ClInclude Include="engine\2d\Object2dCommon.h" />
     <ClInclude Include="engine\2d\Sprite.h" />
     <ClInclude Include="engine\2d\SpriteCommon.h" />
-    <ClInclude Include="engine\2d\Text.h" />
-    <ClInclude Include="engine\2d\TextData.h" />
-    <ClInclude Include="engine\2d\TextRasterizer.h" />
-    <ClInclude Include="engine\2d\TextureManager.h" />
     <ClInclude Include="engine\3d\LODBuilder.h" />
     <ClInclude Include="engine\3d\LODController.h" />
     <ClInclude Include="engine\3d\Mesh.h" />
@@ -104,21 +96,18 @@
     <ClInclude Include="engine\3d\ModelManager.h" />
     <ClInclude Include="engine\3d\Object3d.h" />
     <ClInclude Include="engine\3d\Object3dCommon.h" />
+    <ClInclude Include="engine\3d\SkyBox.h" />
     <ClInclude Include="engine\audio\Audio.h" />
     <ClInclude Include="engine\audio\AudioManager.h" />
-    <ClInclude Include="engine\base\Blend.h" />
-    <ClInclude Include="engine\base\BlendMode.h" />
     <ClInclude Include="engine\base\Context.h" />
     <ClInclude Include="engine\base\Core.h" />
     <ClInclude Include="engine\base\D3DResourceLeakChecker.h" />
     <ClInclude Include="engine\base\DirectXBase.h" />
     <ClInclude Include="engine\base\FixFPS.h" />
-    <ClInclude Include="engine\base\GraphicsPipeline.h" />
-    <ClInclude Include="engine\base\GraphicsPipelineData.h" />
-    <ClInclude Include="engine\base\SRVManager.h" />
     <ClInclude Include="engine\base\WinApi.h" />
     <ClInclude Include="engine\camera\Camera.h" />
     <ClInclude Include="engine\camera\CameraManager.h" />
+    <ClInclude Include="engine\collision\Collision.h" />
     <ClInclude Include="engine\debug\CrashHandler.h" />
     <ClInclude Include="engine\debug\DebugCamera.h" />
     <ClInclude Include="engine\debug\GlobalVariables.h" />
@@ -133,33 +122,41 @@
     <ClInclude Include="engine\debug\wireframes\Sphere.h" />
     <ClInclude Include="engine\framework\Framework.h" />
     <ClInclude Include="engine\framework\GameSystem.h" />
+    <ClInclude Include="engine\gameObject\ColliderData.h" />
     <ClInclude Include="engine\gameObject\GameObject.h" />
     <ClInclude Include="engine\gameObject\GameObjectList.h" />
+    <ClInclude Include="engine\geometry\Culling.h" />
+    <ClInclude Include="engine\geometry\PrimitiveData.h" />
+    <ClInclude Include="engine\geometry\PrimitiveMeshFactory.h" />
+    <ClInclude Include="engine\graphics\data\RenderData.h" />
+    <ClInclude Include="engine\graphics\data\RenderingData.h" />
+    <ClInclude Include="engine\graphics\descriptor\SRVManager.h" />
+    <ClInclude Include="engine\graphics\pipeline\Blend.h" />
+    <ClInclude Include="engine\graphics\pipeline\BlendMode.h" />
+    <ClInclude Include="engine\graphics\pipeline\GraphicsPipeline.h" />
+    <ClInclude Include="engine\graphics\pipeline\GraphicsPipelineData.h" />
+    <ClInclude Include="engine\graphics\texture\TextureManager.h" />
     <ClInclude Include="engine\input\Input.h" />
-    <ClInclude Include="engine\math\algorithms\Collision.h" />
-    <ClInclude Include="engine\math\algorithms\Math.h" />
-    <ClInclude Include="engine\math\algorithms\Physics.h" />
-    <ClInclude Include="engine\math\algorithms\Rendering.h" />
-    <ClInclude Include="engine\math\PrimitiveData.h" />
+    <ClInclude Include="engine\math\MathUtility.h" />
     <ClInclude Include="engine\math\Matrix3x3.h" />
     <ClInclude Include="engine\math\Matrix4x4.h" />
-    <ClInclude Include="engine\math\PhysicsData.h" />
+    <ClInclude Include="engine\math\MatrixUtility.h" />
     <ClInclude Include="engine\math\Quaternion.h" />
-    <ClInclude Include="engine\math\RenderingData.h" />
     <ClInclude Include="engine\math\Vector2.h" />
     <ClInclude Include="engine\math\Vector3.h" />
     <ClInclude Include="engine\math\Vector4.h" />
-    <ClInclude Include="engine\math\ResourceData.h" />
     <ClInclude Include="engine\particle\ParticleCommon.h" />
     <ClInclude Include="engine\particle\ParticleEmitter.h" />
     <ClInclude Include="engine\particle\ParticleManager.h" />
     <ClInclude Include="engine\particle\ParticleSystem.h" />
+    <ClInclude Include="engine\physics\Physics.h" />
+    <ClInclude Include="engine\physics\PhysicsData.h" />
     <ClInclude Include="engine\scene\AbstractSceneFactory.h" />
     <ClInclude Include="engine\scene\BaseScene.h" />
     <ClInclude Include="engine\scene\SceneFactory.h" />
     <ClInclude Include="engine\scene\SceneManager.h" />
-    <ClInclude Include="engine\utilitys\HashUtility.h" />
-    <ClInclude Include="engine\utilitys\StringUtility.h" />
+    <ClInclude Include="engine\utility\HashUtility.h" />
+    <ClInclude Include="engine\utility\StringUtility.h" />
     <ClInclude Include="engine\worldTransform\WorldTransform.h" />
   </ItemGroup>
   <ItemGroup>
@@ -178,6 +175,7 @@
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
       </ExcludedFromBuild>
     </None>
+    <None Include="engine\resources\shaders\SkyBox.hlsli" />
     <None Include="engine\resources\shaders\Sprite.hlsli">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
@@ -209,6 +207,14 @@
     <FxCompile Include="engine\resources\shaders\Shape.VS.hlsl">
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Vertex</ShaderType>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Vertex</ShaderType>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+    </FxCompile>
+    <FxCompile Include="engine\resources\shaders\SkyBox.PS.hlsl">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+    </FxCompile>
+    <FxCompile Include="engine\resources\shaders\SkyBox.VS.hlsl">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
     </FxCompile>
@@ -288,7 +294,7 @@
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
       <TreatWarningAsError>true</TreatWarningAsError>
-      <AdditionalIncludeDirectories>$(ProjectDir);$(ProjectDir)engine\base;$(ProjectDir)engine\2d;$(ProjectDir)externals;$(ProjectDir)engine\math;$(ProjectDir)engine\debug;$(ProjectDir)engine\input;$(ProjectDir)engine\audio;$(SolutionDir)DirectXTex;$(SolutionDir)imgui;$(ProjectDir)engine\resource;$(ProjectDir)application;$(ProjectDir)application\scene;$(ProjectDir)application\actor;$(ProjectDir)externals\assimp\include;$(ProjectDir)engine\3d;$(ProjectDir)engine\framework;$(ProjectDir)engine\camera;$(ProjectDir)engine\scene;$(ProjectDir)engine\worldTransform;$(ProjectDir)engine\gameObject;%(AdditionalIncludeDirectories);$(ProjectDir)engine\debug\wireframes;$(ProjectDir)engine\particle;$(ProjectDir)engine\utilitys</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir);$(ProjectDir)engine\2d;$(ProjectDir)engine\3d;$(ProjectDir)engine\audio;$(ProjectDir)engine\base;$(ProjectDir)engine\camera;$(ProjectDir)engine\collision;$(ProjectDir)engine\debug;$(ProjectDir)engine\debug\wireframes;$(ProjectDir)engine\framework;$(ProjectDir)engine\gameObject;$(ProjectDir)engine\geometry;$(ProjectDir)engine\graphics;$(ProjectDir)engine\graphics\data;$(ProjectDir)engine\graphics\descriptor;$(ProjectDir)engine\graphics\pipeline;$(ProjectDir)engine\graphics\texture;$(ProjectDir)engine\input;$(ProjectDir)engine\math;$(ProjectDir)engine\particle;$(ProjectDir)engine\physics;$(ProjectDir)engine\resources;$(ProjectDir)engine\scene;$(ProjectDir)engine\utility;$(ProjectDir)engine\worldTransform;$(SolutionDir)DirectXTex;$(SolutionDir)imgui;$(ProjectDir)externals;$(ProjectDir)externals\assimp\include;%(AdditionalIncludeDirectories);$(ProjectDir)application\actor;$(ProjectDir)application\scene</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -322,7 +328,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
       <AdditionalOptions>/utf-8 %(AdditionalOptions)</AdditionalOptions>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
-      <AdditionalIncludeDirectories>$(ProjectDir);$(ProjectDir)engine\base;$(ProjectDir)engine\2d;$(ProjectDir)externals;$(ProjectDir)engine\math;$(ProjectDir)engine\debug;$(ProjectDir)engine\input;$(ProjectDir)engine\audio;$(SolutionDir)DirectXTex;$(SolutionDir)imgui;$(ProjectDir)engine\resource;$(ProjectDir)application;$(ProjectDir)application\scene;$(ProjectDir)application\actor;$(ProjectDir)externals\assimp\include;$(ProjectDir)engine\3d;$(ProjectDir)engine\framework;$(ProjectDir)engine\camera;$(ProjectDir)engine\scene;$(ProjectDir)engine\worldTransform;$(ProjectDir)engine\gameObject;%(AdditionalIncludeDirectories);$(ProjectDir)engine\debug\wireframes;$(ProjectDir)engine\particle;$(ProjectDir)engine\utilitys</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir);$(ProjectDir)engine\2d;$(ProjectDir)engine\3d;$(ProjectDir)engine\audio;$(ProjectDir)engine\base;$(ProjectDir)engine\camera;$(ProjectDir)engine\collision;$(ProjectDir)engine\debug;$(ProjectDir)engine\debug\wireframes;$(ProjectDir)engine\framework;$(ProjectDir)engine\gameObject;$(ProjectDir)engine\geometry;$(ProjectDir)engine\graphics;$(ProjectDir)engine\graphics\data;$(ProjectDir)engine\graphics\descriptor;$(ProjectDir)engine\graphics\pipeline;$(ProjectDir)engine\graphics\texture;$(ProjectDir)engine\input;$(ProjectDir)engine\math;$(ProjectDir)engine\particle;$(ProjectDir)engine\physics;$(ProjectDir)engine\resources;$(ProjectDir)engine\scene;$(ProjectDir)engine\utility;$(ProjectDir)engine\worldTransform;$(SolutionDir)DirectXTex;$(SolutionDir)imgui;$(ProjectDir)externals;$(ProjectDir)externals\assimp\include;%(AdditionalIncludeDirectories);$(ProjectDir)application\actor;$(ProjectDir)application\scene</AdditionalIncludeDirectories>
       <Optimization>MinSpace</Optimization>
       <TreatWarningAsError>true</TreatWarningAsError>
     </ClCompile>

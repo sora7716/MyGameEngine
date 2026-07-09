@@ -1,17 +1,19 @@
 #pragma once
-#include "ResourceData.h"
+#include "RenderData.h"
 #include "RenderingData.h"
 #include <string>
 #include <wrl.h>
 #include <d3d12.h>
 #include <dxcapi.h>
 #include <cstdint>
+#include <memory>
 
 //前方宣言
 class DirectXBase;
 class DirectXBase;
 class TextureManager;
 class Camera;
+class GraphicsPipeline;
 
 /// <summary>
 /// 形
@@ -183,6 +185,7 @@ namespace Primitive {
 		ComPtr<IDxcBlob> pixelShaderBlob_ = nullptr;
 		//グラフィックスパイプライン(PSO)
 		ComPtr<ID3D12PipelineState> graphicsPipelineState_ = nullptr;
+		std::unique_ptr<GraphicsPipeline> makeGraphicsPipeline_ = nullptr;
 		//ファイル名
 		std::wstring vertexShaderFileName_ = L"Shape.VS.hlsl";//頂点
 		std::wstring pixelShaderFileName_ = L"Shape.PS.hlsl";//ピクセル

@@ -1,6 +1,6 @@
 #pragma once
-#include "engine/math/RenderingData.h"
-#include "engine/math/Vector4.h"
+#include "MatrixUtility.h"
+#include "Vector4.h"
 #include "externals/nlohmann/json.hpp"
 #include <variant>
 #include <cstdint>

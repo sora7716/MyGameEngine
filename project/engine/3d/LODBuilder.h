@@ -1,5 +1,5 @@
 #pragma once
-#include "ResourceData.h"
+#include "RenderData.h"
 #include "Vector4.h"
 #include <memory>
 #include <vector>
@@ -52,8 +52,22 @@ public://メンバ関数
 	/// テクスチャの設定
 	/// </summary>
 	/// <param name="materialIndex">マテリアルの検索キー</param>
-	/// <param name="filePath">ファイルパス</param>
-	void SetTexture(uint32_t materialIndex, const std::string& filePath);
+	/// <param name="imageFileName">画像のファイル名</param>
+	void SetTexture(uint32_t materialIndex, const std::string& imageFileName);
+
+	/// <summary>
+	/// 環境マップの映り込み度を調整
+	/// </summary>
+	/// <param name="materialIndex">マテリアルの検索キー</param>
+	/// <param name="environmentCoefficient">環境マップの映り込み度</param>
+	void SetEnvironmentCoefficient(uint32_t materialIndex, float environmentCoefficient);
+
+	/// <summary>
+	/// 環境マップの変更
+	/// </summary>
+	/// <param name="materialIndex">マテリアルインデックス</param>
+	/// <param name="environmentMapFileName">環境マップのファイル名</param>
+	void SetEnvironmentMap(uint32_t materialIndex, const std::string& environmentMapFileName);
 
 	/// <summary>
 	/// ライティングフラグの設定
@@ -93,7 +107,7 @@ private://メンバ関数
 	/// <param name="meshData">メッシュデータ</param>
 	/// <param name="rate">倍率</param>
 	/// <returns>辺縮約したメッシュデータ</returns>
-	std::vector<MeshData> EdgeCollapse(const std::vector<MeshData>& meshData,float rate);
+	std::vector<MeshData> EdgeCollapse(const std::vector<MeshData>& meshData, float rate);
 
 	/// <summary>
 	/// 近くにある頂点をまとめる

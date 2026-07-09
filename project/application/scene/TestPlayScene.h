@@ -8,6 +8,8 @@
 class Object3d;
 class GameObject;
 class Audio;
+class SkyBox;
+class ParticleSystem;
 
 namespace Primitive {
 	class Cube;
@@ -61,10 +63,18 @@ public://メンバ関数
 private://メンバ変数
 	std::unique_ptr<Object3d>object3d_ = nullptr;
 	std::vector<std::unique_ptr<GameObject>>gameObjects_;
+	float environmentCoefficient_ = 1.0f;
+
+	std::unique_ptr<GameObject>skyBoxObject_ = nullptr;
 
 	std::vector<Transform2d>transform2ds_;
 
 	std::unique_ptr<Primitive::Frustum>frustum_ = nullptr;
 
 	std::unique_ptr<Primitive::Cube>cube_ = nullptr;
+
+	std::unique_ptr<SkyBox>skyBox_ = nullptr;
+
+	std::unique_ptr<ParticleSystem>particleSystem_ = nullptr;
+	Vector3 emitterPos_ = {};
 };

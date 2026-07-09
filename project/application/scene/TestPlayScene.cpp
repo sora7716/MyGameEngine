@@ -14,6 +14,7 @@
 #include "Collision.h"
 #include "TextureManager.h"
 #include "SkyBox.h"
+#include <numbers>
 
 //コンストラクタ
 TestPlayScene::TestPlayScene() {};
@@ -31,8 +32,8 @@ void TestPlayScene::Initialize(const SceneContext& sceneContext) {
 	object3d_ = std::make_unique<Object3d>();
 	object3d_->Initialize(sceneContext_.object3dCommon, &renderCamera_, 1);
 	object3d_->SetGameCamera(gameCamera_);
-	object3d_->SetModel("sphere");
-	object3d_->SetTexture(0, "uvChecker.png");
+	object3d_->SetModel("sneakWalk");
+	//object3d_->SetTexture(0, "uvChecker.png");
 	//object3d_->SetModel("cube");
 	//object3d_->SetModel("dekanu");
 	//for (uint32_t i = 0; i < 33; i++) {
@@ -42,7 +43,9 @@ void TestPlayScene::Initialize(const SceneContext& sceneContext) {
 	object3d_->SetLODDistances({ 20.0f,30.0f,50.0f,80.0f });
 	std::unique_ptr<GameObject>tree = std::make_unique<GameObject>();
 	tree->Initialize("tree");
-	tree->GetTransform().translate = { 0.0f,0.0f,10.0f };
+	tree->GetTransform().translate = { 0.0f,0.0f,-9.9f };
+	tree->GetTransform().eulerAngle = { -std::numbers::pi_v<float> / 2.0f,0.0f,0.0f };
+	tree->GetTransform().quaternion = Quaternion::MakeQuaternionForEulerAngle(tree->GetTransform().eulerAngle);
 	tree->GetTransform().scale = Vector3::MakeAllOne();
 
 	GameObject* treePtr = tree.get();
@@ -66,6 +69,7 @@ void TestPlayScene::Initialize(const SceneContext& sceneContext) {
 	skyBoxObject_->Initialize("skyBox");
 	skyBox_ = std::make_unique<SkyBox>();
 	skyBox_->Initialize(sceneContext_.directXBase, sceneContext.textureManager, "rostock_laage_airport_4k.dds", gameCamera_);
+	skyBoxObject_->GetTransform().scale = { 10.0f,10.0f,10.0f };
 	skyBox_->SetGameObject(skyBoxObject_.get());
 }
 

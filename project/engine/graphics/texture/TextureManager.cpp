@@ -33,23 +33,36 @@ void TextureManager::LoadTexture(std::string& filePath) {
 #endif // _DEBUG
 	}
 
-	//読み込み済みテクスチャを検索
-	if (textureDatas_.contains(filePath)) {
-		//読み込み済みなら早期リターン
-		return;
-	}
-	//テクスチャファイルを読み込んでプログラムを扱えるようにする
+	HRESULT hr = S_FALSE;
 	DirectX::ScratchImage image{};
 	std::wstring filePathW = StringUtility::ConvertString(filePath);
-	HRESULT hr = DirectX::LoadFromWICFile(filePathW.c_str(), DirectX::WIC_FLAGS_FORCE_SRGB, nullptr, image);
-
-	if (filePathW.ends_with(L".dds")) {//.ddsで終わっていたらddsとみなす。
-		hr = DirectX::LoadFromDDSFile(filePathW.c_str(), DirectX::DDS_FLAGS_NONE, nullptr, image);
-	} else {
+	//読み込めなかった場合もう一度ループ
+	do {
+		//読み込み済みテクスチャを検索
+		if (textureDatas_.contains(filePath)) {
+			//読み込み済みなら早期リターン
+			return;
+		}
+		//テクスチャファイルを読み込んでプログラムを扱えるようにする
 		hr = DirectX::LoadFromWICFile(filePathW.c_str(), DirectX::WIC_FLAGS_FORCE_SRGB, nullptr, image);
-	}
 
-	assert(SUCCEEDED(hr));
+		if (filePathW.ends_with(L".dds")) {//.ddsで終わっていたらddsとみなす。
+			hr = DirectX::LoadFromDDSFile(filePathW.c_str(), DirectX::DDS_FLAGS_NONE, nullptr, image);
+		} else {
+			hr = DirectX::LoadFromWICFile(filePathW.c_str(), DirectX::WIC_FLAGS_FORCE_SRGB, nullptr, image);
+		}
+
+		//読み込み成功したら
+		if (SUCCEEDED(hr)) {
+			break;
+		}
+
+#ifdef _DEBUG
+		filePath = "engine/resources/textures/magenta1x1.png";
+#else
+		filePath = "engine/resources/textures/white1x1.png";
+#endif // _DEBUG
+	} while (true);
 
 	//ミップマップの作成
 	DirectX::ScratchImage mipImages{};

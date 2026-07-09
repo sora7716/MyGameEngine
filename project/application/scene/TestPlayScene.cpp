@@ -161,6 +161,7 @@ void TestPlayScene::Debug() {
 		float farClip = gameCamera_->GetFarClip();
 		ImGui::DragFloat("farClip", &farClip);
 		gameCamera_->SetFarClip(farClip);
+		ImGui::TreePop();
 	}
 
 	if (ImGui::TreeNode("skyBox")) {

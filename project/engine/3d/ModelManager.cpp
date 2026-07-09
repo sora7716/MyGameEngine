@@ -1,6 +1,7 @@
 #include "ModelManager.h"
-#include "engine/3d/ModelCommon.h"
-#include "engine/3d/Model.h"
+#include "ModelCommon.h"
+#include "Model.h"
+#include "PrimitiveMeshFactory.h"
 #include <cassert>
 
 //デストラクタ
@@ -10,38 +11,26 @@ ModelManager::~ModelManager() {}
 void ModelManager::Initialize(ModelCommon* modelCommon) {
 	assert(modelCommon);
 	modelCommon_ = modelCommon;
-	//プリミティブモデルの生成時に使用する設定の初期化
-	primitiveMeshCreateDescs.reserve(static_cast<uint32_t>(PrimitiveMeshType::kNone));
-	for (uint32_t i = 0; i < static_cast<uint32_t>(PrimitiveMeshType::kNone); i++) {
-		PrimitiveMeshCreateDesc meshCreateDesc = {
-		.meshType = static_cast<PrimitiveMeshType>(i),
-		.size = Vector3::MakeAllOne(),
-		.sphereSubdivision = 16,
-		};
-		primitiveMeshCreateDescs.push_back(meshCreateDesc);
-	}
 }
 
 //プリミティブなモデルの生成
 void ModelManager::CreatePrimitiveModel() {
-	for (const PrimitiveMeshCreateDesc& meshCreateDesc : primitiveMeshCreateDescs) {
-		//モデルの生成とファイル読み込み、初期化
-		std::unique_ptr<Model>model = Model::CreatePrimitiveModel(modelCommon_, meshCreateDesc);
+	//モデルの生成とファイル読み込み、初期化
+	std::unique_ptr<Model>model = Model::CreateModel(modelCommon_, { PrimitiveMeshFactory::CreateCube() });
 
-		//モデルをmapコンテナに格納する
-		models_.insert(std::make_pair(model->GetNameFromPrimitiveMeshType(meshCreateDesc.meshType), std::move(model)));
-	}
+	//モデルをmapコンテナに格納する
+	models_.insert(std::make_pair("cube", std::move(model)));
 }
 
 // objモデルの読み込み
-void ModelManager::LoadModel(const std::string& name, const std::string& storedFileName, const std::string& filePath) {
+void ModelManager::LoadModel(const std::string& name, const std::string& modelFileName) {
 	//読み込み済みならモデルを検索
 	if (models_.contains(name)) {
 		//読み込み済みなら早期return
 		return;
 	}
 	//モデルの生成とファイル読み込み、初期化
-	std::unique_ptr<Model>model = Model::CreateFromModel(modelCommon_, storedFileName, filePath);
+	std::unique_ptr<Model>model = Model::CreateModel(modelCommon_, modelFileName);
 
 	//モデルをmapコンテナに格納する
 	models_.insert(std::make_pair(name, std::move(model)));

@@ -9,6 +9,7 @@
 #include "SRVManager.h"
 #include "Model.h"
 #include "Mesh.h"
+#include "PrimitiveMeshFactory.h"
 
 //コンストラクタ
 ParticleSystem::ParticleSystem() {
@@ -36,7 +37,7 @@ void ParticleSystem::Initialize(ParticleCommon* particleCommon, Camera* renderCa
 	} else {
 		//メッシュデータを作成
 		modelData_.mesheDatas.reserve(1);
-		modelData_.mesheDatas.push_back(InitializePlaneModelData());
+		modelData_.mesheDatas.push_back(PrimitiveMeshFactory::CreatePlane());
 		modelData_.materialTexturePath.resize(1);
 	}
 
@@ -133,50 +134,6 @@ void ParticleSystem::SetAccelerationField(const AccelerationField& field) {
 //パーティクルの発生感覚[秒]の設定
 void ParticleSystem::SetFrequency(float frequency) {
 	emitter_->SetFrequency(frequency);
-}
-
-//モデルデータの初期化
-MeshData ParticleSystem::InitializePlaneModelData() {
-	MeshData meshData = {};
-	//サイズ決定
-	meshData.vertices.resize(4);
-	meshData.indices.resize(6);
-
-	//頂点
-	//左上
-	meshData.vertices[0] = {
-		.position = {-1.0f,1.0f,0.0f,1.0f},
-		.texcoord = {0.0f,0.0f},
-		.normal = {0.0f,0.0f,1.0f}
-	};
-	//右上
-	meshData.vertices[1] = {
-		.position = {1.0f,1.0f,0.0f,1.0f},
-		.texcoord = {1.0f,0.0f},
-		.normal = {0.0f,0.0f,1.0f}
-	};
-	//右下
-	meshData.vertices[2] = {
-		.position = {1.0f,-1.0f,0.0f,1.0f},
-		.texcoord = {1.0f,1.0f},
-		.normal = {0.0f,0.0f,1.0f}
-	};
-	//左下
-	meshData.vertices[3] = {
-		.position = {-1.0f,-1.0f,0.0f,1.0f},
-		.texcoord = {0.0f,1.0f},
-		.normal = {0.0f,0.0f,1.0f}
-	};
-
-	//インデックス
-	meshData.indices[0] = 0;
-	meshData.indices[1] = 1;
-	meshData.indices[2] = 2;
-	meshData.indices[3] = 0; 
-	meshData.indices[4] = 2; 
-	meshData.indices[5] = 3;
-
-	return meshData;
 }
 
 //マテリアルデータの初期化

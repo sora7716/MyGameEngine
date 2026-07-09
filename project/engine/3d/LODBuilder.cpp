@@ -34,7 +34,7 @@ void LODBuilder::CreateLODModel(Model* model, const std::vector<float>& keepRate
 	lodModels_.resize(keepRates.size());
 	//モデルの作成
 	for (uint32_t i = 0; i < keepRates.size(); i++) {
-		lodModels_[i] = Model::CreateModelFromModelData(model->GetModelCommon(), model->GetModelData());
+		lodModels_[i] = Model::CreateModel(model->GetModelCommon(), model->GetModelData());
 		//lodModels_[i]->RebuildMeshes(VertexClustering(lodModels_[i]->GetModelData().mesheDatas, keepRates[i]));
 		lodModels_[i]->RebuildMeshes(EdgeCollapse(lodModels_[i]->GetModelData().mesheDatas, keepRates[i]));
 	}

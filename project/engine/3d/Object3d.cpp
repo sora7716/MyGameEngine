@@ -5,12 +5,11 @@
 #include "ModelManager.h"
 #include "MatrixUtility.h"
 #include "GameObject.h"
-#include "ImGuiManager.h"
 #include "Model.h"
 #include "Mesh.h"
 #include "SRVManager.h"
 #include "TextureManager.h"
-#include "Collision.h"
+#include "Culling.h"
 #include "LODBuilder.h"
 #include "LODController.h"
 #include <algorithm>
@@ -48,7 +47,7 @@ void Object3d::Initialize(Object3dCommon* object3dCommon, Camera* renderCamera, 
 	transform3dMode_ = transform3dMode;
 	//ゲームオブジェクトの数を決定
 	maxInstanceCount_ = maxInstanceCount;
-	
+
 	//LOD関係のセットアップ
 	SetupLOD();
 	//LODビルダーの生成
@@ -105,7 +104,9 @@ void Object3d::Update() {
 		}
 
 		//表示状態の更新
-		UpdateVisibility(i, worldMatrix_);
+		for (const std::unique_ptr<Mesh>& mesh : baseModel_->GetMeshes()) {
+			instanceData_[i].isEnabled = culling_->IsVisibleInFrustum(mesh->GetAABB(), worldMatrix_);
+		}
 
 		//表示しなかったら
 		if (!instanceData_[i].isEnabled) {
@@ -226,6 +227,8 @@ uint32_t Object3d::AddInstance(GameObject* gameObject) {
 //カメラの設定
 void Object3d::SetGameCamera(Camera* gameCamera) {
 	gameCamera_ = gameCamera;
+	//カリングの初期化
+	culling_ = Culling::Create(gameCamera_);
 }
 
 //LODの切り替え距離
@@ -488,23 +491,4 @@ void Object3d::UpdateWorldTransform(uint32_t lodIndex, uint32_t drawIndex, const
 	lodWvpData_[lodIndex][drawIndex].worldInverseTranspose = lodWvpData_[lodIndex][drawIndex].world.InverseTranspose();
 
 	lodWvpPtrs_[lodIndex][drawIndex] = lodWvpData_[lodIndex][drawIndex];
-}
-
-//オブジェクトの表示状態の更新
-void Object3d::UpdateVisibility(uint32_t index, const Matrix4x4& worldMatrix) {
-	//表示するかのフラグ
-	bool isVisible = true;
-	if (gameCamera_) {
-		isVisible = false;
-		for (const std::unique_ptr<Mesh>& mesh : baseModel_->GetMeshes()) {
-			PrimitiveData::AABB worldAABB = mesh->GetAABB() * worldMatrix;
-
-			if (Collision::IsCollision(gameCamera_->GetFrustum(), worldAABB)) {
-				isVisible = true;
-				break;
-			}
-		}
-	}
-
-	instanceData_[index].isEnabled = isVisible;
 }

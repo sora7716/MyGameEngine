@@ -315,6 +315,12 @@
     <ClCompile Include="engine\3d\SkyBox.cpp">
       <Filter>engine\3d</Filter>
     </ClCompile>
+    <ClCompile Include="engine\geometry\PrimitiveMeshFactory.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="engine\geometry\Culling.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="application\scene\TestPlayScene.h">
@@ -536,8 +542,11 @@
     <ClInclude Include="engine\3d\SkyBox.h">
       <Filter>engine\3d</Filter>
     </ClInclude>
-    <ClInclude Include="engine\3d\PrimitiveMeshCreate.h">
-      <Filter>engine\3d</Filter>
+    <ClInclude Include="engine\geometry\PrimitiveMeshFactory.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="engine\geometry\Culling.h">
+      <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

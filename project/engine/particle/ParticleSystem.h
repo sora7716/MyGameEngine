@@ -95,13 +95,6 @@ public://メンバ関数
 	/// <param name="frequency">発生感覚</param>
 	void SetFrequency(float frequency);
 private://メンバ関数
-
-	/// <summary>
-	/// メッシュデータの初期化
-	/// </summary>
-	/// <returns>メッシュデータ</returns>
-	MeshData InitializePlaneModelData();
-
 	/// <summary>
 	/// マテリアルデータの初期化
 	/// </summary>

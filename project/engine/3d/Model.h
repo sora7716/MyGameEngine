@@ -1,7 +1,6 @@
 #pragma once
 #include "RenderData.h"
 #include "MatrixUtility.h"
-#include "PrimitiveMeshCreate.h"
 #include <string>
 #include <vector>
 #include <wrl.h>
@@ -19,6 +18,47 @@ class Mesh;
 class Model {
 private://エイリアステンプレート
 	template <class T>using ComPtr = Microsoft::WRL::ComPtr<T>;
+public://静的メンバ関数
+	/// <summary>
+	/// モデルの生成(ファイルを読み込み)
+	/// </summary>
+	/// <param name="modelCommon">モデルの共通部分</param>
+	/// <param name="modelFileName">モデルのファイル名</param>
+	/// <returns>モデル</returns>
+	static std::unique_ptr<Model> CreateModel(ModelCommon* modelCommon, const std::string& modelFileName);
+
+	/// <summary>
+    /// モデルの生成(メッシュデータ)
+    /// </summary>
+    /// <param name="modelCommon">モデルの共通部分</param>
+	/// <param name="meshDatas">メッシュデータ</param>
+    /// <returns>モデル</returns>
+	static std::unique_ptr<Model> CreateModel(ModelCommon* modelCommon,const std::vector<MeshData>&meshDatas);
+
+	/// <summary>
+	/// モデルの生成(モデルデータ)
+	/// </summary>
+	/// <param name="modelCommon">モデルの共通部分</param>
+	/// <param name="modelData">モデルデータ</param>
+	/// <returns>モデル</returns>
+	static std::unique_ptr<Model> CreateModel(ModelCommon* modelCommon, const ModelData& modelData);
+
+	/// <summary>
+	/// .mtlファイルの読み取り	
+	/// </summary>
+	/// <param name="directoryPath">ディレクトリファイルパス</param>
+	/// <param name="filename">ファイル名</param>
+	/// <returns>マテリアルデータ</returns>
+	static MaterialTexturePaths LoadMaterialTemplateFile(const std::string& directoryPath, const std::string& filename);
+
+	/// <summary>
+	/// モデルファイルの読み込み
+	/// </summary>
+	/// <param name="directoryPath">ディレクトリファイルパス(最後に"/"はいらない)</param>
+	/// <param name="fileName">ファイル名</param>
+	/// <returns>モデルデータ</returns>
+	static ModelData LoadModelFile(const std::string& directoryPath, const std::string& fileName);
+
 public://メンバ関数
 	/// <summary>
 	/// コンストラクタ
@@ -31,47 +71,22 @@ public://メンバ関数
 	~Model();
 
 	/// <summary>
-	/// モデルの生成(ファイルを読み込み)
-	/// </summary>
-	/// <param name="modelCommon">モデルの共通部分</param>
-	/// <param name="storedFilePath">モデルを保管しているファイル名(最初と最後に"/"入らない)</param>
-	/// <param name="filename">ファイル名(最初に"/"入らない</param>
-	/// <returns>モデル</returns>
-	static std::unique_ptr<Model> CreateFromModel(ModelCommon* modelCommon, const std::string& storedFilePath, const std::string& filename);
-
-	/// <summary>
-    /// モデルの生成(キューブ)
-    /// </summary>
-    /// <param name="modelCommon">モデルの共通部分</param>
-	/// <param name="meshCreateDesc">プリミティブメッシュを作成する際に使用する設定</param>
-    /// <returns>モデル</returns>
-	static std::unique_ptr<Model> CreatePrimitiveModel(ModelCommon* modelCommon, const PrimitiveMeshCreateDesc& meshCreateDesc);
-
-	/// <summary>
-	/// モデルの生成(モデルデータ)
-	/// </summary>
-	/// <param name="modelCommon">モデルの共通部分</param>
-	/// <param name="modelData">モデルデータ</param>
-	/// <returns>モデル</returns>
-	static std::unique_ptr<Model> CreateModelFromModelData(ModelCommon* modelCommon, const ModelData& modelData);
-
-	/// <summary>
 	/// 初期化
 	/// </summary>
 	/// <param name="modelCommon">モデルの共通部分</param>
 	void Initialize(ModelCommon* modelCommon);
 
 	/// <summary>
-	/// メッシュの再構成
-	/// </summary>
-	/// <param name="meshes">メッシュ</param>
-	void RebuildMeshes(const std::vector<MeshData>& meshes);
-
-	/// <summary>
 	/// 描画
 	/// </summary>
 	/// <param name="objectCount">表示したいオブジェクト数</param>
 	void Draw(uint32_t objectCount = 1);
+
+	/// <summary>
+	/// メッシュの再構成
+	/// </summary>
+	/// <param name="meshes">メッシュ</param>
+	void RebuildMeshes(const std::vector<MeshData>& meshes);
 
 	/// <summary>
 	/// UV変換
@@ -115,23 +130,6 @@ public://メンバ関数
 	const ModelData& GetModelData()const;
 
 	/// <summary>
-	/// .mtlファイルの読み取り	
-	/// </summary>
-	/// <param name="directoryPath">ディレクトリファイルパス</param>
-	/// <param name="filename">ファイル名</param>
-	/// <returns>マテリアルデータ</returns>
-	static MaterialTexturePaths LoadMaterialTemplateFile(const std::string& directoryPath, const std::string& filename);
-
-	/// <summary>
-	/// モデルファイルの読み込み
-	/// </summary>
-	/// <param name="directoryPath">ディレクトリファイルパス(最後に"/"はいらない)</param>
-	/// <param name="storedFilePath">モデルを保管しているファイル名(最初と最後に"/"入らない)</param>
-	/// <param name="filename">ファイル名(最初に"/"入らない</param>
-	/// <returns>モデルデータ</returns>
-	static ModelData LoadModelFile(const std::string& directoryPath, const std::string& storedFilePath, const std::string& filename);
-
-	/// <summary>
 	/// ライティングの設定
 	/// </summary>
 	/// <param name="index">マテリアルの検索キー</param>
@@ -169,13 +167,6 @@ public://メンバ関数
 	/// </summary>
 	/// <returns>モデルの共通部分</returns>
 	ModelCommon* GetModelCommon();
-
-	/// <summary>
-	/// プリミティブメッシュタイプからメッシュ名を取得する
-	/// </summary>
-	/// <param name="meshType">プリミティブメッシュタイプ</param>
-	/// <returns>メッシュ名</returns>
-	std::string GetNameFromPrimitiveMeshType(PrimitiveMeshType meshType);
 private://メンバ関数
 	/// <summary>
 	/// マテリアルリソースの生成
@@ -193,41 +184,27 @@ private://メンバ関数
 	void BuildMesh();
 
 	/// <summary>
-	/// キューブの作成
+	/// モデルの作成(メッシュデータから1)
 	/// </summary>
-	MeshData MakeCubeData();
+	/// <param name="meshDatas">メッシュデータ</param>
+	void CreateModel(const std::vector<MeshData>& meshDatas,const std::string& nodeName = "primitive");
 
 	/// <summary>
-	/// 球の作成
+	/// モデルの生成(モデルのファイルから)
 	/// </summary>
-	MeshData MakeSphereData();
-
-	/// <summary>
-	/// プリミティブモデルの初期化
-	/// </summary>
-	/// <param name="meshCreateDesc">メッシュ生成に使用する設定</param>
-	void InitializePrimitiveModel(const PrimitiveMeshCreateDesc& meshCreateDesc);
-
-	/// <summary>
-	/// モデルの生成
-	/// </summary>
-	/// <param name="storedFilePath">モデルを保管しているファイル名(最初と最後に"/"入らない)</param>
-	/// <param name="filename">ファイル名(最初に"/"入らない</param>
-	void CreateFromModel(const std::string& storedFilePath, const std::string& filename);
+	/// <param name="objectFileName">オブジェクトのファイル名</param>
+	void CreateModel(const std::string& objectFileName);
 
 	/// <summary>
 	/// モデルの生成(モデルデータ)
 	/// </summary>
 	/// <param name="modelData">モデルデータ</param>
-	void CreateModelFromModelData(const ModelData& modelData);
+	void CreateModel(const ModelData& modelData);
 
 	/// <summary>
 	/// 各種リソースの生成
 	/// </summary>
 	void CreateResources();
-private://静的メンバ変数
-	//プリミティブのメッシュ作成関数をまとめたテーブル
-	static MeshData(Model::* PrimitiveMeshFactoryTable[])();
 private://メンバ変数
 	//ModelCommonのポインタ
 	ModelCommon* modelCommon_ = nullptr;

@@ -19,6 +19,7 @@ class Model;
 class GameObject;
 class LODBuilder;
 class LODController;
+class Culling;
 
 //3dオブジェクトのインスタンスデータ
 struct Object3dInstance {
@@ -274,13 +275,6 @@ private://メンバ関数
 	/// <param name="drawIndex">描画の検索キー</param>
 	/// <param name="worldMatrix">ワールド行列</param>
 	void UpdateWorldTransform(uint32_t lodIndex, uint32_t drawIndex, const Matrix4x4& worldMatrix);
-
-	/// <summary>
-	/// オブジェクトの表示状態の更新
-	/// </summary>
-	/// <param name="index">インデックス</param>
-	/// <param name="worldMatrix">ワールド行列</param>
-	void UpdateVisibility(uint32_t index, const Matrix4x4& worldMatrix);
 private://メンバ関数テーブル
 	//座標の更新をまとめた
 	static void (Object3d::* UpdateWorldMatrixTable[])(uint32_t index);
@@ -333,4 +327,7 @@ private://メンバ変数
 
 	//マテリアル
 	Material material_ = {};
+
+	//カリング
+	std::unique_ptr<Culling>culling_ = nullptr;
 };

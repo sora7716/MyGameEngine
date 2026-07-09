@@ -54,37 +54,37 @@ public://メンバ関数
 	void Debug();
 
 	/// <summary>
-	/// カメラのセッター
+	/// カメラの設定
 	/// </summary>
 	/// <param name="camera">カメラ</param>
 	void SetGameCamera(Camera* camera);
 
 	/// <summary>
-	/// ブレンドモードのセッター
+	/// ブレンドモードの設定
 	/// </summary>
 	/// <param name="blendMode">ブレンドモード</param>
 	void SetBlendMode(BlendMode blendMode);
 
 	/// <summary>
-	/// トランスフォームデータのセッター
+	/// エミッター位置の設定
 	/// </summary>
-	/// <param name="transform">トランスフォーム</param>
-	void SetTransformData(const Transform& transfrom);
+	/// <param name="position">位置</param>
+	void SetEmitterPosition(const Vector3& position);
 
 	/// <summary>
-	/// パーティクルの数のセッター
+	/// パーティクルの数の設定
 	/// </summary>
 	/// <param name="cont">パーティクルの数</param>
 	void SetParticleCount(uint32_t cont);
 
 	/// <summary>
-	/// 発生範囲のセッター
+	/// 発生範囲の設定
 	/// </summary>
 	/// <param name="range">範囲</param>
 	void SetEmitRange(float range);
 
 	/// <summary>
-	/// 加速度が起こるフィールドのセッター
+	/// 加速度が起こるフィールドの設定
 	/// </summary>
 	/// <param name="field">フィールド</param>
 	void SetAccelerationField(const AccelerationField& field);

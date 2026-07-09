@@ -75,37 +75,37 @@ void ParticleEmitter::Debug() {
 #endif //USE_IMGUI
 }
 
-//モデルのゲッター
+//モデルの取得
 Model* ParticleEmitter::GetModel() const {
 	return model_;
 }
 
-//生存しているパーティクルの数のゲッター
+//生存しているパーティクルの数の取得
 const uint32_t ParticleEmitter::GetNumInstance() const {
 	return numInstance_;
 }
 
-//カメラのセッター
+//カメラの設定
 void ParticleEmitter::SetGameCamera(Camera* camera) {
 	gameCamera_ = camera;
 }
 
-//トランスフォームデータのセッター
-void ParticleEmitter::SetTransformData(const Transform& transfrom) {
-	emitter_.transform = transfrom;
+//エミッター位置の設定
+void ParticleEmitter::SetEmitterPosition(const Vector3& position) {
+	emitter_.translate = position;
 }
 
-//パーティクルの数のセッター
+//パーティクルの数の設定
 void ParticleEmitter::SetParticleCount(uint32_t count) {
 	emitter_.count = count;
 }
 
-//発生範囲のセッター
+//発生範囲の設定
 void ParticleEmitter::SetEmitRange(float range) {
 	emitter_.range = range;
 }
 
-//加速度が起こるフィールドのセッター
+//加速度が起こるフィールドの設定
 void ParticleEmitter::SetAccelerationField(const AccelerationField& field) {
 	accelerationField_ = field;
 }
@@ -122,33 +122,46 @@ Particle ParticleEmitter::MakeNewParticle() {
 
 //通常のパーティクルを生成
 Particle ParticleEmitter::MakeNormalParticle() {
+	////パーティクルの初期化
+	//Particle particle;
+
+	////拡縮
+	//particle.transform.scale = { 1.0f, 1.0f, 1.0f };
+
+	////位置の値をemitRange_の範囲でランダムに設定
+	//std::uniform_real_distribution<float>distributionPosition(-emitter_.range, emitter_.range);
+	////位置
+	//Vector3 randomTranslate = { distributionPosition(randomEngine_), distributionPosition(randomEngine_), distributionPosition(randomEngine_) };
+	////パーティクルの位置を発生源を中心に設定
+	//particle.transform.translate = emitter_.transform.translate + randomTranslate;
+
+	////位置と速度を[-1.0f,1.0f]でランダムに設定
+	//std::uniform_real_distribution<float>distributionVelocity(-1.0f, 1.0f);
+	////移動する速度
+	//particle.velocity = { distributionVelocity(randomEngine_), distributionVelocity(randomEngine_), distributionVelocity(randomEngine_) };
+
+	////色の値を[0.0f,1.0f]でランダムに設定
+	//std::uniform_real_distribution<float>distColor(0.0f, 1.0f);
+	////色
+	//particle.color = { distColor(randomEngine_), distColor(randomEngine_), distColor(randomEngine_),1.0f };
+
+	////生存時間
+	//std::uniform_real_distribution<float>distTime(1.0f, 3.0f);
+	//particle.lifeTime = distTime(randomEngine_);
+	//particle.currentTime = 0.0f;
+
 	//パーティクルの初期化
 	Particle particle;
-
-	//拡縮
-	particle.transform.scale = { 1.0f, 1.0f, 1.0f };
-
-	//位置の値をemitRange_の範囲でランダムに設定
-	std::uniform_real_distribution<float>distributionPosition(-emitter_.range, emitter_.range);
-	//位置
-	Vector3 randomTranslate = { distributionPosition(randomEngine_), distributionPosition(randomEngine_), distributionPosition(randomEngine_) };
-	//パーティクルの位置を発生源を中心に設定
-	particle.transform.translate = emitter_.transform.translate + randomTranslate;
-
-	//位置と速度を[-1.0f,1.0f]でランダムに設定
-	std::uniform_real_distribution<float>distributionVelocity(-1.0f, 1.0f);
-	//移動する速度
-	particle.velocity = { distributionVelocity(randomEngine_), distributionVelocity(randomEngine_), distributionVelocity(randomEngine_) };
-
-	//色の値を[0.0f,1.0f]でランダムに設定
-	std::uniform_real_distribution<float>distColor(0.0f, 1.0f);
-	//色
-	particle.color = { distColor(randomEngine_), distColor(randomEngine_), distColor(randomEngine_),1.0f };
-
-	//生存時間
-	std::uniform_real_distribution<float>distTime(1.0f, 3.0f);
-	particle.lifeTime = distTime(randomEngine_);
-	particle.currentTime = 0.0f;
+	std::uniform_real_distribution<float>distScale(0.4f, 1.5f);
+	particle.transform.scale = { 0.05f,distScale(randomEngine_),1.0f };
+	std::uniform_real_distribution<float>distRotate(-std::numbers::pi_v<float>, std::numbers::pi_v<float>);
+	particle.transform.eulerAngle = { 0.0f,0.0f,distRotate(randomEngine_) };
+	particle.transform.quaternion = Quaternion::MakeQuaternionForEulerAngle(particle.transform.eulerAngle);
+	particle.transform.translate = emitter_.translate;
+	particle.velocity = { 0.0f,0.0f,0.0f };
+	particle.color = Vector4::MakeWhiteColor();
+	particle.lifeTime = 1.0f;//1秒で消える
+	particle.currentTime = 0;
 
 	return particle;
 }

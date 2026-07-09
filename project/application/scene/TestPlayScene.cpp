@@ -78,8 +78,9 @@ void TestPlayScene::Initialize(const SceneContext& sceneContext) {
 	}
 
 	particleSystem_ = std::make_unique<ParticleSystem>();
-	particleSystem_->Initialize(sceneContext_.particleCommon, &renderCamera_, "circle.png");
+	particleSystem_->Initialize(sceneContext_.particleCommon, &renderCamera_, "circle2.png");
 	particleSystem_->SetGameCamera(gameCamera_);
+	particleSystem_->SetParticleCount(2);
 	particleSystem_->SetFrequency(0.3f);
 }
 
@@ -127,7 +128,7 @@ void TestPlayScene::Update() {
 //デバッグ
 void TestPlayScene::Debug() {
 #ifdef USE_IMGUI
-	ImGui::Begin("object3d");
+	ImGui::Begin("Object");
 
 	for (int32_t i = 0; i < gameObjects_.size(); i++) {
 		ImGui::PushID(i);
@@ -148,35 +149,34 @@ void TestPlayScene::Debug() {
 	//	ImGui::DragFloat2("uvTranslate", &transform2ds_[i].translate.x, 0.1f);
 	//	ImGui::PopID();
 	//}
-	Vector3 cameraTranslate2 = gameCamera_->GetTranslate();
-	ImGui::Text("cameraToPlayer:%f", gameObjects_[0]->GetTransform().translate - cameraTranslate2);
-	ImGui::End();
 
-	ImGui::Begin("camera");
-	Vector3 cameraTranslate = gameCamera_->GetTranslate();
-	Vector3 cameraRotate = gameCamera_->GetEulerAngle();
-	ImGui::DragFloat3("rotate", &cameraRotate.x, 0.1f);
-	ImGui::DragFloat3("translate", &cameraTranslate.x, 0.1f);
-	gameCamera_->SetEulerAngle(cameraRotate);
-	gameCamera_->SetTranslate(cameraTranslate);
+	if (ImGui::TreeNode("camera")) {
+		Vector3 cameraTranslate = gameCamera_->GetTranslate();
+		Vector3 cameraRotate = gameCamera_->GetEulerAngle();
+		ImGui::DragFloat3("rotate", &cameraRotate.x, 0.1f);
+		ImGui::DragFloat3("translate", &cameraTranslate.x, 0.1f);
+		gameCamera_->SetEulerAngle(cameraRotate);
+		gameCamera_->SetTranslate(cameraTranslate);
 
-	float farClip = gameCamera_->GetFarClip();
-	ImGui::DragFloat("farClip", &farClip);
-	gameCamera_->SetFarClip(farClip);
-	ImGui::End();
+		float farClip = gameCamera_->GetFarClip();
+		ImGui::DragFloat("farClip", &farClip);
+		gameCamera_->SetFarClip(farClip);
+	}
 
-	ImGui::Begin("cube");
-	PrimitiveData::OBB obb = cube_->GetOBB();
-	ImGui::DragFloat3("size", &obb.size.x, 0.1f);
-	ImGui::DragFloat3("translate", &obb.center.x, 0.1f);
-	cube_->SetOBB(obb);
-	ImGui::End();
-
-	ImGui::Begin("skyBox");
 	if (ImGui::TreeNode("skyBox")) {
 		ImGuiManager::DragTransform(skyBoxObject_->GetTransform());
 		ImGui::TreePop();
 	}
+
+	if (ImGui::TreeNode("particle")) {
+		ImGui::DragFloat3("emitter", &emitterPos_.x, 0.01f);
+		particleSystem_->SetEmitterPosition(emitterPos_);
+		PrimitiveData::OBB obb = cube_->GetOBB();
+		obb.center = emitterPos_;
+		cube_->SetOBB(obb);
+		ImGui::TreePop();
+	}
+
 	ImGui::End();
 #endif // USE_IMGUI
 

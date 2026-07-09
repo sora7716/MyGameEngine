@@ -100,32 +100,32 @@ void ParticleSystem::Debug() {
 	emitter_->Debug();
 }
 
-//カメラのセッター
+//カメラの設定
 void ParticleSystem::SetGameCamera(Camera* camera) {
 	emitter_->SetGameCamera(camera);
 }
 
-//ブレンドモードのセッター
+//ブレンドモードの設定
 void ParticleSystem::SetBlendMode(BlendMode blendMode) {
 	blendMode_ = blendMode;
 }
 
-//トランスフォームデータのセッター
-void ParticleSystem::SetTransformData(const Transform& transfrom) {
-	emitter_->SetTransformData(transfrom);
+//エミッター位置の設定
+void ParticleSystem::SetEmitterPosition(const Vector3& position) {
+	emitter_->SetEmitterPosition(position);
 }
 
-//パーティクルの数のセッター
+//パーティクルの数の設定
 void ParticleSystem::SetParticleCount(uint32_t cont) {
 	emitter_->SetParticleCount(cont);
 }
 
-//発生範囲のセッター
+//発生範囲の設定
 void ParticleSystem::SetEmitRange(float range) {
 	emitter_->SetEmitRange(range);
 }
 
-//加速度が起こるフィールドのセッター
+//加速度が起こるフィールドの設定
 void ParticleSystem::SetAccelerationField(const AccelerationField& field) {
 	emitter_->SetAccelerationField(field);
 }

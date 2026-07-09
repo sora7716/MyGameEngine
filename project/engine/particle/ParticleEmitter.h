@@ -28,7 +28,7 @@ struct Particle {
 
 //発生源
 struct Emitter {
-	Transform transform = {};//エミッターのTransform
+	Vector3 translate = {};//エミッターのTransform
 	uint32_t count = 0;//発生数
 	float frequency = 0.0f;//発生頻度
 	float frequencyTime = 0.0f;//頻度用時刻
@@ -57,11 +57,11 @@ public://メンバ関数
 	~ParticleEmitter() = default;
 
 	/// <summary>
-    /// 初期化
-    /// </summary>
-    /// <param name="particleCommon">パーティクルの共通部分</param>
+	/// 初期化
+	/// </summary>
+	/// <param name="particleCommon">パーティクルの共通部分</param>
 	/// <param name="renderCamera">描画用カメラ</param>
-    /// <param name="model">モデル</param>
+	/// <param name="model">モデル</param>
 	void Initialize(ParticleCommon* particleCommon, Camera* renderCamera, Model* model);
 
 	/// <summary>
@@ -76,47 +76,47 @@ public://メンバ関数
 	void Debug();
 
 	/// <summary>
-	/// モデルのゲッター
+	/// モデルの取得
 	/// </summary>
 	/// <returns></returns>
 	Model* GetModel()const;
 
 	/// <summary>
-	/// 生存しているパーティクルの数のゲッター
+	/// 生存しているパーティクルの数の取得
 	/// </summary>
 	/// <returns></returns>
 	const uint32_t GetNumInstance()const;
 
 	/// <summary>
-	/// カメラのセッター
+	/// カメラの設定
 	/// </summary>
 	/// <param name="camera"></param>
 	void SetGameCamera(Camera* gameCamera);
 
 	/// <summary>
-	/// トランスフォームデータのセッター
+	/// エミッター位置の設定の設定
 	/// </summary>
-	/// <param name="transform">トランスフォーム</param>
-	void SetTransformData(const Transform& transfrom);
+	/// <param name="position">エミッター位置の設定</param>
+	void SetEmitterPosition(const Vector3& position);
 
 	/// <summary>
-	/// パーティクルの数のセッター
+	/// パーティクルの数の設定
 	/// </summary>
 	/// <param name="cont">パーティクルの数</param>
 	void SetParticleCount(uint32_t cont);
 
 	/// <summary>
-	/// 発生範囲のセッター
+	/// 発生範囲の設定
 	/// </summary>
 	/// <param name="range">範囲</param>
 	void SetEmitRange(float range);
 
 	/// <summary>
-	/// 加速度が起こるフィールドのセッター
+	/// 加速度が起こるフィールドの設定
 	/// </summary>
 	/// <param name="field">フィールド</param>
 	void SetAccelerationField(const AccelerationField& field);
-	
+
 	/// <summary>
 	/// パーティクルの発生感覚[秒]の設定
 	/// </summary>
@@ -179,7 +179,7 @@ private://メンバ変数
 
 	//発生源
 	Emitter emitter_ = {
-		.transform = {{1.0f,1.0f,1.0f},{0.0f,0.0f,0.0f},{0.0f,0.0f,0.0f}},
+		.translate = {0.0f,0.0f,0.0f},
 		.count = 1,
 		.frequency = 1.0f,//発生頻度
 		.frequencyTime = 0.0f,//発生頻度用の時刻,0.0fで初期化

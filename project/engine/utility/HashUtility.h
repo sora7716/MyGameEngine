@@ -4,13 +4,12 @@
 /// <summary>
 /// ハッシュ関係
 /// </summary>
-class HashUtility{
-public://メンバ関数
+namespace HashUtility {
 	/// <summary>
 	/// ハッシュの作成
 	/// </summary>
 	/// <param name="seed"></param>
 	/// <param name="value"></param>
-	static void CreateHash(size_t& seed, int32_t value);
+	void CreateHash(size_t& seed, int32_t value);
 };
 

@@ -5,49 +5,48 @@
 /// <summary>
 /// 行列関係
 /// </summary>
-class MatrixUtility {
-public://メンバ関数
+namespace MatrixUtility {
 	/// <summary>
 	/// 拡大縮小
 	/// </summary>
 	/// <param name="scale">倍率</param>
 	/// <returns>倍率のmatrix</returns>
-	static Matrix4x4 MakeScaleMatrix(const Vector3& scale);
+	Matrix4x4 MakeScaleMatrix(const Vector3& scale);
 
 	/// <summary>
 	/// 平行移動
 	/// </summary>
 	/// <param name="translate">移動</param>
 	/// <returns>移動のmatrix</returns>
-	static Matrix4x4 MakeTranslateMatrix(const Vector3& translate);
+	Matrix4x4 MakeTranslateMatrix(const Vector3& translate);
 
 	/// <summary>
 	/// x座標を軸に回転
 	/// </summary>
 	/// <param name="radian">角度</param>
 	/// <returns>x座標を軸の回転</returns>
-	static Matrix4x4 MakeRotateXMatrix(const float& radian);
+	Matrix4x4 MakeRotateXMatrix(const float& radian);
 
 	/// <summary>
 	/// y座標を軸に回転
 	/// </summary>
 	/// <param name="radian">角度</param>
 	/// <returns>y座標を軸の回転</returns>
-	static Matrix4x4 MakeRotateYMatrix(const float& radian);
+	Matrix4x4 MakeRotateYMatrix(const float& radian);
 
 	/// <summary>
 	/// z座標を軸に回転
 	/// </summary>
 	/// <param name="radian">角度</param>
 	/// <returns>z座標を軸の回転</returns>
-	static Matrix4x4 MakeRotateZMatrix(const float& radian);
+	Matrix4x4 MakeRotateZMatrix(const float& radian);
 
 	/// <summary>
 	/// x,y,z座標で回転
 	/// </summary>
 	/// <param name="radian">角度</param>
 	/// <returns>回転</returns>
-	static Matrix4x4 MakeRotateMatrix(const Vector3& radian);
+	Matrix4x4 MakeRotateMatrix(const Vector3& radian);
 
 	/// <summary>
 	/// 任意軸回転
@@ -55,7 +54,7 @@ public://メンバ関数
 	/// <param name="axis">3軸</param>
 	/// <param name="angle">角度</param>
 	/// <returns>任意軸回転</returns>
-	static Matrix4x4 MakeRotateAxisAngle(const Vector3& axis, float angle);
+	Matrix4x4 MakeRotateAxisAngle(const Vector3& axis, float angle);
 
 	/// <summary>
 	/// fromからtoの方向へ向く回転行列
@@ -63,7 +62,7 @@ public://メンバ関数
 	/// <param name="from">今のいる位置</param>
 	/// <param name="to">向いたい位置</param>
 	/// <returns></returns>
-	static Matrix4x4 DirectionToDirection(const Vector3& from, const Vector3& to);
+	Matrix4x4 DirectionToDirection(const Vector3& from, const Vector3& to);
 
 	/// <summary>
 	/// 任意軸回転を表すクォータニオンの生成
@@ -71,7 +70,7 @@ public://メンバ関数
 	/// <param name="axis">3軸</param>
 	/// <param name="angle">角度</param>
 	/// <returns>任意軸回転を表すクォータニオン</returns>
-	static Quaternion MakeRotateAxisAngleQuaternion(const Vector3& axis, float angle);
+	Quaternion MakeRotateAxisAngleQuaternion(const Vector3& axis, float angle);
 
 	/// <summary>
 	/// ベクトルをクォータニオンで回転させた結果のベクトルを求める
@@ -79,21 +78,21 @@ public://メンバ関数
 	/// <param name="vector">ベクトル</param>
 	/// <param name="quaternion">クォータニオン</param>
 	/// <returns>クォータニオンで回転させたベクトル</returns>
-	static Vector3 RotateVector(const Vector3& vector, const Quaternion& quaternion);
+	Vector3 RotateVector(const Vector3& vector, const Quaternion& quaternion);
 
 	/// <summary>
 	/// Quaternionから回転行列を求める
 	/// </summary>
 	/// <param name="quaternion">クオータニオン</param>
 	/// <returns>回転行列</returns>
-	static Matrix4x4 MakeRotateMatrix(const Quaternion& quaternion);
+	Matrix4x4 MakeRotateMatrix(const Quaternion& quaternion);
 
 	/// <summary>
 	/// OBB用の回転行列
 	/// </summary>
 	/// <param name="orientations">回転行列から抽出するやつ</param>
 	/// <param name="rotate">回転する値</param>
-	static void MakeOBBRotateMatrix(Vector3* orientations, const Quaternion& rotate);
+	void MakeOBBRotateMatrix(Vector3* orientations, const Quaternion& rotate);
 
 	/// <summary>
 	/// OBB用のワールド行列
@@ -101,14 +100,14 @@ public://メンバ関数
 	/// <param name="orientations">回転行列から抽出したやつ</param>
 	/// <param name="center">センターの値</param>
 	/// <returns>OBBのワールド行列</returns>
-	static Matrix4x4 MakeOBBWorldMatrix(const Vector3* orientations, const Vector3 center);
+	Matrix4x4 MakeOBBWorldMatrix(const Vector3* orientations, const Vector3 center);
 
 	/// <summary>
 	/// アフィン行列の作成
 	/// </summary>
 	/// <param name="transform">トランスフォーム</param>
 	/// <returns>アフィン行列</returns>
-	static Matrix4x4 MakeAffineMatrix(const Transform& transform);
+	Matrix4x4 MakeAffineMatrix(const Transform& transform);
 
 	/// <summary>
 	/// アフィン行列
@@ -117,7 +116,7 @@ public://メンバ関数
 	/// <param name="rotate">回転</param>
 	/// <param name="translate">平行移動</param>
 	/// <returns>アフィン行列</returns>
-	static Matrix4x4 MakeAffineMatrix(const Vector3& scale, const Vector3& rotate, const Vector3& translate);
+	Matrix4x4 MakeAffineMatrix(const Vector3& scale, const Vector3& rotate, const Vector3& translate);
 
 	/// <summary>
 	/// STRの変換
@@ -126,14 +125,14 @@ public://メンバ関数
 	/// <param name="rotate">回転</param>
 	/// <param name="translate">移動</param>
 	/// <returns>STRの変換</returns>
-	static Matrix4x4 MakeSTRMatrix(const Vector3& scale, const Vector3& rotate, const Vector3& translate);
+	Matrix4x4 MakeSTRMatrix(const Vector3& scale, const Vector3& rotate, const Vector3& translate);
 
 	/// <summary>
 	/// UVのアフィン変換
 	/// </summary>
 	/// <param name="uvTransform">uv座標</param>
 	/// <returns>アフィン行列</returns>
-	static Matrix4x4 MakeUVAffineMatrix(const Transform2d& uvTransform);
+	Matrix4x4 MakeUVAffineMatrix(const Transform2d& uvTransform);
 
 	/// <summary>
 	/// 正射影行列
@@ -145,7 +144,7 @@ public://メンバ関数
 	/// <param name="nearClip">近平面</param>
 	/// <param name="farClip">遠平面</param>
 	/// <returns>OrthographicMatrix</returns>
-	static Matrix4x4 MakeOrthographicMatrix(const float& left, const float& top, const float& right, const float& bottom, const float& nearClip, const float& farClip);
+	Matrix4x4 MakeOrthographicMatrix(const float& left, const float& top, const float& right, const float& bottom, const float& nearClip, const float& farClip);
 
 	/// <summary>
 	/// 透視投影行列
@@ -155,7 +154,7 @@ public://メンバ関数
 	/// <param name="nearClip">近平面への距離</param>
 	/// <param name="farClip">遠平面への距離</param>
 	/// <returns>PerspectiveFovMatrix</returns>
-	static Matrix4x4 MakePerspectiveFovMatrix(const float& fovY, const float& aspectRation, const float& nearClip, const float& farClip);
+	Matrix4x4 MakePerspectiveFovMatrix(const float& fovY, const float& aspectRation, const float& nearClip, const float& farClip);
 
 	/// <summary>
 	/// ビューポートmatrix
@@ -167,7 +166,7 @@ public://メンバ関数
 	/// <param name="minDepth">最小深度値</param>
 	/// <param name="maxDepth">最大深度値</param>
 	/// <returns>ViewportMatrix</returns>
-	static Matrix4x4 MakeViewportMatrix(const float& left, const float& top, const float& width, const float& height, const float& minDepth, const float& maxDepth);
+	Matrix4x4 MakeViewportMatrix(const float& left, const float& top, const float& width, const float& height, const float& minDepth, const float& maxDepth);
 
 	/// <summary>
 	/// ビルボード行列の作成
@@ -175,7 +174,7 @@ public://メンバ関数
 	/// <param name="cameraWorldMatrix">カメラのワールド行列</param>
 	/// <param name="rotate">回転</param>
 	/// <returns>ビルボード行列</returns>
-	static Matrix4x4 MakeBillboardMatrix(const Matrix4x4& cameraWorldMatrix, const Vector3& rotate);
+	Matrix4x4 MakeBillboardMatrix(const Matrix4x4& cameraWorldMatrix, const Vector3& rotate);
 
 	/// <summary>
 	/// ビルボード行列の作成
@@ -183,7 +182,7 @@ public://メンバ関数
 	/// <param name="cameraWorldMatrix">カメラのワールド行列</param>
 	/// <param name="quaternion">クォータニオン</param>
 	/// <returns></returns>
-	static Matrix4x4 MakeBillboardMatrix(const Matrix4x4& cameraWorldMatrix, const Quaternion& quaternion);
+	Matrix4x4 MakeBillboardMatrix(const Matrix4x4& cameraWorldMatrix, const Quaternion& quaternion);
 
 	/// <summary>
 	/// ビルボード行列を含んだアフィン行列の作成
@@ -191,13 +190,13 @@ public://メンバ関数
 	/// <param name="cameraWorldMatrix">カメラのワールド行列</param>
 	/// <param name="transform">トランスフォーム</param>
 	/// <returns>ビルボード行列を含んだアフィン行列</returns>
-	static Matrix4x4 MakeBillboardAffineMatrix(const Matrix4x4& cameraWorldMatrix, const Transform& transform);
+	Matrix4x4 MakeBillboardAffineMatrix(const Matrix4x4& cameraWorldMatrix, const Transform& transform);
 
 	/// <summary>
 	/// 行列をTransformDataに分解
 	/// </summary>
 	/// <param name="mat">行列</param>
 	/// <returns>TransformData</returns>
-	static Transform DecomposeMatrix(const Matrix4x4& mat);
+	Transform DecomposeMatrix(const Matrix4x4& mat);
 };
 

@@ -14,15 +14,14 @@ struct HitInfo {
 /// <summary>
 /// 衝突判定
 /// </summary>
-class Collision {
-public://静的メンバ関数
+namespace Collision {
 	/// <summary>
 	/// 球同士の衝突判定
 	/// </summary>
 	/// <param name="sphere1">球1</param>
 	/// <param name="sphere2">球2</param>
 	/// <returns>衝突したかどうか</returns>
-	static bool IsCollision(const PrimitiveData::Sphere& sphere1, const PrimitiveData::Sphere& sphere2);
+	bool IsCollision(const PrimitiveData::Sphere& sphere1, const PrimitiveData::Sphere& sphere2);
 
 	/// <summary>
 	/// AABB同士の衝突判定
@@ -30,7 +29,7 @@ public://静的メンバ関数
 	/// <param name="aabb1">aabb1</param>
 	/// <param name="aabb2">aabb2</param>
 	/// <returns>衝突したかのフラグ</returns>
-	static bool IsCollision(const PrimitiveData::AABB& aabb1, const PrimitiveData::AABB& aabb2);
+	bool IsCollision(const PrimitiveData::AABB& aabb1, const PrimitiveData::AABB& aabb2);
 
 	/// <summary>
 	/// AABBと球の衝突判定
@@ -38,7 +37,7 @@ public://静的メンバ関数
 	/// <param name="aabb">aabb</param>
 	/// <param name="sphere">球</param>
 	/// <returns>衝突したかのフラグ</returns>
-	static bool IsCollision(const PrimitiveData::AABB& aabb, const PrimitiveData::Sphere& sphere);
+	bool IsCollision(const PrimitiveData::AABB& aabb, const PrimitiveData::Sphere& sphere);
 
 	/// <summary>
 	/// OBBと球の衝突判定
@@ -46,7 +45,7 @@ public://静的メンバ関数
 	/// <param name="obb">obb</param>
 	/// <param name="sphere">球</param>
 	/// <returns>衝突したかのフラグ</returns>
-	static bool IsCollision(const PrimitiveData::OBB& obb, const PrimitiveData::Sphere& sphere);
+	bool IsCollision(const PrimitiveData::OBB& obb, const PrimitiveData::Sphere& sphere);
 
 	/// <summary>
 	/// 分離軸を使用したOBB同士の衝突判定
@@ -54,7 +53,7 @@ public://静的メンバ関数
 	/// <param name="obb1">obb1</param>
 	/// <param name="obb2">obb2</param>
 	/// <returns>衝突したかのフラグ</returns>
-	static bool IsCollision(const PrimitiveData::OBB& obb1, const PrimitiveData::OBB& obb2);
+	bool IsCollision(const PrimitiveData::OBB& obb1, const PrimitiveData::OBB& obb2);
 
 	/// <summary>
 	/// 平面と球の衝突判定
@@ -62,7 +61,7 @@ public://静的メンバ関数
 	/// <param name="plane">平面</param>
 	/// <param name="sphere">球</param>
 	/// <returns>衝突したかのフラグ</returns>
-	static bool IsCollision(const PrimitiveData::Plane& plane, const PrimitiveData::Sphere& sphere);
+	bool IsCollision(const PrimitiveData::Plane& plane, const PrimitiveData::Sphere& sphere);
 
 	/// <summary>
 	/// 平面とAABBの衝突判定
@@ -70,7 +69,7 @@ public://静的メンバ関数
 	/// <param name="plane">平面</param>
 	/// <param name="aabb">AABB</param>
 	/// <returns>衝突したかのフラグ</returns>
-	static bool IsCollision(const PrimitiveData::Plane& plane, const PrimitiveData::AABB& aabb);
+	bool IsCollision(const PrimitiveData::Plane& plane, const PrimitiveData::AABB& aabb);
 
 	/// <summary>
 	/// 視錐台とAABBの衝突判定
@@ -78,7 +77,7 @@ public://静的メンバ関数
 	/// <param name="frustum">視錐台</param>
 	/// <param name="aabb">AABB</param>
 	/// <returns>衝突したかのフラグ</returns>
-	static bool IsCollision(const PrimitiveData::Frustum& frustum, const PrimitiveData::AABB& aabb);
+	bool IsCollision(const PrimitiveData::Frustum& frustum, const PrimitiveData::AABB& aabb);
 
-	static HitInfo GetHitInfo(const PrimitiveData::OBB& obb1, const PrimitiveData::OBB& obb2);
+	HitInfo GetHitInfo(const PrimitiveData::OBB& obb1, const PrimitiveData::OBB& obb2);
 };

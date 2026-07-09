@@ -9,6 +9,7 @@
 #include <array>
 #include <numbers>
 #include <algorithm>
+#include "Quaternion.h"
 
 /// <summary>
 /// 数学的な計算
@@ -147,6 +148,13 @@ public:
 	/// <param name="vertices">頂点</param>
 	/// <returns>三角形の面積(正確じゃない)</returns>
 	static float CalcParallelogramAreaSquared(const std::array<Vector3, 3>& vertices);
+
+	/// <summary>
+	/// クォータニオンからオイラー角を求める
+	/// </summary>
+	/// <param name="quaternion">クォータニオン</param>
+	/// <returns>オイラー角</returns>
+	static Vector3 MakeEulerAngleForQuaternion(const Quaternion& quaternion);
 public://定数
 	//デルタタイム
 	static inline const float kDeltaTime = 1.0f / 60.0f;

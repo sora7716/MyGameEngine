@@ -7,15 +7,15 @@
 #include <vector>
 //Transform情報
 struct Transform {
-	Vector3 scale = {};
-	Quaternion quaternion = {};
+	Vector3 scale = Vector3::MakeAllOne();
+	Quaternion quaternion = Quaternion::IdentityQuaternion();
 	Vector3 translate = {};
 
 	//デバック用
 	//軸
 	Vector3 axis = {};
 	//角度
-	float angle=0.0f;
+	float angle = 0.0f;
 	//オイラー角
 	Vector3 eulerAngle = {};
 	//クォータニオンかオイラーか
@@ -29,7 +29,7 @@ struct Transform {
 
 //Transform2D情報
 struct Transform2d {
-	Vector2 scale = {};
+	Vector2 scale = Vector2::MakeAllOne();
 	float rotate = 0.0f;
 	Vector2 translate = {};
 

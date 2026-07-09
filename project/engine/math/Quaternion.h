@@ -28,10 +28,10 @@ struct Quaternion {
 	float Dot(const Quaternion& q)const;
 
 	/// <summary>
-	/// ノルム
+	/// 長さ(ノルム)
 	/// </summary>
-	/// <returns>ノルム</returns>
-	float Norm()const;
+	/// <returns>長さ(ノルム)</returns>
+	float Length()const;
 
 	/// <summary>
 	/// 逆クォータニオン

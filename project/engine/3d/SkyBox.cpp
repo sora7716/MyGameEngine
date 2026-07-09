@@ -9,6 +9,7 @@
 #include "Camera.h"
 #include "GraphicsPipeline.h"
 #include "Blend.h"
+#include "GameObject.h"
 #include <cassert>
 
 //コンストラクタ
@@ -67,23 +68,16 @@ void SkyBox::Initialize(DirectXBase* directXBase, TextureManager* textureManager
 	imageFileName_ = "engine/resources/textures/" + imageFileName;
 	//スプライトの共通部分
 	textureManager->LoadTexture(imageFileName_);
-	//ワールド座標
-	transform_ = { {10.0f,10.0f,20.0f},{0.0f,0.0f,0.0f},{0.0f,0.0f,0.0f} };
 	//wvpリソースの初期化
 	CreateTransformationMatrixResource();
 }
 
 //更新
 void SkyBox::Update() {
-	//TransformからWorldMatrixを作る
-	wvpData_->world = MatrixUtility::MakeAffineMatrix(transform_);
-	//wvpの書き込み
-	const Matrix4x4& viewProjectionMatrix = camera_->GetViewProjectionMatrix();
-	wvpData_->wvp = wvpData_->world * viewProjectionMatrix;
-}
-
-void SkyBox::Debug() {
-	ImGuiManager::DragTransform(transform_);
+	//ワールド座標の更新
+	UpdateTransform();
+	//UV座標の更新
+	UpdateUVTransform();
 }
 
 //描画処理
@@ -110,10 +104,9 @@ void SkyBox::Draw() {
 	directXBase_->GetCommandList()->DrawIndexedInstanced(kIndexCount, 1, 0, 0, 0);
 }
 
-// UVの座標変換の更新
-void SkyBox::UpdateUVTransform(Transform2d uvTransform) {
-	//UVTransform
-	materialData_->uvMatrix = MatrixUtility::MakeUVAffineMatrix(uvTransform);
+//ゲームオブジェクトの設定
+void SkyBox::SetGameObject(GameObject* gameObject) {
+	gameObject_ = gameObject;
 }
 
 //頂点データの初期化
@@ -309,4 +302,19 @@ void SkyBox::CreateTransformationMatrixResource() {
 	wvpData_->wvp = Matrix4x4::Identity4x4();
 	wvpData_->world = Matrix4x4::Identity4x4();
 	wvpData_->worldInverseTranspose = Matrix4x4::Identity4x4();
+}
+
+// UVの座標変換の更新
+void SkyBox::UpdateUVTransform() {
+	//UVTransform
+	materialData_->uvMatrix = MatrixUtility::MakeUVAffineMatrix(uvTransform_);
+}
+
+//ワールド座標の更新
+void SkyBox::UpdateTransform() {
+	//TransformからWorldMatrixを作る
+	wvpData_->world = MatrixUtility::MakeAffineMatrix(gameObject_->GetTransform());
+	//wvpの書き込み
+	const Matrix4x4& viewProjectionMatrix = camera_->GetViewProjectionMatrix();
+	wvpData_->wvp = wvpData_->world * viewProjectionMatrix;
 }

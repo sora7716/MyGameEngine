@@ -195,7 +195,7 @@ Matrix4x4 MatrixUtility::MakeOBBWorldMatrix(const Vector3* orientations, const V
 
 //アフィン関数
 Matrix4x4 MatrixUtility::MakeAffineMatrix(const Transform& transform) {
-	//Quaternion q = MakeRotateQuaternion(transform.quaternion);
+
 	return (MakeScaleMatrix(transform.scale) * MakeRotateMatrix(transform.quaternion)) * MakeTranslateMatrix(transform.translate);
 }
 

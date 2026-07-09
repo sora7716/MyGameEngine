@@ -284,3 +284,24 @@ float MathUtility::CalcParallelogramAreaSquared(const std::array<Vector3, 3>& ve
 
 	return crossLength;
 }
+
+//クォータニオンからオイラー角を求める
+Vector3 MathUtility::MakeEulerAngleForQuaternion(const Quaternion& quaternion) {
+	Quaternion q = quaternion.Normalize();
+	Vector3 eulerAngle = {};
+
+	//X軸回転
+	float sinX = 2.0f * (q.w * q.x + q.y * q.z);
+	float cosX = 1.0f - 2.0f * (q.x * q.x + q.y * q.y);
+	eulerAngle.x = std::atan2(sinX, cosX);
+	//Y軸回転
+	float sinY = 2.0f * (q.w * q.y - q.z * q.x);
+	sinY = std::clamp(sinY, -1.0f, 1.0f);
+	eulerAngle.y = std::asin(sinY);
+	//Z軸回転
+	float sinZ = 2.0f * (q.w * q.z + q.x * q.y);
+	float cosZ = 1.0f - 2.0f * (q.y * q.y + q.z * q.z);
+	eulerAngle.z = std::atan2(sinZ, cosZ);
+
+	return eulerAngle;
+}

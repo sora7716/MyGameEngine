@@ -17,6 +17,7 @@ class TextureManager;
 class Camera;
 class Blend;
 class GraphicsPipeline;
+class GameObject;
 
 /// <summary>
 /// スカイボックス
@@ -40,15 +41,12 @@ public://メンバ関数
 	/// </summary>
 	/// <param name="spriteCommon">スプライトの共通部分</param>
 	/// <param name="spriteName">スプライト名</param>
-	void Initialize(DirectXBase*directXBase,TextureManager*textureManager, const std::string& imageFileName,Camera*camera);
+	void Initialize(DirectXBase* directXBase, TextureManager* textureManager, const std::string& imageFileName, Camera* camera);
 
 	/// <summary>
 	/// 更新
 	/// </summary>
 	void Update();
-
-	
-	void Debug();
 
 	/// <summary>
 	/// 描画処理
@@ -56,11 +54,10 @@ public://メンバ関数
 	void Draw();
 
 	/// <summary>
-	/// UVの座標変換の更新
+	/// ゲームオブジェクトの設定
 	/// </summary>
-	/// <param name="uvTransform">uv座標</param>
-	void UpdateUVTransform(Transform2d uvTransform);
-
+	/// <param name="gameObject">ゲームオブジェクト</param>
+	void SetGameObject(GameObject*gameObject);
 private://メンバ関数
 	/// <summary>
 	/// 頂点データの初期化
@@ -93,9 +90,19 @@ private://メンバ関数
 	void CreateMaterialResource();
 
 	/// <summary>
-    /// 座標変換行列リソースの生成
-    /// </summary>
+	/// 座標変換行列リソースの生成
+	/// </summary>
 	void CreateTransformationMatrixResource();
+
+	/// <summary>
+	/// UVの座標変換の更新
+	/// </summary>
+	void UpdateUVTransform();
+
+	/// <summary>
+	/// ワールド座標の更新
+	/// </summary>
+	void UpdateTransform();
 private://定数
 	//頂点数
 	static inline const uint32_t kVertexCount = 24;
@@ -105,7 +112,10 @@ private://メンバ変数
 	Camera* camera_ = nullptr;
 	//テクスチャ番号
 	std::string imageFileName_ = "";
-	Transform transform_ = { {100.0f,100.0f ,1.0f},{},{} };//トランスフォームの情報
+	//GameObject
+	GameObject* gameObject_ = nullptr;
+	//UVトランスフォーム
+	Transform2d uvTransform_ = {};
 	//DirectXの基盤部分
 	DirectXBase* directXBase_ = nullptr;
 	//ルートシグネイチャ

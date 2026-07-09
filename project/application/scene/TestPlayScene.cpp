@@ -61,11 +61,12 @@ void TestPlayScene::Initialize(const SceneContext& sceneContext) {
 	cube_ = std::make_unique<Primitive::Cube>();
 	cube_->Initialize(sceneContext_.directXBase, &renderCamera_);
 
-	//std::string ddsFileName = "engine/resources/textures/rostock_laage_airport_4k.dds";
-	//sceneContext_.textureManager->LoadTexture(ddsFileName);
 
+	skyBoxObject_ = std::make_unique<GameObject>();
+	skyBoxObject_->Initialize("skyBox");
 	skyBox_ = std::make_unique<SkyBox>();
 	skyBox_->Initialize(sceneContext_.directXBase, sceneContext.textureManager, "rostock_laage_airport_4k.dds", gameCamera_);
+	skyBox_->SetGameObject(skyBoxObject_.get());
 }
 
 //更新
@@ -154,17 +155,20 @@ void TestPlayScene::Debug() {
 	ImGui::End();
 
 	ImGui::Begin("skyBox");
-	skyBox_->Debug();
+	if (ImGui::TreeNode("skyBox")) {
+		ImGuiManager::DragTransform(skyBoxObject_->GetTransform());
+		ImGui::TreePop();
+	}
 	ImGui::End();
 #endif // USE_IMGUI
 
-	//#ifdef _DEBUG
+#ifdef _DEBUG
 	if (debugCamera_->IsDebug()) {
 		renderCamera_ = *debugCamera_->GetCamera();
 	} else {
 		renderCamera_ = *sceneContext_.cameraManager->FindCamera("testPlayCamera");
 	}
-	//#endif // _DEBUG
+#endif // _DEBUG
 }
 
 //描画

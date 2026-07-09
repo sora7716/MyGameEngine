@@ -63,6 +63,8 @@ private://メンバ変数
 	std::unique_ptr<Object3d>object3d_ = nullptr;
 	std::vector<std::unique_ptr<GameObject>>gameObjects_;
 
+	std::unique_ptr<GameObject>skyBoxObject_ = nullptr;
+
 	std::vector<Transform2d>transform2ds_;
 
 	std::unique_ptr<Primitive::Frustum>frustum_ = nullptr;

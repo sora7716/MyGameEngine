@@ -9,9 +9,9 @@
 #include "Vector3.h"
 #include "PrimitiveData.h"
 //前方宣言
+class WinApi;
 class DirectXBase;
 class SRVManager;
-class WinApi;
 
 /// <summary>
 /// ImGuiの管理
@@ -131,6 +131,8 @@ private://メンバ関数
 	//代入演算子の禁止
 	ImGuiManager operator=(const ImGuiManager&) = delete;
 private://メンバ変数
+	//WindowApi
+	WinApi* winApi_ = nullptr;
 	//DirectXの基盤部分
 	DirectXBase* directXBase_ = nullptr;
 	//SRVの管理

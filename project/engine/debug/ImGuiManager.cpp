@@ -17,16 +17,21 @@ ImGuiManager::~ImGuiManager() {
 //初期化
 void ImGuiManager::Initialize([[maybe_unused]] WinApi* winApi, [[maybe_unused]] DirectXBase* directXBase, [[maybe_unused]] SRVManager* srvManager) {
 #ifdef USE_IMGUI
+	//WindowApiを記録する
+	assert(winApi);
+	winApi_ = winApi;
 	//DirectXの基盤部分を記録する
+	assert(directXBase);
 	directXBase_ = directXBase;
 	//SRVの管理を記録する
+	assert(srvManager);
 	srvManager_ = srvManager;
 	IMGUI_CHECKVERSION();
 	//ImGuiのコンテキストを生成
 	ImGui::CreateContext();
 	//ImGuiのスタイルを設定
 	ImGui::StyleColorsDark();
-	ImGui_ImplWin32_Init(winApi->GetHwnd(0));
+	ImGui_ImplWin32_Init(winApi->GetHwnd(WindowType::kDebug));
 	//srvの確保
 	srvManager_->Allocate();
 	ImGui_ImplDX12_Init(

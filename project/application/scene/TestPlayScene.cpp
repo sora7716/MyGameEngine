@@ -35,7 +35,7 @@ void TestPlayScene::Initialize(const SceneContext& sceneContext) {
 	object3d_ = std::make_unique<Object3d>();
 	object3d_->Initialize(sceneContext_.object3dCommon, &renderCamera_, 1);
 	object3d_->SetGameCamera(gameCamera_);
-	object3d_->SetModel("sneakWalk");
+	object3d_->SetModel("sneakWalk", { 1.0f });
 	//object3d_->SetTexture(0, "uvChecker.png");
 	//object3d_->SetModel("cube");
 	//object3d_->SetModel("dekanu");
@@ -43,7 +43,7 @@ void TestPlayScene::Initialize(const SceneContext& sceneContext) {
 	//	object3d_->SetTexture(i, "white1x1.png");
 	//}
 
-	object3d_->SetLODDistances({ 20.0f,30.0f,50.0f,80.0f });
+	//object3d_->SetLODDistances({ 20.0f,30.0f,50.0f,80.0f });
 	std::unique_ptr<GameObject>tree = std::make_unique<GameObject>();
 	tree->Initialize("tree");
 	tree->GetTransform().translate = { 0.0f,0.0f,-9.9f };

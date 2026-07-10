@@ -34,8 +34,15 @@ void DirectXBase::Initialize(WinApi* winApi) {
 	StopExecution();
 	//コマンド関連の生成
 	CreateCommands();
+#ifdef _DEBUG
+	createSwapChainCount_ = kSwapChainCount;
+#else
+	createSwapChainCount_ = 1;
+#endif // _DEBUG
 	//スワップチェーンの生成
-	swapChain_ = CreateSwapChain();
+	for (uint32_t i = 0; i < createSwapChainCount_; i++) {
+		swapChain_[i] = CreateSwapChain(WinApi::kClientWidth, WinApi::kClientHeight, kSwapChainBufferCount, i);
+	}
 	//深度バッファの生成
 	depthStencilResource_ = CreateDepthStencilTextureResource(WinApi::kClientWidth, WinApi::kClientHeight);
 	//各種デスクリプタヒープの生成
@@ -69,33 +76,33 @@ void DirectXBase::CreateDescriptorHeap() {
 	descriptorSizeDSV_ = device_->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_DSV);//DSV
 	//DescriptorHeapの作成
 	//RTV
-	rtvDescriptorHeap_ = CreateDescriptorHeap(D3D12_DESCRIPTOR_HEAP_TYPE_RTV, 2, false);
+	rtvDescriptorHeap_ = CreateDescriptorHeap(D3D12_DESCRIPTOR_HEAP_TYPE_RTV, 4, false);
 	//DSV用のヒープでディスクリプタの数は1。DSVはShader内で触れるものではないので、ShaderVisibleはfalse
 	dsvDescriptorHeap_ = CreateDescriptorHeap(D3D12_DESCRIPTOR_HEAP_TYPE_DSV, 1, false);
 }
 
 //RTVの生成
 void DirectXBase::CreateRenderTargetView() {
-	//SwapChainからResourceを引っ張ってくる
-	swapChainResources_[0] = BringResourcesFromSwapChain(0);
-	swapChainResources_[1] = BringResourcesFromSwapChain(1);
-	//rtvDesc
+	for (uint32_t i = 0; i < createSwapChainCount_ * kSwapChainBufferCount; i++) {
+		//SwapChainからResourceを引っ張ってくる
+		swapChainResources_[i] = BringResourcesFromSwapChain(swapChain_[i / kSwapChainBufferCount].Get(), i%kSwapChainBufferCount);
+	}
+
+	//rtvDesc	
 	D3D12_RENDER_TARGET_VIEW_DESC rtvDesc{};
 	//RTV用の設定
 	rtvDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM_SRGB;//出力結果をSRGBに変換して書き込む
 	rtvDesc.ViewDimension = D3D12_RTV_DIMENSION_TEXTURE2D;//2dテクスチャとして書き込む
-	//RTVハンドルの要素数を2個に変更する
-	rtvHandles_.resize(2);
-	//ディスクリプタの先頭を取得
-	D3D12_CPU_DESCRIPTOR_HANDLE rtvStartHandle = rtvDescriptorHeap_->GetCPUDescriptorHandleForHeapStart();
-	//まずは1つ目を作る。1つ目は最初のところに作る。作る場所をこちらで指定してあげる必要がある
-	rtvHandles_[0] = rtvStartHandle;
-	//2つ目ディスクリプタハンドルを得る(自力で)
-	rtvHandles_[1].ptr = rtvHandles_[0].ptr + descriptorSizeRTV_;
+
+	//RTVハンドルの要素数を設定
+	rtvHandles_.resize(4);
 	for (uint32_t i = 0; i < rtvHandles_.size(); i++) {
+		//rtvHandleを取得
+		rtvHandles_[i] = GetCPUDescriptorHandle(rtvDescriptorHeap_, descriptorSizeRTV_, i);
 		//レンダーターゲットビューの生成
 		device_->CreateRenderTargetView(swapChainResources_[i].Get(), &rtvDesc, rtvHandles_[i]);
 	}
+
 }
 
 //ビューポート矩形の初期化
@@ -134,10 +141,11 @@ void DirectXBase::CreateDXCCompiler() {
 }
 
 // 描画開始位置
-void DirectXBase::PreDraw() {
+void DirectXBase::PreDraw(uint32_t swapChainIndex) {
 	/*コマンドを積む*/
 	//これから書き込むバックバッファのインデックスを取得
-	UINT backBufferIndex = swapChain_->GetCurrentBackBufferIndex();
+	UINT backBufferIndex = swapChain_[swapChainIndex]->GetCurrentBackBufferIndex();
+	backBufferIndex = backBufferIndex + kSwapChainCount * swapChainIndex;
 	//今回のバリアはTransition
 	D3D12_RESOURCE_BARRIER barrier{};
 	barrier.Type = D3D12_RESOURCE_BARRIER_TYPE_TRANSITION;
@@ -167,10 +175,11 @@ void DirectXBase::PreDraw() {
 }
 
 // 描画終了位置
-void DirectXBase::PostDraw() {
+void DirectXBase::PostDraw(uint32_t swapChainIndex) {
 	HRESULT result = S_FALSE;
 	//これから書き込むバックバッファのインデックスを取得
-	UINT backBufferIndex = swapChain_->GetCurrentBackBufferIndex();
+	UINT backBufferIndex = swapChain_[swapChainIndex]->GetCurrentBackBufferIndex();
+	backBufferIndex = backBufferIndex + kSwapChainCount * swapChainIndex;
 	//画面に描く処理は全て終わり、画面に移すので、状態を遷移
 	D3D12_RESOURCE_BARRIER barrier{};
 	barrier.Type = D3D12_RESOURCE_BARRIER_TYPE_TRANSITION;
@@ -194,7 +203,7 @@ void DirectXBase::PostDraw() {
 	ComPtr<ID3D12CommandList> commandLists[] = { commandList_.Get() };
 	commandQueue_->ExecuteCommandLists(1, commandLists->GetAddressOf());
 	//GPUとOSに画面の交換を行うように通知
-	swapChain_->Present(1, 0);
+	swapChain_[swapChainIndex]->Present(1, 0);
 	//GPUがここまでたどり着いた時に、Fenceの値を指定した値に代入するようにSignalを送る
 	commandQueue_->Signal(fence_.Get(), ++fenceValue_);
 	if (fence_->GetCompletedValue() < fenceValue_) {
@@ -340,7 +349,7 @@ ComPtr<ID3D12Resource> DirectXBase::CreateTextureResource(const DirectX::TexMeta
 	return resource;
 }
 
-ComPtr<ID3D12Resource> DirectXBase::UploadTextureData(ID3D12Resource* texture,D3D12_RESOURCE_STATES& inOutState,const DirectX::ScratchImage& mipImages) {
+ComPtr<ID3D12Resource> DirectXBase::UploadTextureData(ID3D12Resource* texture, D3D12_RESOURCE_STATES& inOutState, const DirectX::ScratchImage& mipImages) {
 	// 必要なら COPY_DESTへ
 	if (inOutState != D3D12_RESOURCE_STATE_COPY_DEST) {
 		auto toCopy = CD3DX12_RESOURCE_BARRIER::Transition(
@@ -554,28 +563,28 @@ ComPtr<ID3D12GraphicsCommandList> DirectXBase::CreateCommandList() {
 }
 
 //スワップチェーンの生成
-ComPtr<IDXGISwapChain4> DirectXBase::CreateSwapChain() {
+ComPtr<IDXGISwapChain4> DirectXBase::CreateSwapChain(int32_t windowWidth, int32_t windowHeight, uint32_t bufferSize, uint32_t hwndIndex) {
 	HRESULT result = S_FALSE;
 	DXGI_SWAP_CHAIN_DESC1 swapChainDesc{};
-	swapChainDesc.Width = WinApi::kClientWidth;//画面の横幅
-	swapChainDesc.Height = WinApi::kClientHeight;//画面の縦幅
+	swapChainDesc.Width = windowWidth;//画面の横幅
+	swapChainDesc.Height = windowHeight;//画面の縦幅
 	swapChainDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;//色形式
 	swapChainDesc.SampleDesc.Count = 1;//マルチサンプルしない
 	swapChainDesc.BufferUsage = DXGI_USAGE_RENDER_TARGET_OUTPUT;//描画のターゲットとして利用
-	swapChainDesc.BufferCount = 2;//ダブルバッファ
+	swapChainDesc.BufferCount = bufferSize;//ダブルバッファ
 	swapChainDesc.SwapEffect = DXGI_SWAP_EFFECT_FLIP_DISCARD;//モニタにうつしたら、中身を破棄
 	ComPtr<IDXGISwapChain4> swapChain = nullptr;
 	//コマンドキュー、ウィンドウハンドル、設定を渡して生成する
-	result = dxgiFactory_->CreateSwapChainForHwnd(commandQueue_.Get(), winApi_->GetHwnd(), &swapChainDesc, nullptr, nullptr, reinterpret_cast<IDXGISwapChain1**>(swapChain.GetAddressOf()));
+	result = dxgiFactory_->CreateSwapChainForHwnd(commandQueue_.Get(), winApi_->GetHwnd(hwndIndex), &swapChainDesc, nullptr, nullptr, reinterpret_cast<IDXGISwapChain1**>(swapChain.GetAddressOf()));
 	assert(SUCCEEDED(result));
 	return swapChain;
 }
 
 // SwapChainからResourceを引っ張ってくる
-ComPtr<ID3D12Resource> DirectXBase::BringResourcesFromSwapChain(UINT num) {
+ComPtr<ID3D12Resource> DirectXBase::BringResourcesFromSwapChain(IDXGISwapChain4* swapChain, UINT num) {
 	HRESULT result = S_FALSE;
 	ComPtr<ID3D12Resource> swapChainResource = nullptr;
-	result = swapChain_->GetBuffer(num, IID_PPV_ARGS(&swapChainResource));
+	result = swapChain->GetBuffer(num, IID_PPV_ARGS(&swapChainResource));
 	//うまく取得できなければ起動できない
 	assert(SUCCEEDED(result));
 	return swapChainResource;
@@ -637,4 +646,3 @@ void DirectXBase::StopExecution() {
 	}
 #endif // _DEBUG
 }
- 

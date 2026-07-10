@@ -25,7 +25,7 @@ public://メンバ関数
 	/// デストラクタ
 	/// </summary>
 	~DirectXBase();
-	
+
 	/// <summary>
 	/// DirectX12の初期化
 	/// </summary>
@@ -65,12 +65,24 @@ public://メンバ関数
 	/// <summary>
 	/// 描画開始位置
 	/// </summary>
-	void PreDraw();
+	/// <param name="swapChainIndex">スワップチェインの検索キー</param>
+	void PreDraw(uint32_t swapChainIndex);
 
 	/// <summary>
 	/// 描画終了位置
 	/// </summary>
-	void PostDraw();
+	/// <param name="swapChainIndex">スワップチェインの検索キー</param>
+	void PostDraw(uint32_t swapChainIndex);
+
+	/// <summary>
+	/// 描画開始位置
+	/// </summary>
+	void PreDrawDebug();
+
+	/// <summary>
+	/// 描画終了位置
+	/// </summary>
+	void PostDrawDebug();
 
 	/// <summary>
 	/// DescriptorHeapの作成
@@ -79,7 +91,7 @@ public://メンバ関数
 	/// <param name="numDescriptors">デスクリプターの番号</param>
 	/// <param name="shaderVisible">シェーダを使うか</param>
 	/// <returns>デスクリプターヒープ</returns>
-	ComPtr<ID3D12DescriptorHeap> CreateDescriptorHeap(D3D12_DESCRIPTOR_HEAP_TYPE heapType, UINT numDescriptors, bool	shaderVisible);
+	ComPtr<ID3D12DescriptorHeap> CreateDescriptorHeap(D3D12_DESCRIPTOR_HEAP_TYPE heapType, UINT numDescriptors, bool shaderVisible);
 
 	/// <summary>
 	/// シェーダーのコンパイラ
@@ -198,11 +210,11 @@ private://メンバ関数
 	//代入演算子を禁止
 	const DirectXBase operator=(const DirectXBase&) = delete;
 	/// <summary>
-    /// 深度バッファリソースの設定
-    /// </summary>
-    /// <param name="width">横幅</param>
-    /// <param name="height">縦幅</param>
-    /// <returns></returns>
+	/// 深度バッファリソースの設定
+	/// </summary>
+	/// <param name="width">横幅</param>
+	/// <param name="height">縦幅</param>
+	/// <returns></returns>
 	ComPtr<ID3D12Resource> CreateDepthStencilTextureResource(int32_t width, int32_t height);
 
 	/// <summary>
@@ -244,15 +256,21 @@ private://メンバ関数
 	/// <summary>
 	/// スワップチェーンの生成
 	/// </summary>
-	/// <returns>スワップチェーン</returns>
-	ComPtr<IDXGISwapChain4> CreateSwapChain();
+	/// <param name="windowWidth">画面の横幅</param>
+	/// <param name="windowHeight">画面の縦幅</param>
+	/// <param name="bufferSize">バッファサイズ</param>
+	/// <param name="hwndIndex">windowの検索キー</param>
+	/// <returns></returns>
+/// <returns>スワップチェーン</returns>
+	ComPtr<IDXGISwapChain4> CreateSwapChain(int32_t windowWidth, int32_t windowHeight, uint32_t bufferSize, uint32_t hwndIndex);
 
 	/// <summary>
 	/// SwapChainからResourceを引っ張ってくる
 	/// </summary>
+	/// <param name="swapChain">スワップチェイン</param>
 	/// <param name="num">何番目か</param>
 	/// <returns>リソース</returns>
-	ComPtr<ID3D12Resource> BringResourcesFromSwapChain(UINT num);
+	ComPtr<ID3D12Resource> BringResourcesFromSwapChain(IDXGISwapChain4* swapChain, UINT num);
 
 	/// <summary>
 	/// Fenceを作成する
@@ -269,6 +287,11 @@ private://メンバ関数
 	/// 実行を停止する(エラー・警告の場合)
 	/// </summary>
 	void StopExecution();
+private://定数
+	//スワップチェインの数
+	static inline const uint32_t kSwapChainCount = 2;
+	//スワップチェインのバッファサイズ
+	static inline const uint32_t kSwapChainBufferCount = 2;
 private://メンバ変数
 	//WindowAPI
 	WinApi* winApi_ = nullptr;
@@ -286,10 +309,12 @@ private://メンバ変数
 	ComPtr<ID3D12CommandAllocator> commandAllocator_ = nullptr;
 	//コマンドリスト
 	ComPtr<ID3D12GraphicsCommandList> commandList_ = nullptr;
-	//スワップチェーン
-	ComPtr<IDXGISwapChain4> swapChain_ = nullptr;
+	//ゲーム画面用のスワップチェーン
+	std::array<ComPtr<IDXGISwapChain4>, kSwapChainBufferCount> swapChain_ = { nullptr };
+	//スワップチェインを作成するカウント
+	uint32_t createSwapChainCount_ = 1;
 	//スワップチェーンからリソースを引っ張ってくる
-	std::array<ComPtr<ID3D12Resource>, 2> swapChainResources_ = { nullptr };
+	std::array<ComPtr<ID3D12Resource>, kSwapChainCount* kSwapChainBufferCount> swapChainResources_ = { nullptr };
 	//RTVを2つ作るのでディスクリプタを2つ用意
 	std::vector<D3D12_CPU_DESCRIPTOR_HANDLE> rtvHandles_ = {};
 	//RTV(描画情報の使い方)

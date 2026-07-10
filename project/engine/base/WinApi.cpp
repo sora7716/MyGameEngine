@@ -14,10 +14,12 @@ WinApi::~WinApi() {
 
 // ウィンドウの生成するための初期化
 void WinApi::Initialize() {
+	HRESULT hr = S_FALSE;
 	//システムタイマーの分解能を上げる
 	timeBeginPeriod(1);
 	//メインスレッドではMTAでCOMを利用
-	HRESULT result = CoInitializeEx(0, COINIT_MULTITHREADED);
+	hr = CoInitializeEx(0, COINIT_MULTITHREADED);
+	assert(SUCCEEDED(hr));
 	//ウィンドウプロシージャ
 	wndClass_.lpfnWndProc = WindowProc;
 	//ウィンドウのクラス名
@@ -36,17 +38,17 @@ void WinApi::Initialize() {
 	//クライアント領域を元に実際のサイズをwrcを変更してもらう
 	AdjustWindowRect(&windowRect_, WS_OVERLAPPEDWINDOW, false);
 
-	//ウィンドウハンドルの数を設定
-	hwnds_.resize(2);
-
-	Vector2Int windowPos = {
-		.x = 500,
-		.y = -1000
-	};
-
-	hwnds_[0] = CreateWindow(
+#ifdef _DEBUG
+	uint32_t windowCount = kWindowCount;
+#else 
+	uint32_t windowCount = 1;
+#endif // _DEBUG
+	//ウィンドウの作成
+	for (uint32_t i = 0; i < windowCount; i++) {
+		//ウィンドウを作成
+		hwnds_[i] = CreateWindow(
 		wndClass_.lpszClassName,//利用するクラス
-		label.c_str(),
+		(labels_[i]).c_str(),
 		WS_OVERLAPPEDWINDOW,//よく見るウィンドウのスタイル
 		CW_USEDEFAULT,//ウィンドウの表示位置(X座標)
 		CW_USEDEFAULT,//ウィンドウの表示位置(Y座標)
@@ -56,27 +58,12 @@ void WinApi::Initialize() {
 		nullptr,
 		wndClass_.hInstance,//インスタンスハンドル
 		nullptr
-	);
+		);
 
-	hwnds_[1] = CreateWindow(
-		wndClass_.lpszClassName,//利用するクラス
-		L"DebugWindow",
-		WS_OVERLAPPEDWINDOW,//よく見るウィンドウのスタイル
-		CW_USEDEFAULT,//表示X座標(Windowに任せる)
-		CW_USEDEFAULT,//表示Y座標(Windowに任せる)
-		windowRect_.right - windowRect_.left,//ウィンドウの横幅
-		windowRect_.bottom - windowRect_.top,//ウィンドウの縦幅
-		nullptr,
-		nullptr,
-		wndClass_.hInstance,//インスタンスハンドル
-		nullptr
-	);
-	debugHwnd_ = hwnds_[1];
+		//ウィンドウを表示する
+		ShowWindow(hwnds_[i], SW_SHOW);
+	}
 
-	////ウィンドウを表示する
-	//for (const HWND& hwnd : hwnds_) {
-	//}
-	ShowWindow(hwnds_[0], SW_SHOW);
 }
 
 // プロセスメッセージ
@@ -93,9 +80,19 @@ bool WinApi::ProcessMessage() {
 	return true;
 }
 
-//HWNDのゲッター
-HWND WinApi::GetHwnd(uint32_t index)const {
-	return hwnds_[index];
+//HWNDの取得
+HWND WinApi::GetHwnd(uint32_t windowIndex) const {
+	return  hwnds_[windowIndex];
+}
+
+//HWNDの取得
+HWND WinApi::GetHwnd(WindowType windowType)const {
+	return hwnds_[static_cast<uint32_t>(windowType)];
+}
+
+//現在使用しているウィンドウのハンドルを取得
+HWND WinApi::GetActiveHwnd() const {
+	return activeHwnd_;
 }
 
 //WNDクラスのゲッター
@@ -108,11 +105,6 @@ WinApi::WinApi(ConstructorKey) {}
 
 //ウィンドウプロシージャ
 LRESULT WinApi::WindowProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam) {
-	//if (hwnd == debugHwnd_) {
-	//	if (ImGui_ImplWin32_WndProcHandler(hwnd, msg, wParam, lParam)) {
-	//		return true;
-	//	}
-	//}
 	if (ImGui_ImplWin32_WndProcHandler(hwnd, msg, wParam, lParam)) {
 		return true;
 	}
@@ -123,6 +115,9 @@ LRESULT WinApi::WindowProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam) {
 		//OSに対して、アプリの終了を伝える
 		PostQuitMessage(0);
 		return 0;
+	case WM_SETFOCUS:
+		//現在選択しているウィンドウハンドルを取得
+		activeHwnd_ = hwnd;
 	}
 	//標準のメッセージ処理を行う
 	return DefWindowProc(hwnd, msg, wParam, lParam);

@@ -117,7 +117,7 @@ Vector3 Input::GetWorldMousePosition(Camera* camera) const {
 	GetCursorPos(&mousePosition);
 
 	// クライアントエリア座標に変換する
-	HWND hwnd = winApi_->GetHwnd();
+	HWND hwnd = winApi_->GetActiveHwnd();
 	ScreenToClient(hwnd, &mousePosition);
 
 	// ビューポートサイズを取得
@@ -152,7 +152,7 @@ Vector2Int Input::GetMousePosition() const {
 	GetCursorPos(&mousePosition);
 
 	// クライアントエリア座標に変換する
-	HWND hwnd = winApi_->GetHwnd();
+	HWND hwnd = winApi_->GetActiveHwnd();
 	ScreenToClient(hwnd, &mousePosition);
 	Vector2Int result = { mousePosition.x,mousePosition.y };
 	return result;
@@ -276,7 +276,7 @@ void Input::KeyboardInitialize() {
 	result = keyboard_->SetDataFormat(&c_dfDIKeyboard);
 	assert(SUCCEEDED(result));
 	//排他制御レベルのセット
-	result = keyboard_->SetCooperativeLevel(winApi_->GetHwnd(), DISCL_FOREGROUND | DISCL_NONEXCLUSIVE | DISCL_NOWINKEY);
+	result = keyboard_->SetCooperativeLevel(winApi_->GetActiveHwnd(), DISCL_FOREGROUND | DISCL_NONEXCLUSIVE | DISCL_NOWINKEY);
 	assert(SUCCEEDED(result));
 }
 
@@ -304,7 +304,7 @@ void Input::MouseInitialize() {
 	result = mouse_->SetDataFormat(&c_dfDIMouse);
 	assert(SUCCEEDED(result));
 	//排他制御レベルのセット
-	result = mouse_->SetCooperativeLevel(winApi_->GetHwnd(), DISCL_FOREGROUND | DISCL_NONEXCLUSIVE);
+	result = mouse_->SetCooperativeLevel(winApi_->GetActiveHwnd(), DISCL_FOREGROUND | DISCL_NONEXCLUSIVE);
 	assert(SUCCEEDED(result));
 }
 

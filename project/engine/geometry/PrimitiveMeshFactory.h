@@ -6,7 +6,7 @@
 /// </summary>
 namespace primitiveMeshFactory {
 	struct Desc {
-
+		float subdivision;
 	};
 	/// <summary>
 	/// 立方体メッシュの作成

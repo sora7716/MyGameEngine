@@ -153,7 +153,7 @@ private://メンバ変数
 	//SRVインデックス
 	uint32_t srvIndex_ = 0;
 	//ブレンドモード
-	BlendMode blendMode_ = BlendMode::kNormal;
+	BlendMode blendMode_ = BlendMode::kAdd;
 	//パーティクルの発生源
 	std::unique_ptr<ParticleEmitter>emitter_ = nullptr;
 };

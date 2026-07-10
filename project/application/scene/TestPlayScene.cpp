@@ -201,7 +201,7 @@ void TestPlayScene::Draw() {
 
 	cube_->Draw();
 
-	//skyBox_->Draw();
+	skyBox_->Draw();
 
 	particleSystem_->Draw();
 }

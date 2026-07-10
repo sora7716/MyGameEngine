@@ -48,11 +48,6 @@ public://メンバ関数
 	void Draw();
 
 	/// <summary>
-	/// デバッグ
-	/// </summary>
-	void Debug();
-
-	/// <summary>
 	/// カメラの設定
 	/// </summary>
 	/// <param name="camera">カメラ</param>
@@ -145,7 +140,7 @@ private://メンバ変数
 	//モデルデータ
 	ModelData modelData_ = {};
 	//メッシュ
-	std::vector<std::unique_ptr<Mesh>>meshes_;
+	std::vector<std::shared_ptr<Mesh>>meshes_;
 	//マテリアルのリソース
 	std::vector<ComPtr<ID3D12Resource>>materialResources_;
 	//マテリアルデータ

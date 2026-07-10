@@ -1,18 +1,22 @@
 #pragma once
-#include <list>
-#include <random>
 #include "RenderingData.h"
 #include "Vector4.h"
 #include "PrimitiveData.h"
+#include <list>
+#include <random>
+#include <vector>
+#include <memory>
 
 //前方宣言
 class ParticleCommon;
 class Camera;
+class Culling;
+class Mesh;
 
 //パーティクルの情報をGPUに送るための構造体
 struct ParticleForGPU {
 	Matrix4x4 WVP = Matrix4x4::Identity4x4();
-	Matrix4x4 World = Matrix4x4::Identity4x4();
+	Matrix4x4 world = Matrix4x4::Identity4x4();
 	Vector4 color = Vector4::MakeWhiteColor();
 };
 
@@ -23,6 +27,7 @@ struct Particle {
 	Vector4 color = Vector4::MakeWhiteColor();//色
 	float lifeTime = 0.0f;//生存時間
 	float currentTime = 0.0f;//発生してからの
+	bool isEnabled = true;//表示するか
 };
 
 //発生源
@@ -48,12 +53,12 @@ public://メンバ関数
 	/// <summary>
 	/// コンストラクタ
 	/// </summary>
-	ParticleEmitter() = default;
+	ParticleEmitter();
 
 	/// <summary>
 	/// デストラクタ
 	/// </summary>
-	~ParticleEmitter() = default;
+	~ParticleEmitter();
 
 	/// <summary>
 	/// 初期化
@@ -69,11 +74,6 @@ public://メンバ関数
 	void Update(ParticleForGPU* instancingData);
 
 	/// <summary>
-	/// デバッグ
-	/// </summary>
-	void Debug();
-
-	/// <summary>
 	/// 生存しているパーティクルの数の取得
 	/// </summary>
 	/// <returns></returns>
@@ -82,7 +82,7 @@ public://メンバ関数
 	/// <summary>
 	/// カメラの設定
 	/// </summary>
-	/// <param name="camera"></param>
+	/// <param name="gameCamera">ゲームカメラ</param>
 	void SetGameCamera(Camera* gameCamera);
 
 	/// <summary>
@@ -114,6 +114,12 @@ public://メンバ関数
 	/// </summary>
 	/// <param name="frequency">パーティクルの発生感覚</param>
 	void SetFrequency(float frequency);
+
+	/// <summary>
+	/// メッシュの設定
+	/// </summary>
+	/// <param name="meshes"></param>
+	void SetMeshes(const std::vector<std::shared_ptr<Mesh>>& meshes);
 private://メンバ関数
 	/// <summary>
 	/// パーティクルの生成
@@ -179,5 +185,11 @@ private://メンバ変数
 		.acceleration = {0.0f,0.0f,0.0f},
 		.area = {{-1.0f,-1.0f,-1.0f},1.0f,1.0f,1.0f}
 	};
+
+	//カリング
+	std::unique_ptr<Culling>culling_ = nullptr;
+	
+	//メッシュ
+	std::vector<std::shared_ptr<Mesh>>meshes_;
 };
 

@@ -3,9 +3,17 @@
 #include "MathUtility.h"
 #include "Camera.h"
 #include "ParticleCommon.h"
-#include "Model.h"
-#include "ImGuiManager.h"
+#include "Culling.h"
+#include "Mesh.h"
 using namespace primitiveData;
+
+//コンストラクタ
+ParticleEmitter::ParticleEmitter() {
+}
+
+//デストラクタ
+ParticleEmitter::~ParticleEmitter() {
+}
 
 //初期化
 void ParticleEmitter::Initialize(ParticleCommon* particleCommon, Camera* renderCamera) {
@@ -42,6 +50,18 @@ void ParticleEmitter::Update(ParticleForGPU* instancingData) {
 			instancingData[numInstance_].color.w = alpha;
 			//ワールドトランスフォームの更新
 			UpdateWorldTransform(numInstance_, it, instancingData);
+			for (std::shared_ptr<Mesh>& mesh : meshes_) {
+				//カリング
+				if (!culling_->IsVisibleInFrustum(mesh->GetAABB(),instancingData->world)) {
+					it->isEnabled = false;
+				}
+			}
+
+			//表示するかチェック
+			if (!it->isEnabled) {
+				continue;
+			}
+
 			//生きているパーティクルの数を記録
 			numInstance_++;
 
@@ -67,20 +87,16 @@ void ParticleEmitter::Update(ParticleForGPU* instancingData) {
 	}
 }
 
-void ParticleEmitter::Debug() {
-#ifdef  USE_IMGUI
-
-#endif //USE_IMGUI
-}
-
 //生存しているパーティクルの数の取得
 const uint32_t ParticleEmitter::GetNumInstance() const {
 	return numInstance_;
 }
 
 //カメラの設定
-void ParticleEmitter::SetGameCamera(Camera* camera) {
-	gameCamera_ = camera;
+void ParticleEmitter::SetGameCamera(Camera* gameCamera) {
+	gameCamera_ = gameCamera;
+	//カリングの生成
+	culling_ = Culling::Create(gameCamera_);
 }
 
 //エミッター位置の設定
@@ -106,6 +122,11 @@ void ParticleEmitter::SetAccelerationField(const AccelerationField& field) {
 //パーティクルの発生感覚の設定
 void ParticleEmitter::SetFrequency(float frequency) {
 	emitter_.frequency = frequency;
+}
+
+//メッシュの設定
+void ParticleEmitter::SetMeshes(const std::vector<std::shared_ptr<Mesh>>& meshes) {
+	meshes_ = meshes;
 }
 
 //パーティクルの生成
@@ -173,7 +194,7 @@ void ParticleEmitter::UpdateWorldTransform(uint32_t numInstance, auto iterator, 
 		instancingData[numInstance].WVP = worldMatrix;
 	}
 	//ワールド行列を送信
-	instancingData[numInstance].World = worldMatrix;
+	instancingData[numInstance].world = worldMatrix;
 }
 
 //パーティクルの発生

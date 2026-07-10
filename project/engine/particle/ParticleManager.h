@@ -25,7 +25,7 @@ public://メンバ関数
 	/// </summary>
 	/// <param name="name">名前</param>
 	ParticleSystem* FindParticleSystem(const std::string& name);
-public://PrassKey
+public://PassKey
 	class ConstructorKey {
 		ConstructorKey() = default;
 		friend class Core;
@@ -33,7 +33,7 @@ public://PrassKey
 	/// <summary>
 	/// コンストラクタ
 	/// </summary>
-	/// <param name="">PrassKeyを受け取る</param>
+	/// <param name="">PassKeyを受け取る</param>
 	explicit ParticleManager(ConstructorKey);
 private://メンバ関数
 	//コピーコンストラクタ禁止

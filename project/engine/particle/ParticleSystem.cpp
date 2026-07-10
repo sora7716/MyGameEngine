@@ -44,6 +44,9 @@ void ParticleSystem::Initialize(ParticleCommon* particleCommon, Camera* renderCa
 		meshes_.push_back(std::move(mesh));
 	}
 
+	//メッシュの設定
+	emitter_->SetMeshes(meshes_);
+
 	//ワールドトランスフォームのリソースの生成
 	CreateWorldTransformResource();
 
@@ -94,12 +97,6 @@ void ParticleSystem::Draw() {
 		//メッシュの描画
 		meshes_[i]->Draw(emitter_->GetNumInstance());
 	}
-}
-
-
-//デバッグ
-void ParticleSystem::Debug() {
-	emitter_->Debug();
 }
 
 //カメラの設定
@@ -156,9 +153,12 @@ void ParticleSystem::SetModelData(const ModelData& modelData) {
 	CreateMaterialResources();
 
 	//モデルのテクスチャの適応
-	for (std::unique_ptr<Mesh>& mesh : meshes_) {
+	for (std::shared_ptr<Mesh>& mesh : meshes_) {
 		ApplyModelTexture(mesh->GetMaterialIndex());
 	}
+
+	//メッシュの設定
+	emitter_->SetMeshes(meshes_);
 
 }
 
@@ -199,7 +199,7 @@ void ParticleSystem::CreateWorldTransformResource() {
 	for (uint32_t i = 0; i < ParticleEmitter::kNumMaxInstance; i++) {
 		//単位行列を書き込んでおく
 		instancingData_[i].WVP = Matrix4x4::Identity4x4();
-		instancingData_[i].World = Matrix4x4::Identity4x4();
+		instancingData_[i].world = Matrix4x4::Identity4x4();
 		instancingData_[i].color = Vector4(1.0f, 1.0f, 1.0f, 1.0f); // 初期色を白に設定
 	}
 }

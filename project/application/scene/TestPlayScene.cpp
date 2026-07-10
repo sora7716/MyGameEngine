@@ -84,7 +84,7 @@ void TestPlayScene::Initialize(const SceneContext& sceneContext) {
 	particleSystem_->SetGameCamera(gameCamera_);
 	particleSystem_->SetParticleCount(2);
 	particleSystem_->SetFrequency(0.3f);
-	particleSystem_->SetModelData(sceneContext_.object3dCommon->GetModelManager()->FindModel("dekanu")->GetModelData());
+	//particleSystem_->SetModelData(sceneContext_.object3dCommon->GetModelManager()->FindModel("dekanu")->GetModelData());
 }
 
 //更新

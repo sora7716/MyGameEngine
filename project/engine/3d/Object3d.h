@@ -286,7 +286,7 @@ private://メンバ変数
 	//SRVマネージャー
 	SRVManager* srvManager_ = nullptr;
 	//モデル
-	Model* baseModel_ = nullptr;
+	std::unique_ptr<Model> baseModel_ = nullptr;
 
 	//LODの数
 	uint32_t lodCount_ = 1;

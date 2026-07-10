@@ -206,7 +206,7 @@ void Object3d::SetModel(const std::string& modelName, const std::vector<float>& 
 	//LOD関係のセットアップ
 	SetupLOD();
 	//LODモデルの生成
-	lodBuilder_->CreateLODModel(baseModel_, keepRates);
+	lodBuilder_->CreateLODModel(baseModel_.get(), keepRates);
 	//LODの制御の初期化
 	lodController_->Initialize(lodBuilder_.get());
 }
@@ -378,7 +378,7 @@ Matrix4x4& Object3d::GetWorldMatrix(uint32_t instanceIndex) {
 
 //ワールド座標の取得
 Vector3 Object3d::GetWorldPos(uint32_t instanceIndex) {
-	return { worldMatrixes_[instanceIndex].m[3][0],worldMatrixes_[instanceIndex].m[3][1],worldMatrixes_[instanceIndex].m[3][2]};
+	return { worldMatrixes_[instanceIndex].m[3][0],worldMatrixes_[instanceIndex].m[3][1],worldMatrixes_[instanceIndex].m[3][2] };
 }
 
 //メッシュのサイズの取得

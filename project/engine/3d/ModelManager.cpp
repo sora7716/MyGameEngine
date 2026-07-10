@@ -18,30 +18,36 @@ void ModelManager::CreatePrimitiveModel() {
 	//モデルの生成とファイル読み込み、初期化
 	std::unique_ptr<Model>model = Model::CreateModel(modelCommon_, { primitiveMeshFactory::CreateCube() });
 
-	//モデルをmapコンテナに格納する
-	models_.insert(std::make_pair("cube", std::move(model)));
+	//モデルデータを取得
+	ModelData modelData = model->GetModelData();
+
+	//モデルデータをmapコンテナに格納する
+	modelDatas_.insert(std::make_pair("cube", modelData));
 }
 
 // objモデルの読み込み
 void ModelManager::LoadModel(const std::string& name, const std::string& modelFileName) {
 	//読み込み済みならモデルを検索
-	if (models_.contains(name)) {
+	if (modelDatas_.contains(name)) {
 		//読み込み済みなら早期return
 		return;
 	}
 	//モデルの生成とファイル読み込み、初期化
 	std::unique_ptr<Model>model = Model::CreateModel(modelCommon_, modelFileName);
 
-	//モデルをmapコンテナに格納する
-	models_.insert(std::make_pair(name, std::move(model)));
+	//モデルデータを取得
+	ModelData modelData = model->GetModelData();
+
+	//モデルデータをmapコンテナに格納する
+	modelDatas_.insert(std::make_pair(name, modelData));
 }
 
 //モデルの検索
-Model* ModelManager::FindModel(const std::string& name) {
+std::unique_ptr<Model> ModelManager::FindModel(const std::string& name) {
 	//読み込み済みモデルを検索
-	if (models_.contains(name)) {
+	if (modelDatas_.contains(name)) {
 		//読み込み済みモデルを戻り値としてreturn
-		return models_.at(name).get();
+		return std::move(Model::CreateModel(modelCommon_, modelDatas_.at(name)));
 	}
 	//ファイル名一致なし
 	return nullptr;

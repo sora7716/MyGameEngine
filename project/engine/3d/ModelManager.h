@@ -3,12 +3,12 @@
 #include <string>
 #include <memory>
 #include <vector>
+#include "RenderData.h"
 
 //前方宣言
 class DirectXBase;
 class ModelCommon;
 class Model;
-class TextureManager;
 
 /// <summary>
 /// モデルの管理
@@ -43,7 +43,7 @@ public://メンバ関数
 	/// </summary>
 	/// <param name="name">名前</param>
 	/// <returns>モデル</returns>
-	Model* FindModel(const std::string& name);
+	std::unique_ptr<Model> FindModel(const std::string& name);
 
 	/// <summary>
 	/// モデルの共通部分のゲッター
@@ -66,8 +66,8 @@ private://メンバ関数
 	//代入演算子禁止
 	ModelManager operator=(const ModelManager&) = delete;
 private://メンバ変数
-	//モデルデータコンテナ
-	std::map<std::string, std::unique_ptr<Model>>models_;
+	//モデルデータのコンテナ
+	std::map<std::string, ModelData>modelDatas_;
 	//モデルの共通部分
 	ModelCommon* modelCommon_ = nullptr;
 };

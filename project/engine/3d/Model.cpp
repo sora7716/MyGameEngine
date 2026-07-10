@@ -179,7 +179,7 @@ ModelData Model::LoadModelFile(const std::string& directoryPath, const std::stri
 		}
 
 		//モデルデータのマテリアルにマテリアルデータを移動
-		modelData.materialTexturePath.push_back(std::move(materialData));
+		modelData.materialTexturePaths.push_back(std::move(materialData));
 	}
 
 	return modelData;
@@ -212,7 +212,7 @@ void Model::Draw(uint32_t objectCount) {
 		//マテリアルCBufferの場所を設定
 		directXBase_->GetCommandList()->SetGraphicsRootConstantBufferView(0, materialResources_[materialIndex]->GetGPUVirtualAddress());
 
-		MaterialTexturePaths& materialTexturePath = modelData_.materialTexturePath[materialIndex];
+		MaterialTexturePaths& materialTexturePath = modelData_.materialTexturePaths[materialIndex];
 
 		//テクスチャをセット
 		directXBase_->GetCommandList()->SetGraphicsRootDescriptorTable(2, modelCommon_->GetTextureManager()->GetSRVHandleGPU(materialTexturePath.textureFilePath));
@@ -232,9 +232,9 @@ void Model::RebuildMeshes(const std::vector<MeshData>& meshes) {
 	//受け取ったメッシュデータに書き換え
 	modelData_.mesheDatas = meshes;
 	//マテリアルが存在するか
-	if (!modelData_.materialTexturePath.empty()) {
+	if (!modelData_.materialTexturePaths.empty()) {
 		for (uint32_t i = 0; i < modelData_.mesheDatas.size(); i++) {
-			if (modelData_.mesheDatas[i].materialIndex >= modelData_.materialTexturePath.size()) {
+			if (modelData_.mesheDatas[i].materialIndex >= modelData_.materialTexturePaths.size()) {
 				modelData_.mesheDatas[i].materialIndex = 0;
 			}
 		}
@@ -246,18 +246,15 @@ void Model::RebuildMeshes(const std::vector<MeshData>& meshes) {
 #else
 		material.textureFilePath = "engine/resources/textures/white1x1.png";
 #endif // _DEBUG
-		modelData_.materialTexturePath.push_back(material);
+		modelData_.materialTexturePaths.push_back(material);
 	}
 	//メッシュを構築
 	BuildMesh();
-	//マテリアルリソースとポインタのサイズ設定
-	materialResources_.resize(modelData_.materialTexturePath.size());
-	materialPtrs_.resize(modelData_.materialTexturePath.size());
 }
 
 //uv変換
 void Model::UVTransform(uint32_t index, Transform2d uvTransform) {
-	materialPtrs_[index]->uvMatrix = MatrixUtility::MakeUVAffineMatrix(uvTransform);
+	materialPtrs_[index]->uvMatrix = matrixUtility::MakeUVAffineMatrix(uvTransform);
 }
 
 // 色を変更
@@ -267,14 +264,14 @@ void Model::SetColor(uint32_t index, const Vector4& color) {
 
 //テクスチャの設定
 void Model::SetTexture(uint32_t materialIndex, const std::string& imageFileName) {
-	modelData_.materialTexturePath[materialIndex].textureFilePath = "engine/resources/textures/" + imageFileName;
-	modelCommon_->GetTextureManager()->LoadTexture(modelData_.materialTexturePath[materialIndex].textureFilePath);
+	modelData_.materialTexturePaths[materialIndex].textureFilePath = "engine/resources/textures/" + imageFileName;
+	modelCommon_->GetTextureManager()->LoadTexture(modelData_.materialTexturePaths[materialIndex].textureFilePath);
 }
 
 //環境マップの設定
 void Model::SetEnvironmentMap(uint32_t materialIndex, const std::string& environmentMapFileName) {
-	modelData_.materialTexturePath[materialIndex].environmentMap = "engine/resources/textures/" + environmentMapFileName;
-	modelCommon_->GetTextureManager()->LoadTexture(modelData_.materialTexturePath[materialIndex].environmentMap);
+	modelData_.materialTexturePaths[materialIndex].environmentMap = "engine/resources/textures/" + environmentMapFileName;
+	modelCommon_->GetTextureManager()->LoadTexture(modelData_.materialTexturePaths[materialIndex].environmentMap);
 }
 
 //色を取得
@@ -325,7 +322,10 @@ ModelCommon* Model::GetModelCommon() {
 
 //マテリアルリソースの生成
 void Model::CreateMaterialResource() {
-	for (uint32_t i = 0; i < modelData_.materialTexturePath.size(); i++) {
+	//マテリアルリソースとポインタのサイズ設定
+	materialResources_.resize(modelData_.materialTexturePaths.size());
+	materialPtrs_.resize(modelData_.materialTexturePaths.size());
+	for (uint32_t i = 0; i < modelData_.materialTexturePaths.size(); i++) {
 		//マテリアル用のリソースを作る
 		materialResources_[i] = directXBase_->CreateBufferResource(sizeof(Material));
 		//書き込むためのアドレスを取得
@@ -367,7 +367,7 @@ void Model::BuildMesh() {
 //プリミティブモデルの初期化
 void Model::CreateModel(const std::vector<MeshData>& meshDatas, const std::string& nodeName) {
 	//モデルの読み込み
-	modelData_.mesheDatas = { PrimitiveMeshFactory::CreatePlane() };
+	modelData_.mesheDatas = { primitiveMeshFactory::CreatePlane() };
 	//メッシュの再構築
 	RebuildMeshes(modelData_.mesheDatas);
 	//各種リソースの生成
@@ -408,7 +408,7 @@ void Model::CreateResources() {
 	//リムライトリソースの生成
 	CreateRimLightResource();
 	//テクスチャの読み込み
-	for (MaterialTexturePaths& materialData : modelData_.materialTexturePath) {
+	for (MaterialTexturePaths& materialData : modelData_.materialTexturePaths) {
 		modelCommon_->GetTextureManager()->LoadTexture(materialData.textureFilePath);
 	}
 }

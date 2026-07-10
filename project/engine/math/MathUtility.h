@@ -14,7 +14,7 @@
 /// <summary>
 /// 数学的な計算
 /// </summary>
-namespace MathUtility {
+namespace mathUtility {
 	/// <summary>
 	/// トランスフォームノーマル
 	/// </summary>
@@ -107,7 +107,7 @@ namespace MathUtility {
 	/// <param name="p1">平面上の点1</param>
 	/// <param name="p2">平面上の点2</param>
 	/// <returns>平面</returns>
-	PrimitiveData::Plane MakePlane(const Vector3& p0, const Vector3& p1, const Vector3& p2);
+	primitiveData::Plane MakePlane(const Vector3& p0, const Vector3& p1, const Vector3& p2);
 
 	/// <summary>
 	/// 視錐台の頂点の作成
@@ -125,7 +125,7 @@ namespace MathUtility {
 	/// <param name="vertices">頂点</param>
 	/// <param name="worldMatrix">ワールド行列</param>
 	/// <returns>視錐台</returns>
-	PrimitiveData::Frustum CreateFrustumData(const std::array<Vector3, 8>& vertices, const Matrix4x4& worldMatrix);
+	primitiveData::Frustum CreateFrustumData(const std::array<Vector3, 8>& vertices, const Matrix4x4& worldMatrix);
 
 	/// <summary>
 	/// 平行四辺形の面積を求める

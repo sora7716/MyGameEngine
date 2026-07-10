@@ -559,16 +559,16 @@ MeshData LODBuilder::VertexClusteringByGridSize(const MeshData& meshData, float 
 		size_t operator()(const GridKey& key)const {
 			size_t seed = 0;
 
-			HashUtility::CreateHash(seed, key.vertexKey.x);
-			HashUtility::CreateHash(seed, key.vertexKey.y);
-			HashUtility::CreateHash(seed, key.vertexKey.z);
+			hashUtility::CreateHash(seed, key.vertexKey.x);
+			hashUtility::CreateHash(seed, key.vertexKey.y);
+			hashUtility::CreateHash(seed, key.vertexKey.z);
 
-			HashUtility::CreateHash(seed, key.texcoordKey.x);
-			HashUtility::CreateHash(seed, key.texcoordKey.y);
+			hashUtility::CreateHash(seed, key.texcoordKey.x);
+			hashUtility::CreateHash(seed, key.texcoordKey.y);
 
-			HashUtility::CreateHash(seed, key.normalKey.x);
-			HashUtility::CreateHash(seed, key.normalKey.y);
-			HashUtility::CreateHash(seed, key.normalKey.z);
+			hashUtility::CreateHash(seed, key.normalKey.x);
+			hashUtility::CreateHash(seed, key.normalKey.y);
+			hashUtility::CreateHash(seed, key.normalKey.z);
 
 			return seed;
 		}

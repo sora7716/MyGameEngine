@@ -307,13 +307,13 @@ void SkyBox::CreateTransformationMatrixResource() {
 // UVの座標変換の更新
 void SkyBox::UpdateUVTransform() {
 	//UVTransform
-	materialData_->uvMatrix = MatrixUtility::MakeUVAffineMatrix(uvTransform_);
+	materialData_->uvMatrix = matrixUtility::MakeUVAffineMatrix(uvTransform_);
 }
 
 //ワールド座標の更新
 void SkyBox::UpdateTransform() {
 	//TransformからWorldMatrixを作る
-	wvpData_->world = MatrixUtility::MakeAffineMatrix(gameObject_->GetTransform());
+	wvpData_->world = matrixUtility::MakeAffineMatrix(gameObject_->GetTransform());
 	//wvpの書き込み
 	const Matrix4x4& viewProjectionMatrix = camera_->GetViewProjectionMatrix();
 	wvpData_->wvp = wvpData_->world * viewProjectionMatrix;

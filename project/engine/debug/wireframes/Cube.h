@@ -30,19 +30,19 @@ namespace Primitive {
 		/// OBBのセッター
 		/// </summary>
 		/// <param name="obb">OBB</param>
-		void SetOBB(const PrimitiveData::OBB& obb);
+		void SetOBB(const primitiveData::OBB& obb);
 
 		/// <summary>
 		/// OBBのゲッター
 		/// </summary>
 		/// <returns>OBB</returns>
-		PrimitiveData::OBB GetOBB();
+		primitiveData::OBB GetOBB();
 
 		/// <summary>
 		/// AABBのゲッター
 		/// </summary>
 		/// <returns>AABB</returns>
-		PrimitiveData::AABB GetAABB();
+		primitiveData::AABB GetAABB();
 	private://メンバ変数
 		/// <summary>
 		/// 頂点データの設定
@@ -55,6 +55,6 @@ namespace Primitive {
 		void SettingIndexData()override;
 	private://メンバ変数
 		//OBB
-		PrimitiveData::OBB obb_ = {};
+		primitiveData::OBB obb_ = {};
 	};
 }

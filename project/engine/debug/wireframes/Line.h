@@ -30,13 +30,13 @@ namespace Primitive {
 		/// 線分のセッター
 		/// </summary>
 		/// <param name="segment">線分</param>
-		void SetSegment(const PrimitiveData::Segment& segment);
+		void SetSegment(const primitiveData::Segment& segment);
 
 		/// <summary>
 		/// 線分のゲッター
 		/// </summary>
 		/// <returns>線分</returns>
-		PrimitiveData::Segment GetSegment();
+		primitiveData::Segment GetSegment();
 	private://メンバ変数
 		/// <summary>
 		/// 頂点データの設定
@@ -49,6 +49,6 @@ namespace Primitive {
 		void SettingIndexData()override;
 	private://メンバ変数
 		//線分
-		PrimitiveData::Segment segment_ = {};
+		primitiveData::Segment segment_ = {};
 	};
 }

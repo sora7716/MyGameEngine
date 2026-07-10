@@ -4,7 +4,7 @@
 #include <array>
 #include "Matrix4x4.h"
 
-namespace PrimitiveData {
+namespace primitiveData {
 	//球のデータ
 	struct Sphere {
 		Vector3 center = {}; //中心座標

@@ -47,7 +47,7 @@ public://メンバ関数
 	/// AABBを取得
 	/// </summary>
 	/// <returns></returns>
-	const PrimitiveData::AABB& GetAABB()const;
+	const primitiveData::AABB& GetAABB()const;
 private://メンバ関数
 	/// <summary>
 	/// 頂点リソースの生成
@@ -77,6 +77,6 @@ private://メンバ変数
 	//メッシュデータ
 	MeshData meshData_ = {};
 	//AABB
-	PrimitiveData::AABB aabb_ = {};
+	primitiveData::AABB aabb_ = {};
 };
 

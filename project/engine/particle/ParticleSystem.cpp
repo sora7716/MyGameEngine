@@ -20,7 +20,7 @@ ParticleSystem::~ParticleSystem() {
 }
 
 //初期化
-void ParticleSystem::Initialize(ParticleCommon* particleCommon, Camera* renderCamera, const std::string& textureName, Model* model) {
+void ParticleSystem::Initialize(ParticleCommon* particleCommon, Camera* renderCamera, const std::string& textureName) {
 	//パーティクルの共通部分
 	particleCommon_ = particleCommon;
 
@@ -29,17 +29,12 @@ void ParticleSystem::Initialize(ParticleCommon* particleCommon, Camera* renderCa
 
 	//エミッター
 	emitter_ = std::make_unique<ParticleEmitter>();
-	emitter_->Initialize(particleCommon_, renderCamera, model);
+	emitter_->Initialize(particleCommon_, renderCamera);
 
-	if (model) {
-		//メッシュデータの記録
-		modelData_ = model->GetModelData();
-	} else {
-		//メッシュデータを作成
-		modelData_.mesheDatas.reserve(1);
-		modelData_.mesheDatas.push_back(PrimitiveMeshFactory::CreatePlane());
-		modelData_.materialTexturePath.resize(1);
-	}
+	//メッシュデータを作成
+	modelData_.mesheDatas.reserve(1);
+	modelData_.mesheDatas.push_back(primitiveMeshFactory::CreatePlane());
+	modelData_.materialTexturePaths.resize(1);
 
 	//メッシュの生成
 	meshes_.reserve(modelData_.mesheDatas.size());
@@ -54,13 +49,13 @@ void ParticleSystem::Initialize(ParticleCommon* particleCommon, Camera* renderCa
 
 	for (uint32_t i = 0; i < meshes_.size(); i++) {
 		//テクスチャファイルの記録
-		modelData_.materialTexturePath[i].textureFilePath = "engine/resources/textures/" + textureName;
+		modelData_.materialTexturePaths[i].textureFilePath = "engine/resources/textures/" + textureName;
 		//テクスチャの読み込み
-		particleCommon_->GetTextureManager()->LoadTexture(modelData_.materialTexturePath[i].textureFilePath);
+		particleCommon_->GetTextureManager()->LoadTexture(modelData_.materialTexturePaths[i].textureFilePath);
 	}
 
 	//マテリアルリソースの生成
-	CreateMaterialResource();
+	CreateMaterialResources();
 
 	//ストラクチャバッファの生成
 	CreateStructuredBuffer();
@@ -83,13 +78,19 @@ void ParticleSystem::Draw() {
 	directXBase_->GetCommandList()->IASetVertexBuffers(0, 1, &vertexBufferView_);//VBVを設定
 	//IndexBufferViewの設定
 	directXBase_->GetCommandList()->IASetIndexBuffer(&indexBufferView_);//IBVを設定
-	//マテリアルCBufferの場所を設定
-	directXBase_->GetCommandList()->SetGraphicsRootConstantBufferView(0, materialResource_->GetGPUVirtualAddress());//material
 	//ワールドトランスフォームの描画
 	directXBase_->GetCommandList()->SetGraphicsRootDescriptorTable(1, particleCommon_->GetSRVManager()->GetGPUDescriptorHandle(srvIndex_));
 	for (uint32_t i = 0; i < meshes_.size(); i++) {
+		//マテリアルインデックス
+		uint32_t materialIndex = meshes_[i]->GetMaterialIndex();
+
+		//マテリアルCBufferの場所を設定
+		directXBase_->GetCommandList()->SetGraphicsRootConstantBufferView(0, materialResources_[materialIndex]->GetGPUVirtualAddress());
+
+		//テクスチャパスを適応
+		MaterialTexturePaths& materialTexturePath = modelData_.materialTexturePaths[materialIndex];
 		//SRVのDescriptorTableの先頭を設定
-		directXBase_->GetCommandList()->SetGraphicsRootDescriptorTable(2, particleCommon_->GetTextureManager()->GetSRVHandleGPU(modelData_.materialTexturePath[i].textureFilePath));
+		directXBase_->GetCommandList()->SetGraphicsRootDescriptorTable(2, particleCommon_->GetTextureManager()->GetSRVHandleGPU(materialTexturePath.textureFilePath));
 		//メッシュの描画
 		meshes_[i]->Draw(emitter_->GetNumInstance());
 	}
@@ -136,23 +137,56 @@ void ParticleSystem::SetFrequency(float frequency) {
 	emitter_->SetFrequency(frequency);
 }
 
-//マテリアルデータの初期化
-void ParticleSystem::InitializeMaterialData() {
-	//色を書き込む
-	materialData_->color = { 1.0f, 1.0f, 1.0f, 1.0f };
-	materialData_->enableLighting = false;
-	materialData_->uvMatrix = Matrix4x4::Identity4x4();
+//モデルデータの設定
+void ParticleSystem::SetModelData(const ModelData& modelData) {
+	//モデルデータを記録
+	modelData_ = modelData;
+	//メッシュデータをクリア
+	meshes_.clear();
+	//メモリのサイズを確保(要素数は増えない)
+	meshes_.reserve(modelData_.mesheDatas.size());
+	//メッシュを生成
+	for (MeshData& meshData : modelData_.mesheDatas) {
+		std::unique_ptr<Mesh>mesh = std::make_unique<Mesh>();
+		mesh->Initialize(directXBase_, meshData);
+		meshes_.push_back(std::move(mesh));
+	}
+
+	//マテリアルリソースを生成
+	CreateMaterialResources();
+
+	//モデルのテクスチャの適応
+	for (std::unique_ptr<Mesh>& mesh : meshes_) {
+		ApplyModelTexture(mesh->GetMaterialIndex());
+	}
+
+}
+
+//テクスチャの設定
+void ParticleSystem::SetTexture(uint32_t meshIndex, const std::string& imageFileName) {
+	//マテリアルの検索キーを取得
+	uint32_t materialIndex = meshes_[meshIndex]->GetMaterialIndex();
+	modelData_.materialTexturePaths[materialIndex].textureFilePath = "engine/resources/textures/" + imageFileName;
+	particleCommon_->GetTextureManager()->LoadTexture(modelData_.materialTexturePaths[materialIndex].textureFilePath);
 }
 
 //マテリアルリソースの生成
-void ParticleSystem::CreateMaterialResource() {
-	//マテリアルリソースを作る
-	materialResource_ = directXBase_->CreateBufferResource(sizeof(Material));
-	//マテリアルリソースにデータを書き込むためのアドレスを取得してmaterialDataに割り当てる
-	//書き込むためのアドレスを取得
-	materialResource_->Map(0, nullptr, reinterpret_cast<void**>(&materialData_));
-	//マテリアルデータの初期値を書き込む
-	InitializeMaterialData();
+void ParticleSystem::CreateMaterialResources() {
+	//マテリアルリソースとポインタのサイズ設定
+	materialResources_.resize(modelData_.materialTexturePaths.size());
+	materialPtrs_.resize(modelData_.materialTexturePaths.size());
+	for (uint32_t i = 0; i < modelData_.materialTexturePaths.size(); i++) {
+		//マテリアル用のリソースを作る
+		materialResources_[i] = directXBase_->CreateBufferResource(sizeof(Material));
+		//書き込むためのアドレスを取得
+		materialResources_[i]->Map(0, nullptr, reinterpret_cast<void**>(&materialPtrs_[i]));
+		//色を書き込む
+		materialPtrs_[i]->color = Vector4::MakeWhiteColor();
+		materialPtrs_[i]->enableLighting = true;
+		materialPtrs_[i]->uvMatrix = Matrix4x4::Identity4x4();
+		materialPtrs_[i]->shininess = 10.0f;
+		materialPtrs_[i]->environmentCoefficient = 0.0f;
+	}
 }
 
 //ワールドトランスフォームのリソースの生成
@@ -180,4 +214,10 @@ void ParticleSystem::CreateStructuredBuffer() {
 		ParticleEmitter::kNumMaxInstance,
 		sizeof(ParticleForGPU)
 	);
+}
+
+//モデルのテクスチャを適応
+void ParticleSystem::ApplyModelTexture(uint32_t materialIndex) {
+	//テクスチャの読み込み
+	particleCommon_->GetTextureManager()->LoadTexture(modelData_.materialTexturePaths[materialIndex].textureFilePath);
 }

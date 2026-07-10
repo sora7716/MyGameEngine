@@ -7,7 +7,7 @@
 #include <array>
 #include <cmath>
 
-using namespace PrimitiveData;
+using namespace primitiveData;
 
 /// <summary>
 /// 球同士の衝突判定
@@ -15,7 +15,7 @@ using namespace PrimitiveData;
 /// <param name="sphere1">球1</param>
 /// <param name="sphere2">球2</param>
 /// <returns>衝突したかどうか</returns>
-bool Collision::IsCollision(const Sphere& sphere1, const Sphere& sphere2) {
+bool collision::IsCollision(const Sphere& sphere1, const Sphere& sphere2) {
 	//距離
 	float distance = (sphere2.center - sphere1.center).Length();
 	//距離と二つの球の半径を足した値と比べて
@@ -28,7 +28,7 @@ bool Collision::IsCollision(const Sphere& sphere1, const Sphere& sphere2) {
 /// <param name="aabb1">aabb1</param>
 /// <param name="aabb2">aabb2</param>
 /// <returns>衝突したかのフラグ</returns>
-bool Collision::IsCollision(const AABB& aabb1, const AABB& aabb2) {
+bool collision::IsCollision(const AABB& aabb1, const AABB& aabb2) {
 	return aabb1.min.x <= aabb2.max.x && aabb1.max.x >= aabb2.min.x &&
 		aabb1.min.y <= aabb2.max.y && aabb1.max.y >= aabb2.min.y &&
 		aabb1.min.z <= aabb2.max.z && aabb1.max.z >= aabb2.min.z;
@@ -40,7 +40,7 @@ bool Collision::IsCollision(const AABB& aabb1, const AABB& aabb2) {
 /// <param name="aabb">aabb</param>
 /// <param name="sphere">球</param>
 /// <returns>衝突したかのフラグ</returns>
-bool Collision::IsCollision(const AABB& aabb, const Sphere& sphere) {
+bool collision::IsCollision(const AABB& aabb, const Sphere& sphere) {
 	//最近接点を求める
 	Vector3 closestPoint{
 		std::clamp(sphere.center.x, aabb.min.x, aabb.max.x),
@@ -61,9 +61,9 @@ bool Collision::IsCollision(const AABB& aabb, const Sphere& sphere) {
 /// <param name="obb">obb</param>
 /// <param name="sphere">球</param>
 /// <returns>衝突したかのフラグ</returns>
-bool Collision::IsCollision(const OBB& obb, const Sphere& sphere) {
+bool collision::IsCollision(const OBB& obb, const Sphere& sphere) {
 	//OBBのワールド行列の逆行列を作成
-	Matrix4x4 obbWorldMatrixInverse = MatrixUtility::MakeOBBWorldMatrix(obb.orientations, obb.center).Inverse();
+	Matrix4x4 obbWorldMatrixInverse = matrixUtility::MakeOBBWorldMatrix(obb.orientations, obb.center).Inverse();
 
 	//球の中心をOBB空間上に持っていく
 	Vector3 centerInOBBLocalSpace = sphere.center * obbWorldMatrixInverse;
@@ -75,11 +75,11 @@ bool Collision::IsCollision(const OBB& obb, const Sphere& sphere) {
 	Sphere sphereOBBLocal = { centerInOBBLocalSpace,sphere.radius };
 
 	//AABBと球の衝突判定をする
-	return Collision::IsCollision(aabbOBBLocal, sphereOBBLocal);
+	return collision::IsCollision(aabbOBBLocal, sphereOBBLocal);
 }
 
 // OBBとAABB/OBB
-bool Collision::IsCollision(const OBB& obb1, const OBB& obb2) {
+bool collision::IsCollision(const OBB& obb1, const OBB& obb2) {
 	//分離軸
 	std::array<Vector3, 15> separationAxes;
 
@@ -210,7 +210,7 @@ bool Collision::IsCollision(const OBB& obb1, const OBB& obb2) {
 }
 
 //平面と球の衝突判定
-bool Collision::IsCollision(const PrimitiveData::Plane& plane, const PrimitiveData::Sphere& sphere) {
+bool collision::IsCollision(const primitiveData::Plane& plane, const primitiveData::Sphere& sphere) {
 	//球の中心点と平面との距離
 	float distance = std::abs(plane.normal.Dot(sphere.center) - plane.distance);
 
@@ -219,7 +219,7 @@ bool Collision::IsCollision(const PrimitiveData::Plane& plane, const PrimitiveDa
 }
 
 //平面とAABBの衝突判定
-bool Collision::IsCollision(const PrimitiveData::Plane& plane, const PrimitiveData::AABB& aabb) {
+bool collision::IsCollision(const primitiveData::Plane& plane, const primitiveData::AABB& aabb) {
 	//AABBの中心と半径を取得
 	Vector3 center = (aabb.min + aabb.max) / 2.0f;
 	Vector3 halfSize = (aabb.max - aabb.min) / 2.0f;
@@ -234,7 +234,7 @@ bool Collision::IsCollision(const PrimitiveData::Plane& plane, const PrimitiveDa
 }
 
 //AABBが平面の外側に完全に出ているか
-bool IsOutsidePlaneAABB(const PrimitiveData::Plane& plane, const PrimitiveData::AABB& aabb) {
+bool IsOutsidePlaneAABB(const primitiveData::Plane& plane, const primitiveData::AABB& aabb) {
 	//AABBの中心
 	Vector3 center = (aabb.min + aabb.max) / 2.0f;
 
@@ -252,8 +252,8 @@ bool IsOutsidePlaneAABB(const PrimitiveData::Plane& plane, const PrimitiveData::
 }
 
 //視錐台と衝突判定
-bool Collision::IsCollision(const PrimitiveData::Frustum& frustum, const PrimitiveData::AABB& aabb) {
-	for (const PrimitiveData::Plane& plane : frustum.planes) {
+bool collision::IsCollision(const primitiveData::Frustum& frustum, const primitiveData::AABB& aabb) {
+	for (const primitiveData::Plane& plane : frustum.planes) {
 		//平面の外にAABBがいた場合
 		if (IsOutsidePlaneAABB(plane, aabb)) {
 			return false;
@@ -263,7 +263,7 @@ bool Collision::IsCollision(const PrimitiveData::Frustum& frustum, const Primiti
 	return true;
 }
 
-HitInfo Collision::GetHitInfo(const OBB& obb1, const OBB& obb2) {
+HitInfo collision::GetHitInfo(const OBB& obb1, const OBB& obb2) {
 	//衝突情報
 	HitInfo hitInfo{
 		.isCollision = false,

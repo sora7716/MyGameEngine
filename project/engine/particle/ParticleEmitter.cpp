@@ -5,16 +5,14 @@
 #include "ParticleCommon.h"
 #include "Model.h"
 #include "ImGuiManager.h"
-using namespace PrimitiveData;
+using namespace primitiveData;
 
 //初期化
-void ParticleEmitter::Initialize(ParticleCommon* particleCommon, Camera* renderCamera, Model* model) {
+void ParticleEmitter::Initialize(ParticleCommon* particleCommon, Camera* renderCamera) {
 	//パーティクルの共通部分
 	particleCommon_ = particleCommon;
 	//カメラを設定
 	gameCamera_ = particleCommon_->GetDefaultCamera();
-	//モデルを設定
-	model_ = model;
 	//描画用カメラの記録
 	renderCamera_ = renderCamera;
 	//乱数エンジンの初期化
@@ -37,9 +35,9 @@ void ParticleEmitter::Update(ParticleForGPU* instancingData) {
 			// パーティクルの色を設定
 			instancingData[numInstance_].color.SetRGB((*it).color.GetRGB());
 			//移動
-			(*it).transform.translate += (*it).velocity * MathUtility::kDeltaTime;
+			(*it).transform.translate += (*it).velocity * mathUtility::kDeltaTime;
 			//経過時間を足す
-			(*it).currentTime += MathUtility::kDeltaTime;
+			(*it).currentTime += mathUtility::kDeltaTime;
 			float alpha = 1.0f - ((*it).currentTime / (*it).lifeTime);
 			instancingData[numInstance_].color.w = alpha;
 			//ワールドトランスフォームの更新
@@ -56,13 +54,13 @@ void ParticleEmitter::Update(ParticleForGPU* instancingData) {
 	for (auto it = particles_.begin(); it != particles_.end();) {
 		//Field内のParticleには加速度を適用する
 		if (IsCollision(accelerationField_.area, (*it).transform.translate)) {
-			(*it).velocity += accelerationField_.acceleration * MathUtility::kDeltaTime;
+			(*it).velocity += accelerationField_.acceleration * mathUtility::kDeltaTime;
 		}
 		it++;
 	}
 
 	//Emitterの更新
-	emitter_.frequencyTime += MathUtility::kDeltaTime;
+	emitter_.frequencyTime += mathUtility::kDeltaTime;
 	if (emitter_.frequency <= emitter_.frequencyTime) {
 		particles_.splice(particles_.end(), Emit());
 		emitter_.frequencyTime -= emitter_.frequency;//余計に過ぎた時間も加味して頻度を計算する
@@ -73,11 +71,6 @@ void ParticleEmitter::Debug() {
 #ifdef  USE_IMGUI
 
 #endif //USE_IMGUI
-}
-
-//モデルの取得
-Model* ParticleEmitter::GetModel() const {
-	return model_;
 }
 
 //生存しているパーティクルの数の取得
@@ -168,23 +161,19 @@ Particle ParticleEmitter::MakeNormalParticle() {
 
 //ワールドトランスフォームの更新
 void ParticleEmitter::UpdateWorldTransform(uint32_t numInstance, auto iterator, ParticleForGPU* instancingData) {
+	//ワールド行列の初期化
+	//モデルがないならビルボード行列を入れる
+	Matrix4x4 worldMatrix = matrixUtility::MakeBillboardAffineMatrix(renderCamera_->GetWorldMatrix(), (*iterator).transform);
 	//wvpの書き込み
 	if (gameCamera_) {
-		if (model_) {
-			//モデルがあったらAffine行列を入れる
-			worldMatrix_ = MatrixUtility::MakeAffineMatrix((*iterator).transform);
-		} else {
-			//モデルがないならビルボード行列を入れる
-			worldMatrix_ = MatrixUtility::MakeBillboardAffineMatrix(renderCamera_->GetWorldMatrix(), (*iterator).transform);
-		}
 		const Matrix4x4& viewProjectionMatrix = renderCamera_->GetViewProjectionMatrix();
 
-		instancingData[numInstance].WVP = worldMatrix_ * viewProjectionMatrix;
+		instancingData[numInstance].WVP = worldMatrix * viewProjectionMatrix;
 	} else {
-		instancingData[numInstance].WVP = worldMatrix_;
+		instancingData[numInstance].WVP = worldMatrix;
 	}
 	//ワールド行列を送信
-	instancingData[numInstance].World = worldMatrix_;
+	instancingData[numInstance].World = worldMatrix;
 }
 
 //パーティクルの発生

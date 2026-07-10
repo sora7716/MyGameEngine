@@ -56,19 +56,19 @@ public://メンバ関数
 	/// OBBデータ用のImGui
 	/// </summary>
 	/// <param name="obb">obb</param>
-	static void DragOBB(PrimitiveData::OBB& obb);
+	static void DragOBB(primitiveData::OBB& obb);
 
 	/// <summary>
 	/// 円用のImGui
 	/// </summary>
 	/// <param name="circle">円</param>
-	static void DragCircle(PrimitiveData::Circle& circle);
+	static void DragCircle(primitiveData::Circle& circle);
 
 	/// <summary>
 	/// 球用のIｍGui
 	/// </summary>
 	/// <param name="sphere">球</param>
-	static void DragSphere(PrimitiveData::Sphere& sphere);
+	static void DragSphere(primitiveData::Sphere& sphere);
 
 	/// <summary>
 	/// int型でcheckBoxを表示する
@@ -111,7 +111,7 @@ public://メンバ関数
 	/// </summary>
 	/// <param name="aabb">aabb</param>
 	/// <param name="label">ラベル</param>
-	static void AABBText(const PrimitiveData::AABB& aabb, const char* label);
+	static void AABBText(const primitiveData::AABB& aabb, const char* label);
 public://PassKey
 	class ConstructorKey {
 	private:

@@ -29,13 +29,13 @@ namespace Primitive {
 		/// <summary>
 		/// 円のセッター
 		/// </summary>
-		void SetCircle(const PrimitiveData::Circle& circle);
+		void SetCircle(const primitiveData::Circle& circle);
 
 		/// <summary>
 		/// 円のゲッター
 		/// </summary>
 		/// <returns>円</returns>
-		PrimitiveData::Circle GetCircle();
+		primitiveData::Circle GetCircle();
 	private://メンバ変数
 		/// <summary>
 		/// 頂点データの設定
@@ -48,7 +48,7 @@ namespace Primitive {
 		void SettingIndexData()override;
 	private://メンバ変数
 		//円
-		PrimitiveData::Circle circle_ = {};
+		primitiveData::Circle circle_ = {};
 	};
 }
 

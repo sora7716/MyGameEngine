@@ -78,8 +78,8 @@ void ImGuiManager::DragTransform(Transform& transformData) {
 	if (transformData.isUsingQuaternion) {
 		ImGui::DragFloat3("axis", &transformData.axis.x, 0.01f, -1.0f, 1.0f);
 		ImGui::SliderAngle("angle", &transformData.angle);
-		transformData.quaternion = MatrixUtility::MakeRotateAxisAngleQuaternion(transformData.axis, transformData.angle);
-		transformData.eulerAngle = MathUtility::MakeEulerAngleForQuaternion(transformData.quaternion);
+		transformData.quaternion = matrixUtility::MakeRotateAxisAngleQuaternion(transformData.axis, transformData.angle);
+		transformData.eulerAngle = mathUtility::MakeEulerAngleForQuaternion(transformData.quaternion);
 	} else {
 		ImGui::DragFloat3("eulerAngle", &transformData.eulerAngle.x, 0.1f);
 		transformData.quaternion = Quaternion::MakeQuaternionForEulerAngle(transformData.eulerAngle);
@@ -90,7 +90,7 @@ void ImGuiManager::DragTransform(Transform& transformData) {
 }
 
 //OBBデータ用のImGui
-void ImGuiManager::DragOBB(PrimitiveData::OBB& obb) {
+void ImGuiManager::DragOBB(primitiveData::OBB& obb) {
 #ifdef USE_IMGUI
 	ImGui::DragFloat3("size", &obb.size.x, 0.1f);
 	static Vector3 obbRadian = {};
@@ -101,7 +101,7 @@ void ImGuiManager::DragOBB(PrimitiveData::OBB& obb) {
 }
 
 //円用のImGui
-void ImGuiManager::DragCircle(PrimitiveData::Circle& circle) {
+void ImGuiManager::DragCircle(primitiveData::Circle& circle) {
 #ifdef USE_IMGUI
 	ImGui::DragFloat3("center", &circle.center.x, 0.1f);
 	ImGui::DragFloat3("eulerAngle", &circle.eulerAngle.x, 0.1f);
@@ -110,7 +110,7 @@ void ImGuiManager::DragCircle(PrimitiveData::Circle& circle) {
 }
 
 //球用のImGui
-void ImGuiManager::DragSphere(PrimitiveData::Sphere& sphere) {
+void ImGuiManager::DragSphere(primitiveData::Sphere& sphere) {
 #ifdef USE_IMGUI
 	ImGui::DragFloat3("center", &sphere.center.x, 0.1f);
 	ImGui::DragFloat("radius", &sphere.radius, 0.01f);
@@ -169,7 +169,7 @@ void ImGuiManager::FloatText(float num, const char* label) {
 }
 
 //AABBの表示
-void ImGuiManager::AABBText(const PrimitiveData::AABB& aabb, const char* label) {
+void ImGuiManager::AABBText(const primitiveData::AABB& aabb, const char* label) {
 #ifdef _DEBUG
 	ImGuiManager::Vector3Text(aabb.min, (static_cast<std::string>(label) + ".min").c_str());
 	ImGuiManager::Vector3Text(aabb.max, (static_cast<std::string>(label) + ".max").c_str());

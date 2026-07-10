@@ -1,5 +1,5 @@
 #include "Cube.h"
-using namespace PrimitiveData;
+using namespace primitiveData;
 using namespace Primitive;
 
 //コンストラクタ

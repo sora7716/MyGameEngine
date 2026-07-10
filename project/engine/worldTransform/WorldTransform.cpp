@@ -61,7 +61,7 @@ void WorldTransform::SetParent(const WorldTransform* parent) {
 //親子付け
 void WorldTransform::Compose(const WorldTransform* parent) {
 	Matrix4x4 childLocal = parent_->worldMatrix_.Inverse() * worldMatrix_;
-	transform_ = MatrixUtility::DecomposeMatrix(childLocal);
+	transform_ = matrixUtility::DecomposeMatrix(childLocal);
 	SetParent(parent);
 }
 
@@ -69,7 +69,7 @@ void WorldTransform::Compose(const WorldTransform* parent) {
 void WorldTransform::Decompose() {
 	if (parent_) {
 		//ワールド行列をTransformDataに分解
-		transform_ = MatrixUtility::DecomposeMatrix(worldMatrix_);
+		transform_ = matrixUtility::DecomposeMatrix(worldMatrix_);
 		//親子関係を解除
 		parent_ = nullptr;
 	}
@@ -175,7 +175,7 @@ void WorldTransform::CreateTransformationMatrixResource() {
 
 //座標の更新
 void WorldTransform::UpdateTransform() {
-	worldMatrix_ = MatrixUtility::MakeAffineMatrix(transform_);
+	worldMatrix_ = matrixUtility::MakeAffineMatrix(transform_);
 	//TransformからWorldMatrixを作る
 	if (parent_) {
 		worldMatrix_ = worldMatrix_ * parent_->worldMatrix_;
@@ -195,9 +195,9 @@ void WorldTransform::UpdateTransform() {
 
 //座標の更新(向きたい方向に向かせる)
 void WorldTransform::UpdateTrasformDirectionToDirection() {
-	Matrix4x4 scaleMat = MatrixUtility::MakeScaleMatrix(transform_.scale);
-	Matrix4x4 rotateMat = MatrixUtility::DirectionToDirection(fromPos_, toPos_);
-	Matrix4x4 translateMat = MatrixUtility::MakeTranslateMatrix(transform_.translate);
+	Matrix4x4 scaleMat = matrixUtility::MakeScaleMatrix(transform_.scale);
+	Matrix4x4 rotateMat = matrixUtility::DirectionToDirection(fromPos_, toPos_);
+	Matrix4x4 translateMat = matrixUtility::MakeTranslateMatrix(transform_.translate);
 	worldMatrix_ = scaleMat * rotateMat * translateMat;
 	//TransformからWorldMatrixを作る
 	if (parent_) {
@@ -219,12 +219,12 @@ void WorldTransform::UpdateTrasformDirectionToDirection() {
 //座標の更新(2次元)
 void WorldTransform::UpdateTransform2d() {
 	//TransformからWorldMatrixを作る
-	worldMatrix_ = MatrixUtility::MakeAffineMatrix(transform_);
+	worldMatrix_ = matrixUtility::MakeAffineMatrix(transform_);
 	if (parent_) {
 		worldMatrix_ = worldMatrix_ * parent_->worldMatrix_;
 	}
 	//ProjectionMatrixを作って平行投影行列を書き込む
-	const Matrix4x4& projectionMatrix = MatrixUtility::MakeOrthographicMatrix(screenArea_.left, screenArea_.top, screenArea_.right, screenArea_.bottom, 0.1f, 100.0f);
+	const Matrix4x4& projectionMatrix = matrixUtility::MakeOrthographicMatrix(screenArea_.left, screenArea_.top, screenArea_.right, screenArea_.bottom, 0.1f, 100.0f);
 	//wvpの書き込み
 	const Matrix4x4& viewProjectionMatrix = Matrix4x4::Identity4x4() * projectionMatrix;
 	wvpData_->wvp = worldMatrix_ * viewProjectionMatrix;
@@ -245,7 +245,7 @@ void WorldTransform::UpdateTransformBillboard() {
 		wvpData_->wvp = worldMatrix_;
 		return;
 	}
-	worldMatrix_ = MatrixUtility::MakeBillboardAffineMatrix(camera_->GetWorldMatrix(), transform_);
+	worldMatrix_ = matrixUtility::MakeBillboardAffineMatrix(camera_->GetWorldMatrix(), transform_);
 	//TransformからWorldMatrixを作る
 	if (parent_) {
 		worldMatrix_ = worldMatrix_ * parent_->worldMatrix_;

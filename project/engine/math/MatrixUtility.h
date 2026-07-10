@@ -5,7 +5,7 @@
 /// <summary>
 /// 行列関係
 /// </summary>
-namespace MatrixUtility {
+namespace matrixUtility {
 	/// <summary>
 	/// 拡大縮小
 	/// </summary>

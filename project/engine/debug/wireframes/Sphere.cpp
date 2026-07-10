@@ -29,12 +29,12 @@ void Sphere::Update() {
 }
 
 //球のセッター
-void Sphere::SetSphere(const PrimitiveData::Sphere& sphere) {
+void Sphere::SetSphere(const primitiveData::Sphere& sphere) {
 	sphere_ = sphere;
 }
 
 //球のゲッター
-PrimitiveData::Sphere Sphere::GetSphere() {
+primitiveData::Sphere Sphere::GetSphere() {
 	return sphere_;
 }
 
@@ -42,7 +42,7 @@ PrimitiveData::Sphere Sphere::GetSphere() {
 void Sphere::SettingVertexData() {
 	for (int32_t i = 0; i < kCircleVertexCount; i++) {
 		float t = static_cast<float>(i) / static_cast<float>(kCircleVertexCount);
-		float angle = t * MathUtility::kPi * 2.0f;
+		float angle = t * mathUtility::kPi * 2.0f;
 
 		int32_t xy = i;
 		int32_t xz = kCircleVertexCount + i;

@@ -5,7 +5,7 @@
 /// <summary>
 /// 文字を変換
 /// </summary>
-namespace StringUtility {
+namespace stringUtility {
 	/// <summary>
 	/// stringをwstringに変換
 	/// </summary>

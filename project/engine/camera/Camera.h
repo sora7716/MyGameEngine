@@ -125,7 +125,7 @@ public://メンバ関数
 	/// 視錐台の取得
 	/// </summary>
 	/// <returns>視錐台</returns>
-	PrimitiveData::Frustum& GetFrustum();
+	primitiveData::Frustum& GetFrustum();
 
 	/// <summary>
 	/// ニアクリップ距離の取得
@@ -170,6 +170,6 @@ private://メンバ変数
 	//ビュープロジェクション行列
 	Matrix4x4 viewProjectionMatrix_ = {};
 	//視錐台
-	PrimitiveData::Frustum frustum_ = {};
+	primitiveData::Frustum frustum_ = {};
 };
 

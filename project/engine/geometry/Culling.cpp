@@ -30,7 +30,7 @@ void Culling::Initialize(Camera* camera) {
 }
 
 //視錐台カリングをするか
-bool Culling::IsVisibleInFrustum(const PrimitiveData::AABB& aabb, const Matrix4x4& worldMatrix) {
+bool Culling::IsVisibleInFrustum(const primitiveData::AABB& aabb, const Matrix4x4& worldMatrix) {
 	//カメラがなかった場合
 	if (!camera_) {
 		return false;
@@ -40,10 +40,10 @@ bool Culling::IsVisibleInFrustum(const PrimitiveData::AABB& aabb, const Matrix4x
 	bool isVisible = false;
 
 	//ワールド座標でのAABBを取得
-	PrimitiveData::AABB worldAABB = aabb * worldMatrix;
+	primitiveData::AABB worldAABB = aabb * worldMatrix;
 
 	//衝突しているかどうか
-	if (Collision::IsCollision(camera_->GetFrustum(), worldAABB)) {
+	if (collision::IsCollision(camera_->GetFrustum(), worldAABB)) {
 		isVisible = true;
 	}
 

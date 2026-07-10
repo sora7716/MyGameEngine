@@ -23,12 +23,12 @@ void Primitive::Plane::Update() {
 }
 
 //平面の設定
-void Primitive::Plane::SetPlane(const PrimitiveData::Plane& plane) {
+void Primitive::Plane::SetPlane(const primitiveData::Plane& plane) {
 	plane_ = plane;
 }
 
 //平面の取得
-const PrimitiveData::Plane& Primitive::Plane::GetPlane() const {
+const primitiveData::Plane& Primitive::Plane::GetPlane() const {
 	// TODO: return ステートメントをここに挿入します
 	return plane_;
 }

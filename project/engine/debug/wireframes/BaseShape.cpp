@@ -316,7 +316,7 @@ void BaseShape::BuildGraphicsPipeline() {
 
 //座標の更新
 void BaseShape::UpdateTransform() {
-	worldMatrix_ = MatrixUtility::MakeAffineMatrix(transform_);
+	worldMatrix_ = matrixUtility::MakeAffineMatrix(transform_);
 	//TransformからWorldMatrixを作る
 	//if (parent_) {
 	//	worldMatrix_ = worldMatrix_ * parent_->worldMatrix_;

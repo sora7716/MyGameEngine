@@ -40,7 +40,7 @@ public://メンバ関数
 	/// <param name="aabb">AABB</param>
 	/// <param name="worldMatrix">ワールド行列</param>
 	/// <returns>視錐台カリングをするか</returns>
-	bool IsVisibleInFrustum(const PrimitiveData::AABB& aabb, const Matrix4x4& worldMatrix);
+	bool IsVisibleInFrustum(const primitiveData::AABB& aabb, const Matrix4x4& worldMatrix);
 private://メンバ変数
 	//カメラ
 	Camera* camera_ = nullptr;

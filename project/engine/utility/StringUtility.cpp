@@ -2,7 +2,7 @@
 #include <Windows.h>
 
 // stringをwstringに変換
-std::wstring StringUtility::ConvertString(const std::string& str) {
+std::wstring stringUtility::ConvertString(const std::string& str) {
     if (str.empty()) {
         return std::wstring();
     }
@@ -17,7 +17,7 @@ std::wstring StringUtility::ConvertString(const std::string& str) {
 }
 
 // wstringをstringに変換
-std::string StringUtility::ConvertString(const std::wstring& str) {
+std::string stringUtility::ConvertString(const std::wstring& str) {
     if (str.empty()) {
         return std::string();
     }

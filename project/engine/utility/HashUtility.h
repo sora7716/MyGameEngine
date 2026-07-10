@@ -4,7 +4,7 @@
 /// <summary>
 /// ハッシュ関係
 /// </summary>
-namespace HashUtility {
+namespace hashUtility {
 	/// <summary>
 	/// ハッシュの作成
 	/// </summary>

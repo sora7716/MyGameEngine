@@ -30,13 +30,13 @@ namespace Primitive {
 		/// 球のセッター
 		/// </summary>
 		/// <param name="sphere">球</param>
-		void SetSphere(const PrimitiveData::Sphere& sphere);
+		void SetSphere(const primitiveData::Sphere& sphere);
 
 		/// <summary>
 		/// 球のゲッター
 		/// </summary>
 		/// <returns>球</returns>
-		PrimitiveData::Sphere GetSphere();
+		primitiveData::Sphere GetSphere();
 	private://メンバ変数
 		/// <summary>
 		/// 頂点データの設定
@@ -51,6 +51,6 @@ namespace Primitive {
 		static inline const int32_t kCircleVertexCount = 32;
 	private://メンバ変数
 		//球
-		PrimitiveData::Sphere sphere_ = {};
+		primitiveData::Sphere sphere_ = {};
 	};
 }

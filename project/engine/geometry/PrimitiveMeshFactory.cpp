@@ -2,7 +2,7 @@
 #include "MathUtility.h"
 
 //キューブ
-MeshData PrimitiveMeshFactory::CreateCube() {
+MeshData primitiveMeshFactory::CreateCube() {
 	//面のデータ
 	struct FaceData {
 		Vector3 normal;
@@ -151,14 +151,14 @@ MeshData PrimitiveMeshFactory::CreateCube() {
 }
 
 //球メッシュの作成
-MeshData PrimitiveMeshFactory::CreateSphere() {
+MeshData primitiveMeshFactory::CreateSphere() {
 	//メッシュ
 	MeshData meshData = {};
 	const uint32_t kSubdivision = 32;
 	meshData.vertices.resize(kSubdivision * kSubdivision * 6);
 
 	//経度分割1つ分の角度φd
-	float pi = MathUtility::kPi;
+	float pi = mathUtility::kPi;
 	const float kLonEvery = pi * 2.0f / static_cast<float>(kSubdivision);
 	//緯度分割1つぶんの角度θd
 	const float kLatEvery = pi / static_cast<float>(kSubdivision);
@@ -234,7 +234,7 @@ MeshData PrimitiveMeshFactory::CreateSphere() {
 }
 
 //平面メッシュの作成
-MeshData PrimitiveMeshFactory::CreatePlane() {
+MeshData primitiveMeshFactory::CreatePlane() {
 	MeshData meshData = {};
 	//サイズ決定
 	meshData.vertices.resize(4);

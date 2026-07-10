@@ -20,24 +20,24 @@ void Camera::Initialize(DirectXBase* directXBase) {
 	nearClip_ = 0.1f;
 	farClip_ = 100.0f;
 	//視錐台のローカルの頂点を作成
-	frustum_.localCorners = MathUtility::CreateFrustumVertex(nearClip_, farClip_, fovY_, aspectRation_);
+	frustum_.localCorners = mathUtility::CreateFrustumVertex(nearClip_, farClip_, fovY_, aspectRation_);
 }
 
 //更新
 void Camera::Update() {
 	//アフィン変換行列の作成
-	worldMatrix_ = MatrixUtility::MakeAffineMatrix(transform_);
+	worldMatrix_ = matrixUtility::MakeAffineMatrix(transform_);
 	//worldMatrixの逆行列
 	viewMatrix_ = worldMatrix_.Inverse();
 	//透視投影行列の作成
-	projectionMatrix_ = MatrixUtility::MakePerspectiveFovMatrix(fovY_, aspectRation_, nearClip_, farClip_);
+	projectionMatrix_ = matrixUtility::MakePerspectiveFovMatrix(fovY_, aspectRation_, nearClip_, farClip_);
 	//ビュープロジェクション行列の作成
 	viewProjectionMatrix_ = viewMatrix_ * projectionMatrix_;
 
 	//視錐台のローカルの頂点を作成
-	frustum_.localCorners = MathUtility::CreateFrustumVertex(nearClip_, farClip_, fovY_, aspectRation_);
+	frustum_.localCorners = mathUtility::CreateFrustumVertex(nearClip_, farClip_, fovY_, aspectRation_);
 	//視錐台のデータを作成
-	frustum_ = MathUtility::CreateFrustumData(frustum_.localCorners, worldMatrix_);
+	frustum_ = mathUtility::CreateFrustumData(frustum_.localCorners, worldMatrix_);
 
 }
 
@@ -125,7 +125,7 @@ Vector3 Camera::GetWorldPos() const {
 }
 
 //視錐台の取得
-PrimitiveData::Frustum& Camera::GetFrustum() {
+primitiveData::Frustum& Camera::GetFrustum() {
 	// TODO: return ステートメントをここに挿入します
 	return frustum_;
 }

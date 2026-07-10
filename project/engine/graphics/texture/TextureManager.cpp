@@ -26,18 +26,17 @@ void TextureManager::Initialize(DirectXBase* directXBase, SRVManager* srvManager
 void TextureManager::LoadTexture(std::string& filePath) {
 	//テクスチャのファイルパスが空だった場合
 	if (filePath.empty()) {
-#ifdef _DEBUG
-		filePath = "engine/resources/textures/magenta1x1.png";
-#else
 		filePath = "engine/resources/textures/white1x1.png";
-#endif // _DEBUG
 	}
 
 	HRESULT hr = S_FALSE;
 	DirectX::ScratchImage image{};
-	std::wstring filePathW = StringUtility::ConvertString(filePath);
-	//読み込めなかった場合もう一度ループ
-	do {
+	std::wstring filePathW = stringUtility::ConvertString(filePath);
+	DirectX::ScratchImage mipImages{};
+
+	//読み込めるまでループ
+	while (true) {
+
 		//読み込み済みテクスチャを検索
 		if (textureDatas_.contains(filePath)) {
 			//読み込み済みなら早期リターン
@@ -52,37 +51,38 @@ void TextureManager::LoadTexture(std::string& filePath) {
 			hr = DirectX::LoadFromWICFile(filePathW.c_str(), DirectX::WIC_FLAGS_FORCE_SRGB, nullptr, image);
 		}
 
-		//読み込み成功したら
-		if (SUCCEEDED(hr)) {
-			break;
+		//読み込み失敗したら
+		if (!SUCCEEDED(hr)) {
+			BindErrorTexture(filePath);
+			continue;
 		}
 
-#ifdef _DEBUG
-		filePath = "engine/resources/textures/magenta1x1.png";
-#else
-		filePath = "engine/resources/textures/white1x1.png";
-#endif // _DEBUG
-	} while (true);
-
-	//ミップマップの作成
-	DirectX::ScratchImage mipImages{};
-
-	//DirectXTexでは直接的に圧縮フォーマットのMipMap生成に対応してないのでimageをそのまま使用する
-	if (DirectX::IsCompressed(image.GetMetadata().format)) {
-		mipImages = std::move(image);
-	} else {
-		if (image.GetMetadata().width <= 1 && image.GetMetadata().height <= 1) {
-			DirectX::LoadFromWICFile(filePathW.c_str(), DirectX::WIC_FLAGS_FORCE_SRGB, nullptr, mipImages);
+		//ミップマップの作成
+		//DirectXTexでは直接的に圧縮フォーマットのMipMap生成に対応してないのでimageをそのまま使用する
+		if (DirectX::IsCompressed(image.GetMetadata().format)) {
+			mipImages = std::move(image);
 		} else {
-			hr = DirectX::GenerateMipMaps(image.GetImages(), image.GetImageCount(), image.GetMetadata(), DirectX::TEX_FILTER_SRGB, 4, mipImages);
+			if (image.GetMetadata().width <= 1 && image.GetMetadata().height <= 1) {
+				DirectX::LoadFromWICFile(filePathW.c_str(), DirectX::WIC_FLAGS_FORCE_SRGB, nullptr, mipImages);
+			} else {
+				hr = DirectX::GenerateMipMaps(image.GetImages(), image.GetImageCount(), image.GetMetadata(), DirectX::TEX_FILTER_SRGB, 4, mipImages);
+			}
+		}
+
+		//読み込み失敗したら
+		if (!SUCCEEDED(hr)) {
+			BindErrorTexture(filePath);
+			continue;
+		}
+
+		//テクスチャ枚数上限チェック
+		if (srvManager_->TextureLimitCheck(kSRVIndexTop)) {
+			//上限を超えなかったら
+			break;
+		} else {
+			assert(false);
 		}
 	}
-
-	assert(SUCCEEDED(hr));
-
-	//テクスチャ枚数上限チェック
-	assert(srvManager_->TextureLimitCheck(kSRVIndexTop));
-
 	//追加したテクスチャデータの参照を取得する
 	TextureData& textureData = textureDatas_[filePath];
 	textureData.metadata = mipImages.GetMetadata();
@@ -194,6 +194,15 @@ uint32_t TextureManager::GetSRVIndex(const std::string& filePath) {
 // GPUハンドルの取得
 D3D12_GPU_DESCRIPTOR_HANDLE TextureManager::GetSRVHandleGPU(const std::string& filePath) {
 	return textureDatas_[filePath].srvHandleGPU;
+}
+
+//エラーテクスチャを適応
+void TextureManager::BindErrorTexture(std::string& filePath) {
+#ifdef _DEBUG
+	filePath = "engine/resources/textures/magenta1x1.png";
+#else
+	filePath = "engine/resources/textures/white1x1.png";
+#endif // _DEBUG
 }
 
 //コンストラクタ

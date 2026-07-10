@@ -133,7 +133,7 @@ public://メンバ関数
 	/// ライティングの設定
 	/// </summary>
 	/// <param name="index">マテリアルの検索キー</param>
-	/// <param name="materialData">ライティングフラグ</param>
+	/// <param name="isLighting">ライティングフラグ</param>
 	void SetIsLighting(uint32_t materialIndex, bool isLighting);
 
 	/// <summary>

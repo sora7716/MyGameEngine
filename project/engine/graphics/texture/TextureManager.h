@@ -92,6 +92,13 @@ public://メンバ関数
 	/// <param name="filePath">ファイルパス</param>
 	/// <returns>GPUハンドル</returns>
 	D3D12_GPU_DESCRIPTOR_HANDLE GetSRVHandleGPU(const std::string& filePath);
+
+private://メンバ関数
+	/// <summary>
+    /// エラーテクスチャを適応
+    /// </summary>
+	/// <param name="filePath">ファイル名</param>
+	void BindErrorTexture(std::string& filePath);
 public://PassKey
 	class ConstructorKey {
 		ConstructorKey() = default;

@@ -35,8 +35,7 @@ public://メンバ関数
 	/// <param name="particleCommon">パーティクルの共通部分</param>
 	/// <param name="renderCamera">描画用カメラ</param>
 	/// <param name="textureName">テクスチャ名</param>
-	/// <param name="model">モデル</param>
-	void Initialize(ParticleCommon* particleCommon, Camera* renderCamera, const std::string& textureName, Model* model = nullptr);
+	void Initialize(ParticleCommon* particleCommon, Camera* renderCamera, const std::string& textureName);
 
 	/// <summary>
 	/// 更新
@@ -94,16 +93,24 @@ public://メンバ関数
 	/// </summary>
 	/// <param name="frequency">発生感覚</param>
 	void SetFrequency(float frequency);
-private://メンバ関数
-	/// <summary>
-	/// マテリアルデータの初期化
-	/// </summary>
-	void InitializeMaterialData();
 
+	/// <summary>
+	/// モデルデータの設定
+	/// </summary>
+	/// <param name="modelData">モデルデータ</param>
+	void SetModelData(const ModelData& modelData);
+
+	/// <summary>
+	/// テクスチャの設定
+	/// </summary>
+	/// <param name="meshIndex">メッシュ検索キー</param>
+	/// <param name="textureFileName">画像のファイル名</param>
+	void SetTexture(uint32_t meshIndex,const std::string& imageFileName);
+private://メンバ関数
 	/// <summary>
 	/// マテリアルリソースの生成
 	/// </summary>
-	void CreateMaterialResource();
+	void CreateMaterialResources();
 
 	/// <summary>
 	/// ワールドトランスフォームのリソースの生成
@@ -114,11 +121,23 @@ private://メンバ関数
 	/// ストラクチャバッファの生成
 	/// </summary>
 	void CreateStructuredBuffer();
+
+	/// <summary>
+    /// モデルのテクスチャを適応
+    /// </summary>
+    /// <param name="materialIndex">マテリアルの検索キー</param>
+	void ApplyModelTexture(uint32_t materialIndex);
 private://メンバ変数
 	//DirectXの基盤部分	
 	DirectXBase* directXBase_ = nullptr;
 	//パーティクルの共通部分
 	ParticleCommon* particleCommon_ = nullptr;
+	//バッファリソース
+	ComPtr<ID3D12Resource>vertexResource_ = nullptr;//頂点
+	ComPtr<ID3D12Resource>indexResource_ = nullptr;//インデックス
+	//バッファリソースの使い道を補足するバッファビュー
+	D3D12_VERTEX_BUFFER_VIEW vertexBufferView_ = {};//頂点
+	D3D12_INDEX_BUFFER_VIEW indexBufferView_ = {};//インデックス	
 	//ワールドビュープロジェクションのリソース
 	ComPtr<ID3D12Resource>instancingResource_ = nullptr;
 	//ワールドビュープロジェクションのデータ
@@ -127,19 +146,14 @@ private://メンバ変数
 	ModelData modelData_ = {};
 	//メッシュ
 	std::vector<std::unique_ptr<Mesh>>meshes_;
+	//マテリアルのリソース
+	std::vector<ComPtr<ID3D12Resource>>materialResources_;
 	//マテリアルデータ
-	Material* materialData_ = nullptr;
-	//バッファリソース
-	ComPtr<ID3D12Resource>vertexResource_ = nullptr;//頂点
-	ComPtr<ID3D12Resource>materialResource_ = nullptr;//マテリアル
-	ComPtr<ID3D12Resource>indexResource_ = nullptr;//インデックス
-	//バッファリソースの使い道を補足するバッファビュー
-	D3D12_VERTEX_BUFFER_VIEW vertexBufferView_ = {};//頂点
-	D3D12_INDEX_BUFFER_VIEW indexBufferView_ = {};//インデックス	
+	std::vector<Material*> materialPtrs_;
 	//SRVインデックス
 	uint32_t srvIndex_ = 0;
 	//ブレンドモード
-	BlendMode blendMode_ = BlendMode::kAdd;
+	BlendMode blendMode_ = BlendMode::kNormal;
 	//パーティクルの発生源
 	std::unique_ptr<ParticleEmitter>emitter_ = nullptr;
 };

@@ -9,5 +9,5 @@ void Logger::ConsolePrintf(const std::string& message) {
 
 //コンソールプリント
 void Logger::ConsolePrintf(const std::wstring& message) {
-	OutputDebugStringA(StringUtility::ConvertString(message).c_str());
+	OutputDebugStringA(stringUtility::ConvertString(message).c_str());
 }

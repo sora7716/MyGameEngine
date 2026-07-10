@@ -44,7 +44,7 @@ uint32_t Mesh::GetMaterialIndex() {
 }
 
 //AABBの取得
-const PrimitiveData::AABB& Mesh::GetAABB() const {
+const primitiveData::AABB& Mesh::GetAABB() const {
 	// TODO: return ステートメントをここに挿入します
 	return aabb_;
 }

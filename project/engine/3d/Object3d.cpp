@@ -453,7 +453,7 @@ void Object3d::MakeWorldMatrix(uint32_t index) {
 	assert(gameObject);
 
 	//このオブジェクト本来のワールド行列を求める
-	worldMatrix_ = MatrixUtility::MakeAffineMatrix(gameObject->GetTransform());
+	worldMatrix_ = matrixUtility::MakeAffineMatrix(gameObject->GetTransform());
 
 	if (parent_) {
 		worldMatrix_ = worldMatrix_ * parent_->GetWorldMatrix();
@@ -469,7 +469,7 @@ void Object3d::MakeBillboardWorldMatrix(uint32_t index) {
 	assert(gameObject);
 
 	//このオブジェクト本来のワールド行列を求める
-	worldMatrix_ = MatrixUtility::MakeBillboardAffineMatrix(renderCamera_->GetWorldMatrix(), gameObject->GetTransform());
+	worldMatrix_ = matrixUtility::MakeBillboardAffineMatrix(renderCamera_->GetWorldMatrix(), gameObject->GetTransform());
 
 	if (parent_) {
 		worldMatrix_ = worldMatrix_ * parent_->GetWorldMatrix();

@@ -15,6 +15,8 @@
 #include "TextureManager.h"
 #include "SkyBox.h"
 #include "ParticleSystem.h"
+#include "Object3dCommon.h"
+#include "ModelManager.h"
 #include <numbers>
 
 //コンストラクタ
@@ -82,6 +84,7 @@ void TestPlayScene::Initialize(const SceneContext& sceneContext) {
 	particleSystem_->SetGameCamera(gameCamera_);
 	particleSystem_->SetParticleCount(2);
 	particleSystem_->SetFrequency(0.3f);
+	particleSystem_->SetModelData(sceneContext_.object3dCommon->GetModelManager()->FindModel("dekanu")->GetModelData());
 }
 
 //更新
@@ -105,7 +108,7 @@ void TestPlayScene::Update() {
 
 	particleSystem_->Update();
 
-	if (Collision::IsCollision(gameCamera_->GetFrustum(), cube_->GetAABB())) {
+	if (collision::IsCollision(gameCamera_->GetFrustum(), cube_->GetAABB())) {
 		cube_->SetColor(Vector4::MakeRedColor());
 	} else {
 		cube_->SetColor(Vector4::MakeWhiteColor());
@@ -172,7 +175,7 @@ void TestPlayScene::Debug() {
 	if (ImGui::TreeNode("particle")) {
 		ImGui::DragFloat3("emitter", &emitterPos_.x, 0.01f);
 		particleSystem_->SetEmitterPosition(emitterPos_);
-		PrimitiveData::OBB obb = cube_->GetOBB();
+		primitiveData::OBB obb = cube_->GetOBB();
 		obb.center = emitterPos_;
 		cube_->SetOBB(obb);
 		ImGui::TreePop();

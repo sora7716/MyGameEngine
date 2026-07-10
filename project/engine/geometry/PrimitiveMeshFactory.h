@@ -4,7 +4,10 @@
 /// <summary>
 /// プリミティブのメッシュを作成
 /// </summary>
-namespace PrimitiveMeshFactory {
+namespace primitiveMeshFactory {
+	struct Desc {
+
+	};
 	/// <summary>
 	/// 立方体メッシュの作成
 	/// </summary>

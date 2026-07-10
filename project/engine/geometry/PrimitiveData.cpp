@@ -2,7 +2,7 @@
 #include "Vector4.h"
 
 //初期化
-void PrimitiveData::OBB::Initialize() {
+void primitiveData::OBB::Initialize() {
 	center = { 0.0f,0.0f,0.0f };
 	quaternion = Quaternion::IdentityQuaternion();
 	orientations[0] = { 1.0f,0.0f,0.0f };
@@ -12,7 +12,7 @@ void PrimitiveData::OBB::Initialize() {
 }
 
 //行列との掛け算
-PrimitiveData::AABB PrimitiveData::AABB::operator*(const Matrix4x4& m)const {
+primitiveData::AABB primitiveData::AABB::operator*(const Matrix4x4& m)const {
 	Vector4 points[8] = {
 		{min.x,min.y,min.z,1.0f},
 		{max.x,min.y,min.z,1.0f},

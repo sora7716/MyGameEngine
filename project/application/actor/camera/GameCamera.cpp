@@ -31,12 +31,12 @@ void GameCamera::Update() {
 		}
 
 		// 回転更新（dtも掛けるのが理想）
-		eulerAngle_.y += ry * kRotateSpeed * MathUtility::kDeltaTime * -1.0f;
-		eulerAngle_.x += rx * kRotateSpeed * MathUtility::kDeltaTime * -1.0f;
+		eulerAngle_.y += ry * kRotateSpeed * mathUtility::kDeltaTime * -1.0f;
+		eulerAngle_.x += rx * kRotateSpeed * mathUtility::kDeltaTime * -1.0f;
 
 		//X軸制限（0〜90度）
-		float minX = -10.0f * MathUtility::kRad;
-		float maxX = 60.0f * MathUtility::kRad;
+		float minX = -10.0f * mathUtility::kRad;
+		float maxX = 60.0f * mathUtility::kRad;
 
 		eulerAngle_.x = std::clamp(eulerAngle_.x, minX, maxX);
 	}
@@ -45,10 +45,10 @@ void GameCamera::Update() {
 	camera_->SetQuaternion(Quaternion::MakeQuaternionForEulerAngle(eulerAngle_));
 
 	//カメラの角度から回転行列を求める
-	Matrix4x4 rotMat = MatrixUtility::MakeRotateMatrix(Quaternion::MakeQuaternionForEulerAngle(eulerAngle_));
+	Matrix4x4 rotMat = matrixUtility::MakeRotateMatrix(Quaternion::MakeQuaternionForEulerAngle(eulerAngle_));
 
 	//オフセットをカメラの回転に合わせて回転させる
-	offset_ = MathUtility::TransformNormal(offset_, rotMat);
+	offset_ = mathUtility::TransformNormal(offset_, rotMat);
 
 	//カメラの位置をオフセット分離す
 	camera_->SetTranslate(targetPos_ + offset_);

@@ -8,7 +8,6 @@
 //前方宣言
 class ParticleCommon;
 class Camera;
-class Model;
 
 //パーティクルの情報をGPUに送るための構造体
 struct ParticleForGPU {
@@ -38,7 +37,7 @@ struct Emitter {
 //フィールドの加速度
 struct AccelerationField {
 	Vector3 acceleration = {};//加速度
-	PrimitiveData::AABB area = {};//範囲
+	primitiveData::AABB area = {};//範囲
 };
 
 /// <summary>
@@ -61,8 +60,7 @@ public://メンバ関数
 	/// </summary>
 	/// <param name="particleCommon">パーティクルの共通部分</param>
 	/// <param name="renderCamera">描画用カメラ</param>
-	/// <param name="model">モデル</param>
-	void Initialize(ParticleCommon* particleCommon, Camera* renderCamera, Model* model);
+	void Initialize(ParticleCommon* particleCommon, Camera* renderCamera);
 
 	/// <summary>
 	/// 更新
@@ -74,12 +72,6 @@ public://メンバ関数
 	/// デバッグ
 	/// </summary>
 	void Debug();
-
-	/// <summary>
-	/// モデルの取得
-	/// </summary>
-	/// <returns></returns>
-	Model* GetModel()const;
 
 	/// <summary>
 	/// 生存しているパーティクルの数の取得
@@ -155,7 +147,7 @@ private://メンバ関数
 	/// <param name="aabb">AABB</param>
 	/// <param name="point">point</param>
 	/// <returns>衝突判定</returns>
-	bool IsCollision(const PrimitiveData::AABB& aabb, const Vector3& point);
+	bool IsCollision(const primitiveData::AABB& aabb, const Vector3& point);
 public://静的メンバ変数
 	//パーティクルの数
 	static const uint32_t kNumMaxInstance = 1024;
@@ -166,14 +158,10 @@ private://メンバ変数
 	Camera* gameCamera_ = nullptr;
 	//描画用のカメラ
 	Camera* renderCamera_ = nullptr;
-	//モデル
-	Model* model_ = nullptr;
 	//ランダムエンジン
 	std::mt19937 randomEngine_;
 	//パーティクルのデータ
 	std::list<Particle> particles_ = {};
-	//ワールドマトリックス
-	Matrix4x4 worldMatrix_ = {};
 	//生存しているパーティクルの数
 	uint32_t numInstance_ = 0;
 

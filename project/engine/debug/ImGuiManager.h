@@ -29,8 +29,7 @@ public://メンバ関数
 	/// <param name="winApi">ウィンドウズアプリケーション</param>
 	/// <param name="directXBase">DirectXの基盤部分</param>
 	/// <param name="srvManager">SRVマネージャー</param>
-	[[maybe_unused]]
-	void Initialize(WinApi* winApi, DirectXBase* directXBase, SRVManager* srvManager);
+	void Initialize([[maybe_unused]] WinApi* winApi, [[maybe_unused]] DirectXBase* directXBase, [[maybe_unused]] SRVManager* srvManager);
 
 	/// <summary>
 	/// ImGuiの受付開始
@@ -51,29 +50,25 @@ public://メンバ関数
 	/// トランスフォームデータ用のImGui
 	/// </summary>
 	/// <param name="transformData">トランスフォームデータ</param>
-	[[maybe_unused]]
-	static void DragTransform(Transform& transformData);
+	static void DragTransform([[maybe_unused]] Transform& transformData);
 
 	/// <summary>
 	/// OBBデータ用のImGui
 	/// </summary>
 	/// <param name="obb">obb</param>
-	[[maybe_unused]]
-	static void DragOBB(primitiveData::OBB& obb);
+	static void DragOBB([[maybe_unused]] primitiveData::OBB& obb);
 
 	/// <summary>
 	/// 円用のImGui
 	/// </summary>
 	/// <param name="circle">円</param>
-	[[maybe_unused]]
-	static void DragCircle(primitiveData::Circle& circle);
+	static void DragCircle([[maybe_unused]] primitiveData::Circle& circle);
 
 	/// <summary>
 	/// 球用のIｍGui
 	/// </summary>
 	/// <param name="sphere">球</param>
-	[[maybe_unused]]
-	static void DragSphere(primitiveData::Sphere& sphere);
+	static void DragSphere([[maybe_unused]] primitiveData::Sphere& sphere);
 
 	/// <summary>
 	/// int型でcheckBoxを表示する
@@ -81,48 +76,42 @@ public://メンバ関数
 	/// <param name="label">ラベル</param>
 	/// <param name="frag">フラグ</param>
 	/// <returns>チェックフラグの状態</returns>
-	[[maybe_unused]]
-	static bool CheckBoxToInt(const std::string& label, int32_t& frag);
+	static bool CheckBoxToInt([[maybe_unused]] const std::string& label, [[maybe_unused]] int32_t& frag);
 
 	/// <summary>
 	/// 4x4の行列の表示
 	/// </summary>
 	/// <param name="matrix">行列</param>
 	/// <param name="label">ラベル</param>
-	[[maybe_unused]]
-	static void Matrix4x4Text(const Matrix4x4& matrix, const char* label);
+	static void Matrix4x4Text([[maybe_unused]] const Matrix4x4& matrix, [[maybe_unused]] const char* label);
 
 	/// <summary>
 	/// 3次元ベクトルの表示
 	/// </summary>
 	/// <param name="vector">ベクトル</param>
 	/// <param name="label">ラベル</param>
-	[[maybe_unused]]
-	static void Vector3Text(const Vector3& vector, const char* label);
+	static void Vector3Text([[maybe_unused]] const Vector3& vector, [[maybe_unused]] const char* label);
 
 	/// <summary>
 	/// クオータニオンの表示
 	/// </summary>
 	/// <param name="quaternion">クオータニオン</param>
 	/// <param name="label">ラベル</param>
-	[[maybe_unused]]
-	static void QuaternionText(const Quaternion& quaternion, const char* label);
+	static void QuaternionText([[maybe_unused]] const Quaternion& quaternion, [[maybe_unused]] const char* label);
 
 	/// <summary>
 	/// 浮動小数の表示
 	/// </summary>
 	/// <param name="num">浮動小数</param>
 	/// <param name="label">ラベル</param>
-	[[maybe_unused]]
-	static void FloatText(float num, const char* label);
+	static void FloatText([[maybe_unused]] float num, [[maybe_unused]] const char* label);
 
 	/// <summary>
 	/// AABBの表示
 	/// </summary>
 	/// <param name="aabb">aabb</param>
 	/// <param name="label">ラベル</param>
-	[[maybe_unused]]
-	static void AABBText(const primitiveData::AABB& aabb, const char* label);
+	static void AABBText([[maybe_unused]] const primitiveData::AABB& aabb, [[maybe_unused]] const char* label);
 public://PassKey
 	class ConstructorKey {
 	private:

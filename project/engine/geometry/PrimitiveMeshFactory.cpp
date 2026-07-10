@@ -2,7 +2,10 @@
 #include "MathUtility.h"
 
 //キューブ
-MeshData primitiveMeshFactory::CreateCube() {
+MeshData primitiveMeshFactory::CreateCube(const Desc& desc) {
+	//半分のサイズ
+	Vector3 halfSize = desc.size / 2.0f;
+
 	//面のデータ
 	struct FaceData {
 		Vector3 normal;
@@ -33,8 +36,8 @@ MeshData primitiveMeshFactory::CreateCube() {
 	MeshData mesh = {};
 	const uint32_t kVertexCount = 24;
 	const uint32_t kIndexCount = 36;
-	mesh.vertices.resize(24);
-	mesh.indices.resize(36);
+	mesh.vertices.resize(kVertexCount);
+	mesh.indices.resize(kIndexCount);
 
 	//UV座標
 	Vector2 uv[kFaceRectCount] = {};
@@ -54,7 +57,7 @@ MeshData primitiveMeshFactory::CreateCube() {
 	face[kFront].position[kRightBottom] = { 1.0f, -1.0f, 1.0f, 1.0f };
 
 	//背面
-	face[kBack].normal = { 0.0f, 0.0f, 1.0f };
+	face[kBack].normal = { 0.0f, 0.0f, -1.0f };
 	face[kBack].position[kLeftUp] = { -1.0f, 1.0f, -1.0f, 1.0f };
 	face[kBack].position[kRightUp] = { 1.0f, 1.0f, -1.0f, 1.0f };
 	face[kBack].position[kLeftBottom] = { -1.0f, -1.0f, -1.0f, 1.0f };
@@ -97,6 +100,8 @@ MeshData primitiveMeshFactory::CreateCube() {
 				.texcoord = uv[faceRectIndex],
 				.normal = face[faceIndex].normal,
 			};
+			//サイズを適応
+			mesh.vertices[index].position.SetVector3(mesh.vertices[index].position.GetVector3() * halfSize);
 		}
 	}
 
@@ -151,24 +156,23 @@ MeshData primitiveMeshFactory::CreateCube() {
 }
 
 //球メッシュの作成
-MeshData primitiveMeshFactory::CreateSphere() {
+MeshData primitiveMeshFactory::CreateSphere(const Desc& desc) {
 	//メッシュ
 	MeshData meshData = {};
-	const uint32_t kSubdivision = 32;
-	meshData.vertices.resize(kSubdivision * kSubdivision * 6);
+	meshData.vertices.resize(desc.subdivision * desc.subdivision * 6);
 
 	//経度分割1つ分の角度φd
 	float pi = mathUtility::kPi;
-	const float kLonEvery = pi * 2.0f / static_cast<float>(kSubdivision);
+	const float kLonEvery = pi * 2.0f / static_cast<float>(desc.subdivision);
 	//緯度分割1つぶんの角度θd
-	const float kLatEvery = pi / static_cast<float>(kSubdivision);
+	const float kLatEvery = pi / static_cast<float>(desc.subdivision);
 	//緯度方向に分割
-	for (uint32_t latIndex = 0; latIndex < kSubdivision; latIndex++) {
+	for (uint32_t latIndex = 0; latIndex < desc.subdivision; latIndex++) {
 		//θ
 		float lat = -pi / 2.0f + kLatEvery * static_cast<float>(latIndex);
 		//緯度方向に分割しながら線を描く
-		for (uint32_t lonIndex = 0; lonIndex < kSubdivision; lonIndex++) {
-			uint32_t start = (latIndex * kSubdivision + lonIndex) * 6;
+		for (uint32_t lonIndex = 0; lonIndex < desc.subdivision; lonIndex++) {
+			uint32_t start = (latIndex * desc.subdivision + lonIndex) * 6;
 			//φ
 			float lon = lonIndex * kLonEvery;
 			//頂点データを入力する
@@ -177,8 +181,8 @@ MeshData primitiveMeshFactory::CreateSphere() {
 			meshData.vertices[start].position.y = std::sin(lat);
 			meshData.vertices[start].position.z = std::cos(lat) * std::sin(lon);
 			meshData.vertices[start].position.w = 1.0f;
-			meshData.vertices[start].texcoord.x = static_cast<float>(lonIndex) / static_cast<float>(kSubdivision);
-			meshData.vertices[start].texcoord.y = 1.0f - static_cast<float>(latIndex) / static_cast<float>(kSubdivision);
+			meshData.vertices[start].texcoord.x = static_cast<float>(lonIndex) / static_cast<float>(desc.subdivision);
+			meshData.vertices[start].texcoord.y = 1.0f - static_cast<float>(latIndex) / static_cast<float>(desc.subdivision);
 			meshData.vertices[start].normal.x = meshData.vertices[start].position.x;
 			meshData.vertices[start].normal.y = meshData.vertices[start].position.y;
 			meshData.vertices[start].normal.z = meshData.vertices[start].position.z;
@@ -188,8 +192,8 @@ MeshData primitiveMeshFactory::CreateSphere() {
 			meshData.vertices[start + 1].position.y = std::sin(lat + kLatEvery);
 			meshData.vertices[start + 1].position.z = std::cos(lat + kLatEvery) * std::sin(lon);
 			meshData.vertices[start + 1].position.w = 1.0f;
-			meshData.vertices[start + 1].texcoord.x = static_cast<float>(lonIndex) / static_cast<float>(kSubdivision);
-			meshData.vertices[start + 1].texcoord.y = 1.0f - static_cast<float>(latIndex + 1) / static_cast<float>(kSubdivision);
+			meshData.vertices[start + 1].texcoord.x = static_cast<float>(lonIndex) / static_cast<float>(desc.subdivision);
+			meshData.vertices[start + 1].texcoord.y = 1.0f - static_cast<float>(latIndex + 1) / static_cast<float>(desc.subdivision);
 			meshData.vertices[start + 1].normal.x = meshData.vertices[start + 1].position.x;
 			meshData.vertices[start + 1].normal.y = meshData.vertices[start + 1].position.y;
 			meshData.vertices[start + 1].normal.z = meshData.vertices[start + 1].position.z;
@@ -199,8 +203,8 @@ MeshData primitiveMeshFactory::CreateSphere() {
 			meshData.vertices[start + 2].position.y = std::sin(lat);
 			meshData.vertices[start + 2].position.z = std::cos(lat) * std::sin(lon + kLonEvery);
 			meshData.vertices[start + 2].position.w = 1.0f;
-			meshData.vertices[start + 2].texcoord.x = static_cast<float>(lonIndex + 1) / static_cast<float>(kSubdivision);
-			meshData.vertices[start + 2].texcoord.y = 1.0f - static_cast<float>(latIndex) / static_cast<float>(kSubdivision);
+			meshData.vertices[start + 2].texcoord.x = static_cast<float>(lonIndex + 1) / static_cast<float>(desc.subdivision);
+			meshData.vertices[start + 2].texcoord.y = 1.0f - static_cast<float>(latIndex) / static_cast<float>(desc.subdivision);
 			meshData.vertices[start + 2].normal.x = meshData.vertices[start + 2].position.x;
 			meshData.vertices[start + 2].normal.y = meshData.vertices[start + 2].position.y;
 			meshData.vertices[start + 2].normal.z = meshData.vertices[start + 2].position.z;
@@ -210,12 +214,17 @@ MeshData primitiveMeshFactory::CreateSphere() {
 			meshData.vertices[start + 3].position.y = std::sin(lat + kLatEvery);
 			meshData.vertices[start + 3].position.z = std::cos(lat + kLatEvery) * std::sin(lon + kLonEvery);
 			meshData.vertices[start + 3].position.w = 1.0f;
-			meshData.vertices[start + 3].texcoord.x = static_cast<float>(lonIndex + 1) / static_cast<float>(kSubdivision);
-			meshData.vertices[start + 3].texcoord.y = 1.0f - static_cast<float>(latIndex + 1) / static_cast<float>(kSubdivision);
+			meshData.vertices[start + 3].texcoord.x = static_cast<float>(lonIndex + 1) / static_cast<float>(desc.subdivision);
+			meshData.vertices[start + 3].texcoord.y = 1.0f - static_cast<float>(latIndex + 1) / static_cast<float>(desc.subdivision);
 			meshData.vertices[start + 3].normal.x = meshData.vertices[start + 3].position.x;
 			meshData.vertices[start + 3].normal.y = meshData.vertices[start + 3].position.y;
 			meshData.vertices[start + 3].normal.z = meshData.vertices[start + 3].position.z;
 		}
+	}
+
+	//半径を適応
+	for (VertexData& vertexData : meshData.vertices) {
+		vertexData.position.SetVector3(vertexData.position.GetVector3() * desc.radius);
 	}
 
 	//インデックス
@@ -234,9 +243,12 @@ MeshData primitiveMeshFactory::CreateSphere() {
 }
 
 //平面メッシュの作成
-MeshData primitiveMeshFactory::CreatePlane() {
+MeshData primitiveMeshFactory::CreatePlane(const Desc& desc) {
 	MeshData meshData = {};
-	//サイズ決定
+
+	Vector3 halfSize = desc.size / 2.0f;
+
+	//配列の要素数を決定
 	meshData.vertices.resize(4);
 	meshData.indices.resize(6);
 
@@ -265,6 +277,11 @@ MeshData primitiveMeshFactory::CreatePlane() {
 		.texcoord = {0.0f,1.0f},
 		.normal = {0.0f,0.0f,1.0f}
 	};
+
+	//サイズを適応
+	for (VertexData& vertexData : meshData.vertices) {
+		vertexData.position.SetVector3(vertexData.position.GetVector3() * halfSize);
+	}
 
 	//インデックス
 	meshData.indices[0] = 0;

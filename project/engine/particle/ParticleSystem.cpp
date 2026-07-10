@@ -32,13 +32,13 @@ void ParticleSystem::Initialize(ParticleCommon* particleCommon, Camera* renderCa
 	emitter_->Initialize(particleCommon_, renderCamera);
 
 	//メッシュデータを作成
-	modelData_.mesheDatas.reserve(1);
-	modelData_.mesheDatas.push_back(primitiveMeshFactory::CreatePlane());
+	modelData_.meshDatas.reserve(1);
+	modelData_.meshDatas.push_back(primitiveMeshFactory::CreatePlane());
 	modelData_.materialTexturePaths.resize(1);
 
 	//メッシュの生成
-	meshes_.reserve(modelData_.mesheDatas.size());
-	for (MeshData& meshData : modelData_.mesheDatas) {
+	meshes_.reserve(modelData_.meshDatas.size());
+	for (MeshData& meshData : modelData_.meshDatas) {
 		std::unique_ptr<Mesh>mesh = std::make_unique<Mesh>();
 		mesh->Initialize(directXBase_, meshData);
 		meshes_.push_back(std::move(mesh));
@@ -144,9 +144,9 @@ void ParticleSystem::SetModelData(const ModelData& modelData) {
 	//メッシュデータをクリア
 	meshes_.clear();
 	//メモリのサイズを確保(要素数は増えない)
-	meshes_.reserve(modelData_.mesheDatas.size());
+	meshes_.reserve(modelData_.meshDatas.size());
 	//メッシュを生成
-	for (MeshData& meshData : modelData_.mesheDatas) {
+	for (MeshData& meshData : modelData_.meshDatas) {
 		std::unique_ptr<Mesh>mesh = std::make_unique<Mesh>();
 		mesh->Initialize(directXBase_, meshData);
 		meshes_.push_back(std::move(mesh));

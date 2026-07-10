@@ -15,8 +15,8 @@
 #include <algorithm>
 #include <cassert>
 //初期化
-void Object3dInstance::Initialize(GameObject* gameObject) {
-	this->gameObject = gameObject;
+void Object3dInstance::Initialize(GameObject* targetGameObject) {
+	this->gameObject = targetGameObject;
 	isEnabled = true;
 	currentLOD = 0;
 }
@@ -47,6 +47,8 @@ void Object3d::Initialize(Object3dCommon* object3dCommon, Camera* renderCamera, 
 	transform3dMode_ = transform3dMode;
 	//ゲームオブジェクトの数を決定
 	maxInstanceCount_ = maxInstanceCount;
+	//ワールド行列のサイズを確保(要素数は増やさない)
+	worldMatrixes_.reserve(maxInstanceCount_);
 
 	//LOD関係のセットアップ
 	SetupLOD();
@@ -83,8 +85,8 @@ void Object3d::Update() {
 		node_ = baseModel_->GetModelData().rootNode;
 	}
 
-	for (int32_t i = 0; i < instanceData_.size(); i++) {
-		GameObject* gameObject = instanceData_[i].gameObject;
+	for (int32_t instanceIndex = 0; instanceIndex < instanceData_.size(); instanceIndex++) {
+		GameObject* gameObject = instanceData_[instanceIndex].gameObject;
 		//ゲームオブジェクトが存在してない場合
 		if (!gameObject) {
 			continue;
@@ -96,7 +98,7 @@ void Object3d::Update() {
 		}
 
 		//ワールド行列の作成
-		(this->*UpdateWorldMatrixTable[static_cast<uint32_t>(transform3dMode_)])(i);;
+		(this->*UpdateWorldMatrixTable[static_cast<uint32_t>(transform3dMode_)])(instanceIndex);;
 
 		//モデルが存在してなかったら
 		if (!baseModel_) {
@@ -105,22 +107,22 @@ void Object3d::Update() {
 
 		//表示状態の更新
 		for (const std::unique_ptr<Mesh>& mesh : baseModel_->GetMeshes()) {
-			instanceData_[i].isEnabled = culling_->IsVisibleInFrustum(mesh->GetAABB(), worldMatrix_);
+			instanceData_[instanceIndex].isEnabled = culling_->IsVisibleInFrustum(mesh->GetAABB(), worldMatrixes_[instanceIndex]);
 		}
 
 		//表示しなかったら
-		if (!instanceData_[i].isEnabled) {
+		if (!instanceData_[instanceIndex].isEnabled) {
 			continue;
 		}
 
 		//LODの計算
 		Vector3 cameraWorldPos = gameCamera_->GetWorldPos();
-		Vector3 objectWorldPos = GetWorldPos(i);
+		Vector3 objectWorldPos = GetWorldPos(instanceIndex);
 
 		float distance = (objectWorldPos - cameraWorldPos).Length();
 
-		uint32_t lodIndex = lodController_->SelectLOD(distance, instanceData_[i].currentLOD);
-		instanceData_[i].currentLOD = lodIndex;
+		uint32_t lodIndex = lodController_->SelectLOD(distance, instanceData_[instanceIndex].currentLOD);
+		instanceData_[instanceIndex].currentLOD = lodIndex;
 		//lodIndex番目がlodModelsに無かったら
 		if (!lodBuilder_->GetLODModel(lodIndex)) {
 			continue;
@@ -134,15 +136,15 @@ void Object3d::Update() {
 		}
 
 		//座標の更新
-		UpdateWorldTransform(lodIndex, drawIndex, worldMatrix_);
+		UpdateWorldTransform(lodIndex, drawIndex, worldMatrixes_[instanceIndex]);
 
 		//描画カウントを加算
 		lodDrawCounts_[lodIndex]++;
 
 		//モデルが存在したらメッシュごとにUV座標を適応
 		if (lodBuilder_->GetLODModel(lodIndex)) {
-			for (uint32_t i = 0; i < lodBuilder_->GetLODModel(lodIndex)->GetMeshes().size(); i++) {
-				uint32_t materialIndex = lodBuilder_->GetLODModel(lodIndex)->GetMeshes()[i]->GetMaterialIndex();
+			for (uint32_t j = 0; j < lodBuilder_->GetLODModel(lodIndex)->GetMeshes().size(); j++) {
+				uint32_t materialIndex = lodBuilder_->GetLODModel(lodIndex)->GetMeshes()[j]->GetMaterialIndex();
 
 				//マテリアルの検索キーがUV座標の配列の要素数を超えたら
 				if (materialIndex >= lodUvTransforms_[lodIndex].size()) {
@@ -272,6 +274,7 @@ void Object3d::SetColor(uint32_t materialIndex, const Vector4& color) {
 
 //親の設定
 void Object3d::SetParent(const WorldTransform* parent) {
+	(void)parent;
 	//worldTransform_->SetParent(parent);
 }
 
@@ -369,20 +372,18 @@ const Vector4& Object3d::GetColor(uint32_t index) const {
 }
 
 //ワールドマトリックスの取得
-Matrix4x4& Object3d::GetWorldMatrix(uint32_t index) {
-	return worldMatrix_;
+Matrix4x4& Object3d::GetWorldMatrix(uint32_t instanceIndex) {
+	return worldMatrixes_[instanceIndex];
 }
 
 //ワールド座標の取得
-Vector3 Object3d::GetWorldPos(uint32_t index) {
-	return { worldMatrix_.m[3][0],worldMatrix_.m[3][1],worldMatrix_.m[3][2] };
-	return Vector3{};
-
+Vector3 Object3d::GetWorldPos(uint32_t instanceIndex) {
+	return { worldMatrixes_[instanceIndex].m[3][0],worldMatrixes_[instanceIndex].m[3][1],worldMatrixes_[instanceIndex].m[3][2]};
 }
 
 //メッシュのサイズの取得
 uint32_t Object3d::GetMeshSize() {
-	return static_cast<uint32_t>(baseModel_->GetModelData().mesheDatas.size());
+	return static_cast<uint32_t>(baseModel_->GetModelData().meshDatas.size());
 }
 
 //LOD関係のセットアップ
@@ -447,35 +448,43 @@ void Object3d::CreateStructuredBufferForWvp() {
 }
 
 //ワールド行列を作成
-void Object3d::MakeWorldMatrix(uint32_t index) {
-	GameObject* gameObject = instanceData_[index].gameObject;
+void Object3d::MakeWorldMatrix(uint32_t instanceIndex) {
+	GameObject* gameObject = instanceData_[instanceIndex].gameObject;
 	//ゲームオブジェクトがNullじゃないか
 	assert(gameObject);
+	Matrix4x4 worldMatrix = Matrix4x4::Identity4x4();
 
 	//このオブジェクト本来のワールド行列を求める
-	worldMatrix_ = matrixUtility::MakeAffineMatrix(gameObject->GetTransform());
+	worldMatrix = matrixUtility::MakeAffineMatrix(gameObject->GetTransform());
 
 	if (parent_) {
-		worldMatrix_ = worldMatrix_ * parent_->GetWorldMatrix();
+		worldMatrix = worldMatrix * parent_->GetWorldMatrix();
 	}
 
-	worldMatrix_ = node_.localMatrix * worldMatrix_;
+	worldMatrix = node_.localMatrix * worldMatrix;
+
+	//ワールド行列の配列に追加
+	worldMatrixes_.push_back(worldMatrix);
 }
 
 //ビルボード行列の作成
-void Object3d::MakeBillboardWorldMatrix(uint32_t index) {
-	GameObject* gameObject = instanceData_[index].gameObject;
+void Object3d::MakeBillboardWorldMatrix(uint32_t instanceIndex) {
+	GameObject* gameObject = instanceData_[instanceIndex].gameObject;
 	//ゲームオブジェクトがNullじゃないか
 	assert(gameObject);
+	Matrix4x4 worldMatrix = Matrix4x4::Identity4x4();
 
 	//このオブジェクト本来のワールド行列を求める
-	worldMatrix_ = matrixUtility::MakeBillboardAffineMatrix(renderCamera_->GetWorldMatrix(), gameObject->GetTransform());
+	worldMatrix = matrixUtility::MakeBillboardAffineMatrix(renderCamera_->GetWorldMatrix(), gameObject->GetTransform());
 
 	if (parent_) {
-		worldMatrix_ = worldMatrix_ * parent_->GetWorldMatrix();
+		worldMatrix = worldMatrix * parent_->GetWorldMatrix();
 	}
 
-	worldMatrix_ = node_.localMatrix * worldMatrix_;
+	worldMatrix = node_.localMatrix * worldMatrix;
+
+	//ワールド行列の配列に追加
+	worldMatrixes_.push_back(worldMatrix);
 }
 
 //座標の更新

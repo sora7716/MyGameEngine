@@ -29,6 +29,7 @@ public://メンバ関数
 	/// <param name="winApi">ウィンドウズアプリケーション</param>
 	/// <param name="directXBase">DirectXの基盤部分</param>
 	/// <param name="srvManager">SRVマネージャー</param>
+	[[maybe_unused]]
 	void Initialize(WinApi* winApi, DirectXBase* directXBase, SRVManager* srvManager);
 
 	/// <summary>
@@ -50,24 +51,28 @@ public://メンバ関数
 	/// トランスフォームデータ用のImGui
 	/// </summary>
 	/// <param name="transformData">トランスフォームデータ</param>
+	[[maybe_unused]]
 	static void DragTransform(Transform& transformData);
 
 	/// <summary>
 	/// OBBデータ用のImGui
 	/// </summary>
 	/// <param name="obb">obb</param>
+	[[maybe_unused]]
 	static void DragOBB(primitiveData::OBB& obb);
 
 	/// <summary>
 	/// 円用のImGui
 	/// </summary>
 	/// <param name="circle">円</param>
+	[[maybe_unused]]
 	static void DragCircle(primitiveData::Circle& circle);
 
 	/// <summary>
 	/// 球用のIｍGui
 	/// </summary>
 	/// <param name="sphere">球</param>
+	[[maybe_unused]]
 	static void DragSphere(primitiveData::Sphere& sphere);
 
 	/// <summary>
@@ -76,6 +81,7 @@ public://メンバ関数
 	/// <param name="label">ラベル</param>
 	/// <param name="frag">フラグ</param>
 	/// <returns>チェックフラグの状態</returns>
+	[[maybe_unused]]
 	static bool CheckBoxToInt(const std::string& label, int32_t& frag);
 
 	/// <summary>
@@ -83,6 +89,7 @@ public://メンバ関数
 	/// </summary>
 	/// <param name="matrix">行列</param>
 	/// <param name="label">ラベル</param>
+	[[maybe_unused]]
 	static void Matrix4x4Text(const Matrix4x4& matrix, const char* label);
 
 	/// <summary>
@@ -90,6 +97,7 @@ public://メンバ関数
 	/// </summary>
 	/// <param name="vector">ベクトル</param>
 	/// <param name="label">ラベル</param>
+	[[maybe_unused]]
 	static void Vector3Text(const Vector3& vector, const char* label);
 
 	/// <summary>
@@ -97,6 +105,7 @@ public://メンバ関数
 	/// </summary>
 	/// <param name="quaternion">クオータニオン</param>
 	/// <param name="label">ラベル</param>
+	[[maybe_unused]]
 	static void QuaternionText(const Quaternion& quaternion, const char* label);
 
 	/// <summary>
@@ -104,6 +113,7 @@ public://メンバ関数
 	/// </summary>
 	/// <param name="num">浮動小数</param>
 	/// <param name="label">ラベル</param>
+	[[maybe_unused]]
 	static void FloatText(float num, const char* label);
 
 	/// <summary>
@@ -111,6 +121,7 @@ public://メンバ関数
 	/// </summary>
 	/// <param name="aabb">aabb</param>
 	/// <param name="label">ラベル</param>
+	[[maybe_unused]]
 	static void AABBText(const primitiveData::AABB& aabb, const char* label);
 public://PassKey
 	class ConstructorKey {

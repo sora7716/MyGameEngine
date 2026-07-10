@@ -1,5 +1,5 @@
 #pragma once
-#include "engine/base/Core.h"
+#include "Core.h"
 
 /// <summary>
 /// ゲーム全体

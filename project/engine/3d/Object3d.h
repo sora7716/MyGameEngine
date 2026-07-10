@@ -30,8 +30,8 @@ struct Object3dInstance {
 	/// <summary>
 	/// 初期化
 	/// </summary>
-	/// <param name="gameObject">ゲームオブジェクト</param>
-	void Initialize(GameObject* gameObject);
+	/// <param name="targetGameObject">初期化対象のゲームオブジェクト</param>
+	void Initialize(GameObject* targetGameObject);
 };
 
 /// <summary>
@@ -222,16 +222,16 @@ public://メンバ関数
 	/// <summary>
 	/// ワールドマトリックスの取得
 	/// </summary>
-	/// <param name="index">インデックス</param>
+	/// <param name="instanceIndex">インスタンスの検索キー</param>
 	/// <returns>ワールドマトリックス</returns>
-	Matrix4x4& GetWorldMatrix(uint32_t index);
+	Matrix4x4& GetWorldMatrix(uint32_t instanceIndex);
 
 	/// <summary>
 	/// ワールド座標の取得
 	/// </summary>
-	/// <param name="index">インデックス</param>
+	/// <param name="instanceIndex">インスタンスの検索キー</param>
 	/// <returns>ワールド座標</returns>
-	Vector3 GetWorldPos(uint32_t index);
+	Vector3 GetWorldPos(uint32_t instanceIndex);
 
 	/// <summary>
 	/// メッシュのサイズの取得
@@ -257,16 +257,16 @@ private://メンバ関数
 	/// <summary>
 	/// ワールド行列を作成
 	/// </summary>
-	/// <param name="index">インデックス</param>
+	/// <param name="instanceIndex">インスタンスの検索キー</param>
 	/// <returns>ワールド行列</returns>
-	void MakeWorldMatrix(uint32_t index);
+	void MakeWorldMatrix(uint32_t instanceIndex);
 
 	/// <summary>
 	/// ビルボード行列の作成
 	/// </summary>
-	/// <param name="index">インデックス</param>
+	/// <param name="instanceIndex">インスタンスの検索キー</param>
 	/// <returns>ビルボード行列</returns>
-	void MakeBillboardWorldMatrix(uint32_t index);
+	void MakeBillboardWorldMatrix(uint32_t instanceIndex);
 
 	/// <summary>
 	/// 座標の更新
@@ -317,7 +317,7 @@ private://メンバ変数
 	//オブジェクトの見た目
 	Transform3dMode transform3dMode_ = Transform3dMode::kNormal;
 	//ワールド行列
-	Matrix4x4 worldMatrix_ = Matrix4x4::Identity4x4();
+	std::vector<Matrix4x4> worldMatrixes_;
 	//親
 	const WorldTransform* parent_ = nullptr;
 	//ノード

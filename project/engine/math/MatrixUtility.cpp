@@ -300,13 +300,13 @@ Transform matrixUtility::DecomposeMatrix(const Matrix4x4& mat) {
 
 	//回転
 	// 回転行列の正規化（スケール除去）
-	float rm00 = mat.m[0][0] / result.scale.x;
+	//float rm00 = mat.m[0][0] / result.scale.x;
 	float rm01 = mat.m[0][1] / result.scale.x;
-	float rm02 = mat.m[0][2] / result.scale.x;
+	//float rm02 = mat.m[0][2] / result.scale.x;
 
-	float rm10 = mat.m[1][0] / result.scale.y;
+	//float rm10 = mat.m[1][0] / result.scale.y;
 	float rm11 = mat.m[1][1] / result.scale.y;
-	float rm12 = mat.m[1][2] / result.scale.y;
+	//float rm12 = mat.m[1][2] / result.scale.y;
 
 	float rm20 = mat.m[2][0] / result.scale.z;
 	float rm21 = mat.m[2][1] / result.scale.z;

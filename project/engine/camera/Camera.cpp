@@ -12,7 +12,7 @@ Camera::~Camera() {
 }
 
 //初期化
-void Camera::Initialize(DirectXBase* directXBase) {
+void Camera::Initialize() {
 	transform_.Initialize();
 	transform_.translate.z = -10.0f;
 	fovY_ = 0.45f;

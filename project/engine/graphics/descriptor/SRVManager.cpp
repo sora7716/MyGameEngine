@@ -41,7 +41,7 @@ void SRVManager::Free(uint32_t index) {
 }
 
 // SRV生成(テクスチャ用)
-void SRVManager::CreateSRVForTexture2D(DirectX::TexMetadata metadata, uint32_t srvIndex, ID3D12Resource* resource, DXGI_FORMAT format, UINT mipLevels) {
+void SRVManager::CreateSRVForTexture2D(DirectX::TexMetadata metadata, uint32_t srvIndex, ID3D12Resource* resource, UINT mipLevels) {
 	//SRVの設定
 	D3D12_SHADER_RESOURCE_VIEW_DESC srvDesc{};
 	srvDesc.Format = metadata.format;

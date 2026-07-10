@@ -23,8 +23,7 @@ public://メンバ関数
 	/// <summary>
 	/// 初期化
 	/// </summary>
-	/// <param name="directXBase">DirectXの基盤部分</param>
-	void Initialize(DirectXBase*directXBase);
+	void Initialize();
 
 	/// <summary>
 	/// 更新

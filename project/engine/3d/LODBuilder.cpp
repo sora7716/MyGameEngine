@@ -35,8 +35,8 @@ void LODBuilder::CreateLODModel(Model* model, const std::vector<float>& keepRate
 	//モデルの作成
 	for (uint32_t i = 0; i < keepRates.size(); i++) {
 		lodModels_[i] = Model::CreateModel(model->GetModelCommon(), model->GetModelData());
-		//lodModels_[i]->RebuildMeshes(VertexClustering(lodModels_[i]->GetModelData().mesheDatas, keepRates[i]));
-		lodModels_[i]->RebuildMeshes(EdgeCollapse(lodModels_[i]->GetModelData().mesheDatas, keepRates[i]));
+		//lodModels_[i]->RebuildMeshes(VertexClustering(lodModels_[i]->GetModelData().meshDatas, keepRates[i]));
+		lodModels_[i]->RebuildMeshes(EdgeCollapse(lodModels_[i]->GetModelData().meshDatas, keepRates[i]));
 	}
 }
 
@@ -710,14 +710,14 @@ std::vector<MeshData> LODBuilder::VertexClustering(const std::vector<MeshData>& 
 	}
 
 	//割合をもとに取得したい頂点数を出す
-	for (const MeshData& meshData : baseMeshes) {
-		uint32_t goalVertexCount = static_cast<uint32_t>(static_cast<float>(meshData.vertices.size()) * rate);
+	for (const MeshData& mesh : baseMeshes) {
+		uint32_t goalVertexCount = static_cast<uint32_t>(static_cast<float>(mesh.vertices.size()) * rate);
 		//グリッドサイズ
 		float minGridSize = minGridSize_;//最小値
 		float maxGridSize = maxGridSize_;//最大値
 
 		//目標の頂点数に一番違いメッシュ
-		MeshData bestMesh = meshData;
+		MeshData bestMesh = mesh;
 		uint32_t bestMeshVertexCount = static_cast<uint32_t>(bestMesh.vertices.size());
 		float gridSize = 0;
 		//試行回数
@@ -728,7 +728,7 @@ std::vector<MeshData> LODBuilder::VertexClustering(const std::vector<MeshData>& 
 			gridSize = (minGridSize + maxGridSize) / 2.0f;
 
 			//元メッシュをgridSizeでクラスタリング
-			MeshData trialMesh = VertexClusteringByGridSize(meshData, gridSize);
+			MeshData trialMesh = VertexClusteringByGridSize(mesh, gridSize);
 			//クラスタリングしたメッシュの頂点数を取得
 			uint32_t trialMeshVertexCount = static_cast<uint32_t>(trialMesh.vertices.size());
 

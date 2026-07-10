@@ -152,7 +152,7 @@ ModelData Model::LoadModelFile(const std::string& directoryPath, const std::stri
 		}
 
 		//モデルデータにメッシュデータを移動
-		modelData.mesheDatas.push_back(std::move(meshData));
+		modelData.meshDatas.push_back(std::move(meshData));
 	}
 
 	//RootNodeの解析
@@ -230,12 +230,12 @@ void Model::RebuildMeshes(const std::vector<MeshData>& meshes) {
 		meshes_.clear();
 	}
 	//受け取ったメッシュデータに書き換え
-	modelData_.mesheDatas = meshes;
+	modelData_.meshDatas = meshes;
 	//マテリアルが存在するか
 	if (!modelData_.materialTexturePaths.empty()) {
-		for (uint32_t i = 0; i < modelData_.mesheDatas.size(); i++) {
-			if (modelData_.mesheDatas[i].materialIndex >= modelData_.materialTexturePaths.size()) {
-				modelData_.mesheDatas[i].materialIndex = 0;
+		for (uint32_t i = 0; i < modelData_.meshDatas.size(); i++) {
+			if (modelData_.meshDatas[i].materialIndex >= modelData_.materialTexturePaths.size()) {
+				modelData_.meshDatas[i].materialIndex = 0;
 			}
 		}
 	} else {
@@ -356,8 +356,8 @@ void Model::CreateRimLightResource() {
 //メッシュの構築
 void Model::BuildMesh() {
 	//メッシュの生成と初期化
-	meshes_.reserve(modelData_.mesheDatas.size());
-	for (const MeshData& meshData : modelData_.mesheDatas) {
+	meshes_.reserve(modelData_.meshDatas.size());
+	for (const MeshData& meshData : modelData_.meshDatas) {
 		std::unique_ptr<Mesh>mesh = std::make_unique<Mesh>();
 		mesh->Initialize(directXBase_, meshData);
 		meshes_.push_back(std::move(mesh));
@@ -367,15 +367,15 @@ void Model::BuildMesh() {
 //プリミティブモデルの初期化
 void Model::CreateModel(const std::vector<MeshData>& meshDatas, const std::string& nodeName) {
 	//モデルの読み込み
-	modelData_.mesheDatas = { primitiveMeshFactory::CreatePlane() };
+	modelData_.meshDatas = { meshDatas };
 	//メッシュの再構築
-	RebuildMeshes(modelData_.mesheDatas);
+	RebuildMeshes(modelData_.meshDatas);
 	//各種リソースの生成
 	CreateResources();
 	//テクスチャの適応
-	SetTexture(modelData_.mesheDatas[0].materialIndex, "white1x1.png");
+	SetTexture(modelData_.meshDatas[0].materialIndex, "white1x1.png");
 	//環境マッピング
-	SetEnvironmentMap(modelData_.mesheDatas[0].materialIndex, "rostock_laage_airport_4k.dds");
+	SetEnvironmentMap(modelData_.meshDatas[0].materialIndex, "rostock_laage_airport_4k.dds");
 	//ノードの初期化
 	Node& node = modelData_.rootNode;
 	node.name = nodeName;
@@ -387,7 +387,7 @@ void Model::CreateModel(const std::string& objectFileName) {
 	//モデルの読み込み
 	modelData_ = LoadModelFile("engine/resources/models", objectFileName);
 	//メッシュの再構築
-	RebuildMeshes(modelData_.mesheDatas);
+	RebuildMeshes(modelData_.meshDatas);
 	//各種リソースの生成
 	CreateResources();
 }
@@ -396,7 +396,7 @@ void Model::CreateModel(const std::string& objectFileName) {
 void Model::CreateModel(const ModelData& modelData) {
 	modelData_ = modelData;
 	//メッシュの再構成
-	RebuildMeshes(modelData_.mesheDatas);
+	RebuildMeshes(modelData_.meshDatas);
 	//各種リソースの生成
 	CreateResources();
 }

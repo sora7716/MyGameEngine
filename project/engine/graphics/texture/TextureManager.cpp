@@ -93,7 +93,7 @@ void TextureManager::LoadTexture(std::string& filePath) {
 	textureData.srvHandleCPU = srvManager_->GetCPUDescriptorHandle(textureData.srvIndex);
 	textureData.srvHandleGPU = srvManager_->GetGPUDescriptorHandle(textureData.srvIndex);
 	//SRVの設定
-	srvManager_->CreateSRVForTexture2D(textureData.metadata, textureData.srvIndex, textureData.resource.Get(), textureData.metadata.format, UINT(textureData.metadata.mipLevels));
+	srvManager_->CreateSRVForTexture2D(textureData.metadata, textureData.srvIndex, textureData.resource.Get(), UINT(textureData.metadata.mipLevels));
 }
 
 //テクスチャファイルのアンロード
@@ -109,6 +109,7 @@ void TextureManager::UnloadTexture(const std::string& filePath) {
 
 //文字テクスチャなどをCPUメモリから作成
 void TextureManager::CreateTextureFromMemoryBGRA(const std::string& key, const void* pixelsBGRA, uint32_t width, uint32_t height, uint32_t strideBytes) {
+	HRESULT hr = S_FALSE;
 	if (textureDatas_.contains(key)) {
 		return;//テクスチャデータに存在したら早期リターン
 	}
@@ -118,7 +119,7 @@ void TextureManager::CreateTextureFromMemoryBGRA(const std::string& key, const v
 
 	//ScratchImageを作ってピクセルを詰める
 	DirectX::ScratchImage img{};
-	HRESULT hr = img.Initialize2D(DXGI_FORMAT_B8G8R8A8_UNORM, width, height, 1, 1);
+	hr = img.Initialize2D(DXGI_FORMAT_B8G8R8A8_UNORM, width, height, 1, 1);
 	assert(SUCCEEDED(hr));
 
 	const DirectX::Image* im = img.GetImage(0, 0, 0);
@@ -140,11 +141,12 @@ void TextureManager::CreateTextureFromMemoryBGRA(const std::string& key, const v
 	textureData.srvHandleCPU = srvManager_->GetCPUDescriptorHandle(textureData.srvIndex);
 	textureData.srvHandleGPU = srvManager_->GetGPUDescriptorHandle(textureData.srvIndex);
 
-	srvManager_->CreateSRVForTexture2D(textureData.metadata, textureData.srvIndex, textureData.resource.Get(), textureData.metadata.format, UINT(textureData.metadata.mipLevels));
+	srvManager_->CreateSRVForTexture2D(textureData.metadata, textureData.srvIndex, textureData.resource.Get(), UINT(textureData.metadata.mipLevels));
 }
 
 //文字テクスチャなどをCPUメモリからの更新
 void TextureManager::UpdateTextureFromMemoryBGRA(const std::string& key, const void* pixelsBGRA, uint32_t width, uint32_t height, uint32_t strideBytes) {
+	HRESULT hr = S_FALSE;
 
 	//まだ無ければ新規作成
 	if (!textureDatas_.contains(key)) {
@@ -164,7 +166,7 @@ void TextureManager::UpdateTextureFromMemoryBGRA(const std::string& key, const v
 
 	//同じサイズ(resourceは再利用してuploadだけやり直す)
 	DirectX::ScratchImage img{};
-	HRESULT hr = img.Initialize2D(DXGI_FORMAT_B8G8R8A8_UNORM, width, height, 1, 1);
+	hr = img.Initialize2D(DXGI_FORMAT_B8G8R8A8_UNORM, width, height, 1, 1);
 	assert(SUCCEEDED(hr));
 
 	const DirectX::Image* im = img.GetImage(0, 0, 0);

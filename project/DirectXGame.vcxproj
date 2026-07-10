@@ -38,7 +38,10 @@
     <ClCompile Include="engine\debug\CrashHandler.cpp" />
     <ClCompile Include="engine\debug\DebugCamera.cpp" />
     <ClCompile Include="engine\debug\GlobalVariables.cpp" />
-    <ClCompile Include="engine\debug\ImGuiManager.cpp" />
+    <ClCompile Include="engine\debug\ImGuiManager.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+      </ExcludedFromBuild>
+    </ClCompile>
     <ClCompile Include="engine\debug\Logger.cpp" />
     <ClCompile Include="engine\debug\wireframes\BaseShape.cpp" />
     <ClCompile Include="engine\debug\wireframes\Circle.cpp" />
@@ -111,7 +114,10 @@
     <ClInclude Include="engine\debug\CrashHandler.h" />
     <ClInclude Include="engine\debug\DebugCamera.h" />
     <ClInclude Include="engine\debug\GlobalVariables.h" />
-    <ClInclude Include="engine\debug\ImGuiManager.h" />
+    <ClInclude Include="engine\debug\ImGuiManager.h">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+      </ExcludedFromBuild>
+    </ClInclude>
     <ClInclude Include="engine\debug\Logger.h" />
     <ClInclude Include="engine\debug\wireframes\BaseShape.h" />
     <ClInclude Include="engine\debug\wireframes\Circle.h" />
@@ -285,7 +291,7 @@
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <ClCompile>
-      <WarningLevel>Level3</WarningLevel>
+      <WarningLevel>Level4</WarningLevel>
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>_DEBUG;_WINDOWS;USE_IMGUI;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
@@ -318,7 +324,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <ClCompile>
-      <WarningLevel>Level3</WarningLevel>
+      <WarningLevel>Level4</WarningLevel>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>

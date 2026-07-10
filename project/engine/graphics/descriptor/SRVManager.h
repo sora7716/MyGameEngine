@@ -46,9 +46,8 @@ public://メンバ関数
 	/// <param name="metadata">画面の幅などの調整</param>
 	/// <param name="srvIndex">srvインデックス</param>
 	/// <param name="resource">リソース</param>
-	/// <param name="format">フォーマット</param>
 	/// <param name="mipLevels">ミップレベル</param>
-	void CreateSRVForTexture2D(DirectX::TexMetadata metadata,uint32_t srvIndex, ID3D12Resource* resource, DXGI_FORMAT format, UINT mipLevels);
+	void CreateSRVForTexture2D(DirectX::TexMetadata metadata, uint32_t srvIndex, ID3D12Resource* resource, UINT mipLevels);
 
 	/// <summary>
 	/// SRV生成(Structured Buffer用)

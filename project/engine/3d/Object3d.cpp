@@ -85,7 +85,7 @@ void Object3d::Update() {
 		node_ = baseModel_->GetModelData().rootNode;
 	}
 
-	for (int32_t instanceIndex = 0; instanceIndex < instanceData_.size(); instanceIndex++) {
+	for (uint32_t instanceIndex = 0; instanceIndex < instanceData_.size(); instanceIndex++) {
 		GameObject* gameObject = instanceData_[instanceIndex].gameObject;
 		//ゲームオブジェクトが存在してない場合
 		if (!gameObject) {
@@ -122,13 +122,14 @@ void Object3d::Update() {
 		float distance = (objectWorldPos - cameraWorldPos).Length();
 
 		uint32_t lodIndex = lodController_->SelectLOD(distance, instanceData_[instanceIndex].currentLOD);
+		lodIndices_[instanceIndex] = lodIndex;
 		instanceData_[instanceIndex].currentLOD = lodIndex;
 		//lodIndex番目がlodModelsに無かったら
 		if (!lodBuilder_->GetLODModel(lodIndex)) {
 			continue;
 		}
 
-		//LOD語とのWVP配列に詰める
+		//LODごとのWVP配列に詰める
 		uint32_t drawIndex = lodDrawCounts_[lodIndex];
 		//検索キーがデータのサイズより大きかった場合
 		if (drawIndex >= lodWvpData_[lodIndex].size()) {
@@ -222,6 +223,12 @@ uint32_t Object3d::AddInstance(GameObject* gameObject) {
 	instance.Initialize(gameObject);
 
 	instanceData_.push_back(instance);
+
+	//ワールド行列の要素数を設定
+	worldMatrixes_.resize(instanceData_.size());
+
+	//lodIndexをまとめる配列の要素数を設定
+	lodIndices_.resize(instanceData_.size());
 
 	return static_cast<uint32_t>(instanceData_.size() - 1);
 }
@@ -468,8 +475,8 @@ void Object3d::MakeWorldMatrix(uint32_t instanceIndex) {
 
 	worldMatrix = node_.localMatrix * worldMatrix;
 
-	//ワールド行列の配列に追加
-	worldMatrixes_.push_back(worldMatrix);
+	//ワールド行列の配列を上書き
+	worldMatrixes_[instanceIndex] = worldMatrix;
 }
 
 //ビルボード行列の作成
@@ -488,8 +495,8 @@ void Object3d::MakeBillboardWorldMatrix(uint32_t instanceIndex) {
 
 	worldMatrix = node_.localMatrix * worldMatrix;
 
-	//ワールド行列の配列に追加
-	worldMatrixes_.push_back(worldMatrix);
+	//ワールド行列の配列を上書き
+	worldMatrixes_[instanceIndex] = worldMatrix;
 }
 
 //座標の更新

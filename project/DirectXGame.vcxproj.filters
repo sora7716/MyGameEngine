@@ -186,9 +186,6 @@
     <ClCompile Include="engine\debug\DebugCamera.cpp">
       <Filter>engine\debug</Filter>
     </ClCompile>
-    <ClCompile Include="engine\debug\GlobalVariables.cpp">
-      <Filter>engine\debug</Filter>
-    </ClCompile>
     <ClCompile Include="engine\debug\ImGuiManager.cpp">
       <Filter>engine\debug</Filter>
     </ClCompile>
@@ -399,9 +396,6 @@
       <Filter>engine\debug</Filter>
     </ClInclude>
     <ClInclude Include="engine\debug\DebugCamera.h">
-      <Filter>engine\debug</Filter>
-    </ClInclude>
-    <ClInclude Include="engine\debug\GlobalVariables.h">
       <Filter>engine\debug</Filter>
     </ClInclude>
     <ClInclude Include="engine\debug\ImGuiManager.h">

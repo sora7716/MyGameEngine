@@ -34,7 +34,7 @@ uint32_t SRVManager::Allocate() {
 
 //解放
 void SRVManager::Free(uint32_t index) {
-	//範囲内のインデックスのみ会法
+	//範囲内のインデックスのみ解放
 	if (index >= 0 && index < useIndex_) {
 		freeList_.push(index);
 	}

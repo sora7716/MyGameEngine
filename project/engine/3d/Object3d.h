@@ -296,6 +296,7 @@ private://メンバ変数
 
 	//LODの数
 	uint32_t lodCount_ = 1;
+	std::vector<uint32_t>lodIndices_;
 	//LODビルダー
 	std::unique_ptr<LODBuilder>lodBuilder_ = nullptr;
 	//LODの制御

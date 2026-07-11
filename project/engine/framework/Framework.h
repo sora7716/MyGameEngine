@@ -25,8 +25,6 @@ public://メンバ関数
 	/// 更新
 	/// </summary>
 	virtual void Update();
-
-	virtual void Game();
 	
 	/// <summary>
 	/// デバッグ

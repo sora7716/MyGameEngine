@@ -35,13 +35,8 @@ void SceneManager::Update() {
 	scene_->Update();
 }
 
-void SceneManager::Game() {
-	scene_->SetGameCamera();
-}
-
 //デバッグ
 void SceneManager::Debug() {
-	scene_->SetDebugCamera();
 #ifdef USE_IMGUI
 	sceneContext_.imGuiManager->Begin();
 	scene_->Debug();

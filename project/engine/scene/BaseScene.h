@@ -37,9 +37,6 @@ public://メンバ関数
 	/// </summary>
 	virtual void Update();
 
-	virtual void SetGameCamera() = 0;
-	virtual void SetDebugCamera() = 0;
-
 	/// <summary>
 	/// デバッグ
 	/// </summary>

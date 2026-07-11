@@ -46,9 +46,6 @@ public://メンバ関数
 	/// </summary>
 	void Update()override;
 
-	void SetGameCamera()override;
-	void SetDebugCamera()override;
-
 	/// <summary>
 	/// デバッグ
 	/// </summary>

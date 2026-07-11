@@ -29,6 +29,8 @@ void ImGuiManager::Initialize([[maybe_unused]] WinApi* winApi, [[maybe_unused]] 
 	IMGUI_CHECKVERSION();
 	//ImGuiのコンテキストを生成
 	ImGui::CreateContext();
+	ImGuiIO& io = ImGui::GetIO();
+	io.Fonts->Build();
 	//ImGuiのスタイルを設定
 	ImGui::StyleColorsDark();
 	ImGui_ImplWin32_Init(winApi->GetHwnd(WindowType::kDebug));
@@ -41,8 +43,6 @@ void ImGuiManager::Initialize([[maybe_unused]] WinApi* winApi, [[maybe_unused]] 
 		srvManager_->GetDescriptorHeap(),
 		srvManager_->GetCPUDescriptorHandle(0),
 		srvManager_->GetGPUDescriptorHandle(0));
-	//srvの解放
-	srvManager_->Free(0);
 #endif // USE_IMGUI
 }
 

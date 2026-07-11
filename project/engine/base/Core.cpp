@@ -53,7 +53,7 @@ void Core::Initialize() {
 	sceneContext_.textureManager = textureManager_.get();
 	sceneContext_.cameraManager = cameraManager_.get();
 	sceneContext_.audioManager = audioManager_.get();
-	sceneContext_.imguiManager = imguiManager_.get();
+	sceneContext_.imGuiManager = imguiManager_.get();
 	//シーンでの必要なものを取得
 	sceneContext_ = this;
 	//シーンマネージャー

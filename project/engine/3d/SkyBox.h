@@ -58,6 +58,12 @@ public://メンバ関数
 	/// </summary>
 	/// <param name="gameObject">ゲームオブジェクト</param>
 	void SetGameObject(GameObject*gameObject);
+
+	/// <summary>
+	/// 描画する用のカメラの設定
+	/// </summary>
+	/// <param name="camera">カメラ</param>
+	void SetRenderCamera(Camera* camera);
 private://メンバ関数
 	/// <summary>
 	/// 頂点データの初期化
@@ -109,7 +115,7 @@ private://定数
 	//インデックス数
 	static inline const uint32_t kIndexCount = 36;
 private://メンバ変数
-	Camera* camera_ = nullptr;
+	Camera* renderCamera_ = nullptr;
 	//テクスチャ番号
 	std::string imageFileName_ = "";
 	//GameObject

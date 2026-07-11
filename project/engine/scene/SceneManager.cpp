@@ -33,11 +33,19 @@ void SceneManager::Update() {
 	}
 	//更新
 	scene_->Update();
+}
 
+void SceneManager::Game() {
+	scene_->SetGameCamera();
+}
+
+//デバッグ
+void SceneManager::Debug() {
+	scene_->SetDebugCamera();
 #ifdef USE_IMGUI
-	sceneContext_.imguiManager->Begin();
+	sceneContext_.imGuiManager->Begin();
 	scene_->Debug();
-	sceneContext_.imguiManager->End();
+	sceneContext_.imGuiManager->End();
 #endif // USE_IMGUI
 }
 

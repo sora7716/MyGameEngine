@@ -95,6 +95,11 @@ HWND WinApi::GetActiveHwnd() const {
 	return activeHwnd_;
 }
 
+//指定したウィンドウと今選択しているウィンドウが一致しているか
+bool WinApi::IsActiveHwnd(WindowType windowType) const {
+	return GetActiveHwnd() == GetHwnd(windowType);
+}
+
 //WNDクラスのゲッター
 WNDCLASS WinApi::GetWndClass()const {
 	return wndClass_;

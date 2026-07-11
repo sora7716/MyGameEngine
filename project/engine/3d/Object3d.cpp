@@ -227,10 +227,15 @@ uint32_t Object3d::AddInstance(GameObject* gameObject) {
 }
 
 //カメラの設定
-void Object3d::SetGameCamera(Camera* gameCamera) {
-	gameCamera_ = gameCamera;
+void Object3d::SetGameCamera(Camera* camera) {
+	gameCamera_ = camera;
 	//カリングの初期化
 	culling_ = Culling::Create(gameCamera_);
+}
+
+//描画に使用するカメラの設定
+void Object3d::SetRenderCamera(Camera* camera) {
+	renderCamera_ = camera;
 }
 
 //LODの切り替え距離

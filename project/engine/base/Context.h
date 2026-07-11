@@ -1,5 +1,6 @@
 #pragma once
 //前方宣言
+class WinApi;
 class Input;
 class DirectXBase;
 class TextureManager;
@@ -17,6 +18,7 @@ class Core;
 
 //シーンで必要なクラス
 struct SceneContext {
+	WinApi* winApi;
 	Input* input;
 	DirectXBase* directXBase;
 	TextureManager* textureManager;
@@ -29,7 +31,7 @@ struct SceneContext {
 	CameraManager* cameraManager;
 	ParticleManager* particleManager;
 	AudioManager* audioManager;
-	ImGuiManager* imguiManager;
+	ImGuiManager* imGuiManager;
 
 	/// <summary>
 	/// ゲームエンジンの核から必要な物を抽出する

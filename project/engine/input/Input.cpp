@@ -68,9 +68,9 @@ bool Input::ReleaseTriggerKey(BYTE keyNumber) {
 }
 
 //マウスのボタンの押下をチェック
-bool Input::PressMouseButton(Click mouseClicPos) {
+bool Input::PressMouseButton(Click mouseClickPos) {
 	//マウスの押していればtrueを返す
-	if (mouseState_.rgbButtons[static_cast<uint32_t>(mouseClicPos)]) {
+	if (mouseState_.rgbButtons[static_cast<uint32_t>(mouseClickPos)]) {
 		return true;
 	}
 	//そうでなければfalseを返す

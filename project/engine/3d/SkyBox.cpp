@@ -27,7 +27,7 @@ void SkyBox::Initialize(DirectXBase* directXBase, TextureManager* textureManager
 	//テクスチャマネージャー
 	textureManager_ = textureManager;
 	//カメラの作成
-	camera_ = camera;
+	renderCamera_ = camera;
 	//ブレンド
 	blend_ = std::make_unique<Blend>();
 	//グラフィックスパイプラインの生成と初期化
@@ -107,6 +107,11 @@ void SkyBox::Draw() {
 //ゲームオブジェクトの設定
 void SkyBox::SetGameObject(GameObject* gameObject) {
 	gameObject_ = gameObject;
+}
+
+//描画する用のカメラの設定
+void SkyBox::SetRenderCamera(Camera* camera) {
+	renderCamera_ = camera;
 }
 
 //頂点データの初期化
@@ -315,6 +320,6 @@ void SkyBox::UpdateTransform() {
 	//TransformからWorldMatrixを作る
 	wvpData_->world = matrixUtility::MakeAffineMatrix(gameObject_->GetTransform());
 	//wvpの書き込み
-	const Matrix4x4& viewProjectionMatrix = camera_->GetViewProjectionMatrix();
+	const Matrix4x4& viewProjectionMatrix = renderCamera_->GetViewProjectionMatrix();
 	wvpData_->wvp = wvpData_->world * viewProjectionMatrix;
 }

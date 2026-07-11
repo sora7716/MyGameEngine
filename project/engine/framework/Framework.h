@@ -26,6 +26,13 @@ public://メンバ関数
 	/// </summary>
 	virtual void Update();
 
+	virtual void Game();
+	
+	/// <summary>
+	/// デバッグ
+	/// </summary>
+	virtual void Debug();
+
 	/// <summary>
 	/// 描画
 	/// </summary>
@@ -49,5 +56,8 @@ public://メンバ関数
 protected://メンバ変数
 	//エンジンの核
 	std::unique_ptr<Core>core_ = nullptr;
+	//ウィンドウの検索キー
+	uint32_t windowIndex_ = 0;
+
 };
 

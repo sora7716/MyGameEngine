@@ -56,6 +56,13 @@ public://メンバ関数
 	HWND GetActiveHwnd()const;
 
 	/// <summary>
+	/// 指定したウィンドウと今選択しているウィンドウが一致しているか
+	/// </summary>
+	/// <param name="windowType">ウィンドウのタイプ</param>
+	/// <returns>一致しているか</returns>
+	bool IsActiveHwnd(WindowType windowType)const;
+
+	/// <summary>
 	/// WNDクラスのゲッター
 	/// </summary>
 	/// <returns>wndClass</returns>

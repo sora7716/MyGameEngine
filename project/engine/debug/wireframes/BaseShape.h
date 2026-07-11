@@ -51,19 +51,19 @@ namespace Primitive {
 		virtual void Draw();
 
 		/// <summary>
-		/// カメラのセッター
+		/// 描画する用のカメラを設定
 		/// </summary>
 		/// <param name="camera">カメラ</param>
-		void SetCamera(Camera* camera);
+		void SetRenderCamera(Camera* camera);
 
 		/// <summary>
-		/// カラーのセッター
+		/// カラーの設定
 		/// </summary>
 		/// <param name="color">色</param>
 		void SetColor(const Vector4& color);
 
 		/// <summary>
-		/// カラーのゲッター
+		/// カラーの取得
 		/// </summary>
 		/// <returns>色</returns>
 		Vector4 GetColor();
@@ -157,7 +157,7 @@ namespace Primitive {
 		//DirectXの基盤部分
 		DirectXBase* directXBase_ = nullptr;
 		//カメラ
-		Camera* camera_ = nullptr;
+		Camera* renderCamera_ = nullptr;
 		//バッファリソース
 		ComPtr<ID3D12Resource>vertexResource_ = nullptr;//頂点
 		ComPtr<ID3D12Resource>materialResource_ = nullptr;//マテリアル

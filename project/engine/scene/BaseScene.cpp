@@ -2,6 +2,7 @@
 #include "DebugCamera.h"
 #include "AbstractSceneFactory.h"
 #include "GlobalVariables.h"
+#include "WinApi.h"
 //#include "algorithms/ColliderManager.h"
 
 //コンストラクタ
@@ -35,7 +36,10 @@ void BaseScene::Update() {
 
 //デバッグ
 void BaseScene::Debug() {
-
+	//デバッグ画面だけ
+	if (sceneContext_.winApi->GetHwnd(WindowType::kDebug)) {
+		renderCamera_ = *debugCamera_->GetCamera();
+	}
 }
 
 //終了

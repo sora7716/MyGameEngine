@@ -109,7 +109,7 @@ public://メンバ関数
 	/// </summary>
 	/// <param name="mouseClicPos">マウスのボタン</param>
 	/// <returns>押されてるか</returns>
-	bool PressMouseButton(Click mouseClicPos);
+	bool PressMouseButton(Click mouseClickPos);
 
 	/// <summary>
 	/// マウスのボタンの押下した瞬間をチェック

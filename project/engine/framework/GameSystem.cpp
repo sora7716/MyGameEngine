@@ -18,32 +18,39 @@ void GameSystem::Initialize() {
 //更新
 void GameSystem::Update() {
 	Framework::Update();
+	//ウィンドウの検索キーがウィンドウの数を超えてしまった場合
+	if (windowIndex_ >= static_cast<uint32_t>(WindowType::kWindowTypeCount)) {
+		windowIndex_ = 0;
+	}
+}
+
+//デバッグ
+void GameSystem::Debug() {
+	Framework::Debug();
 }
 
 //描画
 void GameSystem::Draw() {
 #ifdef _DEBUG
-	uint32_t sceneCount = static_cast<uint32_t>(WindowType::kWindowTypeCount);
 #else
-	uint32_t sceneCount = 1;
+	windowIndex_ = 0;
 #endif // _DEBUG
-
-
-	for (uint32_t i = 0; i < sceneCount; i++) {
-		//描画開始位置
-		core_->GetDirectXBase()->PreDraw(i);
-		//SRVの管理
-		core_->GetSRVManager()->PreDraw();
-		//シーン
-		core_->GetSceneManager()->Draw();
-		//デバッグ画面のときにしか表示しない
-		if (core_->GetWinApi()->GetHwnd(i) == core_->GetWinApi()->GetHwnd(WindowType::kDebug)) {
-			//ImGuiの管理
-			core_->GetImGuiManager()->Draw();
-		}
-		//描画終了位置
-		core_->GetDirectXBase()->PostDraw(i);
+	//描画開始位置
+	core_->GetDirectXBase()->PreDraw(windowIndex_);
+	//SRVの管理
+	core_->GetSRVManager()->PreDraw();
+	//シーン
+	core_->GetSceneManager()->Draw();
+	//デバッグ画面のときにしか表示しない
+	if (core_->GetWinApi()->GetHwnd(windowIndex_) == core_->GetWinApi()->GetHwnd(WindowType::kDebug)) {
+		//ImGuiの管理
+		core_->GetImGuiManager()->Draw();
 	}
+	//描画終了位置
+	core_->GetDirectXBase()->PostDraw(windowIndex_);
+
+	//ウィンドウの検索キーを加算
+	windowIndex_++;
 }
 
 //終了

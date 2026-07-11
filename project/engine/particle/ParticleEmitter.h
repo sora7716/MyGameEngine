@@ -80,10 +80,16 @@ public://メンバ関数
 	const uint32_t GetNumInstance()const;
 
 	/// <summary>
-	/// カメラの設定
+	/// ゲームカメラの設定
 	/// </summary>
-	/// <param name="gameCamera">ゲームカメラ</param>
-	void SetGameCamera(Camera* gameCamera);
+	/// <param name="camera">カメラ</param>
+	void SetGameCamera(Camera* camera);
+
+	/// <summary>
+	/// 描画カメラの設定
+	/// </summary>
+	/// <param name="camera">カメラ</param>
+	void SetRenderCamera(Camera* camera);
 
 	/// <summary>
 	/// エミッター位置の設定の設定

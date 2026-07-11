@@ -4,17 +4,17 @@
 /// <summary>
 /// ゲームシステム
 /// </summary>
-class GameSystem:public Framework{
+class GameSystem :public Framework {
 public://メンバ関数
 	/// <summary>
 	/// コンストラクタ
 	/// </summary>
-	GameSystem()=default;
+	GameSystem() = default;
 
 	/// <summary>
 	/// デストラクタ
 	/// </summary>
-	~GameSystem()=default;
+	~GameSystem() = default;
 
 	/// <summary>
 	/// 初期化
@@ -25,6 +25,11 @@ public://メンバ関数
 	/// 更新
 	/// </summary>
 	void Update()override;
+
+	/// <summary>
+	/// デバッグ
+	/// </summary>
+	void Debug()override;
 
 	/// <summary>
 	/// 描画

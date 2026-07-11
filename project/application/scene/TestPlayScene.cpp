@@ -97,7 +97,6 @@ void TestPlayScene::Update() {
 	//	object3d_->SetUVRotate(i, transform2ds_[i].rotate);
 	//	object3d_->SetUVTranslate(i, transform2ds_[i].translate);
 	//}
-
 	object3d_->Update();
 
 	frustum_->Update();
@@ -126,6 +125,32 @@ void TestPlayScene::Update() {
 		gameObjects_[0]->GetTransform().translate.z += 1.0f;
 	}
 	;
+}
+
+void TestPlayScene::SetGameCamera() {
+	object3d_->SetRenderCamera(gameCamera_);
+
+	frustum_->SetRenderCamera(gameCamera_);
+
+	cube_->SetRenderCamera(gameCamera_);
+
+	skyBox_->SetRenderCamera(gameCamera_);
+
+	particleSystem_->SetRenderCamera(gameCamera_);
+}
+
+void TestPlayScene::SetDebugCamera() {
+	object3d_->SetRenderCamera(debugCamera_->GetCamera());
+
+	frustum_->SetRenderCamera(debugCamera_->GetCamera());
+
+	cube_->SetRenderCamera(debugCamera_->GetCamera());
+
+	skyBox_->SetRenderCamera(debugCamera_->GetCamera());
+
+	particleSystem_->SetRenderCamera(debugCamera_->GetCamera());
+
+	object3d_->SetRenderCamera(debugCamera_->GetCamera());
 }
 
 //デバッグ

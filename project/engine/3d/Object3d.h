@@ -87,8 +87,14 @@ public://メンバ関数
 	/// <summary>
 	/// ゲームで使用するカメラの設定
 	/// </summary>
-	/// <param name="gameCamera">ゲームで使用するカメラ</param>
-	void SetGameCamera(Camera* gameCamera);
+	/// <param name="camera">カメラ</param>
+	void SetGameCamera(Camera* camera);
+
+	/// <summary>
+	/// 描画に使用するカメラの設定
+	/// </summary>
+	/// <param name="camera">カメラ</param>
+	void SetRenderCamera(Camera* camera);
 
 	/// <summary>
 	/// LODの切り替え距離の設定

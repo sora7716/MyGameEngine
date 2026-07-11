@@ -22,6 +22,16 @@ void Framework::Update() {
 	core_->GetSceneManager()->Update();
 }
 
+void Framework::Game() {
+	core_->GetSceneManager()->Game();
+}
+
+//デバッグ
+void Framework::Debug() {
+	//シーンの管理
+	core_->GetSceneManager()->Debug();
+}
+
 //終了
 void Framework::Finalize() {
 }
@@ -34,6 +44,14 @@ void Framework::Run() {
 	while (isEndRequest()) {
 		//ゲームシステムの更新
 		Update();
+
+		if (core_->GetWinApi()->GetHwnd(windowIndex_) == core_->GetWinApi()->GetHwnd(WindowType::kDebug)) {
+			//デバッグのウィンドウの時だけ
+			Debug();
+		} else {
+			Game();
+		}
+
 		//ゲームシステムの描画
 		Draw();
 #ifdef _DEBUG

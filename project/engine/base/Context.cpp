@@ -3,6 +3,7 @@
 
 //ゲームエンジンの核から必要な物を抽出する
 void SceneContext::operator=(Core* core) {
+	winApi = core->GetWinApi();
 	input = core->GetInput();
 	directXBase = core->GetDirectXBase();
 	textureManager = core->GetTextureManager();
@@ -14,5 +15,5 @@ void SceneContext::operator=(Core* core) {
 	cameraManager = core->GetCameraManager();
 	particleManager = core->GetParticleManager();
 	audioManager = core->GetAudioManager();
-	imguiManager = core->GetImGuiManager();
+	imGuiManager = core->GetImGuiManager();
 }

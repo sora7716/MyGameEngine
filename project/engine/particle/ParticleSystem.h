@@ -48,10 +48,16 @@ public://メンバ関数
 	void Draw();
 
 	/// <summary>
-	/// カメラの設定
+	/// ゲームカメラの設定
 	/// </summary>
 	/// <param name="camera">カメラ</param>
 	void SetGameCamera(Camera* camera);
+
+	/// <summary>
+	/// 描画カメラの設定
+	/// </summary>
+	/// <param name="camera">カメラ</param>
+	void SetRenderCamera(Camera*camera);
 
 	/// <summary>
 	/// ブレンドモードの設定

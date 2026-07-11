@@ -104,6 +104,11 @@ void ParticleSystem::SetGameCamera(Camera* camera) {
 	emitter_->SetGameCamera(camera);
 }
 
+//描画カメラの設定
+void ParticleSystem::SetRenderCamera(Camera* camera) {
+	emitter_->SetRenderCamera(camera);
+}
+
 //ブレンドモードの設定
 void ParticleSystem::SetBlendMode(BlendMode blendMode) {
 	blendMode_ = blendMode;

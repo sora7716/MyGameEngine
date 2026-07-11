@@ -92,11 +92,16 @@ const uint32_t ParticleEmitter::GetNumInstance() const {
 	return numInstance_;
 }
 
-//カメラの設定
-void ParticleEmitter::SetGameCamera(Camera* gameCamera) {
-	gameCamera_ = gameCamera;
+//ゲームカメラの設定
+void ParticleEmitter::SetGameCamera(Camera* camera) {
+	gameCamera_ = camera;
 	//カリングの生成
 	culling_ = Culling::Create(gameCamera_);
+}
+
+//描画カメラの設定
+void ParticleEmitter::SetRenderCamera(Camera* camera) {
+	renderCamera_=camera;
 }
 
 //エミッター位置の設定

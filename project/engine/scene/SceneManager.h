@@ -23,6 +23,13 @@ public://メンバ関数
 	/// </summary>
 	void Update();
 
+	void Game();
+
+	/// <summary>
+	/// デバッグ
+	/// </summary>
+	void Debug();
+
 	/// <summary>
 	/// 描画
 	/// </summary>

@@ -22,7 +22,7 @@ void BaseShape::Initialize(DirectXBase* directXBase, Camera* camera) {
 	//DirectXの基盤部分を記録する
 	directXBase_ = directXBase;
 	//カメラの記録
-	camera_ = camera;
+	renderCamera_ = camera;
 	makeGraphicsPipeline_ = std::make_unique<GraphicsPipeline>();
 	//DirectXBaseを記録
 	makeGraphicsPipeline_->SetDirectXBase(directXBase_);
@@ -72,17 +72,17 @@ void BaseShape::Draw() {
 	directXBase_->GetCommandList()->DrawIndexedInstanced(indexCount_, 1, 0, 0, 0);
 }
 
-//カメラのセッター
-void BaseShape::SetCamera(Camera* camera) {
-	camera_ = camera;
+//描画する用のカメラを設定
+void BaseShape::SetRenderCamera(Camera* camera) {
+	renderCamera_ = camera;
 }
 
-//色のセッター
+//色の設定
 void BaseShape::SetColor(const Vector4& color) {
 	*color_ = color;
 }
 
-//色のゲッター
+//色の取得
 Vector4 BaseShape::GetColor() {
 	return *color_;
 }
@@ -322,8 +322,8 @@ void BaseShape::UpdateTransform() {
 	//	worldMatrix_ = worldMatrix_ * parent_->worldMatrix_;
 	//}
 	//wvpの書き込み
-	if (camera_) {
-		const Matrix4x4& viewProjectionMatrix = camera_->GetViewProjectionMatrix();
+	if (renderCamera_) {
+		const Matrix4x4& viewProjectionMatrix = renderCamera_->GetViewProjectionMatrix();
 		wvpData_->wvp = worldMatrix_ * viewProjectionMatrix;
 	} else {
 		wvpData_->wvp = worldMatrix_;

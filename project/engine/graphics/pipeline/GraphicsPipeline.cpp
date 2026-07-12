@@ -153,7 +153,7 @@ void GraphicsPipeline::CreateRootSignatureBlobForObject3d() {
 
 	//カメラ
 	rootParameters[4].ParameterType = D3D12_ROOT_PARAMETER_TYPE_CBV;//CBVを使う
-	rootParameters[4].ShaderVisibility = D3D12_SHADER_VISIBILITY_PIXEL;//PixelShaderを使う
+	rootParameters[4].ShaderVisibility = D3D12_SHADER_VISIBILITY_ALL;//PixelShaderを使う
 	rootParameters[4].Descriptor.ShaderRegister = 2;//レジスタ番号2を使う
 
 	//点光源

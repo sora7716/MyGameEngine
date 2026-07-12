@@ -59,8 +59,8 @@ public://メンバ関数
 	/// <summary>
 	/// カメラの位置のセッター
 	/// </summary>
-	/// <param name="cameraTranslate"></param>
-	void SetCameraForGPU(const Vector3& cameraTranslate);
+	/// <param name="cameraTranslate">カメラの情報</param>
+	void SetCameraForGPU(const CameraForGPU& cameraForGPU);
 
 	/// <summary>
 	/// DirectionalLightのリソースのゲッター

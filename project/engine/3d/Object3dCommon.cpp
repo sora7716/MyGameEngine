@@ -159,11 +159,12 @@ void Object3dCommon::CreateCameraResource(const Vector3& cameraTranslate) {
 	//光源データの書きこみ
 	cameraResource_->Map(0, nullptr, reinterpret_cast<void**>(&cameraForGPU_));
 	cameraForGPU_->worldPosition = cameraTranslate;
+	cameraForGPU_->viewProjection = Matrix4x4::Identity4x4();
 }
 
 //カメラの位置のセッター
-void Object3dCommon::SetCameraForGPU(const Vector3& cameraTranslate) {
-	cameraForGPU_->worldPosition = cameraTranslate;
+void Object3dCommon::SetCameraForGPU(const CameraForGPU& cameraForGPU) {
+	*cameraForGPU_ = cameraForGPU;
 }
 
 //DirectionalLightのリソースのゲッター

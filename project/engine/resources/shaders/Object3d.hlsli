@@ -6,3 +6,10 @@ struct VertexShaderOutput{
     float32_t3 normal : NORMAL0;
     float32_t3 worldPosition : POSITION0;
 };
+
+//Camera
+struct Camera {
+    float32_t3 worldPosition;
+    float32_t padding;
+    float32_t4x4 viewProjection;
+};

@@ -54,12 +54,6 @@ struct RimLight {
     int32_t enableRimLighting; //リムライトを有効にするか
 };
 
-//カメラ
-struct Camera {
-    float32_t3 worldPosition;
-    float32_t padding;
-};
-
 ConstantBuffer<Material> gMaterial : register(b0);
 Texture2D<float4> gTexture : register(t0);
 TextureCube<float32_t4> gEnvironmentTexture : register(t3);

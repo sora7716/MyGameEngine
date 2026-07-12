@@ -61,7 +61,6 @@ void Object3d::Initialize(Object3dCommon* object3dCommon, Camera* renderCamera, 
 	renderCamera_ = renderCamera;
 	//カメラをセット
 	object3dCommon_->CreateCameraResource(renderCamera_->GetTranslate());
-	object3dCommon_->SetCameraForGPU(renderCamera->GetTranslate());
 
 	//マテリアルの初期化
 	material_.color = { 1.0f,1.0f,1.0f,1.0f };
@@ -72,6 +71,12 @@ void Object3d::Initialize(Object3dCommon* object3dCommon, Camera* renderCamera, 
 
 //更新
 void Object3d::Update() {
+	//カメラの情報をGPUに送信
+	CameraForGPU cameraForGPU = {};
+	cameraForGPU.worldPosition = renderCamera_->GetWorldPos();
+	cameraForGPU.viewProjection = renderCamera_->GetViewProjectionMatrix();
+	object3dCommon_->SetCameraForGPU(cameraForGPU);
+
 	//Object3dの共通部分の更新
 	object3dCommon_->Update();
 

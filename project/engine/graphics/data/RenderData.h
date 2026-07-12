@@ -97,6 +97,7 @@ struct TextObjectData {
 struct CameraForGPU {
 	Vector3 worldPosition = {};
 	float padding = 0.0f;
+	Matrix4x4 viewProjection = Matrix4x4::Identity4x4();
 };
 
 //リムライトの構造体

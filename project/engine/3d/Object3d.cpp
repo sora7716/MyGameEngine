@@ -508,12 +508,6 @@ void Object3d::MakeBillboardWorldMatrix(uint32_t instanceIndex) {
 void Object3d::UpdateWorldTransform(uint32_t lodIndex, uint32_t drawIndex, const Matrix4x4& worldMatrix) {
 	lodWvpData_[lodIndex][drawIndex].world = worldMatrix;
 
-	if (renderCamera_) {
-		lodWvpData_[lodIndex][drawIndex].wvp = worldMatrix * renderCamera_->GetViewProjectionMatrix();
-	} else {
-		lodWvpData_[lodIndex][drawIndex].wvp = worldMatrix;
-	}
-
 	lodWvpData_[lodIndex][drawIndex].worldInverseTranspose = lodWvpData_[lodIndex][drawIndex].world.InverseTranspose();
 
 	lodWvpPtrs_[lodIndex][drawIndex] = lodWvpData_[lodIndex][drawIndex];

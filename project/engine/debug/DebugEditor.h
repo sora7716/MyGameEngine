@@ -39,6 +39,12 @@ public://メンバ関数
 	/// </summary>
 	/// <param name="gameObjects">ゲームオブジェクト一覧</param>
 	void SetGameObjects(const std::vector<std::unique_ptr<GameObject>>& gameObjects);
+
+	/// <summary>
+	/// 削除要求を取得
+	/// </summary>
+	/// <returns>削除要求</returns>
+	GameObject* ConsumeDeleteRequest();
 private://メンバ関数
 	/// <summary>
 	/// ドッキングスペースの描画
@@ -59,5 +65,11 @@ private://メンバ変数
 	GameObject* selectedGameObject_ = nullptr;
 	//ゲームオブジェクトの一覧へのポインタ
 	const std::vector<std::unique_ptr<GameObject>>*gameObjects_;
+	//作成要求
+	bool requestCreateGameObject_ = false;
+	//複製要求
+	GameObject* requestDuplicateGameObject_ = nullptr;
+	//削除要求
+	GameObject* requestDeleteGameObject_ = nullptr;
 };
 

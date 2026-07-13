@@ -4,6 +4,7 @@
 #include "GlobalVariables.h"
 #include "WinApi.h"
 #include "GameObject.h"
+#include <algorithm>
 //#include "algorithms/ColliderManager.h"
 
 //コンストラクタ
@@ -45,6 +46,20 @@ void BaseScene::Finalize(){
 	//シーンファクトリーの解放
 	delete sceneFactory_;
 	sceneFactory_ = nullptr;
+}
+
+//ゲームオブジェクトの削除
+void BaseScene::DeleteGameObject(GameObject* target){
+	gameObjects_.erase(
+		std::remove_if(
+			gameObjects_.begin(),
+			gameObjects_.end(),
+			[target](const std::unique_ptr<GameObject>& gameObject){
+				return gameObject.get() == target;
+			}
+		),
+		gameObjects_.end()
+	);
 }
 
 //ゲームオブジェクトの取得

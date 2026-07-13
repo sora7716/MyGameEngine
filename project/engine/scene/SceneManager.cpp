@@ -56,6 +56,12 @@ void SceneManager::Debug() {
 	sceneContext_.imGuiManager->Begin();
 	//デバッグエディタの描画
 	debugEditor_->Draw();
+	
+	//削除要求を処理
+	if (GameObject* target = debugEditor_->ConsumeDeleteRequest()){
+		scene_->DeleteGameObject(target);
+	}
+
 	//シーンのデバッグ
 	scene_->Debug();
 	sceneContext_.imGuiManager->End();

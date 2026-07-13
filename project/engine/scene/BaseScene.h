@@ -54,6 +54,12 @@ public://メンバ関数
 	virtual void GameDraw() = 0;
 
 	/// <summary>
+	/// ゲームオブジェクトの削除
+	/// </summary>
+	/// <param name="target">対象となるゲームオブジェクト</param>
+	void DeleteGameObject(GameObject* target);
+
+	/// <summary>
 	/// ゲームオブジェクトの一覧を取得
 	/// </summary>
 	/// <returns>ゲームオブジェクト</returns>

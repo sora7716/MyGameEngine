@@ -38,6 +38,20 @@ void DebugEditor::SetGameObjects(const std::vector<std::unique_ptr<GameObject>>&
 	gameObjects_ = &gameObjects;
 }
 
+//削除要求を取得
+GameObject* DebugEditor::ConsumeDeleteRequest(){
+	GameObject* target = requestDeleteGameObject_;
+
+	requestDeleteGameObject_ = nullptr;
+
+	//選択中のオブジェクトを削除する場合
+	if (selectedGameObject_ == target){
+		selectedGameObject_ = nullptr;
+	}
+
+	return target;
+}
+
 //ドッキングスペースの描画
 void DebugEditor::DrawDockSpace(){
 #ifdef USE_IMGUI
@@ -61,6 +75,7 @@ void DebugEditor::DrawHierarchy(){
 			//ゲームオブジェクトの生ポインタを保存
 			GameObject* object = gameObject.get();
 
+			//IDを追加し、同じ名前のObjectでも衝突しないようにする
 			ImGui::PushID(object);
 
 			//選んだオブジェクトと同じかどうか
@@ -69,23 +84,53 @@ void DebugEditor::DrawHierarchy(){
 			//存在しているかどうか
 			const bool isActive = object->IsActive();
 
-			//存在していなかったら
+			//フォントの色を変更
 			if (!isActive){
 				ImGui::PushStyleColor(ImGuiCol_Text, ImGui::GetStyleColorVec4(ImGuiCol_TextDisabled));
 			}
 
+			//選択するテーブルの描画
 			if (ImGui::Selectable(object->GetName().c_str(), isSelected)){
 				selectedGameObject_ = object;
 			}
 
+			//SelectTableを描画した直後に元に戻す
 			if (!isActive){
 				ImGui::PopStyleColor();
 			}
 
+			//GameObjectを右クリックしたときのメニュー
+			if (ImGui::BeginPopupContextItem("GameObjectContext")){
+
+				if (ImGui::MenuItem("active", nullptr, isActive)){
+					object->SetIsActive(!isActive);
+				}
+
+				ImGui::Separator();
+
+				if (ImGui::MenuItem("Duplicate")){
+					requestDuplicateGameObject_ = object;
+				}
+
+				if (ImGui::MenuItem("Delete")){
+					requestDeleteGameObject_ = object;
+				}
+				ImGui::EndPopup();
+			}
+
 			ImGui::PopID();
 		}
-		ImGui::End();
+
+		//Hierarchyの空いている場所を右クリック
+		if (ImGui::BeginPopupContextWindow("HierarchyContext", ImGuiPopupFlags_MouseButtonRight | ImGuiPopupFlags_NoOpenOverItems)){
+			if (ImGui::MenuItem("Create Empty")){
+				requestCreateGameObject_ = true;
+			}
+			ImGui::EndPopup();
+		}
+
 	}
+	ImGui::End();
 #endif // USE_IMGUI
 }
 

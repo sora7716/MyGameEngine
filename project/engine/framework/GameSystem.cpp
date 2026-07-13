@@ -39,13 +39,16 @@ void GameSystem::Draw() {
 	core_->GetDirectXBase()->PreDraw(windowIndex_);
 	//SRVの管理
 	core_->GetSRVManager()->PreDraw();
-	//シーン
-	core_->GetSceneManager()->Draw();
 
 	//デバッグ画面のときにしか表示しない
 	if (core_->GetWinApi()->GetHwnd(windowIndex_) == core_->GetWinApi()->GetHwnd(WindowType::kDebug)) {
+		//シーン
+		core_->GetSceneManager()->DebugDraw();
 		//ImGuiの管理
 		core_->GetImGuiManager()->Draw();
+	} else {
+		//シーン
+		core_->GetSceneManager()->GameDraw();
 	}
 
 	//描画終了位置

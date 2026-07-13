@@ -126,6 +126,6 @@ private://メンバ変数
 	//Xboxの番号
 	DWORD xBoxPadNumber_ = 0;
 	//デバッグするかどうか
-	bool isDebug = false;
+	bool isDebug = true;
 };
 

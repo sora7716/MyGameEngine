@@ -44,10 +44,16 @@ void SceneManager::Debug() {
 #endif // USE_IMGUI
 }
 
-//描画
-void SceneManager::Draw() {
+//ゲーム画面の描画
+void SceneManager::GameDraw() {
 	//描画
-	scene_->Draw();
+	scene_->GameDraw();
+}
+
+//デバッグ画面の描画
+void SceneManager::DebugDraw() {
+	//描画
+	scene_->DebugDraw();
 }
 
 //シーンファクトリーのセッター

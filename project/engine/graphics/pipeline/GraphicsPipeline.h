@@ -34,6 +34,11 @@ public://メンバ関数
 	void CreateRootSignatureBlobForSprite();
 
 	/// <summary>
+	/// ルートシグネイチャBlobの生成(SkyBox用)
+	/// </summary>
+	void CreateRootSignatureBlobForSkyBox();
+
+	/// <summary>
 	/// ルートシグネイチャBlobの生成(Object3d用)
 	/// </summary>
 	void CreateRootSignatureBlobForObject3d();

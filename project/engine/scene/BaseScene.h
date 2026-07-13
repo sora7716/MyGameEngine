@@ -48,7 +48,9 @@ public://メンバ関数
 	virtual void Finalize();
 
 	//純粋仮想関数
-	virtual void Draw() = 0;
+	virtual void Draw(Camera* camera) = 0;
+	virtual void DebugDraw() = 0;
+	virtual void GameDraw() = 0;
 protected://メンバ変数
 	//Xboxの番号
 	DWORD xBoxPadNumber_ = 0;

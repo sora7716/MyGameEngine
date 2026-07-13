@@ -87,6 +87,12 @@ void ParticleEmitter::Update(ParticleForGPU* instancingData) {
 	}
 }
 
+//描画準備
+void ParticleEmitter::DrawSetting() {
+	//カメラ
+	renderCamera_->DrawSetting(3);
+}
+
 //生存しているパーティクルの数の取得
 const uint32_t ParticleEmitter::GetNumInstance() const {
 	return numInstance_;

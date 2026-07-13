@@ -29,9 +29,14 @@ public://メンバ関数
 	void Debug();
 
 	/// <summary>
-	/// 描画
+	/// ゲーム画面の描画
 	/// </summary>
-	void Draw();
+	void GameDraw();
+
+	/// <summary>
+	/// デバッグ画面の描画
+	/// </summary>
+	void DebugDraw();
 
 	/// <summary>
 	/// シーンファクトリーのセッター

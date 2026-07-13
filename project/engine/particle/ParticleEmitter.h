@@ -74,6 +74,11 @@ public://メンバ関数
 	void Update(ParticleForGPU* instancingData);
 
 	/// <summary>
+	/// 描画準備
+	/// </summary>
+	void DrawSetting();
+
+	/// <summary>
 	/// 生存しているパーティクルの数の取得
 	/// </summary>
 	/// <returns></returns>

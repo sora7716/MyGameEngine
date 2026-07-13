@@ -27,7 +27,7 @@ void CameraManager::CreateCamera(const std::string& name){
 	}
 	//カメラの生成
 	std::unique_ptr<Camera>camera = std::make_unique<Camera>();
-	camera->Initialize();
+	camera->Initialize(directXBase_);
 
 	//カメラをmapコンテナに格納する
 	cameras_.insert(std::make_pair(name, std::move(camera)));

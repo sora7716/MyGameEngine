@@ -40,7 +40,7 @@ void SkyBox::Initialize(DirectXBase* directXBase, TextureManager* textureManager
 	//深度バッファ
 	makeGraphicsPipeline_->CreateDepthStencilResourceForParticle();
 	//シグネイチャBlobの初期化
-	makeGraphicsPipeline_->CreateRootSignatureBlobForSprite();
+	makeGraphicsPipeline_->CreateRootSignatureBlobForSkyBox();
 	//インプットレイアウト
 	makeGraphicsPipeline_->InitializeInputLayoutDescForSkyBox();
 	//ラスタライザステート
@@ -86,6 +86,8 @@ void SkyBox::Draw() {
 	directXBase_->GetCommandList()->SetGraphicsRootSignature(rootSignature_.Get());
 	//プリミティブトポロジーをセットするコマンド
 	directXBase_->GetCommandList()->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+	//カメラ
+	renderCamera_->DrawSetting(3);
 	//PSOの設定
 	auto pso = graphicsPipelineStates_[static_cast<int32_t>(blendMode_)].Get();
 	//グラフィックスパイプラインをセットするコマンド

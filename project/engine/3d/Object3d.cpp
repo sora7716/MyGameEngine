@@ -59,8 +59,6 @@ void Object3d::Initialize(Object3dCommon* object3dCommon, Camera* renderCamera, 
 
 	//カメラにデフォルトカメラを代入
 	renderCamera_ = renderCamera;
-	//カメラをセット
-	object3dCommon_->CreateCameraResource(renderCamera_->GetTranslate());
 
 	//マテリアルの初期化
 	material_.color = { 1.0f,1.0f,1.0f,1.0f };
@@ -70,13 +68,7 @@ void Object3d::Initialize(Object3dCommon* object3dCommon, Camera* renderCamera, 
 }
 
 //更新
-void Object3d::Update() {
-	//カメラの情報をGPUに送信
-	CameraForGPU cameraForGPU = {};
-	cameraForGPU.worldPosition = renderCamera_->GetWorldPos();
-	cameraForGPU.viewProjection = renderCamera_->GetViewProjectionMatrix();
-	object3dCommon_->SetCameraForGPU(cameraForGPU);
-
+void Object3d::Update() {	
 	//Object3dの共通部分の更新
 	object3dCommon_->Update();
 
@@ -169,6 +161,8 @@ void Object3d::Update() {
 void Object3d::Draw() {
 	//3Dオブジェクトの共通部分
 	object3dCommon_->DrawSetting();
+	//カメラ
+	renderCamera_->DrawSetting(4);
 
 	//PSOの設定
 	auto pso = object3dCommon_->GetGraphicsPipelineStates()[static_cast<int32_t>(blendMode_)].Get();

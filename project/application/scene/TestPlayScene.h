@@ -54,7 +54,18 @@ public://メンバ関数
 	/// <summary>
 	/// 描画
 	/// </summary>
-	void Draw()override;
+	/// <param name="camera">使用するカメラ</param>
+	void Draw(Camera*camera)override;
+
+	/// <summary>
+	/// デバッグでの描画
+	/// </summary>
+	void DebugDraw()override;
+
+	/// <summary>
+	/// ゲームでの描画
+	/// </summary>
+	void GameDraw()override;
 
 	/// <summary>
 	/// 終了

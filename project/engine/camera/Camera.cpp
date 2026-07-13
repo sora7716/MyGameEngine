@@ -1,6 +1,9 @@
 #include "Camera.h"
 #include "WinApi.h"
+#include "DirectXBase.h"
 #include "MathUtility.h"
+#include <cassert>
+using namespace Microsoft::WRL;
 
 
 //コンストラクタ
@@ -12,7 +15,10 @@ Camera::~Camera() {
 }
 
 //初期化
-void Camera::Initialize() {
+void Camera::Initialize(DirectXBase* directXBase) {
+	//DirectXの基盤部分がNullかどうか確認
+	assert(directXBase);
+	directXBase_ = directXBase;
 	transform_.Initialize();
 	transform_.translate.z = -10.0f;
 	fovY_ = 0.45f;
@@ -21,6 +27,8 @@ void Camera::Initialize() {
 	farClip_ = 100.0f;
 	//視錐台のローカルの頂点を作成
 	frustum_.localCorners = mathUtility::CreateFrustumVertex(nearClip_, farClip_, fovY_, aspectRation_);
+	//カメラリソースを生成
+	CreateCameraResource();
 }
 
 //更新
@@ -34,11 +42,21 @@ void Camera::Update() {
 	//ビュープロジェクション行列の作成
 	viewProjectionMatrix_ = viewMatrix_ * projectionMatrix_;
 
+	//GPUに送信する用のポインタを保存
+	cameraForGPU_->viewProjection = viewProjectionMatrix_;
+	cameraForGPU_->worldPosition = GetWorldPos();
+
 	//視錐台のローカルの頂点を作成
 	frustum_.localCorners = mathUtility::CreateFrustumVertex(nearClip_, farClip_, fovY_, aspectRation_);
 	//視錐台のデータを作成
 	frustum_ = mathUtility::CreateFrustumData(frustum_.localCorners, worldMatrix_);
 
+}
+
+//描画準備
+void Camera::DrawSetting(uint32_t rootParameterIndex) {
+	//カメラCBufferの場所を設定
+	directXBase_->GetCommandList()->SetGraphicsRootConstantBufferView(rootParameterIndex, cameraResource_.Get()->GetGPUVirtualAddress());
 }
 
 //オイラー角の設定
@@ -148,4 +166,14 @@ const float Camera::GetFovY() const {
 //アスペクト比の取得
 const float Camera::GetAspectRation() const {
 	return aspectRation_;
+}
+
+//カメラリソースの生成
+void Camera::CreateCameraResource() {
+	//光源のリソースを作成
+	cameraResource_ = directXBase_->CreateBufferResource(sizeof(CameraForGPU));
+	//光源データの書きこみ
+	cameraResource_->Map(0, nullptr, reinterpret_cast<void**>(&cameraForGPU_));
+	cameraForGPU_->worldPosition = {};
+	cameraForGPU_->viewProjection = Matrix4x4::Identity4x4();
 }

@@ -1,9 +1,6 @@
 #include "SceneFactory.h"
-#include "TitleScene.h"
-#include "GameScene.h"
-#include "ResultScene.h"
-#include "GameOverScene.h"
 #include "TestPlayScene.h"
+
 //デストラクタ
 SceneFactory::~SceneFactory() {}
 

@@ -17,6 +17,7 @@
 #include "ParticleSystem.h"
 #include "Object3dCommon.h"
 #include "ModelManager.h"
+#include "WinApi.h"
 #include <numbers>
 
 //コンストラクタ
@@ -97,6 +98,7 @@ void TestPlayScene::Update() {
 	//	object3d_->SetUVRotate(i, transform2ds_[i].rotate);
 	//	object3d_->SetUVTranslate(i, transform2ds_[i].translate);
 	//}
+
 	object3d_->Update();
 
 	frustum_->Update();
@@ -193,16 +195,31 @@ void TestPlayScene::Debug() {
 }
 
 //描画
-void TestPlayScene::Draw() {
+void TestPlayScene::Draw(Camera* camera) {
+	object3d_->SetRenderCamera(camera);
 	object3d_->Draw();
 
+	frustum_->SetRenderCamera(camera);
 	frustum_->Draw();
 
+	cube_->SetRenderCamera(camera);
 	cube_->Draw();
 
+	skyBox_->SetRenderCamera(camera);
 	skyBox_->Draw();
 
+	particleSystem_->SetRenderCamera(camera);
 	particleSystem_->Draw();
+}
+
+//デバッグでの描画
+void TestPlayScene::DebugDraw() {
+	Draw(debugCamera_->GetCamera());
+}
+
+//ゲームでの描画
+void TestPlayScene::GameDraw() {
+	Draw(gameCamera_);
 }
 
 //終了

@@ -73,6 +73,8 @@ void ParticleSystem::Update() {
 void ParticleSystem::Draw() {
 	//描画準備
 	particleCommon_->DrawSetting();
+	//エミッター
+	emitter_->DrawSetting();
 	//PSOの設定
 	auto pso = particleCommon_->GetGraphicsPipelineStates()[static_cast<int32_t>(blendMode_)].Get();
 	//グラフィックスパイプラインをセットするコマンド

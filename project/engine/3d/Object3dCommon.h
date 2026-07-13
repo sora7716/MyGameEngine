@@ -52,15 +52,10 @@ public://メンバ関数
 	void Debug();
 
 	/// <summary>
-	/// カメラリソースの生成
-	/// </summary>
-	void CreateCameraResource(const Vector3& cameraTranslate);
-
-	/// <summary>
 	/// カメラの位置のセッター
 	/// </summary>
 	/// <param name="cameraTranslate">カメラの情報</param>
-	void SetCameraForGPU(const CameraForGPU& cameraForGPU);
+	void SetCameraForGPU(CameraForGPU* cameraForGPU);
 
 	/// <summary>
 	/// DirectionalLightのリソースのゲッター
@@ -234,12 +229,10 @@ private://メンバ変数
 	ComPtr<ID3D12Resource> directionalLightResource_ = nullptr;//平行光源
 	ComPtr<ID3D12Resource> pointLightResource_ = nullptr;//点光源
 	ComPtr<ID3D12Resource> spotLightResource_ = nullptr;//スポットライト
-	ComPtr<ID3D12Resource> cameraResource_ = nullptr;//カメラ
 	//バッファリソース内のデータを指すポインタ
 	DirectionalLight* directionalLightPtr_ = nullptr;//平行光源
 	PointLight* pointLightPtr_ = nullptr;//点光源
 	SpotLight* spotLightPtr_ = nullptr;//スポットライト
-	CameraForGPU* cameraForGPU_ = nullptr;//カメラ
 
 	//平行光源
 	DirectionalLight directionalLightData_ = {};

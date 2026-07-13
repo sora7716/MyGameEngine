@@ -128,8 +128,6 @@ void Object3dCommon::Update() {
 void Object3dCommon::DrawSetting() {
 	//ルートシグネイチャをセットするコマンド
 	directXBase_->GetCommandList()->SetGraphicsRootSignature(rootSignature_.Get());
-	//カメラCBufferの場所を設定
-	directXBase_->GetCommandList()->SetGraphicsRootConstantBufferView(4, cameraResource_.Get()->GetGPUVirtualAddress());
 	//プリミティブトポロジーをセットするコマンド
 	directXBase_->GetCommandList()->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 }
@@ -150,21 +148,6 @@ void Object3dCommon::Debug() {
 	ImGui::DragFloat("pointLight.intensity", &pointLightDataList_[0].intensity, 0.1f);
 	ImGui::End();
 #endif // USE_IMGUi
-}
-
-//カメラリソースの生成
-void Object3dCommon::CreateCameraResource(const Vector3& cameraTranslate) {
-	//光源のリソースを作成
-	cameraResource_ = directXBase_->CreateBufferResource(sizeof(CameraForGPU));
-	//光源データの書きこみ
-	cameraResource_->Map(0, nullptr, reinterpret_cast<void**>(&cameraForGPU_));
-	cameraForGPU_->worldPosition = cameraTranslate;
-	cameraForGPU_->viewProjection = Matrix4x4::Identity4x4();
-}
-
-//カメラの位置のセッター
-void Object3dCommon::SetCameraForGPU(const CameraForGPU& cameraForGPU) {
-	*cameraForGPU_ = cameraForGPU;
 }
 
 //DirectionalLightのリソースのゲッター

@@ -119,5 +119,7 @@ private://メンバ変数
 	float fovY_ = 0.0f;
 	//Xboxの番号
 	DWORD xBoxPadNumber_ = 0;
+	//デバッグモード
+	bool isDebug_ = false;
 };
 

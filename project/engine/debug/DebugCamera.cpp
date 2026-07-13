@@ -19,6 +19,15 @@ void DebugCamera::Initialize(Input* input, CameraManager* cameraManager) {
 
 //更新
 void DebugCamera::Update() {
+	//エスケープキーを入力したら
+	if (input_->TriggerKey(DIK_ESCAPE)){
+		isDebug_ = !isDebug_;
+	}
+
+	//デバッグモードがfalseだった場合
+	if (!isDebug_){
+		return;
+	}
 	//平行移動の更新
 	TranslateUpdate();
 

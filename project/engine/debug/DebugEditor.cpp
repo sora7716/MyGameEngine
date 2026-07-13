@@ -108,14 +108,39 @@ void DebugEditor::DrawInspector(){
 		ImGui::SeparatorText("transform");
 
 		Transform& transform = selectedGameObject_->GetTransform();
+
+		//トランスフォームのリセットボタン
+		if (ImGui::Button("Reset Transform")){
+			transform.Initialize();
+		}
+
 		//スケールの切り替え
 		ImGui::DragFloat3("scale", &transform.scale.x, 0.1f);
+		ImGui::SameLine();
+		//スケールのリセット
+		if (ImGui::SmallButton("Reset##scale")){
+			transform.scale = Vector3::MakeAllOne();
+		}
+
 		//回転の切り替え(オイラー角からクォータニオンを求めてる)
 		if (ImGui::DragFloat3("rotate", &transform.eulerAngle.x, 0.1f)){
 			transform.quaternion = Quaternion::MakeQuaternionForEulerAngle(transform.eulerAngle);
 		}
+		ImGui::SameLine();
+		//回転のリセット
+		if (ImGui::SmallButton("Reset##rotate")){
+			transform.eulerAngle = { 0.0f,0.0f,0.0f };
+			transform.quaternion = Quaternion::IdentityQuaternion();
+		}
+
+
 		//平行移動成分の切り替え
 		ImGui::DragFloat3("translate", &transform.translate.x, 0.1f);
+		ImGui::SameLine();
+		//平行成分のリセット
+		if (ImGui::SmallButton("Reset##translate")){
+			transform.translate = { 0.0f,0.0f,0.0f };
+		}
 	} else{
 		ImGui::TextDisabled("No object selected");
 	}

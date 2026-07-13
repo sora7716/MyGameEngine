@@ -73,10 +73,7 @@ public://メンバ関数
 	void Finalize()override;
 private://メンバ変数
 	std::unique_ptr<Object3d>object3d_ = nullptr;
-	std::vector<std::unique_ptr<GameObject>>gameObjects_;
 	float environmentCoefficient_ = 1.0f;
-
-	std::unique_ptr<GameObject>skyBoxObject_ = nullptr;
 
 	std::vector<Transform2d>transform2ds_;
 

@@ -6,15 +6,16 @@
 #include <memory>
 
 // 前方宣言
-class AbstractSceneFactory;
-class DebugCamera;
-class ColliderManager;
 class DirectXBase;
+class DebugCamera;
+class AbstractSceneFactory;
+class ColliderManager;
+class GameObject;
 
 /// <summary>
 /// シーンの基底クラス
 /// </summary>
-class BaseScene {
+class BaseScene{
 public://メンバ関数
 	/// <summary>
 	/// コンストラクタ
@@ -51,6 +52,12 @@ public://メンバ関数
 	virtual void Draw(Camera* camera) = 0;
 	virtual void DebugDraw() = 0;
 	virtual void GameDraw() = 0;
+
+	/// <summary>
+	/// ゲームオブジェクトの一覧を取得
+	/// </summary>
+	/// <returns>ゲームオブジェクト</returns>
+	const std::vector<std::unique_ptr<GameObject>>& GetGameObjects()const;
 protected://メンバ変数
 	//Xboxの番号
 	DWORD xBoxPadNumber_ = 0;
@@ -64,5 +71,7 @@ protected://メンバ変数
 	//std::unique_ptr<ColliderManager>colliderManager_ = nullptr;
 	//ゲームプレイ用のカメラ
 	Camera* gameCamera_ = nullptr;
+	//ゲームオブジェクトの一覧
+	std::vector<std::unique_ptr<GameObject>> gameObjects_;
 };
 

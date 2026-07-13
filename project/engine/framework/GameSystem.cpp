@@ -1,8 +1,17 @@
 #include "GameSystem.h"
-#include "engine/scene/SceneManager.h"
-#include "engine/scene/SceneFactory.h"
+#include "SceneManager.h"
+#include "SceneFactory.h"
+
+//コンストラクタ
+GameSystem::GameSystem(){
+}
+
+//デストラクタ
+GameSystem::~GameSystem(){
+}
+
 //初期化
-void GameSystem::Initialize() {
+void GameSystem::Initialize(){
 	Framework::Initialize();
 	//タイトルシーンを呼び出す
 	//core_->GetSceneManager()->ChangeScene("Title");
@@ -16,21 +25,21 @@ void GameSystem::Initialize() {
 }
 
 //更新
-void GameSystem::Update() {
+void GameSystem::Update(){
 	Framework::Update();
 	//ウィンドウの検索キーがウィンドウの数を超えてしまった場合
-	if (windowIndex_ >= static_cast<uint32_t>(WindowType::kWindowTypeCount)) {
+	if (windowIndex_ >= static_cast<uint32_t>(WindowType::kWindowTypeCount)){
 		windowIndex_ = 0;
 	}
 }
 
 //デバッグ
-void GameSystem::Debug() {
+void GameSystem::Debug(){
 	Framework::Debug();
 }
 
 //描画
-void GameSystem::Draw() {
+void GameSystem::Draw(){
 #ifdef _DEBUG
 #else
 	windowIndex_ = 0;
@@ -41,12 +50,12 @@ void GameSystem::Draw() {
 	core_->GetSRVManager()->PreDraw();
 
 	//デバッグ画面のときにしか表示しない
-	if (core_->GetWinApi()->GetHwnd(windowIndex_) == core_->GetWinApi()->GetHwnd(WindowType::kDebug)) {
+	if (core_->GetWinApi()->GetHwnd(windowIndex_) == core_->GetWinApi()->GetHwnd(WindowType::kDebug)){
 		//シーン
 		core_->GetSceneManager()->DebugDraw();
 		//ImGuiの管理
 		core_->GetImGuiManager()->Draw();
-	} else {
+	} else{
 		//シーン
 		core_->GetSceneManager()->GameDraw();
 	}
@@ -59,6 +68,6 @@ void GameSystem::Draw() {
 }
 
 //終了
-void GameSystem::Finalize() {
+void GameSystem::Finalize(){
 	Framework::Finalize();
 }

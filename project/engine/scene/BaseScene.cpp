@@ -3,18 +3,19 @@
 #include "AbstractSceneFactory.h"
 #include "GlobalVariables.h"
 #include "WinApi.h"
+#include "GameObject.h"
 //#include "algorithms/ColliderManager.h"
 
 //コンストラクタ
-BaseScene::BaseScene() {
+BaseScene::BaseScene(){
 }
 
 //デストラクタ
-BaseScene::~BaseScene() {
+BaseScene::~BaseScene(){
 }
 
 //初期化
-void BaseScene::Initialize(const SceneContext& sceneContext) {
+void BaseScene::Initialize(const SceneContext& sceneContext){
 	//ゲームエンジンの核
 	sceneContext_ = sceneContext;
 	//デバックカメラ
@@ -27,7 +28,7 @@ void BaseScene::Initialize(const SceneContext& sceneContext) {
 }
 
 //更新
-void BaseScene::Update() {
+void BaseScene::Update(){
 	//デバックカメラ
 	debugCamera_->Update();
 	//コライダーマネージャー
@@ -35,13 +36,19 @@ void BaseScene::Update() {
 }
 
 //デバッグ
-void BaseScene::Debug() {
+void BaseScene::Debug(){
 
 }
 
 //終了
-void BaseScene::Finalize() {
+void BaseScene::Finalize(){
 	//シーンファクトリーの解放
 	delete sceneFactory_;
 	sceneFactory_ = nullptr;
+}
+
+//ゲームオブジェクトの取得
+const std::vector<std::unique_ptr<GameObject>>& BaseScene::GetGameObjects()const{
+	// TODO: return ステートメントをここに挿入します
+	return gameObjects_;
 }

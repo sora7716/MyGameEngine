@@ -44,18 +44,30 @@ void TestPlayScene::Initialize(const SceneContext& sceneContext) {
 	//}
 
 	//object3d_->SetLODDistances({ 20.0f,30.0f,50.0f,80.0f });
-	std::unique_ptr<GameObject>tree = std::make_unique<GameObject>();
-	tree->Initialize("tree");
-	tree->GetTransform().translate = { 0.0f,0.0f,-9.9f };
-	tree->GetTransform().eulerAngle = { -std::numbers::pi_v<float> / 2.0f,0.0f,0.0f };
-	tree->GetTransform().quaternion = Quaternion::MakeQuaternionForEulerAngle(tree->GetTransform().eulerAngle);
-	tree->GetTransform().scale = Vector3::MakeAllOne();
+	GameObject* treePtr = nullptr;
+	std::unique_ptr<GameObject>modelObject = std::make_unique<GameObject>();
+	modelObject->Initialize("object3d");
+	modelObject->GetTransform().translate = { 0.0f,0.0f,-9.9f };
+	modelObject->GetTransform().eulerAngle = { -std::numbers::pi_v<float> / 2.0f,0.0f,0.0f };
+	modelObject->GetTransform().quaternion = Quaternion::MakeQuaternionForEulerAngle(modelObject->GetTransform().eulerAngle);
+	modelObject->GetTransform().scale = Vector3::MakeAllOne();
 
-	GameObject* treePtr = tree.get();
-
-	gameObjects_.push_back(std::move(tree));
+	treePtr = modelObject.get();
+	gameObjects_.push_back(std::move(modelObject));
 	object3d_->AddInstance(treePtr);
 
+	std::unique_ptr<GameObject> skyBoxObject = std::make_unique<GameObject>();
+	skyBoxObject->Initialize("skyBox");
+	skyBoxObject->GetTransform().scale = { 50.0f,50.0f,50.0f };
+	treePtr = skyBoxObject.get();
+	gameObjects_.push_back(std::move(skyBoxObject));
+
+	skyBox_ = std::make_unique<SkyBox>();
+	skyBox_->Initialize(sceneContext_.directXBase, sceneContext.textureManager, "skybox_cube.dds", gameCamera_);
+	skyBox_->SetGameObject(treePtr);
+	for (uint32_t i = 0; i < object3d_->GetMeshSize(); i++){
+		object3d_->SetEnvironmentMap(i, "skybox_cube.dds");
+	}
 	//for (uint32_t i = 0; i < object3d_->GetModel()->GetMeshes().size(); i++) {
 	//	transform2ds_.push_back({ object3d_->GetUVScale(i),object3d_->GetUVRotate(i),object3d_->GetUVTranslate(i) });
 	//}
@@ -67,17 +79,6 @@ void TestPlayScene::Initialize(const SceneContext& sceneContext) {
 
 	cube_ = std::make_unique<Primitive::Cube>();
 	cube_->Initialize(sceneContext_.directXBase, gameCamera_);
-
-
-	skyBoxObject_ = std::make_unique<GameObject>();
-	skyBoxObject_->Initialize("skyBox");
-	skyBox_ = std::make_unique<SkyBox>();
-	skyBox_->Initialize(sceneContext_.directXBase, sceneContext.textureManager, "skybox_cube.dds", gameCamera_);
-	skyBoxObject_->GetTransform().scale = { 10.0f,10.0f,10.0f };
-	skyBox_->SetGameObject(skyBoxObject_.get());
-	for (uint32_t i = 0; i < object3d_->GetMeshSize(); i++) {
-		object3d_->SetEnvironmentMap(i, "skybox_cube.dds");
-	}
 
 	particleSystem_ = std::make_unique<ParticleSystem>();
 	particleSystem_->Initialize(sceneContext_.particleCommon, gameCamera_, "circle2.png");
@@ -113,13 +114,6 @@ void TestPlayScene::Update() {
 	} else {
 		cube_->SetColor(Vector4::MakeWhiteColor());
 	}
-
-	if (sceneContext_.input->PressKey(DIK_UP)) {
-		gameObjects_[0]->GetTransform().translate.z -= 1.0f;
-	} else if (sceneContext_.input->PressKey(DIK_DOWN)) {
-		gameObjects_[0]->GetTransform().translate.z += 1.0f;
-	}
-	;
 }
 
 //デバッグ
@@ -127,18 +121,18 @@ void TestPlayScene::Debug() {
 #ifdef USE_IMGUI
 	ImGui::Begin("Object");
 
-	for (int32_t i = 0; i < gameObjects_.size(); i++) {
-		ImGui::PushID(i);
+	//for (int32_t i = 0; i < gameObjects_.size(); i++) {
+	//	ImGui::PushID(i);
 
-		if (ImGui::TreeNode(("object" + std::to_string(i)).c_str())) {
-			ImGuiManager::DragTransform(gameObjects_[i]->GetTransform());
-			ImGui::SliderFloat("evironmentCoefficient", &environmentCoefficient_, 0.0f, 1.0f);
-			object3d_->SetEnvironmentCoefficient(0, environmentCoefficient_);
-			ImGui::TreePop();
-		}
+	//	if (ImGui::TreeNode(("object" + std::to_string(i)).c_str())) {
+	//		ImGuiManager::DragTransform(gameObjects_[i]->GetTransform());
+	//		ImGui::SliderFloat("environmentCoefficient", &environmentCoefficient_, 0.0f, 1.0f);
+	//		object3d_->SetEnvironmentCoefficient(0, environmentCoefficient_);
+	//		ImGui::TreePop();
+	//	}
 
-		ImGui::PopID();
-	}
+	//	ImGui::PopID();
+	//}
 	//for (uint32_t i = 0; i < transform2ds_.size(); i++) {
 	//	ImGui::PushID(i);
 	//	ImGui::DragFloat2("uvScale", &transform2ds_[i].scale.x, 0.1f);
@@ -161,10 +155,10 @@ void TestPlayScene::Debug() {
 		ImGui::TreePop();
 	}
 
-	if (ImGui::TreeNode("skyBox")) {
-		ImGuiManager::DragTransform(skyBoxObject_->GetTransform());
-		ImGui::TreePop();
-	}
+	//if (ImGui::TreeNode("skyBox")) {
+	//	ImGuiManager::DragTransform(skyBoxObject_->GetTransform());
+	//	ImGui::TreePop();
+	//}
 
 	if (ImGui::TreeNode("particle")) {
 		ImGui::DragFloat3("emitter", &emitterPos_.x, 0.01f);

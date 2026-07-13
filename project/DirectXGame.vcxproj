@@ -37,6 +37,7 @@
     <ClCompile Include="engine\collision\Collision.cpp" />
     <ClCompile Include="engine\debug\CrashHandler.cpp" />
     <ClCompile Include="engine\debug\DebugCamera.cpp" />
+    <ClCompile Include="engine\debug\DebugEditor.cpp" />
     <ClCompile Include="engine\debug\ImGuiManager.cpp">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
       </ExcludedFromBuild>
@@ -112,6 +113,7 @@
     <ClInclude Include="engine\collision\Collision.h" />
     <ClInclude Include="engine\debug\CrashHandler.h" />
     <ClInclude Include="engine\debug\DebugCamera.h" />
+    <ClInclude Include="engine\debug\DebugEditor.h" />
     <ClInclude Include="engine\debug\ImGuiManager.h">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
       </ExcludedFromBuild>

@@ -2,11 +2,19 @@
 #include "BaseScene.h"
 #include "AbstractSceneFactory.h"
 
+//前方宣言
+class DebugEditor;
+
 /// <summary>
 /// シーン管理
 /// </summary>
 class SceneManager {
 public://メンバ関数
+	/// <summary>
+	/// コンストラクタ
+	/// </summary>
+	SceneManager();
+
 	/// <summary>
 	/// デストラクタ
 	/// </summary>
@@ -80,5 +88,7 @@ private://メンバ変数
 	BaseScene* scene_ = nullptr;
 	//次のシーン
 	BaseScene* nextScene_ = nullptr;
+	//デバッグエディタ
+	std::unique_ptr<DebugEditor>debugEditor_ = nullptr;
 };
 

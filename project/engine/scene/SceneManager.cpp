@@ -1,6 +1,11 @@
 #include "SceneManager.h"
 #include "ImGuiManager.h"
+#include "debugEditor.h"
 #include <cassert>
+
+//コンストラクタ
+SceneManager::SceneManager(){
+}
 
 //デストラクタ
 SceneManager::~SceneManager() {
@@ -14,6 +19,9 @@ void SceneManager::Initialize(const SceneContext& sceneContext) {
 	sceneContext_ = sceneContext;
 	//シーンマネージャだけ自分から渡す
 	sceneContext_.sceneManager = this;
+	//デバッグエディターの生成と初期化
+	debugEditor_ = std::make_unique<DebugEditor>();
+	debugEditor_->Initialize();
 }
 
 //更新
@@ -22,6 +30,9 @@ void SceneManager::Update() {
 	if (nextScene_) {
 		//旧シーンの終了
 		if (scene_) {
+			//デバッグエディタの初期化
+			debugEditor_->Initialize();
+			//旧シーンの解放
 			scene_->Finalize();
 			delete scene_;
 		}
@@ -30,15 +41,22 @@ void SceneManager::Update() {
 		nextScene_ = nullptr;
 		//次のシーン
 		scene_->Initialize(sceneContext_);
+		//ゲームオブジェクト一覧をDebugEditorに登録
+		debugEditor_->SetGameObjects(scene_->GetGameObjects());
 	}
 	//更新
 	scene_->Update();
+	//デバッグエディタの更新
+	debugEditor_->Update();
 }
 
 //デバッグ
 void SceneManager::Debug() {
 #ifdef USE_IMGUI
 	sceneContext_.imGuiManager->Begin();
+	//デバッグエディタの描画
+	debugEditor_->Draw();
+	//シーンのデバッグ
 	scene_->Debug();
 	sceneContext_.imGuiManager->End();
 #endif // USE_IMGUI

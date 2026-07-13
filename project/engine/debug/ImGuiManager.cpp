@@ -30,6 +30,7 @@ void ImGuiManager::Initialize([[maybe_unused]] WinApi* winApi, [[maybe_unused]] 
 	//ImGuiのコンテキストを生成
 	ImGui::CreateContext();
 	ImGuiIO& io = ImGui::GetIO();
+	io.ConfigFlags |= ImGuiConfigFlags_DockingEnable;
 	io.Fonts->Build();
 	//ImGuiのスタイルを設定
 	ImGui::StyleColorsDark();

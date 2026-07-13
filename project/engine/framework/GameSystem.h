@@ -9,12 +9,12 @@ public://メンバ関数
 	/// <summary>
 	/// コンストラクタ
 	/// </summary>
-	GameSystem() = default;
+	GameSystem();
 
 	/// <summary>
 	/// デストラクタ
 	/// </summary>
-	~GameSystem() = default;
+	~GameSystem();
 
 	/// <summary>
 	/// 初期化

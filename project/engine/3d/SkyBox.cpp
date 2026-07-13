@@ -82,6 +82,10 @@ void SkyBox::Update() {
 
 //描画処理
 void SkyBox::Draw() {
+	//存在していなかったら
+	if (!gameObject_->IsActive()){
+		return;
+	}
 	//ルートシグネイチャをセットするコマンド
 	directXBase_->GetCommandList()->SetGraphicsRootSignature(rootSignature_.Get());
 	//プリミティブトポロジーをセットするコマンド

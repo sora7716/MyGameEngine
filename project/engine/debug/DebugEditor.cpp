@@ -50,7 +50,7 @@ void DebugEditor::DrawDockSpace(){
 void DebugEditor::DrawHierarchy(){
 #ifdef USE_IMGUI
 	ImGui::Begin("Hierarchy");
-	ImGui::TextUnformatted("GameObjects");
+	//ImGui::TextUnformatted("GameObjects");
 	if (gameObjects_){
 		for (const std::unique_ptr<GameObject>& gameObject : *gameObjects_){
 			//ゲームオブジェクトがなかった場合
@@ -61,12 +61,28 @@ void DebugEditor::DrawHierarchy(){
 			//ゲームオブジェクトの生ポインタを保存
 			GameObject* object = gameObject.get();
 
+			ImGui::PushID(object);
+
 			//選んだオブジェクトと同じかどうか
 			const bool isSelected = selectedGameObject_ == object;
+
+			//存在しているかどうか
+			const bool isActive = object->IsActive();
+
+			//存在していなかったら
+			if (!isActive){
+				ImGui::PushStyleColor(ImGuiCol_Text, ImGui::GetStyleColorVec4(ImGuiCol_TextDisabled));
+			}
 
 			if (ImGui::Selectable(object->GetName().c_str(), isSelected)){
 				selectedGameObject_ = object;
 			}
+
+			if (!isActive){
+				ImGui::PopStyleColor();
+			}
+
+			ImGui::PopID();
 		}
 		ImGui::End();
 	}
@@ -78,14 +94,28 @@ void DebugEditor::DrawInspector(){
 #ifdef USE_IMGUI
 	ImGui::Begin("Inspector");
 	if (selectedGameObject_){
-		ImGui::TextUnformatted("Object selected");
-		Transform& transform = selectedGameObject_->GetTransform();
+		ImGui::SameLine();
+		ImGui::TextUnformatted(selectedGameObject_->GetName().c_str());
 
-		ImGui::DragFloat3("translate", &transform.translate.x, 0.1f);
+		//有効状態
+		bool isActive = selectedGameObject_->IsActive();
+
+		//アクティブを切り替え1
+		if (ImGui::Checkbox("active", &isActive)){
+			selectedGameObject_->SetIsActive(isActive);
+		}
+
+		ImGui::SeparatorText("transform");
+
+		Transform& transform = selectedGameObject_->GetTransform();
+		//スケールの切り替え
+		ImGui::DragFloat3("scale", &transform.scale.x, 0.1f);
+		//回転の切り替え(オイラー角からクォータニオンを求めてる)
 		if (ImGui::DragFloat3("rotate", &transform.eulerAngle.x, 0.1f)){
 			transform.quaternion = Quaternion::MakeQuaternionForEulerAngle(transform.eulerAngle);
-		};
-		ImGui::DragFloat3("scale", &transform.scale.x, 0.1f);
+		}
+		//平行移動成分の切り替え
+		ImGui::DragFloat3("translate", &transform.translate.x, 0.1f);
 	} else{
 		ImGui::TextDisabled("No object selected");
 	}

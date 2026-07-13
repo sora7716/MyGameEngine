@@ -30,11 +30,10 @@ TestPlayScene::~TestPlayScene() {};
 void TestPlayScene::Initialize(const SceneContext& sceneContext) {
 	//ベースシーンの初期化
 	BaseScene::Initialize(sceneContext);
-	renderCamera_ = *sceneContext_.cameraManager->FindCamera("testPlayCamera");
 	gameCamera_ = sceneContext_.cameraManager->FindCamera("testPlayCamera");
 
 	object3d_ = std::make_unique<Object3d>();
-	object3d_->Initialize(sceneContext_.object3dCommon, &renderCamera_, 1);
+	object3d_->Initialize(sceneContext_.object3dCommon, gameCamera_, 1);
 	object3d_->SetGameCamera(gameCamera_);
 	object3d_->SetModel("sneakWalk", { 1.0f });
 	//object3d_->SetTexture(0, "uvChecker.png");
@@ -62,26 +61,26 @@ void TestPlayScene::Initialize(const SceneContext& sceneContext) {
 	//}
 
 	frustum_ = std::make_unique<Primitive::Frustum>();
-	frustum_->Initialize(sceneContext_.directXBase, &renderCamera_);
+	frustum_->Initialize(sceneContext_.directXBase, gameCamera_);
 	frustum_->SetTargetCamera(gameCamera_);
 	frustum_->SetColor({ 1.0f,0.0f,0.0f,1.0f });
 
 	cube_ = std::make_unique<Primitive::Cube>();
-	cube_->Initialize(sceneContext_.directXBase, &renderCamera_);
+	cube_->Initialize(sceneContext_.directXBase, gameCamera_);
 
 
 	skyBoxObject_ = std::make_unique<GameObject>();
 	skyBoxObject_->Initialize("skyBox");
 	skyBox_ = std::make_unique<SkyBox>();
-	skyBox_->Initialize(sceneContext_.directXBase, sceneContext.textureManager, "rostock_laage_airport_4k.dds", gameCamera_);
+	skyBox_->Initialize(sceneContext_.directXBase, sceneContext.textureManager, "skybox_cube.dds", gameCamera_);
 	skyBoxObject_->GetTransform().scale = { 10.0f,10.0f,10.0f };
 	skyBox_->SetGameObject(skyBoxObject_.get());
 	for (uint32_t i = 0; i < object3d_->GetMeshSize(); i++) {
-		object3d_->SetEnvironmentMap(i, "rostock_laage_airport_4k.dds");
+		object3d_->SetEnvironmentMap(i, "skybox_cube.dds");
 	}
 
 	particleSystem_ = std::make_unique<ParticleSystem>();
-	particleSystem_->Initialize(sceneContext_.particleCommon, &renderCamera_, "circle2.png");
+	particleSystem_->Initialize(sceneContext_.particleCommon, gameCamera_, "circle2.png");
 	particleSystem_->SetGameCamera(gameCamera_);
 	particleSystem_->SetParticleCount(2);
 	particleSystem_->SetFrequency(0.3f);
@@ -113,12 +112,6 @@ void TestPlayScene::Update() {
 		cube_->SetColor(Vector4::MakeRedColor());
 	} else {
 		cube_->SetColor(Vector4::MakeWhiteColor());
-	}
-
-	if (debugCamera_->IsDebug()) {
-		renderCamera_ = *debugCamera_->GetCamera();
-	} else {
-		renderCamera_ = *sceneContext_.cameraManager->FindCamera("testPlayCamera");
 	}
 
 	if (sceneContext_.input->PressKey(DIK_UP)) {
@@ -184,14 +177,6 @@ void TestPlayScene::Debug() {
 
 	ImGui::End();
 #endif // USE_IMGUI
-
-#ifdef _DEBUG
-	if (debugCamera_->IsDebug()) {
-		renderCamera_ = *debugCamera_->GetCamera();
-	} else {
-		renderCamera_ = *sceneContext_.cameraManager->FindCamera("testPlayCamera");
-	}
-#endif // _DEBUG
 }
 
 //描画

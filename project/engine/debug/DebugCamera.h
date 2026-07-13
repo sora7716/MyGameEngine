@@ -44,12 +44,6 @@ public://メンバ関数
 	Camera* GetCamera();
 
 	/// <summary>
-	/// デバッグ中どうかのフラグのゲッター
-	/// </summary>
-	/// <returns>isDebug</returns>
-	const bool IsDebug()const;
-
-	/// <summary>
 	/// XboxPadの番号のセッター
 	/// </summary>
 	/// <param name="xboxPadNumber">XBoxPadの番号</param>
@@ -125,7 +119,5 @@ private://メンバ変数
 	float fovY_ = 0.0f;
 	//Xboxの番号
 	DWORD xBoxPadNumber_ = 0;
-	//デバッグするかどうか
-	bool isDebug = true;
 };
 

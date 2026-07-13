@@ -8,7 +8,7 @@
 //初期化
 void DebugCamera::Initialize(Input* input, CameraManager* cameraManager) {
 	//入力
-	input_ =input;
+	input_ = input;
 
 	//カメラ
 	camera_ = cameraManager->FindCamera("debugCamera");
@@ -19,22 +19,14 @@ void DebugCamera::Initialize(Input* input, CameraManager* cameraManager) {
 
 //更新
 void DebugCamera::Update() {
-	//デバッグするかどうか
-	if (isDebug) {
-		//平行移動の更新
-		TranslateUpdate();
+	//平行移動の更新
+	TranslateUpdate();
 
-		//回転の操作
-		RotateControl();
+	//回転の操作
+	RotateControl();
 
-		//ズーム操作
-		ZoomControl();
-	}
-
-	//デバッグOn/Off
-	if (input_->TriggerKey(DIK_ESCAPE) || input_->TriggerXboxPad(xBoxPadNumber_, XboxInput::kStart)) {
-		isDebug = !isDebug;
-	}
+	//ズーム操作
+	ZoomControl();
 
 	//カメラ
 	camera_->SetQuaternion(Quaternion::MakeQuaternionForEulerAngle(rotate_));
@@ -47,11 +39,6 @@ Camera* DebugCamera::GetCamera() {
 	return camera_;
 }
 
-//デバッグ中どうかのフラグのゲッター
-const bool DebugCamera::IsDebug()const {
-	return isDebug;
-}
-
 //XboxPadの番号のセッター
 void DebugCamera::SetXBoxPadNumber(DWORD xboxPadNumber) {
 	xBoxPadNumber_ = xboxPadNumber;
@@ -60,8 +47,6 @@ void DebugCamera::SetXBoxPadNumber(DWORD xboxPadNumber) {
 //デバックに使用する
 void DebugCamera::Debug() {
 #ifdef USE_IMGUI
-	ImGui::Text("ESCAPE or XboxPadforStart");
-	ImGui::Text("DebugMode:%s", isDebug ? "ON" : "OFF");
 	ImGui::DragFloat4("rotate", &rotate_.x, 0.1f);
 	ImGui::DragFloat2("flick", &mouseFlick_.x, 0.1f);
 	ImGui::DragFloat("fovY", &fovY_, 0.1f);

@@ -52,6 +52,15 @@ GameObject* DebugEditor::ConsumeDeleteRequest(){
 	return target;
 }
 
+//複製要求を取得
+GameObject* DebugEditor::ConsumeDuplicateRequest(){
+	GameObject* target = requestDuplicateGameObject_;
+
+	requestDuplicateGameObject_ = nullptr;
+
+	return target;
+}
+
 //ドッキングスペースの描画
 void DebugEditor::DrawDockSpace(){
 #ifdef USE_IMGUI

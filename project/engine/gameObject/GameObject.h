@@ -1,9 +1,10 @@
 #pragma once
 #include "RenderingData.h"
 #include <string>
+#include <memory>
 
 //タグ
-enum class Tag {
+enum class Tag{
 	kPlayer,
 	kJumpPad,
 	kGround,
@@ -12,7 +13,14 @@ enum class Tag {
 };
 
 //ゲームオブジェクト
-class GameObject {
+class GameObject{
+public://静的メンバ関数
+	/// <summary>
+	/// ゲームオブジェクトの生成
+	/// </summary>
+	/// <param name="name">ゲームオブジェクトの名前</param>
+	/// <returns></returns>
+	static std::unique_ptr<GameObject>Create(const std::string& name = "GameObject");
 public://メンバ関数
 	/// <summary>
 	/// コンストラクタ
@@ -20,15 +28,27 @@ public://メンバ関数
 	GameObject();
 
 	/// <summary>
+    /// コピーコンストラクタ
+    /// </summary>
+    /// <param name="gameObject">ゲームオブジェクト</param>
+	GameObject(const GameObject& gameObject);
+
+	/// <summary>
 	/// デストラクタ
 	/// </summary>
 	~GameObject();
 
 	/// <summary>
+	/// 複製
+	/// </summary>
+	/// <returns>複製したゲームオブジェクト</returns>
+	std::unique_ptr<GameObject> Clone()const;
+
+	/// <summary>
 	/// 初期化
 	/// </summary>
-	/// <param name="name"></param>
-	void Initialize(const std::string& name = "GameObject");
+	/// <param name="name">ゲームオブジェクトの名前</param>
+	void Initialize(const std::string& name);
 
 	/// <summary>
 	/// トランスフォームの取得
@@ -43,13 +63,13 @@ public://メンバ関数
 	const Transform& GetTransform()const;
 
 	/// <summary>
-	/// 
+	/// アクティブかどうかを設定
 	/// </summary>
 	/// <param name="isActive"></param>
 	void SetIsActive(bool isActive);
 
 	/// <summary>
-	/// 
+	/// アクティブかどうかを取得
 	/// </summary>
 	/// <returns></returns>
 	bool IsActive()const;
@@ -67,7 +87,13 @@ public://メンバ関数
 	Tag GetTag()const;
 
 	/// <summary>
-	/// 
+	/// 名前の設定
+	/// </summary>
+	/// <param name="name">名前</param>
+	void SetName(const std::string& name);
+
+	/// <summary>
+	/// 名前を取得
 	/// </summary>
 	/// <returns></returns>
 	const std::string& GetName()const;

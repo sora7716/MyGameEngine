@@ -60,10 +60,26 @@ public://メンバ関数
 	void DeleteGameObject(GameObject* target);
 
 	/// <summary>
+	/// ゲームオブジェトの複製
+	/// </summary>
+	/// <param name="target">対象となるゲームオブジェクト</param>
+	void DuplicateGameObject(GameObject* target);
+
+	/// <summary>
 	/// ゲームオブジェクトの一覧を取得
 	/// </summary>
 	/// <returns>ゲームオブジェクト</returns>
 	const std::vector<std::unique_ptr<GameObject>>& GetGameObjects()const;
+private://メンバ関数
+	/// <summary>
+	/// 名前を重複しないようにする
+	/// </summary>
+	/// <param name="baseName">元の名前</param>
+	/// <param name="remove">省きたい部分</param>
+	std::string CreateUniqueGameObjectName(const std::string& baseName, std::string_view remove)const;
+private://定数
+	//オブジェクトの大きさ
+	static inline const uint32_t kGameObjectSize = 65536;
 protected://メンバ変数
 	//Xboxの番号
 	DWORD xBoxPadNumber_ = 0;

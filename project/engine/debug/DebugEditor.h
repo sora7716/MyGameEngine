@@ -45,6 +45,12 @@ public://メンバ関数
 	/// </summary>
 	/// <returns>削除要求</returns>
 	GameObject* ConsumeDeleteRequest();
+
+	/// <summary>
+	/// 複製要求を取得
+	/// </summary>
+	/// <returns>複製要求</returns>
+	GameObject* ConsumeDuplicateRequest();
 private://メンバ関数
 	/// <summary>
 	/// ドッキングスペースの描画

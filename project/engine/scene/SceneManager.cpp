@@ -62,6 +62,11 @@ void SceneManager::Debug() {
 		scene_->DeleteGameObject(target);
 	}
 
+	//複製要求を処理
+	if (GameObject* target = debugEditor_->ConsumeDuplicateRequest()){
+		scene_->DuplicateGameObject(target);
+	}
+
 	//シーンのデバッグ
 	scene_->Debug();
 	sceneContext_.imGuiManager->End();

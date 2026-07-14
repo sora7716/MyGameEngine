@@ -20,7 +20,7 @@ public://静的メンバ関数
 	/// </summary>
 	/// <param name="name">ゲームオブジェクトの名前</param>
 	/// <returns></returns>
-	static std::unique_ptr<GameObject>Create(const std::string& name = "GameObject");
+	static std::unique_ptr<GameObject>Create(const std::string& name);
 public://メンバ関数
 	/// <summary>
 	/// コンストラクタ
@@ -28,9 +28,9 @@ public://メンバ関数
 	GameObject();
 
 	/// <summary>
-    /// コピーコンストラクタ
-    /// </summary>
-    /// <param name="gameObject">ゲームオブジェクト</param>
+	/// コピーコンストラクタ
+	/// </summary>
+	/// <param name="gameObject">ゲームオブジェクト</param>
 	GameObject(const GameObject& gameObject);
 
 	/// <summary>

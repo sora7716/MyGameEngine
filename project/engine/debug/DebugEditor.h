@@ -1,5 +1,6 @@
 #pragma once
 #include <vector>
+#include <array>
 #include <memory>
 //前方宣言
 class GameObject;
@@ -51,6 +52,18 @@ public://メンバ関数
 	/// </summary>
 	/// <returns>複製要求</returns>
 	GameObject* ConsumeDuplicateRequest();
+
+	/// <summary>
+	/// 生成要求を取得
+	/// </summary>
+	/// <returns>生成要求</returns>
+	bool ConsumeCreateRequest();
+
+	/// <summary>
+	/// GameObjectを選択
+	/// </summary>
+	/// <param name="gameObject">ゲームオブジェクト</param>
+	void SelectGameObject(GameObject* gameObject);
 private://メンバ関数
 	/// <summary>
 	/// ドッキングスペースの描画
@@ -66,6 +79,12 @@ private://メンバ関数
 	/// インスペクターの描画
 	/// </summary>
 	void DrawInspector();
+
+	/// <summary>
+	/// 名前変更を開始
+	/// </summary>
+	/// <param name="gameObject">ゲームオブジェクト</param>
+	void BeginRename(GameObject* gameObject);
 private://メンバ変数
 	//選択するゲームオブジェクト
 	GameObject* selectedGameObject_ = nullptr;
@@ -77,5 +96,11 @@ private://メンバ変数
 	GameObject* requestDuplicateGameObject_ = nullptr;
 	//削除要求
 	GameObject* requestDeleteGameObject_ = nullptr;
+	//名前変更
+	GameObject* renamingGameObject_ = nullptr;
+	//名前変更用の文字列バッファ
+	std::array<char, 256>renameBuffer_ = {};
+	//InputTextへフォーカスする要求
+	bool requestRenameFocus_ = false;
 };
 

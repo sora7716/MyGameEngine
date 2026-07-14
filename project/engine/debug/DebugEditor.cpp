@@ -15,6 +15,15 @@ void DebugEditor::Initialize(){
 	//選択するオブジェクトの初期化
 	selectedGameObject_ = nullptr;
 	gameObjects_ = nullptr;
+
+	//作成要求
+	requestCreateGameObject_ = false;
+	//複製要求
+	requestDuplicateGameObject_ = nullptr;
+	//削除要求
+	requestDeleteGameObject_ = nullptr;
+	//名前変更
+	renamingGameObject_ = nullptr;
 }
 
 //更新
@@ -61,6 +70,18 @@ GameObject* DebugEditor::ConsumeDuplicateRequest(){
 	return target;
 }
 
+//生成要求を取得
+bool DebugEditor::ConsumeCreateRequest(){
+	bool request = requestCreateGameObject_;
+	requestCreateGameObject_ = false;
+	return request;
+}
+
+//GameObjectを選択
+void DebugEditor::SelectGameObject(GameObject* gameObject){
+	selectedGameObject_ = gameObject;
+}
+
 //ドッキングスペースの描画
 void DebugEditor::DrawDockSpace(){
 #ifdef USE_IMGUI
@@ -82,16 +103,16 @@ void DebugEditor::DrawHierarchy(){
 			}
 
 			//ゲームオブジェクトの生ポインタを保存
-			GameObject* object = gameObject.get();
+			GameObject* gameObjectPtr = gameObject.get();
 
 			//IDを追加し、同じ名前のObjectでも衝突しないようにする
-			ImGui::PushID(object);
+			ImGui::PushID(gameObjectPtr);
 
 			//選んだオブジェクトと同じかどうか
-			const bool isSelected = selectedGameObject_ == object;
+			const bool isSelected = selectedGameObject_ == gameObjectPtr;
 
 			//存在しているかどうか
-			const bool isActive = object->IsActive();
+			const bool isActive = gameObjectPtr->IsActive();
 
 			//フォントの色を変更
 			if (!isActive){
@@ -99,8 +120,27 @@ void DebugEditor::DrawHierarchy(){
 			}
 
 			//選択するテーブルの描画
-			if (ImGui::Selectable(object->GetName().c_str(), isSelected)){
-				selectedGameObject_ = object;
+			if (renamingGameObject_ == gameObjectPtr){
+				//Renameを選んだ時だけフォーカスする
+				if (requestRenameFocus_){
+					ImGui::SetKeyboardFocusHere();
+					requestRenameFocus_ = false;
+				}
+
+				const bool enterPressed = ImGui::InputText("##Rename", renameBuffer_.data(), renameBuffer_.size(), ImGuiInputTextFlags_EnterReturnsTrue | ImGuiInputTextFlags_AutoSelectAll);
+
+				//Enterで名前を確定
+				if (enterPressed){
+					if (renameBuffer_[0] != '\0'){
+						gameObjectPtr->SetName(renameBuffer_.data());
+					}
+
+					renamingGameObject_ = nullptr;
+				}
+			} else{
+				if (ImGui::Selectable(gameObjectPtr->GetName().c_str(), isSelected)){
+					selectedGameObject_ = gameObjectPtr;
+				}
 			}
 
 			//SelectTableを描画した直後に元に戻す
@@ -111,18 +151,22 @@ void DebugEditor::DrawHierarchy(){
 			//GameObjectを右クリックしたときのメニュー
 			if (ImGui::BeginPopupContextItem("GameObjectContext")){
 
+				if (ImGui::MenuItem("Rename")){
+					BeginRename(gameObjectPtr);
+				}
+
 				if (ImGui::MenuItem("active", nullptr, isActive)){
-					object->SetIsActive(!isActive);
+					gameObjectPtr->SetIsActive(!isActive);
 				}
 
 				ImGui::Separator();
 
 				if (ImGui::MenuItem("Duplicate")){
-					requestDuplicateGameObject_ = object;
+					requestDuplicateGameObject_ = gameObjectPtr;
 				}
 
 				if (ImGui::MenuItem("Delete")){
-					requestDeleteGameObject_ = object;
+					requestDeleteGameObject_ = gameObjectPtr;
 				}
 				ImGui::EndPopup();
 			}
@@ -200,4 +244,29 @@ void DebugEditor::DrawInspector(){
 	}
 	ImGui::End();
 #endif // USE_IMGUI
+}
+
+//名前変更を開始
+void DebugEditor::BeginRename(GameObject* gameObject){
+	//ゲームオブジェクトがなければ
+	if (!gameObject){
+		return;
+	}
+
+	renamingGameObject_ = gameObject;
+	requestRenameFocus_ = true;
+
+	//バッファを初期化
+	renameBuffer_.fill('\0');
+
+	//今の名前を取得
+	const std::string& name = gameObject->GetName();
+
+	const std::size_t copyLength = std::min(name.size(), renameBuffer_.size() - 1);
+
+	std::copy_n(
+		name.data(),
+		copyLength,
+		renameBuffer_.data()
+	);
 }

@@ -84,6 +84,23 @@ void BaseScene::DuplicateGameObject(GameObject* target){
 	gameObjects_.push_back(duplicate->Clone());
 }
 
+//空のゲームオブジェクトを生成
+GameObject* BaseScene::CreateGameObject(){
+	//重複してない名前を生成
+	std::string name = CreateUniqueGameObjectName("GameObjectr", "_");
+
+	//GameObjectの生成
+	std::unique_ptr<GameObject>gameObject = GameObject::Create(name);
+
+	//ポインタを保存
+	GameObject* gameObjectPtr = gameObject.get();
+
+	//ゲームオブジェクトに追加
+	gameObjects_.push_back(std::move(gameObject));
+
+	return gameObjectPtr;
+}
+
 //ゲームオブジェクトの取得
 const std::vector<std::unique_ptr<GameObject>>& BaseScene::GetGameObjects()const{
 	// TODO: return ステートメントをここに挿入します

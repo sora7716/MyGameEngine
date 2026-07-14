@@ -57,14 +57,21 @@ void SceneManager::Debug() {
 	//デバッグエディタの描画
 	debugEditor_->Draw();
 	
-	//削除要求を処理
-	if (GameObject* target = debugEditor_->ConsumeDeleteRequest()){
-		scene_->DeleteGameObject(target);
+	//生成要求
+	if (debugEditor_->ConsumeCreateRequest()){
+		GameObject* newGameObject = scene_->CreateGameObject();
+		//生成したGameObjectを選択
+		debugEditor_->SelectGameObject(newGameObject);
 	}
 
-	//複製要求を処理
+	//複製要求
 	if (GameObject* target = debugEditor_->ConsumeDuplicateRequest()){
 		scene_->DuplicateGameObject(target);
+	}
+
+	//削除要求
+	if (GameObject* target = debugEditor_->ConsumeDeleteRequest()){
+		scene_->DeleteGameObject(target);
 	}
 
 	//シーンのデバッグ

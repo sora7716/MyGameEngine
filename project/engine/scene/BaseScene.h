@@ -66,6 +66,12 @@ public://メンバ関数
 	void DuplicateGameObject(GameObject* target);
 
 	/// <summary>
+	/// 空のゲームオブジェクトを生成
+	/// </summary>
+	/// <returns>空のゲームオブジェクト</returns>
+	GameObject* CreateGameObject();
+
+	/// <summary>
 	/// ゲームオブジェクトの一覧を取得
 	/// </summary>
 	/// <returns>ゲームオブジェクト</returns>

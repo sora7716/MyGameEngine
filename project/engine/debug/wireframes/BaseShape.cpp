@@ -195,7 +195,7 @@ void BaseShape::CreateRootSignatureBlob() {
 	//シリアライズしてバイナリにする
 	HRESULT hr = D3D12SerializeRootSignature(&descriptionRootSignature, D3D_ROOT_SIGNATURE_VERSION_1, &signatureBlob_, &errorBlob);
 	if (FAILED(hr)) {
-		Logger::ConsolePrintf(reinterpret_cast<char*>(errorBlob->GetBufferPointer()));
+		logger::ConsolePrintf(reinterpret_cast<char*>(errorBlob->GetBufferPointer()));
 		assert(false);
 	}
 }

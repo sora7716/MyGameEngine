@@ -705,7 +705,7 @@ std::vector<MeshData> LODBuilder::VertexClustering(const std::vector<MeshData>& 
 
 	//割合が0.0fより小さかった場合
 	if (rate < 0.0f) {
-		Logger::ConsolePrintf("[Model::VertexClustering] rate is 0.0f or less. Invalid rate. Return original meshes.\n");
+		logger::ConsolePrintf("[Model::VertexClustering] rate is 0.0f or less. Invalid rate. Return original meshes.\n");
 		return baseMeshes;
 	}
 

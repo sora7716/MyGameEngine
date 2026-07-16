@@ -240,7 +240,7 @@ ComPtr<ID3D12DescriptorHeap> DirectXBase::CreateDescriptorHeap(D3D12_DESCRIPTOR_
 ComPtr<IDxcBlob> DirectXBase::CompilerShader(const std::wstring& filePath, const wchar_t* profile) {
 	//1. hlslファイルを読み込む
 		//これからシェーダーをコンパイルする旨をログに出す
-	Logger::ConsolePrintf(stringUtility::ConvertString(std::format(L"Begin CompileShader, path:{}, profile:{}\n", filePath, profile)));
+	logger::ConsolePrintf(stringUtility::ConvertString(std::format(L"Begin CompileShader, path:{}, profile:{}\n", filePath, profile)));
 	//hlslファイルを読み込む
 	ComPtr<IDxcBlobEncoding> shaderSource = nullptr;
 	HRESULT hr = dxcUtils_->LoadFile(filePath.c_str(), nullptr, &shaderSource);
@@ -275,7 +275,7 @@ ComPtr<IDxcBlob> DirectXBase::CompilerShader(const std::wstring& filePath, const
 	ComPtr<IDxcBlobUtf8> shaderError = nullptr;
 	shaderResult->GetOutput(DXC_OUT_ERRORS, IID_PPV_ARGS(&shaderError), nullptr);
 	if (shaderError != nullptr && shaderError->GetStringLength() != 0) {
-		Logger::ConsolePrintf(shaderError->GetStringPointer());
+		logger::ConsolePrintf(shaderError->GetStringPointer());
 		//警告・エラーダメゼッタイ
 		assert(false);
 	}
@@ -285,7 +285,7 @@ ComPtr<IDxcBlob> DirectXBase::CompilerShader(const std::wstring& filePath, const
 	hr = shaderResult->GetOutput(DXC_OUT_OBJECT, IID_PPV_ARGS(&shaderBlob), nullptr);
 	assert(SUCCEEDED(hr));
 	//成功したらログを出す
-	Logger::ConsolePrintf(stringUtility::ConvertString(std::format(L"Compile Succeeded, path:{},profile:{}\n", filePath, profile)));
+	logger::ConsolePrintf(stringUtility::ConvertString(std::format(L"Compile Succeeded, path:{},profile:{}\n", filePath, profile)));
 	//もう使わないリソースを解放
 	shaderSource->Release();
 	shaderResult->Release();
@@ -495,7 +495,7 @@ ComPtr<IDXGIAdapter4> DirectXBase::DecideUseAdapter() {
 		//ソフトウェアアダプタでなければ採用
 		if (!(adapterDesc.Flags & DXGI_ADAPTER_FLAG3_SOFTWARE)) {
 			//採用したアダプタの情報をログに出力。wstringのほうなので注意
-			Logger::ConsolePrintf(stringUtility::ConvertString(std::format(L"Use Adapter : {}\n", adapterDesc.Description)));
+			logger::ConsolePrintf(stringUtility::ConvertString(std::format(L"Use Adapter : {}\n", adapterDesc.Description)));
 			break;
 		}
 		adapter = nullptr;//ソフトウェアアダプタの場合は見なかったことにする
@@ -521,13 +521,13 @@ ComPtr<ID3D12Device> DirectXBase::CreateD3D12Device() {
 		//指定した機能レベルでデバイスが生成できたか確認
 		if (SUCCEEDED(result)) {
 			//生成できたのでログを出力を行ってループを抜ける
-			Logger::ConsolePrintf(std::format("FeatureLevel : {}\n", featureLevelStrings[i]));
+			logger::ConsolePrintf(std::format("FeatureLevel : {}\n", featureLevelStrings[i]));
 			break;
 		}
 	}
 	//デバイスがうまく生成できなかった場合止める
 	assert(device != nullptr);
-	Logger::ConsolePrintf("Complete create D3D12Device!!!\n");//初期化完了のログをだす
+	logger::ConsolePrintf("Complete create D3D12Device!!!\n");//初期化完了のログをだす
 	return device;
 }
 

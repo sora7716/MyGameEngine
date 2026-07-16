@@ -3,15 +3,6 @@
 #include <string>
 #include <memory>
 
-//タグ
-enum class Tag{
-	kPlayer,
-	kJumpPad,
-	kGround,
-	kGoal,
-	kNone
-};
-
 //ゲームオブジェクト
 class GameObject{
 public://静的メンバ関数
@@ -75,18 +66,6 @@ public://メンバ関数
 	bool IsActive()const;
 
 	/// <summary>
-	/// タグの設定
-	/// </summary>
-	/// <param name="tag">タグ</param>
-	void SetTag(Tag tag);
-
-	/// <summary>
-	/// タグの取得
-	/// </summary>
-	/// <returns>タグ</returns>
-	Tag GetTag()const;
-
-	/// <summary>
 	/// 名前の設定
 	/// </summary>
 	/// <param name="name">名前</param>
@@ -102,5 +81,5 @@ private://メンバ変数
 	Transform transform_ = {};
 	bool isActive_ = false;
 	//bool isEnabled_ = false;
-	Tag tag_ = Tag::kNone;
+	std::string tag_ = "UnTagged";
 };

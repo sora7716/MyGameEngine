@@ -35,7 +35,7 @@ void GameObject::Initialize(const std::string& name){
 	name_ = name;
 	transform_.Initialize();
 	isActive_ = true;
-	tag_ = Tag::kNone;
+	tag_ = "UnTagged";
 }
 
 //トランスフォームの取得
@@ -58,16 +58,6 @@ void GameObject::SetIsActive(bool isActive){
 //アクティブかどうかを取得
 bool GameObject::IsActive() const{
 	return isActive_;
-}
-
-//タグの設定
-void GameObject::SetTag(Tag tag){
-	tag_ = tag;
-}
-
-//タグの取得
-Tag GameObject::GetTag() const{
-	return tag_;
 }
 
 //名前の設定

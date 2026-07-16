@@ -6,7 +6,7 @@
 #include <functional>
 
 //レイヤー
-enum class Layer : uint32_t {
+enum class Layer : uint32_t{
 	kNone = 0,
 	kPlayer = 1 << 0,
 	kEnemy = 1 << 1,
@@ -22,25 +22,25 @@ enum class Layer : uint32_t {
 //velocityPtr: 速度のポインタ
 //isOnGroundPtr: 地面にいるかのフラグのポインタ
 //tag: オブジェクトのタグ
-struct ColliderState {
+struct ColliderState{
 	Vector3* scalePtr;
 	Quaternion* rotatePtr;
 	Vector3* translatePtr;
 	Vector3* velocityPtr;
 	bool* isOnGroundPtr;
-	Tag *tagPtr;
+	//Tag *tagPtr;
 
 	/// <summary>
-    /// 初期化
-    /// </summary>
-    /// <param name="gameObject">ゲームオブジェクト</param>
-    /// <param name="physicsData">物理演算データ</param>
+	/// 初期化
+	/// </summary>
+	/// <param name="gameObject">ゲームオブジェクト</param>
+	/// <param name="physicsData">物理演算データ</param>
 	/// <param name="scale">スケール</param>
-	void Initialize(GameObject& gameObject, PhysicsData& physicsData,Vector3& scale);
+	void Initialize(GameObject& gameObject, PhysicsData& physicsData, Vector3& scale);
 };
 
 //動かせるのか動かせないのか
-enum class BodyType {
+enum class BodyType{
 	kStatic,
 	kDynamic
 };
@@ -54,7 +54,7 @@ enum class BodyType {
 //maskLayer: 当たりたい相手(複数)
 //bodyType: 動かせるか動かせないのか
 //onCollision: 衝突したときに呼ばれる
-struct Collider {
+struct Collider{
 	ColliderState* owner;
 	primitiveData::OBB obb;
 	bool isTrigger;

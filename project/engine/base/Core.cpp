@@ -1,7 +1,7 @@
 #include "Core.h"
 #include "engine/scene/SceneFactory.h"
 //初期化
-void Core::Initialize() {
+void Core::Initialize(){
 	//WinApi
 	winApi_ = std::make_unique<WinApi>(WinApi::ConstructorKey{});
 	winApi_->Initialize();
@@ -47,6 +47,9 @@ void Core::Initialize() {
 	//ゲームオブジェクトのリスト
 	gameObjectList_ = std::make_unique<GameObjectList>(GameObjectList::ConstructorKey{});
 	gameObjectList_->Initialize(this);
+	//タグの管理
+	tagManager_ = std::make_unique<TagManager>(TagManager::ConstructorKey{});
+	tagManager_->Initialize();
 	//シーンで必要なものをまとめる
 	sceneContext_.input = input_.get();
 	sceneContext_.directXBase = directXBase_.get();
@@ -62,87 +65,92 @@ void Core::Initialize() {
 	sceneManager_->SetSceneFactory(sceneFactory_.get());
 }
 
-//WinApiのゲッター
-WinApi* Core::GetWinApi()const {
+//WinApiの取得
+WinApi* Core::GetWinApi()const{
 	return winApi_.get();
 }
 
 //DirectXの基盤部分
-DirectXBase* Core::GetDirectXBase()const {
+DirectXBase* Core::GetDirectXBase()const{
 	return directXBase_.get();
 }
 
-//SRVマネージャーのゲッター
-SRVManager* Core::GetSRVManager()const {
+//SRVマネージャーの取得
+SRVManager* Core::GetSRVManager()const{
 	return srvManager_.get();
 }
 
-//入力のゲッター
-Input* Core::GetInput()const {
+//入力の取得
+Input* Core::GetInput()const{
 	return input_.get();
 }
 
-//テクスチャマネージャーのゲッター
-TextureManager* Core::GetTextureManager() const {
+//テクスチャマネージャーの取得
+TextureManager* Core::GetTextureManager() const{
 	return textureManager_.get();
 }
 
 //モデルマネージャー
-ModelManager* Core::GetModelManager() const {
+ModelManager* Core::GetModelManager() const{
 	return modelManager_.get();
 }
 
-//ImGuiマネージャーのゲッター
-ImGuiManager* Core::GetImGuiManager() const {
+//ImGuiマネージャーの取得
+ImGuiManager* Core::GetImGuiManager() const{
 	return imguiManager_.get();
 }
 
-//カメラマネージャーのゲッター
-CameraManager* Core::GetCameraManager()const {
+//カメラマネージャーの取得
+CameraManager* Core::GetCameraManager()const{
 	return cameraManager_.get();
 }
 
-//スプライトの共通部分のゲッター
-SpriteCommon* Core::GetSpriteCommon() const {
+//スプライトの共通部分の取得
+SpriteCommon* Core::GetSpriteCommon() const{
 	return spriteCommon_.get();
 }
 
-//3Dオブジェクトの共通部分のゲッター
-Object3dCommon* Core::GetObject3dCommon() const {
+//3Dオブジェクトの共通部分の取得
+Object3dCommon* Core::GetObject3dCommon() const{
 	return object3dCommon_.get();
 }
 
-//パーティクルの共通部分のゲッター
-ParticleCommon* Core::GetParticleCommon() const {
+//パーティクルの共通部分の取得
+ParticleCommon* Core::GetParticleCommon() const{
 	return particleCommon_.get();
 }
 
 //モデルの共通部分
-ModelCommon* Core::GetModelCommon() const {
+ModelCommon* Core::GetModelCommon() const{
 	return modelCommon_.get();
 }
 
-//シーンマネージャーのゲッター
-SceneManager* Core::GetSceneManager() const {
+//シーンマネージャーの取得
+SceneManager* Core::GetSceneManager() const{
 	return sceneManager_.get();
 }
 
 //オーディオマネージャー
-AudioManager* Core::GetAudioManager() const {
+AudioManager* Core::GetAudioManager() const{
 	return audioManager_.get();
 }
 
-//パーティクルマネージャーのゲッター
-ParticleManager* Core::GetParticleManager() const {
+//パーティクルマネージャーの取得
+ParticleManager* Core::GetParticleManager() const{
 	return particleManager_.get();
 }
 
-//ゲームオブジェクトのリストのゲッター
-GameObjectList* Core::GetGameObjectList() const {
+//ゲームオブジェクトのリストの取得
+GameObjectList* Core::GetGameObjectList() const{
 	return gameObjectList_.get();
 }
 
-//シーンファクトリのゲッター
-AbstractSceneFactory* Core::GetSceneFactory() const {
+//シーンファクトリの取得
+AbstractSceneFactory* Core::GetSceneFactory() const{
 	return sceneFactory_.get();
+}
+
+//タグの管理の取得
+TagManager* Core::GetTagManager() const{
+	return tagManager_.get();
 }

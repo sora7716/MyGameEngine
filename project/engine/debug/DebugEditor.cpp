@@ -1,6 +1,7 @@
 #include "DebugEditor.h"
 #include "GameObject.h"
 #include "ImGuiManager.h"
+#include "TagManager.h"
 
 //コンストラクタ
 DebugEditor::DebugEditor(){
@@ -11,7 +12,10 @@ DebugEditor::~DebugEditor(){
 }
 
 //初期化
-void DebugEditor::Initialize(){
+void DebugEditor::Initialize(TagManager* tagManager){
+	//Tagの管理のNULLチェック
+	assert(tagManager);
+	tagManager_ = tagManager;
 	//選択するオブジェクトの初期化
 	selectedGameObject_ = nullptr;
 	gameObjects_ = nullptr;
@@ -203,6 +207,29 @@ void DebugEditor::DrawInspector(){
 			selectedGameObject_->SetIsActive(isActive);
 		}
 
+		//現在選択しているタグを取得
+		const std::string currentTag = selectedGameObject_->GetTag();
+		//タグのリストを取得
+		const std::vector<std::string>& tagList = tagManager_->GetTagList();
+
+		//プルダウンを表示
+		if (ImGui::BeginCombo("tag", currentTag.c_str())){
+			for (const std::string& tag : tagList){
+				bool isSelected = tag == currentTag;
+
+				if (ImGui::Selectable(tag.c_str(), isSelected)){
+					//選択されてタグに変更
+					selectedGameObject_->SetTag(tag);
+				}
+
+				//プルダウンを開いたときに選択されているTagにフォーカスする
+				if (isSelected){
+					ImGui::SetItemDefaultFocus();
+				}
+			}
+			ImGui::EndCombo();
+		}
+
 		ImGui::SeparatorText("transform");
 
 		Transform& transform = selectedGameObject_->GetTransform();
@@ -239,11 +266,16 @@ void DebugEditor::DrawInspector(){
 		if (ImGui::SmallButton("Reset##translate")){
 			transform.translate = { 0.0f,0.0f,0.0f };
 		}
+
 	} else{
 		ImGui::TextDisabled("No object selected");
 	}
 	ImGui::End();
 #endif // USE_IMGUI
+}
+
+//タグの管理の描画
+void DebugEditor::DrawTagManager(){
 }
 
 //名前変更を開始

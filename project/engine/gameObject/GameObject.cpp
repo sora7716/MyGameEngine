@@ -1,4 +1,5 @@
 #include "GameObject.h"
+#include "TagManager.h"
 #include "StringUtility.h"
 
 //ゲームオブジェトの生成
@@ -35,7 +36,7 @@ void GameObject::Initialize(const std::string& name){
 	name_ = name;
 	transform_.Initialize();
 	isActive_ = true;
-	tag_ = "UnTagged";
+	tag_ = TagManager::kDefaultTagName;
 }
 
 //トランスフォームの取得
@@ -69,4 +70,15 @@ void GameObject::SetName(const std::string& name){
 const std::string& GameObject::GetName() const{
 	// TODO: return ステートメントをここに挿入します
 	return name_;
+}
+
+//タグの設定
+void GameObject::SetTag(const std::string& tag){
+	tag_ = tag;
+}
+
+//タグの取得
+const std::string& GameObject::GetTag() const{
+	// TODO: return ステートメントをここに挿入します
+	return tag_;
 }

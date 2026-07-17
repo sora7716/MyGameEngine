@@ -18,7 +18,7 @@ public://メンバ関数
 	/// <param name="sceneName">シーン名</param>
 	/// <returns>シーン</returns>
 	virtual BaseScene* CreateScene(const std::string& sceneName) = 0;
-public://PrassKey
+public://PassKey
 	class ConstructorKey {
 	private:
 		ConstructorKey() = default;
@@ -28,7 +28,7 @@ public://PrassKey
 	/// <summary>
 	/// コンストラクタ
 	/// </summary>
-	/// <param name="">PrassKeyを受け取る</param>
+	/// <param name="">PassKeyを受け取る</param>
 	explicit AbstractSceneFactory(ConstructorKey);
 };
 

@@ -16,6 +16,7 @@
 #include "ParticleManager.h"
 #include "GameObjectList.h"
 #include "AbstractSceneFactory.h"
+#include "TagManager.h"
 #include "Context.h"
 #include <memory>
 
@@ -140,6 +141,12 @@ public://メンバ関数
 	/// </summary>
 	/// <returns>シーンファクトリ</returns>
 	AbstractSceneFactory* GetSceneFactory()const;
+
+	/// <summary>
+	/// タグの管理の取得
+	/// </summary>
+	/// <returns>タグの管理</returns>
+	TagManager* GetTagManager()const;
 private://メンバ変数
 	//WinApi
 	std::unique_ptr<WinApi>winApi_ = nullptr;
@@ -175,6 +182,8 @@ private://メンバ変数
 	std::unique_ptr<GameObjectList>gameObjectList_ = nullptr;
 	//シーンファクトリ
 	std::unique_ptr< AbstractSceneFactory> sceneFactory_ = nullptr;
+	//タグの管理
+	std::unique_ptr<TagManager>tagManager_ = nullptr;
 	//シーンで必要なもの
 	SceneContext sceneContext_ = {};
 };

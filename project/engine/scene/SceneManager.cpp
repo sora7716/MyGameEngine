@@ -8,30 +8,30 @@ SceneManager::SceneManager(){
 }
 
 //デストラクタ
-SceneManager::~SceneManager() {
+SceneManager::~SceneManager(){
 	scene_->Finalize();
 	delete scene_;
 	delete instance;
 }
 
 //初期化
-void SceneManager::Initialize(const SceneContext& sceneContext) {
+void SceneManager::Initialize(const SceneContext& sceneContext){
 	sceneContext_ = sceneContext;
 	//シーンマネージャだけ自分から渡す
 	sceneContext_.sceneManager = this;
 	//デバッグエディターの生成と初期化
 	debugEditor_ = std::make_unique<DebugEditor>();
-	debugEditor_->Initialize();
+	debugEditor_->Initialize(sceneContext_.tagManager);
 }
 
 //更新
-void SceneManager::Update() {
+void SceneManager::Update(){
 	//次のシーンの予約があるなら
-	if (nextScene_) {
+	if (nextScene_){
 		//旧シーンの終了
-		if (scene_) {
+		if (scene_){
 			//デバッグエディタの初期化
-			debugEditor_->Initialize();
+			debugEditor_->Initialize(sceneContext_.tagManager);
 			//旧シーンの解放
 			scene_->Finalize();
 			delete scene_;
@@ -51,12 +51,12 @@ void SceneManager::Update() {
 }
 
 //デバッグ
-void SceneManager::Debug() {
+void SceneManager::Debug(){
 #ifdef USE_IMGUI
 	sceneContext_.imGuiManager->Begin();
 	//デバッグエディタの描画
 	debugEditor_->Draw();
-	
+
 	//生成要求
 	if (debugEditor_->ConsumeCreateRequest()){
 		GameObject* newGameObject = scene_->CreateGameObject();
@@ -81,29 +81,29 @@ void SceneManager::Debug() {
 }
 
 //ゲーム画面の描画
-void SceneManager::GameDraw() {
+void SceneManager::GameDraw(){
 	//描画
 	scene_->GameDraw();
 }
 
 //デバッグ画面の描画
-void SceneManager::DebugDraw() {
+void SceneManager::DebugDraw(){
 	//描画
 	scene_->DebugDraw();
 }
 
 //シーンファクトリーのセッター
-void SceneManager::SetSceneFactory(AbstractSceneFactory* sceneFactory) {
+void SceneManager::SetSceneFactory(AbstractSceneFactory* sceneFactory){
 	sceneFactory_ = sceneFactory;
 }
 
 //シーンの切り替え
-void SceneManager::ChangeScene(const std::string& sceneName) {
+void SceneManager::ChangeScene(const std::string& sceneName){
 	assert(sceneFactory_);
 	assert(nextScene_ == nullptr);
 	nextScene_ = sceneFactory_->CreateScene(sceneName);
 }
 
 //コンストラクタ
-SceneManager::SceneManager(ConstructorKey) {
+SceneManager::SceneManager(ConstructorKey){
 }

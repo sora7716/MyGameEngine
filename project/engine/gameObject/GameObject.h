@@ -76,10 +76,22 @@ public://メンバ関数
 	/// </summary>
 	/// <returns></returns>
 	const std::string& GetName()const;
+
+	/// <summary>
+	/// タグの設定
+	/// </summary>
+	/// <param name="tag">タグ</param>
+	void SetTag(const std::string& tag);
+
+	/// <summary>
+	/// タグの取得
+	/// </summary>
+	/// <returns>タグ</returns>
+	const std::string& GetTag()const;
 private://メンバ変数
 	std::string name_ = "\0";
 	Transform transform_ = {};
 	bool isActive_ = false;
 	//bool isEnabled_ = false;
-	std::string tag_ = "UnTagged";
+	std::string tag_;
 };

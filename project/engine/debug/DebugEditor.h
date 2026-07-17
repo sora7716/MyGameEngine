@@ -4,6 +4,7 @@
 #include <memory>
 //前方宣言
 class GameObject;
+class TagManager;
 
 /// <summary>
 /// デバッグエディター
@@ -23,7 +24,8 @@ public://メンバ関数
 	/// <summary>
 	/// 初期化
 	/// </summary>
-	void Initialize();
+	/// <param name="tagManager">タグの管理</param>
+	void Initialize(TagManager* tagManager);
 
 	/// <summary>
 	/// 更新
@@ -81,6 +83,11 @@ private://メンバ関数
 	void DrawInspector();
 
 	/// <summary>
+	/// タグの管理の描画
+	/// </summary>
+	void DrawTagManager();
+
+	/// <summary>
 	/// 名前変更を開始
 	/// </summary>
 	/// <param name="gameObject">ゲームオブジェクト</param>
@@ -89,7 +96,7 @@ private://メンバ変数
 	//選択するゲームオブジェクト
 	GameObject* selectedGameObject_ = nullptr;
 	//ゲームオブジェクトの一覧へのポインタ
-	const std::vector<std::unique_ptr<GameObject>>*gameObjects_;
+	const std::vector<std::unique_ptr<GameObject>>* gameObjects_;
 	//作成要求
 	bool requestCreateGameObject_ = false;
 	//複製要求
@@ -102,5 +109,7 @@ private://メンバ変数
 	std::array<char, 256>renameBuffer_ = {};
 	//InputTextへフォーカスする要求
 	bool requestRenameFocus_ = false;
+	//タグの管理
+	TagManager* tagManager_ = nullptr;
 };
 

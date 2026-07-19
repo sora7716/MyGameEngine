@@ -388,7 +388,7 @@ void DebugEditor::DrawTagManager(){
 	}
 
 	//削除確認ポップアップ
-	if (ImGui::BeginPopupModal("Delete tag", nullptr, ImGuiWindowFlags_AlwaysAutoResize)){
+	if (ImGui::BeginPopupModal("Delete Tag", nullptr, ImGuiWindowFlags_AlwaysAutoResize)){
 		ImGui::Text("Delete \"%s\"?", deleteTargetTag_.c_str());
 
 		ImGui::TextUnformatted("Objects using this tag should be changed to Untagges.");

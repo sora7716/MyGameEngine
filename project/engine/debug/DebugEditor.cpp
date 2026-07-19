@@ -43,6 +43,10 @@ void DebugEditor::Draw(){
 	DrawHierarchy();
 	//インスペクターの描画
 	DrawInspector();
+	//タグの管理の描画
+	if (isTegManagerOpen_){
+		DrawTagManager();
+	}
 #endif // USE_IMGUI
 }
 
@@ -229,6 +233,10 @@ void DebugEditor::DrawInspector(){
 			}
 			ImGui::EndCombo();
 		}
+		ImGui::SameLine();
+		if (ImGui::Button("Edit Tags")){
+			isTegManagerOpen_ = true;
+		}
 
 		ImGui::SeparatorText("transform");
 
@@ -276,6 +284,132 @@ void DebugEditor::DrawInspector(){
 
 //タグの管理の描画
 void DebugEditor::DrawTagManager(){
+	//タグの管理がNullかどうか
+	if (!tagManager_){
+		return;
+	}
+
+	if (!ImGui::Begin("Tag Manager", &isTegManagerOpen_)){
+		ImGui::End();
+		return;
+	}
+
+	//新しいタグの入力欄
+	ImGui::SetNextItemWidth(200.0f);
+
+	const bool pressedEnter = ImGui::InputText("##NewTagName", newTagNameBuffer_.data(), newTagNameBuffer_.size(), ImGuiInputTextFlags_EnterReturnsTrue);
+
+	ImGui::SameLine();
+
+	const bool pressedAdd = ImGui::Button("Add");
+
+	//EnterまたはAddボタンで追加
+	if (pressedEnter || pressedAdd){
+		const std::string newTagName = newTagNameBuffer_.data();
+
+		if (!newTagName.empty()){
+			tagManager_->AddTag(newTagName);
+
+			//入力欄を空に戻す
+			newTagNameBuffer_.fill('\0');
+		}
+	}
+	ImGui::Separator();
+
+	//タグ一覧
+	const std::vector<std::string>& tagList = tagManager_->GetTagList();
+
+	for (const std::string& tag : tagList){
+		ImGui::PushID(tag.c_str());
+
+		ImGui::Selectable(tag.c_str());
+
+		//タグを右クリック
+		if (ImGui::BeginPopupContextItem("TagContexMenu")){
+			const bool isDefaultTag = tag == TagManager::kDefaultTagName;
+
+			ImGui::BeginDisabled(isDefaultTag);
+
+			if (ImGui::MenuItem("Rename")){
+				renameTargetTag_ = tag;
+				renameBuffer_.fill('\0');
+
+				const size_t copySize = std::min(tag.size(), renameBuffer_.size() - 1);
+
+				std::copy_n(tag.data(), copySize, renameBuffer_.data());
+
+				ImGui::OpenPopup("Rename Tag");
+			}
+
+			if (ImGui::MenuItem("Delete")){
+				deleteTargetTag_ = tag;
+				ImGui::OpenPopup("Delete Tag");
+			}
+
+			ImGui::EndDisabled();
+			ImGui::EndPopup();
+		}
+		ImGui::PopID();
+	}
+
+	//名前変更ポップアップ
+	if (ImGui::BeginPopupModal("Rename Tag", nullptr, ImGuiWindowFlags_AlwaysAutoResize)){
+		ImGui::Text("Rename \"%s\"", renameTargetTag_.c_str());
+
+		ImGui::InputText("New Name", renameBuffer_.data(), renameBuffer_.size());
+
+		const std::string newTagName = renameBuffer_.data();
+
+		const bool cannotRename = newTagName.empty() || newTagName == renameTargetTag_;
+
+		ImGui::BeginDisabled(cannotRename);
+
+		if (ImGui::Button("Rename")){
+			tagManager_->RenameTag(renameTargetTag_, newTagName);
+
+			renameTargetTag_.clear();
+			renameBuffer_.fill('\0');
+
+			ImGui::CloseCurrentPopup();
+		}
+
+		ImGui::EndDisabled();
+
+		ImGui::SameLine();
+
+		if (ImGui::Button("Cancel")){
+			renameTargetTag_.clear();
+			renameBuffer_.fill('\0');
+
+			ImGui::CloseCurrentPopup();
+		}
+
+		ImGui::EndPopup();
+	}
+
+	//削除確認ポップアップ
+	if (ImGui::BeginPopupModal("Delete tag", nullptr, ImGuiWindowFlags_AlwaysAutoResize)){
+		ImGui::Text("Delete \"%s\"?", deleteTargetTag_.c_str());
+
+		ImGui::TextUnformatted("Objects using this tag should be changed to Untagges.");
+
+		if (ImGui::Button("Delete")){
+			tagManager_->RemoveTag(deleteTargetTag_);
+
+			deleteTargetTag_.clear();
+			ImGui::CloseCurrentPopup();
+		}
+
+		ImGui::SameLine();
+
+		if (ImGui::Button("Cancel")){
+			deleteTargetTag_.clear();
+
+			ImGui::CloseCurrentPopup();
+		}
+		ImGui::EndPopup();
+	}
+	ImGui::End();
 }
 
 //名前変更を開始

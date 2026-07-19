@@ -1,6 +1,7 @@
 #pragma once
 #include <vector>
 #include <array>
+#include <string>
 #include <memory>
 //前方宣言
 class GameObject;
@@ -111,5 +112,14 @@ private://メンバ変数
 	bool requestRenameFocus_ = false;
 	//タグの管理
 	TagManager* tagManager_ = nullptr;
+	//タグの管理を開くかのフラグ
+	bool isTegManagerOpen_ = false;
+	//新規タグ入力用
+	std::array<char, 128>newTagNameBuffer_{};
+	//名前変更用
+	std::array<char, 128>renameBuffer__{};
+	std::string renameTargetTag_;
+	//削除用
+	std::string deleteTargetTag_;
 };
 

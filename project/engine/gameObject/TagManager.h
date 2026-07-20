@@ -67,9 +67,20 @@ private://メンバ関数
 	/// <summary>
 	/// タグがListに存在しているか
 	/// </summary>
+	/// <param name="tagList">タグリスト</param>
 	/// <param name="tag">タグ</param>
 	/// <returns>存在しているかのフラグ</returns>
-	bool IsContainsTag(const std::string& tag);
+	bool IsContainsTag(const std::vector<std::string>& tagList, const std::string& tag);
+
+	/// <summary>
+	/// タグリストの保存
+	/// </summary>
+	void SeveTagList();
+
+	/// <summary>
+	/// タグリストの読み込み
+	/// </summary>
+	void LoadTagList();
 private://メンバ変数
 	std::vector<std::string>tagList_;
 };

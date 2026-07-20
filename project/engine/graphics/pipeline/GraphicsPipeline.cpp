@@ -67,7 +67,7 @@ void GraphicsPipeline::CreateRootSignatureBlobForSprite() {
 	//シリアライズしてバイナリにする
 	HRESULT hr = D3D12SerializeRootSignature(&descriptionRootSignature, D3D_ROOT_SIGNATURE_VERSION_1, &signatureBlob, &errorBlob);
 	if (FAILED(hr)) {
-		logger::ConsolePrintf(reinterpret_cast<char*>(errorBlob->GetBufferPointer()));
+		Logger::OutputLog(reinterpret_cast<char*>(errorBlob->GetBufferPointer()));
 		assert(false);
 	}
 	HRESULT result = S_FALSE;
@@ -132,7 +132,7 @@ void GraphicsPipeline::CreateRootSignatureBlobForSkyBox() {
 	//シリアライズしてバイナリにする
 	HRESULT hr = D3D12SerializeRootSignature(&descriptionRootSignature, D3D_ROOT_SIGNATURE_VERSION_1, &signatureBlob, &errorBlob);
 	if (FAILED(hr)) {
-		logger::ConsolePrintf(reinterpret_cast<char*>(errorBlob->GetBufferPointer()));
+		Logger::OutputLog(reinterpret_cast<char*>(errorBlob->GetBufferPointer()));
 		assert(false);
 	}
 	HRESULT result = S_FALSE;
@@ -252,7 +252,7 @@ void GraphicsPipeline::CreateRootSignatureBlobForObject3d() {
 	//シリアライズしてバイナリにする
 	HRESULT hr = D3D12SerializeRootSignature(&descriptionRootSignature, D3D_ROOT_SIGNATURE_VERSION_1, &signatureBlob, &errorBlob);
 	if (FAILED(hr)) {
-		logger::ConsolePrintf(reinterpret_cast<char*>(errorBlob->GetBufferPointer()));
+		Logger::OutputLog(reinterpret_cast<char*>(errorBlob->GetBufferPointer()));
 		assert(false);
 	}
 	HRESULT result = S_FALSE;
@@ -317,7 +317,7 @@ void GraphicsPipeline::CreateRootSignatureBlobForParticle() {
 	//シリアライズしてバイナリにする
 	HRESULT hr = D3D12SerializeRootSignature(&descriptionRootSignature, D3D_ROOT_SIGNATURE_VERSION_1, &signatureBlob, &errorBlob);
 	if (FAILED(hr)) {
-		logger::ConsolePrintf(reinterpret_cast<char*>(errorBlob->GetBufferPointer()));
+		Logger::OutputLog(reinterpret_cast<char*>(errorBlob->GetBufferPointer()));
 		assert(false);
 	}
 	HRESULT result = S_FALSE;

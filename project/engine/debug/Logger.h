@@ -1,20 +1,42 @@
 #pragma once
 #include <string>
+#include <fstream>
 
-/// <summary>
+// <summary>
 /// ログ
 /// </summary>
-namespace logger{
+class Logger{
+public://メンバ関数
 	/// <summary>
-	/// コンソールプリント(ロガー)
+	/// 初期化
 	/// </summary>
-	/// <param name="message">メッセージ</param>
-	void ConsolePrintf(const std::string& message);
+	static void Initialize();
 
 	/// <summary>
 	/// コンソールプリント(ロガー)
 	/// </summary>
 	/// <param name="message">メッセージ</param>
-	void ConsolePrintf(const std::wstring& message);
+	static void ConsolePrintf(const std::string& message);
+
+	/// <summary>
+	/// コンソールプリント(ロガー)
+	/// </summary>
+	/// <param name="message">メッセージ</param>
+	static void ConsolePrintf(const std::wstring& message);
+
+	/// <summary>
+	/// ログの書き出し
+	/// </summary>
+	/// <param name="message">メッセージ</param>
+	static void OutputLog(const std::string& message);
+
+	/// <summary>
+	/// ログの書き出し
+	/// </summary>
+	/// <param name="message">メッセージ</param>
+	static void OutputLog(const std::wstring& message);
+private:
+	//ログのストリーム
+	static inline std::ofstream logStream;
 };
 

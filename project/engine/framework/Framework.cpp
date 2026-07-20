@@ -1,9 +1,12 @@
 #include "Framework.h"
 #include "MathUtility.h"
+#include "Logger.h"
 #include "Input.h"
 
 //初期化
 void Framework::Initialize() {
+	//ログの初期化
+	Logger::Initialize();
 	//エンジンの核
 	core_ = std::make_unique<Core>();
 	core_->Initialize();

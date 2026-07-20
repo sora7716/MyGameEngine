@@ -316,6 +316,11 @@ void DebugEditor::DrawTagManager(){
 	}
 	ImGui::Separator();
 
+	//名前変更のポップアップを開く要求
+	bool isOpenRenamePopup = false;
+	//削除のポップアップを開く要求
+	bool isOpenDeletePopup = false;
+
 	//タグ一覧
 	const std::vector<std::string>& tagList = tagManager_->GetTagList();
 
@@ -338,18 +343,29 @@ void DebugEditor::DrawTagManager(){
 
 				std::copy_n(tag.data(), copySize, renameBuffer_.data());
 
-				ImGui::OpenPopup("Rename Tag");
+				isOpenRenamePopup = true;
 			}
 
 			if (ImGui::MenuItem("Delete")){
 				deleteTargetTag_ = tag;
-				ImGui::OpenPopup("Delete Tag");
+				isOpenDeletePopup = true;
 			}
 
 			ImGui::EndDisabled();
 			ImGui::EndPopup();
 		}
 		ImGui::PopID();
+	}
+
+	//同じID階層からポップアップを開く
+	//名前変更
+	if (isOpenRenamePopup){
+		ImGui::OpenPopup("Rename Tag");
+	}
+
+	//削除
+	if (isOpenDeletePopup){
+		ImGui::OpenPopup("Delete Tag");
 	}
 
 	//名前変更ポップアップ

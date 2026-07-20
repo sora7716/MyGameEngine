@@ -327,3 +327,10 @@ Dumps/
 
 #ImGui
 imgui.ini
+
+#log
+logs/
+*.log
+
+#json
+*.json

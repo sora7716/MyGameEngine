@@ -121,5 +121,10 @@ private://メンバ変数
 	std::string renameTargetTag_;
 	//削除用
 	std::string deleteTargetTag_;
+
+	//移動前のインデックス
+	uint32_t sourceIndex_ = 0;
+	//移動後のインデックスｗ
+	uint32_t targetIndex_ = 0;
 };
 

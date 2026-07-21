@@ -104,7 +104,8 @@ void DebugEditor::DrawHierarchy(){
 	ImGui::Begin("Hierarchy");
 	//ImGui::TextUnformatted("GameObjects");
 	if (gameObjects_){
-		for (const std::unique_ptr<GameObject>& gameObject : *gameObjects_){
+		for (uint32_t i = 0; i < gameObjects_->size(); i++){
+			const std::unique_ptr<GameObject>& gameObject = gameObjects_->at(i);
 			//ゲームオブジェクトがなかった場合
 			if (!gameObject){
 				continue;
@@ -148,6 +149,27 @@ void DebugEditor::DrawHierarchy(){
 			} else{
 				if (ImGui::Selectable(gameObjectPtr->GetName().c_str(), isSelected)){
 					selectedGameObject_ = gameObjectPtr;
+
+					//オブジェクトをドラック中かの判定
+					std::string name = "dragObject";
+					//ドラッグ元
+					if (ImGui::BeginDragDropSource()){
+						ImGui::SetDragDropPayload(name.c_str(), &i, sizeof(i));
+						ImGui::EndDragDropSource();
+					}
+
+					//ドラッグ先
+					if (ImGui::BeginDragDropTarget()){
+						const ImGuiPayload* payload = ImGui::AcceptDragDropPayload(name.c_str());
+
+						//payloadがnullじゃなければ
+						if (payload){
+							sourceIndex_ = *static_cast<uint32_t*>(payload->Data);
+							targetIndex_ = i;
+						}
+
+						ImGui::EndDragDropTarget();
+					}
 				}
 			}
 

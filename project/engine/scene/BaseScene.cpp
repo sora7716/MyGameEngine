@@ -84,6 +84,26 @@ void BaseScene::DuplicateGameObject(GameObject* target){
 	gameObjects_.push_back(duplicate->Clone());
 }
 
+//ゲームオブジェクトの位置(配列の順番)の変更
+void BaseScene::MoveGameObject(uint32_t from, uint32_t to){
+	//ゲームオブジェクトの配列の開始のイテレータを取得
+	std::vector<std::unique_ptr<GameObject>>::iterator begin = gameObjects_.begin();
+
+	//fromとtoが同じ場合
+	if (from == to){
+		return;
+	}
+
+	//場所の入れ替え
+	if (to > from){
+		//後ろへ移動する場合
+		std::rotate(begin + from, begin + from + 1, begin + to + 1);
+	} else{
+		//前へ移動する場合
+		std::rotate(begin + to, begin + from, begin + from + 1);
+	}
+}
+
 //空のゲームオブジェクトを生成
 GameObject* BaseScene::CreateGameObject(){
 	//重複してない名前を生成

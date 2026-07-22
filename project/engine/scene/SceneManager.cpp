@@ -74,6 +74,9 @@ void SceneManager::Debug(){
 		scene_->DeleteGameObject(target);
 	}
 
+	//ゲームオブジェクトの移動要求
+	if (debugEditor_->ConsumeMoveGameObjectRequest());
+
 	//シーンのデバッグ
 	scene_->Debug();
 	sceneContext_.imGuiManager->End();

@@ -63,6 +63,14 @@ public://メンバ関数
 	bool ConsumeCreateRequest();
 
 	/// <summary>
+	/// ゲームオブジェクトの移動要求を取得
+	/// </summary>
+	/// <param name="from">移動前の位置</param>
+	/// <param name="to">移動後の位置</param>
+	/// <returns>ゲームオブジェクトの移動要求</returns>
+	bool ConsumeMoveGameObjectRequest(uint32_t& from,uint32_t& to);
+
+	/// <summary>
 	/// GameObjectを選択
 	/// </summary>
 	/// <param name="gameObject">ゲームオブジェクト</param>
@@ -93,6 +101,9 @@ private://メンバ関数
 	/// </summary>
 	/// <param name="gameObject">ゲームオブジェクト</param>
 	void BeginRename(GameObject* gameObject);
+private://定数
+	//ゲームオブジェクトのpayloadtype
+	static inline const std::string kGameObjectPayloadType = "GameObjectPayload";
 private://メンバ変数
 	//選択するゲームオブジェクト
 	GameObject* selectedGameObject_ = nullptr;
@@ -123,8 +134,10 @@ private://メンバ変数
 	std::string deleteTargetTag_;
 
 	//移動前のインデックス
-	uint32_t sourceIndex_ = 0;
-	//移動後のインデックスｗ
-	uint32_t targetIndex_ = 0;
+	uint32_t draggedIndex_ = 0;
+	//移動後のインデックス
+	uint32_t dropTargetIndex_ = 0;
+	//ゲームオブジェクトの移動要求
+	bool requestMoveGameObject_ = false;
 };
 

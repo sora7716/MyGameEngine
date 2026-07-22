@@ -85,6 +85,22 @@ bool DebugEditor::ConsumeCreateRequest(){
 	return request;
 }
 
+//ゲームオブジェクトの移動要求を取得
+bool DebugEditor::ConsumeMoveGameObjectRequest(uint32_t& from, uint32_t& to){
+	if (!requestMoveGameObject_){
+		return false;
+	}
+
+	//fromとtoを書き換え
+	from = draggedIndex_;
+	to = dropTargetIndex_;
+
+	//リクエストをfalseに変更
+	requestMoveGameObject_ = false;
+
+	return true;
+}
+
 //GameObjectを選択
 void DebugEditor::SelectGameObject(GameObject* gameObject){
 	selectedGameObject_ = gameObject;
@@ -102,7 +118,6 @@ void DebugEditor::DrawDockSpace(){
 void DebugEditor::DrawHierarchy(){
 #ifdef USE_IMGUI
 	ImGui::Begin("Hierarchy");
-	//ImGui::TextUnformatted("GameObjects");
 	if (gameObjects_){
 		for (uint32_t i = 0; i < gameObjects_->size(); i++){
 			const std::unique_ptr<GameObject>& gameObject = gameObjects_->at(i);
@@ -149,27 +164,31 @@ void DebugEditor::DrawHierarchy(){
 			} else{
 				if (ImGui::Selectable(gameObjectPtr->GetName().c_str(), isSelected)){
 					selectedGameObject_ = gameObjectPtr;
+				}
 
-					//オブジェクトをドラック中かの判定
-					std::string name = "dragObject";
-					//ドラッグ元
-					if (ImGui::BeginDragDropSource()){
-						ImGui::SetDragDropPayload(name.c_str(), &i, sizeof(i));
-						ImGui::EndDragDropSource();
-					}
+				//ドラッグ元
+				if (ImGui::BeginDragDropSource()){
+					ImGui::SetDragDropPayload(kGameObjectPayloadType.c_str(), &i, sizeof(i));
+					ImGui::EndDragDropSource();
+				}
 
-					//ドラッグ先
-					if (ImGui::BeginDragDropTarget()){
-						const ImGuiPayload* payload = ImGui::AcceptDragDropPayload(name.c_str());
+				//ドラッグ先
+				if (ImGui::BeginDragDropTarget()){
+					const ImGuiPayload* payload = ImGui::AcceptDragDropPayload(kGameObjectPayloadType.c_str());
 
-						//payloadがnullじゃなければ
-						if (payload){
-							sourceIndex_ = *static_cast<uint32_t*>(payload->Data);
-							targetIndex_ = i;
+					//payloadがnullじゃなければ
+					if (payload){
+						draggedIndex_ = *static_cast<uint32_t*>(payload->Data);
+						dropTargetIndex_ = i;
+
+						//移動前と移動後のインデックスが違かったら
+						if (draggedIndex_ != dropTargetIndex_){
+							//ゲームオブジェクトの移動リクエストを要求
+							requestMoveGameObject_ = true;
 						}
-
-						ImGui::EndDragDropTarget();
 					}
+
+					ImGui::EndDragDropTarget();
 				}
 			}
 

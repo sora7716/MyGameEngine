@@ -66,6 +66,13 @@ public://メンバ関数
 	void DuplicateGameObject(GameObject* target);
 
 	/// <summary>
+	/// ゲームオブジェクトの位置(配列の順番)の変更
+	/// </summary>
+	/// <param name="from">今いる場所</param>
+	/// <param name="to">最終的に置いておく場所</param>
+	void MoveGameObject(uint32_t from, uint32_t to);
+
+	/// <summary>
 	/// 空のゲームオブジェクトを生成
 	/// </summary>
 	/// <returns>空のゲームオブジェクト</returns>

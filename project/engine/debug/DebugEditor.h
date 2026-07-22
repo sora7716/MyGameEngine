@@ -3,9 +3,18 @@
 #include <array>
 #include <string>
 #include <memory>
+#include <optional>
 //前方宣言
 class GameObject;
 class TagManager;
+
+/// <summary>
+/// タグの名前変更リクエスト用
+/// </summary>
+struct RenameTagRequest{
+	std::string oldTag;
+	std::string newTag;
+};
 
 /// <summary>
 /// デバッグエディター
@@ -71,6 +80,21 @@ public://メンバ関数
 	bool ConsumeMoveGameObjectRequest(uint32_t& from,uint32_t& to);
 
 	/// <summary>
+	/// タグ名変更の要求の取得
+	/// </summary>
+	/// <param name="oldTag">前の名前</param>
+	/// <param name="newTag">新し名前</param>
+	/// <returns>新しい名前にするか</returns>
+	bool ConsumeRenameTagRequest(std::string& oldTag, std::string& newTag);
+
+	/// <summary>
+	/// タグの削除の要求の取得
+	/// </summary>
+	/// <param name="tag">タグ</param>
+	/// <returns>削除されたか</returns>
+	bool ConsumeDeleteTagRequest(std::string& tag);
+
+	/// <summary>
 	/// GameObjectを選択
 	/// </summary>
 	/// <param name="gameObject">ゲームオブジェクト</param>
@@ -102,7 +126,7 @@ private://メンバ関数
 	/// <param name="gameObject">ゲームオブジェクト</param>
 	void BeginRename(GameObject* gameObject);
 private://定数
-	//ゲームオブジェクトのpayloadtype
+	//ゲームオブジェクトのpayloadType
 	static inline const std::string kGameObjectPayloadType = "GameObjectPayload";
 private://メンバ変数
 	//選択するゲームオブジェクト
@@ -130,9 +154,12 @@ private://メンバ変数
 	//名前変更用
 	std::array<char, 128>renameBuffer__{};
 	std::string renameTargetTag_;
+	//タグ名変更の要求
+	std::optional<RenameTagRequest>requestRenameTag_;
+	//タグ削除の要求
+	std::optional<std::string>requestDeleteTag_;
 	//削除用
 	std::string deleteTargetTag_;
-
 	//移動前のインデックス
 	uint32_t draggedIndex_ = 0;
 	//移動後のインデックス

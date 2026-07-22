@@ -1,6 +1,7 @@
 #include "SceneManager.h"
 #include "ImGuiManager.h"
 #include "debugEditor.h"
+#include "TagManager.h"
 #include <cassert>
 
 //コンストラクタ
@@ -79,6 +80,23 @@ void SceneManager::Debug(){
 	uint32_t toIndex = 0;
 	if (debugEditor_->ConsumeMoveGameObjectRequest(fromIndex, toIndex)){
 		scene_->MoveGameObject(fromIndex, toIndex);
+	}
+
+	//タグの名前変更を要求
+	std::string oldTag = "\0";
+	std::string newTag = "\0";
+	if (debugEditor_->ConsumeRenameTagRequest(oldTag, newTag)){
+		if (sceneContext_.tagManager->RenameTag(oldTag, newTag)){
+			scene_->ReplaceGameObjectTag(oldTag, newTag);
+		}
+	}
+
+	//タグの削除を要求
+	std::string deleteTag = "\0";
+	if (debugEditor_->ConsumeDeleteTagRequest(deleteTag)){
+		if (sceneContext_.tagManager->RemoveTag(deleteTag)){
+			scene_->ReplaceGameObjectTag(deleteTag, TagManager::kDefaultTagName);
+		}
 	}
 
 	//シーンのデバッグ

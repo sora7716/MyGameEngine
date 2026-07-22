@@ -73,6 +73,13 @@ public://メンバ関数
 	void MoveGameObject(uint32_t from, uint32_t to);
 
 	/// <summary>
+	/// ゲームオブジェクトのタグを古いのから新しいのに変更
+	/// </summary>
+	/// <param name="oldTag">古い名前</param>
+	/// <param name="newTag">新しい名前</param>
+	void ReplaceGameObjectTag(const std::string& oldTag, const std::string& newTag);
+
+	/// <summary>
 	/// 空のゲームオブジェクトを生成
 	/// </summary>
 	/// <returns>空のゲームオブジェクト</returns>

@@ -19,6 +19,11 @@ void TagManager::Initialize(){
 	LoadTagList();
 }
 
+//タグがリストにあるか
+bool TagManager::IsContainsTag(const std::string& tag){
+	return IsContainsTag(tagList_, tag);
+}
+
 //タグの追加
 void TagManager::AddTag(const std::string& tag){
 	//空白じゃないか
@@ -39,17 +44,17 @@ void TagManager::AddTag(const std::string& tag){
 }
 
 //タグの削除
-void TagManager::RemoveTag(const std::string& tag){
+bool TagManager::RemoveTag(const std::string& tag){
 	//存在しているか
-	if (!IsContainsTag(tagList_, tag)){
+	if (!IsContainsTag(tag)){
 		Logger::OutputLog("指定したTagはそもそも存在していません");
-		return;
+		return false;
 	}
 
 	//UnTaggedかどうか
 	if (tag == kDefaultTagName){
 		Logger::OutputLog(std::format(L"{}は削除できません", stringUtility::ConvertString(kDefaultTagName)));
-		return;
+		return false;
 	}
 
 	//削除する
@@ -57,26 +62,28 @@ void TagManager::RemoveTag(const std::string& tag){
 
 	//タグの保存
 	SeveTagList();
+
+	return true;
 }
 
 //タグの名前変更
-void TagManager::RenameTag(const std::string& tag, const std::string& newTagName){
+bool TagManager::RenameTag(const std::string& tag, const std::string& newTagName){
 	//リストに存在しているか
-	if (!IsContainsTag(tagList_, tag)){
+	if (!IsContainsTag(tag)){
 		Logger::OutputLog("指定したTagはそもそも存在していません");
-		return;
+		return false;
 	}
 
 	//UnTaggedかどうか
 	if (tag == kDefaultTagName){
 		//Logger::OutputLog(std::format(L"{}は削除できません", kDefaultTagName));
-		return;
+		return false;
 	}
 
 	//新しい名前が今までにある名前になっていないか
-	if (IsContainsTag(tagList_, newTagName)){
+	if (IsContainsTag(newTagName)){
 		Logger::OutputLog("すでにあるタグと同じ名前は設定できません");
-		return;
+		return false;
 	}
 
 	//名前変更
@@ -85,6 +92,8 @@ void TagManager::RenameTag(const std::string& tag, const std::string& newTagName
 
 	//タグの保存
 	SeveTagList();
+
+	return true;
 }
 
 //タグの取得

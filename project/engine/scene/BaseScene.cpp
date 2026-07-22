@@ -5,6 +5,7 @@
 #include "WinApi.h"
 #include "GameObject.h"
 #include "StringUtility.h"
+#include "TagManager.h"
 #include <algorithm>
 //#include "algorithms/ColliderManager.h"
 
@@ -25,6 +26,19 @@ void BaseScene::Initialize(const SceneContext& sceneContext){
 	debugCamera_->Initialize(sceneContext_.input, sceneContext_.cameraManager);
 	//ゲームオブジェクトの大きさを確保しておく(要素数は増えない)
 	gameObjects_.reserve(kGameObjectSize);
+	//ゲームオブジェクトのタグを見て、タグのマネージャに存在しているか確認
+	for (std::unique_ptr<GameObject>& gameObject : gameObjects_){
+		//ゲームオブジェクトがNUllだった場合
+		if (!gameObject){
+			continue;
+		}
+
+		if (!sceneContext_.tagManager->IsContainsTag(gameObject->GetTag())){
+			//ゲームオブジェクトのタグがタグの管理になかった場合
+			gameObject->SetTag(TagManager::kDefaultTagName);
+		}
+	}
+
 	//コライダーマネージャー
 	//colliderManager_ = std::make_unique<ColliderManager>();
 	////調整ファイルの読み込み
@@ -101,6 +115,22 @@ void BaseScene::MoveGameObject(uint32_t from, uint32_t to){
 	} else{
 		//前へ移動する場合
 		std::rotate(begin + to, begin + from, begin + from + 1);
+	}
+}
+
+//ゲームオブジェクトのタグを古いのから新しいのに変更
+void BaseScene::ReplaceGameObjectTag(const std::string& oldTag, const std::string& newTag){
+	//ゲームオブジェクトのタグを見て、タグのマネージャに存在しているか確認
+	for (std::unique_ptr<GameObject>& gameObject : gameObjects_){
+		//ゲームオブジェクトがNUllだった場合
+		if (!gameObject){
+			continue;
+		}
+
+		if (gameObject->GetTag()==oldTag){
+			//ゲームオブジェクトのタグが古かった場合
+			gameObject->SetTag(newTag);
+		}
 	}
 }
 

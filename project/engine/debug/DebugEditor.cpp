@@ -101,6 +101,36 @@ bool DebugEditor::ConsumeMoveGameObjectRequest(uint32_t& from, uint32_t& to){
 	return true;
 }
 
+//タグ名変更の要求の取得
+bool DebugEditor::ConsumeRenameTagRequest(std::string& oldTag, std::string& newTag){
+	//要求されたタグ名があるか確認
+	if (!requestRenameTag_){
+		return false;
+	}
+
+	//あった場合
+	oldTag = requestRenameTag_->oldTag;
+	newTag = requestRenameTag_->newTag;
+
+	requestRenameTag_.reset();
+	return true;
+}
+
+//タグの削除の要求の取得
+bool DebugEditor::ConsumeDeleteTagRequest(std::string& tag){
+	//要求されたタグが存在するか
+	if (!requestDeleteTag_){
+		return false;
+	}
+
+	//存在した場合
+	tag = *requestDeleteTag_;
+
+	requestDeleteTag_.reset();
+
+	return true;
+}
+
 //GameObjectを選択
 void DebugEditor::SelectGameObject(GameObject* gameObject){
 	selectedGameObject_ = gameObject;
@@ -413,7 +443,11 @@ void DebugEditor::DrawTagManager(){
 	if (ImGui::BeginPopupModal("Rename Tag", nullptr, ImGuiWindowFlags_AlwaysAutoResize)){
 		ImGui::Text("Rename \"%s\"", renameTargetTag_.c_str());
 
-		ImGui::InputText("New Name", renameBuffer_.data(), renameBuffer_.size());
+		//文字を入力時にエンターを押したか
+		const bool pressEnter = ImGui::InputText("New Name", renameBuffer_.data(), renameBuffer_.size(), ImGuiInputTextFlags_EnterReturnsTrue | ImGuiInputTextFlags_AutoSelectAll);
+
+		//ボタンを押したか
+		const bool pressRename = ImGui::Button("Rename");
 
 		const std::string newTagName = renameBuffer_.data();
 
@@ -421,8 +455,11 @@ void DebugEditor::DrawTagManager(){
 
 		ImGui::BeginDisabled(cannotRename);
 
-		if (ImGui::Button("Rename")){
-			tagManager_->RenameTag(renameTargetTag_, newTagName);
+		if ((pressEnter || pressRename) && !cannotRename){
+			requestRenameTag_ = {
+				.oldTag = renameTargetTag_,
+				.newTag = newTagName
+			};
 
 			renameTargetTag_.clear();
 			renameBuffer_.fill('\0');
@@ -451,7 +488,7 @@ void DebugEditor::DrawTagManager(){
 		ImGui::TextUnformatted("Objects using this tag should be changed to Untagges.");
 
 		if (ImGui::Button("Delete")){
-			tagManager_->RemoveTag(deleteTargetTag_);
+			requestDeleteTag_ = deleteTargetTag_;
 
 			deleteTargetTag_.clear();
 			ImGui::CloseCurrentPopup();

@@ -18,23 +18,32 @@ public://メンバ関数
 	void Initialize();
 
 	/// <summary>
+	/// タグがリストの中にあるか
+	/// </summary>
+	/// <param name="tag">タグ</param>
+	/// <returns>タグがリストにあるか</returns>
+	bool IsContainsTag(const std::string& tag);
+
+	/// <summary>
 	/// タグの追加
 	/// </summary>
 	/// <param name="tag">タグ</param>
 	void AddTag(const std::string& tag);
 
 	/// <summary>
-	/// タグの削除
-	/// </summary>
-	/// <param name="tag">タグ</param>
-	void RemoveTag(const std::string& tag);
+    /// タグの削除
+    /// </summary>
+    /// <param name="tag">タグ</param>
+	/// <returns>タグの削除ができたかどうか</returns>
+	bool RemoveTag(const std::string& tag);
 
 	/// <summary>
-	/// タグの名前変更
-	/// </summary>
-	/// <param name="tag">タグ</param>
-	/// <param name="newTagName">新しいタグ名</param>
-	void RenameTag(const std::string& tag, const std::string& newTagName);
+    /// タグの名前変更
+    /// </summary>
+    /// <param name="tag">タグ</param>
+    /// <param name="newTagName">新しいタグ名</param>
+	/// <returns>タグの名前変更ができたかどうか</returns>
+	bool RenameTag(const std::string& tag, const std::string& newTagName);
 
 	/// <summary>
 	/// タグの取得

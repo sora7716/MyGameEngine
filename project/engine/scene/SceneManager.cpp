@@ -75,7 +75,11 @@ void SceneManager::Debug(){
 	}
 
 	//ゲームオブジェクトの移動要求
-	if (debugEditor_->ConsumeMoveGameObjectRequest());
+	uint32_t fromIndex = 0;
+	uint32_t toIndex = 0;
+	if (debugEditor_->ConsumeMoveGameObjectRequest(fromIndex, toIndex)){
+		scene_->MoveGameObject(fromIndex, toIndex);
+	}
 
 	//シーンのデバッグ
 	scene_->Debug();

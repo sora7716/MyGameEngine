@@ -95,7 +95,7 @@ void BaseScene::DuplicateGameObject(GameObject* target){
 	duplicate->SetName(newName);
 
 	//ゲームオブジェクトに追加
-	gameObjects_.push_back(duplicate->Clone());
+	gameObjects_.push_back(std::move(duplicate));
 }
 
 //ゲームオブジェクトの位置(配列の順番)の変更
@@ -127,7 +127,7 @@ void BaseScene::ReplaceGameObjectTag(const std::string& oldTag, const std::strin
 			continue;
 		}
 
-		if (gameObject->GetTag()==oldTag){
+		if (gameObject->GetTag() == oldTag){
 			//ゲームオブジェクトのタグが古かった場合
 			gameObject->SetTag(newTag);
 		}

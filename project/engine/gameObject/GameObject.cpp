@@ -1,6 +1,7 @@
 #include "GameObject.h"
 #include "TagManager.h"
 #include "StringUtility.h"
+#include "Component.h"
 
 //ゲームオブジェトの生成
 std::unique_ptr<GameObject> GameObject::Create(const std::string& name){
@@ -16,9 +17,13 @@ GameObject::GameObject(){
 }
 
 //コピーコンストラクタ
-GameObject::GameObject(const GameObject& gameObject){
+GameObject::GameObject(const GameObject& gameObject)
+	:name_(gameObject.name_),
+	transform_(gameObject.transform_),
+	isActive_(gameObject.isActive_),
+	tag_(gameObject.tag_){
 	//コピーする
-	*this = gameObject;
+	//*this = gameObject;
 }
 
 //デストラクタ
@@ -81,4 +86,45 @@ void GameObject::SetTag(const std::string& tag){
 const std::string& GameObject::GetTag() const{
 	// TODO: return ステートメントをここに挿入します
 	return tag_;
+}
+
+//コンポーネントの追加
+void GameObject::AddComponent(std::unique_ptr<Component> component){
+	if (!component){
+		return;
+	}
+
+	//コンポーネントを追加
+	components_.push_back(std::move(component));
+	components_.back()->Initialize();
+}
+
+//すべてのコンポーネントの更新
+void GameObject::UpdateComponents(){
+	//ゲームオブジェクトが有効か
+	if (!isActive_){
+		return;
+	}
+
+	//コンポーネントの更新
+	for (const std::unique_ptr<Component>& component : components_){
+		//コンポーネントがNullか
+		if (!component){
+			continue;
+		}
+
+		//コンポーネントが有効か
+		if (!component->IsEnabled()){
+			continue;
+		}
+
+		//コンポーネントの更新
+		component->Update();
+	}
+}
+
+//コンポーネントをすべて取得
+const std::vector<std::unique_ptr<Component>>& GameObject::GetComponents()const{
+	// TODO: return ステートメントをここに挿入します
+	return components_;
 }

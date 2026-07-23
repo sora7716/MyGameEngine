@@ -181,12 +181,12 @@ void DebugEditor::DrawHierarchy(){
 					requestRenameFocus_ = false;
 				}
 
-				const bool enterPressed = ImGui::InputText("##Rename", renameBuffer_.data(), renameBuffer_.size(), ImGuiInputTextFlags_EnterReturnsTrue | ImGuiInputTextFlags_AutoSelectAll);
+				const bool enterPressed = ImGui::InputText("##Rename", renameObjectBuffer_.data(), renameObjectBuffer_.size(), ImGuiInputTextFlags_EnterReturnsTrue | ImGuiInputTextFlags_AutoSelectAll);
 
 				//Enterで名前を確定
 				if (enterPressed){
-					if (renameBuffer_[0] != '\0'){
-						gameObjectPtr->SetName(renameBuffer_.data());
+					if (renameObjectBuffer_[0] != '\0'){
+						gameObjectPtr->SetName(renameObjectBuffer_.data());
 					}
 
 					renamingGameObject_ = nullptr;
@@ -408,11 +408,11 @@ void DebugEditor::DrawTagManager(){
 
 			if (ImGui::MenuItem("Rename")){
 				renameTargetTag_ = tag;
-				renameBuffer_.fill('\0');
+				renameTagBuffer_.fill('\0');
 
-				const size_t copySize = std::min(tag.size(), renameBuffer_.size() - 1);
+				const size_t copySize = std::min(tag.size(), renameTagBuffer_.size() - 1);
 
-				std::copy_n(tag.data(), copySize, renameBuffer_.data());
+				std::copy_n(tag.data(), copySize, renameTagBuffer_.data());
 
 				isOpenRenamePopup = true;
 			}
@@ -444,16 +444,16 @@ void DebugEditor::DrawTagManager(){
 		ImGui::Text("Rename \"%s\"", renameTargetTag_.c_str());
 
 		//文字を入力時にエンターを押したか
-		const bool pressEnter = ImGui::InputText("New Name", renameBuffer_.data(), renameBuffer_.size(), ImGuiInputTextFlags_EnterReturnsTrue | ImGuiInputTextFlags_AutoSelectAll);
+		const bool pressEnter = ImGui::InputText("New Name", renameTagBuffer_.data(), renameTagBuffer_.size(), ImGuiInputTextFlags_EnterReturnsTrue | ImGuiInputTextFlags_AutoSelectAll);
 
 		//ボタンを押したか
-		const bool pressRename = ImGui::Button("Rename");
 
-		const std::string newTagName = renameBuffer_.data();
+		const std::string newTagName = renameTagBuffer_.data();
 
 		const bool cannotRename = newTagName.empty() || newTagName == renameTargetTag_;
 
 		ImGui::BeginDisabled(cannotRename);
+		const bool pressRename = ImGui::Button("Rename");
 
 		if ((pressEnter || pressRename) && !cannotRename){
 			requestRenameTag_ = {
@@ -462,7 +462,7 @@ void DebugEditor::DrawTagManager(){
 			};
 
 			renameTargetTag_.clear();
-			renameBuffer_.fill('\0');
+			renameTagBuffer_.fill('\0');
 
 			ImGui::CloseCurrentPopup();
 		}
@@ -473,7 +473,7 @@ void DebugEditor::DrawTagManager(){
 
 		if (ImGui::Button("Cancel")){
 			renameTargetTag_.clear();
-			renameBuffer_.fill('\0');
+			renameTagBuffer_.fill('\0');
 
 			ImGui::CloseCurrentPopup();
 		}
@@ -517,16 +517,16 @@ void DebugEditor::BeginRename(GameObject* gameObject){
 	requestRenameFocus_ = true;
 
 	//バッファを初期化
-	renameBuffer_.fill('\0');
+	renameObjectBuffer_.fill('\0');
 
 	//今の名前を取得
 	const std::string& name = gameObject->GetName();
 
-	const std::size_t copyLength = std::min(name.size(), renameBuffer_.size() - 1);
+	const std::size_t copyLength = std::min(name.size(), renameObjectBuffer_.size() - 1);
 
 	std::copy_n(
 		name.data(),
 		copyLength,
-		renameBuffer_.data()
+		renameObjectBuffer_.data()
 	);
 }

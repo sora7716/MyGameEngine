@@ -1,7 +1,6 @@
 #include "BaseScene.h"
 #include "DebugCamera.h"
 #include "AbstractSceneFactory.h"
-#include "GlobalVariables.h"
 #include "WinApi.h"
 #include "GameObject.h"
 #include "StringUtility.h"

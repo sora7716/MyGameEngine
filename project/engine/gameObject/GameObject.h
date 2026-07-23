@@ -1,7 +1,11 @@
 #pragma once
 #include "RenderingData.h"
+#include <vector>
 #include <string>
 #include <memory>
+
+//前方宣言
+class Component;
 
 //ゲームオブジェクト
 class GameObject{
@@ -88,10 +92,32 @@ public://メンバ関数
 	/// </summary>
 	/// <returns>タグ</returns>
 	const std::string& GetTag()const;
+
+	/// <summary>
+	/// コンポーネントの追加
+	/// </summary>
+	/// <param name="component">コンポーネント</param>
+	void AddComponent(std::unique_ptr<Component> component);
+
+	/// <summary>
+	/// すべてのコンポーネントの更新
+	/// </summary>
+	void UpdateComponents();
+
+	/// <summary>
+	/// コンポーネントをすべて取得
+	/// </summary>
+	/// <returns>すべてのコンポーネント</returns>
+	const std::vector<std::unique_ptr<Component>>& GetComponents()const;
 private://メンバ変数
+	//名前
 	std::string name_ = "\0";
+	//SRT
 	Transform transform_ = {};
+	//有効か
 	bool isActive_ = false;
-	//bool isEnabled_ = false;
+	//タグ
 	std::string tag_;
+	//コンポーネント
+	std::vector<std::unique_ptr<Component>>components_;
 };

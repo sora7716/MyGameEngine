@@ -12,8 +12,8 @@ class TagManager;
 /// タグの名前変更リクエスト用
 /// </summary>
 struct RenameTagRequest{
-	std::string oldTag;
-	std::string newTag;
+	std::string oldTag = "\0";
+	std::string newTag = "\0";
 };
 
 /// <summary>
@@ -77,7 +77,7 @@ public://メンバ関数
 	/// <param name="from">移動前の位置</param>
 	/// <param name="to">移動後の位置</param>
 	/// <returns>ゲームオブジェクトの移動要求</returns>
-	bool ConsumeMoveGameObjectRequest(uint32_t& from,uint32_t& to);
+	bool ConsumeMoveGameObjectRequest(uint32_t& from, uint32_t& to);
 
 	/// <summary>
 	/// タグ名変更の要求の取得
@@ -142,7 +142,7 @@ private://メンバ変数
 	//名前変更
 	GameObject* renamingGameObject_ = nullptr;
 	//名前変更用の文字列バッファ
-	std::array<char, 256>renameBuffer_ = {};
+	std::array<char, 256>renameObjectBuffer_ = {};
 	//InputTextへフォーカスする要求
 	bool requestRenameFocus_ = false;
 	//タグの管理
@@ -152,14 +152,14 @@ private://メンバ変数
 	//新規タグ入力用
 	std::array<char, 128>newTagNameBuffer_{};
 	//名前変更用
-	std::array<char, 128>renameBuffer__{};
-	std::string renameTargetTag_;
+	std::array<char, 128>renameTagBuffer_{};
+	std::string renameTargetTag_ = "\0";
 	//タグ名変更の要求
-	std::optional<RenameTagRequest>requestRenameTag_;
+	std::optional<RenameTagRequest>requestRenameTag_ = {};
 	//タグ削除の要求
-	std::optional<std::string>requestDeleteTag_;
+	std::optional<std::string>requestDeleteTag_ = "\0";
 	//削除用
-	std::string deleteTargetTag_;
+	std::string deleteTargetTag_ = "\0";
 	//移動前のインデックス
 	uint32_t draggedIndex_ = 0;
 	//移動後のインデックス

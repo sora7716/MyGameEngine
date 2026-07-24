@@ -22,8 +22,9 @@ GameObject::GameObject(const GameObject& gameObject)
 	transform_(gameObject.transform_),
 	isActive_(gameObject.isActive_),
 	tag_(gameObject.tag_){
-	//コピーする
-	//*this = gameObject;
+	for (const std::unique_ptr<Component>& component : gameObject.components_){
+		components_.push_back(std::move(component->Clone(this)));
+	}
 }
 
 //デストラクタ

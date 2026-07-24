@@ -15,7 +15,7 @@
 #include <algorithm>
 #include <cassert>
 //初期化
-void Object3dInstance::Initialize(GameObject* targetGameObject) {
+void Object3dInstance::Initialize(GameObject* targetGameObject){
 	this->gameObject = targetGameObject;
 	isEnabled = true;
 	currentLOD = 0;
@@ -27,16 +27,23 @@ void(Object3d::* Object3d::UpdateWorldMatrixTable[])(uint32_t index) = {
 	&MakeBillboardWorldMatrix,
 };
 
+//インスタンスの設定
+std::unique_ptr<Object3d> Object3d::Create(Object3dCommon* object3dCommon, Camera* renderCamera, uint32_t maxInstanceCount, Transform3dMode transform3dMode){
+	std::unique_ptr<Object3d>instance = std::make_unique<Object3d>();
+	instance->Initialize(object3dCommon, renderCamera, maxInstanceCount, transform3dMode);
+	return std::move(instance);
+}
+
 //コンストラクタ
-Object3d::Object3d() {
+Object3d::Object3d(){
 }
 
 //デストラクタ
-Object3d::~Object3d() {
+Object3d::~Object3d(){
 }
 
 //初期化
-void Object3d::Initialize(Object3dCommon* object3dCommon, Camera* renderCamera, uint32_t maxInstanceCount, Transform3dMode transform3dMode) {
+void Object3d::Initialize(Object3dCommon* object3dCommon, Camera* renderCamera, uint32_t maxInstanceCount, Transform3dMode transform3dMode){
 	//3Dオブジェクトの共通部分
 	object3dCommon_ = object3dCommon;
 	//DirectXの基盤部分を受け取る
@@ -68,29 +75,29 @@ void Object3d::Initialize(Object3dCommon* object3dCommon, Camera* renderCamera, 
 }
 
 //更新
-void Object3d::Update() {	
+void Object3d::Update(){
 	//Object3dの共通部分の更新
 	object3dCommon_->Update();
 
 	//LOD語との描画数をリセット
-	for (uint32_t& lodDrawCount : lodDrawCounts_) {
+	for (uint32_t& lodDrawCount : lodDrawCounts_){
 		lodDrawCount = 0;
 	}
 
 	//RootNodeはmodelを基準にする
-	if (baseModel_) {
+	if (baseModel_){
 		node_ = baseModel_->GetModelData().rootNode;
 	}
 
-	for (uint32_t instanceIndex = 0; instanceIndex < instanceData_.size(); instanceIndex++) {
+	for (uint32_t instanceIndex = 0; instanceIndex < instanceData_.size(); instanceIndex++){
 		GameObject* gameObject = instanceData_[instanceIndex].gameObject;
 		//ゲームオブジェクトが存在してない場合
-		if (!gameObject) {
+		if (!gameObject){
 			continue;
 		}
 
 		//生存フラグが立ってなければ
-		if (!gameObject->IsActive()) {
+		if (!gameObject->IsActive()){
 			continue;
 		}
 
@@ -98,17 +105,17 @@ void Object3d::Update() {
 		(this->*UpdateWorldMatrixTable[static_cast<uint32_t>(transform3dMode_)])(instanceIndex);;
 
 		//モデルが存在してなかったら
-		if (!baseModel_) {
+		if (!baseModel_){
 			continue;
 		}
 
 		//表示状態の更新
-		for (const std::unique_ptr<Mesh>& mesh : baseModel_->GetMeshes()) {
+		for (const std::unique_ptr<Mesh>& mesh : baseModel_->GetMeshes()){
 			instanceData_[instanceIndex].isEnabled = culling_->IsVisibleInFrustum(mesh->GetAABB(), worldMatrixes_[instanceIndex]);
 		}
 
 		//表示しなかったら
-		if (!instanceData_[instanceIndex].isEnabled) {
+		if (!instanceData_[instanceIndex].isEnabled){
 			continue;
 		}
 
@@ -122,14 +129,14 @@ void Object3d::Update() {
 		lodIndices_[instanceIndex] = lodIndex;
 		instanceData_[instanceIndex].currentLOD = lodIndex;
 		//lodIndex番目がlodModelsに無かったら
-		if (!lodBuilder_->GetLODModel(lodIndex)) {
+		if (!lodBuilder_->GetLODModel(lodIndex)){
 			continue;
 		}
 
 		//LODごとのWVP配列に詰める
 		uint32_t drawIndex = lodDrawCounts_[lodIndex];
 		//検索キーがデータのサイズより大きかった場合
-		if (drawIndex >= lodWvpData_[lodIndex].size()) {
+		if (drawIndex >= lodWvpData_[lodIndex].size()){
 			continue;
 		}
 
@@ -140,12 +147,12 @@ void Object3d::Update() {
 		lodDrawCounts_[lodIndex]++;
 
 		//モデルが存在したらメッシュごとにUV座標を適応
-		if (lodBuilder_->GetLODModel(lodIndex)) {
-			for (uint32_t j = 0; j < lodBuilder_->GetLODModel(lodIndex)->GetMeshes().size(); j++) {
+		if (lodBuilder_->GetLODModel(lodIndex)){
+			for (uint32_t j = 0; j < lodBuilder_->GetLODModel(lodIndex)->GetMeshes().size(); j++){
 				uint32_t materialIndex = lodBuilder_->GetLODModel(lodIndex)->GetMeshes()[j]->GetMaterialIndex();
 
 				//マテリアルの検索キーがUV座標の配列の要素数を超えたら
-				if (materialIndex >= lodUvTransforms_[lodIndex].size()) {
+				if (materialIndex >= lodUvTransforms_[lodIndex].size()){
 					continue;
 				}
 
@@ -158,7 +165,7 @@ void Object3d::Update() {
 }
 
 //描画
-void Object3d::Draw() {
+void Object3d::Draw(){
 	//3Dオブジェクトの共通部分
 	object3dCommon_->DrawSetting();
 	//カメラ
@@ -176,14 +183,14 @@ void Object3d::Draw() {
 	//スポットライトのStructuredBufferを設定
 	directXBase_->GetCommandList()->SetGraphicsRootDescriptorTable(6, object3dCommon_->GetSRVManager()->GetGPUDescriptorHandle(object3dCommon_->GetSrvIndexSpot()));
 
-	for (uint32_t lodIndex = 0; lodIndex < lodCount_; lodIndex++) {
+	for (uint32_t lodIndex = 0; lodIndex < lodCount_; lodIndex++){
 		//LODモデルが存在してなかったら
-		if (!lodBuilder_->GetLODModel(lodIndex)) {
+		if (!lodBuilder_->GetLODModel(lodIndex)){
 			continue;
 		}
 
 		//LOD描画カウントが0だったら
-		if (lodDrawCounts_[lodIndex] == 0) {
+		if (lodDrawCounts_[lodIndex] == 0){
 			continue;
 		}
 
@@ -197,7 +204,7 @@ void Object3d::Draw() {
 }
 
 //モデルの設定
-void Object3d::SetModel(const std::string& modelName, const std::vector<float>& keepRates) {
+void Object3d::SetModel(const std::string& modelName, const std::vector<float>& keepRates){
 	//元になるモデルを取得
 	baseModel_ = object3dCommon_->GetModelManager()->FindModel(modelName);
 
@@ -212,7 +219,7 @@ void Object3d::SetModel(const std::string& modelName, const std::vector<float>& 
 }
 
 //インスタンスの追加
-uint32_t Object3d::AddInstance(GameObject* gameObject) {
+uint32_t Object3d::AddInstance(GameObject* gameObject){
 	//ゲームオブジェクトがNullじゃないか
 	assert(gameObject);
 	//インスタンスの最大数を超えてないか
@@ -233,50 +240,50 @@ uint32_t Object3d::AddInstance(GameObject* gameObject) {
 }
 
 //カメラの設定
-void Object3d::SetGameCamera(Camera* camera) {
+void Object3d::SetGameCamera(Camera* camera){
 	gameCamera_ = camera;
 	//カリングの初期化
 	culling_ = Culling::Create(gameCamera_);
 }
 
 //描画に使用するカメラの設定
-void Object3d::SetRenderCamera(Camera* camera) {
+void Object3d::SetRenderCamera(Camera* camera){
 	renderCamera_ = camera;
 }
 
 //LODの切り替え距離
-void Object3d::SetLODDistances(const std::vector<float>& lodDistances) {
+void Object3d::SetLODDistances(const std::vector<float>& lodDistances){
 	lodController_->SetLODDistances(lodDistances);
 }
 
 //ヒステリシス幅の設定
-void Object3d::SetHysteresis(float hysteresis) {
+void Object3d::SetHysteresis(float hysteresis){
 	lodController_->SetHysteresis(hysteresis);
 }
 
 // uvスケールの設定
-void Object3d::SetUVScale(uint32_t index, const Vector2& uvScale) {
-	for (std::vector<Transform2d>& uvTransforms : lodUvTransforms_) {
+void Object3d::SetUVScale(uint32_t index, const Vector2& uvScale){
+	for (std::vector<Transform2d>& uvTransforms : lodUvTransforms_){
 		uvTransforms[index].scale = uvScale;
 	}
 }
 
 // uv回転の設定
-void Object3d::SetUVRotate(uint32_t index, float uvRotate) {
-	for (std::vector<Transform2d>& uvTransforms : lodUvTransforms_) {
+void Object3d::SetUVRotate(uint32_t index, float uvRotate){
+	for (std::vector<Transform2d>& uvTransforms : lodUvTransforms_){
 		uvTransforms[index].rotate = uvRotate;
 	}
 }
 
 // uv平行移動の設定
-void Object3d::SetUVTranslate(uint32_t index, const Vector2& uvTranslate) {
-	for (std::vector<Transform2d>& uvTransforms : lodUvTransforms_) {
+void Object3d::SetUVTranslate(uint32_t index, const Vector2& uvTranslate){
+	for (std::vector<Transform2d>& uvTransforms : lodUvTransforms_){
 		uvTransforms[index].translate = uvTranslate;
 	}
 }
 
 //色の設定
-void Object3d::SetColor(uint32_t materialIndex, const Vector4& color) {
+void Object3d::SetColor(uint32_t materialIndex, const Vector4& color){
 	//元モデルにも適応
 	baseModel_->SetColor(materialIndex, color);
 	//LODモデルにも適応
@@ -284,13 +291,13 @@ void Object3d::SetColor(uint32_t materialIndex, const Vector4& color) {
 }
 
 //親の設定
-void Object3d::SetParent(const WorldTransform* parent) {
+void Object3d::SetParent(const WorldTransform* parent){
 	(void)parent;
 	//worldTransform_->SetParent(parent);
 }
 
 //テクスチャの変更
-void Object3d::SetTexture(uint32_t meshIndex, const std::string& imageFileName) {
+void Object3d::SetTexture(uint32_t meshIndex, const std::string& imageFileName){
 	uint32_t materialIndex = baseModel_->GetMeshes()[meshIndex]->GetMaterialIndex();
 	//元モデルにも適応
 	baseModel_->SetTexture(materialIndex, imageFileName);
@@ -298,7 +305,7 @@ void Object3d::SetTexture(uint32_t meshIndex, const std::string& imageFileName) 
 	lodBuilder_->SetTexture(materialIndex, imageFileName);
 }
 //環境マップの変更
-void Object3d::SetEnvironmentMap(uint32_t meshIndex, const std::string& environmentMapFileName) {
+void Object3d::SetEnvironmentMap(uint32_t meshIndex, const std::string& environmentMapFileName){
 	uint32_t materialIndex = baseModel_->GetMeshes()[meshIndex]->GetMaterialIndex();
 	//元モデルにも適応
 	baseModel_->SetEnvironmentMap(materialIndex, environmentMapFileName);
@@ -307,7 +314,7 @@ void Object3d::SetEnvironmentMap(uint32_t meshIndex, const std::string& environm
 }
 
 //ライティングフラグの設定
-void Object3d::SetIsLighting(uint32_t meshIndex, bool isLighting) {
+void Object3d::SetIsLighting(uint32_t meshIndex, bool isLighting){
 	uint32_t materialIndex = baseModel_->GetMeshes()[meshIndex]->GetMaterialIndex();
 	//元モデルにも適応
 	baseModel_->SetIsLighting(materialIndex, isLighting);
@@ -316,7 +323,7 @@ void Object3d::SetIsLighting(uint32_t meshIndex, bool isLighting) {
 }
 
 //輝度の設定
-void Object3d::SetShininess(uint32_t meshIndex, float shininess) {
+void Object3d::SetShininess(uint32_t meshIndex, float shininess){
 	uint32_t materialIndex = baseModel_->GetMeshes()[meshIndex]->GetMaterialIndex();
 	//元モデルにも適応
 	baseModel_->SetShininess(materialIndex, shininess);
@@ -325,7 +332,7 @@ void Object3d::SetShininess(uint32_t meshIndex, float shininess) {
 }
 
 //環境マップの映り込み度を調整
-void Object3d::SetEnvironmentCoefficient(uint32_t meshIndex, float& environmentCoefficient) {
+void Object3d::SetEnvironmentCoefficient(uint32_t meshIndex, float& environmentCoefficient){
 	//環境マップの映り込み度を0~1にクランプ
 	environmentCoefficient = std::clamp(environmentCoefficient, 0.0f, 1.0f);
 	//マテリアルインデックス
@@ -337,68 +344,68 @@ void Object3d::SetEnvironmentCoefficient(uint32_t meshIndex, float& environmentC
 }
 
 //UV座標の設定
-void Object3d::SetUVTransform(uint32_t index, const Transform2d& uvTransform) {
-	for (std::vector<Transform2d>& uvTransforms : lodUvTransforms_) {
+void Object3d::SetUVTransform(uint32_t index, const Transform2d& uvTransform){
+	for (std::vector<Transform2d>& uvTransforms : lodUvTransforms_){
 		uvTransforms[index] = uvTransform;
 	}
 }
 
 //ブレンドモードの設定
-void Object3d::SetBlendMode(const BlendMode& blendMode) {
+void Object3d::SetBlendMode(const BlendMode& blendMode){
 	blendMode_ = blendMode;
 }
 
 //uvスケールの取得
-const Vector2& Object3d::GetUVScale(uint32_t index) const {
+const Vector2& Object3d::GetUVScale(uint32_t index) const{
 	// TODO: return ステートメントをここに挿入します
 	return lodUvTransforms_[0][index].scale;
 }
 
 //uv回転の取得
-const float Object3d::GetUVRotate(uint32_t index) const {
+const float Object3d::GetUVRotate(uint32_t index) const{
 	// TODO: return ステートメントをここに挿入します
 	return lodUvTransforms_[0][index].rotate;
 }
 
 //uv平行移動の取得
-const Vector2& Object3d::GetUVTranslate(uint32_t index) const {
+const Vector2& Object3d::GetUVTranslate(uint32_t index) const{
 	// TODO: return ステートメントをここに挿入します
 	return lodUvTransforms_[0][index].translate;
 }
 
 //UV座標の取得
-const Transform2d& Object3d::GetUVTransform(uint32_t index) const {
+const Transform2d& Object3d::GetUVTransform(uint32_t index) const{
 	// TODO: return ステートメントをここに挿入します
 	return lodUvTransforms_[0][index];
 }
 
 //色の取得
-const Vector4& Object3d::GetColor(uint32_t index) const {
+const Vector4& Object3d::GetColor(uint32_t index) const{
 	// TODO: return ステートメントをここに挿入します
 	static const Vector4 defaultColor(0.0f, 0.0f, 0.0f, 0.0f);
-	if (baseModel_) {
+	if (baseModel_){
 		return baseModel_->GetColor(index);
 	}
 	return defaultColor;
 }
 
 //ワールドマトリックスの取得
-Matrix4x4& Object3d::GetWorldMatrix(uint32_t instanceIndex) {
+Matrix4x4& Object3d::GetWorldMatrix(uint32_t instanceIndex){
 	return worldMatrixes_[instanceIndex];
 }
 
 //ワールド座標の取得
-Vector3 Object3d::GetWorldPos(uint32_t instanceIndex) {
+Vector3 Object3d::GetWorldPos(uint32_t instanceIndex){
 	return { worldMatrixes_[instanceIndex].m[3][0],worldMatrixes_[instanceIndex].m[3][1],worldMatrixes_[instanceIndex].m[3][2] };
 }
 
 //メッシュのサイズの取得
-uint32_t Object3d::GetMeshSize() {
+uint32_t Object3d::GetMeshSize(){
 	return static_cast<uint32_t>(baseModel_->GetModelData().meshDatas.size());
 }
 
 //LOD関係のセットアップ
-void Object3d::SetupLOD() {
+void Object3d::SetupLOD(){
 	//UV座標
 	lodUvTransforms_.resize(lodCount_);
 	//LODWvpデータ
@@ -409,10 +416,10 @@ void Object3d::SetupLOD() {
 	lodWvpPtrs_.resize(lodCount_);
 	lodSrvIndices_.resize(lodCount_);
 	lodDrawCounts_.resize(lodCount_);
-	for (uint32_t lod = 0; lod < lodCount_; lod++) {
+	for (uint32_t lod = 0; lod < lodCount_; lod++){
 		//wvpのデータ数を決定
 		lodWvpData_[lod].resize(maxInstanceCount_);
-		for (TransformationMatrix& wvp : lodWvpData_[lod]) {
+		for (TransformationMatrix& wvp : lodWvpData_[lod]){
 			wvp.world = Matrix4x4::Identity4x4();
 			wvp.wvp = Matrix4x4::Identity4x4();
 			wvp.worldInverseTranspose = Matrix4x4::Identity4x4();
@@ -425,8 +432,8 @@ void Object3d::SetupLOD() {
 }
 
 //座標変換行列リソースの生成
-void Object3d::CreateTransformationMatrixResource() {
-	for (uint32_t lod = 0; lod < lodCount_; lod++) {
+void Object3d::CreateTransformationMatrixResource(){
+	for (uint32_t lod = 0; lod < lodCount_; lod++){
 		//インスタンスの最大数で確保
 		lodWvpData_[lod].resize(maxInstanceCount_);
 
@@ -436,7 +443,7 @@ void Object3d::CreateTransformationMatrixResource() {
 		//書き込むためのアドレス
 		lodWvpResources_[lod]->Map(0, nullptr, reinterpret_cast<void**>(&lodWvpPtrs_[lod]));
 		//単位行列を書き込んでおく
-		for (uint32_t i = 0; i < static_cast<uint32_t>(maxInstanceCount_); i++) {
+		for (uint32_t i = 0; i < static_cast<uint32_t>(maxInstanceCount_); i++){
 			lodWvpPtrs_[lod][i].wvp = Matrix4x4::Identity4x4();
 			lodWvpPtrs_[lod][i].world = Matrix4x4::Identity4x4();
 			lodWvpPtrs_[lod][i].worldInverseTranspose = Matrix4x4::Identity4x4();
@@ -445,8 +452,8 @@ void Object3d::CreateTransformationMatrixResource() {
 }
 
 //座標変換行列リソースのストラクチャバッファの生成
-void Object3d::CreateStructuredBufferForWvp() {
-	for (uint32_t lod = 0; lod < lodCount_; lod++) {
+void Object3d::CreateStructuredBufferForWvp(){
+	for (uint32_t lod = 0; lod < lodCount_; lod++){
 		//ストラクチャバッファを生成
 		lodSrvIndices_[lod] = srvManager_->Allocate() + TextureManager::kSRVIndexTop;
 		srvManager_->CreateSRVForStructuredBuffer(
@@ -459,7 +466,7 @@ void Object3d::CreateStructuredBufferForWvp() {
 }
 
 //ワールド行列を作成
-void Object3d::MakeWorldMatrix(uint32_t instanceIndex) {
+void Object3d::MakeWorldMatrix(uint32_t instanceIndex){
 	GameObject* gameObject = instanceData_[instanceIndex].gameObject;
 	//ゲームオブジェクトがNullじゃないか
 	assert(gameObject);
@@ -468,7 +475,7 @@ void Object3d::MakeWorldMatrix(uint32_t instanceIndex) {
 	//このオブジェクト本来のワールド行列を求める
 	worldMatrix = matrixUtility::MakeAffineMatrix(gameObject->GetTransform());
 
-	if (parent_) {
+	if (parent_){
 		worldMatrix = worldMatrix * parent_->GetWorldMatrix();
 	}
 
@@ -479,7 +486,7 @@ void Object3d::MakeWorldMatrix(uint32_t instanceIndex) {
 }
 
 //ビルボード行列の作成
-void Object3d::MakeBillboardWorldMatrix(uint32_t instanceIndex) {
+void Object3d::MakeBillboardWorldMatrix(uint32_t instanceIndex){
 	GameObject* gameObject = instanceData_[instanceIndex].gameObject;
 	//ゲームオブジェクトがNullじゃないか
 	assert(gameObject);
@@ -488,7 +495,7 @@ void Object3d::MakeBillboardWorldMatrix(uint32_t instanceIndex) {
 	//このオブジェクト本来のワールド行列を求める
 	worldMatrix = matrixUtility::MakeBillboardAffineMatrix(renderCamera_->GetWorldMatrix(), gameObject->GetTransform());
 
-	if (parent_) {
+	if (parent_){
 		worldMatrix = worldMatrix * parent_->GetWorldMatrix();
 	}
 
@@ -499,7 +506,7 @@ void Object3d::MakeBillboardWorldMatrix(uint32_t instanceIndex) {
 }
 
 //座標の更新
-void Object3d::UpdateWorldTransform(uint32_t lodIndex, uint32_t drawIndex, const Matrix4x4& worldMatrix) {
+void Object3d::UpdateWorldTransform(uint32_t lodIndex, uint32_t drawIndex, const Matrix4x4& worldMatrix){
 	lodWvpData_[lodIndex][drawIndex].world = worldMatrix;
 
 	lodWvpData_[lodIndex][drawIndex].worldInverseTranspose = lodWvpData_[lodIndex][drawIndex].world.InverseTranspose();

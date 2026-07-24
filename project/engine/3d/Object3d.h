@@ -40,6 +40,12 @@ struct Object3dInstance {
 class Object3d {
 private://エイリアステンプレート
 	template <class T>using ComPtr = Microsoft::WRL::ComPtr<T>;
+public://静的メンバ関数
+	/// <summary>
+	/// インスタンスの生成
+	/// </summary>
+	/// <returns>インスタンス</returns>
+	std::unique_ptr<Object3d>Create(Object3dCommon* object3dCommon, Camera* renderCamera, uint32_t maxInstanceCount, Transform3dMode transform3dMode);
 public://メンバ関数
 	/// <summary>
 	/// コンストラクタ

@@ -1,4 +1,5 @@
 #pragma once
+#include <memory>
 //前方宣言
 class GameObject;
 
@@ -21,6 +22,13 @@ public://メンバ関数
 	/// 更新
 	/// </summary>
 	virtual void Update();
+
+	/// <summary>
+	/// コピー
+	/// </summary>
+	/// <param name="gameObject">ゲームオブジェクト</param>
+	/// <returns>コピーしたインスタンス</returns>
+	virtual std::unique_ptr<Component>& Clone(GameObject* gameObject)const = 0;
 
 	/// <summary>
 	/// 取り付け先を取得

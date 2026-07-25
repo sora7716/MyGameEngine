@@ -52,12 +52,6 @@ public://メンバ関数
 	void Debug();
 
 	/// <summary>
-	/// カメラの位置のセッター
-	/// </summary>
-	/// <param name="cameraTranslate">カメラの情報</param>
-	void SetCameraForGPU(CameraForGPU* cameraForGPU);
-
-	/// <summary>
 	/// DirectionalLightのリソースのゲッター
 	/// </summary>
 	/// <returns>DirectionalLightのリソース</returns>

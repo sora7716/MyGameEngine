@@ -15,6 +15,7 @@
     <ClCompile Include="application\scene\TestPlayScene.cpp" />
     <ClCompile Include="engine\2d\Sprite.cpp" />
     <ClCompile Include="engine\2d\SpriteCommon.cpp" />
+    <ClCompile Include="engine\3d\LightingManager.cpp" />
     <ClCompile Include="engine\3d\LODBuilder.cpp" />
     <ClCompile Include="engine\3d\LODController.cpp" />
     <ClCompile Include="engine\3d\Mesh.cpp" />
@@ -65,6 +66,8 @@
     <ClCompile Include="engine\graphics\descriptor\SRVManager.cpp" />
     <ClCompile Include="engine\graphics\pipeline\Blend.cpp" />
     <ClCompile Include="engine\graphics\pipeline\GraphicsPipeline.cpp" />
+    <ClCompile Include="engine\graphics\pipeline\PipelineManager.cpp" />
+    <ClCompile Include="engine\graphics\RenderSystem.cpp" />
     <ClCompile Include="engine\graphics\texture\TextureManager.cpp" />
     <ClCompile Include="engine\input\Input.cpp" />
     <ClCompile Include="engine\main.cpp" />
@@ -94,6 +97,7 @@
     <ClInclude Include="application\scene\TestPlayScene.h" />
     <ClInclude Include="engine\2d\Sprite.h" />
     <ClInclude Include="engine\2d\SpriteCommon.h" />
+    <ClInclude Include="engine\3d\LightingManager.h" />
     <ClInclude Include="engine\3d\LODBuilder.h" />
     <ClInclude Include="engine\3d\LODController.h" />
     <ClInclude Include="engine\3d\Mesh.h" />
@@ -147,6 +151,8 @@
     <ClInclude Include="engine\graphics\pipeline\BlendMode.h" />
     <ClInclude Include="engine\graphics\pipeline\GraphicsPipeline.h" />
     <ClInclude Include="engine\graphics\pipeline\GraphicsPipelineData.h" />
+    <ClInclude Include="engine\graphics\pipeline\PipelineManager.h" />
+    <ClInclude Include="engine\graphics\RenderSystem.h" />
     <ClInclude Include="engine\graphics\texture\TextureManager.h" />
     <ClInclude Include="engine\input\Input.h" />
     <ClInclude Include="engine\math\MathUtility.h" />

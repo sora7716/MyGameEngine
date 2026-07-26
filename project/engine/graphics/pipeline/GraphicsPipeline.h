@@ -14,7 +14,7 @@ class DirectXBase;
 /// <summary>
 /// グラフィックスパイプライン
 /// </summary>
-class GraphicsPipeline {
+class GraphicsPipeline{
 private://エイリアステンプレート
 	template <class T>using ComPtr = Microsoft::WRL::ComPtr<T>;
 public://メンバ関数
@@ -70,8 +70,8 @@ public://メンバ関数
 	void InitializeBlendState(int32_t blendMode);
 
 	/// <summary>
-    /// ラスタライザステートの初期化
-    /// </summary>
+	/// ラスタライザステートの初期化
+	/// </summary>
 	/// <param name="fillMode">ポリゴンをどう描画するかの設定</param>
 	void InitializeRasterizerState(FillMode fillMode = FillMode::kSolid);
 
@@ -129,7 +129,13 @@ public://メンバ関数
 	/// </summary>
 	/// <param name="fileName">ファイル名</param>
 	void SetPixelShaderFileName(const std::wstring& fileName);
-protected://メンバ変数
+private://メンバ関数
+	/// <summary>
+	/// Samplerの設定
+	/// </summary>
+	/// <returns>Sampler</returns>
+	std::array<D3D12_STATIC_SAMPLER_DESC,1> SettingSampler();
+private://メンバ変数
 	//DirectXの基盤
 	DirectXBase* directXBase_ = nullptr;
 	//ルートシグネイチャ
@@ -145,8 +151,8 @@ protected://メンバ変数
 	//ピクセルシェーダBlob
 	ComPtr<IDxcBlob> pixelShaderBlob_ = nullptr;
 	//ファイル名
-	std::wstring vertexShaderFileName_ = L"Object3d.VS.hlsl";//頂点
-	std::wstring pixelShaderFileName_ = L"Object3d.PS.hlsl";//ピクセル
+	std::wstring vertexShaderFileName_ = L"";//頂点
+	std::wstring pixelShaderFileName_ = L"";//ピクセル
 	//深度バッファ
 	ComPtr<ID3D12Resource> depthStencilResource_ = nullptr;
 	D3D12_DEPTH_STENCIL_DESC depthStencilDesc_{};

@@ -10,28 +10,21 @@
 using namespace Microsoft::WRL;
 
 //コンストラクタ
-GraphicsPipeline::GraphicsPipeline() {}
+GraphicsPipeline::GraphicsPipeline(){}
 
 //デストラクタ
-GraphicsPipeline::~GraphicsPipeline() {}
+GraphicsPipeline::~GraphicsPipeline(){}
 
 //ルートシグネイチャBlobの生成(スプライト用)
-void GraphicsPipeline::CreateRootSignatureBlobForSprite() {
+void GraphicsPipeline::CreateRootSignatureBlobForSprite(){
 	//RootSignature作成
 	D3D12_ROOT_SIGNATURE_DESC descriptionRootSignature{};
 	descriptionRootSignature.Flags = D3D12_ROOT_SIGNATURE_FLAG_ALLOW_INPUT_ASSEMBLER_INPUT_LAYOUT;
+	
 	//Samplerの設定
-	D3D12_STATIC_SAMPLER_DESC staticSamplers[1] = {};
-	staticSamplers[0].Filter = D3D12_FILTER_MIN_MAG_MIP_LINEAR;//バイナリフィルター
-	staticSamplers[0].AddressU = D3D12_TEXTURE_ADDRESS_MODE_WRAP;//0~1の範囲外をリピート
-	staticSamplers[0].AddressV = D3D12_TEXTURE_ADDRESS_MODE_WRAP;//0~1の範囲外をリピート
-	staticSamplers[0].AddressW = D3D12_TEXTURE_ADDRESS_MODE_WRAP;//0~1の範囲外をリピート
-	staticSamplers[0].ComparisonFunc = D3D12_COMPARISON_FUNC_NEVER;//比較しない
-	staticSamplers[0].MaxLOD = D3D12_FLOAT32_MAX;//ありたっけのMipmapを使う
-	staticSamplers[0].ShaderRegister = 0;//レジスタ番号
-	staticSamplers[0].ShaderVisibility = D3D12_SHADER_VISIBILITY_PIXEL;//PixelShaderを使う
-	descriptionRootSignature.pStaticSamplers = staticSamplers;
-	descriptionRootSignature.NumStaticSamplers = _countof(staticSamplers);
+	std::array<D3D12_STATIC_SAMPLER_DESC, 1> staticSamplers = SettingSampler();
+	descriptionRootSignature.pStaticSamplers = &staticSamplers[0];
+	descriptionRootSignature.NumStaticSamplers = static_cast<uint32_t>(staticSamplers.size());
 
 	//DescriptorRange
 	D3D12_DESCRIPTOR_RANGE descriptorRange[1] = {};
@@ -66,7 +59,7 @@ void GraphicsPipeline::CreateRootSignatureBlobForSprite() {
 	ComPtr<ID3DBlob> errorBlob = nullptr;
 	//シリアライズしてバイナリにする
 	HRESULT hr = D3D12SerializeRootSignature(&descriptionRootSignature, D3D_ROOT_SIGNATURE_VERSION_1, &signatureBlob, &errorBlob);
-	if (FAILED(hr)) {
+	if (FAILED(hr)){
 		Logger::OutputLog(reinterpret_cast<char*>(errorBlob->GetBufferPointer()));
 		assert(false);
 	}
@@ -76,22 +69,15 @@ void GraphicsPipeline::CreateRootSignatureBlobForSprite() {
 }
 
 //ルートシグネイチャBlobの生成(SkyBox用)
-void GraphicsPipeline::CreateRootSignatureBlobForSkyBox() {
+void GraphicsPipeline::CreateRootSignatureBlobForSkyBox(){
 	//RootSignature作成
 	D3D12_ROOT_SIGNATURE_DESC descriptionRootSignature{};
 	descriptionRootSignature.Flags = D3D12_ROOT_SIGNATURE_FLAG_ALLOW_INPUT_ASSEMBLER_INPUT_LAYOUT;
+
 	//Samplerの設定
-	D3D12_STATIC_SAMPLER_DESC staticSamplers[1] = {};
-	staticSamplers[0].Filter = D3D12_FILTER_MIN_MAG_MIP_LINEAR;//バイナリフィルター
-	staticSamplers[0].AddressU = D3D12_TEXTURE_ADDRESS_MODE_WRAP;//0~1の範囲外をリピート
-	staticSamplers[0].AddressV = D3D12_TEXTURE_ADDRESS_MODE_WRAP;//0~1の範囲外をリピート
-	staticSamplers[0].AddressW = D3D12_TEXTURE_ADDRESS_MODE_WRAP;//0~1の範囲外をリピート
-	staticSamplers[0].ComparisonFunc = D3D12_COMPARISON_FUNC_NEVER;//比較しない
-	staticSamplers[0].MaxLOD = D3D12_FLOAT32_MAX;//ありたっけのMipmapを使う
-	staticSamplers[0].ShaderRegister = 0;//レジスタ番号
-	staticSamplers[0].ShaderVisibility = D3D12_SHADER_VISIBILITY_PIXEL;//PixelShaderを使う
-	descriptionRootSignature.pStaticSamplers = staticSamplers;
-	descriptionRootSignature.NumStaticSamplers = _countof(staticSamplers);
+	std::array<D3D12_STATIC_SAMPLER_DESC, 1> staticSamplers = SettingSampler();
+	descriptionRootSignature.pStaticSamplers = &staticSamplers[0];
+	descriptionRootSignature.NumStaticSamplers = static_cast<uint32_t>(staticSamplers.size());
 
 	//DescriptorRange
 	D3D12_DESCRIPTOR_RANGE descriptorRange[1] = {};
@@ -131,7 +117,7 @@ void GraphicsPipeline::CreateRootSignatureBlobForSkyBox() {
 	ComPtr<ID3DBlob> errorBlob = nullptr;
 	//シリアライズしてバイナリにする
 	HRESULT hr = D3D12SerializeRootSignature(&descriptionRootSignature, D3D_ROOT_SIGNATURE_VERSION_1, &signatureBlob, &errorBlob);
-	if (FAILED(hr)) {
+	if (FAILED(hr)){
 		Logger::OutputLog(reinterpret_cast<char*>(errorBlob->GetBufferPointer()));
 		assert(false);
 	}
@@ -141,22 +127,15 @@ void GraphicsPipeline::CreateRootSignatureBlobForSkyBox() {
 }
 
 //ルートシグネイチャBlobの生成(Object3d用)
-void GraphicsPipeline::CreateRootSignatureBlobForObject3d() {
+void GraphicsPipeline::CreateRootSignatureBlobForObject3d(){
 	//RootSignature作成
 	D3D12_ROOT_SIGNATURE_DESC descriptionRootSignature{};
 	descriptionRootSignature.Flags = D3D12_ROOT_SIGNATURE_FLAG_ALLOW_INPUT_ASSEMBLER_INPUT_LAYOUT;
+	
 	//Samplerの設定
-	D3D12_STATIC_SAMPLER_DESC staticSamplers[1] = {};
-	staticSamplers[0].Filter = D3D12_FILTER_MIN_MAG_MIP_LINEAR;//バイナリフィルター
-	staticSamplers[0].AddressU = D3D12_TEXTURE_ADDRESS_MODE_WRAP;//0~1の範囲外をリピート
-	staticSamplers[0].AddressV = D3D12_TEXTURE_ADDRESS_MODE_WRAP;//0~1の範囲外をリピート
-	staticSamplers[0].AddressW = D3D12_TEXTURE_ADDRESS_MODE_WRAP;//0~1の範囲外をリピート
-	staticSamplers[0].ComparisonFunc = D3D12_COMPARISON_FUNC_NEVER;//比較しない
-	staticSamplers[0].MaxLOD = D3D12_FLOAT32_MAX;//ありたっけのMipmapを使う
-	staticSamplers[0].ShaderRegister = 0;//レジスタ番号
-	staticSamplers[0].ShaderVisibility = D3D12_SHADER_VISIBILITY_PIXEL;//PixelShaderを使う
-	descriptionRootSignature.pStaticSamplers = staticSamplers;
-	descriptionRootSignature.NumStaticSamplers = _countof(staticSamplers);
+	std::array<D3D12_STATIC_SAMPLER_DESC, 1> staticSamplers = SettingSampler();
+	descriptionRootSignature.pStaticSamplers = &staticSamplers[0];
+	descriptionRootSignature.NumStaticSamplers = static_cast<uint32_t>(staticSamplers.size());
 
 	//DescriptorRange
 	D3D12_DESCRIPTOR_RANGE descriptorRange[5] = {};
@@ -251,7 +230,7 @@ void GraphicsPipeline::CreateRootSignatureBlobForObject3d() {
 	ComPtr<ID3DBlob> errorBlob = nullptr;
 	//シリアライズしてバイナリにする
 	HRESULT hr = D3D12SerializeRootSignature(&descriptionRootSignature, D3D_ROOT_SIGNATURE_VERSION_1, &signatureBlob, &errorBlob);
-	if (FAILED(hr)) {
+	if (FAILED(hr)){
 		Logger::OutputLog(reinterpret_cast<char*>(errorBlob->GetBufferPointer()));
 		assert(false);
 	}
@@ -261,22 +240,15 @@ void GraphicsPipeline::CreateRootSignatureBlobForObject3d() {
 }
 
 //ルートシグネイチャBlobの生成(Particle用)
-void GraphicsPipeline::CreateRootSignatureBlobForParticle() {
+void GraphicsPipeline::CreateRootSignatureBlobForParticle(){
 	//RootSignature作成
 	D3D12_ROOT_SIGNATURE_DESC descriptionRootSignature{};
 	descriptionRootSignature.Flags = D3D12_ROOT_SIGNATURE_FLAG_ALLOW_INPUT_ASSEMBLER_INPUT_LAYOUT;
+	
 	//Samplerの設定
-	D3D12_STATIC_SAMPLER_DESC staticSamplers[1] = {};
-	staticSamplers[0].Filter = D3D12_FILTER_MIN_MAG_MIP_LINEAR;//バイナリフィルター
-	staticSamplers[0].AddressU = D3D12_TEXTURE_ADDRESS_MODE_WRAP;//0~1の範囲外をリピート
-	staticSamplers[0].AddressV = D3D12_TEXTURE_ADDRESS_MODE_WRAP;//0~1の範囲外をリピート
-	staticSamplers[0].AddressW = D3D12_TEXTURE_ADDRESS_MODE_WRAP;//0~1の範囲外をリピート
-	staticSamplers[0].ComparisonFunc = D3D12_COMPARISON_FUNC_NEVER;//比較しない
-	staticSamplers[0].MaxLOD = D3D12_FLOAT32_MAX;//ありたっけのMipmapを使う
-	staticSamplers[0].ShaderRegister = 0;//レジスタ番号
-	staticSamplers[0].ShaderVisibility = D3D12_SHADER_VISIBILITY_PIXEL;//PixelShaderを使う
-	descriptionRootSignature.pStaticSamplers = staticSamplers;
-	descriptionRootSignature.NumStaticSamplers = _countof(staticSamplers);
+	std::array<D3D12_STATIC_SAMPLER_DESC, 1> staticSamplers = SettingSampler();
+	descriptionRootSignature.pStaticSamplers = &staticSamplers[0];
+	descriptionRootSignature.NumStaticSamplers = static_cast<uint32_t>(staticSamplers.size());
 
 	//DescriptorRange
 	D3D12_DESCRIPTOR_RANGE descriptorRangeForInstancing[1] = {};
@@ -316,7 +288,7 @@ void GraphicsPipeline::CreateRootSignatureBlobForParticle() {
 	ComPtr<ID3DBlob> errorBlob = nullptr;
 	//シリアライズしてバイナリにする
 	HRESULT hr = D3D12SerializeRootSignature(&descriptionRootSignature, D3D_ROOT_SIGNATURE_VERSION_1, &signatureBlob, &errorBlob);
-	if (FAILED(hr)) {
+	if (FAILED(hr)){
 		Logger::OutputLog(reinterpret_cast<char*>(errorBlob->GetBufferPointer()));
 		assert(false);
 	}
@@ -326,7 +298,7 @@ void GraphicsPipeline::CreateRootSignatureBlobForParticle() {
 }
 
 //インプットレイアウトの初期化
-void GraphicsPipeline::InitializeInputLayoutDesc() {
+void GraphicsPipeline::InitializeInputLayoutDesc(){
 	//InputElementDesc
 	static D3D12_INPUT_ELEMENT_DESC inputElementDescs[3] = {};
 	inputElementDescs[0].SemanticName = "POSITION";
@@ -349,7 +321,7 @@ void GraphicsPipeline::InitializeInputLayoutDesc() {
 }
 
 //スカイボックスで使用するインプットレイアウトの初期化
-void GraphicsPipeline::InitializeInputLayoutDescForSkyBox() {
+void GraphicsPipeline::InitializeInputLayoutDescForSkyBox(){
 	//InputElementDesc
 	static D3D12_INPUT_ELEMENT_DESC inputElementDescs[2] = {};
 	inputElementDescs[0].SemanticName = "POSITION";
@@ -367,7 +339,7 @@ void GraphicsPipeline::InitializeInputLayoutDescForSkyBox() {
 }
 
 //インプットレイアウトの初期化(スプライト)
-void GraphicsPipeline::InitializeInputLayoutDescForSprite() {
+void GraphicsPipeline::InitializeInputLayoutDescForSprite(){
 	//InputElementDesc
 	static D3D12_INPUT_ELEMENT_DESC inputElementDescs[2] = {};
 	inputElementDescs[0].SemanticName = "POSITION";
@@ -386,14 +358,14 @@ void GraphicsPipeline::InitializeInputLayoutDescForSprite() {
 }
 
 //ブレンドステートの初期化
-void GraphicsPipeline::InitializeBlendState(int32_t blendMode) {
+void GraphicsPipeline::InitializeBlendState(int32_t blendMode){
 	//ブレンド関係のクラスの生成
 	std::unique_ptr<Blend> blend = std::make_unique<Blend>();
 	blendDesc_ = blend->SetBlendDesc(static_cast<BlendMode>(blendMode));
 }
 
 //ラスタライザステートの初期化
-void GraphicsPipeline::InitializeRasterizerState(FillMode fillMode) {
+void GraphicsPipeline::InitializeRasterizerState(FillMode fillMode){
 	//裏面(時計周り)を表示しない
 	rasterizerDesc_.CullMode = D3D12_CULL_MODE_BACK;
 	//三角形の中を塗りつぶす
@@ -401,21 +373,21 @@ void GraphicsPipeline::InitializeRasterizerState(FillMode fillMode) {
 }
 
 //頂点シェーダのコンパイル
-void GraphicsPipeline::CompileVertexShader() {
+void GraphicsPipeline::CompileVertexShader(){
 	//VertexShader
 	vertexShaderBlob_ = directXBase_->CompilerShader(L"engine/resources/shaders/" + vertexShaderFileName_, L"vs_6_0");
 	assert(vertexShaderBlob_ != nullptr);
 }
 
 //ピクセルシェーダのコンパイル
-void GraphicsPipeline::CompilePixelShader() {
+void GraphicsPipeline::CompilePixelShader(){
 	//PixelShader
 	pixelShaderBlob_ = directXBase_->CompilerShader(L"engine/resources/shaders/" + pixelShaderFileName_, L"ps_6_0");
 	assert(pixelShaderBlob_ != nullptr);
 }
 
 //PSOの生成
-ComPtr<ID3D12PipelineState> GraphicsPipeline::CreateGraphicsPipeline() {
+ComPtr<ID3D12PipelineState> GraphicsPipeline::CreateGraphicsPipeline(){
 	HRESULT result = S_FALSE;
 	//PSOを生成
 	D3D12_GRAPHICS_PIPELINE_STATE_DESC graphicsPipelineStateDesc{};
@@ -449,7 +421,7 @@ ComPtr<ID3D12PipelineState> GraphicsPipeline::CreateGraphicsPipeline() {
 }
 
 //深度バッファの生成(Object3d)
-void GraphicsPipeline::CreateDepthStencilResourceForObject3d() {
+void GraphicsPipeline::CreateDepthStencilResourceForObject3d(){
 	//深度バッファを取得
 	depthStencilResource_ = directXBase_->GetDepthStencilTexture();
 	//Depthの機能を有効化
@@ -468,7 +440,7 @@ void GraphicsPipeline::CreateDepthStencilResourceForObject3d() {
 }
 
 //深度バッファの生成(パーティクル)
-void GraphicsPipeline::CreateDepthStencilResourceForParticle() {
+void GraphicsPipeline::CreateDepthStencilResourceForParticle(){
 	//深度バッファを取得
 	depthStencilResource_ = directXBase_->GetDepthStencilTexture();
 	//Depthの機能を有効化
@@ -487,27 +459,42 @@ void GraphicsPipeline::CreateDepthStencilResourceForParticle() {
 }
 
 //ルートシグネイチャのゲッター
-ComPtr<ID3D12RootSignature> GraphicsPipeline::GetRootSignature() {
+ComPtr<ID3D12RootSignature> GraphicsPipeline::GetRootSignature(){
 	return rootSignature_;
 }
 
 //デプスステンシルの取得
-D3D12_DEPTH_STENCIL_DESC GraphicsPipeline::GetDepthStencilDesc() {
+D3D12_DEPTH_STENCIL_DESC GraphicsPipeline::GetDepthStencilDesc(){
 	return depthStencilDesc_;
 }
 
 //DirectXの基盤のセッター
-void GraphicsPipeline::SetDirectXBase(DirectXBase* directXBase) {
+void GraphicsPipeline::SetDirectXBase(DirectXBase* directXBase){
 	directXBase_ = directXBase;
 }
 
 //頂点シェーダのファイル名をセット
-void GraphicsPipeline::SetVertexShaderFileName(const std::wstring& fileName) {
+void GraphicsPipeline::SetVertexShaderFileName(const std::wstring& fileName){
 	vertexShaderFileName_ = fileName;
 }
 
 //ピクセルシェーダのファイル名をセット
-void GraphicsPipeline::SetPixelShaderFileName(const std::wstring& fileName) {
+void GraphicsPipeline::SetPixelShaderFileName(const std::wstring& fileName){
 	pixelShaderFileName_ = fileName;
+}
+
+//Samplerの設定
+std::array<D3D12_STATIC_SAMPLER_DESC, 1> GraphicsPipeline::SettingSampler(){
+	//Samplerの設定
+	std::array<D3D12_STATIC_SAMPLER_DESC, 1> staticSamplers = {};
+	staticSamplers[0].Filter = D3D12_FILTER_MIN_MAG_MIP_LINEAR;//バイナリフィルター
+	staticSamplers[0].AddressU = D3D12_TEXTURE_ADDRESS_MODE_WRAP;//0~1の範囲外をリピート
+	staticSamplers[0].AddressV = D3D12_TEXTURE_ADDRESS_MODE_WRAP;//0~1の範囲外をリピート
+	staticSamplers[0].AddressW = D3D12_TEXTURE_ADDRESS_MODE_WRAP;//0~1の範囲外をリピート
+	staticSamplers[0].ComparisonFunc = D3D12_COMPARISON_FUNC_NEVER;//比較しない
+	staticSamplers[0].MaxLOD = D3D12_FLOAT32_MAX;//ありたっけのMipmapを使う
+	staticSamplers[0].ShaderRegister = 0;//レジスタ番号
+	staticSamplers[0].ShaderVisibility = D3D12_SHADER_VISIBILITY_PIXEL;//PixelShaderを使う
+	return staticSamplers;
 }
 

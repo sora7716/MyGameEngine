@@ -67,7 +67,7 @@ void SkyBox::Initialize(DirectXBase* directXBase, TextureManager* textureManager
 	//スプライトファイルパスを記録
 	imageFileName_ = "engine/resources/textures/" + imageFileName;
 	//スプライトの共通部分
-	textureManager->LoadTexture(imageFileName_);
+	textureManager->AddTexture(imageFileName_);
 	//wvpリソースの初期化
 	CreateTransformationMatrixResource();
 }

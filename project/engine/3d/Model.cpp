@@ -119,13 +119,13 @@ void Model::SetColor(uint32_t index, const Vector4& color) {
 //テクスチャの設定
 void Model::SetTexture(uint32_t materialIndex, const std::string& imageFileName) {
 	modelData_.materialTexturePaths[materialIndex].textureFilePath = "engine/resources/textures/" + imageFileName;
-	modelCommon_->GetTextureManager()->LoadTexture(modelData_.materialTexturePaths[materialIndex].textureFilePath);
+	modelCommon_->GetTextureManager()->AddTexture(modelData_.materialTexturePaths[materialIndex].textureFilePath);
 }
 
 //環境マップの設定
 void Model::SetEnvironmentMap(uint32_t materialIndex, const std::string& environmentMapFileName) {
 	modelData_.materialTexturePaths[materialIndex].environmentMap = "engine/resources/textures/" + environmentMapFileName;
-	modelCommon_->GetTextureManager()->LoadTexture(modelData_.materialTexturePaths[materialIndex].environmentMap);
+	modelCommon_->GetTextureManager()->AddTexture(modelData_.materialTexturePaths[materialIndex].environmentMap);
 }
 
 //色を取得
@@ -263,6 +263,6 @@ void Model::CreateResources() {
 	CreateRimLightResource();
 	//テクスチャの読み込み
 	for (MaterialTexturePaths& materialData : modelData_.materialTexturePaths) {
-		modelCommon_->GetTextureManager()->LoadTexture(materialData.textureFilePath);
+		modelCommon_->GetTextureManager()->AddTexture(materialData.textureFilePath);
 	}
 }

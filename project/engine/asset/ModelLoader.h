@@ -1,8 +1,10 @@
 #pragma once
 #include "RenderData.h"
 
+/// <summary>
+/// モデルの読み込み
+/// </summary>
 namespace modelLoader{
-
 	/// <summary>
 	/// .mtlファイルの読み取り	
 	/// </summary>

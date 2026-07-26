@@ -54,7 +54,7 @@ void ParticleSystem::Initialize(ParticleCommon* particleCommon, Camera* renderCa
 		//テクスチャファイルの記録
 		modelData_.materialTexturePaths[i].textureFilePath = "engine/resources/textures/" + textureName;
 		//テクスチャの読み込み
-		particleCommon_->GetTextureManager()->LoadTexture(modelData_.materialTexturePaths[i].textureFilePath);
+		particleCommon_->GetTextureManager()->AddTexture(modelData_.materialTexturePaths[i].textureFilePath);
 	}
 
 	//マテリアルリソースの生成
@@ -174,7 +174,7 @@ void ParticleSystem::SetTexture(uint32_t meshIndex, const std::string& imageFile
 	//マテリアルの検索キーを取得
 	uint32_t materialIndex = meshes_[meshIndex]->GetMaterialIndex();
 	modelData_.materialTexturePaths[materialIndex].textureFilePath = "engine/resources/textures/" + imageFileName;
-	particleCommon_->GetTextureManager()->LoadTexture(modelData_.materialTexturePaths[materialIndex].textureFilePath);
+	particleCommon_->GetTextureManager()->AddTexture(modelData_.materialTexturePaths[materialIndex].textureFilePath);
 }
 
 //マテリアルリソースの生成
@@ -226,5 +226,5 @@ void ParticleSystem::CreateStructuredBuffer() {
 //モデルのテクスチャを適応
 void ParticleSystem::ApplyModelTexture(uint32_t materialIndex) {
 	//テクスチャの読み込み
-	particleCommon_->GetTextureManager()->LoadTexture(modelData_.materialTexturePaths[materialIndex].textureFilePath);
+	particleCommon_->GetTextureManager()->AddTexture(modelData_.materialTexturePaths[materialIndex].textureFilePath);
 }

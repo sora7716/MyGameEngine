@@ -1,7 +1,6 @@
 #pragma once
-#include "DirectXTex/DirectXTex.h"
-#include "DirectXTex/d3dx12.h"
-#include <string>
+#include "TextureLoader.h"
+#include "RenderData.h"
 #include <unordered_map>
 
 //前方宣言
@@ -12,21 +11,9 @@ class Core;
 /// <summary>
 /// テクスチャを管理する
 /// </summary>
-class TextureManager {
+class TextureManager{
 private://エイリアステンプレート
 	template <class T>using ComPtr = Microsoft::WRL::ComPtr<T>;
-private://構造体
-	//テクスチャデータ
-	struct TextureData {
-		DirectX::TexMetadata metadata = {};//画像の幅や高さなどの情報
-		ComPtr<ID3D12Resource>resource = {};//テクスチャリソース
-		uint32_t srvIndex;//SRVインデックス
-		ComPtr<ID3D12Resource>intermediateResource = nullptr;//アップロードするリソース
-		D3D12_CPU_DESCRIPTOR_HANDLE srvHandleCPU = {};//SRV作成時に必要なCPUハンドル
-		D3D12_GPU_DESCRIPTOR_HANDLE srvHandleGPU = {};//描画コマンドに必要なGPUハンドル
-
-		D3D12_RESOURCE_STATES state = D3D12_RESOURCE_STATE_COPY_DEST; // ←生成直後はこれ
-	};
 public://メンバ関数
 	/// <summary>
 	/// デストラクタ
@@ -41,16 +28,10 @@ public://メンバ関数
 	void Initialize(DirectXBase* directXBase, SRVManager* srvManager);
 
 	/// <summary>
-	/// テクスチャファイルの読み込み
+	/// テクスチャの追加
 	/// </summary>
 	/// <param name="filePath">テクスチャのファイルパス</param>
-	void LoadTexture(std::string& filePath);
-
-	/// <summary>
-	/// テクスチャファイルのアンロード
-	/// </summary>
-	/// <param name="filePath">ファイルパス</param>
-	void UnloadTexture(const std::string& filePath);
+	void AddTexture(std::string& filePath);
 
 	/// <summary>
 	/// 文字テクスチャなどをCPUメモリから作成
@@ -92,15 +73,8 @@ public://メンバ関数
 	/// <param name="filePath">ファイルパス</param>
 	/// <returns>GPUハンドル</returns>
 	D3D12_GPU_DESCRIPTOR_HANDLE GetSRVHandleGPU(const std::string& filePath);
-
-private://メンバ関数
-	/// <summary>
-    /// エラーテクスチャを適応
-    /// </summary>
-	/// <param name="filePath">ファイル名</param>
-	void BindErrorTexture(std::string& filePath);
 public://PassKey
-	class ConstructorKey {
+	class ConstructorKey{
 		ConstructorKey() = default;
 		friend class Core;
 	};
@@ -119,7 +93,7 @@ public://静的メンバ変数
 	static uint32_t kSRVIndexTop;
 private://メンバ変数
 	//テクスチャデータ
-	std::unordered_map<std::string, TextureData>textureDatas_;
+	std::unordered_map < std::string, TextureData> textureDatas_;
 	//DirectX基盤
 	DirectXBase* directXBase_ = nullptr;
 	//SRVの管理

@@ -1,3 +1,4 @@
+#define NOMINMAX
 #include "DebugEditor.h"
 #include "GameObject.h"
 #include "ImGuiManager.h"

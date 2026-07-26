@@ -61,7 +61,7 @@ void SpriteCommon::DrawSetting() {
 
 //テクスチャの読み込み
 void SpriteCommon::LoadTexture(std::string& filename) {
-	textureManager_->LoadTexture(filename);
+	textureManager_->AddTexture(filename);
 }
 
 //平行光源の生成

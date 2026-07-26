@@ -21,13 +21,13 @@
 #include <numbers>
 
 //コンストラクタ
-TestPlayScene::TestPlayScene() {};
+TestPlayScene::TestPlayScene(){};
 
 //デストラクタ
-TestPlayScene::~TestPlayScene() {};
+TestPlayScene::~TestPlayScene(){};
 
 //初期化
-void TestPlayScene::Initialize(const SceneContext& sceneContext) {
+void TestPlayScene::Initialize(const SceneContext& sceneContext){
 	//ベースシーンの初期化
 	BaseScene::Initialize(sceneContext);
 	gameCamera_ = sceneContext_.cameraManager->FindCamera("testPlayCamera");
@@ -89,7 +89,7 @@ void TestPlayScene::Initialize(const SceneContext& sceneContext) {
 }
 
 //更新
-void TestPlayScene::Update() {
+void TestPlayScene::Update(){
 	//ベースシーンの更新
 	BaseScene::Update();
 
@@ -109,15 +109,15 @@ void TestPlayScene::Update() {
 
 	particleSystem_->Update();
 
-	if (collision::IsCollision(gameCamera_->GetFrustum(), cube_->GetAABB())) {
+	if (collision::IsCollision(gameCamera_->GetFrustum(), cube_->GetAABB())){
 		cube_->SetColor(Vector4::MakeRedColor());
-	} else {
+	} else{
 		cube_->SetColor(Vector4::MakeWhiteColor());
 	}
 }
 
 //デバッグ
-void TestPlayScene::Debug() {
+void TestPlayScene::Debug(){
 #ifdef USE_IMGUI
 	ImGui::Begin("Object");
 
@@ -141,7 +141,7 @@ void TestPlayScene::Debug() {
 	//	ImGui::PopID();
 	//}
 
-	if (ImGui::TreeNode("camera")) {
+	if (ImGui::TreeNode("camera")){
 		Vector3 cameraTranslate = gameCamera_->GetTranslate();
 		Vector3 cameraRotate = gameCamera_->GetEulerAngle();
 		ImGui::DragFloat3("rotate", &cameraRotate.x, 0.1f);
@@ -160,7 +160,7 @@ void TestPlayScene::Debug() {
 	//	ImGui::TreePop();
 	//}
 
-	if (ImGui::TreeNode("particle")) {
+	if (ImGui::TreeNode("particle")){
 		ImGui::DragFloat3("emitter", &emitterPos_.x, 0.01f);
 		particleSystem_->SetEmitterPosition(emitterPos_);
 		primitiveData::OBB obb = cube_->GetOBB();
@@ -174,7 +174,7 @@ void TestPlayScene::Debug() {
 }
 
 //描画
-void TestPlayScene::Draw(Camera* camera) {
+void TestPlayScene::Draw(Camera* camera){
 	object3d_->SetRenderCamera(camera);
 	object3d_->Draw();
 
@@ -192,17 +192,17 @@ void TestPlayScene::Draw(Camera* camera) {
 }
 
 //デバッグでの描画
-void TestPlayScene::DebugDraw() {
+void TestPlayScene::DebugDraw(){
 	Draw(debugCamera_->GetCamera());
 }
 
 //ゲームでの描画
-void TestPlayScene::GameDraw() {
+void TestPlayScene::GameDraw(){
 	Draw(gameCamera_);
 }
 
 //終了
-void TestPlayScene::Finalize() {
+void TestPlayScene::Finalize(){
 	//ベースシーンのの終了
 	BaseScene::Finalize();
 }

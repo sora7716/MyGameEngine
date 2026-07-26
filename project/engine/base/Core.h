@@ -17,13 +17,14 @@
 #include "GameObjectList.h"
 #include "AbstractSceneFactory.h"
 #include "TagManager.h"
+#include "PipelineManager.h"
 #include "Context.h"
 #include <memory>
 
 /// <summary>
 /// エンジンの核
 /// </summary>
-class Core {
+class Core{
 public://メンバ関数
 	/// <summary>
 	/// コンストラクタ
@@ -147,6 +148,12 @@ public://メンバ関数
 	/// </summary>
 	/// <returns>タグの管理</returns>
 	TagManager* GetTagManager()const;
+
+	/// <summary>
+	/// パイプラインの管理の取得
+	/// </summary>
+	/// <returns>パイプラインの管理</returns>
+	PipelineManager* GetPipelineManager()const;
 private://メンバ変数
 	//WinApi
 	std::unique_ptr<WinApi>winApi_ = nullptr;
@@ -184,6 +191,8 @@ private://メンバ変数
 	std::unique_ptr< AbstractSceneFactory> sceneFactory_ = nullptr;
 	//タグの管理
 	std::unique_ptr<TagManager>tagManager_ = nullptr;
+	//パイプラインの管理
+	std::unique_ptr<PipelineManager>pipelineManager_ = nullptr;
 	//シーンで必要なもの
 	SceneContext sceneContext_ = {};
 };

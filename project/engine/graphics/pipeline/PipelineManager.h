@@ -1,8 +1,5 @@
 #pragma once
-#include "blendMode.h"
-#include <wrl.h>
-#include <d3d12.h>
-#include <array>
+#include "PipelineManagerData.h"
 #include <memory>
 
 //前方宣言
@@ -10,34 +7,11 @@ class DirectXBase;
 class GraphicsPipeline;
 class Blend;
 
-//パイプラインタイプ
-enum class PiplineType :uint32_t{
-	kObject3d,
-	kSprite,
-	kParticle,
-	kSkyBox,
-	kPiplineTypeCount
-};
-
-//パイプラインのセット
-struct PipelineSet{
-	ComPtr<ID3D12RootSignature>rootSignature = nullptr;
-	std::array<ComPtr<ID3D12PipelineState>, static_cast<int32_t>(BlendMode::kCountOfBlendMode)> graphicsPipelineStates = { nullptr };
-	BlendMode blendMode_ = BlendMode::kNone;
-};
-
 /// <summary>
 /// パイプラインの管理
 /// </summary>
-class PipelineManager{
-private://エイリアステンプレート
-	template <class T>using ComPtr = Microsoft::WRL::ComPtr<T>;
+class PipelineManager{	
 public://メンバ関数
-	/// <summary>
-	/// コンストラクタ
-	/// </summary>
-	PipelineManager();
-
 	/// <summary>
 	/// デストラクタ
 	/// </summary>
@@ -46,12 +20,59 @@ public://メンバ関数
 	/// <summary>
 	/// 初期化
 	/// </summary>
-	void Initialize();
+	/// <param name="directXBase">DirectXの基盤部分</param>
+	void Initialize(DirectXBase* directXBase);
+
+	/// <summary>
+	/// PSOの作成
+	/// </summary>
+	void CreatePSO();
+
+	/// <summary>
+	/// パイプラインセットの取得
+	/// </summary>
+	/// <param name="pipelineSetType">パイプラインセットのタイプ</param>
+	/// <returns>パイプラインセット</returns>
+	const PipelineSet& GetPipelineSet(PiplineType pipelineSetType)const;
+private://メンバ関数
+	/// <summary>
+	/// PSOの作成(Object3d)
+	/// </summary>
+	void CreatePSOForObject3d();
+
+	/// <summary>
+	/// PSOの作成(Sprite)
+	/// </summary>
+	void CreatePSOForSprite();
+
+	/// <summary>
+	/// PSOの作成(Particle)
+	/// </summary>
+	void CreatePSOForParticle();
+
+	/// <summary>
+	/// PSOの作成(SkyBox)
+	/// </summary>
+	void CreatePSOForSkyBox();
+public://PassKeyIdiom
+	class ConstructorKey{
+	private:
+		ConstructorKey() = default;
+		friend class Core;
+	};
+	/// <summary>
+	/// コンストラクタ
+	/// </summary>
+	/// <param name="">PassKeyを受け取る</param>
+	explicit PipelineManager(ConstructorKey);
+private://静的メンバ変数
+	//PSOの作成関数のテーブル
+	static void (PipelineManager::* createPSOTable[])();
 private://メンバ変数
 	//ブレンド
 	std::unique_ptr<Blend> blend_ = nullptr;
 	//グラフィックスパイプライン
-	std::unique_ptr<GraphicsPipeline> makeGraphicsPipeline_ = nullptr;
+	std::unique_ptr<GraphicsPipeline> graphicsPipeline_ = nullptr;
 	//各オブジェクトごとにパイプラインタイプ
 	std::array<PipelineSet, static_cast<uint32_t>(PiplineType::kPiplineTypeCount)> pipelineSets_ = {};
 };

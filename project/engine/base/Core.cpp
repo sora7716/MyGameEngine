@@ -29,12 +29,16 @@ void Core::Initialize(){
 	//カメラマナージャー
 	cameraManager_ = std::make_unique<CameraManager>(CameraManager::ConstructorKey{});
 	cameraManager_->Initialize(directXBase_.get());
+	//パイプラインの管理
+	pipelineManager_ = std::make_unique<PipelineManager>(PipelineManager::ConstructorKey{});
+	pipelineManager_->Initialize(directXBase_.get());
+	pipelineManager_->CreatePSO();
 	//スプライトの共通部分
 	spriteCommon_ = std::make_unique<SpriteCommon>(SpriteCommon::ConstructorKey{});
 	spriteCommon_->Initialize(directXBase_.get(), textureManager_.get());
 	//3Dオブジェクトの共通部分
 	object3dCommon_ = std::make_unique<Object3dCommon>(Object3dCommon::ConstructorKey{});
-	object3dCommon_->Initialize(directXBase_.get(), srvManager_.get(), textureManager_.get(), modelManager_.get());
+	object3dCommon_->Initialize(directXBase_.get(), srvManager_.get(), textureManager_.get(), modelManager_.get(), pipelineManager_.get());
 	//パーティクルの共通部分
 	particleCommon_ = std::make_unique<ParticleCommon>(ParticleCommon::ConstructorKey{});
 	particleCommon_->Initialize(directXBase_.get(), srvManager_.get(), textureManager_.get());
@@ -153,4 +157,9 @@ AbstractSceneFactory* Core::GetSceneFactory() const{
 //タグの管理の取得
 TagManager* Core::GetTagManager() const{
 	return tagManager_.get();
+}
+
+//パイプラインの管理の取得
+PipelineManager* Core::GetPipelineManager() const{
+	return pipelineManager_.get();
 }

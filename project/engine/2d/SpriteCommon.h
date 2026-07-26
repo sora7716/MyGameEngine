@@ -86,7 +86,7 @@ public://メンバ関数
 	/// </summary>
 	/// <returns>グラフィックパイプライン</returns>
 	std::array<ComPtr<ID3D12PipelineState>, static_cast<int32_t>(BlendMode::kCountOfBlendMode)>GetGraphicsPipelineStates()const;
-public://PressKeyIdiom
+public://PassKeyIdiom
 	class ConstructorKey {
 	private:
 		ConstructorKey() = default;
@@ -95,7 +95,7 @@ public://PressKeyIdiom
 	/// <summary>
 	/// コンストラクタ
 	/// </summary>
-	/// <param name="">PressKeyを受け取る</param>
+	/// <param name="">PassKeyを受け取る</param>
 	explicit SpriteCommon(ConstructorKey);
 private://メンバ関数
 	//コピーコンストラクタ禁止

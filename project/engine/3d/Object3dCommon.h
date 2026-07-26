@@ -1,6 +1,6 @@
 #pragma once
 #include "RenderData.h"
-#include "blendMode.h"
+#include "PipelineManagerData.h"
 #include <wrl.h>
 #include <d3d12.h>
 #include <array>
@@ -9,16 +9,15 @@
 //前方宣言
 class DirectXBase;
 class SRVManager;
-class GraphicsPipeline;
 class TextureManager;
 class ModelManager;
 class Camera;
-class Blend;
+class PipelineManager;
 
 /// <summary>
 /// 3Dオブジェクトの共通部分
 /// </summary>
-class Object3dCommon {
+class Object3dCommon{
 private://エイリアステンプレート
 	template <class T>using ComPtr = Microsoft::WRL::ComPtr<T>;
 public://メンバ関数
@@ -34,7 +33,7 @@ public://メンバ関数
 	/// <param name="srvManager">srvマネージャー</param>
 	/// <param name="textureManager">テクスチャマネージャー</param>
 	/// <param name="modelManager">モデルマネージャー/param>
-	void Initialize(DirectXBase* directXBase, SRVManager* srvManager, TextureManager* textureManager, ModelManager* modelManager);
+	void Initialize(DirectXBase* directXBase, SRVManager* srvManager, TextureManager* textureManager, ModelManager* modelManager, PipelineManager* pipelineManager);
 
 	/// <summary>
 	/// 更新
@@ -154,7 +153,7 @@ public://メンバ関数
 	/// <param name="pointLightPos">ポイントライトの位置</param>
 	void SetPointLightPos(const Vector3& pointLightPos);
 public://PassKey
-	class ConstructorKey {
+	class ConstructorKey{
 	private:
 		ConstructorKey() = default;
 		friend class Core;
@@ -202,22 +201,19 @@ private://メンバ変数
 	//DirectXの基盤
 	DirectXBase* directXBase_ = nullptr;
 
-	//SRVマネージャー
+	//SRVの管理
 	SRVManager* srvManager_ = nullptr;
 
-	//モデルマネージャー
+	//モデルの管理
 	ModelManager* modelManager_ = nullptr;
-
-	//ルートシグネイチャ
-	ComPtr<ID3D12RootSignature>rootSignature_ = nullptr;
-
-	//グラフィックスパイプライン(PSO)
-	std::array<ComPtr<ID3D12PipelineState>, static_cast<int32_t>(BlendMode::kCountOfBlendMode)> graphicsPipelineStates_ = { nullptr };
-	//グラフィックスパイプライン
-	GraphicsPipeline* makeGraphicsPipeline_ = nullptr;
-
-	//テクスチャマネジャー
+	
+	//テクスチャの管理
 	TextureManager* textureManager_ = nullptr;
+
+	//パイプラインの管理
+	PipelineManager* pipelineManager_ = nullptr;
+	//パイプラインセット
+	PipelineSet pipelineSet_ = {};
 
 	//バッファリソース
 	ComPtr<ID3D12Resource> directionalLightResource_ = nullptr;//平行光源
@@ -235,8 +231,7 @@ private://メンバ変数
 	//スポットライト
 	std::vector<SpotLight>spotLightList_ = {};
 
-	//ブレンド
-	Blend* blend_ = nullptr;
+	//ブレンドモード
 	BlendMode blendMode_ = BlendMode::kNone;
 
 	//デフォルトカメラ
@@ -248,4 +243,5 @@ private://メンバ変数
 
 	//光源(追従するターゲット)
 	Vector3 pointLightPos_ = {};
+
 };

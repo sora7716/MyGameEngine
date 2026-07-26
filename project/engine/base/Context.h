@@ -15,6 +15,7 @@ class ParticleManager;
 class AudioManager;
 class ImGuiManager;
 class TagManager;
+class PipelineManager;
 class Core;
 
 //シーンで必要なクラス
@@ -34,6 +35,7 @@ struct SceneContext {
 	AudioManager* audioManager;
 	ImGuiManager* imGuiManager;
 	TagManager* tagManager;
+	PipelineManager* pipelineManager;
 
 	/// <summary>
 	/// ゲームエンジンの核から必要な物を抽出する

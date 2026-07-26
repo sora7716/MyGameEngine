@@ -103,6 +103,12 @@
     <Filter Include="engine\debug\wireframes">
       <UniqueIdentifier>{77757546-f453-4df0-b874-2faa3d99a842}</UniqueIdentifier>
     </Filter>
+    <Filter Include="engine\asset">
+      <UniqueIdentifier>{317e856f-6727-461e-b2b0-fe9c6615c9e8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="engine\gameObject\component">
+      <UniqueIdentifier>{769be0c8-0332-468e-8efe-6b004af174d1}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="engine\main.cpp">
@@ -312,38 +318,38 @@
     <ClCompile Include="engine\3d\SkyBox.cpp">
       <Filter>engine\3d</Filter>
     </ClCompile>
-    <ClCompile Include="engine\geometry\PrimitiveMeshFactory.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
-    <ClCompile Include="engine\geometry\Culling.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
     <ClCompile Include="engine\debug\DebugEditor.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
-    <ClCompile Include="engine\gameObject\TagManager.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
-    <ClCompile Include="engine\gameObject\component\Component.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
-    <ClCompile Include="engine\gameObject\component\ModelRenderComponent.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
-    <ClCompile Include="engine\graphics\RenderSystem.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
-    <ClCompile Include="engine\3d\LightingManager.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
-    <ClCompile Include="engine\graphics\pipeline\PipelineManager.cpp">
-      <Filter>ソース ファイル</Filter>
+      <Filter>engine\debug</Filter>
     </ClCompile>
     <ClCompile Include="engine\asset\ModelLoader.cpp">
-      <Filter>ソース ファイル</Filter>
+      <Filter>engine\asset</Filter>
     </ClCompile>
     <ClCompile Include="engine\asset\TextureLoader.cpp">
-      <Filter>ソース ファイル</Filter>
+      <Filter>engine\asset</Filter>
+    </ClCompile>
+    <ClCompile Include="engine\graphics\pipeline\PipelineManager.cpp">
+      <Filter>engine\graphics\pipeline</Filter>
+    </ClCompile>
+    <ClCompile Include="engine\gameObject\TagManager.cpp">
+      <Filter>engine\gameObject</Filter>
+    </ClCompile>
+    <ClCompile Include="engine\3d\LightingManager.cpp">
+      <Filter>engine\3d</Filter>
+    </ClCompile>
+    <ClCompile Include="engine\gameObject\component\ModelRenderComponent.cpp">
+      <Filter>engine\gameObject\component</Filter>
+    </ClCompile>
+    <ClCompile Include="engine\gameObject\component\Component.cpp">
+      <Filter>engine\gameObject\component</Filter>
+    </ClCompile>
+    <ClCompile Include="engine\geometry\PrimitiveMeshFactory.cpp">
+      <Filter>engine\3d</Filter>
+    </ClCompile>
+    <ClCompile Include="engine\graphics\RenderSystem.cpp">
+      <Filter>engine\graphics</Filter>
+    </ClCompile>
+    <ClCompile Include="engine\geometry\Culling.cpp">
+      <Filter>engine\geometry</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -563,41 +569,41 @@
     <ClInclude Include="engine\3d\SkyBox.h">
       <Filter>engine\3d</Filter>
     </ClInclude>
-    <ClInclude Include="engine\geometry\PrimitiveMeshFactory.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="engine\geometry\Culling.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
     <ClInclude Include="engine\debug\DebugEditor.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="engine\gameObject\TagManager.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="engine\gameObject\component\Component.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="engine\gameObject\component\ModelRenderComponent.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="engine\graphics\RenderSystem.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="engine\3d\LightingManager.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="engine\graphics\pipeline\PipelineManager.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="engine\graphics\pipeline\PipelineManagerData.h">
-      <Filter>ヘッダー ファイル</Filter>
+      <Filter>engine\debug</Filter>
     </ClInclude>
     <ClInclude Include="engine\asset\ModelLoader.h">
-      <Filter>ヘッダー ファイル</Filter>
+      <Filter>engine\asset</Filter>
+    </ClInclude>
+    <ClInclude Include="engine\graphics\pipeline\PipelineManager.h">
+      <Filter>engine\graphics\pipeline</Filter>
+    </ClInclude>
+    <ClInclude Include="engine\gameObject\TagManager.h">
+      <Filter>engine\gameObject</Filter>
+    </ClInclude>
+    <ClInclude Include="engine\3d\LightingManager.h">
+      <Filter>engine\3d</Filter>
+    </ClInclude>
+    <ClInclude Include="engine\gameObject\component\ModelRenderComponent.h">
+      <Filter>engine\gameObject\component</Filter>
+    </ClInclude>
+    <ClInclude Include="engine\gameObject\component\Component.h">
+      <Filter>engine\gameObject\component</Filter>
+    </ClInclude>
+    <ClInclude Include="engine\geometry\PrimitiveMeshFactory.h">
+      <Filter>engine\3d</Filter>
+    </ClInclude>
+    <ClInclude Include="engine\graphics\RenderSystem.h">
+      <Filter>engine\graphics</Filter>
     </ClInclude>
     <ClInclude Include="engine\asset\TextureLoader.h">
-      <Filter>ヘッダー ファイル</Filter>
+      <Filter>engine\asset</Filter>
+    </ClInclude>
+    <ClInclude Include="engine\graphics\pipeline\PipelineManagerData.h">
+      <Filter>engine\graphics\pipeline</Filter>
+    </ClInclude>
+    <ClInclude Include="engine\geometry\Culling.h">
+      <Filter>engine\geometry</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

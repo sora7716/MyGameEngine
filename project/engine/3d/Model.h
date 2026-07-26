@@ -42,23 +42,6 @@ public://静的メンバ関数
 	/// <param name="modelData">モデルデータ</param>
 	/// <returns>モデル</returns>
 	static std::unique_ptr<Model> CreateModel(ModelCommon* modelCommon, const ModelData& modelData);
-
-	/// <summary>
-	/// .mtlファイルの読み取り	
-	/// </summary>
-	/// <param name="directoryPath">ディレクトリファイルパス</param>
-	/// <param name="filename">ファイル名</param>
-	/// <returns>マテリアルデータ</returns>
-	static MaterialTexturePaths LoadMaterialTemplateFile(const std::string& directoryPath, const std::string& filename);
-
-	/// <summary>
-	/// モデルファイルの読み込み
-	/// </summary>
-	/// <param name="directoryPath">ディレクトリファイルパス(最後に"/"はいらない)</param>
-	/// <param name="fileName">ファイル名</param>
-	/// <returns>モデルデータ</returns>
-	static ModelData LoadModelFile(const std::string& directoryPath, const std::string& fileName);
-
 public://メンバ関数
 	/// <summary>
 	/// コンストラクタ

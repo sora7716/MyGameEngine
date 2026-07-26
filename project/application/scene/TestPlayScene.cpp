@@ -55,7 +55,6 @@ void TestPlayScene::Initialize(const SceneContext& sceneContext) {
 	treePtr = modelObject.get();
 	gameObjects_.push_back(std::move(modelObject));
 	object3d_->AddInstance(treePtr);
-	object3d_->SetBlendMode(BlendMode::kMultily);
 
 	std::unique_ptr<GameObject> skyBoxObject = std::make_unique<GameObject>();
 	skyBoxObject->Initialize("skyBox");

@@ -25,6 +25,7 @@
     <ClCompile Include="engine\3d\Object3d.cpp" />
     <ClCompile Include="engine\3d\Object3dCommon.cpp" />
     <ClCompile Include="engine\3d\SkyBox.cpp" />
+    <ClCompile Include="engine\asset\ModelLoader.cpp" />
     <ClCompile Include="engine\audio\Audio.cpp" />
     <ClCompile Include="engine\audio\AudioManager.cpp" />
     <ClCompile Include="engine\base\Context.cpp" />
@@ -107,6 +108,7 @@
     <ClInclude Include="engine\3d\Object3d.h" />
     <ClInclude Include="engine\3d\Object3dCommon.h" />
     <ClInclude Include="engine\3d\SkyBox.h" />
+    <ClInclude Include="engine\asset\ModelLoader.h" />
     <ClInclude Include="engine\audio\Audio.h" />
     <ClInclude Include="engine\audio\AudioManager.h" />
     <ClInclude Include="engine\base\Context.h" />
@@ -314,7 +316,7 @@
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
       <TreatWarningAsError>true</TreatWarningAsError>
-      <AdditionalIncludeDirectories>$(ProjectDir);$(ProjectDir)engine\2d;$(ProjectDir)engine\3d;$(ProjectDir)engine\audio;$(ProjectDir)engine\base;$(ProjectDir)engine\camera;$(ProjectDir)engine\collision;$(ProjectDir)engine\debug;$(ProjectDir)engine\debug\wireframes;$(ProjectDir)engine\framework;$(ProjectDir)engine\gameObject;$(ProjectDir)engine\geometry;$(ProjectDir)engine\graphics;$(ProjectDir)engine\graphics\data;$(ProjectDir)engine\graphics\descriptor;$(ProjectDir)engine\graphics\pipeline;$(ProjectDir)engine\graphics\texture;$(ProjectDir)engine\input;$(ProjectDir)engine\math;$(ProjectDir)engine\particle;$(ProjectDir)engine\physics;$(ProjectDir)engine\resources;$(ProjectDir)engine\scene;$(ProjectDir)engine\utility;$(ProjectDir)engine\worldTransform;$(SolutionDir)DirectXTex;$(SolutionDir)imgui;$(ProjectDir)externals;$(ProjectDir)externals\assimp\include;%(AdditionalIncludeDirectories);$(ProjectDir)application\actor;$(ProjectDir)application\scene;$(ProjectDir)engine\gameObject\component</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir);$(ProjectDir)engine\2d;$(ProjectDir)engine\3d;$(ProjectDir)engine\audio;$(ProjectDir)engine\base;$(ProjectDir)engine\camera;$(ProjectDir)engine\collision;$(ProjectDir)engine\debug;$(ProjectDir)engine\debug\wireframes;$(ProjectDir)engine\framework;$(ProjectDir)engine\gameObject;$(ProjectDir)engine\geometry;$(ProjectDir)engine\graphics;$(ProjectDir)engine\graphics\data;$(ProjectDir)engine\graphics\descriptor;$(ProjectDir)engine\graphics\pipeline;$(ProjectDir)engine\graphics\texture;$(ProjectDir)engine\input;$(ProjectDir)engine\math;$(ProjectDir)engine\particle;$(ProjectDir)engine\physics;$(ProjectDir)engine\resources;$(ProjectDir)engine\scene;$(ProjectDir)engine\utility;$(ProjectDir)engine\worldTransform;$(SolutionDir)DirectXTex;$(SolutionDir)imgui;$(ProjectDir)externals;$(ProjectDir)externals\assimp\include;%(AdditionalIncludeDirectories);$(ProjectDir)application\actor;$(ProjectDir)application\scene;$(ProjectDir)engine\gameObject\component;$(ProjectDir)engine\asset</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -348,7 +350,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
       <AdditionalOptions>/utf-8 %(AdditionalOptions)</AdditionalOptions>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
-      <AdditionalIncludeDirectories>$(ProjectDir);$(ProjectDir)engine\2d;$(ProjectDir)engine\3d;$(ProjectDir)engine\audio;$(ProjectDir)engine\base;$(ProjectDir)engine\camera;$(ProjectDir)engine\collision;$(ProjectDir)engine\debug;$(ProjectDir)engine\debug\wireframes;$(ProjectDir)engine\framework;$(ProjectDir)engine\gameObject;$(ProjectDir)engine\geometry;$(ProjectDir)engine\graphics;$(ProjectDir)engine\graphics\data;$(ProjectDir)engine\graphics\descriptor;$(ProjectDir)engine\graphics\pipeline;$(ProjectDir)engine\graphics\texture;$(ProjectDir)engine\input;$(ProjectDir)engine\math;$(ProjectDir)engine\particle;$(ProjectDir)engine\physics;$(ProjectDir)engine\resources;$(ProjectDir)engine\scene;$(ProjectDir)engine\utility;$(ProjectDir)engine\worldTransform;$(SolutionDir)DirectXTex;$(SolutionDir)imgui;$(ProjectDir)externals;$(ProjectDir)externals\assimp\include;%(AdditionalIncludeDirectories);$(ProjectDir)application\actor;$(ProjectDir)application\scene;$(ProjectDir)engine\gameObject\component</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir);$(ProjectDir)engine\2d;$(ProjectDir)engine\3d;$(ProjectDir)engine\audio;$(ProjectDir)engine\base;$(ProjectDir)engine\camera;$(ProjectDir)engine\collision;$(ProjectDir)engine\debug;$(ProjectDir)engine\debug\wireframes;$(ProjectDir)engine\framework;$(ProjectDir)engine\gameObject;$(ProjectDir)engine\geometry;$(ProjectDir)engine\graphics;$(ProjectDir)engine\graphics\data;$(ProjectDir)engine\graphics\descriptor;$(ProjectDir)engine\graphics\pipeline;$(ProjectDir)engine\graphics\texture;$(ProjectDir)engine\input;$(ProjectDir)engine\math;$(ProjectDir)engine\particle;$(ProjectDir)engine\physics;$(ProjectDir)engine\resources;$(ProjectDir)engine\scene;$(ProjectDir)engine\utility;$(ProjectDir)engine\worldTransform;$(SolutionDir)DirectXTex;$(SolutionDir)imgui;$(ProjectDir)externals;$(ProjectDir)externals\assimp\include;%(AdditionalIncludeDirectories);$(ProjectDir)application\actor;$(ProjectDir)application\scene;$(ProjectDir)engine\gameObject\component;$(ProjectDir)engine\asset</AdditionalIncludeDirectories>
       <Optimization>MinSpace</Optimization>
       <TreatWarningAsError>true</TreatWarningAsError>
     </ClCompile>

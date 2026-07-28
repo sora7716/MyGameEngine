@@ -112,6 +112,6 @@ private://メンバ変数
 	//サウンドデータ
 	SoundData soundData_ = {};
 	//波形フォーマットを元にSourceVoiceの生成
-	IXAudio2SourceVoice* pSorceVoice_ = nullptr;
+	IXAudio2SourceVoice* pSourceVoice_ = nullptr;
 };
 

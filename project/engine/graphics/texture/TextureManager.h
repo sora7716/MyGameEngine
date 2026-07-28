@@ -93,7 +93,7 @@ public://静的メンバ変数
 	static uint32_t kSRVIndexTop;
 private://メンバ変数
 	//テクスチャデータ
-	std::unordered_map < std::string, TextureData> textureDatas_;
+	std::unordered_map<std::string, TextureData> textureDatas_;
 	//DirectX基盤
 	DirectXBase* directXBase_ = nullptr;
 	//SRVの管理

@@ -1,7 +1,6 @@
 #include "RenderSystem.h"
-#include "GraphicsPipeline.h"
-#include "Blend.h"
-using namespace Microsoft::WRL;
+#include "PipelineManager.h"
+#include "DirectXBase.h"
 
 //コンストラクタ
 RenderSystem::RenderSystem(){
@@ -12,35 +11,25 @@ RenderSystem::~RenderSystem(){
 }
 
 //初期化
-void RenderSystem::Initialize(DirectXBase* directXBase){
-	//ブレンド
-	blend_ = new Blend();
-	//グラフィックスパイプラインの生成と初期化
-	makeGraphicsPipeline_ = new GraphicsPipeline();
-	//シェーダを設定
-	makeGraphicsPipeline_->SetVertexShaderFileName(L"Object3d.VS.hlsl");
-	makeGraphicsPipeline_->SetPixelShaderFileName(L"Object3d.PS.hlsl");
-	//DirectXを記録
-	makeGraphicsPipeline_->SetDirectXBase(directXBase);
-	//深度バッファ
-	makeGraphicsPipeline_->CreateDepthStencilResourceForObject3d();
-	//シグネイチャBlobの初期化
-	makeGraphicsPipeline_->CreateRootSignatureBlobForObject3d();
-	//インプットレイアウト
-	makeGraphicsPipeline_->InitializeInputLayoutDesc();
-	//ラスタライザステート
-	makeGraphicsPipeline_->InitializeRasterizerState(FillMode::kSolid);
-	//頂点シェーダBlob
-	makeGraphicsPipeline_->CompileVertexShader();
-	//ピクセルシェーダBlob
-	makeGraphicsPipeline_->CompilePixelShader();
-	//PSO
-	for (uint32_t i = 0; i < static_cast<int32_t>(BlendMode::kCountOfBlendMode); i++){
-		//ブレンドステート
-		makeGraphicsPipeline_->InitializeBlendState(i);
-		//グラフィックスパイプラインの生成
-		graphicsPipelineStates_[i] = makeGraphicsPipeline_->CreateGraphicsPipeline();
-	}	//ルートシグネイチャの記録
-	rootSignature_ = makeGraphicsPipeline_->GetRootSignature();
+void RenderSystem::Initialize(DirectXBase* directXBase, PipelineManager* pipelineManager){
+	//DirectXの基盤部分の記録
+	directXBase_ = directXBase;
+	//パイプラインの管理の記録
+	pipelineManager_ = pipelineManager;
+}
 
+//描画開始
+void RenderSystem::PreDraw(){
+	//パイプラインのセットを取得
+	PipelineSet pipelineSet = pipelineManager_->GetPipelineSet(PiplineType::kObject3d);
+	//ブレンドモード
+	BlendMode blendMode = BlendMode::kNormal;
+	//ルートシグネイチャをセットするコマンド
+	directXBase_->GetCommandList()->SetGraphicsRootSignature(pipelineSet.rootSignature.Get());
+	//プリミティブトポロジーをセットするコマンド
+	directXBase_->GetCommandList()->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+	//PSO
+	ID3D12PipelineState* pso = pipelineSet.graphicsPipelineStates[static_cast<uint32_t>(blendMode)].Get();
+	//グラフィックスパイプラインをセットするコマンド
+	directXBase_->GetCommandList()->SetPipelineState(pso);
 }

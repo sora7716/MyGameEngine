@@ -48,8 +48,6 @@ void ParticleEmitter::Update(ParticleForGPU* instancingData) {
 			(*it).currentTime += mathUtility::kDeltaTime;
 			float alpha = 1.0f - ((*it).currentTime / (*it).lifeTime);
 			instancingData[numInstance_].color.w = alpha;
-			//ワールドトランスフォームの更新
-			UpdateWorldTransform(numInstance_, it, instancingData);
 			for (std::shared_ptr<Mesh>& mesh : meshes_) {
 				//カリング
 				if (!culling_->IsVisibleInFrustum(mesh->GetAABB(),instancingData->world)) {
@@ -84,6 +82,22 @@ void ParticleEmitter::Update(ParticleForGPU* instancingData) {
 	if (emitter_.frequency <= emitter_.frequencyTime) {
 		particles_.splice(particles_.end(), Emit());
 		emitter_.frequencyTime -= emitter_.frequency;//余計に過ぎた時間も加味して頻度を計算する
+	}
+}
+
+//ワールド行列の更新
+void ParticleEmitter::UpdateWorldMatrix(ParticleForGPU* instancingData){
+	uint32_t index = 0;
+	//更新処理
+	for (auto it = particles_.begin(); it != particles_.end();){
+		if (numInstance_ < kNumMaxInstance){
+			//ワールドトランスフォームの更新
+			UpdateWorldTransform(index, it, instancingData);
+			index++;
+
+		}
+		//次のイテレータに進める
+		it++;
 	}
 }
 
@@ -194,16 +208,7 @@ Particle ParticleEmitter::MakeNormalParticle() {
 //ワールドトランスフォームの更新
 void ParticleEmitter::UpdateWorldTransform(uint32_t numInstance, auto iterator, ParticleForGPU* instancingData) {
 	//ワールド行列の初期化
-	//モデルがないならビルボード行列を入れる
 	Matrix4x4 worldMatrix = matrixUtility::MakeBillboardAffineMatrix(renderCamera_->GetWorldMatrix(), (*iterator).transform);
-	//wvpの書き込み
-	if (gameCamera_) {
-		const Matrix4x4& viewProjectionMatrix = renderCamera_->GetViewProjectionMatrix();
-
-		instancingData[numInstance].WVP = worldMatrix * viewProjectionMatrix;
-	} else {
-		instancingData[numInstance].WVP = worldMatrix;
-	}
 	//ワールド行列を送信
 	instancingData[numInstance].world = worldMatrix;
 }

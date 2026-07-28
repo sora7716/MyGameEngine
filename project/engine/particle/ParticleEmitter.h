@@ -15,7 +15,6 @@ class Mesh;
 
 //パーティクルの情報をGPUに送るための構造体
 struct ParticleForGPU {
-	Matrix4x4 WVP = Matrix4x4::Identity4x4();
 	Matrix4x4 world = Matrix4x4::Identity4x4();
 	Vector4 color = Vector4::MakeWhiteColor();
 };
@@ -72,6 +71,12 @@ public://メンバ関数
 	/// </summary>
 	/// <param name="instancingData">インスタンシングデータ</param>
 	void Update(ParticleForGPU* instancingData);
+
+	/// <summary>
+	/// ワールド行列の更新
+	/// </summary>
+	/// <param name="instancingData">インスタンシングデータ</param>
+	void UpdateWorldMatrix(ParticleForGPU* instancingData);
 
 	/// <summary>
 	/// 描画準備

@@ -38,7 +38,7 @@ void Core::Initialize(){
 	spriteCommon_->Initialize(directXBase_.get(), textureManager_.get());
 	//3Dオブジェクトの共通部分
 	object3dCommon_ = std::make_unique<Object3dCommon>(Object3dCommon::ConstructorKey{});
-	object3dCommon_->Initialize(directXBase_.get(), srvManager_.get(), textureManager_.get(), modelManager_.get(), pipelineManager_.get());
+	object3dCommon_->Initialize(directXBase_.get(), srvManager_.get(), textureManager_.get(), modelManager_.get());
 	//パーティクルの共通部分
 	particleCommon_ = std::make_unique<ParticleCommon>(ParticleCommon::ConstructorKey{});
 	particleCommon_->Initialize(directXBase_.get(), srvManager_.get(), textureManager_.get());

@@ -1,6 +1,7 @@
 #include "GameSystem.h"
 #include "SceneManager.h"
 #include "SceneFactory.h"
+#include "RenderSystem.h"
 
 //コンストラクタ
 GameSystem::GameSystem(){
@@ -22,6 +23,10 @@ void GameSystem::Initialize(){
 	//デバッグしたいシーンを呼び出す
 	core_->GetSceneManager()->ChangeScene("TestPlay");
 #endif // _DEBUG
+
+	//描画システム
+	renderSystem_ = std::make_unique<RenderSystem>();
+	renderSystem_->Initialize(core_->GetDirectXBase(), core_->GetPipelineManager());
 }
 
 //更新
@@ -48,6 +53,8 @@ void GameSystem::Draw(){
 	core_->GetDirectXBase()->PreDraw(windowIndex_);
 	//SRVの管理
 	core_->GetSRVManager()->PreDraw();
+	//描画システム
+	renderSystem_->PreDraw();
 
 	//デバッグ画面のときにしか表示しない
 	if (core_->GetWinApi()->GetHwnd(windowIndex_) == core_->GetWinApi()->GetHwnd(WindowType::kDebug)){

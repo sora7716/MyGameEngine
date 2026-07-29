@@ -1,9 +1,7 @@
 #pragma once
 #include "RenderData.h"
-#include "PipelineManagerData.h"
 #include <wrl.h>
 #include <d3d12.h>
-#include <array>
 #include <vector>
 
 //前方宣言
@@ -12,7 +10,6 @@ class SRVManager;
 class TextureManager;
 class ModelManager;
 class Camera;
-class PipelineManager;
 
 /// <summary>
 /// 3Dオブジェクトの共通部分
@@ -33,17 +30,12 @@ public://メンバ関数
 	/// <param name="srvManager">srvマネージャー</param>
 	/// <param name="textureManager">テクスチャマネージャー</param>
 	/// <param name="modelManager">モデルマネージャー/param>
-	void Initialize(DirectXBase* directXBase, SRVManager* srvManager, TextureManager* textureManager, ModelManager* modelManager, PipelineManager* pipelineManager);
+	void Initialize(DirectXBase* directXBase, SRVManager* srvManager, TextureManager* textureManager, ModelManager* modelManager);
 
 	/// <summary>
 	/// 更新
 	/// </summary>
 	void Update();
-
-	/// <summary>
-	/// 共通描画設定
-	/// </summary>
-	void DrawSetting();
 
 	/// <summary>
 	/// デバッグ
@@ -91,12 +83,6 @@ public://メンバ関数
 	/// </summary>
 	/// <returns>モデルマネージャー</returns>
 	ModelManager* GetModelManager()const;
-
-	/// <summary>
-	/// グラフィックパイプラインのゲッター
-	/// </summary>
-	/// <returns>グラフィックパイプライン</returns>
-	std::array<ComPtr<ID3D12PipelineState>, static_cast<int32_t>(BlendMode::kCountOfBlendMode)>GetGraphicsPipelineStates()const;
 
 	/// <summary>
 	/// デフォルトカメラのセッター
@@ -210,11 +196,6 @@ private://メンバ変数
 	//テクスチャの管理
 	TextureManager* textureManager_ = nullptr;
 
-	//パイプラインの管理
-	PipelineManager* pipelineManager_ = nullptr;
-	//パイプラインセット
-	PipelineSet pipelineSet_ = {};
-
 	//バッファリソース
 	ComPtr<ID3D12Resource> directionalLightResource_ = nullptr;//平行光源
 	ComPtr<ID3D12Resource> pointLightResource_ = nullptr;//点光源
@@ -230,9 +211,6 @@ private://メンバ変数
 	PointLight pointLightDataList_[kMaxLightCount] = {};
 	//スポットライト
 	std::vector<SpotLight>spotLightList_ = {};
-
-	//ブレンドモード
-	BlendMode blendMode_ = BlendMode::kNone;
 
 	//デフォルトカメラ
 	Camera* defaultCamera_ = nullptr;

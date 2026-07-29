@@ -14,7 +14,7 @@ Object3dCommon::~Object3dCommon(){
 }
 
 //初期化
-void Object3dCommon::Initialize(DirectXBase* directXBase, SRVManager* srvManager, TextureManager* textureManager, ModelManager* modelManager, PipelineManager* pipelineManager){
+void Object3dCommon::Initialize(DirectXBase* directXBase, SRVManager* srvManager, TextureManager* textureManager, ModelManager* modelManager){
 	//DirectXの基盤を受け取る
 	directXBase_ = directXBase;
 	//SRVの管理を受け取る
@@ -23,10 +23,6 @@ void Object3dCommon::Initialize(DirectXBase* directXBase, SRVManager* srvManager
 	textureManager_ = textureManager;
 	//モデルの管理
 	modelManager_ = modelManager;
-	//パイプラインの管理
-	pipelineManager_ = pipelineManager;
-	//パイプラインセット
-	pipelineSet_ = pipelineManager_->GetPipelineSet(PiplineType::kObject3d);
 
 	//DirectionalLightの初期化
 	directionalLightData_.color = { 1.0f,1.0f,1.0f,1.0f };
@@ -96,14 +92,6 @@ void Object3dCommon::Update(){
 	}
 }
 
-//共通描画設定
-void Object3dCommon::DrawSetting(){
-	//ルートシグネイチャをセットするコマンド
-	directXBase_->GetCommandList()->SetGraphicsRootSignature(pipelineSet_.rootSignature.Get());
-	//プリミティブトポロジーをセットするコマンド
-	directXBase_->GetCommandList()->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
-}
-
 //デバッグ
 void Object3dCommon::Debug(){
 #ifdef USE_IMGUI
@@ -155,11 +143,6 @@ TextureManager* Object3dCommon::GetTextureManager() const{
 //モデルマネージャーのゲッター
 ModelManager* Object3dCommon::GetModelManager() const{
 	return modelManager_;
-}
-
-//グラフィックパイプラインのゲッター
-std::array<ComPtr<ID3D12PipelineState>, static_cast<int32_t>(BlendMode::kCountOfBlendMode)> Object3dCommon::GetGraphicsPipelineStates() const{
-	return pipelineSet_.graphicsPipelineStates;
 }
 
 // デフォルトカメラのセッター

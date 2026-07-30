@@ -32,8 +32,4 @@ void RenderSystem::PreDraw(){
 	ID3D12PipelineState* pso = pipelineSet.graphicsPipelineStates[static_cast<uint32_t>(blendMode)].Get();
 	//グラフィックスパイプラインをセットするコマンド
 	directXBase_->GetCommandList()->SetPipelineState(pso);
-
-	for (){
-
-	}
 }

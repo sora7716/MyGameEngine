@@ -169,11 +169,6 @@ void Object3d::Draw(){
 	//カメラ
 	renderCamera_->DrawSetting(4);
 
-	//PSOの設定
-	//auto pso = object3dCommon_->GetGraphicsPipelineStates()[static_cast<int32_t>(blendMode_)].Get();
-	////グラフィックスパイプラインをセットするコマンド
-	//directXBase_->GetCommandList()->SetPipelineState(pso);
-
 	//平光源CBufferの場所を設定
 	directXBase_->GetCommandList()->SetGraphicsRootConstantBufferView(3, object3dCommon_->GetDirectionalLightResource()->GetGPUVirtualAddress());
 	//点光源のStructuredBufferの場所を設定

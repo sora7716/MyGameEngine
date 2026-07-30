@@ -109,6 +109,9 @@
     <Filter Include="engine\gameObject\component">
       <UniqueIdentifier>{769be0c8-0332-468e-8efe-6b004af174d1}</UniqueIdentifier>
     </Filter>
+    <Filter Include="engine\graphics\rendering">
+      <UniqueIdentifier>{f480746a-a585-426c-a8ed-e813c96cbc96}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="engine\main.cpp">
@@ -345,11 +348,14 @@
     <ClCompile Include="engine\geometry\PrimitiveMeshFactory.cpp">
       <Filter>engine\3d</Filter>
     </ClCompile>
-    <ClCompile Include="engine\graphics\RenderSystem.cpp">
-      <Filter>engine\graphics</Filter>
-    </ClCompile>
     <ClCompile Include="engine\geometry\Culling.cpp">
       <Filter>engine\geometry</Filter>
+    </ClCompile>
+    <ClCompile Include="engine\graphics\rendering\RenderSystem.cpp">
+      <Filter>engine\graphics\rendering</Filter>
+    </ClCompile>
+    <ClCompile Include="engine\graphics\rendering\Object3dRenderer.cpp">
+      <Filter>ソース ファイル</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -593,9 +599,6 @@
     <ClInclude Include="engine\geometry\PrimitiveMeshFactory.h">
       <Filter>engine\3d</Filter>
     </ClInclude>
-    <ClInclude Include="engine\graphics\RenderSystem.h">
-      <Filter>engine\graphics</Filter>
-    </ClInclude>
     <ClInclude Include="engine\asset\TextureLoader.h">
       <Filter>engine\asset</Filter>
     </ClInclude>
@@ -604,6 +607,12 @@
     </ClInclude>
     <ClInclude Include="engine\geometry\Culling.h">
       <Filter>engine\geometry</Filter>
+    </ClInclude>
+    <ClInclude Include="engine\graphics\rendering\RenderSystem.h">
+      <Filter>engine\graphics\rendering</Filter>
+    </ClInclude>
+    <ClInclude Include="engine\graphics\rendering\Object3dRenderer.h">
+      <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

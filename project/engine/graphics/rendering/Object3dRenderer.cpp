@@ -31,6 +31,12 @@ void Object3dRenderer::Initialize(DirectXBase* directXBase, SRVManager* srvManag
 	renderDatas_.clear();
 }
 
+//リセット
+void Object3dRenderer::Reset(){
+	//描画データをリセット
+	renderDatas_.clear();
+}
+
 //描画
 void Object3dRenderer::Draw(){
 	for (const RenderData& renderData : renderDatas_){
@@ -45,13 +51,13 @@ void Object3dRenderer::Draw(){
 		//スポットライトのStructuredBufferを設定
 		directXBase_->GetCommandList()->SetGraphicsRootDescriptorTable(6, srvManager_->GetGPUDescriptorHandle(renderData.spotLightSrvIndex));
 
-		for (uint32_t lodIndex = 0; lodIndex < renderData.models.size(); lodIndex++){
+		for (uint32_t lodIndex = 0; lodIndex < renderData.lodRenderData.models.size(); lodIndex++){
 			//モデル
-			Model* model = renderData.models[lodIndex];
+			Model* model = renderData.lodRenderData.models[lodIndex];
 			//WVPのSRVIndex
-			uint32_t wvpSrvIndex = renderData.lodSrvIndices[lodIndex];
+			uint32_t wvpSrvIndex = renderData.lodRenderData.srvIndices[lodIndex];
 			//描画カウント
-			uint32_t drawCount = renderData.lodClodDrawCounts[lodIndex];
+			uint32_t drawCount = renderData.lodRenderData.drawCounts[lodIndex];
 
 			//LODモデルが存在してなかったら
 			if (!model){
@@ -80,6 +86,19 @@ void Object3dRenderer::AddRenderData(const RenderData& renderData){
 		Logger::OutputLog("想定していたインスタンスの最大値を超えてい追加しています");
 		assert(false);
 	}
+
+	//LODの描画データのサイズチェック
+	if (renderData.lodRenderData.IsLodCountValid()){
+		Logger::OutputLog("LODの描画データのサイズが合いません");
+		assert(false);
+	}
+
 	//レンダーデータの追加
 	renderDatas_.push_back(renderData);
+}
+
+//サイズがあっている確認
+bool Object3dRenderer::LODRenderData::IsLodCountValid() const{
+	return models.size() == srvIndices.size()
+		&& srvIndices.size() == drawCounts.size();
 }

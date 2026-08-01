@@ -18,6 +18,7 @@
 #include "Object3dCommon.h"
 #include "ModelManager.h"
 #include "WinApi.h"
+#include "LightingManager.h"
 #include <numbers>
 
 //コンストラクタ
@@ -35,7 +36,7 @@ void TestPlayScene::Initialize(const SceneContext& sceneContext){
 	object3d_ = std::make_unique<Object3d>();
 	object3d_->Initialize(sceneContext_.object3dCommon, gameCamera_, 1);
 	object3d_->SetGameCamera(gameCamera_);
-	object3d_->SetModel("sneakWalk", { 1.0f });
+	object3d_->SetModel("cube", { 1.0f });
 	//object3d_->SetTexture(0, "uvChecker.png");
 	//object3d_->SetModel("cube");
 	//object3d_->SetModel("dekanu");
@@ -86,6 +87,7 @@ void TestPlayScene::Initialize(const SceneContext& sceneContext){
 	particleSystem_->SetParticleCount(2);
 	particleSystem_->SetFrequency(0.3f);
 	//particleSystem_->SetModelData(sceneContext_.object3dCommon->GetModelManager()->FindModel("dekanu")->GetModelData());
+	directionalLight_ = *sceneContext_.lightingManager->GetDirectionalLight();
 }
 
 //更新
@@ -166,6 +168,14 @@ void TestPlayScene::Debug(){
 		primitiveData::OBB obb = cube_->GetOBB();
 		obb.center = emitterPos_;
 		cube_->SetOBB(obb);
+		ImGui::TreePop();
+	}
+
+	if (ImGui::TreeNode("directionalLight")){
+		ImGui::ColorEdit4("color", &directionalLight_.color.x);
+		ImGui::DragFloat3("direction", &directionalLight_.direction.x, 0.01f);
+		ImGui::DragFloat("intensity", &directionalLight_.intensity);
+		sceneContext_.lightingManager->SetDirectionalLight(directionalLight_);
 		ImGui::TreePop();
 	}
 

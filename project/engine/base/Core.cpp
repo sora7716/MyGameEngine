@@ -1,5 +1,14 @@
 #include "Core.h"
 #include "engine/scene/SceneFactory.h"
+
+//コンストラクタ
+Core::Core(){
+}
+
+//デストラクタ
+Core::~Core(){
+}
+
 //初期化
 void Core::Initialize(){
 	//WinApi
@@ -54,13 +63,9 @@ void Core::Initialize(){
 	//タグの管理
 	tagManager_ = std::make_unique<TagManager>(TagManager::ConstructorKey{});
 	tagManager_->Initialize();
-	//シーンで必要なものをまとめる
-	sceneContext_.input = input_.get();
-	sceneContext_.directXBase = directXBase_.get();
-	sceneContext_.textureManager = textureManager_.get();
-	sceneContext_.cameraManager = cameraManager_.get();
-	sceneContext_.audioManager = audioManager_.get();
-	sceneContext_.imGuiManager = imguiManager_.get();
+	//ライティングの管理
+	lightingManager_ = std::make_unique<LightingManager>(LightingManager::ConstructorKey{});
+	lightingManager_->Initialize(directXBase_.get(), srvManager_.get());
 	//シーンでの必要なものを取得
 	sceneContext_ = this;
 	//シーンマネージャー
@@ -162,4 +167,9 @@ TagManager* Core::GetTagManager() const{
 //パイプラインの管理の取得
 PipelineManager* Core::GetPipelineManager() const{
 	return pipelineManager_.get();
+}
+
+//ライティングの管理の取得 
+LightingManager* Core::GetLightingManager() const{
+	return lightingManager_.get();
 }

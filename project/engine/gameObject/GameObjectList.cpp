@@ -80,7 +80,7 @@ void GameObjectList::LoadModel() {
 
 	//人
 	//core_->GetModelManager()->LoadModel("walk", "human", "walk.gltf");
-	core_->GetModelManager()->LoadModel("sneakWalk", "human/sneakWalk.gltf");
+	//core_->GetModelManager()->LoadModel("sneakWalk", "human/sneakWalk.gltf");
 
 	//杖
 	//core_->GetModelManager()->LoadModel("staff", "staff", "staff.obj");

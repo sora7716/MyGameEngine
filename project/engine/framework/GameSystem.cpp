@@ -56,6 +56,9 @@ void GameSystem::Draw(){
 	//描画システム
 	renderSystem_->PreDraw();
 
+	//ライティングの管理
+	core_->GetLightingManager()->DrawSetting();
+
 	//デバッグ画面のときにしか表示しない
 	if (core_->GetWinApi()->GetHwnd(windowIndex_) == core_->GetWinApi()->GetHwnd(WindowType::kDebug)){
 		//シーン

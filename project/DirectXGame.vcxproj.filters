@@ -614,6 +614,9 @@
     <ClInclude Include="engine\graphics\rendering\Object3dRenderer.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
+    <ClInclude Include="engine\3d\LightingData.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="engine\resources\shaders\Object3d.PS.hlsl">

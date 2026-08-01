@@ -169,13 +169,6 @@ void Object3d::Draw(){
 	//カメラ
 	renderCamera_->DrawSetting(4);
 
-	//平光源CBufferの場所を設定
-	directXBase_->GetCommandList()->SetGraphicsRootConstantBufferView(3, object3dCommon_->GetDirectionalLightResource()->GetGPUVirtualAddress());
-	//点光源のStructuredBufferの場所を設定
-	directXBase_->GetCommandList()->SetGraphicsRootDescriptorTable(5, object3dCommon_->GetSRVManager()->GetGPUDescriptorHandle(object3dCommon_->GetSrvIndexPoint()));
-	//スポットライトのStructuredBufferを設定
-	directXBase_->GetCommandList()->SetGraphicsRootDescriptorTable(6, object3dCommon_->GetSRVManager()->GetGPUDescriptorHandle(object3dCommon_->GetSrvIndexSpot()));
-
 	for (uint32_t lodIndex = 0; lodIndex < lodCount_; lodIndex++){
 		//LODモデルが存在してなかったら
 		if (!lodBuilder_->GetLODModel(lodIndex)){

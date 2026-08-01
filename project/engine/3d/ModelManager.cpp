@@ -16,7 +16,7 @@ void ModelManager::Initialize(ModelCommon* modelCommon) {
 //プリミティブなモデルの生成
 void ModelManager::CreatePrimitiveModel() {
 	//モデルの生成とファイル読み込み、初期化
-	std::unique_ptr<Model>model = Model::CreateModel(modelCommon_, { primitiveMeshFactory::CreateCube() });
+	std::unique_ptr<Model>model = Model::CreateModel(modelCommon_, { primitiveMeshFactory::CreateSphere() });
 
 	//モデルデータを取得
 	ModelData modelData = model->GetModelData();

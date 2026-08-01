@@ -1,6 +1,7 @@
 #pragma once
 #include "BaseScene.h"
 #include "ColliderData.h"
+#include "LightingData.h"
 #include "Input.h"
 #include <vector>
 
@@ -85,4 +86,6 @@ private://メンバ変数
 
 	std::unique_ptr<ParticleSystem>particleSystem_ = nullptr;
 	Vector3 emitterPos_ = {};
+
+	DirectionalLight directionalLight_ = {};
 };

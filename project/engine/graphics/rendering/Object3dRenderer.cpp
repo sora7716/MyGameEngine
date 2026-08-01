@@ -6,6 +6,12 @@
 #include "Logger.h"
 #include <cassert>
 
+//サイズがあっている確認
+bool Object3dRenderer::LODRenderData::IsLodCountValid() const{
+	return models.size() == srvIndices.size()
+		&& srvIndices.size() == drawCounts.size();
+}
+
 //コンストラクタ
 Object3dRenderer::Object3dRenderer(){
 }
@@ -44,13 +50,6 @@ void Object3dRenderer::Draw(){
 		//カメラ
 		renderData.renderCamera->DrawSetting(4);
 
-		//平光源CBufferの場所を設定
-		directXBase_->GetCommandList()->SetGraphicsRootConstantBufferView(3, renderData.directionalLightResource->GetGPUVirtualAddress());
-		//点光源のStructuredBufferの場所を設定
-		directXBase_->GetCommandList()->SetGraphicsRootDescriptorTable(5, srvManager_->GetGPUDescriptorHandle(renderData.pointLightSrvIndex));
-		//スポットライトのStructuredBufferを設定
-		directXBase_->GetCommandList()->SetGraphicsRootDescriptorTable(6, srvManager_->GetGPUDescriptorHandle(renderData.spotLightSrvIndex));
-
 		for (uint32_t lodIndex = 0; lodIndex < renderData.lodRenderData.models.size(); lodIndex++){
 			//モデル
 			Model* model = renderData.lodRenderData.models[lodIndex];
@@ -83,22 +82,16 @@ void Object3dRenderer::Draw(){
 void Object3dRenderer::AddRenderData(const RenderData& renderData){
 	//インスタンスの最大値
 	if (maxInstanceCount_ <= renderDatas_.size()){
-		Logger::OutputLog("想定していたインスタンスの最大値を超えてい追加しています");
+		Logger::OutputLog("想定していたインスタンスの最大値を超えて追加しています");
 		assert(false);
 	}
 
 	//LODの描画データのサイズチェック
-	if (renderData.lodRenderData.IsLodCountValid()){
+	if (!renderData.lodRenderData.IsLodCountValid()){
 		Logger::OutputLog("LODの描画データのサイズが合いません");
 		assert(false);
 	}
 
 	//レンダーデータの追加
 	renderDatas_.push_back(renderData);
-}
-
-//サイズがあっている確認
-bool Object3dRenderer::LODRenderData::IsLodCountValid() const{
-	return models.size() == srvIndices.size()
-		&& srvIndices.size() == drawCounts.size();
 }

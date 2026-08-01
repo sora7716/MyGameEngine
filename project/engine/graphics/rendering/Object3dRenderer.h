@@ -35,7 +35,6 @@ public://構造体など
 		uint32_t spotLightSrvIndex = 0;
 		Camera* renderCamera = nullptr;
 		LODRenderData lodRenderData = {};
-
 	};
 public://メンバ関数
 	/// <summary>

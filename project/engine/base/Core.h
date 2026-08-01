@@ -18,7 +18,9 @@
 #include "AbstractSceneFactory.h"
 #include "TagManager.h"
 #include "PipelineManager.h"
+#include "LightingManager.h"
 #include "Context.h"
+
 #include <memory>
 
 /// <summary>
@@ -29,12 +31,12 @@ public://メンバ関数
 	/// <summary>
 	/// コンストラクタ
 	/// </summary>
-	Core() = default;
+	Core();
 
 	/// <summary>
 	/// デストラクタ
 	/// </summary>
-	~Core() = default;
+	~Core();
 
 	/// <summary>
 	/// 初期化
@@ -154,6 +156,17 @@ public://メンバ関数
 	/// </summary>
 	/// <returns>パイプラインの管理</returns>
 	PipelineManager* GetPipelineManager()const;
+
+	/// <summary>
+	/// ライティングの管理の取得
+	/// </summary>
+	/// <returns>ライティングの管理</returns>
+	LightingManager* GetLightingManager()const;
+private://メンバ関数
+	//コピーコンストラクタ禁止
+	Core(const Core&) = delete;
+	//代入演算子の禁止
+	Core operator=(const Core&) = delete;
 private://メンバ変数
 	//WinApi
 	std::unique_ptr<WinApi>winApi_ = nullptr;
@@ -193,6 +206,8 @@ private://メンバ変数
 	std::unique_ptr<TagManager>tagManager_ = nullptr;
 	//パイプラインの管理
 	std::unique_ptr<PipelineManager>pipelineManager_ = nullptr;
+	//ライティングの管理
+	std::unique_ptr<LightingManager>lightingManager_ = nullptr;
 	//シーンで必要なもの
 	SceneContext sceneContext_ = {};
 };

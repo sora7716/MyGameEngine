@@ -56,6 +56,5 @@ protected://メンバ変数
 	std::unique_ptr<Core>core_ = nullptr;
 	//ウィンドウの検索キー
 	uint32_t windowIndex_ = 0;
-
 };
 

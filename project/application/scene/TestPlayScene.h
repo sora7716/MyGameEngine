@@ -40,7 +40,7 @@ public://メンバ関数
 	/// 初期化
 	/// </summary>
 	/// <param name="sceneContext">シーンで必要なもの</param>
-	void Initialize(const SceneContext& sceneContext)override;
+	void Initialize(const SceneContext& sceneContext, Object3dRenderer* object3dRenderer)override;
 
 	/// <summary>
 	/// 更新

@@ -33,8 +33,8 @@ void Core::Initialize(){
 	modelManager_ = std::make_unique<ModelManager>(ModelManager::ConstructorKey{});
 	modelManager_->Initialize(modelCommon_.get());
 	//ImGuiマネージャー
-	imguiManager_ = std::make_unique<ImGuiManager>(ImGuiManager::ConstructorKey{});
-	imguiManager_->Initialize(winApi_.get(), directXBase_.get(), srvManager_.get());
+	imGuiManager_ = std::make_unique<ImGuiManager>(ImGuiManager::ConstructorKey{});
+	imGuiManager_->Initialize(winApi_.get(), directXBase_.get(), srvManager_.get());
 	//カメラマナージャー
 	cameraManager_ = std::make_unique<CameraManager>(CameraManager::ConstructorKey{});
 	cameraManager_->Initialize(directXBase_.get());
@@ -68,9 +68,12 @@ void Core::Initialize(){
 	lightingManager_->Initialize(directXBase_.get(), srvManager_.get());
 	//シーンでの必要なものを取得
 	sceneContext_ = this;
+	//描画システム
+	renderSystem_ = std::make_unique<RenderSystem>();
+	renderSystem_->Initialize(directXBase_.get(), srvManager_.get(), pipelineManager_.get());
 	//シーンマネージャー
 	sceneManager_ = std::make_unique<SceneManager>(SceneManager::ConstructorKey{});
-	sceneManager_->Initialize(sceneContext_);
+	sceneManager_->Initialize(sceneContext_, renderSystem_.get());
 	sceneManager_->SetSceneFactory(sceneFactory_.get());
 }
 
@@ -106,7 +109,7 @@ ModelManager* Core::GetModelManager() const{
 
 //ImGuiマネージャーの取得
 ImGuiManager* Core::GetImGuiManager() const{
-	return imguiManager_.get();
+	return imGuiManager_.get();
 }
 
 //カメラマネージャーの取得
@@ -172,4 +175,9 @@ PipelineManager* Core::GetPipelineManager() const{
 //ライティングの管理の取得 
 LightingManager* Core::GetLightingManager() const{
 	return lightingManager_.get();
+}
+
+//描画システム
+RenderSystem* Core::GetRenderSystem() const{
+	return renderSystem_.get();
 }

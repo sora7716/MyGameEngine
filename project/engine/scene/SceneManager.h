@@ -4,11 +4,12 @@
 
 //前方宣言
 class DebugEditor;
+class RenderSystem;
 
 /// <summary>
 /// シーン管理
 /// </summary>
-class SceneManager {
+class SceneManager{
 public://メンバ関数
 	/// <summary>
 	/// コンストラクタ
@@ -24,7 +25,7 @@ public://メンバ関数
 	/// 初期化
 	/// </summary>
 	/// <param name="sceneContext">シーンで必要なもの</param>
-	void Initialize(const SceneContext& sceneContext);
+	void Initialize(const SceneContext& sceneContext, RenderSystem* renderSystem);
 
 	/// <summary>
 	/// 更新
@@ -58,7 +59,7 @@ public://メンバ関数
 	/// <param name="sceneName"></param>
 	void ChangeScene(const std::string& sceneName);
 public://PassKey
-	class ConstructorKey {
+	class ConstructorKey{
 	private:
 		ConstructorKey() = default;
 		friend class Core;
@@ -90,5 +91,7 @@ private://メンバ変数
 	BaseScene* nextScene_ = nullptr;
 	//デバッグエディタ
 	std::unique_ptr<DebugEditor>debugEditor_ = nullptr;
+	//描画システム
+	RenderSystem* renderSystem_ = nullptr;
 };
 

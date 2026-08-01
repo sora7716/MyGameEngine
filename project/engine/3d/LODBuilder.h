@@ -14,7 +14,7 @@ class Model;
 /// <summary>
 /// LODモデルの生成
 /// </summary>
-class LODBuilder {
+class LODBuilder{
 public://メンバ関数
 	/// <summary>
 	/// コンストラクタ
@@ -40,6 +40,12 @@ public://メンバ関数
 	/// <param name="lodIndex">LODモデルの検索キー</param>
 	/// <returns>LODモデル</returns>
 	Model* GetLODModel(uint32_t lodIndex);
+
+	/// <summary>
+	/// LODモデルの配列を取得
+	/// </summary>
+	/// <returns>LODモデルの配列</returns>
+	const std::vector<std::unique_ptr<Model>>& GetLODModels()const;
 
 	/// <summary>
 	/// カラーの設定

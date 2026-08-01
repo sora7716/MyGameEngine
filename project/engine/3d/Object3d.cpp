@@ -65,7 +65,7 @@ void Object3d::Initialize(Object3dCommon* object3dCommon, Camera* renderCamera, 
 	lodController_ = std::make_unique<LODController>();
 
 	//カメラにデフォルトカメラを代入
-	renderCamera_ = renderCamera;
+	SetRenderCamera(renderCamera);
 
 	//マテリアルの初期化
 	material_.color = { 1.0f,1.0f,1.0f,1.0f };
@@ -78,6 +78,9 @@ void Object3d::Initialize(Object3dCommon* object3dCommon, Camera* renderCamera, 
 void Object3d::Update(){
 	//Object3dの共通部分の更新
 	object3dCommon_->Update();
+
+	//描画データをまとめる
+	rendererData_.lodRenderData.drawCounts = lodDrawCounts_;
 
 	//LOD語との描画数をリセット
 	for (uint32_t& lodDrawCount : lodDrawCounts_){
@@ -164,31 +167,6 @@ void Object3d::Update(){
 
 }
 
-//描画
-void Object3d::Draw(){
-	//カメラ
-	renderCamera_->DrawSetting(4);
-
-	for (uint32_t lodIndex = 0; lodIndex < lodCount_; lodIndex++){
-		//LODモデルが存在してなかったら
-		if (!lodBuilder_->GetLODModel(lodIndex)){
-			continue;
-		}
-
-		//LOD描画カウントが0だったら
-		if (lodDrawCounts_[lodIndex] == 0){
-			continue;
-		}
-
-		//LODごとのWVP SRVを設定
-		directXBase_->GetCommandList()->SetGraphicsRootDescriptorTable(1, srvManager_->GetGPUDescriptorHandle(lodSrvIndices_[lodIndex]));
-
-		//ドローコール
-		lodBuilder_->GetLODModel(lodIndex)->Draw(lodDrawCounts_[lodIndex]);
-
-	}
-}
-
 //モデルの設定
 void Object3d::SetModel(const std::string& modelName, const std::vector<float>& keepRates){
 	//元になるモデルを取得
@@ -202,6 +180,11 @@ void Object3d::SetModel(const std::string& modelName, const std::vector<float>& 
 	lodBuilder_->CreateLODModel(baseModel_.get(), keepRates);
 	//LODの制御の初期化
 	lodController_->Initialize(lodBuilder_.get());
+
+	//モデルを保存
+	for (const std::unique_ptr<Model>& model : lodBuilder_->GetLODModels()){
+		rendererData_.lodRenderData.models.push_back(model.get());
+	}
 }
 
 //インスタンスの追加
@@ -235,6 +218,7 @@ void Object3d::SetGameCamera(Camera* camera){
 //描画に使用するカメラの設定
 void Object3d::SetRenderCamera(Camera* camera){
 	renderCamera_ = camera;
+	rendererData_.renderCamera = renderCamera_;
 }
 
 //LODの切り替え距離
@@ -390,6 +374,12 @@ uint32_t Object3d::GetMeshSize(){
 	return static_cast<uint32_t>(baseModel_->GetModelData().meshDatas.size());
 }
 
+//描画データの取得
+const Object3dRenderData& Object3d::GetRenderData(){
+	// TODO: return ステートメントをここに挿入します
+	return rendererData_;
+}
+
 //LOD関係のセットアップ
 void Object3d::SetupLOD(){
 	//UV座標
@@ -415,6 +405,8 @@ void Object3d::SetupLOD(){
 	CreateTransformationMatrixResource();
 	//座標変換行列リソースのストラクチャバッファの生成
 	CreateStructuredBufferForWvp();
+	//SRVの保存
+	rendererData_.lodRenderData.srvIndices = lodSrvIndices_;
 }
 
 //座標変換行列リソースの生成

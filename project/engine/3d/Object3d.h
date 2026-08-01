@@ -4,6 +4,7 @@
 #include "WorldTransform.h"
 #include "PrimitiveData.h"
 #include "RenderingData.h"
+#include "RendererData.h"
 #include <vector>
 #include <string>
 #include <wrl.h>
@@ -22,7 +23,7 @@ class LODController;
 class Culling;
 
 //3dオブジェクトのインスタンスデータ
-struct Object3dInstance {
+struct Object3dInstance{
 	GameObject* gameObject;
 	bool isEnabled;
 	uint32_t currentLOD;
@@ -37,7 +38,7 @@ struct Object3dInstance {
 /// <summary>
 /// 3Dオブジェクト
 /// </summary>
-class Object3d {
+class Object3d{
 private://エイリアステンプレート
 	template <class T>using ComPtr = Microsoft::WRL::ComPtr<T>;
 public://静的メンバ関数
@@ -70,11 +71,6 @@ public://メンバ関数
 	/// 更新
 	/// </summary>
 	void Update();
-
-	/// <summary>
-	/// 描画
-	/// </summary>
-	void Draw();
 
 	/// <summary>
 	/// モデルの設定
@@ -250,6 +246,12 @@ public://メンバ関数
 	/// </summary>
 	/// <returns>メッシュのサイズ</returns>
 	uint32_t GetMeshSize();
+
+	/// <summary>
+	/// 描画データの取得
+	/// </summary>
+	/// <returns>描画データ</returns>
+	const Object3dRenderData& GetRenderData();
 private://メンバ関数
 	/// <summary>
 	/// LOD関係のセットアップ
@@ -343,4 +345,7 @@ private://メンバ変数
 
 	//カリング
 	std::unique_ptr<Culling>culling_ = nullptr;
+
+	//レンダーラークラスに渡す情報
+	Object3dRenderData rendererData_;
 };

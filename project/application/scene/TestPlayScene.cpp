@@ -19,6 +19,7 @@
 #include "ModelManager.h"
 #include "WinApi.h"
 #include "LightingManager.h"
+#include "Object3dRenderer.h"
 #include <numbers>
 
 //コンストラクタ
@@ -28,9 +29,9 @@ TestPlayScene::TestPlayScene(){};
 TestPlayScene::~TestPlayScene(){};
 
 //初期化
-void TestPlayScene::Initialize(const SceneContext& sceneContext){
+void TestPlayScene::Initialize(const SceneContext& sceneContext, Object3dRenderer* object3dRenderer){
 	//ベースシーンの初期化
-	BaseScene::Initialize(sceneContext);
+	BaseScene::Initialize(sceneContext, object3dRenderer);
 	gameCamera_ = sceneContext_.cameraManager->FindCamera("testPlayCamera");
 
 	object3d_ = std::make_unique<Object3d>();
@@ -186,7 +187,8 @@ void TestPlayScene::Debug(){
 //描画
 void TestPlayScene::Draw(Camera* camera){
 	object3d_->SetRenderCamera(camera);
-	object3d_->Draw();
+	object3dRenderer_->AddRenderData(object3d_->GetRenderData());
+	//object3d_->Draw();
 
 	frustum_->SetRenderCamera(camera);
 	frustum_->Draw();

@@ -19,6 +19,7 @@
 #include "TagManager.h"
 #include "PipelineManager.h"
 #include "LightingManager.h"
+#include "RenderSystem.h"
 #include "Context.h"
 
 #include <memory>
@@ -162,6 +163,12 @@ public://メンバ関数
 	/// </summary>
 	/// <returns>ライティングの管理</returns>
 	LightingManager* GetLightingManager()const;
+
+	/// <summary>
+	/// 描画システムの取得
+	/// </summary>
+	/// <returns>描画システム</returns>
+	RenderSystem* GetRenderSystem()const;
 private://メンバ関数
 	//コピーコンストラクタ禁止
 	Core(const Core&) = delete;
@@ -181,7 +188,7 @@ private://メンバ変数
 	//モデルマネージャー
 	std::unique_ptr<ModelManager>modelManager_ = nullptr;
 	//ImGuiマネージャー
-	std::unique_ptr<ImGuiManager>imguiManager_ = nullptr;
+	std::unique_ptr<ImGuiManager>imGuiManager_ = nullptr;
 	//カメラマネージャー
 	std::unique_ptr<CameraManager>cameraManager_ = nullptr;
 	//スプライトの共通部分
@@ -208,6 +215,8 @@ private://メンバ変数
 	std::unique_ptr<PipelineManager>pipelineManager_ = nullptr;
 	//ライティングの管理
 	std::unique_ptr<LightingManager>lightingManager_ = nullptr;
+	//描画システム
+	std::unique_ptr<RenderSystem>renderSystem_ = nullptr;
 	//シーンで必要なもの
 	SceneContext sceneContext_ = {};
 };

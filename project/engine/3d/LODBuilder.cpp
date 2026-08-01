@@ -45,6 +45,12 @@ Model* LODBuilder::GetLODModel(uint32_t lodIndex) {
 	return lodModels_[lodIndex].get();
 }
 
+//LODモデルの配列を取得
+const std::vector<std::unique_ptr<Model>>& LODBuilder::GetLODModels() const{
+	// TODO: return ステートメントをここに挿入します
+	return lodModels_;
+}
+
 //カラーの設定
 void LODBuilder::SetColor(uint32_t materialIndex, const Vector4& color) {
 	for (std::unique_ptr<Model>& lodModel : lodModels_) {

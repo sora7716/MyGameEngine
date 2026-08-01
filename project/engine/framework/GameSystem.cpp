@@ -23,10 +23,6 @@ void GameSystem::Initialize(){
 	//デバッグしたいシーンを呼び出す
 	core_->GetSceneManager()->ChangeScene("TestPlay");
 #endif // _DEBUG
-
-	//描画システム
-	renderSystem_ = std::make_unique<RenderSystem>();
-	renderSystem_->Initialize(core_->GetDirectXBase(), core_->GetPipelineManager());
 }
 
 //更新
@@ -54,10 +50,11 @@ void GameSystem::Draw(){
 	//SRVの管理
 	core_->GetSRVManager()->PreDraw();
 	//描画システム
-	renderSystem_->PreDraw();
-
+	core_->GetRenderSystem()->PreDraw();
 	//ライティングの管理
 	core_->GetLightingManager()->DrawSetting();
+	//描画
+	core_->GetRenderSystem()->Draw();
 
 	//デバッグ画面のときにしか表示しない
 	if (core_->GetWinApi()->GetHwnd(windowIndex_) == core_->GetWinApi()->GetHwnd(WindowType::kDebug)){

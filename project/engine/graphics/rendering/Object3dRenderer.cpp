@@ -6,10 +6,11 @@
 #include "Logger.h"
 #include <cassert>
 
-//サイズがあっている確認
-bool Object3dRenderer::LODRenderData::IsLodCountValid() const{
-	return models.size() == srvIndices.size()
-		&& srvIndices.size() == drawCounts.size();
+//生成
+std::unique_ptr<Object3dRenderer> Object3dRenderer::Create(DirectXBase* directXBase, SRVManager* srvManager, uint32_t maxInstance){
+	std::unique_ptr<Object3dRenderer>instance = std::make_unique<Object3dRenderer>();
+	instance->Initialize(directXBase, srvManager, maxInstance);
+	return instance;
 }
 
 //コンストラクタ
@@ -45,21 +46,19 @@ void Object3dRenderer::Reset(){
 
 //描画
 void Object3dRenderer::Draw(){
-	for (const RenderData& renderData : renderDatas_){
+	for (const Object3dRenderData& renderData : renderDatas_){
 
 		//カメラ
 		renderData.renderCamera->DrawSetting(4);
 
 		for (uint32_t lodIndex = 0; lodIndex < renderData.lodRenderData.models.size(); lodIndex++){
-			//モデル
-			Model* model = renderData.lodRenderData.models[lodIndex];
 			//WVPのSRVIndex
 			uint32_t wvpSrvIndex = renderData.lodRenderData.srvIndices[lodIndex];
 			//描画カウント
 			uint32_t drawCount = renderData.lodRenderData.drawCounts[lodIndex];
 
 			//LODモデルが存在してなかったら
-			if (!model){
+			if (!renderData.lodRenderData.models[lodIndex]){
 				continue;
 			}
 
@@ -72,14 +71,13 @@ void Object3dRenderer::Draw(){
 			directXBase_->GetCommandList()->SetGraphicsRootDescriptorTable(1, srvManager_->GetGPUDescriptorHandle(wvpSrvIndex));
 
 			//ドローコール
-			model->Draw(drawCount);
-
+			renderData.lodRenderData.models[lodIndex]->Draw(drawCount);
 		}
 	}
 }
 
 //描画データの追加
-void Object3dRenderer::AddRenderData(const RenderData& renderData){
+void Object3dRenderer::AddRenderData(const Object3dRenderData& renderData){
 	//インスタンスの最大値
 	if (maxInstanceCount_ <= renderDatas_.size()){
 		Logger::OutputLog("想定していたインスタンスの最大値を超えて追加しています");

@@ -1,9 +1,6 @@
 #pragma once
 #include "Framework.h"
 
-//前方宣言
-class RenderSystem;
-
 /// <summary>
 /// ゲームシステム
 /// </summary>
@@ -44,6 +41,5 @@ public://メンバ関数
 	/// </summary>
 	void Finalize()override;
 private://メンバ変数
-	std::unique_ptr<RenderSystem> renderSystem_ = nullptr;
 };
 

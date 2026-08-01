@@ -17,7 +17,7 @@ BaseScene::~BaseScene(){
 }
 
 //初期化
-void BaseScene::Initialize(const SceneContext& sceneContext){
+void BaseScene::Initialize(const SceneContext& sceneContext, Object3dRenderer* object3dRenderer){
 	//ゲームエンジンの核
 	sceneContext_ = sceneContext;
 	//デバックカメラ
@@ -37,6 +37,9 @@ void BaseScene::Initialize(const SceneContext& sceneContext){
 			gameObject->SetTag(TagManager::kDefaultTagName);
 		}
 	}
+
+	//オブジェクト3dのレンダラーの記録
+	object3dRenderer_ = object3dRenderer;
 
 	//コライダーマネージャー
 	//colliderManager_ = std::make_unique<ColliderManager>();

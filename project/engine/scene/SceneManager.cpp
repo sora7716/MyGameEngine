@@ -2,6 +2,7 @@
 #include "ImGuiManager.h"
 #include "debugEditor.h"
 #include "TagManager.h"
+#include "RenderSystem.h"
 #include <cassert>
 
 //コンストラクタ
@@ -16,13 +17,16 @@ SceneManager::~SceneManager(){
 }
 
 //初期化
-void SceneManager::Initialize(const SceneContext& sceneContext){
+void SceneManager::Initialize(const SceneContext& sceneContext, RenderSystem* renderSystem){
 	sceneContext_ = sceneContext;
 	//シーンマネージャだけ自分から渡す
 	sceneContext_.sceneManager = this;
 	//デバッグエディターの生成と初期化
 	debugEditor_ = std::make_unique<DebugEditor>();
 	debugEditor_->Initialize(sceneContext_.tagManager);
+	//描画システムの記録
+	assert(renderSystem);
+	renderSystem_ = renderSystem;
 }
 
 //更新
@@ -41,7 +45,7 @@ void SceneManager::Update(){
 		scene_ = nextScene_;
 		nextScene_ = nullptr;
 		//次のシーン
-		scene_->Initialize(sceneContext_);
+		scene_->Initialize(sceneContext_, renderSystem_->GetObject3dRenderer());
 		//ゲームオブジェクト一覧をDebugEditorに登録
 		debugEditor_->SetGameObjects(scene_->GetGameObjects());
 	}

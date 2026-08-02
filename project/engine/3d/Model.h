@@ -16,7 +16,7 @@ class Mesh;
 /// <summary>
 /// モデル
 /// </summary>
-class Model {
+class Model{
 private://エイリアステンプレート
 	template <class T>using ComPtr = Microsoft::WRL::ComPtr<T>;
 public://静的メンバ関数
@@ -29,12 +29,12 @@ public://静的メンバ関数
 	static std::unique_ptr<Model> CreateModel(ModelCommon* modelCommon, const std::string& modelFileName);
 
 	/// <summary>
-    /// モデルの生成(メッシュデータ)
-    /// </summary>
-    /// <param name="modelCommon">モデルの共通部分</param>
+	/// モデルの生成(メッシュデータ)
+	/// </summary>
+	/// <param name="modelCommon">モデルの共通部分</param>
 	/// <param name="meshDatas">メッシュデータ</param>
-    /// <returns>モデル</returns>
-	static std::unique_ptr<Model> CreateModel(ModelCommon* modelCommon,const std::vector<MeshData>&meshDatas);
+	/// <returns>モデル</returns>
+	static std::unique_ptr<Model> CreateModel(ModelCommon* modelCommon, const std::vector<MeshData>& meshDatas);
 
 	/// <summary>
 	/// モデルの生成(モデルデータ)
@@ -65,6 +65,11 @@ public://メンバ関数
 	/// </summary>
 	/// <param name="meshes">メッシュ</param>
 	void RebuildMeshes(const std::vector<MeshData>& meshes);
+
+	/// <summary>
+    /// 描画に必要なデータのセットアップ
+    /// </summary>
+	void SetupRenderData();
 
 	/// <summary>
 	/// UV変換
@@ -171,7 +176,7 @@ private://メンバ関数
 	/// モデルの作成(メッシュデータから1)
 	/// </summary>
 	/// <param name="meshDatas">メッシュデータ</param>
-	void CreateModel(const std::vector<MeshData>& meshDatas,const std::string& nodeName = "primitive");
+	void CreateModel(const std::vector<MeshData>& meshDatas, const std::string& nodeName = "primitive");
 
 	/// <summary>
 	/// モデルの生成(モデルのファイルから)

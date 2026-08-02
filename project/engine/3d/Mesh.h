@@ -39,6 +39,11 @@ public://メンバ関数
 	void Draw(uint32_t objectCount);
 
 	/// <summary>
+	/// 描画に必要なデータのセットアップ
+	/// </summary>
+	void SetupRenderData();
+
+	/// <summary>
 	/// マテリアルインデックスの取得
 	/// </summary>
 	/// <returns>マテリアルインデックス</returns>

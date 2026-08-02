@@ -83,6 +83,12 @@ void Model::RebuildMeshes(const std::vector<MeshData>& meshes){
 	//メッシュを構築
 	BuildMesh();
 
+	//描画に必要なデータのセットアップ
+	SetupRenderData();
+}
+
+//描画に必要なデータのセットアップ
+void Model::SetupRenderData(){
 	//描画に必要なデータ
 	modelRenderData_.materialResources = materialResources_;
 	modelRenderData_.meshRenderDatas.resize(meshes_.size());

@@ -21,11 +21,8 @@ void Mesh::Initialize(DirectXBase* directXBase, const MeshData& meshData){
 	CreateIndexResource();
 	//AABBの作成
 	CreateAABB();
-
-	//描画データをまとめる
-	meshRenderData_.indexBufferView = indexBufferView_;
-	meshRenderData_.vertexBufferView = vertexBufferView_;
-	meshRenderData_.meshData = meshData_;
+	//描画に必要なデータのセットアップ
+	SetupRenderData();
 }
 
 //描画
@@ -41,6 +38,14 @@ void Mesh::Draw(uint32_t objectCount){
 			directXBase_->GetCommandList()->DrawIndexedInstanced(UINT(meshData_.indices.size()), objectCount, 0, 0, 0);
 		}
 	}
+}
+
+//描画に必要なデータのセットアップ
+void Mesh::SetupRenderData(){
+	//描画データをまとめる
+	meshRenderData_.indexBufferView = indexBufferView_;
+	meshRenderData_.vertexBufferView = vertexBufferView_;
+	meshRenderData_.meshData = meshData_;
 }
 
 //マテリアルインデックスの取得

@@ -7,7 +7,7 @@
 #include "PrimitiveMeshFactory.h"
 #include "ModelLoader.h"
 //モデルの生成(ファイルを読み込んでの)
-std::unique_ptr<Model>Model::CreateModel(ModelCommon* modelCommon, const std::string& modelFileName) {
+std::unique_ptr<Model>Model::CreateModel(ModelCommon* modelCommon, const std::string& modelFileName){
 	//インスタンスの生成
 	std::unique_ptr<Model>instance = std::make_unique<Model>();
 	//初期化
@@ -18,7 +18,7 @@ std::unique_ptr<Model>Model::CreateModel(ModelCommon* modelCommon, const std::st
 }
 
 //モデルの生成(キューブ)
-std::unique_ptr<Model> Model::CreateModel(ModelCommon* modelCommon, const std::vector<MeshData>& meshDatas) {
+std::unique_ptr<Model> Model::CreateModel(ModelCommon* modelCommon, const std::vector<MeshData>& meshDatas){
 	//インスタンスの生成
 	std::unique_ptr<Model>instance = std::make_unique<Model>();
 	//初期化
@@ -29,7 +29,7 @@ std::unique_ptr<Model> Model::CreateModel(ModelCommon* modelCommon, const std::v
 }
 
 //モデルの生成(モデルデータ)
-std::unique_ptr<Model> Model::CreateModel(ModelCommon* modelCommon, const ModelData& modelData) {
+std::unique_ptr<Model> Model::CreateModel(ModelCommon* modelCommon, const ModelData& modelData){
 	//インスタンスの生成
 	std::unique_ptr<Model>instance = std::make_unique<Model>();
 	//初期化
@@ -40,43 +40,37 @@ std::unique_ptr<Model> Model::CreateModel(ModelCommon* modelCommon, const ModelD
 }
 
 //コンストラクタ
-Model::Model() {
+Model::Model(){
 }
 
 //デストラクタ
-Model::~Model() {
+Model::~Model(){
 }
 
 //初期化
-void Model::Initialize(ModelCommon* modelCommon) {
+void Model::Initialize(ModelCommon* modelCommon){
 	//ModelCommonのポインタを引数からメンバ変数を記録する
 	modelCommon_ = modelCommon;
 	//DirectXの基盤部分を受け取る
 	directXBase_ = modelCommon_->GetDirectXBase();
-
-	//描画に必要なデータ
-	modelRenderData_.materialResources = materialResources_;
-	modelRenderData_.meshes = meshes_;
-	modelRenderData_.modelData = modelData_;
-	modelRenderData_.rimLightResource = rimLightResource_;
 }
 
 //メッシュの再構成
-void Model::RebuildMeshes(const std::vector<MeshData>& meshes) {
+void Model::RebuildMeshes(const std::vector<MeshData>& meshes){
 	//メッシュデータのクリア
-	if (!meshes_.empty()) {
+	if (!meshes_.empty()){
 		meshes_.clear();
 	}
 	//受け取ったメッシュデータに書き換え
 	modelData_.meshDatas = meshes;
 	//マテリアルが存在するか
-	if (!modelData_.materialTexturePaths.empty()) {
-		for (uint32_t i = 0; i < modelData_.meshDatas.size(); i++) {
-			if (modelData_.meshDatas[i].materialIndex >= modelData_.materialTexturePaths.size()) {
+	if (!modelData_.materialTexturePaths.empty()){
+		for (uint32_t i = 0; i < modelData_.meshDatas.size(); i++){
+			if (modelData_.meshDatas[i].materialIndex >= modelData_.materialTexturePaths.size()){
 				modelData_.meshDatas[i].materialIndex = 0;
 			}
 		}
-	} else {
+	} else{
 		//マテリアルが存在しなかった場合
 		MaterialTexturePaths material;
 #ifdef _DEBUG
@@ -91,56 +85,56 @@ void Model::RebuildMeshes(const std::vector<MeshData>& meshes) {
 }
 
 //uv変換
-void Model::UVTransform(uint32_t index, Transform2d uvTransform) {
+void Model::UVTransform(uint32_t index, Transform2d uvTransform){
 	materialPtrs_[index]->uvMatrix = matrixUtility::MakeUVAffineMatrix(uvTransform);
 }
 
 // 色を変更
-void Model::SetColor(uint32_t index, const Vector4& color) {
+void Model::SetColor(uint32_t index, const Vector4& color){
 	materialPtrs_[index]->color = color;
 }
 
 //テクスチャの設定
-void Model::SetTexture(uint32_t materialIndex, const std::string& imageFileName) {
+void Model::SetTexture(uint32_t materialIndex, const std::string& imageFileName){
 	modelData_.materialTexturePaths[materialIndex].textureFilePath = "engine/resources/textures/" + imageFileName;
 	modelCommon_->GetTextureManager()->AddTexture(modelData_.materialTexturePaths[materialIndex].textureFilePath);
 }
 
 //環境マップの設定
-void Model::SetEnvironmentMap(uint32_t materialIndex, const std::string& environmentMapFileName) {
+void Model::SetEnvironmentMap(uint32_t materialIndex, const std::string& environmentMapFileName){
 	modelData_.materialTexturePaths[materialIndex].environmentMap = "engine/resources/textures/" + environmentMapFileName;
 	modelCommon_->GetTextureManager()->AddTexture(modelData_.materialTexturePaths[materialIndex].environmentMap);
 }
 
 //色を取得
-const Vector4& Model::GetColor(uint32_t index) const {
+const Vector4& Model::GetColor(uint32_t index) const{
 	// TODO: return ステートメントをここに挿入します
 	return materialPtrs_[index]->color;
 }
 
 //モデルデータのゲッター
-const ModelData& Model::GetModelData() const {
+const ModelData& Model::GetModelData() const{
 	// TODO: return ステートメントをここに挿入します
 	return modelData_;
 }
 
 //ライティングの設定
-void Model::SetIsLighting(uint32_t materialIndex, bool isLighting) {
+void Model::SetIsLighting(uint32_t materialIndex, bool isLighting){
 	materialPtrs_[materialIndex]->enableLighting = isLighting;
 }
 
 //輝度の設定
-void Model::SetShininess(uint32_t materialIndex, float shininess) {
+void Model::SetShininess(uint32_t materialIndex, float shininess){
 	materialPtrs_[materialIndex]->shininess = shininess;
 }
 
 //環境マップの映り込み度を調整
-void Model::SetEnvironmentCoefficient(uint32_t materialIndex, float environmentCoefficient) {
+void Model::SetEnvironmentCoefficient(uint32_t materialIndex, float environmentCoefficient){
 	materialPtrs_[materialIndex]->environmentCoefficient = environmentCoefficient;
 }
 
 //リムライトのセッター
-void Model::SetRimLight(const RimLight& rimLight) {
+void Model::SetRimLight(const RimLight& rimLight){
 	rimLightPtr_->color = rimLight.color;
 	rimLightPtr_->outLinePower = rimLight.outLinePower;
 	rimLightPtr_->power = rimLight.power;
@@ -149,7 +143,7 @@ void Model::SetRimLight(const RimLight& rimLight) {
 }
 
 //メッシュたちのゲッター
-const std::vector<std::unique_ptr<Mesh>>& Model::GetMeshes() const {
+const std::vector<std::unique_ptr<Mesh>>& Model::GetMeshes() const{
 	return meshes_;
 }
 
@@ -160,16 +154,16 @@ const ModelRenderData& Model::GetModelRenderData(){
 }
 
 //モデルの共通部分の取得
-ModelCommon* Model::GetModelCommon() {
+ModelCommon* Model::GetModelCommon(){
 	return modelCommon_;
 }
 
 //マテリアルリソースの生成
-void Model::CreateMaterialResource() {
+void Model::CreateMaterialResource(){
 	//マテリアルリソースとポインタのサイズ設定
 	materialResources_.resize(modelData_.materialTexturePaths.size());
 	materialPtrs_.resize(modelData_.materialTexturePaths.size());
-	for (uint32_t i = 0; i < modelData_.materialTexturePaths.size(); i++) {
+	for (uint32_t i = 0; i < modelData_.materialTexturePaths.size(); i++){
 		//マテリアル用のリソースを作る
 		materialResources_[i] = directXBase_->CreateBufferResource(sizeof(Material));
 		//書き込むためのアドレスを取得
@@ -184,7 +178,7 @@ void Model::CreateMaterialResource() {
 }
 
 //リムライトのリソースを生成
-void Model::CreateRimLightResource() {
+void Model::CreateRimLightResource(){
 	//マテリアル用のリソースを作る
 	rimLightResource_ = directXBase_->CreateBufferResource(sizeof(RimLight));
 	//書き込むためのアドレスを取得
@@ -198,10 +192,10 @@ void Model::CreateRimLightResource() {
 }
 
 //メッシュの構築
-void Model::BuildMesh() {
+void Model::BuildMesh(){
 	//メッシュの生成と初期化
 	meshes_.reserve(modelData_.meshDatas.size());
-	for (const MeshData& meshData : modelData_.meshDatas) {
+	for (const MeshData& meshData : modelData_.meshDatas){
 		std::unique_ptr<Mesh>mesh = std::make_unique<Mesh>();
 		mesh->Initialize(directXBase_, meshData);
 		meshes_.push_back(std::move(mesh));
@@ -209,7 +203,7 @@ void Model::BuildMesh() {
 }
 
 //プリミティブモデルの初期化
-void Model::CreateModel(const std::vector<MeshData>& meshDatas, const std::string& nodeName) {
+void Model::CreateModel(const std::vector<MeshData>& meshDatas, const std::string& nodeName){
 	//モデルの読み込み
 	modelData_.meshDatas = { meshDatas };
 	//メッシュの再構築
@@ -227,7 +221,7 @@ void Model::CreateModel(const std::vector<MeshData>& meshDatas, const std::strin
 }
 
 //モデルの生成
-void Model::CreateModel(const std::string& objectFileName) {
+void Model::CreateModel(const std::string& objectFileName){
 	//モデルの読み込み
 	modelData_ = modelLoader::LoadModelFile("engine/resources/models", objectFileName);
 	//メッシュの再構築
@@ -237,7 +231,7 @@ void Model::CreateModel(const std::string& objectFileName) {
 }
 
 //モデルの生成(モデルデータ)
-void Model::CreateModel(const ModelData& modelData) {
+void Model::CreateModel(const ModelData& modelData){
 	modelData_ = modelData;
 	//メッシュの再構成
 	RebuildMeshes(modelData_.meshDatas);
@@ -246,13 +240,22 @@ void Model::CreateModel(const ModelData& modelData) {
 }
 
 //各種リソースの生成
-void Model::CreateResources() {
+void Model::CreateResources(){
 	//マテリアルリソースの生成
 	CreateMaterialResource();
 	//リムライトリソースの生成
 	CreateRimLightResource();
 	//テクスチャの読み込み
-	for (MaterialTexturePaths& materialData : modelData_.materialTexturePaths) {
+	for (MaterialTexturePaths& materialData : modelData_.materialTexturePaths){
 		modelCommon_->GetTextureManager()->AddTexture(materialData.textureFilePath);
 	}
+
+	//描画に必要なデータ
+	modelRenderData_.materialResources = materialResources_;
+	modelRenderData_.meshes.resize(meshes_.size());
+	for (uint32_t i = 0; i < meshes_.size(); i++){
+		modelRenderData_.meshes[i] = meshes_[i].get();
+	}
+	modelRenderData_.modelData = modelData_;
+	modelRenderData_.rimLightResource = rimLightResource_;
 }

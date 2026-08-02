@@ -3,7 +3,6 @@
 #include <wrl.h>
 #include <d3d12.h>
 #include <vector>
-#include <memory>
 
 //前方宣言
 class Camera;
@@ -14,7 +13,7 @@ struct ModelRenderData{
 	Microsoft::WRL::ComPtr<ID3D12Resource>rimLightResource = nullptr;
 	std::vector<Microsoft::WRL::ComPtr<ID3D12Resource>>materialResources;
 	ModelData modelData = {};
-	std::vector<std::unique_ptr<Mesh>>meshes;
+	std::vector<Mesh*>meshes;
 };
 
 //LODの描画に必要なデータ

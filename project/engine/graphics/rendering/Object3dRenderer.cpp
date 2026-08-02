@@ -79,7 +79,7 @@ void Object3dRenderer::Draw(){
 			//リムライトのCBufferの場所を設定
 			directXBase_->GetCommandList()->SetGraphicsRootConstantBufferView(7, modelRenderData.rimLightResource->GetGPUVirtualAddress());
 			//メッシュの描画
-			for (std::unique_ptr<Mesh>& mesh : modelRenderData.meshes){
+			for (Mesh* mesh : modelRenderData.meshes){
 				uint32_t materialIndex = mesh->GetMaterialIndex();
 
 				//マテリアルCBufferの場所を設定

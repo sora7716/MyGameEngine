@@ -1,6 +1,7 @@
 #pragma once
 #include "RenderData.h"
 #include "MatrixUtility.h"
+#include "RendererData.h"
 #include <string>
 #include <vector>
 #include <wrl.h>
@@ -58,12 +59,6 @@ public://メンバ関数
 	/// </summary>
 	/// <param name="modelCommon">モデルの共通部分</param>
 	void Initialize(ModelCommon* modelCommon);
-
-	/// <summary>
-	/// 描画
-	/// </summary>
-	/// <param name="objectCount">表示したいオブジェクト数</param>
-	void Draw(uint32_t objectCount = 1);
 
 	/// <summary>
 	/// メッシュの再構成
@@ -146,6 +141,12 @@ public://メンバ関数
 	const std::vector<std::unique_ptr<Mesh>>& GetMeshes()const;
 
 	/// <summary>
+	/// 描画に必要なデータの取得
+	/// </summary>
+	/// <returns>描画に必要なデータ</returns>
+	const ModelRenderData& GetModelRenderData();
+
+	/// <summary>
 	/// モデルの共通部分の取得
 	/// </summary>
 	/// <returns>モデルの共通部分</returns>
@@ -205,5 +206,7 @@ private://メンバ変数
 	RimLight* rimLightPtr_ = nullptr;
 	//リムライトリソース
 	ComPtr<ID3D12Resource>rimLightResource_ = nullptr;
+	//描画に必要なデータ
+	ModelRenderData modelRenderData_ = {};
 };
 

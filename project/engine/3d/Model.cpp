@@ -53,28 +53,12 @@ void Model::Initialize(ModelCommon* modelCommon) {
 	modelCommon_ = modelCommon;
 	//DirectXの基盤部分を受け取る
 	directXBase_ = modelCommon_->GetDirectXBase();
-}
 
-//描画
-void Model::Draw(uint32_t objectCount) {
-	//リムライトのCBufferの場所を設定
-	directXBase_->GetCommandList()->SetGraphicsRootConstantBufferView(7, rimLightResource_->GetGPUVirtualAddress());
-	//メッシュの描画
-	for (std::unique_ptr<Mesh>& mesh : meshes_) {
-		uint32_t materialIndex = mesh->GetMaterialIndex();
-
-		//マテリアルCBufferの場所を設定
-		directXBase_->GetCommandList()->SetGraphicsRootConstantBufferView(0, materialResources_[materialIndex]->GetGPUVirtualAddress());
-
-		MaterialTexturePaths& materialTexturePath = modelData_.materialTexturePaths[materialIndex];
-
-		//テクスチャをセット
-		directXBase_->GetCommandList()->SetGraphicsRootDescriptorTable(2, modelCommon_->GetTextureManager()->GetSRVHandleGPU(materialTexturePath.textureFilePath));
-
-		//環境マップのセット
-		directXBase_->GetCommandList()->SetGraphicsRootDescriptorTable(8, modelCommon_->GetTextureManager()->GetSRVHandleGPU(materialTexturePath.environmentMap));
-		mesh->Draw(objectCount);
-	}
+	//描画に必要なデータ
+	modelRenderData_.materialResources = materialResources_;
+	modelRenderData_.meshes = meshes_;
+	modelRenderData_.modelData = modelData_;
+	modelRenderData_.rimLightResource = rimLightResource_;
 }
 
 //メッシュの再構成
@@ -167,6 +151,12 @@ void Model::SetRimLight(const RimLight& rimLight) {
 //メッシュたちのゲッター
 const std::vector<std::unique_ptr<Mesh>>& Model::GetMeshes() const {
 	return meshes_;
+}
+
+//描画に必要なデータの取得
+const ModelRenderData& Model::GetModelRenderData(){
+	// TODO: return ステートメントをここに挿入します
+	return modelRenderData_;
 }
 
 //モデルの共通部分の取得

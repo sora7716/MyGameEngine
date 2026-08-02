@@ -183,7 +183,8 @@ void Object3d::SetModel(const std::string& modelName, const std::vector<float>& 
 
 	//モデルを保存
 	for (const std::unique_ptr<Model>& model : lodBuilder_->GetLODModels()){
-		rendererData_.lodRenderData.models.push_back(model.get());
+		ModelRenderData modelRenderData = model->GetModelRenderData();
+		rendererData_.lodRenderData.modelRendererData.push_back(modelRenderData);
 	}
 }
 

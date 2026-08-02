@@ -70,7 +70,7 @@ void Core::Initialize(){
 	sceneContext_ = this;
 	//描画システム
 	renderSystem_ = std::make_unique<RenderSystem>();
-	renderSystem_->Initialize(directXBase_.get(), srvManager_.get(), pipelineManager_.get());
+	renderSystem_->Initialize(directXBase_.get(), srvManager_.get(), textureManager_.get(), pipelineManager_.get());
 	//シーンマネージャー
 	sceneManager_ = std::make_unique<SceneManager>(SceneManager::ConstructorKey{});
 	sceneManager_->Initialize(sceneContext_, renderSystem_.get());

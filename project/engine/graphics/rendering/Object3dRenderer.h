@@ -7,6 +7,7 @@
 //前方宣言
 class DirectXBase;
 class SRVManager;
+class TextureManager;
 
 /// <summary>
 /// Object3dの描画を担当
@@ -20,9 +21,10 @@ public://静的メンバ関数
 	/// </summary>
 	/// <param name="directXBase">DirectXの基盤部分</param>
 	/// <param name="srvManager">SRVの管理</param>
+	/// <param name="textureManager">テクスチャの管理</param>
 	/// <param name="maxInstance">インスタンスの最大値</param>
 	/// <returns>インスタンス</returns>
-	static std::unique_ptr<Object3dRenderer>Create(DirectXBase* directXBase, SRVManager* srvManager, uint32_t maxInstance = 1024);
+	static std::unique_ptr<Object3dRenderer>Create(DirectXBase* directXBase, SRVManager* srvManager, TextureManager* textureManager, uint32_t maxInstance = 1024);
 public://メンバ関数
 	/// <summary>
 	/// コンストラクタ
@@ -39,8 +41,9 @@ public://メンバ関数
 	/// </summary>
 	/// <param name="directXBase">DirectXの基盤部分</param>
 	/// <param name="srvManager">SRVの管理</param>
+	/// <param name="textureManager">テクスチャの管理</param>
 	/// <param name="maxInstance">インスタンスの最大値</param>
-	void Initialize(DirectXBase* directXBase, SRVManager* srvManager, uint32_t maxInstance);
+	void Initialize(DirectXBase* directXBase, SRVManager* srvManager, TextureManager* textureManager, uint32_t maxInstance);
 
 	/// <summary>
 	///リセット
@@ -62,6 +65,8 @@ private://メンバ変数
 	DirectXBase* directXBase_ = nullptr;
 	//SRVの管理
 	SRVManager* srvManager_ = nullptr;
+	//テクスチャの管理
+	TextureManager* textureManager_ = nullptr;
 	//インスタンスの最大値
 	uint32_t maxInstanceCount_ = 0;
 	//描画データ

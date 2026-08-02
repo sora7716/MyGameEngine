@@ -1,12 +1,25 @@
 #pragma once
+#include "RenderData.h"
+#include <wrl.h>
+#include <d3d12.h>
 #include <vector>
+#include <memory>
 
 //前方宣言
 class Camera;
-class Model;
+class Mesh;
 
+//モデルの描画に必要なデータ
+struct ModelRenderData{
+	Microsoft::WRL::ComPtr<ID3D12Resource>rimLightResource = nullptr;
+	std::vector<Microsoft::WRL::ComPtr<ID3D12Resource>>materialResources;
+	ModelData modelData = {};
+	std::vector<std::unique_ptr<Mesh>>meshes;
+};
+
+//LODの描画に必要なデータ
 struct LODRenderData{
-	std::vector<Model*> models;
+	std::vector<ModelRenderData>modelRendererData;
 	std::vector<uint32_t>srvIndices = {};
 	std::vector<uint32_t>drawCounts = {};
 
@@ -20,5 +33,6 @@ struct LODRenderData{
 //描画に必要なデータ
 struct Object3dRenderData{
 	Camera* renderCamera = nullptr;
+
 	LODRenderData lodRenderData;
 };

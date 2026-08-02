@@ -12,13 +12,13 @@ RenderSystem::~RenderSystem(){
 }
 
 //初期化
-void RenderSystem::Initialize(DirectXBase* directXBase, SRVManager* srvManager, PipelineManager* pipelineManager){
+void RenderSystem::Initialize(DirectXBase* directXBase, SRVManager* srvManager, TextureManager* textureManager, PipelineManager* pipelineManager){
 	//DirectXの基盤部分の記録
 	directXBase_ = directXBase;
 	//パイプラインの管理の記録
 	pipelineManager_ = pipelineManager;
 	//Object3dのレンダラー
-	object3dRenderer_ = Object3dRenderer::Create(directXBase, srvManager);
+	object3dRenderer_ = Object3dRenderer::Create(directXBase, srvManager, textureManager);
 }
 
 //描画開始

@@ -4,6 +4,7 @@
 //前方宣言
 class DirectXBase;
 class SRVManager;
+class TextureManager;
 class PipelineManager;
 class Blend;
 class Object3dRenderer;
@@ -28,8 +29,9 @@ public://メンバ関数
 	/// </summary>
 	/// <param name="directXBase">DirectXの基盤</param>
 	/// <param name="srvManager">SRVの管理</param>
+	/// <param name="textureManager">Textureの管理</param>
 	/// <param name="pipelineManager">パイプラインの管理</param>
-	void Initialize(DirectXBase* directXBase, SRVManager* srvManager, PipelineManager* pipelineManager);
+	void Initialize(DirectXBase* directXBase, SRVManager* srvManager, TextureManager* textureManager, PipelineManager* pipelineManager);
 
 	/// <summary>
 	/// 描画の開始

@@ -49,15 +49,14 @@ void GameSystem::Draw(){
 	core_->GetDirectXBase()->PreDraw(windowIndex_);
 	//SRVの管理
 	core_->GetSRVManager()->PreDraw();
-	//ライティングの管理
-	core_->GetLightingManager()->DrawSetting();
+
+	//デバッグ画面かどうか
+	const bool isDebugWindow = core_->GetWinApi()->GetHwnd(windowIndex_) == core_->GetWinApi()->GetHwnd(WindowType::kDebug);
 
 	//デバッグ画面のときにしか表示しない
-	if (core_->GetWinApi()->GetHwnd(windowIndex_) == core_->GetWinApi()->GetHwnd(WindowType::kDebug)){
+	if (isDebugWindow){
 		//シーン
 		core_->GetSceneManager()->DebugDraw();
-		//ImGuiの管理
-		core_->GetImGuiManager()->Draw();
 	} else{
 		//シーン
 		core_->GetSceneManager()->GameDraw();
@@ -65,8 +64,16 @@ void GameSystem::Draw(){
 
 	//描画システム
 	core_->GetRenderSystem()->PreDraw();
+	//ライティングの管理
+	core_->GetLightingManager()->DrawSetting();
 	//描画
 	core_->GetRenderSystem()->Draw();
+
+	//ImGuiの描画はDebug画面限定
+	if (isDebugWindow){
+		//ImGuiの管理
+		core_->GetImGuiManager()->Draw();
+	}
 
 	//描画終了位置
 	core_->GetDirectXBase()->PostDraw(windowIndex_);

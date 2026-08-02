@@ -2,6 +2,6 @@
 
 //サイズがあっている確認
 bool LODRenderData::IsLodCountValid() const{
-	return modelRendererData.size() == srvIndices.size()
+	return modelRendererDatas.size() == srvIndices.size()
 		&& srvIndices.size() == drawCounts.size();
 }

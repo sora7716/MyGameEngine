@@ -55,14 +55,14 @@ void Object3dRenderer::Draw(){
 		//カメラ
 		renderData.renderCamera->DrawSetting(4);
 
-		for (uint32_t lodIndex = 0; lodIndex < renderData.lodRenderData.modelRendererData.size(); lodIndex++){
+		for (uint32_t lodIndex = 0; lodIndex < renderData.lodRenderData.modelRendererDatas.size(); lodIndex++){
 			//LODモデルが存在してなかったら
-			if (renderData.lodRenderData.modelRendererData.empty()){
+			if (renderData.lodRenderData.modelRendererDatas.empty()){
 				continue;
 			}
 
 			//モデルの描画に必要なデータ
-			ModelRenderData modelRenderData = renderData.lodRenderData.modelRendererData[lodIndex];
+			ModelRenderData modelRenderData = renderData.lodRenderData.modelRendererDatas[lodIndex];
 			//WVPのSRVIndex
 			uint32_t wvpSrvIndex = renderData.lodRenderData.srvIndices[lodIndex];
 			//描画カウント
@@ -79,8 +79,8 @@ void Object3dRenderer::Draw(){
 			//リムライトのCBufferの場所を設定
 			directXBase_->GetCommandList()->SetGraphicsRootConstantBufferView(7, modelRenderData.rimLightResource->GetGPUVirtualAddress());
 			//メッシュの描画
-			for (Mesh* mesh : modelRenderData.meshes){
-				uint32_t materialIndex = mesh->GetMaterialIndex();
+			for (const MeshRenderData& meshRenderData : modelRenderData.meshRenderDatas){
+				uint32_t materialIndex = meshRenderData.meshData.materialIndex;
 
 				//マテリアルCBufferの場所を設定
 				directXBase_->GetCommandList()->SetGraphicsRootConstantBufferView(0, modelRenderData.materialResources[materialIndex]->GetGPUVirtualAddress());
@@ -92,7 +92,17 @@ void Object3dRenderer::Draw(){
 
 				//環境マップのセット
 				directXBase_->GetCommandList()->SetGraphicsRootDescriptorTable(8, textureManager_->GetSRVHandleGPU(materialTexturePath.environmentMap));
-				mesh->Draw(drawCount);
+				//VertexBufferViewの設定
+				directXBase_->GetCommandList()->IASetVertexBuffers(0, 1, &meshRenderData.vertexBufferView);//VBVを設定
+				directXBase_->GetCommandList()->IASetIndexBuffer(&meshRenderData.indexBufferView);//IBVを設定
+				//オブジェクト数が0より大きければ
+				if (drawCount > 0){
+					//メッシュが空じゃなければ
+					if (!meshRenderData.meshData.indices.empty()){
+						//描画
+						directXBase_->GetCommandList()->DrawIndexedInstanced(UINT(meshRenderData.meshData.indices.size()), drawCount, 0, 0, 0);
+					}
+				}
 			}
 		}
 	}

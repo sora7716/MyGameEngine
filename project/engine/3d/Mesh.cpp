@@ -2,15 +2,15 @@
 #include "DirectXBase.h"
 
 //コンストラクタ
-Mesh::Mesh() {
+Mesh::Mesh(){
 }
 
 //デストラクタ
-Mesh::~Mesh() {
+Mesh::~Mesh(){
 }
 
 //初期化
-void Mesh::Initialize(DirectXBase* directXBase, const MeshData& meshData) {
+void Mesh::Initialize(DirectXBase* directXBase, const MeshData& meshData){
 	//DirectXの基盤部分を受け取る
 	directXBase_ = directXBase;
 	//メッシュデータを受け取る
@@ -21,17 +21,22 @@ void Mesh::Initialize(DirectXBase* directXBase, const MeshData& meshData) {
 	CreateIndexResource();
 	//AABBの作成
 	CreateAABB();
+
+	//描画データをまとめる
+	meshRenderData_.indexBufferView = indexBufferView_;
+	meshRenderData_.vertexBufferView = vertexBufferView_;
+	meshRenderData_.meshData = meshData_;
 }
 
 //描画
-void Mesh::Draw(uint32_t objectCount) {
+void Mesh::Draw(uint32_t objectCount){
 	//VertexBufferViewの設定
 	directXBase_->GetCommandList()->IASetVertexBuffers(0, 1, &vertexBufferView_);//VBVを設定
 	directXBase_->GetCommandList()->IASetIndexBuffer(&indexBufferView_);//IBVを設定
 	//オブジェクト数が0より大きければ
-	if (objectCount > 0) {
+	if (objectCount > 0){
 		//メッシュが空じゃなければ
-		if (!meshData_.indices.empty()) {
+		if (!meshData_.indices.empty()){
 			//描画
 			directXBase_->GetCommandList()->DrawIndexedInstanced(UINT(meshData_.indices.size()), objectCount, 0, 0, 0);
 		}
@@ -39,18 +44,24 @@ void Mesh::Draw(uint32_t objectCount) {
 }
 
 //マテリアルインデックスの取得
-uint32_t Mesh::GetMaterialIndex() {
+uint32_t Mesh::GetMaterialIndex(){
 	return meshData_.materialIndex;
 }
 
 //AABBの取得
-const primitiveData::AABB& Mesh::GetAABB() const {
+const primitiveData::AABB& Mesh::GetAABB() const{
 	// TODO: return ステートメントをここに挿入します
 	return aabb_;
 }
 
+//メッシュの描画データの取得
+const MeshRenderData& Mesh::GetMeshRenderData(){
+	// TODO: return ステートメントをここに挿入します
+	return meshRenderData_;
+}
+
 //頂点リソースの生成
-void Mesh::CreateVertexResource() {
+void Mesh::CreateVertexResource(){
 	//頂点リソースを生成
 	vertexResource_ = directXBase_->CreateBufferResource(sizeof(VertexData) * meshData_.vertices.size());
 	//VertexBufferViewを作成する(頂点バッファービュー)
@@ -70,9 +81,9 @@ void Mesh::CreateVertexResource() {
 }
 
 //インデックスリソースの生成
-void Mesh::CreateIndexResource() {
+void Mesh::CreateIndexResource(){
 	//インデックスのサイズが0だったら作らないようにする
-	if (meshData_.indices.empty()) {
+	if (meshData_.indices.empty()){
 		return;
 	}
 	//Index用(3dGameObject)
@@ -93,9 +104,9 @@ void Mesh::CreateIndexResource() {
 }
 
 //AABBの生成
-void Mesh::CreateAABB() {
+void Mesh::CreateAABB(){
 	//頂点データが無ければ
-	if (meshData_.vertices.empty()) {
+	if (meshData_.vertices.empty()){
 		return;
 	}
 
@@ -110,7 +121,7 @@ void Mesh::CreateAABB() {
 	aabb_.max = aabb_.min;
 
 	//AABBを作成
-	for (const VertexData& vertex : meshData_.vertices) {
+	for (const VertexData& vertex : meshData_.vertices){
 		Vector3 vertexPosition = { vertex.position.x,vertex.position.y,vertex.position.z };
 
 		//最小値を求める

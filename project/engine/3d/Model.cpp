@@ -85,9 +85,9 @@ void Model::RebuildMeshes(const std::vector<MeshData>& meshes){
 
 	//描画に必要なデータ
 	modelRenderData_.materialResources = materialResources_;
-	modelRenderData_.meshes.resize(meshes_.size());
+	modelRenderData_.meshRenderDatas.resize(meshes_.size());
 	for (uint32_t i = 0; i < meshes_.size(); i++){
-		modelRenderData_.meshes[i] = meshes_[i].get();
+		modelRenderData_.meshRenderDatas[i] = meshes_[i]->GetMeshRenderData();
 	}
 	modelRenderData_.modelData = modelData_;
 	modelRenderData_.rimLightResource = rimLightResource_;

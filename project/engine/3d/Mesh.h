@@ -1,6 +1,7 @@
 #pragma once
 #include "RenderData.h"
 #include "PrimitiveData.h"
+#include "RendererData.h"
 #include <wrl.h>
 #include <d3d12.h>
 
@@ -10,7 +11,7 @@ class DirectXBase;
 /// <summary>
 /// メッシュ
 /// </summary>
-class Mesh {
+class Mesh{
 private://エイリアステンプレート
 	template <class T>using ComPtr = Microsoft::WRL::ComPtr<T>;
 public://メンバ関数
@@ -48,6 +49,12 @@ public://メンバ関数
 	/// </summary>
 	/// <returns></returns>
 	const primitiveData::AABB& GetAABB()const;
+
+	/// <summary>
+	/// メッシュの描画データの取得
+	/// </summary>
+	/// <returns>メッシュの描画データ</returns>
+	const MeshRenderData& GetMeshRenderData();
 private://メンバ関数
 	/// <summary>
 	/// 頂点リソースの生成
@@ -78,5 +85,7 @@ private://メンバ変数
 	MeshData meshData_ = {};
 	//AABB
 	primitiveData::AABB aabb_ = {};
+	//描画に必要なデータ
+	MeshRenderData meshRenderData_ = {};
 };
 

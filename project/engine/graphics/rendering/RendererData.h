@@ -8,17 +8,25 @@
 class Camera;
 class Mesh;
 
+//メッシュの描画に必要なデータ
+struct MeshRenderData{
+	D3D12_VERTEX_BUFFER_VIEW vertexBufferView = {};
+	D3D12_INDEX_BUFFER_VIEW indexBufferView = {};
+	MeshData meshData = {};
+};
+
+
 //モデルの描画に必要なデータ
 struct ModelRenderData{
 	Microsoft::WRL::ComPtr<ID3D12Resource>rimLightResource = nullptr;
 	std::vector<Microsoft::WRL::ComPtr<ID3D12Resource>>materialResources;
 	ModelData modelData = {};
-	std::vector<Mesh*>meshes;
+	std::vector<MeshRenderData>meshRenderDatas;
 };
 
 //LODの描画に必要なデータ
 struct LODRenderData{
-	std::vector<ModelRenderData>modelRendererData;
+	std::vector<ModelRenderData>modelRendererDatas;
 	std::vector<uint32_t>srvIndices = {};
 	std::vector<uint32_t>drawCounts = {};
 
@@ -32,6 +40,5 @@ struct LODRenderData{
 //描画に必要なデータ
 struct Object3dRenderData{
 	Camera* renderCamera = nullptr;
-
 	LODRenderData lodRenderData;
 };

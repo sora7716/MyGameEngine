@@ -49,12 +49,8 @@ void GameSystem::Draw(){
 	core_->GetDirectXBase()->PreDraw(windowIndex_);
 	//SRVの管理
 	core_->GetSRVManager()->PreDraw();
-	//描画システム
-	core_->GetRenderSystem()->PreDraw();
 	//ライティングの管理
 	core_->GetLightingManager()->DrawSetting();
-	//描画
-	core_->GetRenderSystem()->Draw();
 
 	//デバッグ画面のときにしか表示しない
 	if (core_->GetWinApi()->GetHwnd(windowIndex_) == core_->GetWinApi()->GetHwnd(WindowType::kDebug)){
@@ -66,6 +62,11 @@ void GameSystem::Draw(){
 		//シーン
 		core_->GetSceneManager()->GameDraw();
 	}
+
+	//描画システム
+	core_->GetRenderSystem()->PreDraw();
+	//描画
+	core_->GetRenderSystem()->Draw();
 
 	//描画終了位置
 	core_->GetDirectXBase()->PostDraw(windowIndex_);

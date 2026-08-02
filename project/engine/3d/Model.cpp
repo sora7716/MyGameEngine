@@ -82,6 +82,15 @@ void Model::RebuildMeshes(const std::vector<MeshData>& meshes){
 	}
 	//メッシュを構築
 	BuildMesh();
+
+	//描画に必要なデータ
+	modelRenderData_.materialResources = materialResources_;
+	modelRenderData_.meshes.resize(meshes_.size());
+	for (uint32_t i = 0; i < meshes_.size(); i++){
+		modelRenderData_.meshes[i] = meshes_[i].get();
+	}
+	modelRenderData_.modelData = modelData_;
+	modelRenderData_.rimLightResource = rimLightResource_;
 }
 
 //uv変換
@@ -249,13 +258,4 @@ void Model::CreateResources(){
 	for (MaterialTexturePaths& materialData : modelData_.materialTexturePaths){
 		modelCommon_->GetTextureManager()->AddTexture(materialData.textureFilePath);
 	}
-
-	//描画に必要なデータ
-	modelRenderData_.materialResources = materialResources_;
-	modelRenderData_.meshes.resize(meshes_.size());
-	for (uint32_t i = 0; i < meshes_.size(); i++){
-		modelRenderData_.meshes[i] = meshes_[i].get();
-	}
-	modelRenderData_.modelData = modelData_;
-	modelRenderData_.rimLightResource = rimLightResource_;
 }

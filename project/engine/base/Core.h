@@ -8,7 +8,6 @@
 #include "ImGuiManager.h"
 #include "CameraManager.h"
 #include "SpriteCommon.h"
-#include "Object3dCommon.h"
 #include "ParticleCommon.h"
 #include "ModelCommon.h"
 #include "SceneManager.h"
@@ -99,12 +98,6 @@ public://メンバ関数
 	SpriteCommon* GetSpriteCommon()const;
 
 	/// <summary>
-	/// 3Dオブジェクトの共通部分の取得
-	/// </summary>
-	/// <returns>3Dオブジェクトの共通部分</returns>
-	Object3dCommon* GetObject3dCommon()const;
-
-	/// <summary>
 	/// パーティクルの共通部分の取得
 	/// </summary>
 	/// <returns>パーティクルの共通部分</returns>
@@ -193,8 +186,6 @@ private://メンバ変数
 	std::unique_ptr<CameraManager>cameraManager_ = nullptr;
 	//スプライトの共通部分
 	std::unique_ptr<SpriteCommon>spriteCommon_ = nullptr;
-	//3Dオブジェクトの共通部分
-	std::unique_ptr<Object3dCommon>object3dCommon_ = nullptr;
 	//パーティクルの共通部分
 	std::unique_ptr<ParticleCommon>particleCommon_ = nullptr;
 	//モデルの共通部分

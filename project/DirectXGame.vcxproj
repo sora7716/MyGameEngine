@@ -23,7 +23,6 @@
     <ClCompile Include="engine\3d\ModelCommon.cpp" />
     <ClCompile Include="engine\3d\ModelManager.cpp" />
     <ClCompile Include="engine\3d\Object3d.cpp" />
-    <ClCompile Include="engine\3d\Object3dCommon.cpp" />
     <ClCompile Include="engine\3d\SkyBox.cpp" />
     <ClCompile Include="engine\asset\ModelLoader.cpp" />
     <ClCompile Include="engine\asset\TextureLoader.cpp" />
@@ -110,7 +109,6 @@
     <ClInclude Include="engine\3d\ModelCommon.h" />
     <ClInclude Include="engine\3d\ModelManager.h" />
     <ClInclude Include="engine\3d\Object3d.h" />
-    <ClInclude Include="engine\3d\Object3dCommon.h" />
     <ClInclude Include="engine\3d\SkyBox.h" />
     <ClInclude Include="engine\asset\ModelLoader.h" />
     <ClInclude Include="engine\asset\TextureLoader.h" />

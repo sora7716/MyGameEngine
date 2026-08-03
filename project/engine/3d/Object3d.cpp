@@ -1,5 +1,4 @@
 #include "Object3d.h"
-#include "Object3dCommon.h"
 #include "DirectXBase.h"
 #include "Camera.h"
 #include "ModelManager.h"
@@ -28,9 +27,9 @@ void(Object3d::* Object3d::UpdateWorldMatrixTable[])(uint32_t index) = {
 };
 
 //インスタンスの設定
-std::unique_ptr<Object3d> Object3d::Create(Object3dCommon* object3dCommon, Camera* renderCamera, uint32_t maxInstanceCount, Transform3dMode transform3dMode){
+std::unique_ptr<Object3d> Object3d::Create(DirectXBase* directXBase, SRVManager* srvManager, Camera* renderCamera, uint32_t maxInstanceCount, Transform3dMode transform3dMode){
 	std::unique_ptr<Object3d>instance = std::make_unique<Object3d>();
-	instance->Initialize(object3dCommon, renderCamera, maxInstanceCount, transform3dMode);
+	instance->Initialize(directXBase, srvManager, renderCamera, maxInstanceCount, transform3dMode);
 	return std::move(instance);
 }
 
@@ -43,13 +42,11 @@ Object3d::~Object3d(){
 }
 
 //初期化
-void Object3d::Initialize(Object3dCommon* object3dCommon, Camera* renderCamera, uint32_t maxInstanceCount, Transform3dMode transform3dMode){
-	//3Dオブジェクトの共通部分
-	object3dCommon_ = object3dCommon;
-	//DirectXの基盤部分を受け取る
-	directXBase_ = object3dCommon_->GetDirectXBase();
-	//SRVマネージャーを受け取る
-	srvManager_ = object3dCommon_->GetSRVManager();
+void Object3d::Initialize(DirectXBase* directXBase, SRVManager* srvManager, Camera* renderCamera, uint32_t maxInstanceCount, Transform3dMode transform3dMode){
+	//DirectXの基盤部分の記録
+	directXBase_ = directXBase;
+	//SRVの管理記録
+	srvManager_ = srvManager;
 	//座標変換のモード切替用変数
 	transform3dMode_ = transform3dMode;
 	//ゲームオブジェクトの数を決定
@@ -76,9 +73,6 @@ void Object3d::Initialize(Object3dCommon* object3dCommon, Camera* renderCamera, 
 
 //更新
 void Object3d::Update(){
-	//Object3dの共通部分の更新
-	object3dCommon_->Update();
-
 	//描画データをまとめる
 	rendererData_.lodRenderData.drawCounts = lodDrawCounts_;
 
@@ -168,22 +162,22 @@ void Object3d::Update(){
 }
 
 //モデルの設定
-void Object3d::SetModel(const std::string& modelName, const std::vector<float>& keepRates){
+void Object3d::SetModel(Model* model, const std::vector<float>& keepRates){
 	//元になるモデルを取得
-	baseModel_ = object3dCommon_->GetModelManager()->FindModel(modelName);
+	baseModel_ = model;
 
 	//LODカウントの初期化
 	lodCount_ = static_cast<uint32_t>(keepRates.size());
 	//LOD関係のセットアップ
 	SetupLOD();
 	//LODモデルの生成
-	lodBuilder_->CreateLODModel(baseModel_.get(), keepRates);
+	lodBuilder_->CreateLODModel(baseModel_, keepRates);
 	//LODの制御の初期化
 	lodController_->Initialize(lodBuilder_.get());
 
 	//モデルを保存
-	for (const std::unique_ptr<Model>& model : lodBuilder_->GetLODModels()){
-		ModelRenderData modelRenderData = model->GetModelRenderData();
+	for (const std::unique_ptr<Model>& lodModel : lodBuilder_->GetLODModels()){
+		ModelRenderData modelRenderData = lodModel->GetModelRenderData();
 		rendererData_.lodRenderData.modelRendererDatas.push_back(modelRenderData);
 	}
 }
@@ -277,6 +271,24 @@ void Object3d::SetTexture(uint32_t meshIndex, const std::string& imageFileName){
 }
 //環境マップの変更
 void Object3d::SetEnvironmentMap(uint32_t meshIndex, const std::string& environmentMapFileName){
+	//元のモデルがなければ
+	if (!baseModel_){
+		return;
+	}
+
+	//メッシュのサイズを取得
+	const std::vector<std::unique_ptr<Mesh>>& meshes = baseModel_->GetMeshes();
+
+	//メッシュの検索キーとサイズを比較
+	if (meshIndex > meshes.size()){
+		return;
+	}
+
+	//メッシュのNullチェック
+	if (!meshes[meshIndex]){
+		return;
+	}
+
 	uint32_t materialIndex = baseModel_->GetMeshes()[meshIndex]->GetMaterialIndex();
 	//元モデルにも適応
 	baseModel_->SetEnvironmentMap(materialIndex, environmentMapFileName);
@@ -371,7 +383,10 @@ Vector3 Object3d::GetWorldPos(uint32_t instanceIndex){
 }
 
 //メッシュのサイズの取得
-uint32_t Object3d::GetMeshSize(){
+uint32_t Object3d::GetMeshDataSize(){
+	if (!baseModel_){
+		return 0;
+	}
 	return static_cast<uint32_t>(baseModel_->GetModelData().meshDatas.size());
 }
 

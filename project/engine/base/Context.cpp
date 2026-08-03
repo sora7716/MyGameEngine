@@ -2,12 +2,13 @@
 #include "engine/base/Core.h"
 
 //ゲームエンジンの核から必要な物を抽出する
-void SceneContext::operator=(Core* core) {
+void SceneContext::operator=(Core* core){
 	winApi = core->GetWinApi();
 	input = core->GetInput();
 	directXBase = core->GetDirectXBase();
+	srvManager = core->GetSRVManager();
 	textureManager = core->GetTextureManager();
-	object3dCommon = core->GetObject3dCommon();
+	modelManager = core->GetModelManager();
 	spriteCommon = core->GetSpriteCommon();
 	particleCommon = core->GetParticleCommon();
 	modelCommon = core->GetModelCommon();

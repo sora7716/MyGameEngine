@@ -45,9 +45,6 @@ void Core::Initialize(){
 	//スプライトの共通部分
 	spriteCommon_ = std::make_unique<SpriteCommon>(SpriteCommon::ConstructorKey{});
 	spriteCommon_->Initialize(directXBase_.get(), textureManager_.get());
-	//3Dオブジェクトの共通部分
-	object3dCommon_ = std::make_unique<Object3dCommon>(Object3dCommon::ConstructorKey{});
-	object3dCommon_->Initialize(directXBase_.get(), srvManager_.get(), textureManager_.get(), modelManager_.get());
 	//パーティクルの共通部分
 	particleCommon_ = std::make_unique<ParticleCommon>(ParticleCommon::ConstructorKey{});
 	particleCommon_->Initialize(directXBase_.get(), srvManager_.get(), textureManager_.get());
@@ -120,11 +117,6 @@ CameraManager* Core::GetCameraManager()const{
 //スプライトの共通部分の取得
 SpriteCommon* Core::GetSpriteCommon() const{
 	return spriteCommon_.get();
-}
-
-//3Dオブジェクトの共通部分の取得
-Object3dCommon* Core::GetObject3dCommon() const{
-	return object3dCommon_.get();
 }
 
 //パーティクルの共通部分の取得

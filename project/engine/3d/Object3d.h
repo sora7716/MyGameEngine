@@ -14,7 +14,6 @@
 //前方宣言
 class DirectXBase;
 class SRVManager;
-class Object3dCommon;
 class Camera;
 class Model;
 class GameObject;
@@ -46,7 +45,7 @@ public://静的メンバ関数
 	/// インスタンスの生成
 	/// </summary>
 	/// <returns>インスタンス</returns>
-	std::unique_ptr<Object3d>Create(Object3dCommon* object3dCommon, Camera* renderCamera, uint32_t maxInstanceCount, Transform3dMode transform3dMode);
+	std::unique_ptr<Object3d>Create(DirectXBase* directXBase, SRVManager* srvManager, Camera* renderCamera, uint32_t maxInstanceCount, Transform3dMode transform3dMode);
 public://メンバ関数
 	/// <summary>
 	/// コンストラクタ
@@ -61,11 +60,11 @@ public://メンバ関数
 	/// <summary>
 	/// 初期化
 	/// </summary>
-	/// <param name="object3dCommon">3dオブジェクトの共通部分</param>
+	/// <param name="srvManager">SRVの管理</param>
 	/// <param name="renderCamera">描画で使用するカメラ</param>
 	/// <param name="maxInstanceCount">オブジェクトの最大数</param>
 	/// <param name="transformMode">トランスフォームモード</param>
-	void Initialize(Object3dCommon* object3dCommon, Camera* renderCamera, uint32_t maxInstanceCount = 1, Transform3dMode transform3dMode = Transform3dMode::kNormal);
+	void Initialize(DirectXBase* directXBase, SRVManager* srvManager, Camera* renderCamera, uint32_t maxInstanceCount = 1, Transform3dMode transform3dMode = Transform3dMode::kNormal);
 
 	/// <summary>
 	/// 更新
@@ -75,9 +74,9 @@ public://メンバ関数
 	/// <summary>
 	/// モデルの設定
 	/// </summary>
-	/// <param name="modelName">モデル名</param>
+	/// <param name="model">モデル</param>
 	/// <param name="keepRates">モデルの保持する倍率</param>
-	void SetModel(const std::string& modelName, const std::vector<float>& keepRates = { 1.0f,0.75f,0.5f,0.25f });
+	void SetModel(Model* model, const std::vector<float>& keepRates = { 1.0f,0.75f,0.5f,0.25f });
 
 	/// <summary>
 	/// インスタンスの追加
@@ -245,7 +244,7 @@ public://メンバ関数
 	/// メッシュのサイズの取得
 	/// </summary>
 	/// <returns>メッシュのサイズ</returns>
-	uint32_t GetMeshSize();
+	uint32_t GetMeshDataSize();
 
 	/// <summary>
 	/// 描画データの取得
@@ -293,14 +292,12 @@ private://メンバ関数テーブル
 	//座標の更新をまとめた
 	static void (Object3d::* UpdateWorldMatrixTable[])(uint32_t index);
 private://メンバ変数
-	//3Dオブジェクトの共通部分
-	Object3dCommon* object3dCommon_ = nullptr;
 	//DirectXの基盤部分
 	DirectXBase* directXBase_ = nullptr;
 	//SRVマネージャー
 	SRVManager* srvManager_ = nullptr;
 	//モデル
-	std::unique_ptr<Model> baseModel_ = nullptr;
+	Model* baseModel_ = nullptr;
 
 	//LODの数
 	uint32_t lodCount_ = 1;

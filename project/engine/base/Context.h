@@ -3,8 +3,9 @@
 class WinApi;
 class Input;
 class DirectXBase;
+class SRVManager;
 class TextureManager;
-class Object3dCommon;
+class ModelManager;
 class Object2dCommon;
 class SpriteCommon;
 class ParticleCommon;
@@ -24,8 +25,9 @@ struct SceneContext {
 	WinApi* winApi;
 	Input* input;
 	DirectXBase* directXBase;
+	SRVManager* srvManager;
 	TextureManager* textureManager;
-	Object3dCommon* object3dCommon;
+	ModelManager* modelManager;
 	Object2dCommon* object2dCommon;
 	SpriteCommon* spriteCommon;
 	ParticleCommon* particleCommon;

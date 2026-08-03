@@ -153,9 +153,6 @@
     <ClCompile Include="engine\3d\Object3d.cpp">
       <Filter>engine\3d</Filter>
     </ClCompile>
-    <ClCompile Include="engine\3d\Object3dCommon.cpp">
-      <Filter>engine\3d</Filter>
-    </ClCompile>
     <ClCompile Include="engine\audio\Audio.cpp">
       <Filter>engine\audio</Filter>
     </ClCompile>
@@ -396,9 +393,6 @@
       <Filter>engine\3d</Filter>
     </ClInclude>
     <ClInclude Include="engine\3d\Object3d.h">
-      <Filter>engine\3d</Filter>
-    </ClInclude>
-    <ClInclude Include="engine\3d\Object3dCommon.h">
       <Filter>engine\3d</Filter>
     </ClInclude>
     <ClInclude Include="engine\audio\Audio.h">

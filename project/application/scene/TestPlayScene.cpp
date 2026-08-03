@@ -15,7 +15,6 @@
 #include "TextureManager.h"
 #include "SkyBox.h"
 #include "ParticleSystem.h"
-#include "Object3dCommon.h"
 #include "ModelManager.h"
 #include "WinApi.h"
 #include "LightingManager.h"
@@ -35,9 +34,9 @@ void TestPlayScene::Initialize(const SceneContext& sceneContext, Object3dRendere
 	gameCamera_ = sceneContext_.cameraManager->FindCamera("testPlayCamera");
 
 	object3d_ = std::make_unique<Object3d>();
-	object3d_->Initialize(sceneContext_.object3dCommon, gameCamera_, 1);
+	object3d_->Initialize(sceneContext_.directXBase, sceneContext_.srvManager, gameCamera_, 1);
 	object3d_->SetGameCamera(gameCamera_);
-	object3d_->SetModel("cube", { 1.0f });
+	object3d_->SetModel(sceneContext_.modelManager->FindModel("cube").get(), { 1.0f });
 	//object3d_->SetTexture(0, "uvChecker.png");
 	//object3d_->SetModel("cube");
 	//object3d_->SetModel("dekanu");
@@ -67,7 +66,7 @@ void TestPlayScene::Initialize(const SceneContext& sceneContext, Object3dRendere
 	skyBox_ = std::make_unique<SkyBox>();
 	skyBox_->Initialize(sceneContext_.directXBase, sceneContext.textureManager, "skybox_cube.dds", gameCamera_);
 	skyBox_->SetGameObject(treePtr);
-	for (uint32_t i = 0; i < object3d_->GetMeshSize(); i++){
+	for (uint32_t i = 0; i < object3d_->GetMeshDataSize(); i++){
 		object3d_->SetEnvironmentMap(i, "skybox_cube.dds");
 	}
 	//for (uint32_t i = 0; i < object3d_->GetModel()->GetMeshes().size(); i++) {

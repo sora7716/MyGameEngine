@@ -239,7 +239,7 @@ ComPtr<ID3D12DescriptorHeap> DirectXBase::CreateDescriptorHeap(D3D12_DESCRIPTOR_
 //シェーダーのコンパイル
 ComPtr<IDxcBlob> DirectXBase::CompilerShader(const std::wstring& filePath, const wchar_t* profile) {
 	//1. hlslファイルを読み込む
-		//これからシェーダーをコンパイルする旨をログに出す
+	//これからシェーダーをコンパイルする旨をログに出す
 	Logger::OutputLog(stringUtility::ConvertString(std::format(L"Begin CompileShader, path:{}, profile:{}\n", filePath, profile)));
 	//hlslファイルを読み込む
 	ComPtr<IDxcBlobEncoding> shaderSource = nullptr;

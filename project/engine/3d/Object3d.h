@@ -76,7 +76,7 @@ public://メンバ関数
 	/// </summary>
 	/// <param name="model">モデル</param>
 	/// <param name="keepRates">モデルの保持する倍率</param>
-	void SetModel(Model* model, const std::vector<float>& keepRates = { 1.0f,0.75f,0.5f,0.25f });
+	void SetModel(std::unique_ptr<Model> model, const std::vector<float>& keepRates = { 1.0f,0.75f,0.5f,0.25f });
 
 	/// <summary>
 	/// インスタンスの追加
@@ -297,7 +297,7 @@ private://メンバ変数
 	//SRVマネージャー
 	SRVManager* srvManager_ = nullptr;
 	//モデル
-	Model* baseModel_ = nullptr;
+	std::unique_ptr<Model> baseModel_ = nullptr;
 
 	//LODの数
 	uint32_t lodCount_ = 1;

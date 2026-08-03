@@ -162,16 +162,16 @@ void Object3d::Update(){
 }
 
 //モデルの設定
-void Object3d::SetModel(Model* model, const std::vector<float>& keepRates){
+void Object3d::SetModel(std::unique_ptr<Model> model, const std::vector<float>& keepRates){
 	//元になるモデルを取得
-	baseModel_ = model;
+	baseModel_ = std::move(model);
 
 	//LODカウントの初期化
 	lodCount_ = static_cast<uint32_t>(keepRates.size());
 	//LOD関係のセットアップ
 	SetupLOD();
 	//LODモデルの生成
-	lodBuilder_->CreateLODModel(baseModel_, keepRates);
+	lodBuilder_->CreateLODModel(baseModel_.get(), keepRates);
 	//LODの制御の初期化
 	lodController_->Initialize(lodBuilder_.get());
 

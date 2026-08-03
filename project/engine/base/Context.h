@@ -9,7 +9,6 @@ class ModelManager;
 class Object2dCommon;
 class SpriteCommon;
 class ParticleCommon;
-class ModelCommon;
 class SceneManager;
 class CameraManager;
 class ParticleManager;
@@ -31,7 +30,6 @@ struct SceneContext {
 	Object2dCommon* object2dCommon;
 	SpriteCommon* spriteCommon;
 	ParticleCommon* particleCommon;
-	ModelCommon* modelCommon;
 	SceneManager* sceneManager;
 	CameraManager* cameraManager;
 	ParticleManager* particleManager;

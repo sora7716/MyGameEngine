@@ -20,7 +20,6 @@
     <ClCompile Include="engine\3d\LODController.cpp" />
     <ClCompile Include="engine\3d\Mesh.cpp" />
     <ClCompile Include="engine\3d\Model.cpp" />
-    <ClCompile Include="engine\3d\ModelCommon.cpp" />
     <ClCompile Include="engine\3d\ModelManager.cpp" />
     <ClCompile Include="engine\3d\Object3d.cpp" />
     <ClCompile Include="engine\3d\SkyBox.cpp" />
@@ -106,7 +105,6 @@
     <ClInclude Include="engine\3d\LODController.h" />
     <ClInclude Include="engine\3d\Mesh.h" />
     <ClInclude Include="engine\3d\Model.h" />
-    <ClInclude Include="engine\3d\ModelCommon.h" />
     <ClInclude Include="engine\3d\ModelManager.h" />
     <ClInclude Include="engine\3d\Object3d.h" />
     <ClInclude Include="engine\3d\SkyBox.h" />

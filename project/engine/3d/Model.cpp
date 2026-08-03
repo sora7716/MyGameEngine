@@ -1,39 +1,39 @@
 #define NOMINMAX
 #include "Model.h"
 #include "DirectXBase.h"
-#include "ModelCommon.h"
 #include "Mesh.h"
 #include "TextureManager.h"
 #include "PrimitiveMeshFactory.h"
 #include "ModelLoader.h"
+
 //モデルの生成(ファイルを読み込んでの)
-std::unique_ptr<Model>Model::CreateModel(ModelCommon* modelCommon, const std::string& modelFileName){
+std::unique_ptr<Model>Model::CreateModel(DirectXBase* directXBase, TextureManager* textureManager, const std::string& modelFileName){
 	//インスタンスの生成
 	std::unique_ptr<Model>instance = std::make_unique<Model>();
 	//初期化
-	instance->Initialize(modelCommon);
+	instance->Initialize(directXBase, textureManager);
 	//モデルの生成
 	instance->CreateModel(modelFileName);
 	return instance;
 }
 
 //モデルの生成(キューブ)
-std::unique_ptr<Model> Model::CreateModel(ModelCommon* modelCommon, const std::vector<MeshData>& meshDatas){
+std::unique_ptr<Model> Model::CreateModel(DirectXBase* directXBase, TextureManager* textureManager, const std::vector<MeshData>& meshDatas){
 	//インスタンスの生成
 	std::unique_ptr<Model>instance = std::make_unique<Model>();
 	//初期化
-	instance->Initialize(modelCommon);
+	instance->Initialize(directXBase, textureManager);
 	//モデルの生成
 	instance->CreateModel(meshDatas);
 	return instance;
 }
 
 //モデルの生成(モデルデータ)
-std::unique_ptr<Model> Model::CreateModel(ModelCommon* modelCommon, const ModelData& modelData){
+std::unique_ptr<Model> Model::CreateModel(DirectXBase* directXBase, TextureManager* textureManager, const ModelData& modelData){
 	//インスタンスの生成
 	std::unique_ptr<Model>instance = std::make_unique<Model>();
 	//初期化
-	instance->Initialize(modelCommon);
+	instance->Initialize(directXBase, textureManager);
 	//モデルの生成
 	instance->CreateModel(modelData);
 	return instance;
@@ -48,11 +48,13 @@ Model::~Model(){
 }
 
 //初期化
-void Model::Initialize(ModelCommon* modelCommon){
-	//ModelCommonのポインタを引数からメンバ変数を記録する
-	modelCommon_ = modelCommon;
-	//DirectXの基盤部分を受け取る
-	directXBase_ = modelCommon_->GetDirectXBase();
+void Model::Initialize(DirectXBase* directXBase, TextureManager* textureManager){
+	//DirectXの基盤部分を記録
+	assert(directXBase);
+	directXBase_ = directXBase;
+	//テクスチャの管理を記録
+	assert(textureManager);
+	textureManager_ = textureManager;
 }
 
 //メッシュの再構成
@@ -112,13 +114,13 @@ void Model::SetColor(uint32_t index, const Vector4& color){
 //テクスチャの設定
 void Model::SetTexture(uint32_t materialIndex, const std::string& imageFileName){
 	modelData_.materialTexturePaths[materialIndex].textureFilePath = "engine/resources/textures/" + imageFileName;
-	modelCommon_->GetTextureManager()->AddTexture(modelData_.materialTexturePaths[materialIndex].textureFilePath);
+	textureManager_->AddTexture(modelData_.materialTexturePaths[materialIndex].textureFilePath);
 }
 
 //環境マップの設定
 void Model::SetEnvironmentMap(uint32_t materialIndex, const std::string& environmentMapFileName){
 	modelData_.materialTexturePaths[materialIndex].environmentMap = "engine/resources/textures/" + environmentMapFileName;
-	modelCommon_->GetTextureManager()->AddTexture(modelData_.materialTexturePaths[materialIndex].environmentMap);
+	textureManager_->AddTexture(modelData_.materialTexturePaths[materialIndex].environmentMap);
 }
 
 //色を取得
@@ -166,11 +168,6 @@ const std::vector<std::unique_ptr<Mesh>>& Model::GetMeshes() const{
 const ModelRenderData& Model::GetModelRenderData(){
 	// TODO: return ステートメントをここに挿入します
 	return modelRenderData_;
-}
-
-//モデルの共通部分の取得
-ModelCommon* Model::GetModelCommon(){
-	return modelCommon_;
 }
 
 //マテリアルリソースの生成
@@ -262,6 +259,6 @@ void Model::CreateResources(){
 	CreateRimLightResource();
 	//テクスチャの読み込み
 	for (MaterialTexturePaths& materialData : modelData_.materialTexturePaths){
-		modelCommon_->GetTextureManager()->AddTexture(materialData.textureFilePath);
+		textureManager_->AddTexture(materialData.textureFilePath);
 	}
 }

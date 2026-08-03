@@ -5,18 +5,23 @@
 #include <cassert>
 
 //デストラクタ
-ModelManager::~ModelManager() {}
+ModelManager::~ModelManager(){}
 
 //初期化
-void ModelManager::Initialize(ModelCommon* modelCommon) {
-	assert(modelCommon);
-	modelCommon_ = modelCommon;
+void ModelManager::Initialize(DirectXBase* directXBase, TextureManager* textureManager){
+	//DirectXの基盤部分の記録
+	assert(directXBase);
+	directXBase_ = directXBase;
+	//テクスチャの管理の記録
+	assert(textureManager);
+	textureManager_ = textureManager;
+
 }
 
 //プリミティブなモデルの生成
-void ModelManager::CreatePrimitiveModel() {
+void ModelManager::CreatePrimitiveModel(){
 	//モデルの生成とファイル読み込み、初期化
-	std::unique_ptr<Model>model = Model::CreateModel(modelCommon_, { primitiveMeshFactory::CreateSphere() });
+	std::unique_ptr<Model>model = Model::CreateModel(directXBase_, textureManager_, { primitiveMeshFactory::CreateSphere() });
 
 	//モデルデータを取得
 	ModelData modelData = model->GetModelData();
@@ -26,14 +31,14 @@ void ModelManager::CreatePrimitiveModel() {
 }
 
 // objモデルの読み込み
-void ModelManager::LoadModel(const std::string& name, const std::string& modelFileName) {
+void ModelManager::LoadModel(const std::string& name, const std::string& modelFileName){
 	//読み込み済みならモデルを検索
-	if (modelDatas_.contains(name)) {
+	if (modelDatas_.contains(name)){
 		//読み込み済みなら早期return
 		return;
 	}
 	//モデルの生成とファイル読み込み、初期化
-	std::unique_ptr<Model>model = Model::CreateModel(modelCommon_, modelFileName);
+	std::unique_ptr<Model>model = Model::CreateModel(directXBase_, textureManager_, modelFileName);
 
 	//モデルデータを取得
 	ModelData modelData = model->GetModelData();
@@ -43,20 +48,15 @@ void ModelManager::LoadModel(const std::string& name, const std::string& modelFi
 }
 
 //モデルの検索
-std::unique_ptr<Model> ModelManager::FindModel(const std::string& name) {
+std::unique_ptr<Model> ModelManager::FindModel(const std::string& name){
 	//読み込み済みモデルを検索
-	if (modelDatas_.contains(name)) {
+	if (modelDatas_.contains(name)){
 		//読み込み済みモデルを戻り値としてreturn
-		return std::move(Model::CreateModel(modelCommon_, modelDatas_.at(name)));
+		return std::move(Model::CreateModel(directXBase_, textureManager_, modelDatas_.at(name)));
 	}
 	//ファイル名一致なし
 	return nullptr;
 }
 
-//モデルの共通部分のゲッター
-ModelCommon* ModelManager::GetModelCommon() {
-	return modelCommon_;
-}
-
 //コンストラクタ
-ModelManager::ModelManager(ConstructorKey) {}
+ModelManager::ModelManager(ConstructorKey){}

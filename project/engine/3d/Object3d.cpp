@@ -162,7 +162,7 @@ void Object3d::Update(){
 }
 
 //モデルの設定
-void Object3d::SetModel(std::unique_ptr<Model> model, const std::vector<float>& keepRates){
+void Object3d::SetModel(std::unique_ptr<Model> model, TextureManager* textureManager, const std::vector<float>& keepRates){
 	//元になるモデルを取得
 	baseModel_ = std::move(model);
 
@@ -171,7 +171,7 @@ void Object3d::SetModel(std::unique_ptr<Model> model, const std::vector<float>& 
 	//LOD関係のセットアップ
 	SetupLOD();
 	//LODモデルの生成
-	lodBuilder_->CreateLODModel(baseModel_.get(), keepRates);
+	lodBuilder_->CreateLODModel(directXBase_, textureManager, baseModel_.get(), keepRates);
 	//LODの制御の初期化
 	lodController_->Initialize(lodBuilder_.get());
 

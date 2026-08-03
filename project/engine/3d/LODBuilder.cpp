@@ -9,39 +9,39 @@
 #include <algorithm>
 
 //uint32_tの変数を二つ切り詰めてuint64_tの検索キーを作成
-static uint64_t MakeEdgeKey(uint32_t a, uint32_t b) {
+static uint64_t MakeEdgeKey(uint32_t a, uint32_t b){
 	std::array<uint32_t, 2>edge = {};
 	edge = { std::min(a,b),std::max(a,b) };
 	return static_cast<uint64_t>(edge[0]) << 32 | static_cast<uint64_t>(edge[1]);
 }
 
 //コンストラクタ
-LODBuilder::LODBuilder() {
+LODBuilder::LODBuilder(){
 }
 
 //デストラクタ
-LODBuilder::~LODBuilder() {
+LODBuilder::~LODBuilder(){
 }
 
 //LODモデルの生成
-void LODBuilder::CreateLODModel(Model* model, const std::vector<float>& keepRates) {
+void LODBuilder::CreateLODModel(DirectXBase* directXBase, TextureManager* textureManager, Model* model, const std::vector<float>& keepRates){
 	//頂点合成する割合が存在しなかったら
-	if (keepRates.empty()) {
+	if (keepRates.empty()){
 		return;
 	}
 
 	//サイズを決定
 	lodModels_.resize(keepRates.size());
 	//モデルの作成
-	for (uint32_t i = 0; i < keepRates.size(); i++) {
-		lodModels_[i] = Model::CreateModel(model->GetModelCommon(), model->GetModelData());
+	for (uint32_t i = 0; i < keepRates.size(); i++){
+		lodModels_[i] = Model::CreateModel(directXBase, textureManager, model->GetModelData());
 		//lodModels_[i]->RebuildMeshes(VertexClustering(lodModels_[i]->GetModelData().meshDatas, keepRates[i]));
 		lodModels_[i]->RebuildMeshes(EdgeCollapse(lodModels_[i]->GetModelData().meshDatas, keepRates[i]));
 	}
 }
 
 //LODモデルの取得
-Model* LODBuilder::GetLODModel(uint32_t lodIndex) {
+Model* LODBuilder::GetLODModel(uint32_t lodIndex){
 	return lodModels_[lodIndex].get();
 }
 
@@ -52,84 +52,84 @@ const std::vector<std::unique_ptr<Model>>& LODBuilder::GetLODModels() const{
 }
 
 //カラーの設定
-void LODBuilder::SetColor(uint32_t materialIndex, const Vector4& color) {
-	for (std::unique_ptr<Model>& lodModel : lodModels_) {
-		if (lodModel) {
+void LODBuilder::SetColor(uint32_t materialIndex, const Vector4& color){
+	for (std::unique_ptr<Model>& lodModel : lodModels_){
+		if (lodModel){
 			lodModel->SetColor(materialIndex, color);
 		}
 	}
 }
 
 //テクスチャの設定
-void LODBuilder::SetTexture(uint32_t materialIndex, const std::string& imageFileName) {
-	for (std::unique_ptr<Model>& lodModel : lodModels_) {
-		if (lodModel) {
+void LODBuilder::SetTexture(uint32_t materialIndex, const std::string& imageFileName){
+	for (std::unique_ptr<Model>& lodModel : lodModels_){
+		if (lodModel){
 			lodModel->SetTexture(materialIndex, imageFileName);
 		}
 	}
 }
 
 //環境マップの映り込み度を調整
-void LODBuilder::SetEnvironmentCoefficient(uint32_t materialIndex, float environmentCoefficient) {
-	for (std::unique_ptr<Model>& lodModel : lodModels_) {
-		if (lodModel) {
+void LODBuilder::SetEnvironmentCoefficient(uint32_t materialIndex, float environmentCoefficient){
+	for (std::unique_ptr<Model>& lodModel : lodModels_){
+		if (lodModel){
 			lodModel->SetEnvironmentCoefficient(materialIndex, environmentCoefficient);
 		}
 	}
 }
 
 //環境マップの設定
-void LODBuilder::SetEnvironmentMap(uint32_t materialIndex, const std::string& environmentMapFileName) {
-	for (std::unique_ptr<Model>& lodModel : lodModels_) {
-		if (lodModel) {
+void LODBuilder::SetEnvironmentMap(uint32_t materialIndex, const std::string& environmentMapFileName){
+	for (std::unique_ptr<Model>& lodModel : lodModels_){
+		if (lodModel){
 			lodModel->SetEnvironmentMap(materialIndex, environmentMapFileName);
 		}
 	}
 }
 
 //ライティングフラグの設定
-void LODBuilder::SetIsLighting(uint32_t materialIndex, bool isLighting) {
-	for (std::unique_ptr<Model>& lodModel : lodModels_) {
-		if (lodModel) {
+void LODBuilder::SetIsLighting(uint32_t materialIndex, bool isLighting){
+	for (std::unique_ptr<Model>& lodModel : lodModels_){
+		if (lodModel){
 			lodModel->SetIsLighting(materialIndex, isLighting);
 		}
 	}
 }
 
 //輝度の設定
-void LODBuilder::SetShininess(uint32_t materialIndex, float shininess) {
-	for (std::unique_ptr<Model>& lodModel : lodModels_) {
-		if (lodModel) {
+void LODBuilder::SetShininess(uint32_t materialIndex, float shininess){
+	for (std::unique_ptr<Model>& lodModel : lodModels_){
+		if (lodModel){
 			lodModel->SetShininess(materialIndex, shininess);
 		}
 	}
 }
 
 //モデルのサイズを取得
-uint32_t LODBuilder::LODModelSize()const {
+uint32_t LODBuilder::LODModelSize()const{
 	return static_cast<uint32_t>(lodModels_.size());
 }
 
 //グリッドサイズの最小値の設定
-void LODBuilder::SetMinGridSize(float minGridSize) {
+void LODBuilder::SetMinGridSize(float minGridSize){
 	minGridSize_ = minGridSize;
 }
 
 //グリッドサイズの最大値の設定
-void LODBuilder::SetMaxGridSize(float maxGridSize) {
+void LODBuilder::SetMaxGridSize(float maxGridSize){
 	maxGridSize_ = maxGridSize;
 }
 
 //辺縮約
-std::vector<MeshData> LODBuilder::EdgeCollapse(const std::vector<MeshData>& meshData, float rate) {
+std::vector<MeshData> LODBuilder::EdgeCollapse(const std::vector<MeshData>& meshData, float rate){
 	//メッシュデータを記録
 	std::vector<MeshData> baseMeshDatas = meshData;
 	//割合が1より大きかったら辺縮約しない
-	if (rate >= 1.0f) {
+	if (rate >= 1.0f){
 		return baseMeshDatas;
 	}
 	//辺の消しやすさのスコアを作成
-	struct EdgeCandidate {
+	struct EdgeCandidate{
 		std::array<uint32_t, 2>edgeIndices;
 		float score;
 		uint32_t useCount;
@@ -137,16 +137,16 @@ std::vector<MeshData> LODBuilder::EdgeCollapse(const std::vector<MeshData>& mesh
 	};
 
 	//スコアが小さいものから出す
-	struct EdgeScoreCompare {
-		bool operator()(const EdgeCandidate& a, const EdgeCandidate& b)const {
+	struct EdgeScoreCompare{
+		bool operator()(const EdgeCandidate& a, const EdgeCandidate& b)const{
 			return a.score > b.score;
 		}
 	};
 
 	//各メッシュごとに処理をする
-	for (MeshData& baseMeshData : baseMeshDatas) {
+	for (MeshData& baseMeshData : baseMeshDatas){
 		//インデックスのサイズが3の倍数じゃなかった場合
-		if (baseMeshData.indices.size() % 3 != 0) {
+		if (baseMeshData.indices.size() % 3 != 0){
 			continue;
 		}
 		//現在の頂点数
@@ -160,17 +160,17 @@ std::vector<MeshData> LODBuilder::EdgeCollapse(const std::vector<MeshData>& mesh
 		//頂点のバージョン
 		std::vector<uint32_t>vertexVersion(baseMeshData.vertices.size(), 0);
 
-		while (currentVertexCount > goalVertexCount) {
+		while (currentVertexCount > goalVertexCount){
 			//Collapse開始する前の頂点数を記録
 			uint32_t startVertexCount = static_cast<uint32_t>(baseMeshData.vertices.size());
 			//辺の一覧表のリセット
 			edgeList.clear();
 			//辺のキューをリセット
-			while (!edgeQueue.empty()) {
+			while (!edgeQueue.empty()){
 				edgeQueue.pop();
 			}
 
-			for (uint32_t i = 0; i < baseMeshData.indices.size(); i += 3) {
+			for (uint32_t i = 0; i < baseMeshData.indices.size(); i += 3){
 				//三角形を作る
 				uint32_t a = baseMeshData.indices[i];
 				uint32_t b = baseMeshData.indices[i + 1];
@@ -189,7 +189,7 @@ std::vector<MeshData> LODBuilder::EdgeCollapse(const std::vector<MeshData>& mesh
 			std::vector<std::vector<uint32_t>>neighbors;
 			neighbors.resize(baseMeshData.vertices.size());
 			//三角形を追加
-			for (uint32_t i = 0; i < baseMeshData.indices.size(); i += 3) {
+			for (uint32_t i = 0; i < baseMeshData.indices.size(); i += 3){
 				uint32_t a = baseMeshData.indices[i];
 				uint32_t b = baseMeshData.indices[i + 1];
 				uint32_t c = baseMeshData.indices[i + 2];
@@ -204,7 +204,7 @@ std::vector<MeshData> LODBuilder::EdgeCollapse(const std::vector<MeshData>& mesh
 			}
 
 			//重複を削除
-			for (std::vector<uint32_t>& neighbor : neighbors) {
+			for (std::vector<uint32_t>& neighbor : neighbors){
 				//ソート
 				std::sort(neighbor.begin(), neighbor.end());
 
@@ -213,47 +213,47 @@ std::vector<MeshData> LODBuilder::EdgeCollapse(const std::vector<MeshData>& mesh
 			}
 
 			//境界頂点をtrueにする
-			for (const auto& edge : edgeList) {
+			for (const auto& edge : edgeList){
 				//辺の検索キーを取得
 				uint64_t edgeKey = edge.first;
 				uint32_t v0 = static_cast<uint32_t>(edgeKey >> 32);
 				uint32_t v1 = static_cast<uint32_t>(edgeKey & UINT32_MAX);
 
 				//普通の内部辺以外の場合
-				if (edge.second != 2) {
+				if (edge.second != 2){
 					isBoundaryVertices[v0] = true;
 					isBoundaryVertices[v1] = true;
 				}
 			}
 
 			//スコア付けをしていく
-			for (const auto& edge : edgeList) {
+			for (const auto& edge : edgeList){
 				//辺の検索キーを取得
 				uint64_t edgeKey = edge.first;
 				uint32_t v0 = static_cast<uint32_t>(edgeKey >> 32);
 				uint32_t v1 = static_cast<uint32_t>(edgeKey & UINT32_MAX);
 
 				//普通の内部辺以外の場合
-				if (edge.second != 2) {
+				if (edge.second != 2){
 					continue;
 				}
 
 				//境界頂点がtrueだったらスキップする
-				if (isBoundaryVertices[v0] || isBoundaryVertices[v1]) {
+				if (isBoundaryVertices[v0] || isBoundaryVertices[v1]){
 					continue;
 				}
 
 				//共通近傍チェック
 				//v0-v1で共有している頂点数のカウント
 				uint32_t sharedNeighborCount = 0;
-				for (uint32_t i = 0; i < neighbors[v0].size(); i++) {
+				for (uint32_t i = 0; i < neighbors[v0].size(); i++){
 					//共有している点が2より大きくなったら
-					if (sharedNeighborCount > 2) {
+					if (sharedNeighborCount > 2){
 						break;
 					}
-					for (uint32_t j = 0; j < neighbors[v1].size(); j++) {
+					for (uint32_t j = 0; j < neighbors[v1].size(); j++){
 						//共有している頂点があったら
-						if (neighbors[v0][i] == neighbors[v1][j]) {
+						if (neighbors[v0][i] == neighbors[v1][j]){
 							sharedNeighborCount++;
 							break;
 						}
@@ -261,7 +261,7 @@ std::vector<MeshData> LODBuilder::EdgeCollapse(const std::vector<MeshData>& mesh
 				}
 
 				//共有している頂点が2つでなければスキップ
-				if (sharedNeighborCount != 2) {
+				if (sharedNeighborCount != 2){
 					continue;
 				}
 
@@ -301,7 +301,7 @@ std::vector<MeshData> LODBuilder::EdgeCollapse(const std::vector<MeshData>& mesh
 			}
 
 			//辺のスコア表が空だったら
-			if (edgeQueue.empty()) {
+			if (edgeQueue.empty()){
 				break;
 			}
 
@@ -309,13 +309,13 @@ std::vector<MeshData> LODBuilder::EdgeCollapse(const std::vector<MeshData>& mesh
 			uint32_t batchCount = 50000;
 			float batchRate = 50.0f;
 			//割合ごとにCollapseしたい数と割合も変更
-			if (rate <= 0.25f) {
+			if (rate <= 0.25f){
 				batchCount = 700000;
 				batchRate = 200.0f;
-			} else if (rate <= 0.5f) {
+			} else if (rate <= 0.5f){
 				batchCount = 500000;
 				batchRate = 100.f;
-			} else if (rate <= 0.8f) {
+			} else if (rate <= 0.8f){
 				batchCount = 300000;
 				batchRate = 80.0f;
 			}
@@ -324,7 +324,7 @@ std::vector<MeshData> LODBuilder::EdgeCollapse(const std::vector<MeshData>& mesh
 			//現在の頂点数の何割かを取得
 			uint32_t rateBasedBatchCount = static_cast<uint32_t>(static_cast<float>(currentVertexCount) * batchRate);
 			//もし0以下になっていたら
-			if (rateBasedBatchCount == 0) {
+			if (rateBasedBatchCount == 0){
 				rateBasedBatchCount = 1;
 			}
 			//Collapseできる数
@@ -336,9 +336,9 @@ std::vector<MeshData> LODBuilder::EdgeCollapse(const std::vector<MeshData>& mesh
 			std::vector<uint8_t>isUseThisPass(currentVertexCount, false);
 			//法線を考慮する
 			float normalDotThreshold = 0.7f;
-			while (minCandidates.size() < candidateCount) {
+			while (minCandidates.size() < candidateCount){
 				//キューが空になったら
-				if (edgeQueue.empty()) {
+				if (edgeQueue.empty()){
 					break;
 				}
 
@@ -351,13 +351,13 @@ std::vector<MeshData> LODBuilder::EdgeCollapse(const std::vector<MeshData>& mesh
 				Vector3 normal1 = baseMeshData.vertices[minCandidate.edgeIndices[1]].normal;
 				float normalDot = normal0.Dot(normal1);
 				//法線の内積がnormalDotThresholdより小さければ飛ばす(同じ方向を見ていないってことなので)
-				if (normalDot < normalDotThreshold) {
+				if (normalDot < normalDotThreshold){
 					continue;
 				}
 
 				//辺の点が候補に選ばれたか
 				//edgeIndices[0]またはedgeIndices[1]どちらか候補に挙がってたか
-				if (isUseThisPass[minCandidate.edgeIndices[0]] || isUseThisPass[minCandidate.edgeIndices[1]]) {
+				if (isUseThisPass[minCandidate.edgeIndices[0]] || isUseThisPass[minCandidate.edgeIndices[1]]){
 					continue;
 				}
 				//edgeIndices[0]またはedgeIndices[1]が候補に挙がってなかった場合
@@ -369,13 +369,13 @@ std::vector<MeshData> LODBuilder::EdgeCollapse(const std::vector<MeshData>& mesh
 			}
 
 			//Collapseする候補が空だったら
-			if (minCandidates.empty()) {
+			if (minCandidates.empty()){
 				break;
 			}
 
 			//CollapseしたIndexを保存する対応表
 			std::vector<uint32_t>collapseTo(currentVertexCount, UINT32_MAX);
-			for (const EdgeCandidate& minCandidate : minCandidates) {
+			for (const EdgeCandidate& minCandidate : minCandidates){
 				//Collapseする
 				uint32_t v0 = minCandidate.edgeIndices[0];
 				uint32_t v1 = minCandidate.edgeIndices[1];
@@ -393,9 +393,9 @@ std::vector<MeshData> LODBuilder::EdgeCollapse(const std::vector<MeshData>& mesh
 			}
 
 			//対応表からインデックスを適応
-			for (uint32_t& index : baseMeshData.indices) {
+			for (uint32_t& index : baseMeshData.indices){
 				//UINT_MAXじゃなければindexに追加
-				if (collapseTo[index] != UINT32_MAX) {
+				if (collapseTo[index] != UINT32_MAX){
 					index = collapseTo[index];
 				}
 			}
@@ -403,17 +403,17 @@ std::vector<MeshData> LODBuilder::EdgeCollapse(const std::vector<MeshData>& mesh
 			//インデックスの張替え
 			std::vector<uint32_t>collapseToNewIndices;
 			collapseToNewIndices.reserve(baseMeshData.indices.size());
-			for (uint32_t i = 0; i < baseMeshData.indices.size(); i += 3) {
+			for (uint32_t i = 0; i < baseMeshData.indices.size(); i += 3){
 				uint32_t a = baseMeshData.indices[i];
 				uint32_t b = baseMeshData.indices[i + 1];
 				uint32_t c = baseMeshData.indices[i + 2];
 
 				//三角形が作れない場合は省く
-				if (a == b) {
+				if (a == b){
 					continue;
-				} else if (a == c) {
+				} else if (a == c){
 					continue;
-				} else if (b == c) {
+				} else if (b == c){
 					continue;
 				}
 
@@ -424,7 +424,7 @@ std::vector<MeshData> LODBuilder::EdgeCollapse(const std::vector<MeshData>& mesh
 			}
 
 			//Collapseした後のインデックスが空だった場合
-			if (collapseToNewIndices.empty()) {
+			if (collapseToNewIndices.empty()){
 				break;
 			}
 
@@ -442,15 +442,15 @@ std::vector<MeshData> LODBuilder::EdgeCollapse(const std::vector<MeshData>& mesh
 			std::vector<uint32_t>newVerticesVersion;
 			newVerticesVersion.reserve(isUseVertices.size());
 			//頂点の配列を使用されている奴だけにする
-			for (uint32_t index : baseMeshData.indices) {
+			for (uint32_t index : baseMeshData.indices){
 				//使用されている頂点をtrueに
 				isUseVertices[index] = true;
 			}
 
 			//新しい頂点を生成
 			uint32_t newIndex = 0;
-			for (uint32_t oldIndex = 0; oldIndex < isUseVertices.size(); oldIndex++) {
-				if (!isUseVertices[oldIndex]) {
+			for (uint32_t oldIndex = 0; oldIndex < isUseVertices.size(); oldIndex++){
+				if (!isUseVertices[oldIndex]){
 					continue;
 				}
 				//新しい頂点を挿入
@@ -464,21 +464,21 @@ std::vector<MeshData> LODBuilder::EdgeCollapse(const std::vector<MeshData>& mesh
 			//インデックスの張替え
 			std::vector<uint32_t>newIndices;
 			newIndices.reserve(baseMeshData.indices.size());
-			for (uint32_t i = 0; i < baseMeshData.indices.size(); i += 3) {
+			for (uint32_t i = 0; i < baseMeshData.indices.size(); i += 3){
 				uint32_t a = oldToNewIndices[baseMeshData.indices[i]];
 				uint32_t b = oldToNewIndices[baseMeshData.indices[i + 1]];
 				uint32_t c = oldToNewIndices[baseMeshData.indices[i + 2]];
 				//a,b,cのどれかがUINT32_MAXになっていたらスキップ
-				if (a == UINT32_MAX || b == UINT32_MAX || c == UINT32_MAX) {
+				if (a == UINT32_MAX || b == UINT32_MAX || c == UINT32_MAX){
 					continue;
 				}
 
 				//三角形が作れない場合は省く
-				if (a == b) {
+				if (a == b){
 					continue;
-				} else if (a == c) {
+				} else if (a == c){
 					continue;
-				} else if (b == c) {
+				} else if (b == c){
 					continue;
 				}
 
@@ -489,7 +489,7 @@ std::vector<MeshData> LODBuilder::EdgeCollapse(const std::vector<MeshData>& mesh
 			}
 
 			//新しく作ったインデックスが空だったら
-			if (newIndices.empty()) {
+			if (newIndices.empty()){
 				break;
 			}
 
@@ -504,7 +504,7 @@ std::vector<MeshData> LODBuilder::EdgeCollapse(const std::vector<MeshData>& mesh
 			currentVertexCount = static_cast<uint32_t>(baseMeshData.vertices.size());
 
 			//Collapseした後の頂点とする前の頂点を以上になっていたら
-			if (currentVertexCount >= startVertexCount) {
+			if (currentVertexCount >= startVertexCount){
 				break;
 			}
 		}
@@ -513,25 +513,25 @@ std::vector<MeshData> LODBuilder::EdgeCollapse(const std::vector<MeshData>& mesh
 }
 
 //近くの頂点をまとめる
-MeshData LODBuilder::VertexClusteringByGridSize(const MeshData& meshData, float size) {
+MeshData LODBuilder::VertexClusteringByGridSize(const MeshData& meshData, float size){
 	//GridKeyの構造体
-	struct GridKey {
+	struct GridKey{
 		Vector3Int vertexKey;
 		Vector2Int texcoordKey;
 		Vector3Int normalKey;
 
 		//GridKeyの比較
-		bool operator<(const GridKey& g) const {
-			if (vertexKey != g.vertexKey) {
+		bool operator<(const GridKey& g) const{
+			if (vertexKey != g.vertexKey){
 				return vertexKey < g.vertexKey;
-			} else if (texcoordKey != g.texcoordKey) {
+			} else if (texcoordKey != g.texcoordKey){
 				return texcoordKey < g.texcoordKey;
 			}
 			return normalKey < g.normalKey;
 		}
 
 		//キーがすべて同じかを判定
-		bool operator==(const GridKey& other)const {
+		bool operator==(const GridKey& other)const{
 			//頂点のキーが一致してるか
 			bool isMatchVertexKey =
 				vertexKey.x == other.vertexKey.x &&
@@ -554,15 +554,15 @@ MeshData LODBuilder::VertexClusteringByGridSize(const MeshData& meshData, float 
 	};
 
 	//グリッドキーごとの情報をまとめた
-	struct GridCluster {
+	struct GridCluster{
 		Vector4 vertexPosSum = {};//GridKeyに入った頂点の位置の合計
 		uint32_t vertexCount = 0;//GridKeyに入った頂点数
 		uint32_t newIndex = 0;//代表頂点のインデックス
 	};
 
 	//グリッドキーのハッシュ
-	struct GridKeyHash {
-		size_t operator()(const GridKey& key)const {
+	struct GridKeyHash{
+		size_t operator()(const GridKey& key)const{
 			size_t seed = 0;
 
 			hashUtility::CreateHash(seed, key.vertexKey.x);
@@ -596,7 +596,7 @@ MeshData LODBuilder::VertexClusteringByGridSize(const MeshData& meshData, float 
 	//新しインデックス
 	uint32_t newIndex = 0;
 	//GridKeyの作成
-	for (uint32_t oldIndex = 0; oldIndex < baseMeshData.vertices.size(); oldIndex++) {
+	for (uint32_t oldIndex = 0; oldIndex < baseMeshData.vertices.size(); oldIndex++){
 		//一つの頂点
 		VertexData vertex = baseMeshData.vertices[oldIndex];
 
@@ -623,7 +623,7 @@ MeshData LODBuilder::VertexClusteringByGridSize(const MeshData& meshData, float 
 		//gridKeyがgridClustersに登録されてるか
 		auto [it, inserted] = gridClusters.try_emplace(gridKey);
 		GridCluster& gridCluster = it->second;
-		if (inserted) {
+		if (inserted){
 			//未登録
 			gridCluster.vertexPosSum = vertex.position;
 			gridCluster.vertexCount = 1;
@@ -643,7 +643,7 @@ MeshData LODBuilder::VertexClusteringByGridSize(const MeshData& meshData, float 
 			//新しいインデックスの加算
 			newIndex++;
 
-		} else {
+		} else{
 			//登録済み
 
 			//頂点を加算
@@ -668,17 +668,17 @@ MeshData LODBuilder::VertexClusteringByGridSize(const MeshData& meshData, float 
 
 	//インデックスの張替え
 	std::vector<uint32_t>newIndices;
-	for (uint32_t i = 0; i < baseMeshData.indices.size(); i += 3) {
+	for (uint32_t i = 0; i < baseMeshData.indices.size(); i += 3){
 		uint32_t a = oldToNewIndices[baseMeshData.indices[i]];
 		uint32_t b = oldToNewIndices[baseMeshData.indices[i + 1]];
 		uint32_t c = oldToNewIndices[baseMeshData.indices[i + 2]];
 
 		//三角形が作れない場合は省く
-		if (a == b) {
+		if (a == b){
 			continue;
-		} else if (a == c) {
+		} else if (a == c){
 			continue;
-		} else if (b == c) {
+		} else if (b == c){
 			continue;
 		}
 
@@ -697,7 +697,7 @@ MeshData LODBuilder::VertexClusteringByGridSize(const MeshData& meshData, float 
 }
 
 //頂点を合成する
-std::vector<MeshData> LODBuilder::VertexClustering(const std::vector<MeshData>& meshData, float rate) {
+std::vector<MeshData> LODBuilder::VertexClustering(const std::vector<MeshData>& meshData, float rate){
 	//メッシュ
 	std::vector<MeshData>baseMeshes = meshData;
 
@@ -705,18 +705,18 @@ std::vector<MeshData> LODBuilder::VertexClustering(const std::vector<MeshData>& 
 	std::vector<MeshData>newMeshes;
 
 	//割合が1.0fより大きかったら
-	if (rate >= 1.0f) {
+	if (rate >= 1.0f){
 		return baseMeshes;
 	}
 
 	//割合が0.0fより小さかった場合
-	if (rate < 0.0f) {
+	if (rate < 0.0f){
 		Logger::OutputLog("[Model::VertexClustering] rate is 0.0f or less. Invalid rate. Return original meshes.\n");
 		return baseMeshes;
 	}
 
 	//割合をもとに取得したい頂点数を出す
-	for (const MeshData& mesh : baseMeshes) {
+	for (const MeshData& mesh : baseMeshes){
 		uint32_t goalVertexCount = static_cast<uint32_t>(static_cast<float>(mesh.vertices.size()) * rate);
 		//グリッドサイズ
 		float minGridSize = minGridSize_;//最小値
@@ -729,7 +729,7 @@ std::vector<MeshData> LODBuilder::VertexClustering(const std::vector<MeshData>& 
 		//試行回数
 		const uint32_t kTrialCount = 20;
 		//二分探索
-		for (uint32_t i = 0; i < kTrialCount; i++) {
+		for (uint32_t i = 0; i < kTrialCount; i++){
 			//gridSizeはminとmaxの中間
 			gridSize = (minGridSize + maxGridSize) / 2.0f;
 
@@ -739,7 +739,7 @@ std::vector<MeshData> LODBuilder::VertexClustering(const std::vector<MeshData>& 
 			uint32_t trialMeshVertexCount = static_cast<uint32_t>(trialMesh.vertices.size());
 
 			//目標の頂点数より差分が小さいほうのメッシュを入れる
-			if (std::fabs(static_cast<float>(goalVertexCount) - static_cast<float>(bestMeshVertexCount)) > std::fabs(static_cast<float>(goalVertexCount) - static_cast<float>(trialMeshVertexCount))) {
+			if (std::fabs(static_cast<float>(goalVertexCount) - static_cast<float>(bestMeshVertexCount)) > std::fabs(static_cast<float>(goalVertexCount) - static_cast<float>(trialMeshVertexCount))){
 				//ベストメッシュの置き換え
 				bestMesh = trialMesh;
 				//頂点の数の記録
@@ -747,9 +747,9 @@ std::vector<MeshData> LODBuilder::VertexClustering(const std::vector<MeshData>& 
 			}
 
 			//範囲を狭めていく
-			if (trialMeshVertexCount > goalVertexCount) {
+			if (trialMeshVertexCount > goalVertexCount){
 				minGridSize = gridSize;
-			} else if (trialMeshVertexCount < goalVertexCount) {
+			} else if (trialMeshVertexCount < goalVertexCount){
 				maxGridSize = gridSize;
 			}
 		}

@@ -26,12 +26,9 @@ void Core::Initialize(){
 	//テクスチャマネージャー
 	textureManager_ = std::make_unique<TextureManager>(TextureManager::ConstructorKey{});
 	textureManager_->Initialize(directXBase_.get(), srvManager_.get());
-	//モデルの共通部分
-	modelCommon_ = std::make_unique<ModelCommon>(ModelCommon::ConstructorKey{});
-	modelCommon_->Initialize(directXBase_.get(), textureManager_.get());
 	//モデルマネージャー
 	modelManager_ = std::make_unique<ModelManager>(ModelManager::ConstructorKey{});
-	modelManager_->Initialize(modelCommon_.get());
+	modelManager_->Initialize(directXBase_.get(), textureManager_.get());
 	//ImGuiマネージャー
 	imGuiManager_ = std::make_unique<ImGuiManager>(ImGuiManager::ConstructorKey{});
 	imGuiManager_->Initialize(winApi_.get(), directXBase_.get(), srvManager_.get());
@@ -122,11 +119,6 @@ SpriteCommon* Core::GetSpriteCommon() const{
 //パーティクルの共通部分の取得
 ParticleCommon* Core::GetParticleCommon() const{
 	return particleCommon_.get();
-}
-
-//モデルの共通部分
-ModelCommon* Core::GetModelCommon() const{
-	return modelCommon_.get();
 }
 
 //シーンマネージャーの取得

@@ -7,13 +7,13 @@
 
 //前方宣言
 class DirectXBase;
-class ModelCommon;
+class TextureManager;
 class Model;
 
 /// <summary>
 /// モデルの管理
 /// </summary>
-class ModelManager {
+class ModelManager{
 public://メンバ関数
 	/// <summary>
 	/// デストラクタ
@@ -23,8 +23,9 @@ public://メンバ関数
 	/// <summary>
 	/// 初期化
 	/// </summary>
-	/// <param name="modelCommon">モデルの共通部分</param>
-	void Initialize(ModelCommon* modelCommon);
+	/// <param name="directXBase">DirectXの基盤部分</param>
+	/// <param name="textureManager">テクスチャの管理</param>
+	void Initialize(DirectXBase* directXBase, TextureManager* textureManager);
 
 	/// <summary>
 	/// プリミティブなモデルの生成
@@ -44,14 +45,8 @@ public://メンバ関数
 	/// <param name="name">名前</param>
 	/// <returns>モデル</returns>
 	std::unique_ptr<Model> FindModel(const std::string& name);
-
-	/// <summary>
-	/// モデルの共通部分のゲッター
-	/// </summary>
-	/// <returns>モデルの共通部分</returns>
-	ModelCommon* GetModelCommon();
 public://PassKey
-	class ConstructorKey {
+	class ConstructorKey{
 		ConstructorKey() = default;
 		friend class Core;
 	};
@@ -68,7 +63,9 @@ private://メンバ関数
 private://メンバ変数
 	//モデルデータのコンテナ
 	std::map<std::string, ModelData>modelDatas_;
-	//モデルの共通部分
-	ModelCommon* modelCommon_ = nullptr;
+	//DirectXの基盤部分
+	DirectXBase* directXBase_ = nullptr;
+	//Textureの管理
+	TextureManager* textureManager_ = nullptr;
 };
 

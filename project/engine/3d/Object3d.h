@@ -13,6 +13,7 @@
 #include <memory>
 //前方宣言
 class DirectXBase;
+class TextureManager;
 class SRVManager;
 class Camera;
 class Model;
@@ -75,8 +76,9 @@ public://メンバ関数
 	/// モデルの設定
 	/// </summary>
 	/// <param name="model">モデル</param>
+	/// <param name="textureManager">テクスチャの管理</param>
 	/// <param name="keepRates">モデルの保持する倍率</param>
-	void SetModel(std::unique_ptr<Model> model, const std::vector<float>& keepRates = { 1.0f,0.75f,0.5f,0.25f });
+	void SetModel(std::unique_ptr<Model> model, TextureManager* textureManager, const std::vector<float>& keepRates = { 1.0f,0.75f,0.5f,0.25f });
 
 	/// <summary>
 	/// インスタンスの追加

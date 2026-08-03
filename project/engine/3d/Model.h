@@ -9,8 +9,8 @@
 #include <memory>
 
 //前方宣言
-class ModelCommon;
 class DirectXBase;
+class TextureManager;
 class Mesh;
 
 /// <summary>
@@ -23,26 +23,29 @@ public://静的メンバ関数
 	/// <summary>
 	/// モデルの生成(ファイルを読み込み)
 	/// </summary>
-	/// <param name="modelCommon">モデルの共通部分</param>
+	/// <param name="directXBase">DirectXの基盤部分</param>
+	/// <param name="textureManager">テクスチャの管理</param>
 	/// <param name="modelFileName">モデルのファイル名</param>
 	/// <returns>モデル</returns>
-	static std::unique_ptr<Model> CreateModel(ModelCommon* modelCommon, const std::string& modelFileName);
+	static std::unique_ptr<Model> CreateModel(DirectXBase* directXBase, TextureManager* textureManager, const std::string& modelFileName);
 
 	/// <summary>
 	/// モデルの生成(メッシュデータ)
 	/// </summary>
-	/// <param name="modelCommon">モデルの共通部分</param>
+	/// <param name="directXBase">DirectXの基盤部分</param>
+	/// <param name="textureManager">テクスチャの管理</param>
 	/// <param name="meshDatas">メッシュデータ</param>
 	/// <returns>モデル</returns>
-	static std::unique_ptr<Model> CreateModel(ModelCommon* modelCommon, const std::vector<MeshData>& meshDatas);
+	static std::unique_ptr<Model> CreateModel(DirectXBase* directXBase, TextureManager* textureManager, const std::vector<MeshData>& meshDatas);
 
 	/// <summary>
 	/// モデルの生成(モデルデータ)
 	/// </summary>
-	/// <param name="modelCommon">モデルの共通部分</param>
+	/// <param name="directXBase">DirectXの基盤部分</param>
+	/// <param name="textureManager">テクスチャの管理</param>
 	/// <param name="modelData">モデルデータ</param>
 	/// <returns>モデル</returns>
-	static std::unique_ptr<Model> CreateModel(ModelCommon* modelCommon, const ModelData& modelData);
+	static std::unique_ptr<Model> CreateModel(DirectXBase* directXBase, TextureManager* textureManager, const ModelData& modelData);
 public://メンバ関数
 	/// <summary>
 	/// コンストラクタ
@@ -57,8 +60,9 @@ public://メンバ関数
 	/// <summary>
 	/// 初期化
 	/// </summary>
-	/// <param name="modelCommon">モデルの共通部分</param>
-	void Initialize(ModelCommon* modelCommon);
+	/// <param name="directXBase">DirectXの基盤部分</param>
+	/// <param name="textureManager">テクスチャの管理</param>
+	void Initialize(DirectXBase* directXBase, TextureManager* textureManager);
 
 	/// <summary>
 	/// メッシュの再構成
@@ -67,8 +71,8 @@ public://メンバ関数
 	void RebuildMeshes(const std::vector<MeshData>& meshes);
 
 	/// <summary>
-    /// 描画に必要なデータのセットアップ
-    /// </summary>
+	/// 描画に必要なデータのセットアップ
+	/// </summary>
 	void SetupRenderData();
 
 	/// <summary>
@@ -150,12 +154,6 @@ public://メンバ関数
 	/// </summary>
 	/// <returns>描画に必要なデータ</returns>
 	const ModelRenderData& GetModelRenderData();
-
-	/// <summary>
-	/// モデルの共通部分の取得
-	/// </summary>
-	/// <returns>モデルの共通部分</returns>
-	ModelCommon* GetModelCommon();
 private://メンバ関数
 	/// <summary>
 	/// マテリアルリソースの生成
@@ -195,10 +193,10 @@ private://メンバ関数
 	/// </summary>
 	void CreateResources();
 private://メンバ変数
-	//ModelCommonのポインタ
-	ModelCommon* modelCommon_ = nullptr;
 	//DirectXの基盤部分
 	DirectXBase* directXBase_ = nullptr;
+	//テクスチャの管理
+	TextureManager* textureManager_ = nullptr;
 	//メッシュ
 	std::vector<std::unique_ptr<Mesh>>meshes_;
 	//Objファイルデータ

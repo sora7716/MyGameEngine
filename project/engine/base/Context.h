@@ -6,7 +6,6 @@ class DirectXBase;
 class SRVManager;
 class TextureManager;
 class ModelManager;
-class Object2dCommon;
 class SpriteCommon;
 class ParticleCommon;
 class SceneManager;
@@ -27,7 +26,6 @@ struct SceneContext {
 	SRVManager* srvManager;
 	TextureManager* textureManager;
 	ModelManager* modelManager;
-	Object2dCommon* object2dCommon;
 	SpriteCommon* spriteCommon;
 	ParticleCommon* particleCommon;
 	SceneManager* sceneManager;

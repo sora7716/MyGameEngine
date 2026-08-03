@@ -140,7 +140,7 @@ void DebugCamera::RotateControl() {
 
 	//Xboxの右スティックの入力
 	if (input_->IsXboxPadConnected(xBoxPadNumber_)) {
-		Vector2 dir = input_->GetXboxPadRighttStick(xBoxPadNumber_);
+		Vector2 dir = input_->GetXboxPadRightStick(xBoxPadNumber_);
 		rotate_.x -= dir.Normalize().y * kXboxPadRotSpeed;
 		rotate_.y += dir.Normalize().x * kXboxPadRotSpeed;
 	}

@@ -233,7 +233,7 @@ const Vector2 Input::GetXboxPadLeftStick(DWORD xBoxPadNumber) {
 }
 
 //Xboxの右スティックのゲッター
-const Vector2 Input::GetXboxPadRighttStick(DWORD xBoxPadNumber) {
+const Vector2 Input::GetXboxPadRightStick(DWORD xBoxPadNumber) {
 	//横軸
 	xboxPadDatas_[static_cast<uint32_t>(xBoxPadNumber)].rightStick.x = static_cast<float>(xboxPadDatas_[static_cast<uint32_t>(xBoxPadNumber)].state.Gamepad.sThumbRX) / static_cast<float>(SHRT_MAX);
 

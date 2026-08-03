@@ -194,7 +194,7 @@ public://メンバ関数
 	/// </summary>
 	/// <param name="xBoxPadNumber">何番目(0~4)</param>
 	/// <returns>右スティック</returns>
-	const Vector2 GetXboxPadRighttStick(DWORD xBoxPadNumber);
+	const Vector2 GetXboxPadRightStick(DWORD xBoxPadNumber);
 
 	/// <summary>
 	/// Xboxのデッドゾーン

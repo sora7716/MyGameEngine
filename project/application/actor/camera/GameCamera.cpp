@@ -19,8 +19,8 @@ void GameCamera::Update() {
 	offset_ = { 0.0f,2.0f,-15.0f };
 	//カメラの回転
 	if (input_->IsXboxPadConnected(xBoxPadNumber_)) {
-		float rx = input_->GetXboxPadRighttStick(xBoxPadNumber_).y;
-		float ry = input_->GetXboxPadRighttStick(xBoxPadNumber_).x;
+		float rx = input_->GetXboxPadRightStick(xBoxPadNumber_).y;
+		float ry = input_->GetXboxPadRightStick(xBoxPadNumber_).x;
 
 		// デッドゾーン
 		if (std::fabs(rx) < 0.15f) {

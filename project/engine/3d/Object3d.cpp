@@ -133,7 +133,7 @@ void Object3d::Update(){
 		//LODごとのWVP配列に詰める
 		uint32_t drawIndex = lodDrawCounts_[lodIndex];
 		//検索キーがデータのサイズより大きかった場合
-		if (drawIndex >= lodWvpData_[lodIndex].size()){
+		if (drawIndex >= rendererData_.lodRenderData.wvpData[lodIndex].size()){
 			continue;
 		}
 
@@ -168,6 +168,7 @@ void Object3d::SetModel(std::unique_ptr<Model> model, TextureManager* textureMan
 
 	//LODカウントの初期化
 	lodCount_ = static_cast<uint32_t>(keepRates.size());
+	rendererData_.lodRenderData.lodCount = lodCount_;
 	//LOD関係のセットアップ
 	SetupLOD();
 	//LODモデルの生成
@@ -401,61 +402,21 @@ void Object3d::SetupLOD(){
 	//UV座標
 	lodUvTransforms_.resize(lodCount_);
 	//LODWvpデータ
-	lodWvpData_.resize(lodCount_);
+	rendererData_.lodRenderData.wvpData.resize(lodCount_);
 	//ワールドビュープロジェクションのリソース
-	lodWvpResources_.resize(lodCount_);
+	rendererData_.lodRenderData.wvpResources.resize(lodCount_);
 	//ワールドビュープロジェクションのポインタ
-	lodWvpPtrs_.resize(lodCount_);
-	lodSrvIndices_.resize(lodCount_);
+	rendererData_.lodRenderData.wvpPtrs.resize(lodCount_);
+	rendererData_.lodRenderData.wvpSrvIndices.resize(lodCount_);
 	lodDrawCounts_.resize(lodCount_);
 	for (uint32_t lod = 0; lod < lodCount_; lod++){
 		//wvpのデータ数を決定
-		lodWvpData_[lod].resize(maxInstanceCount_);
-		for (TransformationMatrix& wvp : lodWvpData_[lod]){
+		rendererData_.lodRenderData.wvpData[lod].resize(maxInstanceCount_);
+		for (TransformationMatrix& wvp : rendererData_.lodRenderData.wvpData[lod]){
 			wvp.world = Matrix4x4::Identity4x4();
 			wvp.wvp = Matrix4x4::Identity4x4();
 			wvp.worldInverseTranspose = Matrix4x4::Identity4x4();
 		}
-	}
-	//wvpリソースの初期化
-	CreateTransformationMatrixResource();
-	//座標変換行列リソースのストラクチャバッファの生成
-	CreateStructuredBufferForWvp();
-	//SRVの保存
-	rendererData_.lodRenderData.srvIndices = lodSrvIndices_;
-}
-
-//座標変換行列リソースの生成
-void Object3d::CreateTransformationMatrixResource(){
-	for (uint32_t lod = 0; lod < lodCount_; lod++){
-		//インスタンスの最大数で確保
-		lodWvpData_[lod].resize(maxInstanceCount_);
-
-		// 配列サイズで確保
-		lodWvpResources_[lod] = directXBase_->CreateBufferResource(sizeof(TransformationMatrix) * maxInstanceCount_);
-		//座標変換行列リソースにデータを書き込むためのアドレスを取得してtransformationMatrixDataに割り当てる
-		//書き込むためのアドレス
-		lodWvpResources_[lod]->Map(0, nullptr, reinterpret_cast<void**>(&lodWvpPtrs_[lod]));
-		//単位行列を書き込んでおく
-		for (uint32_t i = 0; i < static_cast<uint32_t>(maxInstanceCount_); i++){
-			lodWvpPtrs_[lod][i].wvp = Matrix4x4::Identity4x4();
-			lodWvpPtrs_[lod][i].world = Matrix4x4::Identity4x4();
-			lodWvpPtrs_[lod][i].worldInverseTranspose = Matrix4x4::Identity4x4();
-		}
-	}
-}
-
-//座標変換行列リソースのストラクチャバッファの生成
-void Object3d::CreateStructuredBufferForWvp(){
-	for (uint32_t lod = 0; lod < lodCount_; lod++){
-		//ストラクチャバッファを生成
-		lodSrvIndices_[lod] = srvManager_->Allocate() + TextureManager::kSRVIndexTop;
-		srvManager_->CreateSRVForStructuredBuffer(
-			lodSrvIndices_[lod],
-			lodWvpResources_[lod].Get(),
-			static_cast<uint32_t>(maxInstanceCount_),
-			sizeof(TransformationMatrix)
-		);
 	}
 }
 
@@ -501,9 +462,9 @@ void Object3d::MakeBillboardWorldMatrix(uint32_t instanceIndex){
 
 //座標の更新
 void Object3d::UpdateWorldTransform(uint32_t lodIndex, uint32_t drawIndex, const Matrix4x4& worldMatrix){
-	lodWvpData_[lodIndex][drawIndex].world = worldMatrix;
+	rendererData_.lodRenderData.wvpData[lodIndex][drawIndex].world = worldMatrix;
 
-	lodWvpData_[lodIndex][drawIndex].worldInverseTranspose = lodWvpData_[lodIndex][drawIndex].world.InverseTranspose();
+	rendererData_.lodRenderData.wvpData[lodIndex][drawIndex].worldInverseTranspose = rendererData_.lodRenderData.wvpData[lodIndex][drawIndex].world.InverseTranspose();
 
-	lodWvpPtrs_[lodIndex][drawIndex] = lodWvpData_[lodIndex][drawIndex];
+	rendererData_.lodRenderData.wvpPtrs[lodIndex][drawIndex] = rendererData_.lodRenderData.wvpData[lodIndex][drawIndex];
 }

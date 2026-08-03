@@ -260,16 +260,6 @@ private://メンバ関数
 	void SetupLOD();
 
 	/// <summary>
-	/// 座標変換行列リソースの生成
-	/// </summary>
-	void CreateTransformationMatrixResource();
-
-	/// <summary>
-	/// 座標変換行列リソースのストラクチャバッファの生成
-	/// </summary>
-	void CreateStructuredBufferForWvp();
-
-	/// <summary>
 	/// ワールド行列を作成
 	/// </summary>
 	/// <param name="instanceIndex">インスタンスの検索キー</param>
@@ -308,13 +298,7 @@ private://メンバ変数
 	std::unique_ptr<LODBuilder>lodBuilder_ = nullptr;
 	//LODの制御
 	std::unique_ptr<LODController>lodController_ = nullptr;
-	//LODWvpデータ
-	std::vector<std::vector<TransformationMatrix>>lodWvpData_;
-	//ワールドビュープロジェクションのリソース
-	std::vector<ComPtr<ID3D12Resource>> lodWvpResources_;
-	//ワールドビュープロジェクションのポインタ
-	std::vector<TransformationMatrix*>lodWvpPtrs_;
-	std::vector<uint32_t>lodSrvIndices_;
+	//描画数
 	std::vector<uint32_t>lodDrawCounts_;
 	//UV座標
 	std::vector<std::vector<Transform2d>> lodUvTransforms_;

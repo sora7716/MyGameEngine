@@ -40,6 +40,11 @@ void Object3dRenderer::Initialize(DirectXBase* directXBase, SRVManager* srvManag
 	//描画データの初期化
 	renderDatas_.reserve(maxInstanceCount_);
 	renderDatas_.clear();
+
+	//TransformationResourceの作成
+	CreateTransformationMatrixResource();
+	//StructuredBufferの作成(Transformation用)
+	CreateStructuredBufferForWvp();
 }
 
 //リセット
@@ -64,7 +69,7 @@ void Object3dRenderer::Draw(){
 			//モデルの描画に必要なデータ
 			ModelRenderData modelRenderData = renderData.lodRenderData.modelRendererDatas[lodIndex];
 			//WVPのSRVIndex
-			uint32_t wvpSrvIndex = renderData.lodRenderData.srvIndices[lodIndex];
+			uint32_t wvpSrvIndex = renderData.lodRenderData.wvpSrvIndices[lodIndex];
 			//描画カウント
 			uint32_t drawCount = renderData.lodRenderData.drawCounts[lodIndex];
 
@@ -116,12 +121,44 @@ void Object3dRenderer::AddRenderData(const Object3dRenderData& renderData){
 		assert(false);
 	}
 
-	//LODの描画データのサイズチェック
-	if (!renderData.lodRenderData.IsLodCountValid()){
-		Logger::OutputLog("LODの描画データのサイズが合いません");
-		assert(false);
-	}
-
 	//レンダーデータの追加
 	renderDatas_.push_back(renderData);
+}
+
+//座標変換行列リソースの生成
+void Object3dRenderer::CreateTransformationMatrixResource(){
+	for (Object3dRenderData& renderData : renderDatas_){
+		for (uint32_t lod = 0; lod < renderData.lodRenderData.lodCount; lod++){
+			//インスタンスの最大数で確保
+			renderData.lodRenderData.wvpData[lod].resize(maxInstanceCount_);
+
+			// 配列サイズで確保
+			renderData.lodRenderData.wvpResources[lod] = directXBase_->CreateBufferResource(sizeof(TransformationMatrix) * maxInstanceCount_);
+			//座標変換行列リソースにデータを書き込むためのアドレスを取得してtransformationMatrixDataに割り当てる
+			//書き込むためのアドレス
+			renderData.lodRenderData.wvpResources[lod]->Map(0, nullptr, reinterpret_cast<void**>(&renderData.lodRenderData.wvpPtrs[lod]));
+			//単位行列を書き込んでおく
+			for (uint32_t i = 0; i < static_cast<uint32_t>(maxInstanceCount_); i++){
+				renderData.lodRenderData.wvpPtrs[lod][i].wvp = Matrix4x4::Identity4x4();
+				renderData.lodRenderData.wvpPtrs[lod][i].world = Matrix4x4::Identity4x4();
+				renderData.lodRenderData.wvpPtrs[lod][i].worldInverseTranspose = Matrix4x4::Identity4x4();
+			}
+		}
+	}
+}
+
+//座標変換行列リソースのストラクチャバッファの生成
+void Object3dRenderer::CreateStructuredBufferForWvp(){
+	for (Object3dRenderData& renderData : renderDatas_){
+		for (uint32_t lod = 0; lod < renderData.lodRenderData.lodCount; lod++){
+			//ストラクチャバッファを生成
+			renderData.lodRenderData.wvpSrvIndices[lod] = srvManager_->Allocate() + TextureManager::kSRVIndexTop;
+			srvManager_->CreateSRVForStructuredBuffer(
+				renderData.lodRenderData.wvpSrvIndices[lod],
+				renderData.lodRenderData.wvpResources[lod].Get(),
+				static_cast<uint32_t>(maxInstanceCount_),
+				sizeof(TransformationMatrix)
+			);
+		}
+	}
 }

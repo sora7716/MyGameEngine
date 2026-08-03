@@ -60,6 +60,16 @@ public://メンバ関数
 	/// </summary>
 	/// <param name="renderData">描画データ</param>
 	void AddRenderData(const Object3dRenderData& renderData);
+private://メンバ関数
+	/// <summary>
+    /// 座標変換行列リソースの生成
+    /// </summary>
+	void CreateTransformationMatrixResource();
+
+	/// <summary>
+	/// 座標変換行列リソースのストラクチャバッファの生成
+	/// </summary>
+	void CreateStructuredBufferForWvp();
 private://メンバ変数
 	//DirectXの基盤部分
 	DirectXBase* directXBase_ = nullptr;

@@ -27,14 +27,12 @@ struct ModelRenderData{
 //LODの描画に必要なデータ
 struct LODRenderData{
 	std::vector<ModelRenderData>modelRendererDatas;
-	std::vector<uint32_t>srvIndices = {};
+	std::vector<uint32_t>wvpSrvIndices = {};
+	std::vector<Microsoft::WRL::ComPtr<ID3D12Resource>> wvpResources;
+	std::vector<std::vector<TransformationMatrix>>wvpData;
+	std::vector<TransformationMatrix*>wvpPtrs;
+	uint32_t lodCount = 0;
 	std::vector<uint32_t>drawCounts = {};
-
-	/// <summary>
-	/// サイズがあっている確認
-	/// </summary>
-	/// <returns>サイズがあっているか</returns>
-	bool IsLodCountValid()const;
 };
 
 //描画に必要なデータ

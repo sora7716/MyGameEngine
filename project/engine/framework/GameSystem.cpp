@@ -17,12 +17,14 @@ void GameSystem::Initialize(){
 	//タイトルシーンを呼び出す
 	//core_->GetSceneManager()->ChangeScene("Title");
 	core_->GetSceneManager()->ChangeScene("TestPlay");
-#ifdef _DEBUG
-	//シーンの管理
-	core_->GetSceneManager()->Update();
-	//デバッグしたいシーンを呼び出す
-	core_->GetSceneManager()->ChangeScene("TestPlay");
-#endif // _DEBUG
+	core_->GetRenderSystem()->Initialize(core_->GetDirectXBase(), core_->GetSRVManager(), core_->GetTextureManager(), core_->GetPipelineManager());
+//#ifdef _DEBUG
+//	//シーンの管理
+//	core_->GetSceneManager()->Update();
+//	//デバッグしたいシーンを呼び出す
+//	core_->GetSceneManager()->ChangeScene("TestPlay");
+//#endif // _DEBUG
+
 }
 
 //更新

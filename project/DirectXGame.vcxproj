@@ -68,7 +68,6 @@
     <ClCompile Include="engine\graphics\pipeline\GraphicsPipeline.cpp" />
     <ClCompile Include="engine\graphics\pipeline\PipelineManager.cpp" />
     <ClCompile Include="engine\graphics\rendering\Object3dRenderer.cpp" />
-    <ClCompile Include="engine\graphics\rendering\RendererData.cpp" />
     <ClCompile Include="engine\graphics\rendering\RenderSystem.cpp" />
     <ClCompile Include="engine\graphics\texture\TextureManager.cpp" />
     <ClCompile Include="engine\input\Input.cpp" />
@@ -156,8 +155,9 @@
     <ClInclude Include="engine\graphics\pipeline\GraphicsPipelineData.h" />
     <ClInclude Include="engine\graphics\pipeline\PipelineManager.h" />
     <ClInclude Include="engine\graphics\pipeline\PipelineManagerData.h" />
+    <ClInclude Include="engine\graphics\rendering\Object3dGpuResource.h" />
     <ClInclude Include="engine\graphics\rendering\Object3dRenderer.h" />
-    <ClInclude Include="engine\graphics\rendering\RendererData.h" />
+    <ClInclude Include="engine\graphics\rendering\Object3dRendererData.h" />
     <ClInclude Include="engine\graphics\rendering\RenderSystem.h" />
     <ClInclude Include="engine\graphics\texture\TextureManager.h" />
     <ClInclude Include="engine\input\Input.h" />

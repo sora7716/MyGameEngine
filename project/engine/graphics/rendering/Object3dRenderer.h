@@ -1,7 +1,8 @@
 #pragma once
 #include <wrl.h>
 #include <d3d12.h>
-#include "RendererData.h"
+#include "Object3dRendererData.h"
+#include "Object3dGpuResource.h"
 #include <memory>
 
 //前方宣言
@@ -50,7 +51,7 @@ public://メンバ関数
 	/// </summary>
 	/// <param name="lodCount">Lodの数</param>
 	/// <param name="maxInstance">Object3dが表示される最大数</param>
-	void RegisterObject(uint32_t lodCount, uint32_t maxInstance);
+	Object3dRenderHandle RegisterObject(uint32_t lodCount, uint32_t maxInstance);
 
 	/// <summary>
 	///リセット

@@ -43,17 +43,31 @@ void Object3dRenderer::Initialize(DirectXBase* directXBase, SRVManager* srvManag
 }
 
 //オブジェクトのリソースの作成
-void Object3dRenderer::RegisterObject(uint32_t lodCount, uint32_t maxInstance){
-	//サイズを決定
-	objectResources_.resize(maxInstance);
-	for (Object3dGpuResource& objectResource : objectResources_){
-		objectResource.lodResources.resize(lodCount);
-	}
+Object3dRenderHandle Object3dRenderer::RegisterObject(uint32_t lodCount, uint32_t maxInstance){
 
-	//TransformationResourceの作成
-	CreateTransformationMatrixResource();
-	//StructuredBufferの作成(Transformation用)
-	CreateStructuredBufferForWvp();
+	assert(lodCount > 0);
+	assert(maxInstance > 0);
+
+	const Object3dRenderHandle handle = static_cast<Object3dRenderHandle>(objectResources_.size());
+
+	//Object3d一つ分を追加
+	objectResources_.emplace_back();
+
+	Object3dGpuResource& objectResource = objectResources_.back();
+
+	//LOD数分のResourceを用意
+	objectResource.lodResources.resize(lodCount);
+
+	for (LODGpuResource& lodResource : objectResource.lodResources){
+		//このLODに格納できる最大行列数
+		lodResource.capacity = maxInstance;
+
+		//TransformationResourceの作成
+		CreateTransformationMatrixResource(lodResource);
+
+		//StructuredBufferの作成(Transformation用)
+		CreateStructuredBufferForWvp(lodResource);
+	}
 }
 
 //リセット
@@ -142,7 +156,7 @@ void Object3dRenderer::CreateTransformationMatrixResource(LODGpuResource& lodGpu
 	//書き込むためのアドレス
 	lodGpuResource.wvpResource->Map(0, nullptr, reinterpret_cast<void**>(&lodGpuResource.wvpData));
 	//単位行列を書き込んでおく
-	for (uint32_t i = 0; i < static_cast<uint32_t>(maxInstanceCount_); i++){
+	for (uint32_t i = 0; i < lodGpuResource.capacity; i++){
 		lodGpuResource.wvpData[i].wvp = Matrix4x4::Identity4x4();
 		lodGpuResource.wvpData[i].world = Matrix4x4::Identity4x4();
 		lodGpuResource.wvpData[i].worldInverseTranspose = Matrix4x4::Identity4x4();

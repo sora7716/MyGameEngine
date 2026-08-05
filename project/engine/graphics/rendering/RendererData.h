@@ -28,10 +28,6 @@ struct ModelRenderData{
 struct LODRenderData{
 	std::vector<ModelRenderData>modelRendererDatas;
 	std::vector<uint32_t>wvpSrvIndices = {};
-	std::vector<Microsoft::WRL::ComPtr<ID3D12Resource>> wvpResources;
-	std::vector<std::vector<TransformationMatrix>>wvpData;
-	std::vector<TransformationMatrix*>wvpPtrs;
-	uint32_t lodCount = 0;
 	std::vector<uint32_t>drawCounts = {};
 };
 
@@ -39,4 +35,17 @@ struct LODRenderData{
 struct Object3dRenderData{
 	Camera* renderCamera = nullptr;
 	LODRenderData lodRenderData;
+};
+
+//LodのGPUに送る用のデータ
+struct LODGpuResource{
+	Microsoft::WRL::ComPtr<ID3D12Resource> wvpResource = nullptr;
+	TransformationMatrix* wvpData = nullptr;
+	uint32_t srvIndex = 0;
+	uint32_t capacity = 0;
+};
+
+//Object3dのGPUに送る用のデータ
+struct Object3dGpuResource{
+	std::vector<LODGpuResource> lodResources;
 };

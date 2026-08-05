@@ -127,21 +127,20 @@ void Object3dRenderer::AddRenderData(const Object3dRenderData& renderData){
 
 //座標変換行列リソースの生成
 void Object3dRenderer::CreateTransformationMatrixResource(){
-	for (Object3dRenderData& renderData : renderDatas_){
-		for (uint32_t lod = 0; lod < renderData.lodRenderData.lodCount; lod++){
-			//インスタンスの最大数で確保
-			renderData.lodRenderData.wvpData[lod].resize(maxInstanceCount_);
-
-			// 配列サイズで確保
-			renderData.lodRenderData.wvpResources[lod] = directXBase_->CreateBufferResource(sizeof(TransformationMatrix) * maxInstanceCount_);
-			//座標変換行列リソースにデータを書き込むためのアドレスを取得してtransformationMatrixDataに割り当てる
-			//書き込むためのアドレス
-			renderData.lodRenderData.wvpResources[lod]->Map(0, nullptr, reinterpret_cast<void**>(&renderData.lodRenderData.wvpPtrs[lod]));
-			//単位行列を書き込んでおく
-			for (uint32_t i = 0; i < static_cast<uint32_t>(maxInstanceCount_); i++){
-				renderData.lodRenderData.wvpPtrs[lod][i].wvp = Matrix4x4::Identity4x4();
-				renderData.lodRenderData.wvpPtrs[lod][i].world = Matrix4x4::Identity4x4();
-				renderData.lodRenderData.wvpPtrs[lod][i].worldInverseTranspose = Matrix4x4::Identity4x4();
+	for (Object3dGpuResource& objectResource : objectResources_){
+		for (LODGpuResource& lodResource : objectResource.lodResources){
+			for (uint32_t lod = 0; lod < lodResource.capacity; lod++){
+				// 配列サイズで確保
+				lodResource.wvpResource = directXBase_->CreateBufferResource(sizeof(TransformationMatrix) * maxInstanceCount_);
+				//座標変換行列リソースにデータを書き込むためのアドレスを取得してtransformationMatrixDataに割り当てる
+				//書き込むためのアドレス
+				lodResource.wvpResource->Map(0, nullptr, reinterpret_cast<void**>(&lodResource.wvpData));
+				//単位行列を書き込んでおく
+				for (uint32_t i = 0; i < static_cast<uint32_t>(maxInstanceCount_); i++){
+					lodResource.wvpData[i].wvp = Matrix4x4::Identity4x4();
+					lodResource.wvpData[i].world = Matrix4x4::Identity4x4();
+					lodResource.wvpData[i].worldInverseTranspose = Matrix4x4::Identity4x4();
+				}
 			}
 		}
 	}
@@ -149,16 +148,18 @@ void Object3dRenderer::CreateTransformationMatrixResource(){
 
 //座標変換行列リソースのストラクチャバッファの生成
 void Object3dRenderer::CreateStructuredBufferForWvp(){
-	for (Object3dRenderData& renderData : renderDatas_){
-		for (uint32_t lod = 0; lod < renderData.lodRenderData.lodCount; lod++){
-			//ストラクチャバッファを生成
-			renderData.lodRenderData.wvpSrvIndices[lod] = srvManager_->Allocate() + TextureManager::kSRVIndexTop;
-			srvManager_->CreateSRVForStructuredBuffer(
-				renderData.lodRenderData.wvpSrvIndices[lod],
-				renderData.lodRenderData.wvpResources[lod].Get(),
-				static_cast<uint32_t>(maxInstanceCount_),
-				sizeof(TransformationMatrix)
-			);
+	for (Object3dGpuResource& objectResource : objectResources_){
+		for (LODGpuResource& lodResource : objectResource.lodResources){
+			for (uint32_t lod = 0; lod < lodResource.capacity; lod++){
+				//ストラクチャバッファを生成
+				lodResource.srvIndex = srvManager_->Allocate() + TextureManager::kSRVIndexTop;
+				srvManager_->CreateSRVForStructuredBuffer(
+					lodResource.srvIndex,
+					lodResource.wvpResource.Get(),
+					static_cast<uint32_t>(maxInstanceCount_),
+					sizeof(TransformationMatrix)
+				);
+			}
 		}
 	}
 }

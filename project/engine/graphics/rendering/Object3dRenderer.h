@@ -79,7 +79,9 @@ private://メンバ変数
 	TextureManager* textureManager_ = nullptr;
 	//インスタンスの最大値
 	uint32_t maxInstanceCount_ = 0;
-	//描画データ
+	//マイフレーム消す描画データ
 	std::vector<Object3dRenderData>renderDatas_;
+	//Object3dが生存している間保持する
+	std::vector<Object3dGpuResource>objectResources_;
 };
 

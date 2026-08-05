@@ -84,7 +84,7 @@ public://メンバ関数
 	void SetModel(std::unique_ptr<Model> model, TextureManager* textureManager, const std::vector<float>& keepRates = { 1.0f,0.75f,0.5f,0.25f });
 
 	/// <summary>
-	/// 
+	/// レンダラーを登録
 	/// </summary>
 	/// <param name="renderer">レンダラー</param>
 	void RegisterToRenderer(Object3dRenderer* renderer);

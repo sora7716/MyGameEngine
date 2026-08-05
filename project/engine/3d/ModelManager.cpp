@@ -1,5 +1,4 @@
 #include "ModelManager.h"
-#include "ModelCommon.h"
 #include "Model.h"
 #include "PrimitiveMeshFactory.h"
 #include <cassert>

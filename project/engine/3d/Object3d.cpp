@@ -74,9 +74,6 @@ void Object3d::Initialize(DirectXBase* directXBase, SRVManager* srvManager, Came
 
 //更新
 void Object3d::Update(){
-	//描画データをまとめる
-	rendererData_.lodRenderData.drawCounts = lodDrawCounts_;
-
 	//LOD語との描画数をリセット
 	for (uint32_t& lodDrawCount : lodDrawCounts_){
 		lodDrawCount = 0;
@@ -134,7 +131,7 @@ void Object3d::Update(){
 		//LODごとのWVP配列に詰める
 		uint32_t drawIndex = lodDrawCounts_[lodIndex];
 		//検索キーがデータのサイズより大きかった場合
-		if (drawIndex >= rendererData_.lodRenderData.wvpData[lodIndex].size()){
+		if (drawIndex >= rendererData_.lodRenderData.transforMationData[lodIndex].size()){
 			continue;
 		}
 
@@ -160,6 +157,8 @@ void Object3d::Update(){
 		}
 	}
 
+	//描画データをまとめる
+	rendererData_.lodRenderData.drawCounts = lodDrawCounts_;
 }
 
 //モデルの設定
@@ -193,6 +192,8 @@ void Object3d::RegisterToRenderer(Object3dRenderer* renderer){
 	assert(renderHandle_ == kInvalidObject3dRenderHandle);
 
 	renderHandle_ = renderer->RegisterObject(lodCount_, maxInstanceCount_);
+
+	rendererData_.renderHandle_ = renderHandle_;
 }
 
 //インスタンスの追加
@@ -413,21 +414,18 @@ const Object3dRenderData& Object3d::GetRenderData(){
 void Object3d::SetupLOD(){
 	//UV座標
 	lodUvTransforms_.resize(lodCount_);
-	//LODWvpデータ
-	rendererData_.lodRenderData.wvpData.resize(lodCount_);
-	//ワールドビュープロジェクションのリソース
-	rendererData_.lodRenderData.wvpResources.resize(lodCount_);
-	//ワールドビュープロジェクションのポインタ
-	rendererData_.lodRenderData.wvpPtrs.resize(lodCount_);
-	rendererData_.lodRenderData.wvpSrvIndices.resize(lodCount_);
+	//描画する数
 	lodDrawCounts_.resize(lodCount_);
-	for (uint32_t lod = 0; lod < lodCount_; lod++){
-		//wvpのデータ数を決定
-		rendererData_.lodRenderData.wvpData[lod].resize(maxInstanceCount_);
-		for (TransformationMatrix& wvp : rendererData_.lodRenderData.wvpData[lod]){
-			wvp.world = Matrix4x4::Identity4x4();
-			wvp.wvp = Matrix4x4::Identity4x4();
-			wvp.worldInverseTranspose = Matrix4x4::Identity4x4();
+	rendererData_.lodRenderData.drawCounts.resize(lodCount_);
+	//TransformData
+	rendererData_.lodRenderData.transforMationData.resize(lodCount_);
+
+	for (std::vector<TransformationMatrix>& lodData : rendererData_.lodRenderData.transforMationData){
+		lodData.resize(maxInstanceCount_);
+		for (TransformationMatrix& transform : lodData){
+			transform.world = Matrix4x4::Identity4x4();
+			transform.wvp = Matrix4x4::Identity4x4();
+			transform.worldInverseTranspose = Matrix4x4::Identity4x4();
 		}
 	}
 }
@@ -474,9 +472,10 @@ void Object3d::MakeBillboardWorldMatrix(uint32_t instanceIndex){
 
 //座標の更新
 void Object3d::UpdateWorldTransform(uint32_t lodIndex, uint32_t drawIndex, const Matrix4x4& worldMatrix){
-	rendererData_.lodRenderData.wvpData[lodIndex][drawIndex].world = worldMatrix;
+	TransformationMatrix& transformation = rendererData_.lodRenderData.transforMationData[lodIndex][drawIndex];
+	
+	transformation.world = worldMatrix;
 
-	rendererData_.lodRenderData.wvpData[lodIndex][drawIndex].worldInverseTranspose = rendererData_.lodRenderData.wvpData[lodIndex][drawIndex].world.InverseTranspose();
+	transformation.worldInverseTranspose = transformation.world.InverseTranspose();
 
-	rendererData_.lodRenderData.wvpPtrs[lodIndex][drawIndex] = rendererData_.lodRenderData.wvpData[lodIndex][drawIndex];
 }

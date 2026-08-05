@@ -42,7 +42,7 @@ void Object3dRenderer::Initialize(DirectXBase* directXBase, SRVManager* srvManag
 	renderDatas_.clear();
 }
 
-//オブジェクトのリソースの作成
+//レンダラーを登録
 Object3dRenderHandle Object3dRenderer::RegisterObject(uint32_t lodCount, uint32_t maxInstance){
 
 	assert(lodCount > 0);
@@ -68,6 +68,8 @@ Object3dRenderHandle Object3dRenderer::RegisterObject(uint32_t lodCount, uint32_
 		//StructuredBufferの作成(Transformation用)
 		CreateStructuredBufferForWvp(lodResource);
 	}
+
+	return handle;
 }
 
 //リセット
@@ -89,10 +91,14 @@ void Object3dRenderer::Draw(){
 				continue;
 			}
 
+			const Object3dGpuResource& objectResource = objectResources_[renderData.renderHandle_];
+
+			const LODGpuResource& lodResource = objectResource.lodResources[lodIndex];
+
 			//モデルの描画に必要なデータ
 			ModelRenderData modelRenderData = renderData.lodRenderData.modelRendererDatas[lodIndex];
 			//WVPのSRVIndex
-			uint32_t wvpSrvIndex = renderData.lodRenderData.wvpSrvIndices[lodIndex];
+			uint32_t wvpSrvIndex = lodResource.srvIndex;
 			//描画カウント
 			uint32_t drawCount = renderData.lodRenderData.drawCounts[lodIndex];
 
@@ -138,10 +144,28 @@ void Object3dRenderer::Draw(){
 
 //描画データの追加
 void Object3dRenderer::AddRenderData(const Object3dRenderData& renderData){
-	//インスタンスの最大値
-	if (maxInstanceCount_ <= renderDatas_.size()){
-		Logger::OutputLog("想定していたインスタンスの最大値を超えて追加しています");
-		assert(false);
+	assert(renderData.renderHandle_ != kInvalidObject3dRenderHandle);
+
+	assert(renderData.renderHandle_ < objectResources_.size());
+
+	Object3dGpuResource& objectResource = objectResources_[renderData.renderHandle_];
+
+	const std::vector<std::vector<TransformationMatrix>>& transformationData = renderData.lodRenderData.transforMationData;
+
+	const std::vector<uint32_t>drawCounts = renderData.lodRenderData.drawCounts;
+
+	assert(transformationData.size() == objectResource.lodResources.size());
+
+	assert(drawCounts.size() == objectResource.lodResources.size());
+
+	for (uint32_t lodIndex = 0; lodIndex < objectResource.lodResources.size(); lodIndex++){
+		LODGpuResource& lodResource = objectResource.lodResources[lodIndex];
+
+		const uint32_t drawCount = drawCounts[lodIndex];
+
+		assert(drawCount <= lodResource.capacity);
+
+		std::copy_n(transformationData[lodIndex].data(), drawCount, lodResource.wvpData);
 	}
 
 	//レンダーデータの追加

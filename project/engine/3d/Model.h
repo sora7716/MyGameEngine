@@ -1,7 +1,7 @@
 #pragma once
 #include "RenderData.h"
 #include "MatrixUtility.h"
-#include "RendererData.h"
+#include "Object3dRendererData.h"
 #include <string>
 #include <vector>
 #include <wrl.h>

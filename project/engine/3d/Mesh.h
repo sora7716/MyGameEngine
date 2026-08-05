@@ -1,7 +1,7 @@
 #pragma once
 #include "RenderData.h"
 #include "PrimitiveData.h"
-#include "RendererData.h"
+#include "Object3dRendererData.h"
 #include <wrl.h>
 #include <d3d12.h>
 

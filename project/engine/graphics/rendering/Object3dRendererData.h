@@ -31,13 +31,13 @@ struct ModelRenderData{
 //LODの描画に必要なデータ
 struct LODRenderData{
 	std::vector<ModelRenderData>modelRendererDatas;
-	std::vector<uint32_t>wvpSrvIndices = {};
+	std::vector<std::vector<TransformationMatrix>>transforMationData;
 	std::vector<uint32_t>drawCounts = {};
 };
 
 //描画に必要なデータ
 struct Object3dRenderData{
-	Object3dRenderHandle renderHandle_ = -1;
+	Object3dRenderHandle renderHandle_ = kInvalidObject3dRenderHandle;
 	Camera* renderCamera = nullptr;
 	LODRenderData lodRenderData;
 };

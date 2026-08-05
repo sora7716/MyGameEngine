@@ -36,6 +36,7 @@ void TestPlayScene::Initialize(const SceneContext& sceneContext, Object3dRendere
 	object3d_ = Object3d::Create(sceneContext_.directXBase, gameCamera_);
 	object3d_->SetGameCamera(gameCamera_);
 	object3d_->SetModel(sceneContext_.modelManager->FindModel("cube"), { 1.0f });
+	object3d_->SetBlendMode(BlendMode::kAdd);
 	//object3d_->SetTexture(0, "uvChecker.png");
 	//object3d_->SetModel("cube");
 	//object3d_->SetModel("dekanu");
@@ -47,6 +48,7 @@ void TestPlayScene::Initialize(const SceneContext& sceneContext, Object3dRendere
 	object3d2_ = Object3d::Create(sceneContext_.directXBase, gameCamera_);
 	object3d2_->SetGameCamera(gameCamera_);
 	object3d2_->SetModel(sceneContext_.modelManager->FindModel("cube"), { 1.0f });
+	object3d2_->SetBlendMode(BlendMode::kSubtract);
 	object3d2_->RegisterToRenderer(object3dRenderer);
 
 	//object3d_->SetLODDistances({ 20.0f,30.0f,50.0f,80.0f });
@@ -205,6 +207,9 @@ void TestPlayScene::Debug(){
 void TestPlayScene::Draw(Camera* camera){
 	object3d_->SetRenderCamera(camera);
 	object3dRenderer_->AddRenderData(object3d_->GetRenderData());
+
+	object3d2_->SetRenderCamera(camera);
+	object3dRenderer_->AddRenderData(object3d2_->GetRenderData());
 	//object3d_->Draw();
 
 	frustum_->SetRenderCamera(camera);

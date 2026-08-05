@@ -155,6 +155,7 @@ void Object3d::Update(){
 
 	//描画データをまとめる
 	rendererData_.lodRenderData.drawCounts = lodDrawCounts_;
+	rendererData_.blendMode = blendMode_;
 }
 
 //モデルの設定

@@ -35,8 +35,9 @@ void RenderSystem::Draw(){
 		lightingManager_->DrawSetting();
 		//3dオブジェクトの描画
 		object3dRenderer_->Draw(i);
-		object3dRenderer_->Reset();
 	}
+	//描画オブジェクトのリセット
+	object3dRenderer_->Reset();
 }
 
 //Object3dのレンダラーの取得

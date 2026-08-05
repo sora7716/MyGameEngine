@@ -4,13 +4,15 @@
 #include "WorldTransform.h"
 #include "PrimitiveData.h"
 #include "RenderingData.h"
-#include "Object3dRenderData.h"
+#include "Object3dRendererData.h"
+#include "Object3dGpuResource.h"
 #include <vector>
 #include <string>
 #include <wrl.h>
 #include <d3d12.h>
 #include <array>
 #include <memory>
+
 //前方宣言
 class DirectXBase;
 class TextureManager;
@@ -21,6 +23,7 @@ class GameObject;
 class LODBuilder;
 class LODController;
 class Culling;
+class Object3dRenderer;
 
 //3dオブジェクトのインスタンスデータ
 struct Object3dInstance{
@@ -79,6 +82,12 @@ public://メンバ関数
 	/// <param name="textureManager">テクスチャの管理</param>
 	/// <param name="keepRates">モデルの保持する倍率</param>
 	void SetModel(std::unique_ptr<Model> model, TextureManager* textureManager, const std::vector<float>& keepRates = { 1.0f,0.75f,0.5f,0.25f });
+
+	/// <summary>
+	/// 
+	/// </summary>
+	/// <param name="renderer">レンダラー</param>
+	void RegisterToRenderer(Object3dRenderer* renderer);
 
 	/// <summary>
 	/// インスタンスの追加
@@ -331,4 +340,7 @@ private://メンバ変数
 
 	//レンダーラークラスに渡す情報
 	Object3dRenderData rendererData_;
+
+	//ハンドル
+	Object3dRenderHandle renderHandle_ = UINT32_MAX;
 };

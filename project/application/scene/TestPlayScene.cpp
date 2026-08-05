@@ -43,6 +43,7 @@ void TestPlayScene::Initialize(const SceneContext& sceneContext, Object3dRendere
 	//for (uint32_t i = 0; i < 33; i++) {
 	//	object3d_->SetTexture(i, "white1x1.png");
 	//}
+	object3d_->RegisterToRenderer(object3dRenderer);
 
 	//object3d_->SetLODDistances({ 20.0f,30.0f,50.0f,80.0f });
 	GameObject* treePtr = nullptr;

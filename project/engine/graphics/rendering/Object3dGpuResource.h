@@ -1,11 +1,8 @@
 #pragma once
-
 #include "RenderData.h"
 #include <wrl.h>
 #include <d3d12.h>
 #include <vector>
-//Object3dの描画ハンドル
-using Object3dRenderHandle = uint32_t;
 
 //LodのGPUに送る用のデータ
 struct LODGpuResource{

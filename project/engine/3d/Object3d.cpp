@@ -11,6 +11,7 @@
 #include "Culling.h"
 #include "LODBuilder.h"
 #include "LODController.h"
+#include "Object3dRenderer.h"
 #include <algorithm>
 #include <cassert>
 //初期化
@@ -168,7 +169,6 @@ void Object3d::SetModel(std::unique_ptr<Model> model, TextureManager* textureMan
 
 	//LODカウントの初期化
 	lodCount_ = static_cast<uint32_t>(keepRates.size());
-	rendererData_.lodRenderData.lodCount = lodCount_;
 	//LOD関係のセットアップ
 	SetupLOD();
 	//LODモデルの生成
@@ -181,6 +181,18 @@ void Object3d::SetModel(std::unique_ptr<Model> model, TextureManager* textureMan
 		ModelRenderData modelRenderData = lodModel->GetModelRenderData();
 		rendererData_.lodRenderData.modelRendererDatas.push_back(modelRenderData);
 	}
+}
+
+//
+void Object3d::RegisterToRenderer(Object3dRenderer* renderer){
+	assert(renderer);
+	assert(lodCount_ > 0);
+	assert(maxInstanceCount_ > 0);
+
+	//まだ登録されてない事の確認
+	assert(renderHandle_ == kInvalidObject3dRenderHandle);
+
+	renderHandle_ = renderer->RegisterObject(lodCount_, maxInstanceCount_);
 }
 
 //インスタンスの追加

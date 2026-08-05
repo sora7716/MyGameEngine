@@ -8,6 +8,10 @@
 class Camera;
 class Mesh;
 
+//Object3dの描画ハンドル
+using Object3dRenderHandle = uint32_t;
+constexpr Object3dRenderHandle kInvalidObject3dRenderHandle = UINT32_MAX;
+
 //メッシュの描画に必要なデータ
 struct MeshRenderData{
 	D3D12_VERTEX_BUFFER_VIEW vertexBufferView = {};
@@ -33,6 +37,7 @@ struct LODRenderData{
 
 //描画に必要なデータ
 struct Object3dRenderData{
+	Object3dRenderHandle renderHandle_ = -1;
 	Camera* renderCamera = nullptr;
 	LODRenderData lodRenderData;
 };

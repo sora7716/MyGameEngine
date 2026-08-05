@@ -114,13 +114,11 @@ void Model::SetColor(uint32_t index, const Vector4& color){
 //テクスチャの設定
 void Model::SetTexture(uint32_t materialIndex, const std::string& imageFileName){
 	modelData_.materialTexturePaths[materialIndex].textureFilePath = "engine/resources/textures/" + imageFileName;
-	textureManager_->AddTexture(modelData_.materialTexturePaths[materialIndex].textureFilePath);
 }
 
 //環境マップの設定
 void Model::SetEnvironmentMap(uint32_t materialIndex, const std::string& environmentMapFileName){
 	modelData_.materialTexturePaths[materialIndex].environmentMap = "engine/resources/textures/" + environmentMapFileName;
-	textureManager_->AddTexture(modelData_.materialTexturePaths[materialIndex].environmentMap);
 }
 
 //色を取得

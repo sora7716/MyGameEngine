@@ -27,6 +27,11 @@ void GameObjectList::LoadAudio() {
 	core_->GetAudioManager()->LoadAudio("mokugyo", "mokugyo");
 }
 
+//テクスチャの読み込み
+void GameObjectList::LoadTexture(){
+	core_->GetTextureManager()->AddTexture("engine/resources/textures/skybox_cube.dds");
+}
+
 //OBJファイルの読み込み
 void GameObjectList::LoadModel() {
 	//プリミティブなモデルの生成

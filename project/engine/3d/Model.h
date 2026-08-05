@@ -10,7 +10,6 @@
 
 //前方宣言
 class DirectXBase;
-class TextureManager;
 class Mesh;
 
 /// <summary>
@@ -27,7 +26,7 @@ public://静的メンバ関数
 	/// <param name="textureManager">テクスチャの管理</param>
 	/// <param name="modelFileName">モデルのファイル名</param>
 	/// <returns>モデル</returns>
-	static std::unique_ptr<Model> CreateModel(DirectXBase* directXBase, TextureManager* textureManager, const std::string& modelFileName);
+	static std::unique_ptr<Model> CreateModel(DirectXBase* directXBase, const std::string& modelFileName);
 
 	/// <summary>
 	/// モデルの生成(メッシュデータ)
@@ -195,8 +194,6 @@ private://メンバ関数
 private://メンバ変数
 	//DirectXの基盤部分
 	DirectXBase* directXBase_ = nullptr;
-	//テクスチャの管理
-	TextureManager* textureManager_ = nullptr;
 	//メッシュ
 	std::vector<std::unique_ptr<Mesh>>meshes_;
 	//Objファイルデータ

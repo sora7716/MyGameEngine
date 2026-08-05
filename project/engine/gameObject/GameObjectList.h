@@ -1,4 +1,5 @@
 #pragma once
+#pragma once
 #include "engine/audio/AudioManager.h"
 #include "engine/3d/ModelManager.h"
 
@@ -20,7 +21,7 @@ public://メンバ関数
 	/// </summary>
 	/// <param name="core">エンジンの核</param>
 	void Initialize(Core*core);
-public://PrassKey
+public://PassKey
 	class ConstructorKey {
 		ConstructorKey() = default;
 		friend class Core;
@@ -28,7 +29,7 @@ public://PrassKey
 	/// <summary>
 	/// コンストラクタ
 	/// </summary>
-	/// <param name="">PrassKeyを受け取る</param>
+	/// <param name="">PassKeyを受け取る</param>
 	explicit GameObjectList(ConstructorKey);
 private://メンバ関数
 	//コピーコンストラクタ禁止
@@ -40,6 +41,11 @@ private://メンバ関数
 	/// オーディオの読み込み
 	/// </summary>
 	void LoadAudio();
+
+	/// <summary>
+	/// テクスチャの読み込み
+	/// </summary>
+	void LoadTexture();
 
 	/// <summary>
 	/// OBJファイルの読み込み

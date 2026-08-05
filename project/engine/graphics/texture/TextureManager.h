@@ -31,7 +31,7 @@ public://メンバ関数
 	/// テクスチャの追加
 	/// </summary>
 	/// <param name="filePath">テクスチャのファイルパス</param>
-	void AddTexture(std::string& filePath);
+	void AddTexture(const std::string& filePath);
 
 	/// <summary>
 	/// 文字テクスチャなどをCPUメモリから作成

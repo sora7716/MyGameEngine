@@ -23,16 +23,19 @@ void TextureManager::Initialize(DirectXBase* directXBase, SRVManager* srvManager
 }
 
 //テクスチャの追加
-void TextureManager::AddTexture(std::string& filePath){
+void TextureManager::AddTexture(const std::string& filePath){
+	//テクスチャファイルパス
+	std::string textureFilePath = filePath;
+
 	//テクスチャの読み込み
-	textureLoader::LoadTextureData loadTextureData = textureLoader::LoadTexture(srvManager_, filePath);
+	textureLoader::LoadTextureData loadTextureData = textureLoader::LoadTexture(srvManager_, textureFilePath);
 	//読み込み済みテクスチャを検索
-	if (textureDatas_.contains(filePath)){
+	if (textureDatas_.contains(textureFilePath)){
 		//読み込み済みなら早期リターン
 		return;
 	}
 	//追加したテクスチャデータの参照を取得する
-	TextureData& textureData = textureDatas_[filePath];
+	TextureData& textureData = textureDatas_[textureFilePath];
 	textureData.metadata = loadTextureData.mipImages.GetMetadata();
 	textureData.resource = directXBase_->CreateTextureResource(textureData.metadata);
 	textureData.intermediateResource = directXBase_->UploadTextureData(textureData.resource.Get(), textureData.state, loadTextureData.mipImages);

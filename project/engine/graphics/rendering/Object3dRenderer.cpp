@@ -174,11 +174,13 @@ void Object3dRenderer::AddRenderData(const Object3dRenderData& renderData){
 
 //座標変換行列リソースの生成
 void Object3dRenderer::CreateTransformationMatrixResource(LODGpuResource& lodGpuResource){
+	HRESULT result = S_FALSE;
 	// 配列サイズで確保
 	lodGpuResource.wvpResource = directXBase_->CreateBufferResource(sizeof(TransformationMatrix) * lodGpuResource.capacity);
 	//座標変換行列リソースにデータを書き込むためのアドレスを取得してtransformationMatrixDataに割り当てる
 	//書き込むためのアドレス
-	lodGpuResource.wvpResource->Map(0, nullptr, reinterpret_cast<void**>(&lodGpuResource.wvpData));
+	result = lodGpuResource.wvpResource->Map(0, nullptr, reinterpret_cast<void**>(&lodGpuResource.wvpData));
+	assert(SUCCEEDED(result));
 	//単位行列を書き込んでおく
 	for (uint32_t i = 0; i < lodGpuResource.capacity; i++){
 		lodGpuResource.wvpData[i].wvp = Matrix4x4::Identity4x4();

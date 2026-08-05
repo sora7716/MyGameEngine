@@ -61,17 +61,31 @@ public://メンバ関数
 	/// <summary>
 	/// 描画
 	/// </summary>
-	void Draw();
+	/// <param name="instanceIndex">インスタンス検索キー</param>
+	void Draw(uint32_t instanceIndex);
 
 	/// <summary>
 	/// 描画データの追加
 	/// </summary>
 	/// <param name="renderData">描画データ</param>
 	void AddRenderData(const Object3dRenderData& renderData);
+
+	/// <summary>
+	/// ブレンドモードの取得
+	/// </summary>
+	/// <param name="instanceIndex">インスタンス検索キー</param>
+	/// <returns>ブレンドモード</returns>
+	BlendMode GetBlendMode(uint32_t instanceIndex);
+
+	/// <summary>
+	/// 描画データの配列のサイズの取得
+	/// </summary>
+	/// <returns>描画データの配列のサイズ</returns>
+	uint32_t GetRenderDataSize();
 private://メンバ関数
 	/// <summary>
-    /// 座標変換行列リソースの生成
-    /// </summary>
+	/// 座標変換行列リソースの生成
+	/// </summary>
 	/// <param name="lodGpuResource">LodのGpuに送るデータ</param>
 	void CreateTransformationMatrixResource(LODGpuResource& lodGpuResource);
 

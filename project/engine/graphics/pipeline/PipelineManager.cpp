@@ -26,13 +26,13 @@ void PipelineManager::Initialize(DirectXBase* directXBase){
 
 //PSOの作成
 void PipelineManager::CreatePSO(){
-	for (uint32_t i = 0; i < static_cast<uint32_t>(PiplineType::kPiplineTypeCount); i++){
+	for (uint32_t i = 0; i < static_cast<uint32_t>(PipelineType::kPiplineTypeCount); i++){
 		(this->*createPSOTable[i])();
 	}
 }
 
 //パイプラインセットの取得
-const PipelineSet& PipelineManager::GetPipelineSet(PiplineType pipelineSetType) const{
+const PipelineSet& PipelineManager::GetPipelineSet(PipelineType pipelineSetType) const{
 	// TODO: return ステートメントをここに挿入します
 	uint32_t index = static_cast<uint32_t>(pipelineSetType);
 	return pipelineSets_[index];
@@ -60,9 +60,9 @@ void PipelineManager::CreatePSOForObject3d(){
 		//ブレンドステート
 		graphicsPipeline_->InitializeBlendState(i);
 		//グラフィックスパイプラインの生成
-		pipelineSets_[static_cast<uint32_t>(PiplineType::kObject3d)].graphicsPipelineStates[i] = graphicsPipeline_->CreateGraphicsPipeline();
+		pipelineSets_[static_cast<uint32_t>(PipelineType::kObject3d)].graphicsPipelineStates[i] = graphicsPipeline_->CreateGraphicsPipeline();
 	}	//ルートシグネイチャの記録
-	pipelineSets_[static_cast<uint32_t>(PiplineType::kObject3d)].rootSignature = graphicsPipeline_->GetRootSignature();
+	pipelineSets_[static_cast<uint32_t>(PipelineType::kObject3d)].rootSignature = graphicsPipeline_->GetRootSignature();
 }
 
 //PSOの作成(Sprite)
@@ -87,10 +87,10 @@ void PipelineManager::CreatePSOForSprite(){
 		//ブレンドステート
 		graphicsPipeline_->InitializeBlendState(i);
 		//グラフィックスパイプラインの生成
-		pipelineSets_[static_cast<uint32_t>(PiplineType::kSprite)].graphicsPipelineStates[i] = graphicsPipeline_->CreateGraphicsPipeline();
+		pipelineSets_[static_cast<uint32_t>(PipelineType::kSprite)].graphicsPipelineStates[i] = graphicsPipeline_->CreateGraphicsPipeline();
 	}
 	//ルートシグネイチャの記録
-	pipelineSets_[static_cast<uint32_t>(PiplineType::kSprite)].rootSignature = graphicsPipeline_->GetRootSignature();
+	pipelineSets_[static_cast<uint32_t>(PipelineType::kSprite)].rootSignature = graphicsPipeline_->GetRootSignature();
 }
 
 //PSOの作成(Particle)
@@ -114,9 +114,9 @@ void PipelineManager::CreatePSOForParticle(){
 		//ブレンドステート
 		graphicsPipeline_->InitializeBlendState(i);
 		//グラフィックスパイプラインの生成[
-		pipelineSets_[static_cast<uint32_t>(PiplineType::kParticle)].graphicsPipelineStates[i] = graphicsPipeline_->CreateGraphicsPipeline();
+		pipelineSets_[static_cast<uint32_t>(PipelineType::kParticle)].graphicsPipelineStates[i] = graphicsPipeline_->CreateGraphicsPipeline();
 	}	//ルートシグネイチャの記録
-	pipelineSets_[static_cast<uint32_t>(PiplineType::kParticle)].rootSignature = graphicsPipeline_->GetRootSignature();
+	pipelineSets_[static_cast<uint32_t>(PipelineType::kParticle)].rootSignature = graphicsPipeline_->GetRootSignature();
 }
 
 //PSOの作成(SkyBox)
@@ -141,10 +141,10 @@ void PipelineManager::CreatePSOForSkyBox(){
 		//ブレンドステート
 		graphicsPipeline_->InitializeBlendState(i);
 		//グラフィックスパイプラインの生成
-		pipelineSets_[static_cast<uint32_t>(PiplineType::kSkyBox)].graphicsPipelineStates[i] = graphicsPipeline_->CreateGraphicsPipeline();
+		pipelineSets_[static_cast<uint32_t>(PipelineType::kSkyBox)].graphicsPipelineStates[i] = graphicsPipeline_->CreateGraphicsPipeline();
 	}
 	//ルートシグネイチャの記録
-	pipelineSets_[static_cast<uint32_t>(PiplineType::kSkyBox)].rootSignature = graphicsPipeline_->GetRootSignature();
+	pipelineSets_[static_cast<uint32_t>(PipelineType::kSkyBox)].rootSignature = graphicsPipeline_->GetRootSignature();
 }
 
 //コンストラクタ

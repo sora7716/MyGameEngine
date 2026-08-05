@@ -1,5 +1,6 @@
 #pragma once
 #include "RenderData.h"
+#include "BlendMode.h"
 #include <wrl.h>
 #include <d3d12.h>
 #include <vector>
@@ -31,7 +32,7 @@ struct ModelRenderData{
 //LODの描画に必要なデータ
 struct LODRenderData{
 	std::vector<ModelRenderData>modelRendererDatas;
-	std::vector<std::vector<TransformationMatrix>>transforMationData;
+	std::vector<std::vector<TransformationMatrix>>transformationData;
 	std::vector<uint32_t>drawCounts = {};
 };
 
@@ -40,4 +41,5 @@ struct Object3dRenderData{
 	Object3dRenderHandle renderHandle_ = kInvalidObject3dRenderHandle;
 	Camera* renderCamera = nullptr;
 	LODRenderData lodRenderData;
+	BlendMode blendMode;
 };

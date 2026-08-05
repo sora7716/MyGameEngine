@@ -356,6 +356,9 @@ void DebugEditor::DrawInspector(){
 
 //タグの管理の描画
 void DebugEditor::DrawTagManager(){
+#ifdef USE_IMGUI
+
+
 	//タグの管理がNullかどうか
 	if (!tagManager_){
 		return;
@@ -505,6 +508,7 @@ void DebugEditor::DrawTagManager(){
 		ImGui::EndPopup();
 	}
 	ImGui::End();
+#endif // USE_IMGUI
 }
 
 //名前変更を開始

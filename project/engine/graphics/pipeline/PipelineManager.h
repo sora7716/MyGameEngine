@@ -33,7 +33,7 @@ public://メンバ関数
 	/// </summary>
 	/// <param name="pipelineSetType">パイプラインセットのタイプ</param>
 	/// <returns>パイプラインセット</returns>
-	const PipelineSet& GetPipelineSet(PiplineType pipelineSetType)const;
+	const PipelineSet& GetPipelineSet(PipelineType pipelineSetType)const;
 private://メンバ関数
 	/// <summary>
 	/// PSOの作成(Object3d)
@@ -74,6 +74,6 @@ private://メンバ変数
 	//グラフィックスパイプライン
 	std::unique_ptr<GraphicsPipeline> graphicsPipeline_ = nullptr;
 	//各オブジェクトごとにパイプラインタイプ
-	std::array<PipelineSet, static_cast<uint32_t>(PiplineType::kPiplineTypeCount)> pipelineSets_ = {};
+	std::array<PipelineSet, static_cast<uint32_t>(PipelineType::kPiplineTypeCount)> pipelineSets_ = {};
 };
 

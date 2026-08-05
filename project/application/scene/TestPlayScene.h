@@ -74,6 +74,7 @@ public://メンバ関数
 	void Finalize()override;
 private://メンバ変数
 	std::unique_ptr<Object3d>object3d_ = nullptr;
+	std::unique_ptr<Object3d>object3d2_ = nullptr;
 	float environmentCoefficient_ = 1.0f;
 
 	std::vector<Transform2d>transform2ds_;

@@ -55,10 +55,6 @@ void GameSystem::Draw(){
 		core_->GetSceneManager()->GameDraw();
 	}
 
-	//描画システム
-	core_->GetRenderSystem()->PreDraw();
-	//ライティングの管理
-	core_->GetLightingManager()->DrawSetting();
 	//描画
 	core_->GetRenderSystem()->Draw();
 

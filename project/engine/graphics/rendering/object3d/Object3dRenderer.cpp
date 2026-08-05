@@ -79,63 +79,61 @@ void Object3dRenderer::Reset(){
 }
 
 //描画
-void Object3dRenderer::Draw(){
-	for (const Object3dRenderData& renderData : renderDatas_){
+void Object3dRenderer::Draw(uint32_t instanceIndex){
 
-		//カメラ
-		renderData.renderCamera->DrawSetting(4);
+	//カメラ
+	renderDatas_[instanceIndex].renderCamera->DrawSetting(4);
 
-		for (uint32_t lodIndex = 0; lodIndex < renderData.lodRenderData.modelRendererDatas.size(); lodIndex++){
-			//LODモデルが存在してなかったら
-			if (renderData.lodRenderData.modelRendererDatas.empty()){
-				continue;
-			}
+	for (uint32_t lodIndex = 0; lodIndex < renderDatas_[instanceIndex].lodRenderData.modelRendererDatas.size(); lodIndex++){
+		//LODモデルが存在してなかったら
+		if (renderDatas_[instanceIndex].lodRenderData.modelRendererDatas.empty()){
+			continue;
+		}
 
-			const Object3dGpuResource& objectResource = objectResources_[renderData.renderHandle_];
+		const Object3dGpuResource& objectResource = objectResources_[renderDatas_[instanceIndex].renderHandle_];
 
-			const LODGpuResource& lodResource = objectResource.lodResources[lodIndex];
+		const LODGpuResource& lodResource = objectResource.lodResources[lodIndex];
 
-			//モデルの描画に必要なデータ
-			ModelRenderData modelRenderData = renderData.lodRenderData.modelRendererDatas[lodIndex];
-			//WVPのSRVIndex
-			uint32_t wvpSrvIndex = lodResource.srvIndex;
-			//描画カウント
-			uint32_t drawCount = renderData.lodRenderData.drawCounts[lodIndex];
+		//モデルの描画に必要なデータ
+		ModelRenderData modelRenderData = renderDatas_[instanceIndex].lodRenderData.modelRendererDatas[lodIndex];
+		//WVPのSRVIndex
+		uint32_t wvpSrvIndex = lodResource.srvIndex;
+		//描画カウント
+		uint32_t drawCount = renderDatas_[instanceIndex].lodRenderData.drawCounts[lodIndex];
 
-			//LOD描画カウントが0だったら
-			if (drawCount == 0){
-				continue;
-			}
+		//LOD描画カウントが0だったら
+		if (drawCount == 0){
+			continue;
+		}
 
-			//LODごとのWVP SRVを設定
-			directXBase_->GetCommandList()->SetGraphicsRootDescriptorTable(1, srvManager_->GetGPUDescriptorHandle(wvpSrvIndex));
+		//LODごとのWVP SRVを設定
+		directXBase_->GetCommandList()->SetGraphicsRootDescriptorTable(1, srvManager_->GetGPUDescriptorHandle(wvpSrvIndex));
 
-			//リムライトのCBufferの場所を設定
-			directXBase_->GetCommandList()->SetGraphicsRootConstantBufferView(7, modelRenderData.rimLightResource->GetGPUVirtualAddress());
-			//メッシュの描画
-			for (const MeshRenderData& meshRenderData : modelRenderData.meshRenderDatas){
-				uint32_t materialIndex = meshRenderData.meshData.materialIndex;
+		//リムライトのCBufferの場所を設定
+		directXBase_->GetCommandList()->SetGraphicsRootConstantBufferView(7, modelRenderData.rimLightResource->GetGPUVirtualAddress());
+		//メッシュの描画
+		for (const MeshRenderData& meshRenderData : modelRenderData.meshRenderDatas){
+			uint32_t materialIndex = meshRenderData.meshData.materialIndex;
 
-				//マテリアルCBufferの場所を設定
-				directXBase_->GetCommandList()->SetGraphicsRootConstantBufferView(0, modelRenderData.materialResources[materialIndex]->GetGPUVirtualAddress());
+			//マテリアルCBufferの場所を設定
+			directXBase_->GetCommandList()->SetGraphicsRootConstantBufferView(0, modelRenderData.materialResources[materialIndex]->GetGPUVirtualAddress());
 
-				MaterialTexturePaths& materialTexturePath = modelRenderData.modelData.materialTexturePaths[materialIndex];
+			MaterialTexturePaths& materialTexturePath = modelRenderData.modelData.materialTexturePaths[materialIndex];
 
-				//テクスチャをセット
-				directXBase_->GetCommandList()->SetGraphicsRootDescriptorTable(2, textureManager_->GetSRVHandleGPU(materialTexturePath.textureFilePath));
+			//テクスチャをセット
+			directXBase_->GetCommandList()->SetGraphicsRootDescriptorTable(2, textureManager_->GetSRVHandleGPU(materialTexturePath.textureFilePath));
 
-				//環境マップのセット
-				directXBase_->GetCommandList()->SetGraphicsRootDescriptorTable(8, textureManager_->GetSRVHandleGPU(materialTexturePath.environmentMap));
-				//VertexBufferViewの設定
-				directXBase_->GetCommandList()->IASetVertexBuffers(0, 1, &meshRenderData.vertexBufferView);//VBVを設定
-				directXBase_->GetCommandList()->IASetIndexBuffer(&meshRenderData.indexBufferView);//IBVを設定
-				//オブジェクト数が0より大きければ
-				if (drawCount > 0){
-					//メッシュが空じゃなければ
-					if (!meshRenderData.meshData.indices.empty()){
-						//描画
-						directXBase_->GetCommandList()->DrawIndexedInstanced(UINT(meshRenderData.meshData.indices.size()), drawCount, 0, 0, 0);
-					}
+			//環境マップのセット
+			directXBase_->GetCommandList()->SetGraphicsRootDescriptorTable(8, textureManager_->GetSRVHandleGPU(materialTexturePath.environmentMap));
+			//VertexBufferViewの設定
+			directXBase_->GetCommandList()->IASetVertexBuffers(0, 1, &meshRenderData.vertexBufferView);//VBVを設定
+			directXBase_->GetCommandList()->IASetIndexBuffer(&meshRenderData.indexBufferView);//IBVを設定
+			//オブジェクト数が0より大きければ
+			if (drawCount > 0){
+				//メッシュが空じゃなければ
+				if (!meshRenderData.meshData.indices.empty()){
+					//描画
+					directXBase_->GetCommandList()->DrawIndexedInstanced(UINT(meshRenderData.meshData.indices.size()), drawCount, 0, 0, 0);
 				}
 			}
 		}
@@ -150,7 +148,7 @@ void Object3dRenderer::AddRenderData(const Object3dRenderData& renderData){
 
 	Object3dGpuResource& objectResource = objectResources_[renderData.renderHandle_];
 
-	const std::vector<std::vector<TransformationMatrix>>& transformationData = renderData.lodRenderData.transforMationData;
+	const std::vector<std::vector<TransformationMatrix>>& transformationData = renderData.lodRenderData.transformationData;
 
 	const std::vector<uint32_t>drawCounts = renderData.lodRenderData.drawCounts;
 
@@ -170,6 +168,16 @@ void Object3dRenderer::AddRenderData(const Object3dRenderData& renderData){
 
 	//レンダーデータの追加
 	renderDatas_.push_back(renderData);
+}
+
+//ブレンドモードの取得
+BlendMode Object3dRenderer::GetBlendMode(uint32_t instanceIndex){
+	return renderDatas_[instanceIndex].blendMode;
+}
+
+//描画データの配列のサイズの取得
+uint32_t Object3dRenderer::GetRenderDataSize(){
+	return static_cast<uint32_t>(renderDatas_.size());
 }
 
 //座標変換行列リソースの生成

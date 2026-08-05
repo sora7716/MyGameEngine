@@ -127,7 +127,7 @@ void Object3d::Update(){
 		//LODごとのWVP配列に詰める
 		uint32_t drawIndex = lodDrawCounts_[lodIndex];
 		//検索キーがデータのサイズより大きかった場合
-		if (drawIndex >= rendererData_.lodRenderData.transforMationData[lodIndex].size()){
+		if (drawIndex >= rendererData_.lodRenderData.transformationData[lodIndex].size()){
 			continue;
 		}
 
@@ -414,9 +414,9 @@ void Object3d::SetupLOD(){
 	lodDrawCounts_.resize(lodCount_);
 	rendererData_.lodRenderData.drawCounts.resize(lodCount_);
 	//TransformData
-	rendererData_.lodRenderData.transforMationData.resize(lodCount_);
+	rendererData_.lodRenderData.transformationData.resize(lodCount_);
 
-	for (std::vector<TransformationMatrix>& lodData : rendererData_.lodRenderData.transforMationData){
+	for (std::vector<TransformationMatrix>& lodData : rendererData_.lodRenderData.transformationData){
 		lodData.resize(maxInstanceCount_);
 		for (TransformationMatrix& transform : lodData){
 			transform.world = Matrix4x4::Identity4x4();
@@ -468,7 +468,7 @@ void Object3d::MakeBillboardWorldMatrix(uint32_t instanceIndex){
 
 //座標の更新
 void Object3d::UpdateWorldTransform(uint32_t lodIndex, uint32_t drawIndex, const Matrix4x4& worldMatrix){
-	TransformationMatrix& transformation = rendererData_.lodRenderData.transforMationData[lodIndex][drawIndex];
+	TransformationMatrix& transformation = rendererData_.lodRenderData.transformationData[lodIndex][drawIndex];
 
 	transformation.world = worldMatrix;
 

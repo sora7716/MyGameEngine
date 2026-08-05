@@ -33,8 +33,7 @@ void TestPlayScene::Initialize(const SceneContext& sceneContext, Object3dRendere
 	BaseScene::Initialize(sceneContext, object3dRenderer);
 	gameCamera_ = sceneContext_.cameraManager->FindCamera("testPlayCamera");
 
-	object3d_ = std::make_unique<Object3d>();
-	object3d_->Initialize(sceneContext_.directXBase, gameCamera_, 1);
+	object3d_ = Object3d::Create(sceneContext_.directXBase, gameCamera_);
 	object3d_->SetGameCamera(gameCamera_);
 	object3d_->SetModel(sceneContext_.modelManager->FindModel("cube"), { 1.0f });
 	//object3d_->SetTexture(0, "uvChecker.png");
@@ -44,6 +43,11 @@ void TestPlayScene::Initialize(const SceneContext& sceneContext, Object3dRendere
 	//	object3d_->SetTexture(i, "white1x1.png");
 	//}
 	object3d_->RegisterToRenderer(object3dRenderer);
+
+	object3d2_ = Object3d::Create(sceneContext_.directXBase, gameCamera_);
+	object3d2_->SetGameCamera(gameCamera_);
+	object3d2_->SetModel(sceneContext_.modelManager->FindModel("cube"), { 1.0f });
+	object3d2_->RegisterToRenderer(object3dRenderer);
 
 	//object3d_->SetLODDistances({ 20.0f,30.0f,50.0f,80.0f });
 	GameObject* treePtr = nullptr;
@@ -57,6 +61,17 @@ void TestPlayScene::Initialize(const SceneContext& sceneContext, Object3dRendere
 	treePtr = modelObject.get();
 	gameObjects_.push_back(std::move(modelObject));
 	object3d_->AddInstance(treePtr);
+
+	modelObject = std::make_unique<GameObject>();
+	modelObject->Initialize("object3d2");
+	modelObject->GetTransform().translate = { 0.0f,0.0f,-9.9f };
+	modelObject->GetTransform().eulerAngle = { -std::numbers::pi_v<float> / 2.0f,0.0f,0.0f };
+	modelObject->GetTransform().quaternion = Quaternion::MakeQuaternionForEulerAngle(modelObject->GetTransform().eulerAngle);
+	modelObject->GetTransform().scale = Vector3::MakeAllOne();
+
+	treePtr = modelObject.get();
+	gameObjects_.push_back(std::move(modelObject));
+	object3d2_->AddInstance(treePtr);
 
 	std::unique_ptr<GameObject> skyBoxObject = std::make_unique<GameObject>();
 	skyBoxObject->Initialize("skyBox");
@@ -103,6 +118,8 @@ void TestPlayScene::Update(){
 	//}
 
 	object3d_->Update();
+
+	object3d2_->Update();
 
 	frustum_->Update();
 

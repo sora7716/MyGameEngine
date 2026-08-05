@@ -51,7 +51,7 @@ public://静的メンバ関数
 	/// <param name="maxInstanceCount">オブジェクトの最大数</param>
 	/// <param name="transformMode">トランスフォームモード</param>
 	/// <returns>インスタンス</returns>
-	std::unique_ptr<Object3d>Create(DirectXBase* directXBase, Camera* renderCamera, uint32_t maxInstanceCount, Transform3dMode transform3dMode);
+	static std::unique_ptr<Object3d>Create(DirectXBase* directXBase, Camera* renderCamera, uint32_t maxInstanceCount = 1, Transform3dMode transform3dMode = Transform3dMode::kNormal);
 public://メンバ関数
 	/// <summary>
 	/// コンストラクタ
@@ -70,7 +70,7 @@ public://メンバ関数
 	/// <param name="renderCamera">描画で使用するカメラ</param>
 	/// <param name="maxInstanceCount">オブジェクトの最大数</param>
 	/// <param name="transformMode">トランスフォームモード</param>
-	void Initialize(DirectXBase* directXBase, Camera* renderCamera, uint32_t maxInstanceCount = 1, Transform3dMode transform3dMode = Transform3dMode::kNormal);
+	void Initialize(DirectXBase* directXBase, Camera* renderCamera, uint32_t maxInstanceCount, Transform3dMode transform3dMode);
 
 	/// <summary>
 	/// 更新

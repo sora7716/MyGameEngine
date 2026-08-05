@@ -47,7 +47,7 @@ public://メンバ関数
 	void Initialize(DirectXBase* directXBase, SRVManager* srvManager, TextureManager* textureManager, uint32_t maxInstance);
 
 	/// <summary>
-	/// オブジェクトのリソースの作成
+	/// オブジェクトを登録
 	/// </summary>
 	/// <param name="lodCount">Lodの数</param>
 	/// <param name="maxInstance">Object3dが表示される最大数</param>

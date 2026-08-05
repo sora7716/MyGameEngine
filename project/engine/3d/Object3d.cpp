@@ -182,7 +182,7 @@ void Object3d::SetModel(std::unique_ptr<Model> model, TextureManager* textureMan
 	}
 }
 
-//
+//レンダラーを登録
 void Object3d::RegisterToRenderer(Object3dRenderer* renderer){
 	assert(renderer);
 	assert(lodCount_ > 0);

@@ -42,7 +42,7 @@ void Object3dRenderer::Initialize(DirectXBase* directXBase, SRVManager* srvManag
 	renderDatas_.clear();
 }
 
-//レンダラーを登録
+//オブジェクトを登録
 Object3dRenderHandle Object3dRenderer::RegisterObject(uint32_t lodCount, uint32_t maxInstance){
 
 	assert(lodCount > 0);

@@ -79,7 +79,7 @@ public://メンバ関数
 	/// </summary>
 	/// <returns>デフォルトカメラ</returns>
 	Camera* GetDefaultCamera()const;
-public://PrassKey
+public://PassKey
 	class ConstructorKey {
 	private:
 		ConstructorKey() = default;
@@ -88,7 +88,7 @@ public://PrassKey
 	/// <summary>
 	/// コンストラクタ
 	/// </summary>
-	/// <param name="">PrassKeyを受け取る</param>
+	/// <param name="">PassKeyを受け取る</param>
 	explicit ParticleCommon(ConstructorKey);
 private://メンバ関数
 	//コピーコンストラクタ禁止

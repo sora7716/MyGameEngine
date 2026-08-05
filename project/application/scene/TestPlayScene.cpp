@@ -34,7 +34,7 @@ void TestPlayScene::Initialize(const SceneContext& sceneContext, Object3dRendere
 	gameCamera_ = sceneContext_.cameraManager->FindCamera("testPlayCamera");
 
 	object3d_ = std::make_unique<Object3d>();
-	object3d_->Initialize(sceneContext_.directXBase, sceneContext_.srvManager, gameCamera_, 1);
+	object3d_->Initialize(sceneContext_.directXBase, gameCamera_, 1);
 	object3d_->SetGameCamera(gameCamera_);
 	object3d_->SetModel(sceneContext_.modelManager->FindModel("cube"), { 1.0f });
 	//object3d_->SetTexture(0, "uvChecker.png");

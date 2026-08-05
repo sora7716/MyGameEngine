@@ -176,7 +176,6 @@ void ParticleSystem::SetTexture(uint32_t meshIndex, const std::string& imageFile
 	//マテリアルの検索キーを取得
 	uint32_t materialIndex = meshes_[meshIndex]->GetMaterialIndex();
 	modelData_.materialTexturePaths[materialIndex].textureFilePath = "engine/resources/textures/" + imageFileName;
-	particleCommon_->GetTextureManager()->AddTexture(modelData_.materialTexturePaths[materialIndex].textureFilePath);
 }
 
 //マテリアルリソースの生成

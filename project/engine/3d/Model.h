@@ -23,7 +23,6 @@ public://静的メンバ関数
 	/// モデルの生成(ファイルを読み込み)
 	/// </summary>
 	/// <param name="directXBase">DirectXの基盤部分</param>
-	/// <param name="textureManager">テクスチャの管理</param>
 	/// <param name="modelFileName">モデルのファイル名</param>
 	/// <returns>モデル</returns>
 	static std::unique_ptr<Model> CreateModel(DirectXBase* directXBase, const std::string& modelFileName);
@@ -32,19 +31,17 @@ public://静的メンバ関数
 	/// モデルの生成(メッシュデータ)
 	/// </summary>
 	/// <param name="directXBase">DirectXの基盤部分</param>
-	/// <param name="textureManager">テクスチャの管理</param>
 	/// <param name="meshDatas">メッシュデータ</param>
 	/// <returns>モデル</returns>
-	static std::unique_ptr<Model> CreateModel(DirectXBase* directXBase, TextureManager* textureManager, const std::vector<MeshData>& meshDatas);
+	static std::unique_ptr<Model> CreateModel(DirectXBase* directXBase, const std::vector<MeshData>& meshDatas);
 
 	/// <summary>
 	/// モデルの生成(モデルデータ)
 	/// </summary>
 	/// <param name="directXBase">DirectXの基盤部分</param>
-	/// <param name="textureManager">テクスチャの管理</param>
 	/// <param name="modelData">モデルデータ</param>
 	/// <returns>モデル</returns>
-	static std::unique_ptr<Model> CreateModel(DirectXBase* directXBase, TextureManager* textureManager, const ModelData& modelData);
+	static std::unique_ptr<Model> CreateModel(DirectXBase* directXBase, const ModelData& modelData);
 public://メンバ関数
 	/// <summary>
 	/// コンストラクタ
@@ -60,8 +57,7 @@ public://メンバ関数
 	/// 初期化
 	/// </summary>
 	/// <param name="directXBase">DirectXの基盤部分</param>
-	/// <param name="textureManager">テクスチャの管理</param>
-	void Initialize(DirectXBase* directXBase, TextureManager* textureManager);
+	void Initialize(DirectXBase* directXBase);
 
 	/// <summary>
 	/// メッシュの再構成

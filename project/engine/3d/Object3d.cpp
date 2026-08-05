@@ -6,8 +6,6 @@
 #include "GameObject.h"
 #include "Model.h"
 #include "Mesh.h"
-#include "SRVManager.h"
-#include "TextureManager.h"
 #include "Culling.h"
 #include "LODBuilder.h"
 #include "LODController.h"
@@ -28,9 +26,9 @@ void(Object3d::* Object3d::UpdateWorldMatrixTable[])(uint32_t index) = {
 };
 
 //インスタンスの設定
-std::unique_ptr<Object3d> Object3d::Create(DirectXBase* directXBase, SRVManager* srvManager, Camera* renderCamera, uint32_t maxInstanceCount, Transform3dMode transform3dMode){
+std::unique_ptr<Object3d> Object3d::Create(DirectXBase* directXBase, Camera* renderCamera, uint32_t maxInstanceCount, Transform3dMode transform3dMode){
 	std::unique_ptr<Object3d>instance = std::make_unique<Object3d>();
-	instance->Initialize(directXBase, srvManager, renderCamera, maxInstanceCount, transform3dMode);
+	instance->Initialize(directXBase, renderCamera, maxInstanceCount, transform3dMode);
 	return std::move(instance);
 }
 
@@ -43,11 +41,9 @@ Object3d::~Object3d(){
 }
 
 //初期化
-void Object3d::Initialize(DirectXBase* directXBase, SRVManager* srvManager, Camera* renderCamera, uint32_t maxInstanceCount, Transform3dMode transform3dMode){
+void Object3d::Initialize(DirectXBase* directXBase, Camera* renderCamera, uint32_t maxInstanceCount, Transform3dMode transform3dMode){
 	//DirectXの基盤部分の記録
 	directXBase_ = directXBase;
-	//SRVの管理記録
-	srvManager_ = srvManager;
 	//座標変換のモード切替用変数
 	transform3dMode_ = transform3dMode;
 	//ゲームオブジェクトの数を決定
@@ -162,7 +158,7 @@ void Object3d::Update(){
 }
 
 //モデルの設定
-void Object3d::SetModel(std::unique_ptr<Model> model, TextureManager* textureManager, const std::vector<float>& keepRates){
+void Object3d::SetModel(std::unique_ptr<Model> model, const std::vector<float>& keepRates){
 	//元になるモデルを取得
 	baseModel_ = std::move(model);
 
@@ -171,7 +167,7 @@ void Object3d::SetModel(std::unique_ptr<Model> model, TextureManager* textureMan
 	//LOD関係のセットアップ
 	SetupLOD();
 	//LODモデルの生成
-	lodBuilder_->CreateLODModel(directXBase_, textureManager, baseModel_.get(), keepRates);
+	lodBuilder_->CreateLODModel(directXBase_, baseModel_.get(), keepRates);
 	//LODの制御の初期化
 	lodController_->Initialize(lodBuilder_.get());
 
@@ -473,7 +469,7 @@ void Object3d::MakeBillboardWorldMatrix(uint32_t instanceIndex){
 //座標の更新
 void Object3d::UpdateWorldTransform(uint32_t lodIndex, uint32_t drawIndex, const Matrix4x4& worldMatrix){
 	TransformationMatrix& transformation = rendererData_.lodRenderData.transforMationData[lodIndex][drawIndex];
-	
+
 	transformation.world = worldMatrix;
 
 	transformation.worldInverseTranspose = transformation.world.InverseTranspose();

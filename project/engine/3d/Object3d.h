@@ -15,8 +15,6 @@
 
 //前方宣言
 class DirectXBase;
-class TextureManager;
-class SRVManager;
 class Camera;
 class Model;
 class GameObject;
@@ -48,8 +46,12 @@ public://静的メンバ関数
 	/// <summary>
 	/// インスタンスの生成
 	/// </summary>
+	/// <param name="directXBase">DirectXの基盤部分</param>
+	/// <param name="renderCamera">描画で使用するカメラ</param>
+	/// <param name="maxInstanceCount">オブジェクトの最大数</param>
+	/// <param name="transformMode">トランスフォームモード</param>
 	/// <returns>インスタンス</returns>
-	std::unique_ptr<Object3d>Create(DirectXBase* directXBase, SRVManager* srvManager, Camera* renderCamera, uint32_t maxInstanceCount, Transform3dMode transform3dMode);
+	std::unique_ptr<Object3d>Create(DirectXBase* directXBase, Camera* renderCamera, uint32_t maxInstanceCount, Transform3dMode transform3dMode);
 public://メンバ関数
 	/// <summary>
 	/// コンストラクタ
@@ -64,11 +66,11 @@ public://メンバ関数
 	/// <summary>
 	/// 初期化
 	/// </summary>
-	/// <param name="srvManager">SRVの管理</param>
+	/// <param name="directXBase">DirectXの基盤部分</param>
 	/// <param name="renderCamera">描画で使用するカメラ</param>
 	/// <param name="maxInstanceCount">オブジェクトの最大数</param>
 	/// <param name="transformMode">トランスフォームモード</param>
-	void Initialize(DirectXBase* directXBase, SRVManager* srvManager, Camera* renderCamera, uint32_t maxInstanceCount = 1, Transform3dMode transform3dMode = Transform3dMode::kNormal);
+	void Initialize(DirectXBase* directXBase, Camera* renderCamera, uint32_t maxInstanceCount = 1, Transform3dMode transform3dMode = Transform3dMode::kNormal);
 
 	/// <summary>
 	/// 更新
@@ -79,9 +81,8 @@ public://メンバ関数
 	/// モデルの設定
 	/// </summary>
 	/// <param name="model">モデル</param>
-	/// <param name="textureManager">テクスチャの管理</param>
 	/// <param name="keepRates">モデルの保持する倍率</param>
-	void SetModel(std::unique_ptr<Model> model, TextureManager* textureManager, const std::vector<float>& keepRates = { 1.0f,0.75f,0.5f,0.25f });
+	void SetModel(std::unique_ptr<Model> model, const std::vector<float>& keepRates = { 1.0f,0.75f,0.5f,0.25f });
 
 	/// <summary>
 	/// レンダラーを登録
@@ -295,8 +296,6 @@ private://メンバ関数テーブル
 private://メンバ変数
 	//DirectXの基盤部分
 	DirectXBase* directXBase_ = nullptr;
-	//SRVマネージャー
-	SRVManager* srvManager_ = nullptr;
 	//モデル
 	std::unique_ptr<Model> baseModel_ = nullptr;
 

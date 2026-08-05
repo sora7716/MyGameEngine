@@ -24,7 +24,7 @@ LODBuilder::~LODBuilder(){
 }
 
 //LODモデルの生成
-void LODBuilder::CreateLODModel(DirectXBase* directXBase, TextureManager* textureManager, Model* model, const std::vector<float>& keepRates){
+void LODBuilder::CreateLODModel(DirectXBase* directXBase, Model* model, const std::vector<float>& keepRates){
 	//頂点合成する割合が存在しなかったら
 	if (keepRates.empty()){
 		return;
@@ -34,7 +34,7 @@ void LODBuilder::CreateLODModel(DirectXBase* directXBase, TextureManager* textur
 	lodModels_.resize(keepRates.size());
 	//モデルの作成
 	for (uint32_t i = 0; i < keepRates.size(); i++){
-		lodModels_[i] = Model::CreateModel(directXBase, textureManager, model->GetModelData());
+		lodModels_[i] = Model::CreateModel(directXBase, model->GetModelData());
 		//lodModels_[i]->RebuildMeshes(VertexClustering(lodModels_[i]->GetModelData().meshDatas, keepRates[i]));
 		lodModels_[i]->RebuildMeshes(EdgeCollapse(lodModels_[i]->GetModelData().meshDatas, keepRates[i]));
 	}

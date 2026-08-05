@@ -20,7 +20,7 @@ void ModelManager::Initialize(DirectXBase* directXBase, TextureManager* textureM
 //プリミティブなモデルの生成
 void ModelManager::CreatePrimitiveModel(){
 	//モデルの生成とファイル読み込み、初期化
-	std::unique_ptr<Model>model = Model::CreateModel(directXBase_, textureManager_, { primitiveMeshFactory::CreateSphere() });
+	std::unique_ptr<Model>model = Model::CreateModel(directXBase_, { primitiveMeshFactory::CreateSphere() });
 
 	//モデルデータを取得
 	ModelData modelData = model->GetModelData();
@@ -29,15 +29,15 @@ void ModelManager::CreatePrimitiveModel(){
 	modelDatas_.insert(std::make_pair("cube", modelData));
 }
 
-// objモデルの読み込み
-void ModelManager::LoadModel(const std::string& name, const std::string& modelFileName){
+//モデルの追加
+void ModelManager::AddModel(const std::string& name, const std::string& modelFileName){
 	//読み込み済みならモデルを検索
 	if (modelDatas_.contains(name)){
 		//読み込み済みなら早期return
 		return;
 	}
 	//モデルの生成とファイル読み込み、初期化
-	std::unique_ptr<Model>model = Model::CreateModel(directXBase_, textureManager_, modelFileName);
+	std::unique_ptr<Model>model = Model::CreateModel(directXBase_, modelFileName);
 
 	//モデルデータを取得
 	ModelData modelData = model->GetModelData();
@@ -51,7 +51,7 @@ std::unique_ptr<Model> ModelManager::FindModel(const std::string& name){
 	//読み込み済みモデルを検索
 	if (modelDatas_.contains(name)){
 		//読み込み済みモデルを戻り値としてreturn
-		return std::move(Model::CreateModel(directXBase_, textureManager_, modelDatas_.at(name)));
+		return std::move(Model::CreateModel(directXBase_, modelDatas_.at(name)));
 	}
 	//ファイル名一致なし
 	return nullptr;

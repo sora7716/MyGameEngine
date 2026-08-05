@@ -33,11 +33,11 @@ public://メンバ関数
 	void CreatePrimitiveModel();
 
 	/// <summary>
-	/// objモデルの読み込み
+	/// モデルの追加
 	/// </summary>
 	/// <param name="name">名前</param>
 	/// <param name="modelFileName">モデルのファイル名</param>
-	void LoadModel(const std::string& name, const std::string& modelFileName);
+	void AddModel(const std::string& name, const std::string& modelFileName);
 
 	/// <summary>
 	/// モデルの検索(.objはいらない)

@@ -1,7 +1,4 @@
 #pragma once
-#pragma once
-#include "engine/audio/AudioManager.h"
-#include "engine/3d/ModelManager.h"
 
 //前方宣言
 class Core;

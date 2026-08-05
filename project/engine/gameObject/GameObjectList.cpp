@@ -1,14 +1,18 @@
 #include "GameObjectList.h"
-#include "engine/base/Core.h"
+#include "Core.h"
+#include <string>
 #include <cassert>
+
 //デストラクタ
-GameObjectList::~GameObjectList() {
+GameObjectList::~GameObjectList(){
 }
 
 //初期化
-void GameObjectList::Initialize(Core* core) {
+void GameObjectList::Initialize(Core* core){
 	//エンジンの核を記録する
 	core_ = core;
+	//テクスチャの読み込み
+	LoadTexture();
 	//オーディオの読み込み
 	LoadAudio();
 	//OBJファイルの読み込み
@@ -18,22 +22,26 @@ void GameObjectList::Initialize(Core* core) {
 }
 
 //コンストラクタ
-GameObjectList::GameObjectList(ConstructorKey) {
+GameObjectList::GameObjectList(ConstructorKey){
 }
 
 //オーディオの読み込み
-void GameObjectList::LoadAudio() {
+void GameObjectList::LoadAudio(){
 	core_->GetAudioManager()->LoadAudio("Alarm01", "Alarm01");
 	core_->GetAudioManager()->LoadAudio("mokugyo", "mokugyo");
 }
 
 //テクスチャの読み込み
 void GameObjectList::LoadTexture(){
-	core_->GetTextureManager()->AddTexture("engine/resources/textures/skybox_cube.dds");
+	std::string directoryPath = "engine/resources/textures/";
+	core_->GetTextureManager()->AddTexture(directoryPath + "magenta1x1.png");
+	core_->GetTextureManager()->AddTexture(directoryPath + "white1x1.png");
+	core_->GetTextureManager()->AddTexture(directoryPath + "rostock_laage_airport_4k.dds");
+	core_->GetTextureManager()->AddTexture(directoryPath + "skybox_cube.dds");
 }
 
 //OBJファイルの読み込み
-void GameObjectList::LoadModel() {
+void GameObjectList::LoadModel(){
 	//プリミティブなモデルの生成
 	core_->GetModelManager()->CreatePrimitiveModel();
 	////モデルの読み込み
@@ -85,14 +93,14 @@ void GameObjectList::LoadModel() {
 
 	//人
 	//core_->GetModelManager()->LoadModel("walk", "human", "walk.gltf");
-	//core_->GetModelManager()->LoadModel("sneakWalk", "human/sneakWalk.gltf");
+	//core_->GetModelManager()->AddModel("sneakWalk", "human/sneakWalk.gltf");
 
 	//杖
 	//core_->GetModelManager()->LoadModel("staff", "staff", "staff.obj");
 }
 
 //カメラの生成
-void GameObjectList::CreateCamera() {
+void GameObjectList::CreateCamera(){
 	//カメラの管理
 	core_->GetCameraManager()->CreateCamera("defaultCamera");
 	//デバッグカメラ

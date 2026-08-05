@@ -2,38 +2,37 @@
 #include "Model.h"
 #include "DirectXBase.h"
 #include "Mesh.h"
-#include "TextureManager.h"
 #include "PrimitiveMeshFactory.h"
 #include "ModelLoader.h"
 
 //モデルの生成(ファイルを読み込んでの)
-std::unique_ptr<Model>Model::CreateModel(DirectXBase* directXBase, TextureManager* textureManager, const std::string& modelFileName){
+std::unique_ptr<Model>Model::CreateModel(DirectXBase* directXBase, const std::string& modelFileName){
 	//インスタンスの生成
 	std::unique_ptr<Model>instance = std::make_unique<Model>();
 	//初期化
-	instance->Initialize(directXBase, textureManager);
+	instance->Initialize(directXBase);
 	//モデルの生成
 	instance->CreateModel(modelFileName);
 	return instance;
 }
 
 //モデルの生成(キューブ)
-std::unique_ptr<Model> Model::CreateModel(DirectXBase* directXBase, TextureManager* textureManager, const std::vector<MeshData>& meshDatas){
+std::unique_ptr<Model> Model::CreateModel(DirectXBase* directXBase, const std::vector<MeshData>& meshDatas){
 	//インスタンスの生成
 	std::unique_ptr<Model>instance = std::make_unique<Model>();
 	//初期化
-	instance->Initialize(directXBase, textureManager);
+	instance->Initialize(directXBase);
 	//モデルの生成
 	instance->CreateModel(meshDatas);
 	return instance;
 }
 
 //モデルの生成(モデルデータ)
-std::unique_ptr<Model> Model::CreateModel(DirectXBase* directXBase, TextureManager* textureManager, const ModelData& modelData){
+std::unique_ptr<Model> Model::CreateModel(DirectXBase* directXBase, const ModelData& modelData){
 	//インスタンスの生成
 	std::unique_ptr<Model>instance = std::make_unique<Model>();
 	//初期化
-	instance->Initialize(directXBase, textureManager);
+	instance->Initialize(directXBase);
 	//モデルの生成
 	instance->CreateModel(modelData);
 	return instance;
@@ -48,13 +47,10 @@ Model::~Model(){
 }
 
 //初期化
-void Model::Initialize(DirectXBase* directXBase, TextureManager* textureManager){
+void Model::Initialize(DirectXBase* directXBase){
 	//DirectXの基盤部分を記録
 	assert(directXBase);
 	directXBase_ = directXBase;
-	//テクスチャの管理を記録
-	assert(textureManager);
-	textureManager_ = textureManager;
 }
 
 //メッシュの再構成
@@ -255,8 +251,4 @@ void Model::CreateResources(){
 	CreateMaterialResource();
 	//リムライトリソースの生成
 	CreateRimLightResource();
-	//テクスチャの読み込み
-	for (MaterialTexturePaths& materialData : modelData_.materialTexturePaths){
-		textureManager_->AddTexture(materialData.textureFilePath);
-	}
 }

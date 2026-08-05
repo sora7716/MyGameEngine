@@ -30,11 +30,10 @@ public://メンバ関数
 	/// LODモデルの生成
 	/// </summary>
 	/// <param name="directXBase">DirectXの基盤部分</param>
-	/// <param name="textureManager">テクスチャの管理</param>
 	/// <param name="model">モデル</param>
 	/// <param name="keepRates">頂点合成する割合</param>
 	/// <returns>LODモデル</returns>
-	void CreateLODModel(DirectXBase* directXBase, TextureManager* textureManager, Model* model, const std::vector<float>& keepRates);
+	void CreateLODModel(DirectXBase* directXBase, Model* model, const std::vector<float>& keepRates);
 
 	/// <summary>
 	/// LODモデルの取得

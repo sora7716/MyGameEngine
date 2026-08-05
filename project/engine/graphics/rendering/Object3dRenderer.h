@@ -46,6 +46,13 @@ public://メンバ関数
 	void Initialize(DirectXBase* directXBase, SRVManager* srvManager, TextureManager* textureManager, uint32_t maxInstance);
 
 	/// <summary>
+	/// オブジェクトのリソースの作成
+	/// </summary>
+	/// <param name="lodCount">Lodの数</param>
+	/// <param name="maxInstance">Object3dが表示される最大数</param>
+	void RegisterObject(uint32_t lodCount, uint32_t maxInstance);
+
+	/// <summary>
 	///リセット
 	/// </summary>
 	void Reset();
@@ -64,12 +71,14 @@ private://メンバ関数
 	/// <summary>
     /// 座標変換行列リソースの生成
     /// </summary>
-	void CreateTransformationMatrixResource();
+	/// <param name="lodGpuResource">LodのGpuに送るデータ</param>
+	void CreateTransformationMatrixResource(LODGpuResource& lodGpuResource);
 
 	/// <summary>
 	/// 座標変換行列リソースのストラクチャバッファの生成
 	/// </summary>
-	void CreateStructuredBufferForWvp();
+	/// <param name="lodGpuResource">LodのGpuに送るデータ</param>
+	void CreateStructuredBufferForWvp(LODGpuResource& lodGpuResource);
 private://メンバ変数
 	//DirectXの基盤部分
 	DirectXBase* directXBase_ = nullptr;

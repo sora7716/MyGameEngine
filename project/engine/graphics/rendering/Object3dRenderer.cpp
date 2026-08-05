@@ -40,6 +40,15 @@ void Object3dRenderer::Initialize(DirectXBase* directXBase, SRVManager* srvManag
 	//描画データの初期化
 	renderDatas_.reserve(maxInstanceCount_);
 	renderDatas_.clear();
+}
+
+//オブジェクトのリソースの作成
+void Object3dRenderer::RegisterObject(uint32_t lodCount, uint32_t maxInstance){
+	//サイズを決定
+	objectResources_.resize(maxInstance);
+	for (Object3dGpuResource& objectResource : objectResources_){
+		objectResource.lodResources.resize(lodCount);
+	}
 
 	//TransformationResourceの作成
 	CreateTransformationMatrixResource();
@@ -126,40 +135,28 @@ void Object3dRenderer::AddRenderData(const Object3dRenderData& renderData){
 }
 
 //座標変換行列リソースの生成
-void Object3dRenderer::CreateTransformationMatrixResource(){
-	for (Object3dGpuResource& objectResource : objectResources_){
-		for (LODGpuResource& lodResource : objectResource.lodResources){
-			for (uint32_t lod = 0; lod < lodResource.capacity; lod++){
-				// 配列サイズで確保
-				lodResource.wvpResource = directXBase_->CreateBufferResource(sizeof(TransformationMatrix) * maxInstanceCount_);
-				//座標変換行列リソースにデータを書き込むためのアドレスを取得してtransformationMatrixDataに割り当てる
-				//書き込むためのアドレス
-				lodResource.wvpResource->Map(0, nullptr, reinterpret_cast<void**>(&lodResource.wvpData));
-				//単位行列を書き込んでおく
-				for (uint32_t i = 0; i < static_cast<uint32_t>(maxInstanceCount_); i++){
-					lodResource.wvpData[i].wvp = Matrix4x4::Identity4x4();
-					lodResource.wvpData[i].world = Matrix4x4::Identity4x4();
-					lodResource.wvpData[i].worldInverseTranspose = Matrix4x4::Identity4x4();
-				}
-			}
-		}
+void Object3dRenderer::CreateTransformationMatrixResource(LODGpuResource& lodGpuResource){
+	// 配列サイズで確保
+	lodGpuResource.wvpResource = directXBase_->CreateBufferResource(sizeof(TransformationMatrix) * lodGpuResource.capacity);
+	//座標変換行列リソースにデータを書き込むためのアドレスを取得してtransformationMatrixDataに割り当てる
+	//書き込むためのアドレス
+	lodGpuResource.wvpResource->Map(0, nullptr, reinterpret_cast<void**>(&lodGpuResource.wvpData));
+	//単位行列を書き込んでおく
+	for (uint32_t i = 0; i < static_cast<uint32_t>(maxInstanceCount_); i++){
+		lodGpuResource.wvpData[i].wvp = Matrix4x4::Identity4x4();
+		lodGpuResource.wvpData[i].world = Matrix4x4::Identity4x4();
+		lodGpuResource.wvpData[i].worldInverseTranspose = Matrix4x4::Identity4x4();
 	}
 }
 
 //座標変換行列リソースのストラクチャバッファの生成
-void Object3dRenderer::CreateStructuredBufferForWvp(){
-	for (Object3dGpuResource& objectResource : objectResources_){
-		for (LODGpuResource& lodResource : objectResource.lodResources){
-			for (uint32_t lod = 0; lod < lodResource.capacity; lod++){
-				//ストラクチャバッファを生成
-				lodResource.srvIndex = srvManager_->Allocate() + TextureManager::kSRVIndexTop;
-				srvManager_->CreateSRVForStructuredBuffer(
-					lodResource.srvIndex,
-					lodResource.wvpResource.Get(),
-					static_cast<uint32_t>(maxInstanceCount_),
-					sizeof(TransformationMatrix)
-				);
-			}
-		}
-	}
+void Object3dRenderer::CreateStructuredBufferForWvp(LODGpuResource& lodGpuResource){
+	//ストラクチャバッファを生成
+	lodGpuResource.srvIndex = srvManager_->Allocate() + TextureManager::kSRVIndexTop;
+	srvManager_->CreateSRVForStructuredBuffer(
+		lodGpuResource.srvIndex,
+		lodGpuResource.wvpResource.Get(),
+		static_cast<uint32_t>(lodGpuResource.capacity),
+		sizeof(TransformationMatrix)
+	);
 }

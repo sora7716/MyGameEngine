@@ -18,7 +18,7 @@ class GraphicsPipeline;
 /// <summary>
 /// 形
 /// </summary>
-namespace Primitive {
+namespace DebugDraw {
 	class BaseShape {
 	private://エイリアステンプレート
 		template <class T>using ComPtr = Microsoft::WRL::ComPtr<T>;

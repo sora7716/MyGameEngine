@@ -2,6 +2,7 @@
 #include "RenderData.h"
 #include "BlendMode.h"
 #include "RenderingData.h"
+#include "PipelineManagerData.h"
 #include <d3d12.h>
 #include <dxgi1_6.h>
 #include <dxgidebug.h>
@@ -13,16 +14,21 @@
 
 //前方宣言
 class DirectXBase;
-class TextureManager;
+class PipelineManager;
 class Camera;
-class Blend;
 class GraphicsPipeline;
 class GameObject;
+class TextureManager;
 
 /// <summary>
 /// スカイボックス
 /// </summary>
-class SkyBox {
+class SkyBox{
+private://構造体など
+	struct SkyBoxProp{
+		Vector4 vertexPos;
+		Vector3 texcoord;
+	};
 private://エイリアステンプレート
 	template <class T>using ComPtr = Microsoft::WRL::ComPtr<T>;
 public://メンバ関数
@@ -39,9 +45,11 @@ public://メンバ関数
 	/// <summary>
 	/// 初期化
 	/// </summary>
-	/// <param name="spriteCommon">スプライトの共通部分</param>
-	/// <param name="spriteName">スプライト名</param>
-	void Initialize(DirectXBase* directXBase, TextureManager* textureManager, const std::string& imageFileName, Camera* camera);
+	/// <param name="directXBase">DirectXの基盤部分</param>
+	/// <param name="pipelineManager">パイプラインの管理</param>
+	/// <param name="imageFileName">画像のファイル名</param>
+	/// <param name="camera">描画に使用するカメラ</param>
+	void Initialize(DirectXBase* directXBase, PipelineManager* pipelineManager, const std::string& imageFileName, Camera* camera);
 
 	/// <summary>
 	/// 更新
@@ -51,13 +59,13 @@ public://メンバ関数
 	/// <summary>
 	/// 描画処理
 	/// </summary>
-	void Draw();
+	void Draw(TextureManager* textureManager);
 
 	/// <summary>
 	/// ゲームオブジェクトの設定
 	/// </summary>
 	/// <param name="gameObject">ゲームオブジェクト</param>
-	void SetGameObject(GameObject*gameObject);
+	void SetGameObject(GameObject* gameObject);
 
 	/// <summary>
 	/// 描画する用のカメラの設定
@@ -115,34 +123,20 @@ private://定数
 	//インデックス数
 	static inline const uint32_t kIndexCount = 36;
 private://メンバ変数
+	//DirectXの基盤部分
+	DirectXBase* directXBase_ = nullptr;
+	//パイプラインの管理
+	PipelineManager* pipelineManager_ = nullptr;
+	//パイプラインセット
+	PipelineSet pipelineSet_ = {};
+	//描画用のカメラ
 	Camera* renderCamera_ = nullptr;
-	//テクスチャ番号
+	//画像のファイル名
 	std::string imageFileName_ = "";
 	//GameObject
 	GameObject* gameObject_ = nullptr;
 	//UVトランスフォーム
 	Transform2d uvTransform_ = {};
-	//DirectXの基盤部分
-	DirectXBase* directXBase_ = nullptr;
-	//ルートシグネイチャ
-	ComPtr<ID3D12RootSignature>rootSignature_ = nullptr;
-	//グラフィックスパイプライン(PSO)
-	std::array<ComPtr<ID3D12PipelineState>, static_cast<int32_t>(BlendMode::kCountOfBlendMode)> graphicsPipelineStates_ = { nullptr };
-	//グラフィックスパイプライン
-	std::unique_ptr<GraphicsPipeline> makeGraphicsPipeline_ = nullptr;
-
-	//バッファリソース
-	ComPtr<ID3D12Resource> directionalLightResource_ = nullptr;//平行光源
-	ComPtr<ID3D12Resource> pointLightResource_ = nullptr;//点光源
-	//バッファリソース内のデータを指すポインタ
-	DirectionalLight* directionalLightPtr_ = nullptr;//平行光源
-	PointLight* pointLightPtr_ = nullptr;//点光源
-
-	//テクスチャマネージャー
-	TextureManager* textureManager_ = nullptr;
-
-	//ブレンド
-	std::unique_ptr<Blend> blend_ = nullptr;
 
 	//バッファリソース
 	ComPtr<ID3D12Resource>vertexResource_ = nullptr;//頂点
@@ -150,10 +144,6 @@ private://メンバ変数
 	ComPtr<ID3D12Resource>materialResource_ = nullptr;//マテリアル
 
 	//バッファリソース内のデータを指すポインタ
-	struct SkyBoxProp {
-		Vector4 vertexPos;
-		Vector3 texcoord;
-	};
 	std::vector<SkyBoxProp>skyBoxProp;
 	std::vector<uint32_t>index_;
 	Material* materialData_ = nullptr;//マテリアル

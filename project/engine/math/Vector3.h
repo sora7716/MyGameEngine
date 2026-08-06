@@ -82,7 +82,6 @@ struct Vector3 final {
 	/// <returns>現在のベクトル</returns>
 	static Vector3 Lerp(const Vector3& begin, const Vector3& end, float frame);
 
-	// 円関数を使用した線形補間
 	//加法
 	Vector3 operator+(const Vector3& v)const;
 	//減法

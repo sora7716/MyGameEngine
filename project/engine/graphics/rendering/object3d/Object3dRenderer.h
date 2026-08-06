@@ -11,7 +11,7 @@ class SRVManager;
 class TextureManager;
 
 /// <summary>
-/// Object3dの描画を担当
+/// Object3dのレンダラー
 /// </summary>
 class Object3dRenderer{
 private://エイリアステンプレート

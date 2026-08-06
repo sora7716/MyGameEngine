@@ -351,6 +351,9 @@
     <ClCompile Include="engine\graphics\rendering\object3d\Object3dRenderer.cpp">
       <Filter>engine\graphics\rendering</Filter>
     </ClCompile>
+    <ClCompile Include="engine\graphics\rendering\skyBox\SkyBoxRenderer.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="application\scene\TestPlayScene.h">
@@ -599,9 +602,6 @@
     <ClInclude Include="engine\graphics\rendering\RenderSystem.h">
       <Filter>engine\graphics\rendering</Filter>
     </ClInclude>
-    <ClInclude Include="engine\3d\LightingData.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
     <ClInclude Include="engine\graphics\rendering\object3d\Object3dGpuResource.h">
       <Filter>engine\graphics\rendering</Filter>
     </ClInclude>
@@ -610,6 +610,15 @@
     </ClInclude>
     <ClInclude Include="engine\graphics\rendering\object3d\Object3dRendererData.h">
       <Filter>engine\graphics\rendering</Filter>
+    </ClInclude>
+    <ClInclude Include="engine\3d\LightingData.h">
+      <Filter>engine\3d</Filter>
+    </ClInclude>
+    <ClInclude Include="engine\graphics\rendering\skyBox\SkyBoxRenderer.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="engine\graphics\rendering\skyBox\SkyBoxRendererData.h">
+      <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

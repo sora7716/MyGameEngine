@@ -8,7 +8,7 @@ class Camera;
 /// <summary>
 /// 視錐台
 /// </summary>
-namespace Primitive {
+namespace DebugDraw {
 	class Frustum :public BaseShape {
 	public://メンバ関数
 		/// <summary>

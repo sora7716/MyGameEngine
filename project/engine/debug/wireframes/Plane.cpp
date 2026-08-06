@@ -1,12 +1,12 @@
 #include "Plane.h"
 //コンストラクタ
-Primitive::Plane::Plane() {}
+DebugDraw::Plane::Plane() {}
 
 //デストラクタ
-Primitive::Plane::~Plane() {}
+DebugDraw::Plane::~Plane() {}
 
 //初期化
-void Primitive::Plane::Initialize(DirectXBase* directXBase, Camera* camera) {
+void DebugDraw::Plane::Initialize(DirectXBase* directXBase, Camera* camera) {
 	vertexCount_ = 4;
 	indexCount_ = 8;
 	plane_ = {
@@ -17,24 +17,24 @@ void Primitive::Plane::Initialize(DirectXBase* directXBase, Camera* camera) {
 }
 
 //更新
-void Primitive::Plane::Update() {
+void DebugDraw::Plane::Update() {
 	//基底クラスの更新
 	BaseShape::Update();
 }
 
 //平面の設定
-void Primitive::Plane::SetPlane(const primitiveData::Plane& plane) {
+void DebugDraw::Plane::SetPlane(const primitiveData::Plane& plane) {
 	plane_ = plane;
 }
 
 //平面の取得
-const primitiveData::Plane& Primitive::Plane::GetPlane() const {
+const primitiveData::Plane& DebugDraw::Plane::GetPlane() const {
 	// TODO: return ステートメントをここに挿入します
 	return plane_;
 }
 
 //頂点データの設定
-void Primitive::Plane::SettingVertexData() {
+void DebugDraw::Plane::SettingVertexData() {
 	Vector3 normal = plane_.normal.Normalize();
 
 	//平面上の中心点
@@ -69,7 +69,7 @@ void Primitive::Plane::SettingVertexData() {
 }
 
 //インデックスの設定
-void Primitive::Plane::SettingIndexData() {
+void DebugDraw::Plane::SettingIndexData() {
 	int32_t indices[] = {
 		//前面
 		0,1,
@@ -86,7 +86,7 @@ void Primitive::Plane::SettingIndexData() {
 }
 
 //垂直の処理
-Vector3 Primitive::Plane::Perpendicular(const Vector3& v){
+Vector3 DebugDraw::Plane::Perpendicular(const Vector3& v){
 	// TODO: return ステートメントをここに挿入します
 	if (v.x != 0.0f || v.y != 0.0f) {
 		return { -v.y, v.x, 0.0f };

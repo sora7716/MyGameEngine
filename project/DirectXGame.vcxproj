@@ -69,6 +69,7 @@
     <ClCompile Include="engine\graphics\pipeline\PipelineManager.cpp" />
     <ClCompile Include="engine\graphics\rendering\object3d\Object3dRenderer.cpp" />
     <ClCompile Include="engine\graphics\rendering\RenderSystem.cpp" />
+    <ClCompile Include="engine\graphics\rendering\skyBox\SkyBoxRenderer.cpp" />
     <ClCompile Include="engine\graphics\texture\TextureManager.cpp" />
     <ClCompile Include="engine\input\Input.cpp" />
     <ClCompile Include="engine\main.cpp" />
@@ -159,6 +160,8 @@
     <ClInclude Include="engine\graphics\rendering\object3d\Object3dRenderer.h" />
     <ClInclude Include="engine\graphics\rendering\object3d\Object3dRendererData.h" />
     <ClInclude Include="engine\graphics\rendering\RenderSystem.h" />
+    <ClInclude Include="engine\graphics\rendering\skyBox\SkyBoxRenderer.h" />
+    <ClInclude Include="engine\graphics\rendering\skyBox\SkyBoxRendererData.h" />
     <ClInclude Include="engine\graphics\texture\TextureManager.h" />
     <ClInclude Include="engine\input\Input.h" />
     <ClInclude Include="engine\math\MathUtility.h" />

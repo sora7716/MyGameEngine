@@ -1,7 +1,7 @@
 #include "Sphere.h"
 #include "MathUtility.h"
 #include "ImGuiManager.h"
-using namespace Primitive;
+using namespace DebugDraw;
 
 //コンストラクタ
 Sphere::Sphere() {}

@@ -1,63 +1,31 @@
 #include "SkyBox.h"
-#include "MathUtility.h"
-#include "TextureManager.h"
 #include "DirectXBase.h"
-#include "WinApi.h"
-#include "ImGuiManager.h"
 #include "MatrixUtility.h"
-#include "TextureManager.h"
 #include "Camera.h"
-#include "GraphicsPipeline.h"
-#include "Blend.h"
+#include "TextureManager.h"
+#include "PipelineManager.h"
 #include "GameObject.h"
 #include <cassert>
 
 //コンストラクタ
-SkyBox::SkyBox() {
+SkyBox::SkyBox(){
 }
 
 //デストラクタ
-SkyBox::~SkyBox() {
+SkyBox::~SkyBox(){
 }
 
 //初期化
-void SkyBox::Initialize(DirectXBase* directXBase, TextureManager* textureManager, const std::string& imageFileName, Camera* camera) {
-	//DirectXの基盤を受け取る
+void SkyBox::Initialize(DirectXBase* directXBase, PipelineManager* pipelineManager, const std::string& imageFileName, Camera* camera){
+	//DirectXの基盤の記録
+	assert(directXBase);
 	directXBase_ = directXBase;
-	//テクスチャマネージャー
-	textureManager_ = textureManager;
+	//パイプラインの管理の記録
+	assert(pipelineManager);
+	pipelineManager_ = pipelineManager;
+	pipelineSet_ = pipelineManager_->GetPipelineSet(PipelineType::kSkyBox);
 	//カメラの作成
 	renderCamera_ = camera;
-	//ブレンド
-	blend_ = std::make_unique<Blend>();
-	//グラフィックスパイプラインの生成と初期化
-	makeGraphicsPipeline_ = std::make_unique<GraphicsPipeline>();
-	//シェーダを設定
-	makeGraphicsPipeline_->SetVertexShaderFileName(L"SkyBox.VS.hlsl");
-	makeGraphicsPipeline_->SetPixelShaderFileName(L"SkyBox.PS.hlsl");
-	//DirectXBaseの記録
-	makeGraphicsPipeline_->SetDirectXBase(directXBase);
-	//深度バッファ
-	makeGraphicsPipeline_->CreateDepthStencilResourceForParticle();
-	//シグネイチャBlobの初期化
-	makeGraphicsPipeline_->CreateRootSignatureBlobForSkyBox();
-	//インプットレイアウト
-	makeGraphicsPipeline_->InitializeInputLayoutDescForSkyBox();
-	//ラスタライザステート
-	makeGraphicsPipeline_->InitializeRasterizerState();
-	//頂点シェーダBlob
-	makeGraphicsPipeline_->CompileVertexShader();
-	//ピクセルシェーダBlob
-	makeGraphicsPipeline_->CompilePixelShader();
-	//PSO
-	for (uint32_t i = 0; i < static_cast<int32_t>(BlendMode::kCountOfBlendMode); i++) {
-		//ブレンドステート
-		makeGraphicsPipeline_->InitializeBlendState(i);
-		//グラフィックスパイプラインの生成
-		graphicsPipelineStates_[i] = makeGraphicsPipeline_->CreateGraphicsPipeline();
-	}
-	//ルートシグネイチャの記録
-	rootSignature_ = makeGraphicsPipeline_->GetRootSignature();
 	//頂点データの生成
 	CreateVertexResource();
 	//インデックスデータの生成
@@ -66,14 +34,12 @@ void SkyBox::Initialize(DirectXBase* directXBase, TextureManager* textureManager
 	CreateMaterialResource();
 	//スプライトファイルパスを記録
 	imageFileName_ = "engine/resources/textures/" + imageFileName;
-	//スプライトの共通部分
-	textureManager->AddTexture(imageFileName_);
 	//wvpリソースの初期化
 	CreateTransformationMatrixResource();
 }
 
 //更新
-void SkyBox::Update() {
+void SkyBox::Update(){
 	//ワールド座標の更新
 	UpdateTransform();
 	//UV座標の更新
@@ -81,19 +47,19 @@ void SkyBox::Update() {
 }
 
 //描画処理
-void SkyBox::Draw() {
+void SkyBox::Draw(TextureManager* textureManager){
 	//存在していなかったら
 	if (!gameObject_->IsActive()){
 		return;
 	}
 	//ルートシグネイチャをセットするコマンド
-	directXBase_->GetCommandList()->SetGraphicsRootSignature(rootSignature_.Get());
+	directXBase_->GetCommandList()->SetGraphicsRootSignature(pipelineSet_.rootSignature.Get());
 	//プリミティブトポロジーをセットするコマンド
 	directXBase_->GetCommandList()->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 	//カメラ
 	renderCamera_->DrawSetting(3);
 	//PSOの設定
-	auto pso = graphicsPipelineStates_[static_cast<int32_t>(blendMode_)].Get();
+	auto pso = pipelineSet_.graphicsPipelineStates[static_cast<uint32_t>(blendMode_)].Get();
 	//グラフィックスパイプラインをセットするコマンド
 	directXBase_->GetCommandList()->SetPipelineState(pso);
 	//座標変換行列CBufferの場所を設定
@@ -105,23 +71,23 @@ void SkyBox::Draw() {
 	//マテリアルCBufferの場所を設定
 	directXBase_->GetCommandList()->SetGraphicsRootConstantBufferView(0, materialResource_->GetGPUVirtualAddress());
 	//SRVのDescriptorTableの先頭を設定
-	directXBase_->GetCommandList()->SetGraphicsRootDescriptorTable(2, textureManager_->GetSRVHandleGPU(imageFileName_));
+	directXBase_->GetCommandList()->SetGraphicsRootDescriptorTable(2, textureManager->GetSRVHandleGPU(imageFileName_));
 	//描画(DrawCall/ドローコール)
 	directXBase_->GetCommandList()->DrawIndexedInstanced(kIndexCount, 1, 0, 0, 0);
 }
 
 //ゲームオブジェクトの設定
-void SkyBox::SetGameObject(GameObject* gameObject) {
+void SkyBox::SetGameObject(GameObject* gameObject){
 	gameObject_ = gameObject;
 }
 
 //描画する用のカメラの設定
-void SkyBox::SetRenderCamera(Camera* camera) {
+void SkyBox::SetRenderCamera(Camera* camera){
 	renderCamera_ = camera;
 }
 
 //頂点データの初期化
-void SkyBox::InitializeVertexData() {
+void SkyBox::InitializeVertexData(){
 	//サイズを設定
 	skyBoxProp.resize(kVertexCount);
 	//右面
@@ -133,7 +99,7 @@ void SkyBox::InitializeVertexData() {
 	//Texcoord
 	skyBoxProp[0].texcoord = { 1.0f,1.0f,1.0f };
 	skyBoxProp[1].texcoord = { 1.0f,1.0f,-1.0f };
-	skyBoxProp[2].texcoord = { 1.0f,-1.0f,1.0f};
+	skyBoxProp[2].texcoord = { 1.0f,-1.0f,1.0f };
 	skyBoxProp[3].texcoord = { 1.0f,-1.0f,-1.0f };
 
 	//左面
@@ -194,7 +160,7 @@ void SkyBox::InitializeVertexData() {
 }
 
 //頂点データの生成
-void SkyBox::CreateVertexResource() {
+void SkyBox::CreateVertexResource(){
 	//頂点データの初期化
 	InitializeVertexData();
 	//VertexResourceを作成する
@@ -215,7 +181,7 @@ void SkyBox::CreateVertexResource() {
 }
 
 //インデックスデータの初期化
-void SkyBox::InitializeIndexData() {
+void SkyBox::InitializeIndexData(){
 	//サイズを設定
 	index_.resize(kIndexCount);
 	//右面
@@ -263,7 +229,7 @@ void SkyBox::InitializeIndexData() {
 }
 
 //インデックスリソースの生成
-void SkyBox::CreateIndexResource() {
+void SkyBox::CreateIndexResource(){
 	//インデックスデータの初期化
 	InitializeIndexData();
 	//IndexResourceを作成する
@@ -284,7 +250,7 @@ void SkyBox::CreateIndexResource() {
 }
 
 //マテリアルデータの初期化
-void SkyBox::InitializeMaterialData() {
+void SkyBox::InitializeMaterialData(){
 	//色を書き込む
 	materialData_->color = { 1.0f, 1.0f, 1.0f, 1.0f };
 	materialData_->enableLighting = false;
@@ -292,7 +258,7 @@ void SkyBox::InitializeMaterialData() {
 }
 
 //マテリアルリソースの生成
-void SkyBox::CreateMaterialResource() {
+void SkyBox::CreateMaterialResource(){
 	//マテリアルリソースを作る
 	materialResource_ = directXBase_->CreateBufferResource(sizeof(Material));
 	//マテリアルリソースにデータを書き込むためのアドレスを取得してmaterialDataに割り当てる
@@ -303,7 +269,7 @@ void SkyBox::CreateMaterialResource() {
 }
 
 //座標変換行列リソースの生成
-void SkyBox::CreateTransformationMatrixResource() {
+void SkyBox::CreateTransformationMatrixResource(){
 	//座標変換行列リソースを作成する
 	wvpResource_ = directXBase_->CreateBufferResource(sizeof(TransformationMatrix));
 	//座標変換行列リソースにデータを書き込むためのアドレスを取得してtransformationMatrixDataに割り当てる
@@ -316,13 +282,13 @@ void SkyBox::CreateTransformationMatrixResource() {
 }
 
 // UVの座標変換の更新
-void SkyBox::UpdateUVTransform() {
+void SkyBox::UpdateUVTransform(){
 	//UVTransform
 	materialData_->uvMatrix = matrixUtility::MakeUVAffineMatrix(uvTransform_);
 }
 
 //ワールド座標の更新
-void SkyBox::UpdateTransform() {
+void SkyBox::UpdateTransform(){
 	//TransformからWorldMatrixを作る
 	wvpData_->world = matrixUtility::MakeAffineMatrix(gameObject_->GetTransform());
 	//wvpの書き込み

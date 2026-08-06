@@ -12,7 +12,7 @@ class Audio;
 class SkyBox;
 class ParticleSystem;
 
-namespace Primitive {
+namespace DebugDraw {
 	class Cube;
 	class Frustum;
 	class Line;
@@ -74,14 +74,13 @@ public://メンバ関数
 	void Finalize()override;
 private://メンバ変数
 	std::unique_ptr<Object3d>object3d_ = nullptr;
-	std::unique_ptr<Object3d>object3d2_ = nullptr;
 	float environmentCoefficient_ = 1.0f;
 
 	std::vector<Transform2d>transform2ds_;
 
-	std::unique_ptr<Primitive::Frustum>frustum_ = nullptr;
+	std::unique_ptr<DebugDraw::Frustum>frustum_ = nullptr;
 
-	std::unique_ptr<Primitive::Cube>cube_ = nullptr;
+	std::unique_ptr<DebugDraw::Cube>cube_ = nullptr;
 
 	std::unique_ptr<SkyBox>skyBox_ = nullptr;
 

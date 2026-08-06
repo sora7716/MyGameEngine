@@ -45,12 +45,6 @@ void TestPlayScene::Initialize(const SceneContext& sceneContext, Object3dRendere
 	//}
 	object3d_->RegisterToRenderer(object3dRenderer);
 
-	object3d2_ = Object3d::Create(sceneContext_.directXBase, gameCamera_);
-	object3d2_->SetGameCamera(gameCamera_);
-	object3d2_->SetModel(sceneContext_.modelManager->FindModel("cube"), { 1.0f });
-	object3d2_->SetBlendMode(BlendMode::kSubtract);
-	object3d2_->RegisterToRenderer(object3dRenderer);
-
 	//object3d_->SetLODDistances({ 20.0f,30.0f,50.0f,80.0f });
 	GameObject* treePtr = nullptr;
 	std::unique_ptr<GameObject>modelObject = std::make_unique<GameObject>();
@@ -64,17 +58,6 @@ void TestPlayScene::Initialize(const SceneContext& sceneContext, Object3dRendere
 	gameObjects_.push_back(std::move(modelObject));
 	object3d_->AddInstance(treePtr);
 
-	modelObject = std::make_unique<GameObject>();
-	modelObject->Initialize("object3d2");
-	modelObject->GetTransform().translate = { 0.0f,0.0f,-9.9f };
-	modelObject->GetTransform().eulerAngle = { -std::numbers::pi_v<float> / 2.0f,0.0f,0.0f };
-	modelObject->GetTransform().quaternion = Quaternion::MakeQuaternionForEulerAngle(modelObject->GetTransform().eulerAngle);
-	modelObject->GetTransform().scale = Vector3::MakeAllOne();
-
-	treePtr = modelObject.get();
-	gameObjects_.push_back(std::move(modelObject));
-	object3d2_->AddInstance(treePtr);
-
 	std::unique_ptr<GameObject> skyBoxObject = std::make_unique<GameObject>();
 	skyBoxObject->Initialize("skyBox");
 	skyBoxObject->GetTransform().scale = { 50.0f,50.0f,50.0f };
@@ -82,7 +65,7 @@ void TestPlayScene::Initialize(const SceneContext& sceneContext, Object3dRendere
 	gameObjects_.push_back(std::move(skyBoxObject));
 
 	skyBox_ = std::make_unique<SkyBox>();
-	skyBox_->Initialize(sceneContext_.directXBase, sceneContext.textureManager, "skybox_cube.dds", gameCamera_);
+	skyBox_->Initialize(sceneContext_.directXBase, sceneContext.pipelineManager, "skybox_cube.dds", gameCamera_);
 	skyBox_->SetGameObject(treePtr);
 	for (uint32_t i = 0; i < object3d_->GetMeshDataSize(); i++){
 		object3d_->SetEnvironmentMap(i, "skybox_cube.dds");
@@ -91,12 +74,12 @@ void TestPlayScene::Initialize(const SceneContext& sceneContext, Object3dRendere
 	//	transform2ds_.push_back({ object3d_->GetUVScale(i),object3d_->GetUVRotate(i),object3d_->GetUVTranslate(i) });
 	//}
 
-	frustum_ = std::make_unique<Primitive::Frustum>();
+	frustum_ = std::make_unique<DebugDraw::Frustum>();
 	frustum_->Initialize(sceneContext_.directXBase, gameCamera_);
 	frustum_->SetTargetCamera(gameCamera_);
 	frustum_->SetColor({ 1.0f,0.0f,0.0f,1.0f });
 
-	cube_ = std::make_unique<Primitive::Cube>();
+	cube_ = std::make_unique<DebugDraw::Cube>();
 	cube_->Initialize(sceneContext_.directXBase, gameCamera_);
 
 	particleSystem_ = std::make_unique<ParticleSystem>();
@@ -120,8 +103,6 @@ void TestPlayScene::Update(){
 	//}
 
 	object3d_->Update();
-
-	object3d2_->Update();
 
 	frustum_->Update();
 
@@ -208,10 +189,6 @@ void TestPlayScene::Draw(Camera* camera){
 	object3d_->SetRenderCamera(camera);
 	object3dRenderer_->AddRenderData(object3d_->GetRenderData());
 
-	object3d2_->SetRenderCamera(camera);
-	object3dRenderer_->AddRenderData(object3d2_->GetRenderData());
-	//object3d_->Draw();
-
 	frustum_->SetRenderCamera(camera);
 	frustum_->Draw();
 
@@ -219,7 +196,7 @@ void TestPlayScene::Draw(Camera* camera){
 	cube_->Draw();
 
 	skyBox_->SetRenderCamera(camera);
-	skyBox_->Draw();
+	skyBox_->Draw(sceneContext_.textureManager);
 
 	particleSystem_->SetRenderCamera(camera);
 	particleSystem_->Draw();

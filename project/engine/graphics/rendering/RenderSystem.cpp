@@ -3,6 +3,7 @@
 #include "PipelineManager.h"
 #include "LightingManager.h"
 #include "Object3dRenderer.h"
+#include "SkyBoxRenderer.h"
 
 //コンストラクタ
 RenderSystem::RenderSystem(){
@@ -25,6 +26,8 @@ void RenderSystem::Initialize(DirectXBase* directXBase, SRVManager* srvManager, 
 	lightingManager_ = lightingManager;
 	//Object3dのレンダラー
 	object3dRenderer_ = Object3dRenderer::Create(directXBase, srvManager, textureManager);
+	//スカイボックスのレンダラー
+	skyBoxRenderer_ = SkyBoxRenderer::Create(directXBase, textureManager);
 }
 
 //描画

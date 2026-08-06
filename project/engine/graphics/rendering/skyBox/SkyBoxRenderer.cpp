@@ -4,6 +4,13 @@
 #include "TextureManager.h"
 #include <cassert>
 
+//生成
+std::unique_ptr<SkyBoxRenderer> SkyBoxRenderer::Create(DirectXBase* directXBase, TextureManager* textureManager){
+	std::unique_ptr<SkyBoxRenderer>instance = std::make_unique<SkyBoxRenderer>();
+	instance->Initialize(directXBase, textureManager);
+	return instance;
+}
+
 //コンストラクタ
 SkyBoxRenderer::SkyBoxRenderer(){
 }

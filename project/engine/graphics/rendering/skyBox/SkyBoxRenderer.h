@@ -1,6 +1,7 @@
 #pragma once
 #include "SkyBoxRendererData.h"
 #include <vector>
+#include <memory>
 
 //前方宣言
 class DirectXBase;
@@ -10,6 +11,14 @@ class TextureManager;
 /// スカイボックスのレンダラー
 /// </summary>
 class SkyBoxRenderer{
+public://静的メンバ関数
+	/// <summary>
+	/// 生成
+	/// </summary>
+	/// <param name="directXBase">DirectXの基盤部分</param>
+	/// <param name="textureManager">Textureの管理</param>
+	/// <returns>インスタンス</returns>
+	static std::unique_ptr<SkyBoxRenderer>Create(DirectXBase* directXBase, TextureManager* textureManager);
 public://メンバ関数
 	/// <summary>
 	/// コンストラクタ
@@ -29,8 +38,8 @@ public://メンバ関数
 	void Initialize(DirectXBase* directXBase, TextureManager* textureManager);
 
 	/// <summary>
-    /// 描画データの追加
-    /// </summary>
+	/// 描画データの追加
+	/// </summary>
 	/// <param name="skyBoxRenderData"></param>
 	void AddRenderData(const SkyBoxRenderData& skyBoxRenderData);
 

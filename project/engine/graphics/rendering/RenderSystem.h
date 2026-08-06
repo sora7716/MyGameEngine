@@ -10,6 +10,7 @@ class PipelineManager;
 class LightingManager;
 class Blend;
 class Object3dRenderer;
+class SkyBoxRenderer;
 
 /// <summary>
 /// 描画のシステム
@@ -62,5 +63,7 @@ private://メンバ関数
 	LightingManager* lightingManager_ = nullptr;
 	//Object3dのレンダラー
 	std::unique_ptr<Object3dRenderer>object3dRenderer_ = nullptr;
+	//スカイボックスのレンダラー
+	std::unique_ptr<SkyBoxRenderer>skyBoxRenderer_ = nullptr;
 };
 

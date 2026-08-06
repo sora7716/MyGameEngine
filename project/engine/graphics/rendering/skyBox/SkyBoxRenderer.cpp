@@ -16,14 +16,20 @@ SkyBoxRenderer::~SkyBoxRenderer(){
 void SkyBoxRenderer::Initialize(DirectXBase* directXBase, TextureManager* textureManager){
 	//DirectXの基盤部分の記録
 	assert(directXBase);;
-	directXBase_ = directXBase;;
+	directXBase_ = directXBase;
 	//Textureの管理の記録
+	assert(textureManager);
 	textureManager_ = textureManager;
 }
 
 //レンダーデータの追加
 void SkyBoxRenderer::AddRenderData(const SkyBoxRenderData& skyBoxRenderData){
 	skyBoxRenderDatas_.push_back(skyBoxRenderData);
+}
+
+//リセット
+void SkyBoxRenderer::Reset(){
+	skyBoxRenderDatas_.clear();
 }
 
 //描画

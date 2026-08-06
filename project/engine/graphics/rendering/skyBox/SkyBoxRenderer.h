@@ -35,6 +35,11 @@ public://メンバ関数
 	void AddRenderData(const SkyBoxRenderData& skyBoxRenderData);
 
 	/// <summary>
+	/// リセット
+	/// </summary>
+	void Reset();
+
+	/// <summary>
 	/// 描画
 	/// </summary>
 	/// <param name="instanceIndex">インスタンスの検索キー</param>

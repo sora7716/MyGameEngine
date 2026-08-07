@@ -1,4 +1,4 @@
-#include "Shape.hlsli"
+#include "DebugDraw.hlsli"
 
 struct TransformationMatrix {
     float32_t4x4 wvp;
@@ -18,7 +18,6 @@ ConstantBuffer<Camera> gCamera : register(b1);
 struct VertexShaderInput {
     float32_t4 position : POSITION0;
     float32_t2 texcoord : TEXCOORD0;
-    float32_t3 normal : NORMAL0;
 };
 
 VertexShaderOutput main(VertexShaderInput input)
@@ -27,7 +26,5 @@ VertexShaderOutput main(VertexShaderInput input)
     float32_t4x4 worldViewProjection = mul(gTrasformationMatrix.world, gCamera.viewProjection);
     output.position = mul(input.position, worldViewProjection);
     output.texcoord = input.texcoord;
-    output.normal = normalize(mul(input.normal, (float32_t3x3) gTrasformationMatrix.world));
-    output.worldPosition = mul(input.position, gTrasformationMatrix.world).xyz;
     return output;
 }

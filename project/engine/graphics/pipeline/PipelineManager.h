@@ -54,6 +54,11 @@ private://メンバ関数
 	/// PSOの作成(SkyBox)
 	/// </summary>
 	void CreatePSOForSkyBox();
+
+	/// <summary>
+	/// PSOの作成(DebugDraw)
+	/// </summary>
+	void CreatePSOForDebugDraw();
 public://PassKeyIdiom
 	class ConstructorKey{
 	private:

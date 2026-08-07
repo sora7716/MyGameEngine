@@ -1,6 +1,6 @@
 #include "Circle.h"
 #include "MathUtility.h"
-using namespace DebugDraw;
+using namespace debugDraw;
 
 //コンストラクタ
 Circle::Circle() {}

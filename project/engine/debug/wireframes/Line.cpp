@@ -1,6 +1,6 @@
 #include "Line.h"
 using namespace primitiveData;
-using namespace DebugDraw;
+using namespace debugDraw;
 
 
 //コンストラクタ

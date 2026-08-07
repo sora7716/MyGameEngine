@@ -352,7 +352,7 @@
       <Filter>engine\graphics\rendering</Filter>
     </ClCompile>
     <ClCompile Include="engine\graphics\rendering\skyBox\SkyBoxRenderer.cpp">
-      <Filter>ソース ファイル</Filter>
+      <Filter>engine\3d</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -614,11 +614,11 @@
     <ClInclude Include="engine\3d\LightingData.h">
       <Filter>engine\3d</Filter>
     </ClInclude>
-    <ClInclude Include="engine\graphics\rendering\skyBox\SkyBoxRenderer.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
     <ClInclude Include="engine\graphics\rendering\skyBox\SkyBoxRenderData.h">
-      <Filter>ヘッダー ファイル</Filter>
+      <Filter>engine\3d</Filter>
+    </ClInclude>
+    <ClInclude Include="engine\graphics\rendering\skyBox\SkyBoxRenderer.h">
+      <Filter>engine\3d</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -640,10 +640,10 @@
     <FxCompile Include="engine\resources\shaders\Sprite.PS.hlsl">
       <Filter>shaders</Filter>
     </FxCompile>
-    <FxCompile Include="engine\resources\shaders\Shape.VS.hlsl">
+    <FxCompile Include="engine\resources\shaders\DebugDraw.VS.hlsl">
       <Filter>shaders</Filter>
     </FxCompile>
-    <FxCompile Include="engine\resources\shaders\Shape.PS.hlsl">
+    <FxCompile Include="engine\resources\shaders\DebugDraw.PS.hlsl">
       <Filter>shaders</Filter>
     </FxCompile>
     <FxCompile Include="engine\resources\shaders\SkyBox.PS.hlsl">
@@ -663,7 +663,7 @@
     <None Include="engine\resources\shaders\Sprite.hlsli">
       <Filter>shaders</Filter>
     </None>
-    <None Include="engine\resources\shaders\Shape.hlsli">
+    <None Include="engine\resources\shaders\DebugDraw.hlsli">
       <Filter>shaders</Filter>
     </None>
     <None Include="engine\resources\shaders\CommonTypes.hlsli">

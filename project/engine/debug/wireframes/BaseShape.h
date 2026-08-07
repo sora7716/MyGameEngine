@@ -18,7 +18,7 @@ class GraphicsPipeline;
 /// <summary>
 /// 形
 /// </summary>
-namespace DebugDraw {
+namespace debugDraw {
 	class BaseShape {
 	private://エイリアステンプレート
 		template <class T>using ComPtr = Microsoft::WRL::ComPtr<T>;
@@ -187,8 +187,8 @@ namespace DebugDraw {
 		ComPtr<ID3D12PipelineState> graphicsPipelineState_ = nullptr;
 		std::unique_ptr<GraphicsPipeline> makeGraphicsPipeline_ = nullptr;
 		//ファイル名
-		std::wstring vertexShaderFileName_ = L"Shape.VS.hlsl";//頂点
-		std::wstring pixelShaderFileName_ = L"Shape.PS.hlsl";//ピクセル
+		std::wstring vertexShaderFileName_ = L"DebugDraw.VS.hlsl";//頂点
+		std::wstring pixelShaderFileName_ = L"DebugDraw.PS.hlsl";//ピクセル
 	protected://メンバ変数
 		//頂点数
 		int32_t vertexCount_ = 0;

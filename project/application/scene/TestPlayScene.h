@@ -12,7 +12,7 @@ class Audio;
 class SkyBox;
 class ParticleSystem;
 
-namespace DebugDraw {
+namespace debugDraw {
 	class Cube;
 	class Frustum;
 	class Line;
@@ -78,9 +78,9 @@ private://メンバ変数
 
 	std::vector<Transform2d>transform2ds_;
 
-	std::unique_ptr<DebugDraw::Frustum>frustum_ = nullptr;
+	std::unique_ptr<debugDraw::Frustum>frustum_ = nullptr;
 
-	std::unique_ptr<DebugDraw::Cube>cube_ = nullptr;
+	std::unique_ptr<debugDraw::Cube>cube_ = nullptr;
 
 	std::unique_ptr<SkyBox>skyBox_ = nullptr;
 

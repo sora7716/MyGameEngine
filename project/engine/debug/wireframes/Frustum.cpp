@@ -4,15 +4,15 @@
 #include <cmath>
 
 //コンストラクタ
-DebugDraw::Frustum::Frustum() {
+debugDraw::Frustum::Frustum() {
 }
 
 //デストラクタ
-DebugDraw::Frustum::~Frustum() {
+debugDraw::Frustum::~Frustum() {
 }
 
 //初期化
-void DebugDraw::Frustum::Initialize(DirectXBase* directXBase, Camera* camera) {
+void debugDraw::Frustum::Initialize(DirectXBase* directXBase, Camera* camera) {
 	vertexCount_ = 8;
 	indexCount_ = 24;
 	targetCamera_ = camera;
@@ -22,7 +22,7 @@ void DebugDraw::Frustum::Initialize(DirectXBase* directXBase, Camera* camera) {
 }
 
 //更新
-void DebugDraw::Frustum::Update() {
+void debugDraw::Frustum::Update() {
 	//トランスフォームに送信
 	transform_.eulerAngle = targetCamera_->GetEulerAngle();
 	transform_.quaternion = targetCamera_->GetQuaternion();
@@ -33,12 +33,12 @@ void DebugDraw::Frustum::Update() {
 }
 
 //対象となるカメラの設定
-void DebugDraw::Frustum::SetTargetCamera(Camera* targetCamera) {
+void debugDraw::Frustum::SetTargetCamera(Camera* targetCamera) {
 	targetCamera_ = targetCamera;
 }
 
 //頂点の設定
-void DebugDraw::Frustum::SettingVertexData() {
+void debugDraw::Frustum::SettingVertexData() {
 	for (uint32_t i = 0; i < 8; i++) {
 		//w=1.0fを入れて同次座標系に変換
 		vertexData_[i].position = targetCamera_->GetFrustum().localCorners[i];
@@ -52,7 +52,7 @@ void DebugDraw::Frustum::SettingVertexData() {
 }
 
 //インデックスの設定
-void DebugDraw::Frustum::SettingIndexData() {
+void debugDraw::Frustum::SettingIndexData() {
 	int32_t indices[] = {
 		//前面
 		0,1,

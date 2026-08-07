@@ -49,6 +49,11 @@ public://メンバ関数
 	void CreateRootSignatureBlobForParticle();
 
 	/// <summary>
+	/// ルートシグネイチャBlobの生成(DebugDraw)
+	/// </summary>
+	void CreateRootSignatureBlobForDebugDraw();
+
+	/// <summary>
 	/// インプットレイアウトの初期化
 	/// </summary>
 	void InitializeInputLayoutDesc();
@@ -64,6 +69,11 @@ public://メンバ関数
 	void InitializeInputLayoutDescForSprite();
 
 	/// <summary>
+	/// インプットレイアウトの初期化(DebugDraw)
+	/// </summary>
+	void InitializeInputLayoutDescForDebugDraw();
+
+	/// <summary>
 	/// ブレンドステートの初期化
 	/// </summary>
 	/// <param name="blendMode">ブレンドモード</param>
@@ -73,7 +83,7 @@ public://メンバ関数
 	/// ラスタライザステートの初期化
 	/// </summary>
 	/// <param name="fillMode">ポリゴンをどう描画するかの設定</param>
-	void InitializeRasterizerState(FillMode fillMode = FillMode::kSolid);
+	void InitializeRasterizerState(rasterizerMode::FillMode fillMode = rasterizerMode::FillMode::kSolid, rasterizerMode::CullingMode cullingMode = rasterizerMode::CullingMode::kBack);
 
 	/// <summary>
 	/// 頂点シェーダのコンパイル
@@ -98,7 +108,14 @@ public://メンバ関数
 	/// <summary>
 	/// PSOの生成
 	/// </summary>
+	/// <returns>PSO</returns>
 	ComPtr<ID3D12PipelineState> CreateGraphicsPipeline();
+
+	/// <summary>
+	/// PSOの生成(DebugDraw)
+	/// </summary>
+	/// <returns>PSO</returns>
+	ComPtr<ID3D12PipelineState> CreateGraphicsPipelineForDebugDraw();
 
 	/// <summary>
 	/// ルートシグネイチャのゲッター
@@ -134,7 +151,7 @@ private://メンバ関数
 	/// Samplerの設定
 	/// </summary>
 	/// <returns>Sampler</returns>
-	std::array<D3D12_STATIC_SAMPLER_DESC,1> SettingSampler();
+	std::array<D3D12_STATIC_SAMPLER_DESC, 1> SettingSampler();
 private://メンバ変数
 	//DirectXの基盤
 	DirectXBase* directXBase_ = nullptr;

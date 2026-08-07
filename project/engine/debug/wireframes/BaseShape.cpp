@@ -7,7 +7,7 @@
 #include "Camera.h"
 #include "ImGuiManager.h"
 using namespace Microsoft::WRL;
-using namespace DebugDraw;
+using namespace debugDraw;
 
 #pragma comment(lib,"d3d12.lib")
 
@@ -210,7 +210,7 @@ void BaseShape::CreateRootSignature() {
 //インプットレイアウトの初期化
 void BaseShape::InitializeInputLayoutDesc() {
 	//InputElementDesc
-	static D3D12_INPUT_ELEMENT_DESC inputElementDescs[3] = {};
+	static D3D12_INPUT_ELEMENT_DESC inputElementDescs[2] = {};
 	inputElementDescs[0].SemanticName = "POSITION";
 	inputElementDescs[0].SemanticIndex = 0;
 	inputElementDescs[0].Format = DXGI_FORMAT_R32G32B32A32_FLOAT;
@@ -221,10 +221,6 @@ void BaseShape::InitializeInputLayoutDesc() {
 	inputElementDescs[1].Format = DXGI_FORMAT_R32G32_FLOAT;
 	inputElementDescs[1].AlignedByteOffset = D3D12_APPEND_ALIGNED_ELEMENT;
 
-	inputElementDescs[2].SemanticName = "NORMAL";
-	inputElementDescs[2].SemanticIndex = 0;
-	inputElementDescs[2].Format = DXGI_FORMAT_R32G32B32_FLOAT;
-	inputElementDescs[2].AlignedByteOffset = D3D12_APPEND_ALIGNED_ELEMENT;
 	//InputLayout
 	inputLayoutDesc_.pInputElementDescs = inputElementDescs;
 	inputLayoutDesc_.NumElements = _countof(inputElementDescs);

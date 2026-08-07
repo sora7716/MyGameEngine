@@ -2,7 +2,7 @@
 #include "BaseShape.h"
 #include "PrimitiveData.h"
 #include <Vector3.h>
-namespace DebugDraw {
+namespace debugDraw {
 	class Plane :public BaseShape {
 	public://メンバ関数
 		/// <summary>

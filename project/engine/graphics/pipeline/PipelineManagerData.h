@@ -13,8 +13,9 @@ struct PipelineSet{
 //パイプラインタイプ
 enum class PipelineType :uint32_t{
 	kObject3d,
-	kSprite,
 	kParticle,
+	kDebugDraw,
 	kSkyBox,
+	kSprite,
 	kPiplineTypeCount
 };

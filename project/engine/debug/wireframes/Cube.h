@@ -1,7 +1,7 @@
 #pragma once
 #include "BaseShape.h"
 #include "PrimitiveData.h"
-namespace DebugDraw {
+namespace debugDraw {
 	class Cube :public BaseShape {
 	public://メンバ関数
 		/// <summary>

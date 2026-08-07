@@ -1,6 +1,6 @@
 #include "Cube.h"
 using namespace primitiveData;
-using namespace DebugDraw;
+using namespace debugDraw;
 
 //コンストラクタ
 Cube::Cube() {}

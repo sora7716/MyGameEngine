@@ -75,12 +75,12 @@ void TestPlayScene::Initialize(const SceneContext& sceneContext, Object3dRendere
 	//	transform2ds_.push_back({ object3d_->GetUVScale(i),object3d_->GetUVRotate(i),object3d_->GetUVTranslate(i) });
 	//}
 
-	frustum_ = std::make_unique<DebugDraw::Frustum>();
+	frustum_ = std::make_unique<debugDraw::Frustum>();
 	frustum_->Initialize(sceneContext_.directXBase, gameCamera_);
 	frustum_->SetTargetCamera(gameCamera_);
 	frustum_->SetColor({ 1.0f,0.0f,0.0f,1.0f });
 
-	cube_ = std::make_unique<DebugDraw::Cube>();
+	cube_ = std::make_unique<debugDraw::Cube>();
 	cube_->Initialize(sceneContext_.directXBase, gameCamera_);
 
 	particleSystem_ = std::make_unique<ParticleSystem>();

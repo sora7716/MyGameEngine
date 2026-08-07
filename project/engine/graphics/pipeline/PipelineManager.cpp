@@ -1,13 +1,15 @@
 #include "PipelineManager.h"
 #include "GraphicsPipeline.h"
 #include "Blend.h"
+using namespace rasterizerMode;
 
 //テーブルの初期化
 void(PipelineManager::* PipelineManager::createPSOTable[])() = {
 	&CreatePSOForObject3d,
-	&CreatePSOForSprite,
 	&CreatePSOForParticle,
+	&CreatePSOForDebugDraw,
 	&CreatePSOForSkyBox,
+	&CreatePSOForSprite,
 };
 
 //デストラクタ
@@ -142,6 +144,34 @@ void PipelineManager::CreatePSOForSkyBox(){
 		graphicsPipeline_->InitializeBlendState(i);
 		//グラフィックスパイプラインの生成
 		pipelineSets_[static_cast<uint32_t>(PipelineType::kSkyBox)].graphicsPipelineStates[i] = graphicsPipeline_->CreateGraphicsPipeline();
+	}
+	//ルートシグネイチャの記録
+	pipelineSets_[static_cast<uint32_t>(PipelineType::kSkyBox)].rootSignature = graphicsPipeline_->GetRootSignature();
+}
+
+//PSOの作成(DebugDraw)
+void PipelineManager::CreatePSOForDebugDraw(){
+	//シェーダを設定
+	graphicsPipeline_->SetVertexShaderFileName(L"DebugDraw.VS.hlsl");
+	graphicsPipeline_->SetPixelShaderFileName(L"DebugDraw.PS.hlsl");
+	//深度バッファ
+	graphicsPipeline_->CreateDepthStencilResourceForObject3d();
+	//シグネイチャBlobの初期化
+	graphicsPipeline_->CreateRootSignatureBlobForDebugDraw();
+	//インプットレイアウト
+	graphicsPipeline_->InitializeInputLayoutDescForDebugDraw();
+	//ラスタライザステート
+	graphicsPipeline_->InitializeRasterizerState(FillMode::kSolid, CullingMode::kNone);
+	//頂点シェーダBlob
+	graphicsPipeline_->CompileVertexShader();
+	//ピクセルシェーダBlob
+	graphicsPipeline_->CompilePixelShader();
+	//PSO
+	for (uint32_t i = 0; i < static_cast<int32_t>(BlendMode::kCountOfBlendMode); i++){
+		//ブレンドステート
+		graphicsPipeline_->InitializeBlendState(i);
+		//グラフィックスパイプラインの生成
+		pipelineSets_[static_cast<uint32_t>(PipelineType::kSkyBox)].graphicsPipelineStates[i] = graphicsPipeline_->CreateGraphicsPipelineForDebugDraw();
 	}
 	//ルートシグネイチャの記録
 	pipelineSets_[static_cast<uint32_t>(PipelineType::kSkyBox)].rootSignature = graphicsPipeline_->GetRootSignature();

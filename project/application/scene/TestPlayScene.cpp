@@ -19,6 +19,7 @@
 #include "WinApi.h"
 #include "LightingManager.h"
 #include "Object3dRenderer.h"
+#include "SkyBoxRenderer.h"
 #include <numbers>
 
 //コンストラクタ
@@ -28,9 +29,9 @@ TestPlayScene::TestPlayScene(){};
 TestPlayScene::~TestPlayScene(){};
 
 //初期化
-void TestPlayScene::Initialize(const SceneContext& sceneContext, Object3dRenderer* object3dRenderer){
+void TestPlayScene::Initialize(const SceneContext& sceneContext, Object3dRenderer* object3dRenderer, SkyBoxRenderer* skyBoxRenderer){
 	//ベースシーンの初期化
-	BaseScene::Initialize(sceneContext, object3dRenderer);
+	BaseScene::Initialize(sceneContext, object3dRenderer, skyBoxRenderer);
 	gameCamera_ = sceneContext_.cameraManager->FindCamera("testPlayCamera");
 
 	object3d_ = Object3d::Create(sceneContext_.directXBase, gameCamera_);
@@ -65,7 +66,7 @@ void TestPlayScene::Initialize(const SceneContext& sceneContext, Object3dRendere
 	gameObjects_.push_back(std::move(skyBoxObject));
 
 	skyBox_ = std::make_unique<SkyBox>();
-	skyBox_->Initialize(sceneContext_.directXBase, sceneContext.pipelineManager, "skybox_cube.dds", gameCamera_);
+	skyBox_->Initialize(sceneContext_.directXBase, "skybox_cube.dds", gameCamera_);
 	skyBox_->SetGameObject(treePtr);
 	for (uint32_t i = 0; i < object3d_->GetMeshDataSize(); i++){
 		object3d_->SetEnvironmentMap(i, "skybox_cube.dds");
@@ -196,7 +197,8 @@ void TestPlayScene::Draw(Camera* camera){
 	cube_->Draw();
 
 	skyBox_->SetRenderCamera(camera);
-	skyBox_->Draw(sceneContext_.textureManager);
+	skyBoxRenderer_->AddRenderData(skyBox_->GetSkyBoxRenderData());
+	//skyBox_->Draw(sceneContext_.textureManager);
 
 	particleSystem_->SetRenderCamera(camera);
 	particleSystem_->Draw();

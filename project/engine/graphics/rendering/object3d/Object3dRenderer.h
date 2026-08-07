@@ -1,7 +1,7 @@
 #pragma once
 #include <wrl.h>
 #include <d3d12.h>
-#include "Object3dRendererData.h"
+#include "Object3dRenderData.h"
 #include "Object3dGpuResource.h"
 #include <memory>
 

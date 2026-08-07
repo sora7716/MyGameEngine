@@ -4,7 +4,7 @@
 #include "WorldTransform.h"
 #include "PrimitiveData.h"
 #include "RenderingData.h"
-#include "Object3dRendererData.h"
+#include "Object3dRenderData.h"
 #include "Object3dGpuResource.h"
 #include <vector>
 #include <string>

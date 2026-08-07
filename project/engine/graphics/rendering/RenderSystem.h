@@ -47,6 +47,12 @@ public://メンバ関数
 	/// </summary>
 	/// <returns>Object3dのレンダラー</returns>
 	Object3dRenderer* GetObject3dRenderer();
+
+	/// <summary>
+	/// SkyBoxのレンダラーの取得
+	/// </summary>
+	/// <returns>SkyBoxのレンダラー</returns>
+	SkyBoxRenderer* GetSkyBoxRenderer();
 private://メンバ関数
 	/// <summary>
 	/// 描画の開始

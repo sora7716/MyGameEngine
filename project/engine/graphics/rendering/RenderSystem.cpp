@@ -32,6 +32,7 @@ void RenderSystem::Initialize(DirectXBase* directXBase, SRVManager* srvManager, 
 
 //描画
 void RenderSystem::Draw(){
+	//Object3d
 	for (uint32_t i = 0; i < object3dRenderer_->GetRenderDataSize(); i++){
 		PreDraw(object3dRenderer_->GetBlendMode(i), PipelineType::kObject3d);
 		//ライティングの設定
@@ -41,11 +42,25 @@ void RenderSystem::Draw(){
 	}
 	//描画オブジェクトのリセット
 	object3dRenderer_->Reset();
+
+	//スカイボックス
+	for (uint32_t i = 0; i < skyBoxRenderer_->GetRenderDataSize(); i++){
+		PreDraw(skyBoxRenderer_->GetBlendMode(i), PipelineType::kSkyBox);
+		//スカイボックスの描画
+		skyBoxRenderer_->Draw(i);
+	}
+	//描画オブジェクトのリセット
+	skyBoxRenderer_->Reset();
 }
 
 //Object3dのレンダラーの取得
 Object3dRenderer* RenderSystem::GetObject3dRenderer(){
 	return object3dRenderer_.get();
+}
+
+//SkyBoxのレンダラーの取得
+SkyBoxRenderer* RenderSystem::GetSkyBoxRenderer(){
+	return skyBoxRenderer_.get();
 }
 
 //描画開始

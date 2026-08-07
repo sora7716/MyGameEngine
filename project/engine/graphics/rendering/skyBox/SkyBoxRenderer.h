@@ -1,5 +1,5 @@
 #pragma once
-#include "SkyBoxRendererData.h"
+#include "SkyBoxRenderData.h"
 #include <vector>
 #include <memory>
 
@@ -53,6 +53,19 @@ public://メンバ関数
 	/// </summary>
 	/// <param name="instanceIndex">インスタンスの検索キー</param>
 	void Draw(uint32_t instanceIndex);
+
+	/// <summary>
+	/// ブレンドモードの取得
+	/// </summary>
+	/// <param name="instanceIndex">インスタンスの検索キー</param>
+	/// <returns>ブレンドモード</returns>
+	BlendMode GetBlendMode(uint32_t instanceIndex);
+
+	/// <summary>
+	/// 描画データのサイズの取得
+	/// </summary>
+	/// <returns>描画データのサイズ</returns>
+	uint32_t GetRenderDataSize();
 private://メンバ変数
 	//DirectXの基盤部分
 	DirectXBase* directXBase_ = nullptr;

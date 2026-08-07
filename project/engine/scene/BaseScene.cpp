@@ -17,7 +17,7 @@ BaseScene::~BaseScene(){
 }
 
 //初期化
-void BaseScene::Initialize(const SceneContext& sceneContext, Object3dRenderer* object3dRenderer){
+void BaseScene::Initialize(const SceneContext& sceneContext, Object3dRenderer* object3dRenderer, SkyBoxRenderer* skyBoxRenderer){
 	//ゲームエンジンの核
 	sceneContext_ = sceneContext;
 	//デバックカメラ
@@ -40,6 +40,9 @@ void BaseScene::Initialize(const SceneContext& sceneContext, Object3dRenderer* o
 
 	//オブジェクト3dのレンダラーの記録
 	object3dRenderer_ = object3dRenderer;
+
+	//スカイボックスのレンダラーの記録
+	skyBoxRenderer_ = skyBoxRenderer;
 
 	//コライダーマネージャー
 	//colliderManager_ = std::make_unique<ColliderManager>();

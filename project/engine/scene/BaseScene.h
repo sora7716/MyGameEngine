@@ -12,6 +12,7 @@ class AbstractSceneFactory;
 class ColliderManager;
 class GameObject;
 class Object3dRenderer;
+class SkyBoxRenderer;
 
 /// <summary>
 /// シーンの基底クラス
@@ -32,7 +33,7 @@ public://メンバ関数
 	/// 初期化
 	/// </summary>
 	/// <param name="sceneContext">シーンで必要なもの</param>
-	virtual void Initialize(const SceneContext& sceneContext, Object3dRenderer* object3dRenderer);
+	virtual void Initialize(const SceneContext& sceneContext, Object3dRenderer* object3dRenderer, SkyBoxRenderer* skyBoxRenderer);
 
 	/// <summary>
 	/// 更新
@@ -118,5 +119,7 @@ protected://メンバ変数
 	std::vector<std::unique_ptr<GameObject>> gameObjects_;
 	//オブジェクト3dレンダラー
 	Object3dRenderer* object3dRenderer_ = nullptr;
+	//スカイボックスのレンダラー
+	SkyBoxRenderer* skyBoxRenderer_ = nullptr;
 };
 

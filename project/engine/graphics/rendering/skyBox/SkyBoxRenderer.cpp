@@ -1,4 +1,5 @@
 #include "SkyBoxRenderer.h"
+#include "SkyBoxRenderer.h"
 #include "Camera.h"
 #include "DirectXBase.h"
 #include "TextureManager.h"
@@ -62,4 +63,14 @@ void SkyBoxRenderer::Draw(uint32_t instanceIndex){
 	directXBase_->GetCommandList()->SetGraphicsRootDescriptorTable(2, textureManager_->GetSRVHandleGPU(skyBoxRenderData.imageFileName));
 	//描画(DrawCall/ドローコール)
 	directXBase_->GetCommandList()->DrawIndexedInstanced(skyBoxRenderData.indexCount, 1, 0, 0, 0);
+}
+
+//ブレンドモードの取得
+BlendMode SkyBoxRenderer::GetBlendMode(uint32_t instanceIndex){
+	return skyBoxRenderDatas_[instanceIndex].blendMode;
+}
+
+//描画データのサイズの取得
+uint32_t SkyBoxRenderer::GetRenderDataSize(){
+	return static_cast<uint32_t>(skyBoxRenderDatas_.size());
 }

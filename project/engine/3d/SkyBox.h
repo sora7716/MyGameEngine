@@ -2,7 +2,7 @@
 #include "RenderData.h"
 #include "BlendMode.h"
 #include "RenderingData.h"
-#include "PipelineManagerData.h"
+#include "SkyBoxRenderData.h"
 #include <d3d12.h>
 #include <dxgi1_6.h>
 #include <dxgidebug.h>
@@ -14,11 +14,9 @@
 
 //前方宣言
 class DirectXBase;
-class PipelineManager;
 class Camera;
 class GraphicsPipeline;
 class GameObject;
-class TextureManager;
 
 /// <summary>
 /// スカイボックス
@@ -46,20 +44,14 @@ public://メンバ関数
 	/// 初期化
 	/// </summary>
 	/// <param name="directXBase">DirectXの基盤部分</param>
-	/// <param name="pipelineManager">パイプラインの管理</param>
 	/// <param name="imageFileName">画像のファイル名</param>
 	/// <param name="camera">描画に使用するカメラ</param>
-	void Initialize(DirectXBase* directXBase, PipelineManager* pipelineManager, const std::string& imageFileName, Camera* camera);
+	void Initialize(DirectXBase* directXBase,const std::string& imageFileName, Camera* camera);
 
 	/// <summary>
 	/// 更新
 	/// </summary>
 	void Update();
-
-	/// <summary>
-	/// 描画処理
-	/// </summary>
-	void Draw(TextureManager* textureManager);
 
 	/// <summary>
 	/// ゲームオブジェクトの設定
@@ -72,6 +64,12 @@ public://メンバ関数
 	/// </summary>
 	/// <param name="camera">カメラ</param>
 	void SetRenderCamera(Camera* camera);
+
+	/// <summary>
+	/// 描画データの取得
+	/// </summary>
+	/// <returns>描画データ</returns>
+	const SkyBoxRenderData& GetSkyBoxRenderData();
 private://メンバ関数
 	/// <summary>
 	/// 頂点データの初期化
@@ -125,10 +123,6 @@ private://定数
 private://メンバ変数
 	//DirectXの基盤部分
 	DirectXBase* directXBase_ = nullptr;
-	//パイプラインの管理
-	PipelineManager* pipelineManager_ = nullptr;
-	//パイプラインセット
-	PipelineSet pipelineSet_ = {};
 	//描画用のカメラ
 	Camera* renderCamera_ = nullptr;
 	//画像のファイル名
@@ -159,4 +153,7 @@ private://メンバ変数
 	ComPtr<ID3D12Resource>wvpResource_ = nullptr;
 	//ワールドビュープロジェクションのデータ
 	TransformationMatrix* wvpData_ = nullptr;
+
+	//描画データ
+	SkyBoxRenderData skyBoxRenderData_ = {};
 };

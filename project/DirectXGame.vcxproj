@@ -158,10 +158,10 @@
     <ClInclude Include="engine\graphics\pipeline\PipelineManagerData.h" />
     <ClInclude Include="engine\graphics\rendering\object3d\Object3dGpuResource.h" />
     <ClInclude Include="engine\graphics\rendering\object3d\Object3dRenderer.h" />
-    <ClInclude Include="engine\graphics\rendering\object3d\Object3dRendererData.h" />
+    <ClInclude Include="engine\graphics\rendering\object3d\Object3dRenderData.h" />
     <ClInclude Include="engine\graphics\rendering\RenderSystem.h" />
     <ClInclude Include="engine\graphics\rendering\skyBox\SkyBoxRenderer.h" />
-    <ClInclude Include="engine\graphics\rendering\skyBox\SkyBoxRendererData.h" />
+    <ClInclude Include="engine\graphics\rendering\skyBox\SkyBoxRenderData.h" />
     <ClInclude Include="engine\graphics\texture\TextureManager.h" />
     <ClInclude Include="engine\input\Input.h" />
     <ClInclude Include="engine\math\MathUtility.h" />

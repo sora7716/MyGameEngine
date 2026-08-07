@@ -18,6 +18,7 @@ struct SkyBoxRenderData{
 	D3D12_INDEX_BUFFER_VIEW indexBufferView = {};
 	Microsoft::WRL::ComPtr<ID3D12Resource>materialResource;
 	Microsoft::WRL::ComPtr<ID3D12Resource>wvpResource;
-	std::string imageFileName;
+	std::string imageFileName = "";
+	BlendMode blendMode = BlendMode::kNone;
 	uint32_t indexCount = 0;
 };

@@ -2,8 +2,6 @@
 #include "DirectXBase.h"
 #include "MatrixUtility.h"
 #include "Camera.h"
-#include "TextureManager.h"
-#include "PipelineManager.h"
 #include "GameObject.h"
 #include <cassert>
 
@@ -16,16 +14,12 @@ SkyBox::~SkyBox(){
 }
 
 //初期化
-void SkyBox::Initialize(DirectXBase* directXBase, PipelineManager* pipelineManager, const std::string& imageFileName, Camera* camera){
+void SkyBox::Initialize(DirectXBase* directXBase,const std::string& imageFileName, Camera* camera){
 	//DirectXの基盤の記録
 	assert(directXBase);
 	directXBase_ = directXBase;
-	//パイプラインの管理の記録
-	assert(pipelineManager);
-	pipelineManager_ = pipelineManager;
-	pipelineSet_ = pipelineManager_->GetPipelineSet(PipelineType::kSkyBox);
-	//カメラの作成
-	renderCamera_ = camera;
+	//カメラの設定
+	SetRenderCamera(camera);
 	//頂点データの生成
 	CreateVertexResource();
 	//インデックスデータの生成
@@ -44,36 +38,20 @@ void SkyBox::Update(){
 	UpdateTransform();
 	//UV座標の更新
 	UpdateUVTransform();
-}
 
-//描画処理
-void SkyBox::Draw(TextureManager* textureManager){
-	//存在していなかったら
-	if (!gameObject_->IsActive()){
-		return;
+	//描画データをまとめる
+	skyBoxRenderData_.blendMode = blendMode_;
+	skyBoxRenderData_.imageFileName = imageFileName_;
+	skyBoxRenderData_.indexBufferView = indexBufferView_;
+	skyBoxRenderData_.vertexBufferView = vertexBufferView_;
+	skyBoxRenderData_.indexCount = kIndexCount;
+	skyBoxRenderData_.materialResource = materialResource_;
+	skyBoxRenderData_.wvpResource = wvpResource_;
+	if (gameObject_){
+		skyBoxRenderData_.isActive = gameObject_->IsActive();
+	} else{
+		skyBoxRenderData_.isActive = false;
 	}
-	//ルートシグネイチャをセットするコマンド
-	directXBase_->GetCommandList()->SetGraphicsRootSignature(pipelineSet_.rootSignature.Get());
-	//プリミティブトポロジーをセットするコマンド
-	directXBase_->GetCommandList()->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
-	//カメラ
-	renderCamera_->DrawSetting(3);
-	//PSOの設定
-	auto pso = pipelineSet_.graphicsPipelineStates[static_cast<uint32_t>(blendMode_)].Get();
-	//グラフィックスパイプラインをセットするコマンド
-	directXBase_->GetCommandList()->SetPipelineState(pso);
-	//座標変換行列CBufferの場所を設定
-	directXBase_->GetCommandList()->SetGraphicsRootConstantBufferView(1, wvpResource_->GetGPUVirtualAddress());
-	//VertexBufferViewの設定
-	directXBase_->GetCommandList()->IASetVertexBuffers(0, 1, &vertexBufferView_);
-	//IndexBufferViewを設定
-	directXBase_->GetCommandList()->IASetIndexBuffer(&indexBufferView_);
-	//マテリアルCBufferの場所を設定
-	directXBase_->GetCommandList()->SetGraphicsRootConstantBufferView(0, materialResource_->GetGPUVirtualAddress());
-	//SRVのDescriptorTableの先頭を設定
-	directXBase_->GetCommandList()->SetGraphicsRootDescriptorTable(2, textureManager->GetSRVHandleGPU(imageFileName_));
-	//描画(DrawCall/ドローコール)
-	directXBase_->GetCommandList()->DrawIndexedInstanced(kIndexCount, 1, 0, 0, 0);
 }
 
 //ゲームオブジェクトの設定
@@ -84,6 +62,13 @@ void SkyBox::SetGameObject(GameObject* gameObject){
 //描画する用のカメラの設定
 void SkyBox::SetRenderCamera(Camera* camera){
 	renderCamera_ = camera;
+	skyBoxRenderData_.renderCamera = camera;
+}
+
+//描画データの取得
+const SkyBoxRenderData& SkyBox::GetSkyBoxRenderData(){
+	// TODO: return ステートメントをここに挿入します
+	return skyBoxRenderData_;
 }
 
 //頂点データの初期化

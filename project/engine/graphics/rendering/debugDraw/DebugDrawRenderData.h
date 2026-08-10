@@ -7,17 +7,13 @@
 //前方宣言
 class Camera;
 
-/// <summary>
-/// スカイボックスの描画データ
-/// </summary>
-struct SkyBoxRenderData{
-	bool isActive;
+//デバッグ描画で必要な描画データ
+struct DebugDrawRenderData{
 	Camera* renderCamera = nullptr;
 	D3D12_VERTEX_BUFFER_VIEW vertexBufferView = {};
 	D3D12_INDEX_BUFFER_VIEW indexBufferView = {};
 	Microsoft::WRL::ComPtr<ID3D12Resource>materialResource;
 	Microsoft::WRL::ComPtr<ID3D12Resource>wvpResource;
-	std::string imageFileName = "";
 	BlendMode blendMode = BlendMode::kNone;
 	uint32_t indexCount = 0;
 };

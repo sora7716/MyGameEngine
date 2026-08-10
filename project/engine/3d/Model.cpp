@@ -219,7 +219,7 @@ void Model::CreateModel(const std::vector<MeshData>& meshDatas, const std::strin
 	//テクスチャの適応
 	SetTexture(modelData_.meshDatas[0].materialIndex, "white1x1.png");
 	//環境マッピング
-	SetEnvironmentMap(modelData_.meshDatas[0].materialIndex, "rostock_laage_airport_4k.dds");
+	SetEnvironmentMap(modelData_.meshDatas[0].materialIndex, "skybox_cube.dds");
 	//ノードの初期化
 	Node& node = modelData_.rootNode;
 	node.name = nodeName;

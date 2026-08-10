@@ -60,6 +60,12 @@ private://メンバ関数
 	/// <param name="blendMode">ブレンドモード</param>
 	/// <param name="pipelineType">パイプラインモード</param>
 	void PreDraw(BlendMode blendMode, PipelineType pipelineType);
+
+	/// <summary>
+	/// 描画開始
+	/// </summary>
+	/// <param name="blendMode">ブレンドモード</param>
+	void PreDraw(BlendMode blendMode);
 private://メンバ関数
 	//DirectXの基盤部分
 	DirectXBase* directXBase_ = nullptr;

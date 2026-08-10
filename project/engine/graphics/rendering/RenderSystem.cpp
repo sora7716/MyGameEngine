@@ -76,3 +76,17 @@ void RenderSystem::PreDraw(BlendMode blendMode, PipelineType pipelineType){
 	//グラフィックスパイプラインをセットするコマンド
 	directXBase_->GetCommandList()->SetPipelineState(pso);
 }
+
+//描画開始
+void RenderSystem::PreDraw(BlendMode blendMode){
+	//パイプラインのセットを取得
+	PipelineSet pipelineSet = pipelineManager_->GetPipelineSet(PipelineType::kDebugDraw);
+	//ルートシグネイチャをセットするコマンド
+	directXBase_->GetCommandList()->SetGraphicsRootSignature(pipelineSet.rootSignature.Get());
+	//プリミティブトポロジーをセットするコマンド
+	directXBase_->GetCommandList()->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_LINELIST);
+	//PSO
+	ID3D12PipelineState* pso = pipelineSet.graphicsPipelineStates[static_cast<uint32_t>(blendMode)].Get();
+	//グラフィックスパイプラインをセットするコマンド
+	directXBase_->GetCommandList()->SetPipelineState(pso);
+}

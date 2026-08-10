@@ -354,6 +354,9 @@
     <ClCompile Include="engine\graphics\rendering\skyBox\SkyBoxRenderer.cpp">
       <Filter>engine\3d</Filter>
     </ClCompile>
+    <ClCompile Include="engine\graphics\rendering\debugDraw\DebugDrawRenderer.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="application\scene\TestPlayScene.h">
@@ -619,6 +622,12 @@
     </ClInclude>
     <ClInclude Include="engine\graphics\rendering\skyBox\SkyBoxRenderer.h">
       <Filter>engine\3d</Filter>
+    </ClInclude>
+    <ClInclude Include="engine\graphics\rendering\debugDraw\DebugDrawRenderer.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="engine\graphics\rendering\debugDraw\DebugDrawRenderData.h">
+      <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

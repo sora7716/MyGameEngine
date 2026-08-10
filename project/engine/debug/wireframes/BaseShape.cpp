@@ -53,7 +53,6 @@ void BaseShape::Update() {
 
 //描画
 void BaseShape::Draw() {
-	//2Dオブジェクトの共通部分
 	//ルートシグネイチャをセットするコマンド
 	directXBase_->GetCommandList()->SetGraphicsRootSignature(rootSignature_.Get());
 	//プリミティブトポロジーをセットするコマンド

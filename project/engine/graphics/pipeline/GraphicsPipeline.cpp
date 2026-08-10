@@ -334,6 +334,10 @@ void GraphicsPipeline::CreateRootSignatureBlobForDebugDraw(){
 		Logger::OutputLog(reinterpret_cast<char*>(errorBlob->GetBufferPointer()));
 		assert(false);
 	}
+
+	HRESULT result = S_FALSE;
+	result = directXBase_->GetDevice()->CreateRootSignature(0, signatureBlob->GetBufferPointer(), signatureBlob->GetBufferSize(), IID_PPV_ARGS(&rootSignature_));
+	assert(SUCCEEDED(result));
 }
 
 //インプットレイアウトの初期化

@@ -37,7 +37,6 @@ void TestPlayScene::Initialize(const SceneContext& sceneContext, Object3dRendere
 	object3d_ = Object3d::Create(sceneContext_.directXBase, gameCamera_);
 	object3d_->SetGameCamera(gameCamera_);
 	object3d_->SetModel(sceneContext_.modelManager->FindModel("cube"), { 1.0f });
-	object3d_->SetBlendMode(BlendMode::kAdd);
 	//object3d_->SetTexture(0, "uvChecker.png");
 	//object3d_->SetModel("cube");
 	//object3d_->SetModel("dekanu");
@@ -125,18 +124,18 @@ void TestPlayScene::Debug(){
 #ifdef USE_IMGUI
 	ImGui::Begin("Object");
 
-	//for (int32_t i = 0; i < gameObjects_.size(); i++) {
-	//	ImGui::PushID(i);
+	for (int32_t i = 0; i < gameObjects_.size(); i++) {
+		ImGui::PushID(i);
 
-	//	if (ImGui::TreeNode(("object" + std::to_string(i)).c_str())) {
-	//		ImGuiManager::DragTransform(gameObjects_[i]->GetTransform());
-	//		ImGui::SliderFloat("environmentCoefficient", &environmentCoefficient_, 0.0f, 1.0f);
-	//		object3d_->SetEnvironmentCoefficient(0, environmentCoefficient_);
-	//		ImGui::TreePop();
-	//	}
+		if (ImGui::TreeNode(("object" + std::to_string(i)).c_str())) {
+			ImGuiManager::DragTransform(gameObjects_[i]->GetTransform());
+			ImGui::SliderFloat("environmentCoefficient", &environmentCoefficient_, 0.0f, 1.0f);
+			object3d_->SetEnvironmentCoefficient(0, environmentCoefficient_);
+			ImGui::TreePop();
+		}
 
-	//	ImGui::PopID();
-	//}
+		ImGui::PopID();
+	}
 	//for (uint32_t i = 0; i < transform2ds_.size(); i++) {
 	//	ImGui::PushID(i);
 	//	ImGui::DragFloat2("uvScale", &transform2ds_[i].scale.x, 0.1f);

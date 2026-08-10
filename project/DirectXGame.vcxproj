@@ -67,6 +67,7 @@
     <ClCompile Include="engine\graphics\pipeline\Blend.cpp" />
     <ClCompile Include="engine\graphics\pipeline\GraphicsPipeline.cpp" />
     <ClCompile Include="engine\graphics\pipeline\PipelineManager.cpp" />
+    <ClCompile Include="engine\graphics\rendering\debugDraw\DebugDrawRenderer.cpp" />
     <ClCompile Include="engine\graphics\rendering\object3d\Object3dRenderer.cpp" />
     <ClCompile Include="engine\graphics\rendering\RenderSystem.cpp" />
     <ClCompile Include="engine\graphics\rendering\skyBox\SkyBoxRenderer.cpp" />
@@ -156,6 +157,8 @@
     <ClInclude Include="engine\graphics\pipeline\GraphicsPipelineData.h" />
     <ClInclude Include="engine\graphics\pipeline\PipelineManager.h" />
     <ClInclude Include="engine\graphics\pipeline\PipelineManagerData.h" />
+    <ClInclude Include="engine\graphics\rendering\debugDraw\DebugDrawRenderData.h" />
+    <ClInclude Include="engine\graphics\rendering\debugDraw\DebugDrawRenderer.h" />
     <ClInclude Include="engine\graphics\rendering\object3d\Object3dGpuResource.h" />
     <ClInclude Include="engine\graphics\rendering\object3d\Object3dRenderer.h" />
     <ClInclude Include="engine\graphics\rendering\object3d\Object3dRenderData.h" />

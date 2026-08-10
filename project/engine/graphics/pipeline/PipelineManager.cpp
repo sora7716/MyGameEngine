@@ -171,10 +171,10 @@ void PipelineManager::CreatePSOForDebugDraw(){
 		//ブレンドステート
 		graphicsPipeline_->InitializeBlendState(i);
 		//グラフィックスパイプラインの生成
-		pipelineSets_[static_cast<uint32_t>(PipelineType::kSkyBox)].graphicsPipelineStates[i] = graphicsPipeline_->CreateGraphicsPipelineForDebugDraw();
+		pipelineSets_[static_cast<uint32_t>(PipelineType::kDebugDraw)].graphicsPipelineStates[i] = graphicsPipeline_->CreateGraphicsPipelineForDebugDraw();
 	}
 	//ルートシグネイチャの記録
-	pipelineSets_[static_cast<uint32_t>(PipelineType::kSkyBox)].rootSignature = graphicsPipeline_->GetRootSignature();
+	pipelineSets_[static_cast<uint32_t>(PipelineType::kDebugDraw)].rootSignature = graphicsPipeline_->GetRootSignature();
 }
 
 //コンストラクタ

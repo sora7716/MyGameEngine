@@ -3,6 +3,13 @@
 #include "Camera.h"
 #include <cassert>
 
+//生成
+std::unique_ptr<DebugDrawRenderer> DebugDrawRenderer::Create(DirectXBase* directXBase){
+	std::unique_ptr<DebugDrawRenderer>instance = std::make_unique<DebugDrawRenderer>();
+	instance->Initialize(directXBase);
+	return instance;
+}
+
 //コンストラクタ
 DebugDrawRenderer::DebugDrawRenderer(){
 }
@@ -44,4 +51,14 @@ void DebugDrawRenderer::Draw(uint32_t instanceIndex){
 //描画データのリセット
 void DebugDrawRenderer::Reset(){
 	debugDrawRenderDatas_.clear();
+}
+
+//描画データのサイズの取得
+uint32_t DebugDrawRenderer::GetRenderDataSize(){
+	return static_cast<uint32_t>(debugDrawRenderDatas_.size());
+}
+
+//ブレンドモードの取得
+BlendMode DebugDrawRenderer::GetBlendMode(uint32_t instanceIndex){
+	return debugDrawRenderDatas_[instanceIndex].blendMode;
 }

@@ -112,6 +112,15 @@
     <Filter Include="engine\graphics\rendering">
       <UniqueIdentifier>{f480746a-a585-426c-a8ed-e813c96cbc96}</UniqueIdentifier>
     </Filter>
+    <Filter Include="engine\graphics\rendering\object3d">
+      <UniqueIdentifier>{d948acb6-2a4d-49ed-9dae-d6e6c5f0f11d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="engine\graphics\rendering\skyBox">
+      <UniqueIdentifier>{f80ce055-d702-4ba9-9313-f7ac42f92ef0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="engine\graphics\rendering\debugDraw">
+      <UniqueIdentifier>{ee11c4a8-f24a-41a9-bd01-84ebb90bf872}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="engine\main.cpp">
@@ -349,13 +358,13 @@
       <Filter>engine\graphics\rendering</Filter>
     </ClCompile>
     <ClCompile Include="engine\graphics\rendering\object3d\Object3dRenderer.cpp">
-      <Filter>engine\graphics\rendering</Filter>
+      <Filter>engine\graphics\rendering\object3d</Filter>
     </ClCompile>
     <ClCompile Include="engine\graphics\rendering\skyBox\SkyBoxRenderer.cpp">
-      <Filter>engine\3d</Filter>
+      <Filter>engine\graphics\rendering\skyBox</Filter>
     </ClCompile>
     <ClCompile Include="engine\graphics\rendering\debugDraw\DebugDrawRenderer.cpp">
-      <Filter>ソース ファイル</Filter>
+      <Filter>engine\graphics\rendering\debugDraw</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -608,9 +617,6 @@
     <ClInclude Include="engine\graphics\rendering\object3d\Object3dGpuResource.h">
       <Filter>engine\graphics\rendering</Filter>
     </ClInclude>
-    <ClInclude Include="engine\graphics\rendering\object3d\Object3dRenderer.h">
-      <Filter>engine\graphics\rendering</Filter>
-    </ClInclude>
     <ClInclude Include="engine\graphics\rendering\object3d\Object3dRenderData.h">
       <Filter>engine\graphics\rendering</Filter>
     </ClInclude>
@@ -620,14 +626,17 @@
     <ClInclude Include="engine\graphics\rendering\skyBox\SkyBoxRenderData.h">
       <Filter>engine\3d</Filter>
     </ClInclude>
-    <ClInclude Include="engine\graphics\rendering\skyBox\SkyBoxRenderer.h">
-      <Filter>engine\3d</Filter>
-    </ClInclude>
-    <ClInclude Include="engine\graphics\rendering\debugDraw\DebugDrawRenderer.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
     <ClInclude Include="engine\graphics\rendering\debugDraw\DebugDrawRenderData.h">
       <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="engine\graphics\rendering\object3d\Object3dRenderer.h">
+      <Filter>engine\graphics\rendering\object3d</Filter>
+    </ClInclude>
+    <ClInclude Include="engine\graphics\rendering\skyBox\SkyBoxRenderer.h">
+      <Filter>engine\graphics\rendering\skyBox</Filter>
+    </ClInclude>
+    <ClInclude Include="engine\graphics\rendering\debugDraw\DebugDrawRenderer.h">
+      <Filter>engine\graphics\rendering\debugDraw</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

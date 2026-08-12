@@ -20,6 +20,7 @@
 #include "LightingManager.h"
 #include "Object3dRenderer.h"
 #include "SkyBoxRenderer.h"
+#include "DebugDrawRenderer.h"
 #include <numbers>
 
 //コンストラクタ
@@ -29,9 +30,9 @@ TestPlayScene::TestPlayScene(){};
 TestPlayScene::~TestPlayScene(){};
 
 //初期化
-void TestPlayScene::Initialize(const SceneContext& sceneContext, Object3dRenderer* object3dRenderer, SkyBoxRenderer* skyBoxRenderer){
+void TestPlayScene::Initialize(const SceneContext& sceneContext, Object3dRenderer* object3dRenderer, SkyBoxRenderer* skyBoxRenderer, DebugDrawRenderer* debugDrawRenderer){
 	//ベースシーンの初期化
-	BaseScene::Initialize(sceneContext, object3dRenderer, skyBoxRenderer);
+	BaseScene::Initialize(sceneContext, object3dRenderer, skyBoxRenderer, debugDrawRenderer);
 	gameCamera_ = sceneContext_.cameraManager->FindCamera("testPlayCamera");
 
 	object3d_ = Object3d::Create(sceneContext_.directXBase, gameCamera_);
@@ -124,10 +125,10 @@ void TestPlayScene::Debug(){
 #ifdef USE_IMGUI
 	ImGui::Begin("Object");
 
-	for (int32_t i = 0; i < gameObjects_.size(); i++) {
+	for (int32_t i = 0; i < gameObjects_.size(); i++){
 		ImGui::PushID(i);
 
-		if (ImGui::TreeNode(("object" + std::to_string(i)).c_str())) {
+		if (ImGui::TreeNode(("object" + std::to_string(i)).c_str())){
 			ImGuiManager::DragTransform(gameObjects_[i]->GetTransform());
 			ImGui::SliderFloat("environmentCoefficient", &environmentCoefficient_, 0.0f, 1.0f);
 			object3d_->SetEnvironmentCoefficient(0, environmentCoefficient_);
@@ -190,10 +191,10 @@ void TestPlayScene::Draw(Camera* camera){
 	object3dRenderer_->AddRenderData(object3d_->GetRenderData());
 
 	frustum_->SetRenderCamera(camera);
-	frustum_->Draw();
+	debugDrawRenderer_->AddRenderData(frustum_->GetRenderData());
 
 	cube_->SetRenderCamera(camera);
-	cube_->Draw();
+	debugDrawRenderer_->AddRenderData(cube_->GetRenderData());
 
 	skyBox_->SetRenderCamera(camera);
 	skyBoxRenderer_->AddRenderData(skyBox_->GetSkyBoxRenderData());

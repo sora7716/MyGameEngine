@@ -13,6 +13,7 @@ class ColliderManager;
 class GameObject;
 class Object3dRenderer;
 class SkyBoxRenderer;
+class DebugDrawRenderer;
 
 /// <summary>
 /// シーンの基底クラス
@@ -33,7 +34,7 @@ public://メンバ関数
 	/// 初期化
 	/// </summary>
 	/// <param name="sceneContext">シーンで必要なもの</param>
-	virtual void Initialize(const SceneContext& sceneContext, Object3dRenderer* object3dRenderer, SkyBoxRenderer* skyBoxRenderer);
+	virtual void Initialize(const SceneContext& sceneContext, Object3dRenderer* object3dRenderer, SkyBoxRenderer* skyBoxRenderer,DebugDrawRenderer*debugDrawRenderer);
 
 	/// <summary>
 	/// 更新
@@ -121,5 +122,7 @@ protected://メンバ変数
 	Object3dRenderer* object3dRenderer_ = nullptr;
 	//スカイボックスのレンダラー
 	SkyBoxRenderer* skyBoxRenderer_ = nullptr;
+	//デバッグ描画のレンダラー
+	DebugDrawRenderer* debugDrawRenderer_ = nullptr;
 };
 

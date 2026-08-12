@@ -45,7 +45,7 @@ void SceneManager::Update(){
 		scene_ = nextScene_;
 		nextScene_ = nullptr;
 		//次のシーン
-		scene_->Initialize(sceneContext_, renderSystem_->GetObject3dRenderer(), renderSystem_->GetSkyBoxRenderer());
+		scene_->Initialize(sceneContext_, renderSystem_->GetObject3dRenderer(), renderSystem_->GetSkyBoxRenderer(), renderSystem_->GetDebugDrawRenderer());
 		//ゲームオブジェクト一覧をDebugEditorに登録
 		debugEditor_->SetGameObjects(scene_->GetGameObjects());
 	}

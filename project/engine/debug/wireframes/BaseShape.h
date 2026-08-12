@@ -1,6 +1,8 @@
 #pragma once
 #include "RenderData.h"
 #include "RenderingData.h"
+#include "DebugDrawRenderData.h"
+#include "BlendMode.h"
 #include <string>
 #include <wrl.h>
 #include <d3d12.h>
@@ -46,11 +48,6 @@ namespace debugDraw {
 		virtual void Update();
 
 		/// <summary>
-		/// 描画
-		/// </summary>
-		virtual void Draw();
-
-		/// <summary>
 		/// 描画する用のカメラを設定
 		/// </summary>
 		/// <param name="camera">カメラ</param>
@@ -67,6 +64,12 @@ namespace debugDraw {
 		/// </summary>
 		/// <returns>色</returns>
 		Vector4 GetColor();
+
+		/// <summary>
+		/// 描画データの取得
+		/// </summary>
+		/// <returns>描画データ</returns>
+		const DebugDrawRenderData& GetRenderData();
 	protected://メンバ関数
 		/// <summary>
 		/// 頂点データの設定
@@ -104,52 +107,6 @@ namespace debugDraw {
 		void CreateTransformationMatrixResource();
 
 		/// <summary>
-		/// ルートシグネイチャBlobの生成
-		/// </summary>
-		void CreateRootSignatureBlob();
-
-		/// <summary>
-		/// ルートシグネイチャの生成
-		/// </summary>
-		void CreateRootSignature();
-
-		/// <summary>
-		/// インプットレイアウトの初期化
-		/// </summary>
-		void InitializeInputLayoutDesc();
-
-		/// <summary>
-		/// ラスタライザステートの初期化
-		/// </summary>
-		void InitializeRasterizerState();
-
-		/// <summary>
-		/// 頂点シェーダのコンパイル
-		/// </summary>
-		void CompileVertexShader();
-
-		/// <summary>
-		/// ピクセルシェーダのコンパイル
-		/// </summary>
-		void CompilePixelShader();
-
-		/// <summary>
-		/// ブレンドステートの初期化
-		/// </summary>
-		void InitializeBlendState();
-
-		/// <summary>
-		/// PSOの生成
-		/// </summary>
-		/// <returns></returns>
-		ComPtr<ID3D12PipelineState> CreateGraphicsPipeline();
-
-		/// <summary>
-		/// グラフィックスパイプラインの構築
-		/// </summary>
-		void BuildGraphicsPipeline();
-
-		/// <summary>
 		/// 座標の更新
 		/// </summary>
 		void UpdateTransform();
@@ -169,26 +126,8 @@ namespace debugDraw {
 		D3D12_VERTEX_BUFFER_VIEW vertexBufferView_ = {};//頂点
 		D3D12_INDEX_BUFFER_VIEW indexBufferView_ = {};//インデックス	
 
-		//ルートシグネイチャ
-		ComPtr<ID3D12RootSignature>rootSignature_ = nullptr;
-		//ルートシグネイチャBlob
-		ComPtr<ID3DBlob>signatureBlob_ = nullptr;
-		//インプットレイアウト
-		D3D12_INPUT_LAYOUT_DESC inputLayoutDesc_ = {};
-		//ブレンドステート
-		D3D12_BLEND_DESC blendDesc_ = {};
-		//ラスタライザステート
-		D3D12_RASTERIZER_DESC rasterizerDesc_ = {};
-		//頂点シェーダBlob
-		ComPtr<IDxcBlob> vertexShaderBlob_ = nullptr;
-		//ピクセルシェーダBlob
-		ComPtr<IDxcBlob> pixelShaderBlob_ = nullptr;
-		//グラフィックスパイプライン(PSO)
-		ComPtr<ID3D12PipelineState> graphicsPipelineState_ = nullptr;
-		std::unique_ptr<GraphicsPipeline> makeGraphicsPipeline_ = nullptr;
-		//ファイル名
-		std::wstring vertexShaderFileName_ = L"DebugDraw.VS.hlsl";//頂点
-		std::wstring pixelShaderFileName_ = L"DebugDraw.PS.hlsl";//ピクセル
+		//描画データ
+		DebugDrawRenderData renderData_ = {};
 	protected://メンバ変数
 		//頂点数
 		int32_t vertexCount_ = 0;
@@ -204,6 +143,8 @@ namespace debugDraw {
 		VertexData* vertexData_ = nullptr;
 		//インデックスデータ
 		uint32_t* indexData_ = nullptr;
+		//ブレンドモード
+		BlendMode blendMode_ = BlendMode::kNormal;
 	};
 }
 

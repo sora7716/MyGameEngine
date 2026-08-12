@@ -44,8 +44,12 @@ void SceneManager::Update(){
 		//シーンの切り替え
 		scene_ = nextScene_;
 		nextScene_ = nullptr;
+		//シーンに必要な情報の設定
+		scene_->SetSceneContext(sceneContext_);
+		//描画システムの設定
+		scene_->SetRenderSystem(renderSystem_);
 		//次のシーン
-		scene_->Initialize(sceneContext_, renderSystem_->GetObject3dRenderer(), renderSystem_->GetSkyBoxRenderer(), renderSystem_->GetDebugDrawRenderer());
+		scene_->Initialize();
 		//ゲームオブジェクト一覧をDebugEditorに登録
 		debugEditor_->SetGameObjects(scene_->GetGameObjects());
 	}

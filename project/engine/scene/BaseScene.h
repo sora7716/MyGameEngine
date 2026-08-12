@@ -11,6 +11,7 @@ class DebugCamera;
 class AbstractSceneFactory;
 class ColliderManager;
 class GameObject;
+class RenderSystem;
 class Object3dRenderer;
 class SkyBoxRenderer;
 class DebugDrawRenderer;
@@ -33,8 +34,7 @@ public://メンバ関数
 	/// <summary>
 	/// 初期化
 	/// </summary>
-	/// <param name="sceneContext">シーンで必要なもの</param>
-	virtual void Initialize(const SceneContext& sceneContext, Object3dRenderer* object3dRenderer, SkyBoxRenderer* skyBoxRenderer,DebugDrawRenderer*debugDrawRenderer);
+	virtual void Initialize();
 
 	/// <summary>
 	/// 更新
@@ -93,6 +93,18 @@ public://メンバ関数
 	/// </summary>
 	/// <returns>ゲームオブジェクト</returns>
 	const std::vector<std::unique_ptr<GameObject>>& GetGameObjects()const;
+
+	/// <summary>
+	/// シーンで必要な情報の設定
+	/// </summary>
+	/// <param name="sceneContext">シーンに必要な情報</param>
+	void SetSceneContext(const SceneContext& sceneContext);
+
+	/// <summary>
+	/// レンダーシステムの設定
+	/// </summary>
+	/// <param name="renderSystem">レンダーシステム</param>
+	void SetRenderSystem(RenderSystem* renderSystem);
 private://メンバ関数
 	/// <summary>
 	/// 名前を重複しないようにする
@@ -124,5 +136,7 @@ protected://メンバ変数
 	SkyBoxRenderer* skyBoxRenderer_ = nullptr;
 	//デバッグ描画のレンダラー
 	DebugDrawRenderer* debugDrawRenderer_ = nullptr;
+	//描画システムの設定
+	RenderSystem* renderSystem_ = nullptr;
 };
 

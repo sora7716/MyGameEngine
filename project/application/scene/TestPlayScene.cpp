@@ -30,9 +30,9 @@ TestPlayScene::TestPlayScene(){};
 TestPlayScene::~TestPlayScene(){};
 
 //初期化
-void TestPlayScene::Initialize(const SceneContext& sceneContext, Object3dRenderer* object3dRenderer, SkyBoxRenderer* skyBoxRenderer, DebugDrawRenderer* debugDrawRenderer){
+void TestPlayScene::Initialize(){
 	//ベースシーンの初期化
-	BaseScene::Initialize(sceneContext, object3dRenderer, skyBoxRenderer, debugDrawRenderer);
+	BaseScene::Initialize();
 	gameCamera_ = sceneContext_.cameraManager->FindCamera("testPlayCamera");
 
 	object3d_ = Object3d::Create(sceneContext_.directXBase, gameCamera_);
@@ -44,7 +44,7 @@ void TestPlayScene::Initialize(const SceneContext& sceneContext, Object3dRendere
 	//for (uint32_t i = 0; i < 33; i++) {
 	//	object3d_->SetTexture(i, "white1x1.png");
 	//}
-	object3d_->RegisterToRenderer(object3dRenderer);
+	object3d_->RegisterToRenderer(object3dRenderer_);
 
 	//object3d_->SetLODDistances({ 20.0f,30.0f,50.0f,80.0f });
 	GameObject* treePtr = nullptr;

@@ -39,8 +39,7 @@ public://メンバ関数
 	/// <summary>
 	/// 初期化
 	/// </summary>
-	/// <param name="sceneContext">シーンで必要なもの</param>
-	void Initialize(const SceneContext& sceneContext, Object3dRenderer* object3dRenderer, SkyBoxRenderer* skyBoxRenderer, DebugDrawRenderer* debugDrawRenderer)override;
+	void Initialize()override;
 
 	/// <summary>
 	/// 更新

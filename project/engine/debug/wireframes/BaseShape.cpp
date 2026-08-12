@@ -12,17 +12,17 @@ using namespace debugDraw;
 #pragma comment(lib,"d3d12.lib")
 
 //コンストラクタ
-BaseShape::BaseShape() {}
+BaseShape::BaseShape(){}
 
 //デストラクタ
-BaseShape::~BaseShape() {}
+BaseShape::~BaseShape(){}
 
 //初期化
-void BaseShape::Initialize(DirectXBase* directXBase, Camera* camera) {
+void BaseShape::Initialize(DirectXBase* directXBase, Camera* camera){
 	//DirectXの基盤部分を記録する
 	directXBase_ = directXBase;
 	//カメラの記録
-	renderCamera_ = camera;
+	SetRenderCamera(camera);
 
 	//頂点データの生成
 	CreateVertexResource();
@@ -38,7 +38,7 @@ void BaseShape::Initialize(DirectXBase* directXBase, Camera* camera) {
 }
 
 //更新
-void BaseShape::Update() {
+void BaseShape::Update(){
 	//頂点データの設定
 	SettingVertexData();
 	//ワールドトランスフォームの更新
@@ -50,22 +50,22 @@ void BaseShape::Update() {
 	renderData_.vertexBufferView = vertexBufferView_;
 	renderData_.materialResource = materialResource_;
 	renderData_.wvpResource = wvpResource_;
-	renderData_.renderCamera = renderCamera_;
 	renderData_.indexCount = indexCount_;
 }
 
 //描画する用のカメラを設定
-void BaseShape::SetRenderCamera(Camera* camera) {
+void BaseShape::SetRenderCamera(Camera* camera){
 	renderCamera_ = camera;
+	renderData_.renderCamera = renderCamera_;
 }
 
 //色の設定
-void BaseShape::SetColor(const Vector4& color) {
+void BaseShape::SetColor(const Vector4& color){
 	*color_ = color;
 }
 
 //色の取得
-Vector4 BaseShape::GetColor() {
+Vector4 BaseShape::GetColor(){
 	return *color_;
 }
 
@@ -76,7 +76,7 @@ const DebugDrawRenderData& debugDraw::BaseShape::GetRenderData(){
 }
 
 //インデックスリソースの生成
-void BaseShape::CreateIndexResource() {
+void BaseShape::CreateIndexResource(){
 	indexResource_ = directXBase_->CreateBufferResource(sizeof(uint32_t) * indexCount_);
 
 	indexBufferView_.BufferLocation = indexResource_->GetGPUVirtualAddress();
@@ -90,7 +90,7 @@ void BaseShape::CreateIndexResource() {
 }
 
 //頂点データの生成
-void BaseShape::CreateVertexResource() {
+void BaseShape::CreateVertexResource(){
 	//頂点リソースを生成
 	vertexResource_ = directXBase_->CreateBufferResource(sizeof(VertexData) * vertexCount_);
 	//VertexBufferViewを作成する(頂点バッファービュー)
@@ -110,13 +110,13 @@ void BaseShape::CreateVertexResource() {
 }
 
 //マテリアルデータの初期化
-void BaseShape::InitializeMaterialData() {
+void BaseShape::InitializeMaterialData(){
 	//色を書き込む
 	*color_ = { 1.0f, 1.0f, 1.0f, 1.0f };
 }
 
 //マテリアルリソースの生成
-void BaseShape::CreateMaterialResource() {
+void BaseShape::CreateMaterialResource(){
 	//マテリアルリソースを作る
 	materialResource_ = directXBase_->CreateBufferResource(sizeof(Vector4));
 	//マテリアルリソースにデータを書き込むためのアドレスを取得してmaterialDataに割り当てる
@@ -127,7 +127,7 @@ void BaseShape::CreateMaterialResource() {
 }
 
 //WorldTransformation行列リソースの生成
-void BaseShape::CreateTransformationMatrixResource() {
+void BaseShape::CreateTransformationMatrixResource(){
 	//座標変換行列リソースを作成する
 	wvpResource_ = directXBase_->CreateBufferResource(sizeof(TransformationMatrix));
 	//座標変換行列リソースにデータを書き込むためのアドレスを取得してtransformationMatrixDataに割り当てる
@@ -140,17 +140,17 @@ void BaseShape::CreateTransformationMatrixResource() {
 }
 
 //座標の更新
-void BaseShape::UpdateTransform() {
+void BaseShape::UpdateTransform(){
 	worldMatrix_ = matrixUtility::MakeAffineMatrix(transform_);
 	//TransformからWorldMatrixを作る
 	//if (parent_) {
 	//	worldMatrix_ = worldMatrix_ * parent_->worldMatrix_;
 	//}
 	//wvpの書き込み
-	if (renderCamera_) {
+	if (renderCamera_){
 		const Matrix4x4& viewProjectionMatrix = renderCamera_->GetViewProjectionMatrix();
 		wvpData_->wvp = worldMatrix_ * viewProjectionMatrix;
-	} else {
+	} else{
 		wvpData_->wvp = worldMatrix_;
 	}
 	//ワールド行列を送信

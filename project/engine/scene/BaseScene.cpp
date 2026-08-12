@@ -5,6 +5,7 @@
 #include "GameObject.h"
 #include "StringUtility.h"
 #include "TagManager.h"
+#include "RenderSystem.h"
 #include <algorithm>
 //#include "algorithms/ColliderManager.h"
 
@@ -17,9 +18,7 @@ BaseScene::~BaseScene(){
 }
 
 //初期化
-void BaseScene::Initialize(const SceneContext& sceneContext, Object3dRenderer* object3dRenderer, SkyBoxRenderer* skyBoxRenderer, DebugDrawRenderer* debugDrawRenderer){
-	//ゲームエンジンの核
-	sceneContext_ = sceneContext;
+void BaseScene::Initialize(){
 	//デバックカメラ
 	debugCamera_ = std::make_unique<DebugCamera>();
 	debugCamera_->Initialize(sceneContext_.input, sceneContext_.cameraManager);
@@ -39,11 +38,11 @@ void BaseScene::Initialize(const SceneContext& sceneContext, Object3dRenderer* o
 	}
 
 	//オブジェクト3dのレンダラーの記録
-	object3dRenderer_ = object3dRenderer;
+	object3dRenderer_ = renderSystem_->GetObject3dRenderer();
 	//スカイボックスのレンダラーの記録
-	skyBoxRenderer_ = skyBoxRenderer;
+	skyBoxRenderer_ = renderSystem_->GetSkyBoxRenderer();
 	//デバッグ描画のレンダラーの記録
-	debugDrawRenderer_ = debugDrawRenderer;
+	debugDrawRenderer_ = renderSystem_->GetDebugDrawRenderer();
 
 	//コライダーマネージャー
 	//colliderManager_ = std::make_unique<ColliderManager>();
@@ -161,6 +160,16 @@ GameObject* BaseScene::CreateGameObject(){
 const std::vector<std::unique_ptr<GameObject>>& BaseScene::GetGameObjects()const{
 	// TODO: return ステートメントをここに挿入します
 	return gameObjects_;
+}
+
+//シーンで必要な情報の設定
+void BaseScene::SetSceneContext(const SceneContext& sceneContext){
+	sceneContext_ = sceneContext;
+}
+
+//レンダーシステムの設定
+void BaseScene::SetRenderSystem(RenderSystem* renderSystem){
+	renderSystem_ = renderSystem;
 }
 
 //名前を重複しないようにする

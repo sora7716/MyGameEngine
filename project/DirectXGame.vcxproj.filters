@@ -121,6 +121,9 @@
     <Filter Include="engine\graphics\rendering\debugDraw">
       <UniqueIdentifier>{ee11c4a8-f24a-41a9-bd01-84ebb90bf872}</UniqueIdentifier>
     </Filter>
+    <Filter Include="engine\graphics\rendering\particle">
+      <UniqueIdentifier>{45a0f329-24c2-4885-b42b-2b821b1ffa51}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="engine\main.cpp">
@@ -365,6 +368,9 @@
     </ClCompile>
     <ClCompile Include="engine\graphics\rendering\debugDraw\DebugDrawRenderer.cpp">
       <Filter>engine\graphics\rendering\debugDraw</Filter>
+    </ClCompile>
+    <ClCompile Include="engine\graphics\rendering\particle\ParticleRenderer.cpp">
+      <Filter>ソース ファイル</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -614,20 +620,8 @@
     <ClInclude Include="engine\graphics\rendering\RenderSystem.h">
       <Filter>engine\graphics\rendering</Filter>
     </ClInclude>
-    <ClInclude Include="engine\graphics\rendering\object3d\Object3dGpuResource.h">
-      <Filter>engine\graphics\rendering</Filter>
-    </ClInclude>
-    <ClInclude Include="engine\graphics\rendering\object3d\Object3dRenderData.h">
-      <Filter>engine\graphics\rendering</Filter>
-    </ClInclude>
     <ClInclude Include="engine\3d\LightingData.h">
       <Filter>engine\3d</Filter>
-    </ClInclude>
-    <ClInclude Include="engine\graphics\rendering\skyBox\SkyBoxRenderData.h">
-      <Filter>engine\3d</Filter>
-    </ClInclude>
-    <ClInclude Include="engine\graphics\rendering\debugDraw\DebugDrawRenderData.h">
-      <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
     <ClInclude Include="engine\graphics\rendering\object3d\Object3dRenderer.h">
       <Filter>engine\graphics\rendering\object3d</Filter>
@@ -637,6 +631,27 @@
     </ClInclude>
     <ClInclude Include="engine\graphics\rendering\debugDraw\DebugDrawRenderer.h">
       <Filter>engine\graphics\rendering\debugDraw</Filter>
+    </ClInclude>
+    <ClInclude Include="engine\graphics\rendering\debugDraw\DebugDrawRenderData.h">
+      <Filter>engine\graphics\rendering\debugDraw</Filter>
+    </ClInclude>
+    <ClInclude Include="engine\graphics\rendering\object3d\Object3dGpuResource.h">
+      <Filter>engine\graphics\rendering\object3d</Filter>
+    </ClInclude>
+    <ClInclude Include="engine\graphics\rendering\object3d\Object3dRenderData.h">
+      <Filter>engine\graphics\rendering\object3d</Filter>
+    </ClInclude>
+    <ClInclude Include="engine\graphics\rendering\skyBox\SkyBoxRenderData.h">
+      <Filter>engine\graphics\rendering\skyBox</Filter>
+    </ClInclude>
+    <ClInclude Include="engine\particle\ParticleData.h">
+      <Filter>engine\particle</Filter>
+    </ClInclude>
+    <ClInclude Include="engine\graphics\rendering\particle\ParticleRenderer.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="engine\graphics\rendering\particle\ParticleRenderData.h">
+      <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

@@ -21,6 +21,7 @@
 #include "Object3dRenderer.h"
 #include "SkyBoxRenderer.h"
 #include "DebugDrawRenderer.h"
+#include "ParticleRenderer.h"
 #include <numbers>
 
 //コンストラクタ
@@ -84,7 +85,7 @@ void TestPlayScene::Initialize(){
 	cube_->Initialize(sceneContext_.directXBase, gameCamera_);
 
 	particleSystem_ = std::make_unique<ParticleSystem>();
-	particleSystem_->Initialize(sceneContext_.particleCommon, gameCamera_, "circle2.png");
+	particleSystem_->Initialize(sceneContext_.directXBase, sceneContext_.srvManager, sceneContext_.pipelineManager, gameCamera_, "circle2.png");
 	particleSystem_->SetGameCamera(gameCamera_);
 	particleSystem_->SetParticleCount(2);
 	particleSystem_->SetFrequency(0.3f);
@@ -187,21 +188,20 @@ void TestPlayScene::Debug(){
 
 //描画
 void TestPlayScene::Draw(Camera* camera){
-	object3d_->SetRenderCamera(camera);
-	object3dRenderer_->AddRenderData(object3d_->GetRenderData());
+	//object3d_->SetRenderCamera(camera);
+	//object3dRenderer_->AddRenderData(object3d_->GetRenderData());
 
-	frustum_->SetRenderCamera(camera);
-	debugDrawRenderer_->AddRenderData(frustum_->GetRenderData());
+	//frustum_->SetRenderCamera(camera);
+	//debugDrawRenderer_->AddRenderData(frustum_->GetRenderData());
 
-	cube_->SetRenderCamera(camera);
-	debugDrawRenderer_->AddRenderData(cube_->GetRenderData());
+	//cube_->SetRenderCamera(camera);
+	//debugDrawRenderer_->AddRenderData(cube_->GetRenderData());
 
-	skyBox_->SetRenderCamera(camera);
-	skyBoxRenderer_->AddRenderData(skyBox_->GetSkyBoxRenderData());
-	//skyBox_->Draw(sceneContext_.textureManager);
+	//skyBox_->SetRenderCamera(camera);
+	//skyBoxRenderer_->AddRenderData(skyBox_->GetSkyBoxRenderData());
 
 	particleSystem_->SetRenderCamera(camera);
-	particleSystem_->Draw();
+	particleRenderer_->AddRenderData(particleSystem_->GetRenderData());
 }
 
 //デバッグでの描画

@@ -7,7 +7,6 @@
 
 //前方宣言
 class Camera;
-class Mesh;
 
 //Object3dの描画ハンドル
 using Object3dRenderHandle = uint32_t;

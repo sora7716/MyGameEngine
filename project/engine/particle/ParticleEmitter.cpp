@@ -2,7 +2,6 @@
 #include "ParticleEmitter.h"
 #include "MathUtility.h"
 #include "Camera.h"
-#include "ParticleCommon.h"
 #include "Culling.h"
 #include "Mesh.h"
 using namespace primitiveData;
@@ -16,11 +15,9 @@ ParticleEmitter::~ParticleEmitter() {
 }
 
 //初期化
-void ParticleEmitter::Initialize(ParticleCommon* particleCommon, Camera* renderCamera) {
-	//パーティクルの共通部分
-	particleCommon_ = particleCommon;
+void ParticleEmitter::Initialize(Camera* renderCamera) {
 	//カメラを設定
-	gameCamera_ = particleCommon_->GetDefaultCamera();
+	gameCamera_ = renderCamera;
 	//描画用カメラの記録
 	renderCamera_ = renderCamera;
 	//乱数エンジンの初期化
@@ -99,12 +96,6 @@ void ParticleEmitter::UpdateWorldMatrix(ParticleForGPU* instancingData){
 		//次のイテレータに進める
 		it++;
 	}
-}
-
-//描画準備
-void ParticleEmitter::DrawSetting() {
-	//カメラ
-	renderCamera_->DrawSetting(3);
 }
 
 //生存しているパーティクルの数の取得

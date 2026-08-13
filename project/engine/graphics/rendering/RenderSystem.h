@@ -12,6 +12,7 @@ class Blend;
 class Object3dRenderer;
 class SkyBoxRenderer;
 class DebugDrawRenderer;
+class ParticleRenderer;
 
 /// <summary>
 /// 描画のシステム
@@ -60,6 +61,12 @@ public://メンバ関数
 	/// </summary>
 	/// <returns>デバッグ描画のレンダラー</returns>
 	DebugDrawRenderer* GetDebugDrawRenderer();
+
+	/// <summary>
+	/// パーティクルのレンダラーの取得
+	/// </summary>
+	/// <returns>パーティクルのレンダラー</returns>
+	ParticleRenderer* GetParticleRenderer();
 private://メンバ関数
 	/// <summary>
 	/// 描画の開始
@@ -86,5 +93,7 @@ private://メンバ関数
 	std::unique_ptr<SkyBoxRenderer>skyBoxRenderer_ = nullptr;
 	//デバッグ描画のレンダラー
 	std::unique_ptr<DebugDrawRenderer>debugDrawRenderer_ = nullptr;
+	//パーティクルの描画のレンダラー
+	std::unique_ptr<ParticleRenderer>particleRenderer_ = nullptr;
 };
 

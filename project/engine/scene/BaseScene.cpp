@@ -43,6 +43,8 @@ void BaseScene::Initialize(){
 	skyBoxRenderer_ = renderSystem_->GetSkyBoxRenderer();
 	//デバッグ描画のレンダラーの記録
 	debugDrawRenderer_ = renderSystem_->GetDebugDrawRenderer();
+	//パーティクルのレンダラーの記録
+	particleRenderer_ = renderSystem_->GetParticleRenderer();
 
 	//コライダーマネージャー
 	//colliderManager_ = std::make_unique<ColliderManager>();

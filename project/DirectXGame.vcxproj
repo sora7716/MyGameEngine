@@ -69,6 +69,7 @@
     <ClCompile Include="engine\graphics\pipeline\PipelineManager.cpp" />
     <ClCompile Include="engine\graphics\rendering\debugDraw\DebugDrawRenderer.cpp" />
     <ClCompile Include="engine\graphics\rendering\object3d\Object3dRenderer.cpp" />
+    <ClCompile Include="engine\graphics\rendering\particle\ParticleRenderer.cpp" />
     <ClCompile Include="engine\graphics\rendering\RenderSystem.cpp" />
     <ClCompile Include="engine\graphics\rendering\skyBox\SkyBoxRenderer.cpp" />
     <ClCompile Include="engine\graphics\texture\TextureManager.cpp" />
@@ -162,6 +163,8 @@
     <ClInclude Include="engine\graphics\rendering\object3d\Object3dGpuResource.h" />
     <ClInclude Include="engine\graphics\rendering\object3d\Object3dRenderer.h" />
     <ClInclude Include="engine\graphics\rendering\object3d\Object3dRenderData.h" />
+    <ClInclude Include="engine\graphics\rendering\particle\ParticleRenderData.h" />
+    <ClInclude Include="engine\graphics\rendering\particle\ParticleRenderer.h" />
     <ClInclude Include="engine\graphics\rendering\RenderSystem.h" />
     <ClInclude Include="engine\graphics\rendering\skyBox\SkyBoxRenderer.h" />
     <ClInclude Include="engine\graphics\rendering\skyBox\SkyBoxRenderData.h" />
@@ -176,6 +179,7 @@
     <ClInclude Include="engine\math\Vector3.h" />
     <ClInclude Include="engine\math\Vector4.h" />
     <ClInclude Include="engine\particle\ParticleCommon.h" />
+    <ClInclude Include="engine\particle\ParticleData.h" />
     <ClInclude Include="engine\particle\ParticleEmitter.h" />
     <ClInclude Include="engine\particle\ParticleManager.h" />
     <ClInclude Include="engine\particle\ParticleSystem.h" />

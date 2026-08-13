@@ -5,6 +5,7 @@
 #include "Object3dRenderer.h"
 #include "SkyBoxRenderer.h"
 #include "DebugDrawRenderer.h"
+#include "ParticleRenderer.h"
 
 //コンストラクタ
 RenderSystem::RenderSystem(){
@@ -31,6 +32,8 @@ void RenderSystem::Initialize(DirectXBase* directXBase, SRVManager* srvManager, 
 	skyBoxRenderer_ = SkyBoxRenderer::Create(directXBase, textureManager);
 	//デバッグ描画のレンダラー
 	debugDrawRenderer_ = DebugDrawRenderer::Create(directXBase);
+	//パーティクルのレンダラー
+	particleRenderer_ = ParticleRenderer::Create(directXBase, srvManager, textureManager);
 }
 
 //描画
@@ -47,6 +50,16 @@ void RenderSystem::Draw(){
 	//描画オブジェクトのリセット
 	object3dRenderer_->Reset();
 
+	//Particle
+	for (uint32_t i = 0; i < particleRenderer_->GetRenderDataSize(); i++){
+		//描画の開始
+		PreDraw(particleRenderer_->GetBlendMode(i), PipelineType::kParticle);
+		//Particleの描画
+		particleRenderer_->Draw(i);
+	}
+	//描画オブジェクトのリセット
+	particleRenderer_->Reset();
+
 	//デバッグ描画
 	for (uint32_t i = 0; i < debugDrawRenderer_->GetRenderDataSize(); i++){
 		//描画開始
@@ -54,7 +67,7 @@ void RenderSystem::Draw(){
 		//デバッグ描画の描画
 		debugDrawRenderer_->Draw(i);
 	}
-	//デバッグ描画のリセット
+	//描画オブジェクトのリセット
 	debugDrawRenderer_->Reset();
 
 	//スカイボックス
@@ -82,6 +95,11 @@ SkyBoxRenderer* RenderSystem::GetSkyBoxRenderer(){
 //デバッグ描画のレンダラーの取得
 DebugDrawRenderer* RenderSystem::GetDebugDrawRenderer(){
 	return debugDrawRenderer_.get();
+}
+
+//パーティクルのレンダラーの取得
+ParticleRenderer* RenderSystem::GetParticleRenderer(){
+	return particleRenderer_.get();
 }
 
 //描画開始

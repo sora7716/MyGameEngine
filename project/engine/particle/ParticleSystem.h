@@ -1,7 +1,9 @@
 #pragma once
 #include "RenderData.h"
 #include "BlendMode.h"
-#include "ParticleEmitter.h"
+#include "ParticleData.h"
+#include "ParticleRenderData.h"
+#include "PipelineManagerData.h"
 #include <memory>
 #include <d3d12.h>
 #include <wrl.h>
@@ -9,13 +11,17 @@
 
 //前方宣言
 class DirectXBase;
-class ParticleCommon;
+class SRVManager;
+class PipelineManager;
+class TextureManager;
 class Mesh;
+class Camera;
+class ParticleEmitter;
 
 /// <summary>
 /// パーティクルシステム
 /// </summary>
-class ParticleSystem {
+class ParticleSystem{
 private://エイリアステンプレート
 	template <class T>using ComPtr = Microsoft::WRL::ComPtr<T>;
 public://メンバ関数
@@ -35,17 +41,12 @@ public://メンバ関数
 	/// <param name="particleCommon">パーティクルの共通部分</param>
 	/// <param name="renderCamera">描画用カメラ</param>
 	/// <param name="textureName">テクスチャ名</param>
-	void Initialize(ParticleCommon* particleCommon, Camera* renderCamera, const std::string& textureName);
+	void Initialize(DirectXBase* directXBase, SRVManager* srvManager, PipelineManager* pipelineManager, Camera* renderCamera, const std::string& textureName);
 
 	/// <summary>
 	/// 更新
 	/// </summary>
 	void Update();
-
-	/// <summary>
-	/// 描画
-	/// </summary>
-	void Draw();
 
 	/// <summary>
 	/// ゲームカメラの設定
@@ -57,7 +58,7 @@ public://メンバ関数
 	/// 描画カメラの設定
 	/// </summary>
 	/// <param name="camera">カメラ</param>
-	void SetRenderCamera(Camera*camera);
+	void SetRenderCamera(Camera* camera);
 
 	/// <summary>
 	/// ブレンドモードの設定
@@ -106,7 +107,13 @@ public://メンバ関数
 	/// </summary>
 	/// <param name="meshIndex">メッシュ検索キー</param>
 	/// <param name="textureFileName">画像のファイル名</param>
-	void SetTexture(uint32_t meshIndex,const std::string& imageFileName);
+	void SetTexture(uint32_t meshIndex, const std::string& imageFileName);
+
+	/// <summary>
+	/// 描画データの取得
+	/// </summary>
+	/// <returns>描画データ</returns>
+	const ParticleRenderData& GetRenderData();
 private://メンバ関数
 	/// <summary>
 	/// マテリアルリソースの生成
@@ -122,17 +129,16 @@ private://メンバ関数
 	/// ストラクチャバッファの生成
 	/// </summary>
 	void CreateStructuredBuffer();
-
-	/// <summary>
-    /// モデルのテクスチャを適応
-    /// </summary>
-    /// <param name="materialIndex">マテリアルの検索キー</param>
-	void ApplyModelTexture(uint32_t materialIndex);
 private://メンバ変数
 	//DirectXの基盤部分	
 	DirectXBase* directXBase_ = nullptr;
-	//パーティクルの共通部分
-	ParticleCommon* particleCommon_ = nullptr;
+	//SRVの管理
+	SRVManager* srvManager_ = nullptr;
+	//パイプラインの管理
+	PipelineManager* pipelineManager_ = nullptr;
+	PipelineSet pipelineSet_ = {};
+	//描画用のカメラ
+	Camera* renderCamera_ = nullptr;
 	//バッファリソース
 	ComPtr<ID3D12Resource>vertexResource_ = nullptr;//頂点
 	ComPtr<ID3D12Resource>indexResource_ = nullptr;//インデックス
@@ -157,4 +163,6 @@ private://メンバ変数
 	BlendMode blendMode_ = BlendMode::kAdd;
 	//パーティクルの発生源
 	std::unique_ptr<ParticleEmitter>emitter_ = nullptr;
+	//描画データ
+	ParticleRenderData renderData_ = {};
 };

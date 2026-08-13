@@ -15,6 +15,7 @@ class RenderSystem;
 class Object3dRenderer;
 class SkyBoxRenderer;
 class DebugDrawRenderer;
+class ParticleRenderer;
 
 /// <summary>
 /// シーンの基底クラス
@@ -130,13 +131,15 @@ protected://メンバ変数
 	Camera* gameCamera_ = nullptr;
 	//ゲームオブジェクトの一覧
 	std::vector<std::unique_ptr<GameObject>> gameObjects_;
-	//オブジェクト3dレンダラー
-	Object3dRenderer* object3dRenderer_ = nullptr;
-	//スカイボックスのレンダラー
-	SkyBoxRenderer* skyBoxRenderer_ = nullptr;
-	//デバッグ描画のレンダラー
-	DebugDrawRenderer* debugDrawRenderer_ = nullptr;
 	//描画システムの設定
 	RenderSystem* renderSystem_ = nullptr;
+	//オブジェクト3dレンダラー
+	Object3dRenderer* object3dRenderer_ = nullptr;
+	//スカイボックスレンダラー
+	SkyBoxRenderer* skyBoxRenderer_ = nullptr;
+	//デバッグ描画レンダラー
+	DebugDrawRenderer* debugDrawRenderer_ = nullptr;
+	//パーティクルレンダラー
+	ParticleRenderer* particleRenderer_ = nullptr;
 };
 

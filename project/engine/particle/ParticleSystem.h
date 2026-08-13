@@ -51,9 +51,9 @@ public://メンバ関数
 	void Update();
 
 	/// <summary>
-    /// レンダラーを登録
-    /// </summary>
-    /// <param name="renderer">レンダラー</param>
+	/// レンダラーを登録
+	/// </summary>
+	/// <param name="renderer">レンダラー</param>
 	void RegisterToRenderer(ParticleRenderer* renderer);
 
 	void DrawSetting();
@@ -145,10 +145,10 @@ private://メンバ変数
 	//バッファリソースの使い道を補足するバッファビュー
 	D3D12_VERTEX_BUFFER_VIEW vertexBufferView_ = {};//頂点
 	D3D12_INDEX_BUFFER_VIEW indexBufferView_ = {};//インデックス	
-	//ワールドビュープロジェクションのリソース
+	//パーティクルのGPUリソース
 	ComPtr<ID3D12Resource>instancingResource_ = nullptr;
-	//ワールドビュープロジェクションのデータ
-	ParticleForGPU* instancingData_ = {};
+	//パーティクルのGPUリソースのデータ
+	std::vector<ParticleForGPU> particleForGpuDatas_ = {};
 	//モデルデータ
 	ModelData modelData_ = {};
 	//メッシュ

@@ -35,6 +35,9 @@ void ParticleSystem::Initialize(DirectXBase* directXBase, SRVManager* srvManager
 	pipelineManager_ = pipelineManager;
 	pipelineSet_ = pipelineManager_->GetPipelineSet(PipelineType::kParticle);
 
+	//GPUリソースのサイズ設定
+	particleForGpuDatas_.resize(ParticleEmitter::kNumMaxInstance);
+
 	//エミッター
 	emitter_ = std::make_unique<ParticleEmitter>();
 	emitter_->Initialize(renderCamera);
@@ -69,12 +72,11 @@ void ParticleSystem::Initialize(DirectXBase* directXBase, SRVManager* srvManager
 
 //更新
 void ParticleSystem::Update(){
-	emitter_->Update(instancingData_);
+	emitter_->Update(particleForGpuDatas_.data());
 
 	//描画データをまとめる
 	renderData_.indexBufferView = indexBufferView_;
 	renderData_.vertexBufferView = vertexBufferView_;
-	renderData_.instanceData = instancingData_;
 	renderData_.blendMode = blendMode_;
 	renderData_.imageTexturePaths.resize(meshes_.size());
 	for (uint32_t i = 0; i < meshes_.size(); i++){
@@ -82,8 +84,8 @@ void ParticleSystem::Update(){
 	}
 	renderData_.materialResources = materialResources_;
 	renderData_.meshes = meshes_;
-	renderData_.srvIndex = srvIndex_;
 	renderData_.numInstance = emitter_->GetNumInstance();
+
 }
 
 //レンダラーを登録
@@ -98,7 +100,10 @@ void ParticleSystem::RegisterToRenderer(ParticleRenderer* renderer){
 }
 
 void ParticleSystem::DrawSetting(){
-	emitter_->UpdateWorldMatrix(instancingData_);
+	emitter_->UpdateWorldMatrix(particleForGpuDatas_.data());
+
+	//有効なParticleだけ描画データへ格納
+	renderData_.particleForGpuDatas.assign(particleForGpuDatas_.begin(), particleForGpuDatas_.begin() + renderData_.numInstance);
 }
 
 //カメラの設定

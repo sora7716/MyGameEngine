@@ -112,6 +112,9 @@ ParticleRenderHandle ParticleRenderer::RegisterParticle(uint32_t maxInstance){
 
 	ParticleGpuResource& particleResource = particleResources_.back();
 
+	//キャパシティを設定
+	particleResource.capacity = maxInstance;
+
 	//座標のリソースを作成
 	CreateTransformationMatrixResource(particleResource);
 

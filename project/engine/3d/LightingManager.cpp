@@ -1,8 +1,10 @@
+#define NOMINMAX
 #include "LightingManager.h"
 #include "DirectXBase.h"
 #include "SRVManager.h"
 #include "TextureManager.h"
 #include "MathUtility.h"
+#include <algorithm>
 #include <cassert>
 
 //コンストラクタ
@@ -53,6 +55,7 @@ void LightingManager::DrawSetting(){
 void LightingManager::SetDirectionalLight(const DirectionalLight& directionalLight){
 	*directionalLight_ = directionalLight;
 	directionalLight_->direction = directionalLight.direction.Normalize();
+	directionalLight_->intensity = std::max(directionalLight.intensity, 0.0f);
 }
 
 //平行光源の取得
@@ -98,7 +101,7 @@ void LightingManager::CreatePointLight(){
 	}
 
 	//配列の内容をコピー
-	std::memcpy(pointLights_.data(), pointLightData, pointLights_.size() * sizeof(PointLight));
+	std::memcpy(pointLightData, pointLights_.data(), pointLights_.size() * sizeof(PointLight));
 }
 
 //点光源のストラクチャバッファの生成
@@ -138,7 +141,7 @@ void LightingManager::CreateSpotLight(){
 	}
 
 	//配列の内容をコピー
-	std::memcpy(spotLights_.data(), spotLightData, spotLights_.size() * sizeof(SpotLight));
+	std::memcpy(spotLightData, spotLights_.data(), spotLights_.size() * sizeof(SpotLight));
 }
 
 //スポットライトのストラクチャバッファの生成

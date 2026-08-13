@@ -179,7 +179,7 @@ void TestPlayScene::Debug(){
 	if (ImGui::TreeNode("directionalLight")){
 		ImGui::ColorEdit4("color", &directionalLight_.color.x);
 		ImGui::DragFloat3("direction", &directionalLight_.direction.x, 0.01f);
-		ImGui::DragFloat("intensity", &directionalLight_.intensity);
+		ImGui::DragFloat("intensity", &directionalLight_.intensity, 0.05f, 0.0f, 10.0f);
 		sceneContext_.lightingManager->SetDirectionalLight(directionalLight_);
 		ImGui::TreePop();
 	}
@@ -190,8 +190,8 @@ void TestPlayScene::Debug(){
 
 //描画
 void TestPlayScene::Draw(Camera* camera){
-	//object3d_->SetRenderCamera(camera);
-	//object3dRenderer_->AddRenderData(object3d_->GetRenderData());
+	object3d_->SetRenderCamera(camera);
+	object3dRenderer_->AddRenderData(object3d_->GetRenderData());
 
 	//frustum_->SetRenderCamera(camera);
 	//debugDrawRenderer_->AddRenderData(frustum_->GetRenderData());

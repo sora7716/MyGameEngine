@@ -316,5 +316,6 @@ PixelShaderOutput main(VertexShaderOutput input) {
     if (output.color.a == 0.0f) {
         discard;
     }
+    output.color.rgb = output.color.rgb / (output.color.rgb + 1.0f);
     return output;
 }

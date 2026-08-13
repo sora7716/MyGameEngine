@@ -201,6 +201,7 @@ void TestPlayScene::Draw(Camera* camera){
 	//skyBoxRenderer_->AddRenderData(skyBox_->GetSkyBoxRenderData());
 
 	particleSystem_->SetRenderCamera(camera);
+	particleSystem_->DrawSetting();
 	particleRenderer_->AddRenderData(particleSystem_->GetRenderData());
 }
 

@@ -91,6 +91,10 @@ void ParticleSystem::Update(){
 	renderData_.numInstance = emitter_->GetNumInstance();
 }
 
+void ParticleSystem::DrawSetting(){
+	emitter_->UpdateWorldMatrix(instancingData_);
+}
+
 //カメラの設定
 void ParticleSystem::SetGameCamera(Camera* camera){
 	emitter_->SetGameCamera(camera);

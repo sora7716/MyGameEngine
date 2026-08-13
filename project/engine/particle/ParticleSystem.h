@@ -48,6 +48,8 @@ public://メンバ関数
 	/// </summary>
 	void Update();
 
+	void DrawSetting();
+
 	/// <summary>
 	/// ゲームカメラの設定
 	/// </summary>

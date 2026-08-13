@@ -38,6 +38,13 @@ void ParticleRenderer::Initialize(DirectXBase* directXBase, SRVManager* srvManag
 void ParticleRenderer::Draw(uint32_t instanceIndex){
 	//各インスタンスごとの描画データ
 	ParticleRenderData renderData = renderDatas_[instanceIndex];
+
+	//ハンドルが登録済みか確認
+	assert(renderData.renderHandle != kInvalidParticleRenderHandle);
+	assert(renderData.renderHandle < particleResources_.size());
+	//GPUリソースを取得
+	const ParticleGpuResource& particleResource = particleResources_[renderData.renderHandle];
+
 	//ワールド行列の更新
 	//emitter_->UpdateWorldMatrix(instancingData_);
 	//カメラ
@@ -47,7 +54,7 @@ void ParticleRenderer::Draw(uint32_t instanceIndex){
 	//IndexBufferViewの設定
 	directXBase_->GetCommandList()->IASetIndexBuffer(&renderData.indexBufferView);//IBVを設定
 	//ワールドトランスフォームの描画
-	directXBase_->GetCommandList()->SetGraphicsRootDescriptorTable(1, srvManager_->GetGPUDescriptorHandle(renderData.srvIndex));
+	directXBase_->GetCommandList()->SetGraphicsRootDescriptorTable(1, srvManager_->GetGPUDescriptorHandle(particleResource.srvIndex));
 	for (uint32_t i = 0; i < renderData.meshes.size(); i++){
 		//マテリアルインデックス
 		uint32_t materialIndex = renderData.meshes[i]->GetMaterialIndex();

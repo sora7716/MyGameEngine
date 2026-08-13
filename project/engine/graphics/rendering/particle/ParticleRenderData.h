@@ -21,7 +21,6 @@ struct ParticleRenderData{
 	D3D12_VERTEX_BUFFER_VIEW vertexBufferView = {};
 	D3D12_INDEX_BUFFER_VIEW indexBufferView = {};
 	std::vector<Microsoft::WRL::ComPtr<ID3D12Resource>>materialResources;
-	uint32_t srvIndex;
 	std::vector<std::string> imageTexturePaths;
 	ParticleForGPU* instanceData;
 	BlendMode blendMode = BlendMode::kNone;

@@ -3,6 +3,8 @@
 #include "Vector4.h"
 #include "ParticleData.h"
 #include "ParticleRenderData.h"
+#include "ParticleGpuResource.h"
+
 #include <list>
 #include <random>
 #include <vector>

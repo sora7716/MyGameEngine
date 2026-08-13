@@ -90,7 +90,7 @@ void Object3dRenderer::Draw(uint32_t instanceIndex){
 			continue;
 		}
 
-		const Object3dGpuResource& objectResource = objectResources_[renderDatas_[instanceIndex].renderHandle_];
+		const Object3dGpuResource& objectResource = objectResources_[renderDatas_[instanceIndex].renderHandle];
 
 		const LODGpuResource& lodResource = objectResource.lodResources[lodIndex];
 
@@ -142,18 +142,25 @@ void Object3dRenderer::Draw(uint32_t instanceIndex){
 
 //描画データの追加
 void Object3dRenderer::AddRenderData(const Object3dRenderData& renderData){
-	assert(renderData.renderHandle_ != kInvalidObject3dRenderHandle);
+	//ハンドルが有効か
+	assert(renderData.renderHandle != kInvalidObject3dRenderHandle);
 
-	assert(renderData.renderHandle_ < objectResources_.size());
+	//ハンドルが範囲内か
+	assert(renderData.renderHandle < objectResources_.size());
 
-	Object3dGpuResource& objectResource = objectResources_[renderData.renderHandle_];
+	//対応リソースの取得
+	Object3dGpuResource& objectResource = objectResources_[renderData.renderHandle];
 
+	//LODごとのTransformationData
 	const std::vector<std::vector<TransformationMatrix>>& transformationData = renderData.lodRenderData.transformationData;
 
+	//LODごとの描画数
 	const std::vector<uint32_t>drawCounts = renderData.lodRenderData.drawCounts;
 
+	//CPUとGPUのLOD数を比べて一致しているか
 	assert(transformationData.size() == objectResource.lodResources.size());
 
+	//描画数もGPUと一致しているか
 	assert(drawCounts.size() == objectResource.lodResources.size());
 
 	for (uint32_t lodIndex = 0; lodIndex < objectResource.lodResources.size(); lodIndex++){
@@ -204,7 +211,7 @@ void Object3dRenderer::CreateStructuredBufferForWvp(LODGpuResource& lodGpuResour
 	srvManager_->CreateSRVForStructuredBuffer(
 		lodGpuResource.srvIndex,
 		lodGpuResource.wvpResource.Get(),
-		static_cast<uint32_t>(lodGpuResource.capacity),
+		lodGpuResource.capacity,
 		sizeof(TransformationMatrix)
 	);
 }

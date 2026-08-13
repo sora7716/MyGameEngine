@@ -190,7 +190,7 @@ void Object3d::RegisterToRenderer(Object3dRenderer* renderer){
 
 	renderHandle_ = renderer->RegisterObject(lodCount_, maxInstanceCount_);
 
-	rendererData_.renderHandle_ = renderHandle_;
+	rendererData_.renderHandle = renderHandle_;
 }
 
 //インスタンスの追加

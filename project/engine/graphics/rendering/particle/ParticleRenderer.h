@@ -1,5 +1,6 @@
 #pragma once
 #include "ParticleRenderData.h"
+#include "ParticleGpuResource.h"
 #include <cstdint>
 #include <memory>
 
@@ -69,6 +70,18 @@ public://メンバ関数
 	/// <param name="instanceIndex">インスタンス検索キー</param>
 	/// <returns>ブレンドモード</returns>
 	BlendMode GetBlendMode(uint32_t instanceIndex);
+private://メンバ関数
+	/// <summary>
+	/// 座標変換行列リソースの生成
+	/// </summary>
+	/// <param name="gpuResource">パーティクルのGpuに送るデータ</param>
+	void CreateTransformationMatrixResource(ParticleGpuResource& gpuResource);
+
+	/// <summary>
+	/// 座標変換行列リソースのストラクチャバッファの生成
+	/// </summary>
+	/// <param name="gpuResource">パーティクルのGpuに送るデータ</param>
+	void CreateStructuredBufferForWvp(ParticleGpuResource& gpuResource);
 private://メンバ変数
 	//DirectXの基盤部分
 	DirectXBase* directXBase_ = nullptr;
@@ -78,5 +91,7 @@ private://メンバ変数
 	TextureManager* textureManager_ = nullptr;
 	//描画データ
 	std::vector<ParticleRenderData>renderDatas_;
+	//GPUリソース
+	std::vector<ParticleGpuResource>particleResources_;
 };
 

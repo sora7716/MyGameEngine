@@ -71,6 +71,16 @@ void ParticleRenderer::Reset(){
 
 //描画データの追加
 void ParticleRenderer::AddRenderData(const ParticleRenderData& renderData){
+	//ハンドルが有効か
+	assert(renderData.handle != kInvalidParticleRenderHandle);
+
+	//ハンドルが範囲内か
+	assert(renderData.handle < particleResources_.size());
+
+	//対応リソースの取得
+	ParticleGpuResource& particleResource = particleResources_[renderData.handle];
+
+	//レンダーデータの追加
 	renderDatas_.push_back(renderData);
 }
 
@@ -82,4 +92,30 @@ uint32_t ParticleRenderer::GetRenderDataSize(){
 //ブレンドモードの取得
 BlendMode ParticleRenderer::GetBlendMode(uint32_t instanceIndex){
 	return renderDatas_[instanceIndex].blendMode;
+}
+
+//座標変換行列リソースの生成
+void ParticleRenderer::CreateTransformationMatrixResource(ParticleGpuResource& gpuResource){
+	//座標変換行列リソースを作成する	
+	gpuResource.instancingResource = directXBase_->CreateBufferResource(sizeof(ParticleForGPU) * gpuResource.capacity);
+	//座標変換行列リソースにデータを書き込むためのアドレスを取得してtransformationMatrixDataに割り当てる
+	//書き込むためのアドレス
+	gpuResource.instancingResource->Map(0, nullptr, reinterpret_cast<void**>(&gpuResource.instanceData));
+	for (uint32_t i = 0; i < gpuResource.capacity; i++){
+		//単位行列を書き込んでおく
+		gpuResource.instanceData[i].world = Matrix4x4::Identity4x4();
+		gpuResource.instanceData[i].color = Vector4(1.0f, 1.0f, 1.0f, 1.0f); // 初期色を白に設定
+	}
+}
+
+//座標変換行列リソースのストラクチャバッファの生成
+void ParticleRenderer::CreateStructuredBufferForWvp(ParticleGpuResource& gpuResource){
+	//ストラクチャバッファを生成
+	gpuResource.srvIndex = srvManager_->Allocate() + TextureManager::kSRVIndexTop;
+	srvManager_->CreateSRVForStructuredBuffer(
+		gpuResource.srvIndex,
+		gpuResource.instancingResource.Get(),
+		gpuResource.capacity,
+		sizeof(ParticleForGPU)
+	);
 }

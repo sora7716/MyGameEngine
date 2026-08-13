@@ -1,6 +1,7 @@
 #pragma once
 #include "RenderData.h"
 #include "BlendMode.h"
+#include "ParticleGpuResource.h"
 #include <wrl.h>
 #include <d3d12.h>
 #include <vector>
@@ -10,11 +11,9 @@
 class Camera;
 class Mesh;
 
-//パーティクルの情報をGPUに送るための構造体
-struct ParticleForGPU{
-	Matrix4x4 world = Matrix4x4::Identity4x4();
-	Vector4 color = Vector4::MakeWhiteColor();
-};
+//Particleの描画ハンドル
+using ParticleRenderHandle = uint32_t;
+constexpr ParticleRenderHandle kInvalidParticleRenderHandle = UINT32_MAX;
 
 //パーティクルの描画に使用するデータ
 struct ParticleRenderData{
@@ -28,4 +27,6 @@ struct ParticleRenderData{
 	BlendMode blendMode = BlendMode::kNone;
 	std::vector <std::shared_ptr<Mesh>> meshes;
 	uint32_t numInstance = 0;
+	std::vector<std::vector<ParticleForGPU>>particleForGpuDatas;
+	ParticleRenderHandle handle = kInvalidParticleRenderHandle;
 };

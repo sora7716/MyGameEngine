@@ -66,6 +66,7 @@ void ParticleRenderer::Draw(uint32_t instanceIndex){
 
 //リセット
 void ParticleRenderer::Reset(){
+	renderDatas_.clear();
 }
 
 //描画データの追加

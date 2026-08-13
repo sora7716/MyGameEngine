@@ -10,8 +10,6 @@ void Framework::Initialize() {
 	//エンジンの核
 	core_ = std::make_unique<Core>();
 	core_->Initialize();
-	//カメラの設定
-	core_->GetParticleCommon()->SetDefaultCamera(core_->GetCameraManager()->FindCamera("defaultCamera"));
 }
 
 //更新

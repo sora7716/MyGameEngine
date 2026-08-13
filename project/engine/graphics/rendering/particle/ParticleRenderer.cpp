@@ -72,13 +72,19 @@ void ParticleRenderer::Reset(){
 //描画データの追加
 void ParticleRenderer::AddRenderData(const ParticleRenderData& renderData){
 	//ハンドルが有効か
-	assert(renderData.handle != kInvalidParticleRenderHandle);
+	assert(renderData.renderHandle != kInvalidParticleRenderHandle);
 
 	//ハンドルが範囲内か
-	assert(renderData.handle < particleResources_.size());
+	assert(renderData.renderHandle < particleResources_.size());
 
 	//対応リソースの取得
-	ParticleGpuResource& particleResource = particleResources_[renderData.handle];
+	ParticleGpuResource& particleResource = particleResources_[renderData.renderHandle];
+
+	//描画数がGPUリソースの最大格納数を超えていないか確認
+	assert(renderData.numInstance <= static_cast<uint32_t>(renderData.particleForGpuDatas.size()));
+
+	//CPU側で計算したParticleの情報をGPUから参照されるMappedResourceへコピー
+	std::copy_n(renderData.particleForGpuDatas.data(), renderData.numInstance, particleResource.instanceData);
 
 	//レンダーデータの追加
 	renderDatas_.push_back(renderData);
@@ -92,6 +98,27 @@ uint32_t ParticleRenderer::GetRenderDataSize(){
 //ブレンドモードの取得
 BlendMode ParticleRenderer::GetBlendMode(uint32_t instanceIndex){
 	return renderDatas_[instanceIndex].blendMode;
+}
+
+//パーティクルを登録
+ParticleRenderHandle ParticleRenderer::RegisterParticle(uint32_t maxInstance){
+	//インスタンスの最大値が0より小さくないか
+	assert(maxInstance > 0);
+
+	//ハンドルを作成
+	const ParticleRenderHandle handle = static_cast<ParticleRenderHandle>(particleResources_.size());
+
+	particleResources_.emplace_back();
+
+	ParticleGpuResource& particleResource = particleResources_.back();
+
+	//座標のリソースを作成
+	CreateTransformationMatrixResource(particleResource);
+
+	//ストラクチャバッファの作成
+	CreateStructuredBufferForWvp(particleResource);
+
+	return handle;
 }
 
 //座標変換行列リソースの生成

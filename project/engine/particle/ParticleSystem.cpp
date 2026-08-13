@@ -11,6 +11,7 @@
 #include "PrimitiveMeshFactory.h"
 #include "ParticleEmitter.h"
 #include "PipelineManager.h"
+#include "ParticleRenderer.h"
 
 //コンストラクタ
 ParticleSystem::ParticleSystem(){
@@ -57,9 +58,6 @@ void ParticleSystem::Initialize(DirectXBase* directXBase, SRVManager* srvManager
 	//メッシュの設定
 	emitter_->SetMeshes(meshes_);
 
-	//ワールドトランスフォームのリソースの生成
-	CreateWorldTransformResource();
-
 	for (uint32_t i = 0; i < meshes_.size(); i++){
 		//テクスチャファイルの記録
 		modelData_.materialTexturePaths[i].textureFilePath = "engine/resources/textures/" + textureName;
@@ -67,9 +65,6 @@ void ParticleSystem::Initialize(DirectXBase* directXBase, SRVManager* srvManager
 
 	//マテリアルリソースの生成
 	CreateMaterialResources();
-
-	//ストラクチャバッファの生成
-	CreateStructuredBuffer();
 }
 
 //更新
@@ -89,6 +84,17 @@ void ParticleSystem::Update(){
 	renderData_.meshes = meshes_;
 	renderData_.srvIndex = srvIndex_;
 	renderData_.numInstance = emitter_->GetNumInstance();
+}
+
+//レンダラーを登録
+void ParticleSystem::RegisterToRenderer(ParticleRenderer* renderer){
+	assert(renderer);
+	//まだ登録されてない事の確認
+	assert(renderHandle_ == kInvalidParticleRenderHandle);
+
+	renderHandle_ = renderer->RegisterParticle(ParticleEmitter::kNumMaxInstance);
+
+	renderData_.renderHandle = renderHandle_;
 }
 
 void ParticleSystem::DrawSetting(){
@@ -191,30 +197,4 @@ void ParticleSystem::CreateMaterialResources(){
 		materialPtrs_[i]->shininess = 10.0f;
 		materialPtrs_[i]->environmentCoefficient = 0.0f;
 	}
-}
-
-//ワールドトランスフォームのリソースの生成
-void ParticleSystem::CreateWorldTransformResource(){
-	//座標変換行列リソースを作成する	
-	instancingResource_ = directXBase_->CreateBufferResource(sizeof(ParticleForGPU) * ParticleEmitter::kNumMaxInstance);
-	//座標変換行列リソースにデータを書き込むためのアドレスを取得してtransformationMatrixDataに割り当てる
-	//書き込むためのアドレス
-	instancingResource_->Map(0, nullptr, reinterpret_cast<void**>(&instancingData_));
-	for (uint32_t i = 0; i < ParticleEmitter::kNumMaxInstance; i++){
-		//単位行列を書き込んでおく
-		instancingData_[i].world = Matrix4x4::Identity4x4();
-		instancingData_[i].color = Vector4(1.0f, 1.0f, 1.0f, 1.0f); // 初期色を白に設定
-	}
-}
-
-//ストラクチャバッファの生成
-void ParticleSystem::CreateStructuredBuffer(){
-	//ストラクチャバッファを生成
-	srvIndex_ = srvManager_->Allocate() + TextureManager::kSRVIndexTop;
-	srvManager_->CreateSRVForStructuredBuffer(
-		srvIndex_,
-		instancingResource_.Get(),
-		ParticleEmitter::kNumMaxInstance,
-		sizeof(ParticleForGPU)
-	);
 }

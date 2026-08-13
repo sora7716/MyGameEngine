@@ -8,7 +8,6 @@
 #include "ImGuiManager.h"
 #include "CameraManager.h"
 #include "SpriteCommon.h"
-#include "ParticleCommon.h"
 #include "SceneManager.h"
 #include "AudioManager.h"
 #include "ParticleManager.h"
@@ -97,12 +96,6 @@ public://メンバ関数
 	SpriteCommon* GetSpriteCommon()const;
 
 	/// <summary>
-	/// パーティクルの共通部分の取得
-	/// </summary>
-	/// <returns>パーティクルの共通部分</returns>
-	ParticleCommon* GetParticleCommon()const;
-
-	/// <summary>
 	/// シーンマネージャーの取得
 	/// </summary>
 	/// <returns>シーンマネージャー</returns>
@@ -179,8 +172,6 @@ private://メンバ変数
 	std::unique_ptr<CameraManager>cameraManager_ = nullptr;
 	//スプライトの共通部分
 	std::unique_ptr<SpriteCommon>spriteCommon_ = nullptr;
-	//パーティクルの共通部分
-	std::unique_ptr<ParticleCommon>particleCommon_ = nullptr;
 	//シーンマネージャー
 	std::unique_ptr<SceneManager>sceneManager_ = nullptr;
 	//オーディオマネージャー

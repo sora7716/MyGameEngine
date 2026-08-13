@@ -27,6 +27,6 @@ struct ParticleRenderData{
 	BlendMode blendMode = BlendMode::kNone;
 	std::vector <std::shared_ptr<Mesh>> meshes;
 	uint32_t numInstance = 0;
-	std::vector<std::vector<ParticleForGPU>>particleForGpuDatas;
-	ParticleRenderHandle handle = kInvalidParticleRenderHandle;
+	std::vector<ParticleForGPU>particleForGpuDatas;
+	ParticleRenderHandle renderHandle = kInvalidParticleRenderHandle;
 };

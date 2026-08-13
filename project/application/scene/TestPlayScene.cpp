@@ -89,6 +89,8 @@ void TestPlayScene::Initialize(){
 	particleSystem_->SetGameCamera(gameCamera_);
 	particleSystem_->SetParticleCount(2);
 	particleSystem_->SetFrequency(0.3f);
+	particleSystem_->RegisterToRenderer(particleRenderer_);
+
 	//particleSystem_->SetModelData(sceneContext_.object3dCommon->GetModelManager()->FindModel("dekanu")->GetModelData());
 	directionalLight_ = *sceneContext_.lightingManager->GetDirectionalLight();
 }

@@ -7,7 +7,6 @@ class SRVManager;
 class TextureManager;
 class ModelManager;
 class SpriteCommon;
-class ParticleCommon;
 class SceneManager;
 class CameraManager;
 class ParticleManager;
@@ -27,7 +26,6 @@ struct SceneContext {
 	TextureManager* textureManager;
 	ModelManager* modelManager;
 	SpriteCommon* spriteCommon;
-	ParticleCommon* particleCommon;
 	SceneManager* sceneManager;
 	CameraManager* cameraManager;
 	ParticleManager* particleManager;

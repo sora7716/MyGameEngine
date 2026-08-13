@@ -7,15 +7,15 @@
 using namespace primitiveData;
 
 //コンストラクタ
-ParticleEmitter::ParticleEmitter() {
+ParticleEmitter::ParticleEmitter(){
 }
 
 //デストラクタ
-ParticleEmitter::~ParticleEmitter() {
+ParticleEmitter::~ParticleEmitter(){
 }
 
 //初期化
-void ParticleEmitter::Initialize(Camera* renderCamera) {
+void ParticleEmitter::Initialize(Camera* renderCamera){
 	//カメラを設定
 	gameCamera_ = renderCamera;
 	//描画用カメラの記録
@@ -26,14 +26,14 @@ void ParticleEmitter::Initialize(Camera* renderCamera) {
 }
 
 //更新
-void ParticleEmitter::Update(ParticleForGPU* instancingData) {
+void ParticleEmitter::Update(ParticleForGPU* instancingData){
 	//生存しているパーティクルの数を0に初期化
 	numInstance_ = 0;
 
 	//更新処理
-	for (auto it = particles_.begin(); it != particles_.end();) {
-		if (numInstance_ < kNumMaxInstance) {
-			if ((*it).lifeTime <= (*it).currentTime) {
+	for (auto it = particles_.begin(); it != particles_.end();){
+		if (numInstance_ < kNumMaxInstance){
+			if ((*it).lifeTime <= (*it).currentTime){
 				it = particles_.erase(it); //生存期間を過ぎたらパーティクルをlistから削除
 				continue;//削除したので次のループへ
 			}
@@ -45,15 +45,15 @@ void ParticleEmitter::Update(ParticleForGPU* instancingData) {
 			(*it).currentTime += mathUtility::kDeltaTime;
 			float alpha = 1.0f - ((*it).currentTime / (*it).lifeTime);
 			instancingData[numInstance_].color.w = alpha;
-			for (std::shared_ptr<Mesh>& mesh : meshes_) {
+			for (std::shared_ptr<Mesh>& mesh : meshes_){
 				//カリング
-				if (!culling_->IsVisibleInFrustum(mesh->GetAABB(),instancingData->world)) {
+				if (!culling_->IsVisibleInFrustum(mesh->GetAABB(), instancingData->world)){
 					it->isEnabled = false;
 				}
 			}
 
 			//表示するかチェック
-			if (!it->isEnabled) {
+			if (!it->isEnabled){
 				continue;
 			}
 
@@ -66,9 +66,9 @@ void ParticleEmitter::Update(ParticleForGPU* instancingData) {
 	}
 
 	//衝突判定
-	for (auto it = particles_.begin(); it != particles_.end();) {
+	for (auto it = particles_.begin(); it != particles_.end();){
 		//Field内のParticleには加速度を適用する
-		if (IsCollision(accelerationField_.area, (*it).transform.translate)) {
+		if (IsCollision(accelerationField_.area, (*it).transform.translate)){
 			(*it).velocity += accelerationField_.acceleration * mathUtility::kDeltaTime;
 		}
 		it++;
@@ -76,7 +76,7 @@ void ParticleEmitter::Update(ParticleForGPU* instancingData) {
 
 	//Emitterの更新
 	emitter_.frequencyTime += mathUtility::kDeltaTime;
-	if (emitter_.frequency <= emitter_.frequencyTime) {
+	if (emitter_.frequency <= emitter_.frequencyTime){
 		particles_.splice(particles_.end(), Emit());
 		emitter_.frequencyTime -= emitter_.frequency;//余計に過ぎた時間も加味して頻度を計算する
 	}
@@ -87,7 +87,7 @@ void ParticleEmitter::UpdateWorldMatrix(ParticleForGPU* instancingData){
 	uint32_t index = 0;
 	//更新処理
 	for (auto it = particles_.begin(); it != particles_.end();){
-		if (numInstance_ < kNumMaxInstance){
+		if (index < kNumMaxInstance){
 			//ワールドトランスフォームの更新
 			UpdateWorldTransform(index, it, instancingData);
 			index++;
@@ -99,59 +99,59 @@ void ParticleEmitter::UpdateWorldMatrix(ParticleForGPU* instancingData){
 }
 
 //生存しているパーティクルの数の取得
-const uint32_t ParticleEmitter::GetNumInstance() const {
+const uint32_t ParticleEmitter::GetNumInstance() const{
 	return numInstance_;
 }
 
 //ゲームカメラの設定
-void ParticleEmitter::SetGameCamera(Camera* camera) {
+void ParticleEmitter::SetGameCamera(Camera* camera){
 	gameCamera_ = camera;
 	//カリングの生成
 	culling_ = Culling::Create(gameCamera_);
 }
 
 //描画カメラの設定
-void ParticleEmitter::SetRenderCamera(Camera* camera) {
-	renderCamera_=camera;
+void ParticleEmitter::SetRenderCamera(Camera* camera){
+	renderCamera_ = camera;
 }
 
 //エミッター位置の設定
-void ParticleEmitter::SetEmitterPosition(const Vector3& position) {
+void ParticleEmitter::SetEmitterPosition(const Vector3& position){
 	emitter_.translate = position;
 }
 
 //パーティクルの数の設定
-void ParticleEmitter::SetParticleCount(uint32_t count) {
+void ParticleEmitter::SetParticleCount(uint32_t count){
 	emitter_.count = count;
 }
 
 //発生範囲の設定
-void ParticleEmitter::SetEmitRange(float range) {
+void ParticleEmitter::SetEmitRange(float range){
 	emitter_.range = range;
 }
 
 //加速度が起こるフィールドの設定
-void ParticleEmitter::SetAccelerationField(const AccelerationField& field) {
+void ParticleEmitter::SetAccelerationField(const AccelerationField& field){
 	accelerationField_ = field;
 }
 
 //パーティクルの発生感覚の設定
-void ParticleEmitter::SetFrequency(float frequency) {
+void ParticleEmitter::SetFrequency(float frequency){
 	emitter_.frequency = frequency;
 }
 
 //メッシュの設定
-void ParticleEmitter::SetMeshes(const std::vector<std::shared_ptr<Mesh>>& meshes) {
+void ParticleEmitter::SetMeshes(const std::vector<std::shared_ptr<Mesh>>& meshes){
 	meshes_ = meshes;
 }
 
 //パーティクルの生成
-Particle ParticleEmitter::MakeNewParticle() {
+Particle ParticleEmitter::MakeNewParticle(){
 	return MakeNormalParticle();
 }
 
 //通常のパーティクルを生成
-Particle ParticleEmitter::MakeNormalParticle() {
+Particle ParticleEmitter::MakeNormalParticle(){
 	////パーティクルの初期化
 	//Particle particle;
 
@@ -197,7 +197,7 @@ Particle ParticleEmitter::MakeNormalParticle() {
 }
 
 //ワールドトランスフォームの更新
-void ParticleEmitter::UpdateWorldTransform(uint32_t numInstance, auto iterator, ParticleForGPU* instancingData) {
+void ParticleEmitter::UpdateWorldTransform(uint32_t numInstance, auto iterator, ParticleForGPU* instancingData){
 	//ワールド行列の初期化
 	Matrix4x4 worldMatrix = matrixUtility::MakeBillboardAffineMatrix(renderCamera_->GetWorldMatrix(), (*iterator).transform);
 	//ワールド行列を送信
@@ -205,16 +205,16 @@ void ParticleEmitter::UpdateWorldTransform(uint32_t numInstance, auto iterator, 
 }
 
 //パーティクルの発生
-std::list<Particle> ParticleEmitter::Emit() {
+std::list<Particle> ParticleEmitter::Emit(){
 	std::list<Particle>particles;
-	for (uint32_t i = 0; i < emitter_.count; i++) {
+	for (uint32_t i = 0; i < emitter_.count; i++){
 		particles.push_back(MakeNewParticle());
 	}
 	return particles;
 }
 
 //衝突判定
-bool ParticleEmitter::IsCollision(const AABB& aabb, const Vector3& point) {
+bool ParticleEmitter::IsCollision(const AABB& aabb, const Vector3& point){
 	AABB temp = aabb;
 	Vector3 tNear;
 	Vector3 tFar;
@@ -240,14 +240,14 @@ bool ParticleEmitter::IsCollision(const AABB& aabb, const Vector3& point) {
 	float tMin = std::max(tNear.x, std::max(tNear.z, tNear.y));
 	float tMax = std::min(tFar.x, std::min(tFar.z, tFar.y));
 	bool isCollision = false;
-	if (tMin <= tMax) {
-		if (tMin * tMax < 0.0f) {
+	if (tMin <= tMax){
+		if (tMin * tMax < 0.0f){
 			isCollision = true;
 		}
-		if (0.0f <= tMin && tMin <= 1.0f || 0.0f <= tMax && tMax <= 1.0f) {
+		if (0.0f <= tMin && tMin <= 1.0f || 0.0f <= tMax && tMax <= 1.0f){
 			isCollision = true;
 		}
-	} else {
+	} else{
 		isCollision = false;
 	}
 	return isCollision;

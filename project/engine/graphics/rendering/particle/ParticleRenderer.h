@@ -70,6 +70,13 @@ public://メンバ関数
 	/// <param name="instanceIndex">インスタンス検索キー</param>
 	/// <returns>ブレンドモード</returns>
 	BlendMode GetBlendMode(uint32_t instanceIndex);
+
+	/// <summary>
+	/// パーティクルを登録
+	/// </summary>
+	/// <param name="maxInstance">インスタンスの最大値</param>
+	/// <returns>パーティクルのハンドル</returns>
+	ParticleRenderHandle RegisterParticle(uint32_t maxInstance);
 private://メンバ関数
 	/// <summary>
 	/// 座標変換行列リソースの生成

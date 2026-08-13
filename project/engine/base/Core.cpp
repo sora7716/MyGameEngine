@@ -42,9 +42,6 @@ void Core::Initialize(){
 	//スプライトの共通部分
 	spriteCommon_ = std::make_unique<SpriteCommon>(SpriteCommon::ConstructorKey{});
 	spriteCommon_->Initialize(directXBase_.get(), textureManager_.get());
-	//パーティクルの共通部分
-	particleCommon_ = std::make_unique<ParticleCommon>(ParticleCommon::ConstructorKey{});
-	particleCommon_->Initialize(directXBase_.get(), srvManager_.get(), textureManager_.get());
 	//シーンファクトリ
 	sceneFactory_ = std::make_unique<SceneFactory>(AbstractSceneFactory::ConstructorKey{});
 	//オーディオマネージャー
@@ -114,11 +111,6 @@ CameraManager* Core::GetCameraManager()const{
 //スプライトの共通部分の取得
 SpriteCommon* Core::GetSpriteCommon() const{
 	return spriteCommon_.get();
-}
-
-//パーティクルの共通部分の取得
-ParticleCommon* Core::GetParticleCommon() const{
-	return particleCommon_.get();
 }
 
 //シーンマネージャーの取得

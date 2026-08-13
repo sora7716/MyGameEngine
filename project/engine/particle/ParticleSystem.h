@@ -4,6 +4,7 @@
 #include "ParticleData.h"
 #include "ParticleRenderData.h"
 #include "PipelineManagerData.h"
+#include "ParticleGpuResource.h"
 #include <memory>
 #include <d3d12.h>
 #include <wrl.h>
@@ -17,6 +18,7 @@ class TextureManager;
 class Mesh;
 class Camera;
 class ParticleEmitter;
+class ParticleRenderer;
 
 /// <summary>
 /// パーティクルシステム
@@ -47,6 +49,12 @@ public://メンバ関数
 	/// 更新
 	/// </summary>
 	void Update();
+
+	/// <summary>
+    /// レンダラーを登録
+    /// </summary>
+    /// <param name="renderer">レンダラー</param>
+	void RegisterToRenderer(ParticleRenderer* renderer);
 
 	void DrawSetting();
 
@@ -121,16 +129,6 @@ private://メンバ関数
 	/// マテリアルリソースの生成
 	/// </summary>
 	void CreateMaterialResources();
-
-	/// <summary>
-	/// ワールドトランスフォームのリソースの生成
-	/// </summary>
-	void CreateWorldTransformResource();
-
-	/// <summary>
-	/// ストラクチャバッファの生成
-	/// </summary>
-	void CreateStructuredBuffer();
 private://メンバ変数
 	//DirectXの基盤部分	
 	DirectXBase* directXBase_ = nullptr;
@@ -167,4 +165,6 @@ private://メンバ変数
 	std::unique_ptr<ParticleEmitter>emitter_ = nullptr;
 	//描画データ
 	ParticleRenderData renderData_ = {};
+	//描画ハンドル
+	ParticleRenderHandle renderHandle_ = kInvalidParticleRenderHandle;
 };

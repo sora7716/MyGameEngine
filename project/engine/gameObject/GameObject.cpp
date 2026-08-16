@@ -98,12 +98,13 @@ void GameObject::UpdateComponents(){
 
 	//各コンポーネントごとに
 	for (const std::unique_ptr<Component>& component : components_){
-		//コンポーネントが存在しているか
 		if (!component){
+			//コンポーネントが存在しているか	
+			continue;
+
+		} else if (!component->IsEnabled()){
 			//コンポーネントが有効か
-			if (!component->IsEnabled()){
-				continue;
-			}
+			continue;
 		}
 
 		//コンポーネントの更新

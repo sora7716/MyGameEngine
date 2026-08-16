@@ -49,22 +49,24 @@ void Object3d::Initialize(){
 	//トランスフォームモード
 	transform3dMode_ = Transform3dMode::kNormal;
 
-	//ワールド行列のサイズを確保(要素数は増やさない)
-	worldMatrixes_.reserve(kMaxInstanceCount_);
+	//ブレンドモードの初期化
+	blendMode_ = BlendMode::kNormal;
 
-	//LOD関係のセットアップ
-	SetupLOD();
 	//LODビルダーの生成
 	lodBuilder_ = std::make_unique<LODBuilder>();
 	//LODコントローラの生成
 	lodController_ = std::make_unique<LODController>();
+}
 
-	//マテリアルの初期化
-	material_.color = { 1.0f,1.0f,1.0f,1.0f };
-	material_.enableLighting = true;
-	material_.uvMatrix = Matrix4x4::Identity4x4();
-	material_.shininess = 1.0f;
-	material_.environmentCoefficient = 0.0f;
+//複製　
+std::unique_ptr<Component> Object3d::Clone(GameObject* gameObject) const{
+	std::unique_ptr<Object3d>cloneInstance = std::make_unique<Object3d>();
+	cloneInstance->Initialize();
+
+	cloneInstance->SetEnabled(this->IsEnabled());
+	cloneInstance->SetBlendMode(this->blendMode_);
+	cloneInstance->SetTransformMode(this->transform3dMode_);
+	return cloneInstance;
 }
 
 //初期化
@@ -85,12 +87,6 @@ void Object3d::Initialize(DirectXBase* directXBase, Camera* renderCamera, Transf
 
 	//カメラにデフォルトカメラを代入
 	SetRenderCamera(renderCamera);
-
-	//マテリアルの初期化
-	material_.color = { 1.0f,1.0f,1.0f,1.0f };
-	material_.enableLighting = true;
-	material_.uvMatrix = Matrix4x4::Identity4x4();
-	material_.shininess = 10.0f;
 }
 
 //更新

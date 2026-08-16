@@ -71,6 +71,13 @@ public://メンバ関数
 	void Initialize()override;
 
 	/// <summary>
+	/// 複製
+	/// </summary>
+	/// <param name="gameObject">ゲームオブジェクト</param>
+	/// <returns>コンポーネント</returns>
+	std::unique_ptr<Component>Clone(GameObject* gameObject)const override;
+
+	/// <summary>
 	/// 初期化
 	/// </summary>
 	/// <param name="directXBase">DirectXの基盤部分</param>
@@ -344,9 +351,6 @@ private://メンバ変数
 	Node node_ = {};
 	//ブレンドモード
 	BlendMode blendMode_ = BlendMode::kNone;
-
-	//マテリアル
-	Material material_ = {};
 
 	//カリング
 	std::unique_ptr<Culling>culling_ = nullptr;

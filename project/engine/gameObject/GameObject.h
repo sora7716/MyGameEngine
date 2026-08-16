@@ -4,6 +4,7 @@
 #include <vector>
 #include <string>
 #include <memory>
+#include <type_traits>
 
 //ゲームオブジェクト
 class GameObject{
@@ -113,7 +114,7 @@ public://メンバ関数
 		components_.push_back(std::move(component));
 
 		//初期化する
-		componentPtr->Inititalize();
+		componentPtr->Initialize();
 
 		return componentPtr;
 	}

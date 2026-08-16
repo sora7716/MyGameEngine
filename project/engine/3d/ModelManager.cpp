@@ -1,6 +1,7 @@
 #include "ModelManager.h"
 #include "Model.h"
 #include "PrimitiveMeshFactory.h"
+#include "TextureManager.h"
 #include <cassert>
 
 //デストラクタ
@@ -41,6 +42,10 @@ void ModelManager::AddModel(const std::string& name, const std::string& modelFil
 
 	//モデルデータを取得
 	ModelData modelData = model->GetModelData();
+	//テクスチャの読み込み
+	for (const MaterialTexturePaths& textureFilePaths : modelData.materialTexturePaths){
+		textureManager_->AddTexture(textureFilePaths.textureFilePath);
+	}
 
 	//モデルデータをmapコンテナに格納する
 	modelDatas_.insert(std::make_pair(name, modelData));

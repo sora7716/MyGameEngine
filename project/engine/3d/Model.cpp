@@ -71,6 +71,7 @@ void Model::RebuildMeshes(const std::vector<MeshData>& meshes){
 	} else{
 		//マテリアルが存在しなかった場合
 		MaterialTexturePaths material;
+		material.environmentMap = "engine/resources/textures/skybox_cube.dds";
 #ifdef _DEBUG
 		material.textureFilePath = "engine/resources/textures/magenta1x1.png";
 #else
@@ -234,6 +235,9 @@ void Model::CreateModel(const std::string& objectFileName){
 	RebuildMeshes(modelData_.meshDatas);
 	//各種リソースの生成
 	CreateResources();
+	for (MeshData& meshData : modelData_.meshDatas){
+		SetEnvironmentMap(meshData.materialIndex, "skybox_cube.dds");
+	}
 }
 
 //モデルの生成(モデルデータ)
@@ -243,6 +247,9 @@ void Model::CreateModel(const ModelData& modelData){
 	RebuildMeshes(modelData_.meshDatas);
 	//各種リソースの生成
 	CreateResources();
+	for (MeshData& meshData : modelData_.meshDatas){
+		SetEnvironmentMap(meshData.materialIndex, "skybox_cube.dds");
+	}
 }
 
 //各種リソースの生成

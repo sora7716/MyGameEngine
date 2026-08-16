@@ -38,7 +38,7 @@ void TestPlayScene::Initialize(){
 
 	object3d_ = Object3d::Create(sceneContext_.directXBase, gameCamera_);
 	object3d_->SetGameCamera(gameCamera_);
-	object3d_->SetModel(sceneContext_.modelManager->FindModel("cube"), { 1.0f });
+	object3d_->SetModel(sceneContext_.modelManager->FindModel("sneakWalk"), { 1.0f });
 	//object3d_->SetTexture(0, "uvChecker.png");
 	//object3d_->SetModel("cube");
 	//object3d_->SetModel("dekanu");
@@ -193,14 +193,14 @@ void TestPlayScene::Draw(Camera* camera){
 	object3d_->SetRenderCamera(camera);
 	object3dRenderer_->AddRenderData(object3d_->GetRenderData());
 
-	//frustum_->SetRenderCamera(camera);
-	//debugDrawRenderer_->AddRenderData(frustum_->GetRenderData());
+	frustum_->SetRenderCamera(camera);
+	debugDrawRenderer_->AddRenderData(frustum_->GetRenderData());
 
-	//cube_->SetRenderCamera(camera);
-	//debugDrawRenderer_->AddRenderData(cube_->GetRenderData());
+	cube_->SetRenderCamera(camera);
+	debugDrawRenderer_->AddRenderData(cube_->GetRenderData());
 
-	//skyBox_->SetRenderCamera(camera);
-	//skyBoxRenderer_->AddRenderData(skyBox_->GetSkyBoxRenderData());
+	skyBox_->SetRenderCamera(camera);
+	skyBoxRenderer_->AddRenderData(skyBox_->GetSkyBoxRenderData());
 
 	particleSystem_->SetRenderCamera(camera);
 	particleSystem_->DrawSetting();

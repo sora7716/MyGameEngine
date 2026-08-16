@@ -142,6 +142,11 @@ public://メンバ関数
 		//指定されたComponentが無かった
 		return nullptr;
 	}
+
+	/// <summary>
+	/// コンポーネントの更新
+	/// </summary>
+	void UpdateComponents();
 private://メンバ変数
 	//名前
 	std::string name_ = "\0";

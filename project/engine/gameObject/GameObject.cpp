@@ -88,3 +88,25 @@ const std::string& GameObject::GetTag() const{
 	// TODO: return ステートメントをここに挿入します
 	return tag_;
 }
+
+//コンポーネントの更新
+void GameObject::UpdateComponents(){
+	//ゲームオブジェクトが有効か
+	if (!isActive_){
+		return;
+	}
+
+	//各コンポーネントごとに
+	for (const std::unique_ptr<Component>& component : components_){
+		//コンポーネントが存在しているか
+		if (!component){
+			//コンポーネントが有効か
+			if (!component->IsEnabled()){
+				continue;
+			}
+		}
+
+		//コンポーネントの更新
+		component->Update();
+	}
+}

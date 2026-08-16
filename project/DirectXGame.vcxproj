@@ -55,7 +55,6 @@
     <ClCompile Include="engine\framework\GameSystem.cpp" />
     <ClCompile Include="engine\gameObject\ColliderData.cpp" />
     <ClCompile Include="engine\gameObject\component\Component.cpp" />
-    <ClCompile Include="engine\gameObject\component\ModelRenderComponent.cpp" />
     <ClCompile Include="engine\gameObject\GameObject.cpp" />
     <ClCompile Include="engine\gameObject\GameObjectList.cpp" />
     <ClCompile Include="engine\gameObject\TagManager.cpp" />
@@ -141,7 +140,6 @@
     <ClInclude Include="engine\framework\GameSystem.h" />
     <ClInclude Include="engine\gameObject\ColliderData.h" />
     <ClInclude Include="engine\gameObject\component\Component.h" />
-    <ClInclude Include="engine\gameObject\component\ModelRenderComponent.h" />
     <ClInclude Include="engine\gameObject\GameObject.h" />
     <ClInclude Include="engine\gameObject\GameObjectList.h" />
     <ClInclude Include="engine\gameObject\TagManager.h" />

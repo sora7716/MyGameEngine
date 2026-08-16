@@ -342,9 +342,6 @@
     <ClCompile Include="engine\3d\LightingManager.cpp">
       <Filter>engine\3d</Filter>
     </ClCompile>
-    <ClCompile Include="engine\gameObject\component\ModelRenderComponent.cpp">
-      <Filter>engine\gameObject\component</Filter>
-    </ClCompile>
     <ClCompile Include="engine\gameObject\component\Component.cpp">
       <Filter>engine\gameObject\component</Filter>
     </ClCompile>
@@ -592,9 +589,6 @@
     </ClInclude>
     <ClInclude Include="engine\3d\LightingManager.h">
       <Filter>engine\3d</Filter>
-    </ClInclude>
-    <ClInclude Include="engine\gameObject\component\ModelRenderComponent.h">
-      <Filter>engine\gameObject\component</Filter>
     </ClInclude>
     <ClInclude Include="engine\gameObject\component\Component.h">
       <Filter>engine\gameObject\component</Filter>

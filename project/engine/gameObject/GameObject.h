@@ -1,11 +1,9 @@
 #pragma once
 #include "RenderingData.h"
+#include "Component.h"
 #include <vector>
 #include <string>
 #include <memory>
-
-//前方宣言
-class Component;
 
 //ゲームオブジェクト
 class GameObject{
@@ -96,19 +94,53 @@ public://メンバ関数
 	/// <summary>
 	/// コンポーネントの追加
 	/// </summary>
-	/// <param name="component">コンポーネント</param>
-	void AddComponent(std::unique_ptr<Component> component);
+	/// <typeparam name="T">コンポーネントの型</typeparam>
+	/// <returns>コンポーネントのポインタ</returns>
+	template<class T>
+	T* AddComponent(){
+		static_assert(
+			std::is_base_of_v<Component, T>,
+			"TはComponentを継承している必要があります"
+		);
+
+		//Componentを生成
+		std::unique_ptr<T>component = std::make_unique<T>(this);
+
+		//返却値のポインタを保存する
+		T* componentPtr = component.get();
+
+		//GameObjectに所有させる
+		components_.push_back(std::move(component));
+
+		//初期化する
+		componentPtr->Inititalize();
+
+		return componentPtr;
+	}
 
 	/// <summary>
-	/// すべてのコンポーネントの更新
+	/// コンポーネントの取得
 	/// </summary>
-	void UpdateComponents();
+	/// <typeparam name="T">コンポーネントの型</typeparam>
+	/// <returns>コンポーネントのポインタ</returns>
+	template <class T>
+	T* GetComponent(){
+		static_assert(
+			std::is_base_of_v<Component, T>,
+			"TはComponentを継承している必要があります"
+		);
 
-	/// <summary>
-	/// コンポーネントをすべて取得
-	/// </summary>
-	/// <returns>すべてのコンポーネント</returns>
-	const std::vector<std::unique_ptr<Component>>& GetComponents()const;
+		for (const std::unique_ptr<Component>& component : components_){
+			T* target = dynamic_cast<T*>(component.get());
+
+			if (target){
+				return target;
+			}
+		}
+
+		//指定されたComponentが無かった
+		return nullptr;
+	}
 private://メンバ変数
 	//名前
 	std::string name_ = "\0";

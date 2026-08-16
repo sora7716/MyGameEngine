@@ -6,6 +6,7 @@
 #include "RenderingData.h"
 #include "Object3dRenderData.h"
 #include "Object3dGpuResource.h"
+#include "Component.h"
 #include <vector>
 #include <string>
 #include <wrl.h>
@@ -39,7 +40,7 @@ struct Object3dInstance{
 /// <summary>
 /// 3Dオブジェクト
 /// </summary>
-class Object3d{
+class Object3d :public Component{
 private://エイリアステンプレート
 	template <class T>using ComPtr = Microsoft::WRL::ComPtr<T>;
 public://静的メンバ関数
@@ -56,7 +57,8 @@ public://メンバ関数
 	/// <summary>
 	/// コンストラクタ
 	/// </summary>
-	Object3d();
+	/// <param name="gameObject">ゲームオブジェクト</param>
+	explicit Object3d(GameObject* gameObject);
 
 	/// <summary>
 	/// デストラクタ
@@ -66,11 +68,15 @@ public://メンバ関数
 	/// <summary>
 	/// 初期化
 	/// </summary>
+	void Initialize();
+
+	/// <summary>
+	/// 初期化
+	/// </summary>
 	/// <param name="directXBase">DirectXの基盤部分</param>
 	/// <param name="renderCamera">描画で使用するカメラ</param>
-	/// <param name="maxInstanceCount">オブジェクトの最大数</param>
 	/// <param name="transformMode">トランスフォームモード</param>
-	void Initialize(DirectXBase* directXBase, Camera* renderCamera, uint32_t maxInstanceCount, Transform3dMode transform3dMode);
+	void Initialize(DirectXBase* directXBase, Camera* renderCamera, Transform3dMode transform3dMode);
 
 	/// <summary>
 	/// 更新
@@ -201,7 +207,13 @@ public://メンバ関数
 	/// ブレンドモードの設定
 	/// </summary>
 	/// <param name="blendMode"></param>
-	void SetBlendMode(const BlendMode& blendMode);
+	void SetBlendMode(BlendMode blendMode);
+
+	/// <summary>
+	/// トランスフォームモードの設定
+	/// </summary>
+	/// <param name="transformMode">トランスフォームモード</param>
+	void SetTransformMode(Transform3dMode transformMode);
 
 	/// <summary>
 	/// uvスケールの取得
@@ -293,6 +305,9 @@ private://メンバ関数
 private://メンバ関数テーブル
 	//座標の更新をまとめた
 	static void (Object3d::* UpdateWorldMatrixTable[])(uint32_t index);
+private://定数
+	//インスタンスの最大数
+	static const inline uint32_t kMaxInstanceCount_ = 1024;
 private://メンバ変数
 	//DirectXの基盤部分
 	DirectXBase* directXBase_ = nullptr;
@@ -318,8 +333,7 @@ private://メンバ変数
 
 	//インスタンスデータ
 	std::vector<Object3dInstance> instanceData_ = {};
-	//インスタンスの最大数
-	uint32_t maxInstanceCount_ = 0;
+
 	//オブジェクトの見た目
 	Transform3dMode transform3dMode_ = Transform3dMode::kNormal;
 	//ワールド行列

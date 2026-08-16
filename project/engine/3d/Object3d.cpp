@@ -26,14 +26,15 @@ void(Object3d::* Object3d::UpdateWorldMatrixTable[])(uint32_t index) = {
 };
 
 //インスタンスの設定
-std::unique_ptr<Object3d> Object3d::Create(DirectXBase* directXBase, Camera* renderCamera, uint32_t maxInstanceCount, Transform3dMode transform3dMode){
+std::unique_ptr<Object3d> Object3d::Create(DirectXBase* directXBase, Camera* renderCamera, Transform3dMode transform3dMode){
 	std::unique_ptr<Object3d>instance = std::make_unique<Object3d>();
-	instance->Initialize(directXBase, renderCamera, maxInstanceCount, transform3dMode);
+	instance->Initialize(directXBase, renderCamera, transform3dMode);
 	return std::move(instance);
 }
 
 //コンストラクタ
-Object3d::Object3d(){
+Object3d::Object3d(GameObject* gameObject) :Component(gameObject){
+
 }
 
 //デストラクタ
@@ -41,15 +42,39 @@ Object3d::~Object3d(){
 }
 
 //初期化
-void Object3d::Initialize(DirectXBase* directXBase, Camera* renderCamera, uint32_t maxInstanceCount, Transform3dMode transform3dMode){
+void Object3d::Initialize(){
+	//基底クラスの初期化
+	Component::Initialize();
+
+	//トランスフォームモード
+	transform3dMode_ = Transform3dMode::kNormal;
+
+	//ワールド行列のサイズを確保(要素数は増やさない)
+	worldMatrixes_.reserve(kMaxInstanceCount_);
+
+	//LOD関係のセットアップ
+	SetupLOD();
+	//LODビルダーの生成
+	lodBuilder_ = std::make_unique<LODBuilder>();
+	//LODコントローラの生成
+	lodController_ = std::make_unique<LODController>();
+
+	//マテリアルの初期化
+	material_.color = { 1.0f,1.0f,1.0f,1.0f };
+	material_.enableLighting = true;
+	material_.uvMatrix = Matrix4x4::Identity4x4();
+	material_.shininess = 1.0f;
+	material_.environmentCoefficient = 0.0f;
+}
+
+//初期化
+void Object3d::Initialize(DirectXBase* directXBase, Camera* renderCamera, Transform3dMode transform3dMode){
 	//DirectXの基盤部分の記録
 	directXBase_ = directXBase;
 	//座標変換のモード切替用変数
 	transform3dMode_ = transform3dMode;
-	//ゲームオブジェクトの数を決定
-	maxInstanceCount_ = maxInstanceCount;
 	//ワールド行列のサイズを確保(要素数は増やさない)
-	worldMatrixes_.reserve(maxInstanceCount_);
+	worldMatrixes_.reserve(kMaxInstanceCount_);
 
 	//LOD関係のセットアップ
 	SetupLOD();
@@ -183,12 +208,12 @@ void Object3d::SetModel(std::unique_ptr<Model> model, const std::vector<float>& 
 void Object3d::RegisterToRenderer(Object3dRenderer* renderer){
 	assert(renderer);
 	assert(lodCount_ > 0);
-	assert(maxInstanceCount_ > 0);
+	assert(kMaxInstanceCount_ > 0);
 
 	//まだ登録されてない事の確認
 	assert(renderHandle_ == kInvalidObject3dRenderHandle);
 
-	renderHandle_ = renderer->RegisterObject(lodCount_, maxInstanceCount_);
+	renderHandle_ = renderer->RegisterObject(lodCount_, kMaxInstanceCount_);
 
 	rendererData_.renderHandle = renderHandle_;
 }
@@ -198,7 +223,7 @@ uint32_t Object3d::AddInstance(GameObject* gameObject){
 	//ゲームオブジェクトがNullじゃないか
 	assert(gameObject);
 	//インスタンスの最大数を超えてないか
-	assert(instanceData_.size() < maxInstanceCount_);
+	assert(instanceData_.size() < kMaxInstanceCount_);
 
 	Object3dInstance instance;
 	instance.Initialize(gameObject);
@@ -345,8 +370,13 @@ void Object3d::SetUVTransform(uint32_t index, const Transform2d& uvTransform){
 }
 
 //ブレンドモードの設定
-void Object3d::SetBlendMode(const BlendMode& blendMode){
+void Object3d::SetBlendMode(BlendMode blendMode){
 	blendMode_ = blendMode;
+}
+
+//トランスフォームモードの設定
+void Object3d::SetTransformMode(Transform3dMode transformMode){
+	transform3dMode_ = transformMode;
 }
 
 //uvスケールの取得
@@ -418,7 +448,7 @@ void Object3d::SetupLOD(){
 	rendererData_.lodRenderData.transformationData.resize(lodCount_);
 
 	for (std::vector<TransformationMatrix>& lodData : rendererData_.lodRenderData.transformationData){
-		lodData.resize(maxInstanceCount_);
+		lodData.resize(kMaxInstanceCount_);
 		for (TransformationMatrix& transform : lodData){
 			transform.world = Matrix4x4::Identity4x4();
 			transform.wvp = Matrix4x4::Identity4x4();

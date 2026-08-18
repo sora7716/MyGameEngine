@@ -56,6 +56,20 @@ void BaseScene::Initialize(){
 void BaseScene::Update(){
 	//デバックカメラ
 	debugCamera_->Update();
+
+	//ゲームカメラの更新
+	if (gameCamera_){
+		gameCamera_->Update();
+	}
+
+	//ゲームオブジェクトのコンポーネントの更新
+	for (const std::unique_ptr<GameObject>& gameObject : gameObjects_){
+		//gameObjectがNullじゃなければ
+		if (gameObject){
+			gameObject->UpdateComponents();
+		}
+	}
+
 	//コライダーマネージャー
 	//colliderManager_->ProcessCollision();
 }

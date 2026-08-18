@@ -24,35 +24,12 @@ class LODController;
 class Culling;
 class Object3dRenderer;
 
-//3dオブジェクトのインスタンスデータ
-struct Object3dInstance{
-	GameObject* gameObject;
-	bool isEnabled;
-	uint32_t currentLOD;
-
-	/// <summary>
-	/// 初期化
-	/// </summary>
-	/// <param name="targetGameObject">初期化対象のゲームオブジェクト</param>
-	void Initialize(GameObject* targetGameObject);
-};
-
 /// <summary>
 /// 3Dオブジェクト
 /// </summary>
 class Object3d :public Component{
 private://エイリアステンプレート
 	template <class T>using ComPtr = Microsoft::WRL::ComPtr<T>;
-public://静的メンバ関数
-	/// <summary>
-	/// インスタンスの生成
-	/// </summary>
-	/// <param name="directXBase">DirectXの基盤部分</param>
-	/// <param name="renderCamera">描画で使用するカメラ</param>
-	/// <param name="maxInstanceCount">オブジェクトの最大数</param>
-	/// <param name="transformMode">トランスフォームモード</param>
-	/// <returns>インスタンス</returns>
-	static std::unique_ptr<Object3d>Create(DirectXBase* directXBase, Camera* renderCamera, Transform3dMode transform3dMode = Transform3dMode::kNormal);
 public://メンバ関数
 	/// <summary>
 	/// コンストラクタ
@@ -78,14 +55,6 @@ public://メンバ関数
 	std::unique_ptr<Component>Clone(GameObject* gameObject)const override;
 
 	/// <summary>
-	/// 初期化
-	/// </summary>
-	/// <param name="directXBase">DirectXの基盤部分</param>
-	/// <param name="renderCamera">描画で使用するカメラ</param>
-	/// <param name="transformMode">トランスフォームモード</param>
-	void Initialize(DirectXBase* directXBase, Camera* renderCamera, Transform3dMode transform3dMode);
-
-	/// <summary>
 	/// 更新
 	/// </summary>
 	void Update();
@@ -102,13 +71,6 @@ public://メンバ関数
 	/// </summary>
 	/// <param name="renderer">レンダラー</param>
 	void RegisterToRenderer(Object3dRenderer* renderer);
-
-	/// <summary>
-	/// インスタンスの追加
-	/// </summary>
-	/// <param name="gameObject">ゲームオブジェクト</param>
-	/// <returns></returns>
-	uint32_t AddInstance(GameObject* gameObject);
 
 	/// <summary>
 	/// ゲームで使用するカメラの設定
@@ -220,7 +182,7 @@ public://メンバ関数
 	/// トランスフォームモードの設定
 	/// </summary>
 	/// <param name="transformMode">トランスフォームモード</param>
-	void SetTransformMode(Transform3dMode transformMode);
+	void SetTransformMode(WorldMatrixType transformMode);
 
 	/// <summary>
 	/// uvスケールの取得
@@ -262,14 +224,14 @@ public://メンバ関数
 	/// </summary>
 	/// <param name="instanceIndex">インスタンスの検索キー</param>
 	/// <returns>ワールドマトリックス</returns>
-	Matrix4x4& GetWorldMatrix(uint32_t instanceIndex);
+	Matrix4x4& GetWorldMatrix();
 
 	/// <summary>
 	/// ワールド座標の取得
 	/// </summary>
 	/// <param name="instanceIndex">インスタンスの検索キー</param>
 	/// <returns>ワールド座標</returns>
-	Vector3 GetWorldPos(uint32_t instanceIndex);
+	Vector3 GetWorldPos();
 
 	/// <summary>
 	/// メッシュのサイズの取得
@@ -291,16 +253,14 @@ private://メンバ関数
 	/// <summary>
 	/// ワールド行列を作成
 	/// </summary>
-	/// <param name="instanceIndex">インスタンスの検索キー</param>
 	/// <returns>ワールド行列</returns>
-	void MakeWorldMatrix(uint32_t instanceIndex);
+	void MakeWorldMatrix();
 
 	/// <summary>
 	/// ビルボード行列の作成
 	/// </summary>
-	/// <param name="instanceIndex">インスタンスの検索キー</param>
 	/// <returns>ビルボード行列</returns>
-	void MakeBillboardWorldMatrix(uint32_t instanceIndex);
+	void MakeBillboardWorldMatrix();
 
 	/// <summary>
 	/// 座標の更新
@@ -311,7 +271,7 @@ private://メンバ関数
 	void UpdateWorldTransform(uint32_t lodIndex, uint32_t drawIndex, const Matrix4x4& worldMatrix);
 private://メンバ関数テーブル
 	//座標の更新をまとめた
-	static void (Object3d::* UpdateWorldMatrixTable[])(uint32_t index);
+	static void (Object3d::* UpdateWorldMatrixTable[])();
 private://定数
 	//インスタンスの最大数
 	static const inline uint32_t kMaxInstanceCount_ = 1024;
@@ -323,7 +283,10 @@ private://メンバ変数
 
 	//LODの数
 	uint32_t lodCount_ = 1;
-	std::vector<uint32_t>lodIndices_;
+	//オブジェクトの表示非表示の管理用フラグ
+	bool isVisible_ = false;
+	//今現在のLOD番号
+	uint32_t currentLOD_ = 0;
 	//LODビルダー
 	std::unique_ptr<LODBuilder>lodBuilder_ = nullptr;
 	//LODの制御
@@ -338,13 +301,10 @@ private://メンバ変数
 	//ゲームで使用するカメラ
 	Camera* gameCamera_ = nullptr;
 
-	//インスタンスデータ
-	std::vector<Object3dInstance> instanceData_ = {};
-
 	//オブジェクトの見た目
-	Transform3dMode transform3dMode_ = Transform3dMode::kNormal;
+	WorldMatrixType worldMatrixType_ = WorldMatrixType::kNone;
 	//ワールド行列
-	std::vector<Matrix4x4> worldMatrixes_;
+	Matrix4x4 worldMatrix_ = {};
 	//親
 	const WorldTransform* parent_ = nullptr;
 	//ノード

@@ -76,7 +76,8 @@ struct RimLight{
 };
 
 //列挙型
-enum class Transform3dMode :uint32_t{
+enum class WorldMatrixType :uint32_t{
+	kNone = -1,
 	kNormal,
 	kBilboard,
 };

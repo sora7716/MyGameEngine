@@ -12,25 +12,12 @@
 #include "Object3dRenderer.h"
 #include <algorithm>
 #include <cassert>
-//初期化
-void Object3dInstance::Initialize(GameObject* targetGameObject){
-	this->gameObject = targetGameObject;
-	isEnabled = true;
-	currentLOD = 0;
-}
 
 //メンバ関数テーブルの初期化
-void(Object3d::* Object3d::UpdateWorldMatrixTable[])(uint32_t index) = {
+void(Object3d::* Object3d::UpdateWorldMatrixTable[])() = {
 	&MakeWorldMatrix,
 	&MakeBillboardWorldMatrix,
 };
-
-//インスタンスの設定
-std::unique_ptr<Object3d> Object3d::Create(DirectXBase* directXBase, Camera* renderCamera, Transform3dMode transform3dMode){
-	std::unique_ptr<Object3d>instance = std::make_unique<Object3d>();
-	instance->Initialize(directXBase, renderCamera, transform3dMode);
-	return std::move(instance);
-}
 
 //コンストラクタ
 Object3d::Object3d(GameObject* gameObject) :Component(gameObject){
@@ -46,11 +33,16 @@ void Object3d::Initialize(){
 	//基底クラスの初期化
 	Component::Initialize();
 
-	//トランスフォームモード
-	transform3dMode_ = Transform3dMode::kNormal;
-
 	//ブレンドモードの初期化
 	blendMode_ = BlendMode::kNormal;
+
+	//トランスフォームモード
+	worldMatrixType_ = WorldMatrixType::kNormal;
+
+	//ワールド行列の初期化
+	worldMatrix_ = Matrix4x4::Identity4x4();
+	//Nodeのローカル行列の初期化
+	node_.localMatrix = Matrix4x4::Identity4x4();
 
 	//LODビルダーの生成
 	lodBuilder_ = std::make_unique<LODBuilder>();
@@ -60,123 +52,170 @@ void Object3d::Initialize(){
 
 //複製　
 std::unique_ptr<Component> Object3d::Clone(GameObject* gameObject) const{
-	std::unique_ptr<Object3d>cloneInstance = std::make_unique<Object3d>();
+	std::unique_ptr<Object3d>cloneInstance = std::make_unique<Object3d>(gameObject
+	);
+
+	//初期化
 	cloneInstance->Initialize();
 
+	//Object3d自信が持つ設定だけ複製
 	cloneInstance->SetEnabled(this->IsEnabled());
 	cloneInstance->SetBlendMode(this->blendMode_);
-	cloneInstance->SetTransformMode(this->transform3dMode_);
+	cloneInstance->SetTransformMode(this->worldMatrixType_);
 	return cloneInstance;
-}
-
-//初期化
-void Object3d::Initialize(DirectXBase* directXBase, Camera* renderCamera, Transform3dMode transform3dMode){
-	//DirectXの基盤部分の記録
-	directXBase_ = directXBase;
-	//座標変換のモード切替用変数
-	transform3dMode_ = transform3dMode;
-	//ワールド行列のサイズを確保(要素数は増やさない)
-	worldMatrixes_.reserve(kMaxInstanceCount_);
-
-	//LOD関係のセットアップ
-	SetupLOD();
-	//LODビルダーの生成
-	lodBuilder_ = std::make_unique<LODBuilder>();
-	//LODコントローラの生成
-	lodController_ = std::make_unique<LODController>();
-
-	//カメラにデフォルトカメラを代入
-	SetRenderCamera(renderCamera);
 }
 
 //更新
 void Object3d::Update(){
-	//LOD語との描画数をリセット
+	//LODの描画カウントのリセット
 	for (uint32_t& lodDrawCount : lodDrawCounts_){
 		lodDrawCount = 0;
 	}
 
-	//RootNodeはmodelを基準にする
+	//描画データをリセット
+	rendererData_.lodRenderData.drawCounts = lodDrawCounts_;
+	rendererData_.blendMode = blendMode_;
+
+	//リンクしているゲームオブジェクトを取得
+	GameObject* gameObject = GetOwner();
+
+	//もしリンクしているゲームオブジェクトがNullならば
+	if (!gameObject){
+		return;
+	}
+
+	//もしリンクしているゲームオブジェクトが非Activeなら
+	if (!gameObject->IsActive()){
+		return;
+	}
+
+	//RootNodeを取得
 	if (baseModel_){
 		node_ = baseModel_->GetModelData().rootNode;
 	}
 
-	for (uint32_t instanceIndex = 0; instanceIndex < instanceData_.size(); instanceIndex++){
-		GameObject* gameObject = instanceData_[instanceIndex].gameObject;
-		//ゲームオブジェクトが存在してない場合
-		if (!gameObject){
-			continue;
-		}
+	//ワールド行列の作成
+	if (worldMatrixType_ == WorldMatrixType::kNone){
+		return;
+	}
 
-		//生存フラグが立ってなければ
-		if (!gameObject->IsActive()){
-			continue;
-		}
-
-		//ワールド行列の作成
-		(this->*UpdateWorldMatrixTable[static_cast<uint32_t>(transform3dMode_)])(instanceIndex);;
-
-		//モデルが存在してなかったら
-		if (!baseModel_){
-			continue;
-		}
-
-		//表示状態の更新
-		for (const std::unique_ptr<Mesh>& mesh : baseModel_->GetMeshes()){
-			instanceData_[instanceIndex].isEnabled = culling_->IsVisibleInFrustum(mesh->GetAABB(), worldMatrixes_[instanceIndex]);
-		}
-
-		//表示しなかったら
-		if (!instanceData_[instanceIndex].isEnabled){
-			continue;
-		}
-
-		//LODの計算
-		Vector3 cameraWorldPos = gameCamera_->GetWorldPos();
-		Vector3 objectWorldPos = GetWorldPos(instanceIndex);
-
-		float distance = (objectWorldPos - cameraWorldPos).Length();
-
-		uint32_t lodIndex = lodController_->SelectLOD(distance, instanceData_[instanceIndex].currentLOD);
-		lodIndices_[instanceIndex] = lodIndex;
-		instanceData_[instanceIndex].currentLOD = lodIndex;
-		//lodIndex番目がlodModelsに無かったら
-		if (!lodBuilder_->GetLODModel(lodIndex)){
-			continue;
-		}
-
-		//LODごとのWVP配列に詰める
-		uint32_t drawIndex = lodDrawCounts_[lodIndex];
-		//検索キーがデータのサイズより大きかった場合
-		if (drawIndex >= rendererData_.lodRenderData.transformationData[lodIndex].size()){
-			continue;
-		}
-
-		//座標の更新
-		UpdateWorldTransform(lodIndex, drawIndex, worldMatrixes_[instanceIndex]);
-
-		//描画カウントを加算
-		lodDrawCounts_[lodIndex]++;
-
-		//モデルが存在したらメッシュごとにUV座標を適応
-		if (lodBuilder_->GetLODModel(lodIndex)){
-			for (uint32_t j = 0; j < lodBuilder_->GetLODModel(lodIndex)->GetMeshes().size(); j++){
-				uint32_t materialIndex = lodBuilder_->GetLODModel(lodIndex)->GetMeshes()[j]->GetMaterialIndex();
-
-				//マテリアルの検索キーがUV座標の配列の要素数を超えたら
-				if (materialIndex >= lodUvTransforms_[lodIndex].size()){
-					continue;
-				}
-
-
-				lodBuilder_->GetLODModel(lodIndex)->UVTransform(materialIndex, lodUvTransforms_[lodIndex][materialIndex]);
-			}
+	//ビルボード作成の場合
+	if (worldMatrixType_ == WorldMatrixType::kBilboard){
+		//描画カメラがNullだったら
+		if (!renderCamera_){
+			return;
 		}
 	}
 
-	//描画データをまとめる
+	(this->*UpdateWorldMatrixTable[static_cast<uint32_t>(worldMatrixType_)])();
+
+	//モデルが未設定なら
+	if (!baseModel_){
+		return;
+	}
+
+	//isVisibleのリセット
+	isVisible_ = false;
+
+	//カリングをする
+	for (const std::unique_ptr<Mesh>& mesh : baseModel_->GetMeshes()){
+		//isVisibleがtrueだった場合
+		if (isVisible_){
+			break;
+		}
+
+		//カリングがNullだった場合
+		if (!culling_){
+			isVisible_ = true;
+			continue;
+		}
+
+		//カリングしているか確認
+		isVisible_ = culling_->IsVisibleInFrustum(mesh->GetAABB(), worldMatrix_);
+	}
+
+	//isVisibleがfalseだった場合
+	if (!isVisible_){
+		return;
+	}
+
+	//ゲームカメラがNullだった場合
+	if (!gameCamera_){
+		return;
+	}
+
+	//LODの選択
+	Vector3 cameraWorldPos = gameCamera_->GetWorldPos();
+	Vector3 objectWorldPos = GetWorldPos();
+
+	float distance = (objectWorldPos - cameraWorldPos).Length();
+
+	uint32_t lodIndex = lodController_->SelectLOD(distance, currentLOD_);
+	currentLOD_ = lodIndex;
+
+	//描画の検索キー
+	uint32_t drawIndex = 0;
+
+	//検索キーとLODModelの要素数を比較して検索キーの方が大きければ
+	if (lodIndex >= lodBuilder_->LODModelSize()){
+		return;
+	}
+
+	//LODModelの取得
+	Model* lodModel = lodBuilder_->GetLODModel(lodIndex);
+	//LODModelがNullか確認
+	if (!lodModel){//Nullだったら
+		return;
+	}
+
+	//描画カウントまたは描画データのTransformationDataがなかった場合
+	if (lodDrawCounts_.empty() ||
+		rendererData_.lodRenderData.transformationData.empty() ||
+		lodDrawCounts_.size() <= lodIndex ||
+		rendererData_.lodRenderData.transformationData.size() <= lodIndex){
+		return;
+	}
+
+	//描画の検索キーをLODごとに取得
+	drawIndex = lodDrawCounts_[lodIndex];
+
+	//TransformationData配列の確認
+	const std::vector<std::vector<TransformationMatrix>>& transformationData = rendererData_.lodRenderData.transformationData;
+	//LODの検索キーと外側の配列を比べて
+	if (lodIndex >= transformationData.size()){
+		return;
+	}
+	//描画カウントと内側の配列を比べて
+	if (drawIndex >= transformationData[lodIndex].size()){
+		return;
+	}
+
+	//座標の更新
+	UpdateWorldTransform(lodIndex, drawIndex, worldMatrix_);
+
+	//描画カウントを加算
+	lodDrawCounts_[lodIndex]++;
+
+	//描画データへ反映
 	rendererData_.lodRenderData.drawCounts = lodDrawCounts_;
 	rendererData_.blendMode = blendMode_;
+
+	//LODごとのUV座標がなかった場合
+	if (lodUvTransforms_.size() <= lodIndex){
+		return;
+	}
+	//モデルが存在したらメッシュごとにUV座標を適応
+	for (uint32_t i = 0; i < lodModel->GetMeshes().size(); i++){
+		uint32_t materialIndex = lodModel->GetMeshes()[i]->GetMaterialIndex();
+
+		//マテリアルの検索キーがUV座標の配列の要素数を超えたら
+		if (materialIndex >= lodUvTransforms_[lodIndex].size()){
+			continue;
+		}
+
+
+		lodModel->UVTransform(materialIndex, lodUvTransforms_[lodIndex][materialIndex]);
+	}
 }
 
 //モデルの設定
@@ -212,27 +251,6 @@ void Object3d::RegisterToRenderer(Object3dRenderer* renderer){
 	renderHandle_ = renderer->RegisterObject(lodCount_, kMaxInstanceCount_);
 
 	rendererData_.renderHandle = renderHandle_;
-}
-
-//インスタンスの追加
-uint32_t Object3d::AddInstance(GameObject* gameObject){
-	//ゲームオブジェクトがNullじゃないか
-	assert(gameObject);
-	//インスタンスの最大数を超えてないか
-	assert(instanceData_.size() < kMaxInstanceCount_);
-
-	Object3dInstance instance;
-	instance.Initialize(gameObject);
-
-	instanceData_.push_back(instance);
-
-	//ワールド行列の要素数を設定
-	worldMatrixes_.resize(instanceData_.size());
-
-	//lodIndexをまとめる配列の要素数を設定
-	lodIndices_.resize(instanceData_.size());
-
-	return static_cast<uint32_t>(instanceData_.size() - 1);
 }
 
 //カメラの設定
@@ -371,8 +389,8 @@ void Object3d::SetBlendMode(BlendMode blendMode){
 }
 
 //トランスフォームモードの設定
-void Object3d::SetTransformMode(Transform3dMode transformMode){
-	transform3dMode_ = transformMode;
+void Object3d::SetTransformMode(WorldMatrixType transformMode){
+	worldMatrixType_ = transformMode;
 }
 
 //uvスケールの取得
@@ -410,13 +428,13 @@ const Vector4& Object3d::GetColor(uint32_t index) const{
 }
 
 //ワールドマトリックスの取得
-Matrix4x4& Object3d::GetWorldMatrix(uint32_t instanceIndex){
-	return worldMatrixes_[instanceIndex];
+Matrix4x4& Object3d::GetWorldMatrix(){
+	return worldMatrix_;
 }
 
 //ワールド座標の取得
-Vector3 Object3d::GetWorldPos(uint32_t instanceIndex){
-	return { worldMatrixes_[instanceIndex].m[3][0],worldMatrixes_[instanceIndex].m[3][1],worldMatrixes_[instanceIndex].m[3][2] };
+Vector3 Object3d::GetWorldPos(){
+	return { worldMatrix_.m[3][0],worldMatrix_.m[3][1],worldMatrix_.m[3][2] };
 }
 
 //メッシュのサイズの取得
@@ -454,8 +472,8 @@ void Object3d::SetupLOD(){
 }
 
 //ワールド行列を作成
-void Object3d::MakeWorldMatrix(uint32_t instanceIndex){
-	GameObject* gameObject = instanceData_[instanceIndex].gameObject;
+void Object3d::MakeWorldMatrix(){
+	GameObject* gameObject = GetOwner();
 	//ゲームオブジェクトがNullじゃないか
 	assert(gameObject);
 	Matrix4x4 worldMatrix = Matrix4x4::Identity4x4();
@@ -470,12 +488,12 @@ void Object3d::MakeWorldMatrix(uint32_t instanceIndex){
 	worldMatrix = node_.localMatrix * worldMatrix;
 
 	//ワールド行列の配列を上書き
-	worldMatrixes_[instanceIndex] = worldMatrix;
+	worldMatrix_ = worldMatrix;
 }
 
 //ビルボード行列の作成
-void Object3d::MakeBillboardWorldMatrix(uint32_t instanceIndex){
-	GameObject* gameObject = instanceData_[instanceIndex].gameObject;
+void Object3d::MakeBillboardWorldMatrix(){
+	GameObject* gameObject = GetOwner();
 	//ゲームオブジェクトがNullじゃないか
 	assert(gameObject);
 	Matrix4x4 worldMatrix = Matrix4x4::Identity4x4();
@@ -490,7 +508,7 @@ void Object3d::MakeBillboardWorldMatrix(uint32_t instanceIndex){
 	worldMatrix = node_.localMatrix * worldMatrix;
 
 	//ワールド行列の配列を上書き
-	worldMatrixes_[instanceIndex] = worldMatrix;
+	worldMatrix_ = worldMatrix;
 }
 
 //座標の更新

@@ -72,9 +72,6 @@ public://メンバ関数
 	/// </summary>
 	void Finalize()override;
 private://メンバ変数
-	std::unique_ptr<Object3d>object3d_ = nullptr;
-	float environmentCoefficient_ = 1.0f;
-
 	std::vector<Transform2d>transform2ds_;
 
 	std::unique_ptr<debugDraw::Frustum>frustum_ = nullptr;

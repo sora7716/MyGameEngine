@@ -120,13 +120,11 @@ void Model::SetEnvironmentMap(uint32_t materialIndex, const std::string& environ
 
 //色を取得
 const Vector4& Model::GetColor(uint32_t index) const{
-	// TODO: return ステートメントをここに挿入します
 	return materialPtrs_[index]->color;
 }
 
 //モデルデータのゲッター
 const ModelData& Model::GetModelData() const{
-	// TODO: return ステートメントをここに挿入します
 	return modelData_;
 }
 
@@ -161,7 +159,6 @@ const std::vector<std::unique_ptr<Mesh>>& Model::GetMeshes() const{
 
 //描画に必要なデータの取得
 const ModelRenderData& Model::GetModelRenderData(){
-	// TODO: return ステートメントをここに挿入します
 	return modelRenderData_;
 }
 

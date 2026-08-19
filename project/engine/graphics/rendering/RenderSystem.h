@@ -11,11 +11,19 @@ class PipelineManager;
 class LightingManager;
 class Blend;
 class GameObject;
+class Model;
 class Object3d;
 class Object3dRenderer;
 class SkyBoxRenderer;
 class DebugDrawRenderer;
 class ParticleRenderer;
+
+//描画グループごとにObject3dを分ける
+struct Object3dBatch{
+	Model* model = nullptr;
+	BlendMode blendMode = BlendMode::kNone;
+	std::vector<Object3d*>instances;
+};
 
 /// <summary>
 /// 描画のシステム
@@ -89,6 +97,11 @@ private://メンバ関数
 	/// </summary>
 	/// <param name="blendMode">ブレンドモード</param>
 	void PreDraw(BlendMode blendMode);
+
+	/// <summary>
+	/// オブジェクト3dの描画グループを構築
+	/// </summary>
+	void BuildObject3dBatches();
 private://メンバ関数
 	//DirectXの基盤部分
 	DirectXBase* directXBase_ = nullptr;
@@ -98,6 +111,8 @@ private://メンバ関数
 	LightingManager* lightingManager_ = nullptr;
 	//オブジェクト3d
 	std::vector<Object3d*>object3ds_;
+	//オブジェクト3dを描画グループごとに分ける
+	std::vector<Object3dBatch>object3dBatches_;
 	//Object3dのレンダラー
 	std::unique_ptr<Object3dRenderer>object3dRenderer_ = nullptr;
 	//スカイボックスのレンダラー

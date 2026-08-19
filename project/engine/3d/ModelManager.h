@@ -3,7 +3,6 @@
 #include <string>
 #include <memory>
 #include <vector>
-#include "RenderData.h"
 
 //前方宣言
 class DirectXBase;
@@ -44,7 +43,7 @@ public://メンバ関数
 	/// </summary>
 	/// <param name="name">名前</param>
 	/// <returns>モデル</returns>
-	std::unique_ptr<Model> FindModel(const std::string& name);
+	Model* FindModel(const std::string& name);
 public://PassKey
 	class ConstructorKey{
 		ConstructorKey() = default;
@@ -61,8 +60,8 @@ private://メンバ関数
 	//代入演算子禁止
 	ModelManager operator=(const ModelManager&) = delete;
 private://メンバ変数
-	//モデルデータのコンテナ
-	std::map<std::string, ModelData>modelDatas_;
+	//モデルのコンテナ
+	std::map<std::string, std::unique_ptr<Model>>models_;
 	//DirectXの基盤部分
 	DirectXBase* directXBase_ = nullptr;
 	//Textureの管理

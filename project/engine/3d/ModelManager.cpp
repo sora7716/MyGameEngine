@@ -20,46 +20,48 @@ void ModelManager::Initialize(DirectXBase* directXBase, TextureManager* textureM
 
 //プリミティブなモデルの生成
 void ModelManager::CreatePrimitiveModel(){
-	//モデルの生成とファイル読み込み、初期化
-	std::unique_ptr<Model>model = Model::CreateModel(directXBase_, { primitiveMeshFactory::CreateSphere() });
+	//Cubeモデルの生成
+	std::unique_ptr<Model>model = Model::CreateModel(directXBase_, { primitiveMeshFactory::CreateCube() });
 
-	//モデルデータを取得
-	ModelData modelData = model->GetModelData();
+	//Cubeモデルの追加
+	models_.insert(std::make_pair("cube", std::move(model)));
 
-	//モデルデータをmapコンテナに格納する
-	modelDatas_.insert(std::make_pair("cube", modelData));
+	//Sphereモデルの生成
+	model = Model::CreateModel(directXBase_, { primitiveMeshFactory::CreateSphere() });
+
+	//Sphereモデルの追加
+	models_.insert(std::make_pair("sphere", std::move(model)));
 }
 
 //モデルの追加
 void ModelManager::AddModel(const std::string& name, const std::string& modelFileName){
 	//読み込み済みならモデルを検索
-	if (modelDatas_.contains(name)){
+	if (models_.contains(name)){
 		//読み込み済みなら早期return
 		return;
 	}
 	//モデルの生成とファイル読み込み、初期化
 	std::unique_ptr<Model>model = Model::CreateModel(directXBase_, modelFileName);
 
-	//モデルデータを取得
-	ModelData modelData = model->GetModelData();
 	//テクスチャの読み込み
-	for (const MaterialTexturePaths& textureFilePaths : modelData.materialTexturePaths){
+	for (const MaterialTexturePaths& textureFilePaths : model->GetModelData().materialTexturePaths){
 		textureManager_->AddTexture(textureFilePaths.textureFilePath);
 	}
 
-	//モデルデータをmapコンテナに格納する
-	modelDatas_.insert(std::make_pair(name, modelData));
+	//モデルをmapコンテナに格納する
+	models_.insert(std::make_pair(name, std::move(model)));
 }
 
 //モデルの検索
-std::unique_ptr<Model> ModelManager::FindModel(const std::string& name){
-	//読み込み済みモデルを検索
-	if (modelDatas_.contains(name)){
-		//読み込み済みモデルを戻り値としてreturn
-		return std::move(Model::CreateModel(directXBase_, modelDatas_.at(name)));
+Model* ModelManager::FindModel(const std::string& name){
+	auto it = models_.find(name);
+
+	//モデルのイテレーターが末尾と一緒だった場合
+	if (it == models_.end()){
+		return nullptr;
 	}
-	//ファイル名一致なし
-	return nullptr;
+
+	return it->second.get();
 }
 
 //コンストラクタ

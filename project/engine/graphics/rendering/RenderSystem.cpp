@@ -8,6 +8,7 @@
 #include "SkyBoxRenderer.h"
 #include "DebugDrawRenderer.h"
 #include "ParticleRenderer.h"
+#include <algorithm>
 
 //コンストラクタ
 RenderSystem::RenderSystem(){
@@ -101,7 +102,7 @@ void RenderSystem::CollectObject3ds(const std::vector<std::unique_ptr<GameObject
 		}
 
 		//オブジェクト3dを取得
-		Object3d*object3d = gameObject->GetComponent<Object3d>();
+		Object3d* object3d = gameObject->GetComponent<Object3d>();
 
 		//オブジェクト3dがNullか
 		if (!object3d){
@@ -169,4 +170,42 @@ void RenderSystem::PreDraw(BlendMode blendMode){
 	ID3D12PipelineState* pso = pipelineSet.graphicsPipelineStates[static_cast<uint32_t>(blendMode)].Get();
 	//グラフィックスパイプラインをセットするコマンド
 	directXBase_->GetCommandList()->SetPipelineState(pso);
+}
+
+//オブジェクト3dの描画グループを構築
+void RenderSystem::BuildObject3dBatches(){
+	//配列をクリア
+	object3dBatches_.clear();
+
+	//Object3dsを先頭から確認
+	Object3d* object3d = *object3ds_.begin();
+
+	//Model*BlendModeを取得
+	Model* model = object3d->GetModel();
+	BlendMode blendMode = object3d->GetBlendMode();
+
+	//同じModel*とBlendModeのバッチを探す
+	auto batchIt = std::find_if(
+		object3dBatches_.begin(),
+		object3dBatches_.end(),
+		[model, blendMode](const Object3dBatch& batch){
+			return batch.model == model &&
+				batch.blendMode == blendMode;
+		}
+	);
+
+	if (batchIt != object3dBatches_.end()){
+		//見つかった場合instancesに追加
+		batchIt->instances.push_back(object3d);
+	} else{
+		//見つからなかった場合新しくバッチを作成
+		Object3dBatch newBatch = {
+			.model = model,
+			.blendMode = blendMode,
+		};
+		newBatch.instances.push_back(object3d);
+
+		//オブジェクト3dのバッチに追加
+		object3dBatches_.push_back(std::move(newBatch));
+	}
 }

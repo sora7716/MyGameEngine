@@ -93,9 +93,9 @@ void Object3d::Update(){
 }
 
 //モデルの設定
-void Object3d::SetModel(std::unique_ptr<Model> model, const std::vector<float>& keepRates){
+void Object3d::SetModel(Model* model, const std::vector<float>& keepRates){
 	//元になるモデルを取得
-	baseModel_ = std::move(model);
+	baseModel_ = model;
 
 	//倍率を保存
 	if (!keepRates.empty()){
@@ -325,12 +325,12 @@ const Object3dRenderData& Object3d::GetRenderData(){
 
 //モデルの取得
 Model* Object3d::GetModel(){
-	return baseModel_.get();
+	return baseModel_;
 }
 
 //モデルの取得
 const Model* Object3d::GetModel() const{
-	return baseModel_.get();
+	return baseModel_;
 }
 
 //LODのポリゴンの割合の取得

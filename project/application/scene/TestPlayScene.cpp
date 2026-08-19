@@ -70,6 +70,12 @@ void TestPlayScene::Initialize(){
 
 	//particleSystem_->SetModelData(sceneContext_.object3dCommon->GetModelManager()->FindModel("dekanu")->GetModelData());
 	directionalLight_ = *sceneContext_.lightingManager->GetDirectionalLight();
+
+	GameObject* gameObject = CreateGameObject();
+
+	Object3d* object3d = gameObject->AddComponent<Object3d>();
+
+	object3d->SetModel(sceneContext_.modelManager->FindModel("sneakWalk"));
 }
 
 //更新

@@ -40,5 +40,5 @@ struct Object3dRenderData{
 	Object3dRenderHandle renderHandle = kInvalidObject3dRenderHandle;
 	Camera* renderCamera = nullptr;
 	LODRenderData lodRenderData;
-	BlendMode blendMode;
+	BlendMode blendMode = BlendMode::kNone;
 };

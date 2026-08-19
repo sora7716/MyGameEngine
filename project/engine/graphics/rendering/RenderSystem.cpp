@@ -2,6 +2,8 @@
 #include "DirectXBase.h"
 #include "PipelineManager.h"
 #include "LightingManager.h"
+#include "GameObject.h"
+#include "Object3d.h"
 #include "Object3dRenderer.h"
 #include "SkyBoxRenderer.h"
 #include "DebugDrawRenderer.h"
@@ -80,6 +82,45 @@ void RenderSystem::Draw(){
 	//描画オブジェクトのリセット
 	skyBoxRenderer_->Reset();
 
+}
+
+//Object3dを集める
+void RenderSystem::CollectObject3ds(const std::vector<std::unique_ptr<GameObject>>& gameObjects){
+	//object3dsをクリア
+	object3ds_.clear();
+
+	for (const std::unique_ptr<GameObject>& gameObject : gameObjects){
+		//ゲームオブジェクトがNullじゃないか
+		if (!gameObject){
+			continue;
+		}
+
+		//ゲームオブジェクトが有効状態か
+		if (!gameObject->IsActive()){
+			continue;
+		}
+
+		//オブジェクト3dを取得
+		Object3d*object3d = gameObject->GetComponent<Object3d>();
+
+		//オブジェクト3dがNullか
+		if (!object3d){
+			continue;
+		}
+
+		//オブジェクト3dが有効状態か
+		if (!object3d->IsEnabled()){
+			continue;
+		}
+
+		//モデルが設定されているか
+		if (!object3d->HasModel()){
+			continue;
+		}
+
+		//Object3dsに追加
+		object3ds_.push_back(object3d);
+	}
 }
 
 //Object3dのレンダラーの取得

@@ -77,7 +77,6 @@ struct RimLight{
 
 //列挙型
 enum class WorldMatrixType :uint32_t{
-	kNone = -1,
 	kNormal,
 	kBilboard,
 };

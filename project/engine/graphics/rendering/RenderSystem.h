@@ -1,5 +1,6 @@
 #pragma once
 #include "PipelineManagerData.h"
+#include <vector>
 #include <memory>
 
 //前方宣言
@@ -9,6 +10,8 @@ class TextureManager;
 class PipelineManager;
 class LightingManager;
 class Blend;
+class GameObject;
+class Object3d;
 class Object3dRenderer;
 class SkyBoxRenderer;
 class DebugDrawRenderer;
@@ -43,6 +46,12 @@ public://メンバ関数
 	/// 描画
 	/// </summary>
 	void Draw();
+
+	/// <summary>
+	/// Object3dを集める
+	/// </summary>
+	/// <param name="gameObjects">ゲームオブジェクト</param>
+	void CollectObject3ds(const std::vector<std::unique_ptr<GameObject>>& gameObjects);
 
 	/// <summary>
 	/// Object3dのレンダラーの取得
@@ -87,6 +96,8 @@ private://メンバ関数
 	PipelineManager* pipelineManager_ = nullptr;
 	//ライティングの管理
 	LightingManager* lightingManager_ = nullptr;
+	//オブジェクト3d
+	std::vector<Object3d*>object3ds_;
 	//Object3dのレンダラー
 	std::unique_ptr<Object3dRenderer>object3dRenderer_ = nullptr;
 	//スカイボックスのレンダラー

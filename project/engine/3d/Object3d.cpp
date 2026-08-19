@@ -67,15 +67,6 @@ std::unique_ptr<Component> Object3d::Clone(GameObject* gameObject) const{
 
 //更新
 void Object3d::Update(){
-	//LODの描画カウントのリセット
-	for (uint32_t& lodDrawCount : lodDrawCounts_){
-		lodDrawCount = 0;
-	}
-
-	//描画データをリセット
-	rendererData_.lodRenderData.drawCounts = lodDrawCounts_;
-	rendererData_.blendMode = blendMode_;
-
 	//リンクしているゲームオブジェクトを取得
 	GameObject* gameObject = GetOwner();
 
@@ -89,16 +80,7 @@ void Object3d::Update(){
 		return;
 	}
 
-	//RootNodeを取得
-	if (baseModel_){
-		node_ = baseModel_->GetModelData().rootNode;
-	}
-
 	//ワールド行列の作成
-	if (worldMatrixType_ == WorldMatrixType::kNone){
-		return;
-	}
-
 	//ビルボード作成の場合
 	if (worldMatrixType_ == WorldMatrixType::kBilboard){
 		//描画カメラがNullだったら
@@ -108,114 +90,6 @@ void Object3d::Update(){
 	}
 
 	(this->*UpdateWorldMatrixTable[static_cast<uint32_t>(worldMatrixType_)])();
-
-	//モデルが未設定なら
-	if (!baseModel_){
-		return;
-	}
-
-	//isVisibleのリセット
-	isVisible_ = false;
-
-	//カリングをする
-	for (const std::unique_ptr<Mesh>& mesh : baseModel_->GetMeshes()){
-		//isVisibleがtrueだった場合
-		if (isVisible_){
-			break;
-		}
-
-		//カリングがNullだった場合
-		if (!culling_){
-			isVisible_ = true;
-			continue;
-		}
-
-		//カリングしているか確認
-		isVisible_ = culling_->IsVisibleInFrustum(mesh->GetAABB(), worldMatrix_);
-	}
-
-	//isVisibleがfalseだった場合
-	if (!isVisible_){
-		return;
-	}
-
-	//ゲームカメラがNullだった場合
-	if (!gameCamera_){
-		return;
-	}
-
-	//LODの選択
-	Vector3 cameraWorldPos = gameCamera_->GetWorldPos();
-	Vector3 objectWorldPos = GetWorldPos();
-
-	float distance = (objectWorldPos - cameraWorldPos).Length();
-
-	uint32_t lodIndex = lodController_->SelectLOD(distance, currentLOD_);
-	currentLOD_ = lodIndex;
-
-	//描画の検索キー
-	uint32_t drawIndex = 0;
-
-	//検索キーとLODModelの要素数を比較して検索キーの方が大きければ
-	if (lodIndex >= lodBuilder_->LODModelSize()){
-		return;
-	}
-
-	//LODModelの取得
-	Model* lodModel = lodBuilder_->GetLODModel(lodIndex);
-	//LODModelがNullか確認
-	if (!lodModel){//Nullだったら
-		return;
-	}
-
-	//描画カウントまたは描画データのTransformationDataがなかった場合
-	if (lodDrawCounts_.empty() ||
-		rendererData_.lodRenderData.transformationData.empty() ||
-		lodDrawCounts_.size() <= lodIndex ||
-		rendererData_.lodRenderData.transformationData.size() <= lodIndex){
-		return;
-	}
-
-	//描画の検索キーをLODごとに取得
-	drawIndex = lodDrawCounts_[lodIndex];
-
-	//TransformationData配列の確認
-	const std::vector<std::vector<TransformationMatrix>>& transformationData = rendererData_.lodRenderData.transformationData;
-	//LODの検索キーと外側の配列を比べて
-	if (lodIndex >= transformationData.size()){
-		return;
-	}
-	//描画カウントと内側の配列を比べて
-	if (drawIndex >= transformationData[lodIndex].size()){
-		return;
-	}
-
-	//座標の更新
-	UpdateWorldTransform(lodIndex, drawIndex, worldMatrix_);
-
-	//描画カウントを加算
-	lodDrawCounts_[lodIndex]++;
-
-	//描画データへ反映
-	rendererData_.lodRenderData.drawCounts = lodDrawCounts_;
-	rendererData_.blendMode = blendMode_;
-
-	//LODごとのUV座標がなかった場合
-	if (lodUvTransforms_.size() <= lodIndex){
-		return;
-	}
-	//モデルが存在したらメッシュごとにUV座標を適応
-	for (uint32_t i = 0; i < lodModel->GetMeshes().size(); i++){
-		uint32_t materialIndex = lodModel->GetMeshes()[i]->GetMaterialIndex();
-
-		//マテリアルの検索キーがUV座標の配列の要素数を超えたら
-		if (materialIndex >= lodUvTransforms_[lodIndex].size()){
-			continue;
-		}
-
-
-		lodModel->UVTransform(materialIndex, lodUvTransforms_[lodIndex][materialIndex]);
-	}
 }
 
 //モデルの設定
@@ -223,19 +97,23 @@ void Object3d::SetModel(std::unique_ptr<Model> model, const std::vector<float>& 
 	//元になるモデルを取得
 	baseModel_ = std::move(model);
 
-	//LODカウントの初期化
-	lodCount_ = static_cast<uint32_t>(keepRates.size());
-	//LOD関係のセットアップ
-	SetupLOD();
-	//LODモデルの生成
-	lodBuilder_->CreateLODModel(directXBase_, baseModel_.get(), keepRates);
-	//LODの制御の初期化
-	lodController_->Initialize(lodBuilder_.get());
+	//倍率を保存
+	if (!keepRates.empty()){
+		lodKeepRates_ = keepRates;
+	} else{
+		lodKeepRates_ = { 1.0f };
+	}
 
-	//モデルを保存
-	for (const std::unique_ptr<Model>& lodModel : lodBuilder_->GetLODModels()){
-		ModelRenderData modelRenderData = lodModel->GetModelRenderData();
-		rendererData_.lodRenderData.modelRendererDatas.push_back(modelRenderData);
+	//currentLODを0に戻す
+	currentLOD_ = 0;
+
+	//モデルが存在する場合nodeにrootNodeを保存
+	if (baseModel_){
+		node_ = baseModel_->GetModelData().rootNode;
+	} else{
+		//モデルがなければリセット
+		node_ = {};
+		node_.localMatrix = Matrix4x4::Identity4x4();
 	}
 }
 
@@ -395,31 +273,26 @@ void Object3d::SetTransformMode(WorldMatrixType transformMode){
 
 //uvスケールの取得
 const Vector2& Object3d::GetUVScale(uint32_t index) const{
-	// TODO: return ステートメントをここに挿入します
 	return lodUvTransforms_[0][index].scale;
 }
 
 //uv回転の取得
 const float Object3d::GetUVRotate(uint32_t index) const{
-	// TODO: return ステートメントをここに挿入します
 	return lodUvTransforms_[0][index].rotate;
 }
 
 //uv平行移動の取得
 const Vector2& Object3d::GetUVTranslate(uint32_t index) const{
-	// TODO: return ステートメントをここに挿入します
 	return lodUvTransforms_[0][index].translate;
 }
 
 //UV座標の取得
 const Transform2d& Object3d::GetUVTransform(uint32_t index) const{
-	// TODO: return ステートメントをここに挿入します
 	return lodUvTransforms_[0][index];
 }
 
 //色の取得
 const Vector4& Object3d::GetColor(uint32_t index) const{
-	// TODO: return ステートメントをここに挿入します
 	static const Vector4 defaultColor(0.0f, 0.0f, 0.0f, 0.0f);
 	if (baseModel_){
 		return baseModel_->GetColor(index);
@@ -427,8 +300,8 @@ const Vector4& Object3d::GetColor(uint32_t index) const{
 	return defaultColor;
 }
 
-//ワールドマトリックスの取得
-Matrix4x4& Object3d::GetWorldMatrix(){
+//ワールド行列の取得
+const Matrix4x4& Object3d::GetWorldMatrix()const{
 	return worldMatrix_;
 }
 
@@ -447,8 +320,40 @@ uint32_t Object3d::GetMeshDataSize(){
 
 //描画データの取得
 const Object3dRenderData& Object3d::GetRenderData(){
-	// TODO: return ステートメントをここに挿入します
 	return rendererData_;
+}
+
+//モデルの取得
+Model* Object3d::GetModel(){
+	return baseModel_.get();
+}
+
+//モデルの取得
+const Model* Object3d::GetModel() const{
+	return baseModel_.get();
+}
+
+//LODのポリゴンの割合の取得
+const std::vector<float>& Object3d::GetLODKeepRates()const{
+	return lodKeepRates_;
+}
+
+//モデルが設定されているかどうか
+bool Object3d::HasModel()const{
+	if (baseModel_){
+		return true;
+	}
+	return false;
+}
+
+//ブレンドモードの取得
+BlendMode Object3d::GetBlendMode()const{
+	return blendMode_;
+}
+
+//ワールド行列タイプの取得
+WorldMatrixType Object3d::GetWorldMatrixType()const{
+	return worldMatrixType_;
 }
 
 //LOD関係のセットアップ

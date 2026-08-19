@@ -220,11 +220,10 @@ public://メンバ関数
 	const Vector4& GetColor(uint32_t index)const;
 
 	/// <summary>
-	/// ワールドマトリックスの取得
+	/// ワールド行列の取得
 	/// </summary>
-	/// <param name="instanceIndex">インスタンスの検索キー</param>
-	/// <returns>ワールドマトリックス</returns>
-	Matrix4x4& GetWorldMatrix();
+	/// <returns>ワールド行列</returns>
+	const Matrix4x4& GetWorldMatrix()const;
 
 	/// <summary>
 	/// ワールド座標の取得
@@ -244,6 +243,42 @@ public://メンバ関数
 	/// </summary>
 	/// <returns>描画データ</returns>
 	const Object3dRenderData& GetRenderData();
+
+	/// <summary>
+	/// モデルの取得
+	/// </summary>
+	/// <returns>モデル</returns>
+	Model* GetModel();
+
+	/// <summary>
+	/// モデルの取得
+	/// </summary>
+	/// <returns>モデル</returns>
+	const Model* GetModel()const;
+
+	/// <summary>
+	/// LODのポリゴンの割合の取得
+	/// </summary>
+	/// <returns>LODのポリゴンの割合</returns>
+	const std::vector<float>& GetLODKeepRates()const;
+
+	/// <summary>
+	/// モデルが設定されているかどうか
+	/// </summary>
+	/// <returns>モデルが設定されているかどうか</returns>
+	bool HasModel()const;
+
+	/// <summary>
+	/// ブレンドモードの取得
+	/// </summary>
+	/// <returns>ブレンドモード</returns>
+	BlendMode GetBlendMode()const;
+
+	/// <summary>
+	/// ワールド行列のタイプの取得
+	/// </summary>
+	/// <returns>ワールド行列のタイプ</returns>
+	WorldMatrixType GetWorldMatrixType()const;
 private://メンバ関数
 	/// <summary>
 	/// LOD関係のセットアップ
@@ -280,13 +315,18 @@ private://メンバ変数
 	DirectXBase* directXBase_ = nullptr;
 	//モデル
 	std::unique_ptr<Model> baseModel_ = nullptr;
+	//今現在のLOD番号
+	uint32_t currentLOD_ = 0;
+	//ノード
+	Node node_ = {};
+	//モデルのポリゴン数の割合
+	std::vector<float>lodKeepRates_;
 
 	//LODの数
 	uint32_t lodCount_ = 1;
 	//オブジェクトの表示非表示の管理用フラグ
 	bool isVisible_ = false;
-	//今現在のLOD番号
-	uint32_t currentLOD_ = 0;
+
 	//LODビルダー
 	std::unique_ptr<LODBuilder>lodBuilder_ = nullptr;
 	//LODの制御
@@ -302,13 +342,11 @@ private://メンバ変数
 	Camera* gameCamera_ = nullptr;
 
 	//オブジェクトの見た目
-	WorldMatrixType worldMatrixType_ = WorldMatrixType::kNone;
+	WorldMatrixType worldMatrixType_ = WorldMatrixType::kNormal;
 	//ワールド行列
 	Matrix4x4 worldMatrix_ = {};
 	//親
 	const WorldTransform* parent_ = nullptr;
-	//ノード
-	Node node_ = {};
 	//ブレンドモード
 	BlendMode blendMode_ = BlendMode::kNone;
 

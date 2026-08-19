@@ -36,6 +36,7 @@ void Object3dRenderer::Initialize(DirectXBase* directXBase, SRVManager* srvManag
 
 	//インスタンスの最大値の記録
 	maxInstanceCount_ = maxInstance;
+	
 
 	//描画データの初期化
 	renderDatas_.reserve(maxInstanceCount_);

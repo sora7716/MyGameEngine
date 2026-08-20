@@ -11,6 +11,7 @@
 //前方宣言
 class DirectXBase;
 class Mesh;
+class MaterialInstance;
 
 /// <summary>
 /// モデル
@@ -149,6 +150,12 @@ public://メンバ関数
 	/// </summary>
 	/// <returns>描画に必要なデータ</returns>
 	const ModelRenderData& GetModelRenderData();
+
+	/// <summary>
+	/// デフォルトのマテリアルインスタンスの取得
+	/// </summary>
+	/// <returns>デフォルトのマテリアルインスタンス</returns>
+	std::shared_ptr<MaterialInstance>GetDefaultMaterialInstance()const;
 private://メンバ関数
 	/// <summary>
 	/// マテリアルリソースの生成
@@ -194,6 +201,8 @@ private://メンバ変数
 	std::vector<std::unique_ptr<Mesh>>meshes_;
 	//Objファイルデータ
 	ModelData modelData_ = {};
+	//マテリアルインスタンス
+	std::shared_ptr<MaterialInstance>defaultMaterialInstance_ = nullptr;
 	//マテリアルリソース
 	std::vector<ComPtr<ID3D12Resource>>materialResources_;
 	//マテリアルリソースにデータを書き込むためのポインタ

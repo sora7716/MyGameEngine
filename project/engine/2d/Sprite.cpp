@@ -83,7 +83,7 @@ void Sprite::ChangeTexture(const std::string& spriteName) {
 // UVの座標変換の更新
 void Sprite::UpdateUVTransform(Transform2d uvTransform) {
 	//UVTransform
-	materialData_->uvMatrix = matrixUtility::MakeUVAffineMatrix(uvTransform);
+	materialData_->uvMatrix = matrixUtility::MakeAffineMatrix(uvTransform);
 }
 
 //色のゲッター

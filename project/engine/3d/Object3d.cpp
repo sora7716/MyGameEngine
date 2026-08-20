@@ -107,13 +107,19 @@ void Object3d::SetModel(Model* model, const std::vector<float>& keepRates){
 	//currentLODを0に戻す
 	currentLOD_ = 0;
 
-	//モデルが存在する場合nodeにrootNodeを保存
+	//モデルが存在する場合
 	if (baseModel_){
+		//nodeにrootNodeを保存
 		node_ = baseModel_->GetModelData().rootNode;
+
+		//マテリアルインスタンスを取得
+		materialInstance_ = baseModel_->GetDefaultMaterialInstance();
 	} else{
 		//モデルがなければリセット
 		node_ = {};
 		node_.localMatrix = Matrix4x4::Identity4x4();
+
+		materialInstance_.reset();
 	}
 }
 
@@ -356,6 +362,16 @@ WorldMatrixType Object3d::GetWorldMatrixType()const{
 	return worldMatrixType_;
 }
 
+//マテリアルインスタンスの取得
+MaterialInstance* Object3d::GetMaterialInstance(){
+	return materialInstance_.get();
+}
+
+//マテリアルインスタンスの取得
+const MaterialInstance* Object3d::GetMaterialInstance() const{
+	return materialInstance_.get();
+}
+
 //LOD関係のセットアップ
 void Object3d::SetupLOD(){
 	//UV座標
@@ -424,4 +440,17 @@ void Object3d::UpdateWorldTransform(uint32_t lodIndex, uint32_t drawIndex, const
 
 	transformation.worldInverseTranspose = transformation.world.InverseTranspose();
 
+}
+
+//マテリアルを個別化する
+void Object3d::EnsureUniqueMaterialInstance(){
+	//マテリアルインスタンスがなければ
+	if (!materialInstance_){
+		return;
+	}
+
+	//ModelやほかのObject3dと共有中なら個別コピー
+	if (!materialInstance_){
+		materialInstance_ = std::make_shared<MaterialInstance>(*materialInstance_);
+	}
 }

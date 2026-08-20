@@ -4,6 +4,7 @@
 #include "Mesh.h"
 #include "PrimitiveMeshFactory.h"
 #include "ModelLoader.h"
+#include "MaterialInstance.h"
 
 //モデルの生成(ファイルを読み込んでの)
 std::unique_ptr<Model>Model::CreateModel(DirectXBase* directXBase, const std::string& modelFileName){
@@ -16,7 +17,7 @@ std::unique_ptr<Model>Model::CreateModel(DirectXBase* directXBase, const std::st
 	return instance;
 }
 
-//モデルの生成(キューブ)
+//モデルの生成(メッシュデータ)
 std::unique_ptr<Model> Model::CreateModel(DirectXBase* directXBase, const std::vector<MeshData>& meshDatas){
 	//インスタンスの生成
 	std::unique_ptr<Model>instance = std::make_unique<Model>();
@@ -97,7 +98,7 @@ void Model::SetupRenderData(){
 
 //uv変換
 void Model::UVTransform(uint32_t index, Transform2d uvTransform){
-	materialPtrs_[index]->uvMatrix = matrixUtility::MakeUVAffineMatrix(uvTransform);
+	materialPtrs_[index]->uvMatrix = matrixUtility::MakeAffineMatrix(uvTransform);
 }
 
 // 色を変更
@@ -157,6 +158,11 @@ const std::vector<std::unique_ptr<Mesh>>& Model::GetMeshes() const{
 //描画に必要なデータの取得
 const ModelRenderData& Model::GetModelRenderData(){
 	return modelRenderData_;
+}
+
+//デフォルトのマテリアルインスタンスの取得
+std::shared_ptr<MaterialInstance> Model::GetDefaultMaterialInstance() const{
+	return defaultMaterialInstance_;
 }
 
 //マテリアルリソースの生成
@@ -219,6 +225,9 @@ void Model::CreateModel(const std::vector<MeshData>& meshDatas, const std::strin
 	Node& node = modelData_.rootNode;
 	node.name = nodeName;
 	node.localMatrix = Matrix4x4::Identity4x4();
+	//マテリアルインスタンスの生成と初期化
+	defaultMaterialInstance_ = std::make_shared<MaterialInstance>();
+	defaultMaterialInstance_->Initialize(modelData_.materialTexturePaths);
 	//描画データをまとめる
 	SetupRenderData();
 }
@@ -234,6 +243,9 @@ void Model::CreateModel(const std::string& objectFileName){
 	for (MeshData& meshData : modelData_.meshDatas){
 		SetEnvironmentMap(meshData.materialIndex, "skybox_cube.dds");
 	}
+	//マテリアルインスタンスの生成と初期化
+	defaultMaterialInstance_ = std::make_shared<MaterialInstance>();
+	defaultMaterialInstance_->Initialize(modelData_.materialTexturePaths);
 	//描画データをまとめる
 	SetupRenderData();
 }
@@ -248,6 +260,9 @@ void Model::CreateModel(const ModelData& modelData){
 	for (MeshData& meshData : modelData_.meshDatas){
 		SetEnvironmentMap(meshData.materialIndex, "skybox_cube.dds");
 	}
+	//マテリアルインスタンスの生成と初期化
+	defaultMaterialInstance_ = std::make_shared<MaterialInstance>();
+	defaultMaterialInstance_->Initialize(modelData_.materialTexturePaths);
 	//描画データをまとめる
 	SetupRenderData();
 }

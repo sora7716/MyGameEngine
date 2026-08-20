@@ -22,7 +22,7 @@ struct Material{
 	float padding1[3] = {};
 	Matrix4x4 uvMatrix = Matrix4x4::Identity4x4();//UVTransform
 	float shininess = 1.0f;//光沢度
-	float environmentCoefficient;//映り込み度を調整
+	float environmentCoefficient = 0.0f;//映り込み度を調整
 	float padding2[2] = {};
 };
 
@@ -44,7 +44,6 @@ struct MeshData{
 	std::vector<uint32_t>indices;
 	uint32_t materialIndex = 0;
 };
-
 
 //モデルデータの構造体
 struct ModelData{

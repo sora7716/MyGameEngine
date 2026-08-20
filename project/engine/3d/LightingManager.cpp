@@ -39,9 +39,6 @@ void LightingManager::Initialize(DirectXBase* directXBase, SRVManager* srvManage
 
 //更新
 void LightingManager::Update(){
-	//directionalLight_->direction.x = std::clamp(directionalLight_->direction.x, -1.0f, 1.0f);
-	//directionalLight_->direction.y = std::clamp(directionalLight_->direction.y, -1.0f, 1.0f);
-	//directionalLight_->direction.z = std::clamp(directionalLight_->direction.z, -1.0f, 1.0f);
 }
 
 //描画の設定
@@ -63,7 +60,6 @@ void LightingManager::SetDirectionalLight(const DirectionalLight& directionalLig
 
 //平行光源の取得
 DirectionalLight* LightingManager::GetDirectionalLight() const{
-	// TODO: return ステートメントをここに挿入します
 	return directionalLight_;
 }
 

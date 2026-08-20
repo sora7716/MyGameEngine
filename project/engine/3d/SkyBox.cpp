@@ -269,7 +269,7 @@ void SkyBox::CreateTransformationMatrixResource(){
 // UVの座標変換の更新
 void SkyBox::UpdateUVTransform(){
 	//UVTransform
-	materialData_->uvMatrix = matrixUtility::MakeUVAffineMatrix(uvTransform_);
+	materialData_->uvMatrix = matrixUtility::MakeAffineMatrix(uvTransform_);
 }
 
 //ワールド座標の更新

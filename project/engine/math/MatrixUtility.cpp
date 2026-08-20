@@ -6,7 +6,7 @@
 using namespace std;
 
 //拡縮
-Matrix4x4 matrixUtility::MakeScaleMatrix(const Vector3& scale) {
+Matrix4x4 matrixUtility::MakeScaleMatrix(const Vector3& scale){
 	//単位行列で初期化
 	Matrix4x4 result = Matrix4x4::Identity4x4();
 	result.m[0][0] = scale.x;
@@ -16,7 +16,7 @@ Matrix4x4 matrixUtility::MakeScaleMatrix(const Vector3& scale) {
 }
 
 //平行移動
-Matrix4x4 matrixUtility::MakeTranslateMatrix(const Vector3& translate) {
+Matrix4x4 matrixUtility::MakeTranslateMatrix(const Vector3& translate){
 	//単位行列で初期化
 	Matrix4x4 result = Matrix4x4::Identity4x4();
 	result.m[3][0] = translate.x;
@@ -26,7 +26,7 @@ Matrix4x4 matrixUtility::MakeTranslateMatrix(const Vector3& translate) {
 }
 
 //x座標を軸に回転
-Matrix4x4 matrixUtility::MakeRotateXMatrix(const float& radian) {
+Matrix4x4 matrixUtility::MakeRotateXMatrix(const float& radian){
 	//単位行列で初期化
 	Matrix4x4 result = Matrix4x4::Identity4x4();
 	result.m[1][1] = std::cos(radian);
@@ -37,7 +37,7 @@ Matrix4x4 matrixUtility::MakeRotateXMatrix(const float& radian) {
 }
 
 //y座標を軸に回転
-Matrix4x4 matrixUtility::MakeRotateYMatrix(const float& radian) {
+Matrix4x4 matrixUtility::MakeRotateYMatrix(const float& radian){
 	//単位行列で初期化
 	Matrix4x4 result = Matrix4x4::Identity4x4();
 	result.m[0][0] = std::cos(radian);
@@ -48,7 +48,7 @@ Matrix4x4 matrixUtility::MakeRotateYMatrix(const float& radian) {
 }
 
 //z座標を軸に回転
-Matrix4x4 matrixUtility::MakeRotateZMatrix(const float& radian) {
+Matrix4x4 matrixUtility::MakeRotateZMatrix(const float& radian){
 	//単位行列で初期化
 	Matrix4x4 result = Matrix4x4::Identity4x4();
 	result.m[0][0] = std::cos(radian);
@@ -59,12 +59,12 @@ Matrix4x4 matrixUtility::MakeRotateZMatrix(const float& radian) {
 }
 
 //x,y,z座標で回転
-Matrix4x4 matrixUtility::MakeRotateMatrix(const Vector3& radian) {
+Matrix4x4 matrixUtility::MakeRotateMatrix(const Vector3& radian){
 	return MakeRotateXMatrix(radian.x) * MakeRotateYMatrix(radian.y) * MakeRotateZMatrix(radian.z);
 }
 
 //任意軸回転
-Matrix4x4 matrixUtility::MakeRotateAxisAngle(const Vector3& axis, float angle) {
+Matrix4x4 matrixUtility::MakeRotateAxisAngle(const Vector3& axis, float angle){
 	Matrix4x4 result = Matrix4x4::Identity4x4();
 	//単位ベクトル
 	Vector3 n = axis.Normalize();
@@ -87,7 +87,7 @@ Matrix4x4 matrixUtility::MakeRotateAxisAngle(const Vector3& axis, float angle) {
 }
 
 //fromからtoの方向へ向く回転行列
-Matrix4x4 matrixUtility::DirectionToDirection(const Vector3& from, const Vector3& to) {
+Matrix4x4 matrixUtility::DirectionToDirection(const Vector3& from, const Vector3& to){
 	Matrix4x4 result = Matrix4x4::Identity4x4();
 	Vector3 u = from.Normalize();
 	Vector3 v = to.Normalize();
@@ -95,10 +95,10 @@ Matrix4x4 matrixUtility::DirectionToDirection(const Vector3& from, const Vector3
 	float cosTheta = u.Dot(v);
 	float sinTheta = u.Cross(v).Length();
 
-	if (cosTheta <= -1.0f) {
-		if (u.x != 0.0f || u.y != 0.0f) {
+	if (cosTheta <= -1.0f){
+		if (u.x != 0.0f || u.y != 0.0f){
 			n = Vector3(u.y, -u.x, 0.0f).Normalize();
-		} else if (u.x != 0.0f || u.z != 0.0f) {
+		} else if (u.x != 0.0f || u.z != 0.0f){
 			n = Vector3(u.z, 0.0f, -u.x).Normalize();
 		}
 	}
@@ -118,7 +118,7 @@ Matrix4x4 matrixUtility::DirectionToDirection(const Vector3& from, const Vector3
 }
 
 //任意軸回転を表すクォータニオンの生成
-Quaternion matrixUtility::MakeRotateAxisAngleQuaternion(const Vector3& axis, float angle) {
+Quaternion matrixUtility::MakeRotateAxisAngleQuaternion(const Vector3& axis, float angle){
 	Quaternion result = Quaternion::IdentityQuaternion();
 	//cos
 	float cos = std::cos(angle / 2.0f);
@@ -132,7 +132,7 @@ Quaternion matrixUtility::MakeRotateAxisAngleQuaternion(const Vector3& axis, flo
 }
 
 //ベクトルをクォータニオンで回転させた結果のベクトルを求める
-Vector3 matrixUtility::RotateVector(const Vector3& vector, const Quaternion& quaternion) {
+Vector3 matrixUtility::RotateVector(const Vector3& vector, const Quaternion& quaternion){
 	Quaternion result = Quaternion::IdentityQuaternion();
 	Quaternion q = quaternion.Normalize();
 	Quaternion r = { vector.x,vector.y,vector.z,0.0f };
@@ -141,7 +141,7 @@ Vector3 matrixUtility::RotateVector(const Vector3& vector, const Quaternion& qua
 }
 
 //Quaternionから回転行列を求める
-Matrix4x4 matrixUtility::MakeRotateMatrix(const Quaternion& quaternion) {
+Matrix4x4 matrixUtility::MakeRotateMatrix(const Quaternion& quaternion){
 	Matrix4x4 result = Matrix4x4::Identity4x4();
 	float x = quaternion.x;
 	float y = quaternion.y;
@@ -161,7 +161,7 @@ Matrix4x4 matrixUtility::MakeRotateMatrix(const Quaternion& quaternion) {
 }
 
 // OBB用の回転行列
-void matrixUtility::MakeOBBRotateMatrix(Vector3* orientations, const Quaternion& rotate) {
+void matrixUtility::MakeOBBRotateMatrix(Vector3* orientations, const Quaternion& rotate){
 	Matrix4x4 rotateMatrix = MakeRotateMatrix(rotate);
 
 	//回転行列からの抽出
@@ -183,7 +183,7 @@ void matrixUtility::MakeOBBRotateMatrix(Vector3* orientations, const Quaternion&
 }
 
 // OBB用のワールド行列
-Matrix4x4 matrixUtility::MakeOBBWorldMatrix(const Vector3* orientations, const Vector3 center) {
+Matrix4x4 matrixUtility::MakeOBBWorldMatrix(const Vector3* orientations, const Vector3 center){
 	Matrix4x4 result{
 		orientations[0].x,orientations[0].y,orientations[0].z,0.0f,
 		orientations[1].x,orientations[1].y,orientations[1].z,0.0f,
@@ -194,28 +194,28 @@ Matrix4x4 matrixUtility::MakeOBBWorldMatrix(const Vector3* orientations, const V
 }
 
 //アフィン関数
-Matrix4x4 matrixUtility::MakeAffineMatrix(const Transform& transform) {
+Matrix4x4 matrixUtility::MakeAffineMatrix(const Transform& transform){
 
 	return (MakeScaleMatrix(transform.scale) * MakeRotateMatrix(transform.quaternion)) * MakeTranslateMatrix(transform.translate);
 }
 
 //アフィン行列
-Matrix4x4 matrixUtility::MakeAffineMatrix(const Vector3& scale, const Vector3& rotate, const Vector3& translate) {
+Matrix4x4 matrixUtility::MakeAffineMatrix(const Vector3& scale, const Vector3& rotate, const Vector3& translate){
 	return (MakeScaleMatrix(scale) * MakeRotateMatrix(rotate)) * MakeTranslateMatrix(translate);
 }
 
 //STRの変換
-Matrix4x4 matrixUtility::MakeSTRMatrix(const Vector3& scale, const Vector3& rotate, const Vector3& translate) {
+Matrix4x4 matrixUtility::MakeSTRMatrix(const Vector3& scale, const Vector3& rotate, const Vector3& translate){
 	return MakeScaleMatrix(scale) * MakeTranslateMatrix(translate) * MakeRotateMatrix(rotate);
 }
 
-// UVのアフィン変換
-Matrix4x4 matrixUtility::MakeUVAffineMatrix(const Transform2d& uvTransform) {
+//2次元のアフィン変換
+Matrix4x4 matrixUtility::MakeAffineMatrix(const Transform2d& uvTransform){
 	return MakeScaleMatrix({ uvTransform.scale.x,uvTransform.scale.y,1.0f }) * MakeRotateZMatrix(uvTransform.rotate) * MakeTranslateMatrix({ uvTransform.translate.x,uvTransform.translate.y,1.0f });
 }
 
 // 正射影行列
-Matrix4x4 matrixUtility::MakeOrthographicMatrix(const float& left, const float& top, const float& right, const float& bottom, const float& nearClip, const float& farClip) {
+Matrix4x4 matrixUtility::MakeOrthographicMatrix(const float& left, const float& top, const float& right, const float& bottom, const float& nearClip, const float& farClip){
 	Matrix4x4 result{
 		2.0f / (right - left),0.0f,0.0f,0.0f,
 		0.0f,2.0f / (top - bottom),0.0f,0.0f,
@@ -227,7 +227,7 @@ Matrix4x4 matrixUtility::MakeOrthographicMatrix(const float& left, const float& 
 }
 
 //透視投影行列
-Matrix4x4 matrixUtility::MakePerspectiveFovMatrix(const float& fovY, const float& aspectRation, const float& nearClip, const float& farClip) {
+Matrix4x4 matrixUtility::MakePerspectiveFovMatrix(const float& fovY, const float& aspectRation, const float& nearClip, const float& farClip){
 	Matrix4x4 result{
 		1.0f / aspectRation * mathUtility::Cont(fovY / 2.0f),0.0f,0.0f,0.0f,
 		0.0f, mathUtility::Cont(fovY / 2.0f),0.0f,0.0f,
@@ -239,7 +239,7 @@ Matrix4x4 matrixUtility::MakePerspectiveFovMatrix(const float& fovY, const float
 }
 
 //ビューポートマトリックス
-Matrix4x4 matrixUtility::MakeViewportMatrix(const float& left, const float& top, const float& width, const float& height, const float& minDepth, const float& maxDepth) {
+Matrix4x4 matrixUtility::MakeViewportMatrix(const float& left, const float& top, const float& width, const float& height, const float& minDepth, const float& maxDepth){
 	Matrix4x4 result{
 		width / 2.0f,0.0f,0.0f,0.0f,
 		0.0f,-height / 2.0f,0.0f,0.0f,
@@ -250,7 +250,7 @@ Matrix4x4 matrixUtility::MakeViewportMatrix(const float& left, const float& top,
 }
 
 //ビルボード行列を作成
-Matrix4x4 matrixUtility::MakeBillboardMatrix(const Matrix4x4& cameraWorldMatrix, const Vector3& rotate) {
+Matrix4x4 matrixUtility::MakeBillboardMatrix(const Matrix4x4& cameraWorldMatrix, const Vector3& rotate){
 	//正面に向けるY軸回転の行列を作成
 	Matrix4x4 backToFrontMatrix = matrixUtility::MakeRotateMatrix(rotate);
 	//ビルボード行列を作成
@@ -262,7 +262,7 @@ Matrix4x4 matrixUtility::MakeBillboardMatrix(const Matrix4x4& cameraWorldMatrix,
 }
 
 //ビルボード行列を作成
-Matrix4x4 matrixUtility::MakeBillboardMatrix(const Matrix4x4& cameraWorldMatrix, const Quaternion& quaternion) {
+Matrix4x4 matrixUtility::MakeBillboardMatrix(const Matrix4x4& cameraWorldMatrix, const Quaternion& quaternion){
 	//正面に向けるY軸回転の行列を作成
 	Matrix4x4 backToFrontMatrix = matrixUtility::MakeRotateMatrix(quaternion);
 	//ビルボード行列を作成
@@ -274,12 +274,12 @@ Matrix4x4 matrixUtility::MakeBillboardMatrix(const Matrix4x4& cameraWorldMatrix,
 }
 
 //ビルボード行列を含んだアフィン行列の作成
-Matrix4x4 matrixUtility::MakeBillboardAffineMatrix(const Matrix4x4& cameraWorldMatrix, const Transform& transform) {
+Matrix4x4 matrixUtility::MakeBillboardAffineMatrix(const Matrix4x4& cameraWorldMatrix, const Transform& transform){
 	return (MakeScaleMatrix(transform.scale) * MakeBillboardMatrix(cameraWorldMatrix, transform.quaternion)) * MakeTranslateMatrix(transform.translate);
 }
 
 //行列をTransformDataに分解
-Transform matrixUtility::DecomposeMatrix(const Matrix4x4& mat) {
+Transform matrixUtility::DecomposeMatrix(const Matrix4x4& mat){
 	Transform result{};
 	//拡縮
 	result.scale.x = std::sqrt(

@@ -128,11 +128,11 @@ namespace matrixUtility {
 	Matrix4x4 MakeSTRMatrix(const Vector3& scale, const Vector3& rotate, const Vector3& translate);
 
 	/// <summary>
-	/// UVのアフィン変換
+	/// 2次元のアフィン変換
 	/// </summary>
 	/// <param name="uvTransform">uv座標</param>
 	/// <returns>アフィン行列</returns>
-	Matrix4x4 MakeUVAffineMatrix(const Transform2d& uvTransform);
+	Matrix4x4 MakeAffineMatrix(const Transform2d& uvTransform);
 
 	/// <summary>
 	/// 正射影行列

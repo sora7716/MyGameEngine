@@ -9,6 +9,17 @@ Vector3 Vector3::MakeAllOne() {
 	return Vector3(1.0f, 1.0f, 1.0f);
 }
 
+//クランプ
+Vector3 Vector3::Clamp(float min, float max){
+	Vector3 result = {
+		.x = std::clamp(x,min,max),
+		.y = std::clamp(y,min,max),
+		.z = std::clamp(z,min,max),
+	};
+
+	return result;
+}
+
 //最小値
 Vector3 Vector3::Min(const Vector3& v) const {
 	Vector3 result = {};

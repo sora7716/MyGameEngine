@@ -81,9 +81,6 @@ void Model::RebuildMeshes(const std::vector<MeshData>& meshes){
 	}
 	//メッシュを構築
 	BuildMesh();
-
-	//描画に必要なデータのセットアップ
-	SetupRenderData();
 }
 
 //描画に必要なデータのセットアップ
@@ -222,6 +219,8 @@ void Model::CreateModel(const std::vector<MeshData>& meshDatas, const std::strin
 	Node& node = modelData_.rootNode;
 	node.name = nodeName;
 	node.localMatrix = Matrix4x4::Identity4x4();
+	//描画データをまとめる
+	SetupRenderData();
 }
 
 //モデルの生成
@@ -235,6 +234,8 @@ void Model::CreateModel(const std::string& objectFileName){
 	for (MeshData& meshData : modelData_.meshDatas){
 		SetEnvironmentMap(meshData.materialIndex, "skybox_cube.dds");
 	}
+	//描画データをまとめる
+	SetupRenderData();
 }
 
 //モデルの生成(モデルデータ)
@@ -247,6 +248,8 @@ void Model::CreateModel(const ModelData& modelData){
 	for (MeshData& meshData : modelData_.meshDatas){
 		SetEnvironmentMap(meshData.materialIndex, "skybox_cube.dds");
 	}
+	//描画データをまとめる
+	SetupRenderData();
 }
 
 //各種リソースの生成

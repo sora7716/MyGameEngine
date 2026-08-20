@@ -362,7 +362,7 @@ void Object3d::SetupLOD(){
 	lodUvTransforms_.resize(lodCount_);
 	//描画する数
 	lodDrawCounts_.resize(lodCount_);
-	rendererData_.lodRenderData.drawCounts.resize(lodCount_);
+	rendererData_.lodRenderData.matrixCounts.resize(lodCount_);
 	//TransformData
 	rendererData_.lodRenderData.transformationData.resize(lodCount_);
 

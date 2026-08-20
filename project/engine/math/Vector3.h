@@ -16,6 +16,14 @@ struct Vector3 final {
 	static Vector3 MakeAllOne();
 
 	/// <summary>
+	/// クランプ
+	/// </summary>
+	/// <param name="min">最小値</param>
+	/// <param name="max">最大値</param>
+	/// <returns>クランプした値</returns>
+	Vector3 Clamp(float min, float max);
+
+	/// <summary>
 	/// 最小値
 	/// </summary>
 	/// <param name="v">ベクトル</param>

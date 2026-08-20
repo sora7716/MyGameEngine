@@ -32,7 +32,7 @@ struct ModelRenderData{
 struct LODRenderData{
 	std::vector<ModelRenderData>modelRendererDatas;
 	std::vector<std::vector<TransformationMatrix>>transformationData;
-	std::vector<uint32_t>drawCounts = {};
+	std::vector<uint32_t>matrixCounts = {};
 };
 
 //描画に必要なデータ

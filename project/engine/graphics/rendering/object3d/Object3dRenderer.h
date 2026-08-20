@@ -11,19 +11,19 @@ class SRVManager;
 class TextureManager;
 class Model;
 
-//オブジェクト3dのバッチリソース
-struct Object3dBatchResource{
-	Model* model = nullptr;
-	BlendMode blendMode = BlendMode::kNone;
-	Object3dRenderHandle handle = kInvalidObject3dRenderHandle;
-};
-
 /// <summary>
 /// Object3dのレンダラー
 /// </summary>
 class Object3dRenderer{
 private://エイリアステンプレート
 	template <class T>using ComPtr = Microsoft::WRL::ComPtr<T>;
+private://構造体など
+	//オブジェクト3dのバッチリソース
+	struct Object3dBatchResource{
+		Model* model = nullptr;
+		BlendMode blendMode = BlendMode::kNone;
+		Object3dRenderHandle handle = kInvalidObject3dRenderHandle;
+	};
 public://静的メンバ関数
 	/// <summary>
 	/// 生成

@@ -113,6 +113,11 @@ private://メンバ関数
 	/// トランスフォーメーションデータの構築
 	/// </summary>
 	void BuildTransformationData();
+
+	/// <summary>
+	/// オブジェクト3dのバッチをレンダラーの送る
+	/// </summary>
+	void SubmitObject3dBatches();
 private://メンバ関数
 	//DirectXの基盤部分
 	DirectXBase* directXBase_ = nullptr;

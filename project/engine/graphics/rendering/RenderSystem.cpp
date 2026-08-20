@@ -6,6 +6,9 @@
 #include "GameObject.h"
 #include "Object3d.h"
 #include "Object3dRenderer.h"
+#include "Culling.h"
+#include "Model.h"
+#include "Mesh.h"
 #include "SkyBoxRenderer.h"
 #include "DebugDrawRenderer.h"
 #include "ParticleRenderer.h"
@@ -94,6 +97,15 @@ void RenderSystem::CollectObject3ds(const std::vector<std::unique_ptr<GameObject
 	//object3dsをクリア
 	object3ds_.clear();
 
+	//描画で使用するカメラがなければ
+	if (!renderCamera_){
+		object3dBatches_.clear();
+		return;
+	}
+
+	//カリングの生成
+	std::unique_ptr<Culling> culling = Culling::Create(renderCamera);
+
 	for (const std::unique_ptr<GameObject>& gameObject : gameObjects){
 		//ゲームオブジェクトがNullじゃないか
 		if (!gameObject){
@@ -123,6 +135,30 @@ void RenderSystem::CollectObject3ds(const std::vector<std::unique_ptr<GameObject
 			continue;
 		}
 
+		//モデルを取得
+		Model* model = object3d->GetModel();
+
+		//モデルがなければ
+		if (!model){
+			continue;
+		}
+
+		//視錐台カリング
+		bool isVisible = false;
+		//メッシュごと
+		for (const std::unique_ptr<Mesh>& mesh : model->GetMeshes()){
+			//メッシュがなければ
+			if (!mesh){
+				continue;
+			}
+
+			//カリングを行う
+			if (culling->IsVisibleInFrustum(mesh->GetAABB(), object3d->GetWorldMatrix())){
+				isVisible = true;
+				break;
+			}
+		}
+
 		//Object3dsに追加
 		object3ds_.push_back(object3d);
 	}
@@ -131,6 +167,8 @@ void RenderSystem::CollectObject3ds(const std::vector<std::unique_ptr<GameObject
 	BuildObject3dBatches();
 	//トランスフォーメーションデータの構築
 	BuildTransformationData();
+	//作成したバッチをレンダラーに送信
+	SubmitObject3dBatches();
 }
 
 //Object3dのレンダラーの取得
@@ -249,5 +287,17 @@ void RenderSystem::BuildTransformationData(){
 			//バッチに追加
 			batch.transformations.push_back(transformation);
 		}
+	}
+}
+
+//オブジェクト3dのバッチをレンダラーの送る
+void RenderSystem::SubmitObject3dBatches(){
+	if (!object3dRenderer_ || !renderCamera_){
+		return;
+	}
+
+	//レンダラーにバッチを送信
+	for (const Object3dBatch& batch : object3dBatches_){
+		object3dRenderer_->SubmitBatch(batch.model, batch.blendMode, batch.transformations, renderCamera_);
 	}
 }

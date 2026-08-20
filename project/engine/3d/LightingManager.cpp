@@ -39,6 +39,9 @@ void LightingManager::Initialize(DirectXBase* directXBase, SRVManager* srvManage
 
 //更新
 void LightingManager::Update(){
+	//directionalLight_->direction.x = std::clamp(directionalLight_->direction.x, -1.0f, 1.0f);
+	//directionalLight_->direction.y = std::clamp(directionalLight_->direction.y, -1.0f, 1.0f);
+	//directionalLight_->direction.z = std::clamp(directionalLight_->direction.z, -1.0f, 1.0f);
 }
 
 //描画の設定
@@ -72,7 +75,7 @@ void LightingManager::CreateDirectionLight(){
 	directionalLightResource_->Map(0, nullptr, reinterpret_cast<void**>(&directionalLight_));
 	directionalLight_->color = { 1.0f,1.0f,1.0f,1.0f };
 	directionalLight_->direction = { 0.0f,-1.0f,0.0f };
-	directionalLight_->intensity = 10.0f;
+	directionalLight_->intensity = 1.0f;
 	directionalLight_->isLambert = false;
 	directionalLight_->isBlinnPhong = true;
 	directionalLight_->enableDirectionalLighting = true;

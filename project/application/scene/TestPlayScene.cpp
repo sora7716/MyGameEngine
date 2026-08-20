@@ -75,7 +75,11 @@ void TestPlayScene::Initialize(){
 
 	Object3d* object3d = gameObject->AddComponent<Object3d>();
 
-	object3d->SetModel(sceneContext_.modelManager->FindModel("sneakWalk"));
+	object3d->SetModel(sceneContext_.modelManager->FindModel("cube"));
+
+	GameObject* gameObject2 = CreateGameObject();
+	Object3d* object3d2 = gameObject2->AddComponent<Object3d>();
+	object3d2->SetModel(sceneContext_.modelManager->FindModel("cube"));
 }
 
 //更新
@@ -145,6 +149,7 @@ void TestPlayScene::Debug(){
 	}
 
 	if (ImGui::TreeNode("directionalLight")){
+		directionalLight_ = *sceneContext_.lightingManager->GetDirectionalLight();
 		ImGui::ColorEdit4("color", &directionalLight_.color.x);
 		ImGui::DragFloat3("direction", &directionalLight_.direction.x, 0.01f);
 		ImGui::DragFloat("intensity", &directionalLight_.intensity, 0.05f, 0.0f, 10.0f);
@@ -158,18 +163,19 @@ void TestPlayScene::Debug(){
 
 //描画
 void TestPlayScene::Draw(Camera* camera){
-	frustum_->SetRenderCamera(camera);
-	debugDrawRenderer_->AddRenderData(frustum_->GetRenderData());
+	(void)camera;
+	//frustum_->SetRenderCamera(camera);
+	//debugDrawRenderer_->AddRenderData(frustum_->GetRenderData());
 
-	cube_->SetRenderCamera(camera);
-	debugDrawRenderer_->AddRenderData(cube_->GetRenderData());
+	//cube_->SetRenderCamera(camera);
+	//debugDrawRenderer_->AddRenderData(cube_->GetRenderData());
 
-	skyBox_->SetRenderCamera(camera);
-	skyBoxRenderer_->AddRenderData(skyBox_->GetSkyBoxRenderData());
+	//skyBox_->SetRenderCamera(camera);
+	//skyBoxRenderer_->AddRenderData(skyBox_->GetSkyBoxRenderData());
 
-	particleSystem_->SetRenderCamera(camera);
-	particleSystem_->DrawSetting();
-	particleRenderer_->AddRenderData(particleSystem_->GetRenderData());
+	//particleSystem_->SetRenderCamera(camera);
+	//particleSystem_->DrawSetting();
+	//particleRenderer_->AddRenderData(particleSystem_->GetRenderData());
 }
 
 //デバッグでの描画

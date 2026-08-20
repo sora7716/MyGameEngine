@@ -18,6 +18,8 @@ void Framework::Update() {
 	core_->GetInput()->Update();
 	//カメラの管理
 	core_->GetCameraManager()->Update();
+	//ライトの管理
+	core_->GetLightingManager()->Update();
 	//シーンの管理
 	core_->GetSceneManager()->Update();
 }

@@ -5,6 +5,8 @@
 #include "Camera.h"
 #include "Logger.h"
 #include "Mesh.h"
+#include "Model.h"
+#include <algorithm>
 #include <cassert>
 
 //生成
@@ -100,7 +102,7 @@ void Object3dRenderer::Draw(uint32_t instanceIndex){
 		//WVPのSRVIndex
 		uint32_t wvpSrvIndex = lodResource.srvIndex;
 		//描画カウント
-		uint32_t drawCount = renderDatas_[instanceIndex].lodRenderData.drawCounts[lodIndex];
+		uint32_t drawCount = renderDatas_[instanceIndex].lodRenderData.matrixCounts[lodIndex];
 
 		//LOD描画カウントが0だったら
 		if (drawCount == 0){
@@ -150,7 +152,7 @@ void Object3dRenderer::SubmitBatch(Model* model, BlendMode blendMode, const std:
 	}
 
 	assert(transformations.size() <= maxInstanceCount_);
-	
+
 	Object3dRenderHandle handle = kInvalidObject3dRenderHandle;
 	//同じModel*とBlendModeのバッチを探す
 	auto batchIt = std::find_if(
@@ -178,6 +180,25 @@ void Object3dRenderer::SubmitBatch(Model* model, BlendMode blendMode, const std:
 		//追加
 		batchResources_.push_back(newResource);
 	}
+
+	//ここからObject3dRenderDataを作る
+	Object3dRenderData renderData = {};
+
+	renderData.renderHandle = handle;
+	renderData.renderCamera = renderCamera;
+	renderData.blendMode = blendMode;
+
+	//LOD0のModel
+	renderData.lodRenderData.modelRendererDatas.push_back(model->GetModelRenderData());
+
+	//LOD0の描画数
+	renderData.lodRenderData.transformationData.push_back(transformations);
+
+	//LOD0の行列配列数
+	renderData.lodRenderData.matrixCounts.push_back(static_cast<uint32_t>(transformations.size()));
+
+	//完成した描画データをGPU側に渡す
+	AddRenderData(renderData);
 }
 
 //描画データの追加
@@ -195,7 +216,7 @@ void Object3dRenderer::AddRenderData(const Object3dRenderData& renderData){
 	const std::vector<std::vector<TransformationMatrix>>& transformationData = renderData.lodRenderData.transformationData;
 
 	//LODごとの描画数
-	const std::vector<uint32_t>drawCounts = renderData.lodRenderData.drawCounts;
+	const std::vector<uint32_t>drawCounts = renderData.lodRenderData.matrixCounts;
 
 	//CPUとGPUのLOD数を比べて一致しているか
 	assert(transformationData.size() == objectResource.lodResources.size());

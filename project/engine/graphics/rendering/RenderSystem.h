@@ -64,7 +64,7 @@ public://メンバ関数
 	/// Object3dを集める
 	/// </summary>
 	/// <param name="gameObjects">ゲームオブジェクト</param>
-	/// <param name="renderCaemra">描画で使用するカメラ</param>
+	/// <param name="renderCamera">描画で使用するカメラ</param>
 	void CollectObject3ds(const std::vector<std::unique_ptr<GameObject>>& gameObjects, Camera* renderCamera);
 
 	/// <summary>

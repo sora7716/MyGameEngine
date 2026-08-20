@@ -159,6 +159,11 @@ void RenderSystem::CollectObject3ds(const std::vector<std::unique_ptr<GameObject
 			}
 		}
 
+		//isVisibleがfalseなら
+		if (!isVisible){
+			continue;
+		}
+
 		//Object3dsに追加
 		object3ds_.push_back(object3d);
 	}

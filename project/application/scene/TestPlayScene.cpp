@@ -76,10 +76,6 @@ void TestPlayScene::Initialize(){
 	Object3d* object3d = gameObject->AddComponent<Object3d>();
 
 	object3d->SetModel(sceneContext_.modelManager->FindModel("cube"));
-
-	GameObject* gameObject2 = CreateGameObject();
-	Object3d* object3d2 = gameObject2->AddComponent<Object3d>();
-	object3d2->SetModel(sceneContext_.modelManager->FindModel("cube"));
 }
 
 //更新

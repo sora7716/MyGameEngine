@@ -450,7 +450,7 @@ void Object3d::EnsureUniqueMaterialInstance(){
 	}
 
 	//ModelやほかのObject3dと共有中なら個別コピー
-	if (!materialInstance_){
+	if (!materialInstance_.use_count() > 1){
 		materialInstance_ = std::make_shared<MaterialInstance>(*materialInstance_);
 	}
 }

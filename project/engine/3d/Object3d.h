@@ -19,6 +19,7 @@ class DirectXBase;
 class Camera;
 class Model;
 class GameObject;
+class MaterialInstrance;
 class LODBuilder;
 class LODController;
 class Culling;
@@ -279,6 +280,18 @@ public://メンバ関数
 	/// </summary>
 	/// <returns>ワールド行列のタイプ</returns>
 	WorldMatrixType GetWorldMatrixType()const;
+
+	/// <summary>
+	/// マテリアルインスタンスの取得
+	/// </summary>
+	/// <returns>マテリアルインスタンス</returns>
+	MaterialInstance* GetMaterialInstance();
+
+	/// <summary>
+	/// マテリアルインスタンスの取得
+	/// </summary>
+	/// <returns>マテリアルインスタンス</returns>
+	const MaterialInstance* GetMaterialInstance()const;
 private://メンバ関数
 	/// <summary>
 	/// LOD関係のセットアップ
@@ -304,6 +317,11 @@ private://メンバ関数
 	/// <param name="drawIndex">描画の検索キー</param>
 	/// <param name="worldMatrix">ワールド行列</param>
 	void UpdateWorldTransform(uint32_t lodIndex, uint32_t drawIndex, const Matrix4x4& worldMatrix);
+
+	/// <summary>
+	/// マテリアルを個別化する
+	/// </summary>
+	void EnsureUniqueMaterialInstance();
 private://メンバ関数テーブル
 	//座標の更新をまとめた
 	static void (Object3d::* UpdateWorldMatrixTable[])();
@@ -335,6 +353,9 @@ private://メンバ変数
 	std::vector<uint32_t>lodDrawCounts_;
 	//UV座標
 	std::vector<std::vector<Transform2d>> lodUvTransforms_;
+
+	//このObject3dが使用するマテリアル
+	std::shared_ptr<MaterialInstance>materialInstance_ = nullptr;
 
 	//描画用のカメラ
 	Camera* renderCamera_ = nullptr;

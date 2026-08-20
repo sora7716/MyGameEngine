@@ -36,7 +36,7 @@ void Object3dRenderer::Initialize(DirectXBase* directXBase, SRVManager* srvManag
 
 	//インスタンスの最大値の記録
 	maxInstanceCount_ = maxInstance;
-	
+
 
 	//描画データの初期化
 	renderDatas_.reserve(maxInstanceCount_);
@@ -138,6 +138,45 @@ void Object3dRenderer::Draw(uint32_t instanceIndex){
 				}
 			}
 		}
+	}
+}
+
+//バッチを受け取る関数
+void Object3dRenderer::SubmitBatch(Model* model, BlendMode blendMode, const std::vector<TransformationMatrix>& transformations, Camera* renderCamera){
+	if (!model || !renderCamera){
+		return;
+	} else if (transformations.empty()){
+		return;
+	}
+
+	assert(transformations.size() <= maxInstanceCount_);
+	
+	Object3dRenderHandle handle = kInvalidObject3dRenderHandle;
+	//同じModel*とBlendModeのバッチを探す
+	auto batchIt = std::find_if(
+		batchResources_.begin(),
+		batchResources_.end(),
+		[model, blendMode](const Object3dBatchResource& batchResource){
+			return batchResource.model == model &&
+				batchResource.blendMode == blendMode;
+		}
+	);
+
+	if (batchIt != batchResources_.end()){
+		//見つかった場合
+		handle = batchIt->handle;
+	} else{
+		//見つからなかった場合
+		handle = RegisterObject(1, maxInstanceCount_);
+
+		//新しく生成
+		Object3dBatchResource newResource = {};
+		newResource.model = model;
+		newResource.blendMode = blendMode;
+		newResource.handle = handle;
+
+		//追加
+		batchResources_.push_back(newResource);
 	}
 }
 

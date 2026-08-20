@@ -106,6 +106,18 @@ public://メンバ関数
 	/// </summary>
 	/// <param name="renderSystem">レンダーシステム</param>
 	void SetRenderSystem(RenderSystem* renderSystem);
+	
+	/// <summary>
+	/// ゲームカメラの取得
+	/// </summary>
+	/// <returns>ゲームカメラ</returns>
+	Camera* GetGameCamera();
+
+	/// <summary>
+	/// デバッグカメラの取得
+	/// </summary>
+	/// <returns>デバッグカメラ</returns>
+	Camera* GetDebugCamera();
 private://メンバ関数
 	/// <summary>
 	/// 名前を重複しないようにする

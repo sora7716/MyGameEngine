@@ -116,7 +116,7 @@ void SceneManager::Debug(){
 //ゲーム画面の描画
 void SceneManager::GameDraw(){
 	//オブジェクト3dの追加
-	renderSystem_->CollectObject3ds(scene_->GetGameObjects());
+	renderSystem_->CollectObject3ds(scene_->GetGameObjects(), scene_->GetGameCamera());
 	//描画
 	scene_->GameDraw();
 }
@@ -124,7 +124,7 @@ void SceneManager::GameDraw(){
 //デバッグ画面の描画
 void SceneManager::DebugDraw(){
 	//オブジェクト3dの追加
-	renderSystem_->CollectObject3ds(scene_->GetGameObjects());
+	renderSystem_->CollectObject3ds(scene_->GetGameObjects(), scene_->GetDebugCamera());
 	//描画
 	scene_->DebugDraw();
 }

@@ -188,6 +188,20 @@ void BaseScene::SetRenderSystem(RenderSystem* renderSystem){
 	renderSystem_ = renderSystem;
 }
 
+//ゲームカメラの取得
+Camera* BaseScene::GetGameCamera(){
+	return gameCamera_;
+}
+
+//デバッグカメラの取得
+Camera* BaseScene::GetDebugCamera(){
+	//デバッグカメラがなかった場合
+	if (!debugCamera_){
+		return nullptr;
+	}
+	return debugCamera_->GetCamera();
+}
+
 //名前を重複しないようにする
 std::string BaseScene::CreateUniqueGameObjectName(const std::string& baseName, std::string_view remove)const{
 	std::string name = baseName;

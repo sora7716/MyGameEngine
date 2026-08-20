@@ -1,5 +1,6 @@
 #pragma once
 #include "PipelineManagerData.h"
+#include "RenderingData.h"
 #include <vector>
 #include <memory>
 
@@ -10,6 +11,7 @@ class TextureManager;
 class PipelineManager;
 class LightingManager;
 class Blend;
+class Camera;
 class GameObject;
 class Model;
 class Object3d;
@@ -23,6 +25,9 @@ struct Object3dBatch{
 	Model* model = nullptr;
 	BlendMode blendMode = BlendMode::kNone;
 	std::vector<Object3d*>instances;
+
+	//GPUへ送るインスタンスごとの行列
+	std::vector<TransformationMatrix>transformations;
 };
 
 /// <summary>
@@ -59,7 +64,8 @@ public://メンバ関数
 	/// Object3dを集める
 	/// </summary>
 	/// <param name="gameObjects">ゲームオブジェクト</param>
-	void CollectObject3ds(const std::vector<std::unique_ptr<GameObject>>& gameObjects);
+	/// <param name="renderCaemra">描画で使用するカメラ</param>
+	void CollectObject3ds(const std::vector<std::unique_ptr<GameObject>>& gameObjects, Camera* renderCamera);
 
 	/// <summary>
 	/// Object3dのレンダラーの取得
@@ -102,6 +108,11 @@ private://メンバ関数
 	/// オブジェクト3dの描画グループを構築
 	/// </summary>
 	void BuildObject3dBatches();
+
+	/// <summary>
+	/// トランスフォーメーションデータの構築
+	/// </summary>
+	void BuildTransformationData();
 private://メンバ関数
 	//DirectXの基盤部分
 	DirectXBase* directXBase_ = nullptr;
@@ -109,6 +120,8 @@ private://メンバ関数
 	PipelineManager* pipelineManager_ = nullptr;
 	//ライティングの管理
 	LightingManager* lightingManager_ = nullptr;
+	//カメラ
+	Camera* renderCamera_ = nullptr;
 	//オブジェクト3d
 	std::vector<Object3d*>object3ds_;
 	//オブジェクト3dを描画グループごとに分ける

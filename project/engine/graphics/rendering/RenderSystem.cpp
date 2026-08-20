@@ -2,6 +2,7 @@
 #include "DirectXBase.h"
 #include "PipelineManager.h"
 #include "LightingManager.h"
+#include "Camera.h"
 #include "GameObject.h"
 #include "Object3d.h"
 #include "Object3dRenderer.h"
@@ -86,7 +87,10 @@ void RenderSystem::Draw(){
 }
 
 //Object3dを集める
-void RenderSystem::CollectObject3ds(const std::vector<std::unique_ptr<GameObject>>& gameObjects){
+void RenderSystem::CollectObject3ds(const std::vector<std::unique_ptr<GameObject>>& gameObjects, Camera* renderCamera){
+	//今回描画で使用するカメラ
+	renderCamera_ = renderCamera;
+
 	//object3dsをクリア
 	object3ds_.clear();
 
@@ -125,6 +129,8 @@ void RenderSystem::CollectObject3ds(const std::vector<std::unique_ptr<GameObject
 
 	//収集したObject3dをグループ分け
 	BuildObject3dBatches();
+	//トランスフォーメーションデータの構築
+	BuildTransformationData();
 }
 
 //Object3dのレンダラーの取得
@@ -196,8 +202,8 @@ void RenderSystem::BuildObject3dBatches(){
 			object3dBatches_.begin(),
 			object3dBatches_.end(),
 			[model, blendMode](const Object3dBatch& batch){
-					return batch.model == model &&
-						batch.blendMode == blendMode;
+				return batch.model == model &&
+					batch.blendMode == blendMode;
 			}
 		);
 
@@ -214,6 +220,34 @@ void RenderSystem::BuildObject3dBatches(){
 
 			//オブジェクト3dのバッチに追加
 			object3dBatches_.push_back(std::move(newBatch));
+		}
+	}
+}
+
+//トランスフォーメーションデータの構築
+void RenderSystem::BuildTransformationData(){
+	//もしカメラがなければ
+	if (!renderCamera_){
+		return;
+	}
+
+	for (Object3dBatch& batch : object3dBatches_){
+		//配列クリア
+		batch.transformations.clear();
+		//サイズを確保
+		batch.transformations.reserve(batch.instances.size());
+		for (Object3d* object3d : batch.instances){
+			//ワールド行列を取得
+			Matrix4x4 world = object3d->GetWorldMatrix();
+
+			//トランスフォーメーション行列
+			TransformationMatrix transformation = {};
+			transformation.world = world;
+			transformation.wvp = world * renderCamera_->GetViewProjectionMatrix();
+			transformation.worldInverseTranspose = world.InverseTranspose();
+
+			//バッチに追加
+			batch.transformations.push_back(transformation);
 		}
 	}
 }

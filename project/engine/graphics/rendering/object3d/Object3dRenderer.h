@@ -9,6 +9,14 @@
 class DirectXBase;
 class SRVManager;
 class TextureManager;
+class Model;
+
+//オブジェクト3dのバッチリソース
+struct Object3dBatchResource{
+	Model* model = nullptr;
+	BlendMode blendMode = BlendMode::kNone;
+	Object3dRenderHandle handle = kInvalidObject3dRenderHandle;
+};
 
 /// <summary>
 /// Object3dのレンダラー
@@ -65,6 +73,15 @@ public://メンバ関数
 	void Draw(uint32_t instanceIndex);
 
 	/// <summary>
+	/// バッチを受け取る関数
+	/// </summary>
+	/// <param name="model">モデル</param>
+	/// <param name="blendMode">ブレンドモード</param>
+	/// <param name="transformations">トランスフォーメーションデータ</param>
+	/// <param name="renderCamera">描画用カメラ</param>
+	void SubmitBatch(Model* model, BlendMode blendMode, const std::vector<TransformationMatrix>& transformations, Camera* renderCamera);
+
+	/// <summary>
 	/// 描画データの追加
 	/// </summary>
 	/// <param name="renderData">描画データ</param>
@@ -107,5 +124,7 @@ private://メンバ変数
 	std::vector<Object3dRenderData>renderDatas_;
 	//Object3dが生存している間保持する
 	std::vector<Object3dGpuResource>objectResources_;
+	//バッチリソース
+	std::vector<Object3dBatchResource>batchResources_;
 };
 

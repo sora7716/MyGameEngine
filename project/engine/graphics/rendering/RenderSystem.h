@@ -16,6 +16,7 @@ class GameObject;
 class Model;
 class Object3d;
 class Object3dRenderer;
+class MaterialInstance;
 class SkyBoxRenderer;
 class DebugDrawRenderer;
 class ParticleRenderer;
@@ -23,9 +24,10 @@ class ParticleRenderer;
 //描画グループごとにObject3dを分ける
 struct Object3dBatch{
 	Model* model = nullptr;
+	MaterialInstance* materialInstance = nullptr;
 	BlendMode blendMode = BlendMode::kNone;
+	
 	std::vector<Object3d*>instances;
-
 	//GPUへ送るインスタンスごとの行列
 	std::vector<TransformationMatrix>transformations;
 };

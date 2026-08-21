@@ -144,8 +144,8 @@ void Object3dRenderer::Draw(uint32_t instanceIndex){
 }
 
 //バッチを受け取る関数
-void Object3dRenderer::SubmitBatch(Model* model, BlendMode blendMode, const std::vector<TransformationMatrix>& transformations, Camera* renderCamera){
-	if (!model || !renderCamera){
+void Object3dRenderer::SubmitBatch(Model* model, MaterialInstance* materialInstance, BlendMode blendMode, const std::vector<TransformationMatrix>& transformations, Camera* renderCamera){
+	if (!model || !materialInstance || !renderCamera){
 		return;
 	} else if (transformations.empty()){
 		return;
@@ -158,8 +158,9 @@ void Object3dRenderer::SubmitBatch(Model* model, BlendMode blendMode, const std:
 	auto batchIt = std::find_if(
 		batchResources_.begin(),
 		batchResources_.end(),
-		[model, blendMode](const Object3dBatchResource& batchResource){
+		[model, materialInstance, blendMode](const Object3dBatchResource& batchResource){
 			return batchResource.model == model &&
+				batchResource.materialInstance == materialInstance &&
 				batchResource.blendMode == blendMode;
 		}
 	);
@@ -174,6 +175,7 @@ void Object3dRenderer::SubmitBatch(Model* model, BlendMode blendMode, const std:
 		//新しく生成
 		Object3dBatchResource newResource = {};
 		newResource.model = model;
+		newResource.materialInstance = materialInstance;
 		newResource.blendMode = blendMode;
 		newResource.handle = handle;
 

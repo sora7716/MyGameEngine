@@ -10,6 +10,7 @@
 #include "LODBuilder.h"
 #include "LODController.h"
 #include "Object3dRenderer.h"
+#include "MaterialInstance.h"
 #include <algorithm>
 #include <cassert>
 
@@ -450,7 +451,7 @@ void Object3d::EnsureUniqueMaterialInstance(){
 	}
 
 	//ModelやほかのObject3dと共有中なら個別コピー
-	if (!materialInstance_.use_count() > 1){
+	if (materialInstance_.use_count() > 1){
 		materialInstance_ = std::make_shared<MaterialInstance>(*materialInstance_);
 	}
 }

@@ -19,7 +19,7 @@ class DirectXBase;
 class Camera;
 class Model;
 class GameObject;
-class MaterialInstrance;
+class MaterialInstance;
 class LODBuilder;
 class LODController;
 class Culling;

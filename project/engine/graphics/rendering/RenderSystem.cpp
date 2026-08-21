@@ -238,14 +238,23 @@ void RenderSystem::BuildObject3dBatches(){
 
 		//Model*BlendModeを取得
 		Model* model = object3d->GetModel();
+		//マテリアルインスタンスを取得
+		MaterialInstance* materialInstance = object3d->GetMaterialInstance();
+		//ブレンドモードを取得
 		BlendMode blendMode = object3d->GetBlendMode();
+
+		//モデル、またはマテリアルインスタンスがなければスキップ
+		if (!model || !materialInstance){
+			continue;
+		}
 
 		//同じModel*とBlendModeのバッチを探す
 		auto batchIt = std::find_if(
 			object3dBatches_.begin(),
 			object3dBatches_.end(),
-			[model, blendMode](const Object3dBatch& batch){
+			[model, materialInstance, blendMode](const Object3dBatch& batch){
 				return batch.model == model &&
+					batch.materialInstance == materialInstance &&
 					batch.blendMode == blendMode;
 			}
 		);
@@ -257,6 +266,7 @@ void RenderSystem::BuildObject3dBatches(){
 			//見つからなかった場合新しくバッチを作成
 			Object3dBatch newBatch = {
 				.model = model,
+				.materialInstance = materialInstance,
 				.blendMode = blendMode,
 			};
 			newBatch.instances.push_back(object3d);
@@ -303,6 +313,6 @@ void RenderSystem::SubmitObject3dBatches(){
 
 	//レンダラーにバッチを送信
 	for (const Object3dBatch& batch : object3dBatches_){
-		object3dRenderer_->SubmitBatch(batch.model, batch.blendMode, batch.transformations, renderCamera_);
+		object3dRenderer_->SubmitBatch(batch.model, batch.materialInstance, batch.blendMode, batch.transformations, renderCamera_);
 	}
 }

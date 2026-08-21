@@ -10,6 +10,7 @@ class DirectXBase;
 class SRVManager;
 class TextureManager;
 class Model;
+class MaterialInstance;
 
 /// <summary>
 /// Object3dのレンダラー
@@ -21,6 +22,7 @@ private://構造体など
 	//オブジェクト3dのバッチリソース
 	struct Object3dBatchResource{
 		Model* model = nullptr;
+		MaterialInstance* materialInstance = nullptr;
 		BlendMode blendMode = BlendMode::kNone;
 		Object3dRenderHandle handle = kInvalidObject3dRenderHandle;
 	};
@@ -76,10 +78,11 @@ public://メンバ関数
 	/// バッチを受け取る関数
 	/// </summary>
 	/// <param name="model">モデル</param>
+	/// <param name="materialInstance">マテリアルインスタンス</param>
 	/// <param name="blendMode">ブレンドモード</param>
 	/// <param name="transformations">トランスフォーメーションデータ</param>
 	/// <param name="renderCamera">描画用カメラ</param>
-	void SubmitBatch(Model* model, BlendMode blendMode, const std::vector<TransformationMatrix>& transformations, Camera* renderCamera);
+	void SubmitBatch(Model* model, MaterialInstance* materialInstance, BlendMode blendMode, const std::vector<TransformationMatrix>& transformations, Camera* renderCamera);
 
 	/// <summary>
 	/// 描画データの追加

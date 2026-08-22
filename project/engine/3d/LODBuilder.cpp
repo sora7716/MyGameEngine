@@ -55,7 +55,9 @@ const std::vector<std::unique_ptr<Model>>& LODBuilder::GetLODModels() const{
 void LODBuilder::SetColor(uint32_t materialIndex, const Vector4& color){
 	for (std::unique_ptr<Model>& lodModel : lodModels_){
 		if (lodModel){
-			lodModel->SetColor(materialIndex, color);
+			(void)materialIndex;
+			(void)color;
+			//lodModel->SetColor(materialIndex, color);
 		}
 	}
 }
@@ -64,7 +66,9 @@ void LODBuilder::SetColor(uint32_t materialIndex, const Vector4& color){
 void LODBuilder::SetTexture(uint32_t materialIndex, const std::string& imageFileName){
 	for (std::unique_ptr<Model>& lodModel : lodModels_){
 		if (lodModel){
-			lodModel->SetTexture(materialIndex, imageFileName);
+			(void)materialIndex;
+			(void)imageFileName;
+			//lodModel->SetTexture(materialIndex, imageFileName);
 		}
 	}
 }
@@ -73,7 +77,9 @@ void LODBuilder::SetTexture(uint32_t materialIndex, const std::string& imageFile
 void LODBuilder::SetEnvironmentCoefficient(uint32_t materialIndex, float environmentCoefficient){
 	for (std::unique_ptr<Model>& lodModel : lodModels_){
 		if (lodModel){
-			lodModel->SetEnvironmentCoefficient(materialIndex, environmentCoefficient);
+			(void)materialIndex;
+			(void)environmentCoefficient;
+			//lodModel->SetEnvironmentCoefficient(materialIndex, environmentCoefficient);
 		}
 	}
 }
@@ -82,7 +88,9 @@ void LODBuilder::SetEnvironmentCoefficient(uint32_t materialIndex, float environ
 void LODBuilder::SetEnvironmentMap(uint32_t materialIndex, const std::string& environmentMapFileName){
 	for (std::unique_ptr<Model>& lodModel : lodModels_){
 		if (lodModel){
-			lodModel->SetEnvironmentMap(materialIndex, environmentMapFileName);
+			(void)materialIndex;
+			(void)environmentMapFileName;
+			//lodModel->SetEnvironmentMap(materialIndex, environmentMapFileName);
 		}
 	}
 }
@@ -91,7 +99,9 @@ void LODBuilder::SetEnvironmentMap(uint32_t materialIndex, const std::string& en
 void LODBuilder::SetIsLighting(uint32_t materialIndex, bool isLighting){
 	for (std::unique_ptr<Model>& lodModel : lodModels_){
 		if (lodModel){
-			lodModel->SetIsLighting(materialIndex, isLighting);
+			(void)materialIndex;
+			(void)isLighting;
+			//lodModel->SetIsLighting(materialIndex, isLighting);
 		}
 	}
 }
@@ -100,7 +110,9 @@ void LODBuilder::SetIsLighting(uint32_t materialIndex, bool isLighting){
 void LODBuilder::SetShininess(uint32_t materialIndex, float shininess){
 	for (std::unique_ptr<Model>& lodModel : lodModels_){
 		if (lodModel){
-			lodModel->SetShininess(materialIndex, shininess);
+			(void)materialIndex;
+			(void)shininess;
+			//lodModel->SetShininess(materialIndex, shininess);
 		}
 	}
 }

@@ -208,13 +208,6 @@ public://メンバ関数
 	const Transform2d& GetUVTransform(uint32_t index)const;
 
 	/// <summary>
-	/// 色の取得
-	/// </summary>
-	/// <param name="index">インデックス</param>
-	/// <returns>色</returns>
-	const Vector4& GetColor(uint32_t index)const;
-
-	/// <summary>
 	/// ワールド行列の取得
 	/// </summary>
 	/// <returns>ワールド行列</returns>

@@ -301,15 +301,6 @@ const Transform2d& Object3d::GetUVTransform(uint32_t index) const{
 	return lodUvTransforms_[0][index];
 }
 
-//色の取得
-const Vector4& Object3d::GetColor(uint32_t index) const{
-	static const Vector4 defaultColor(0.0f, 0.0f, 0.0f, 0.0f);
-	if (baseModel_){
-		return baseModel_->GetColor(index);
-	}
-	return defaultColor;
-}
-
 //ワールド行列の取得
 const Matrix4x4& Object3d::GetWorldMatrix()const{
 	return worldMatrix_;

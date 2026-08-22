@@ -87,67 +87,17 @@ void Model::RebuildMeshes(const std::vector<MeshData>& meshes){
 //描画に必要なデータのセットアップ
 void Model::SetupRenderData(){
 	//描画に必要なデータ
-	modelRenderData_.materialResources = materialResources_;
 	modelRenderData_.meshRenderDatas.resize(meshes_.size());
 	for (uint32_t i = 0; i < meshes_.size(); i++){
 		modelRenderData_.meshRenderDatas[i] = meshes_[i]->GetMeshRenderData();
 	}
 	modelRenderData_.modelData = modelData_;
-	modelRenderData_.rimLightResource = rimLightResource_;
-}
-
-//uv変換
-void Model::UVTransform(uint32_t index, Transform2d uvTransform){
-	materialPtrs_[index]->uvMatrix = matrixUtility::MakeAffineMatrix(uvTransform);
-}
-
-// 色を変更
-void Model::SetColor(uint32_t index, const Vector4& color){
-	materialPtrs_[index]->color = color;
-}
-
-//テクスチャの設定
-void Model::SetTexture(uint32_t materialIndex, const std::string& imageFileName){
-	modelData_.materialTexturePaths[materialIndex].textureFilePath = "engine/resources/textures/" + imageFileName;
-}
-
-//環境マップの設定
-void Model::SetEnvironmentMap(uint32_t materialIndex, const std::string& environmentMapFileName){
-	modelData_.materialTexturePaths[materialIndex].environmentMap = "engine/resources/textures/" + environmentMapFileName;
-}
-
-//色を取得
-const Vector4& Model::GetColor(uint32_t index) const{
-	return materialPtrs_[index]->color;
+	modelRenderData_.rimLightResource = nullptr;
 }
 
 //モデルデータのゲッター
 const ModelData& Model::GetModelData() const{
 	return modelData_;
-}
-
-//ライティングの設定
-void Model::SetIsLighting(uint32_t materialIndex, bool isLighting){
-	materialPtrs_[materialIndex]->enableLighting = isLighting;
-}
-
-//輝度の設定
-void Model::SetShininess(uint32_t materialIndex, float shininess){
-	materialPtrs_[materialIndex]->shininess = shininess;
-}
-
-//環境マップの映り込み度を調整
-void Model::SetEnvironmentCoefficient(uint32_t materialIndex, float environmentCoefficient){
-	materialPtrs_[materialIndex]->environmentCoefficient = environmentCoefficient;
-}
-
-//リムライトのセッター
-void Model::SetRimLight(const RimLight& rimLight){
-	rimLightPtr_->color = rimLight.color;
-	rimLightPtr_->outLinePower = rimLight.outLinePower;
-	rimLightPtr_->power = rimLight.power;
-	rimLightPtr_->softness = rimLight.softness;
-	rimLightPtr_->enableRimLighting = rimLight.enableRimLighting;
 }
 
 //メッシュたちのゲッター
@@ -163,39 +113,6 @@ const ModelRenderData& Model::GetModelRenderData(){
 //デフォルトのマテリアルインスタンスの取得
 std::shared_ptr<MaterialInstance> Model::GetDefaultMaterialInstance() const{
 	return defaultMaterialInstance_;
-}
-
-//マテリアルリソースの生成
-void Model::CreateMaterialResource(){
-	//マテリアルリソースとポインタのサイズ設定
-	materialResources_.resize(modelData_.materialTexturePaths.size());
-	materialPtrs_.resize(modelData_.materialTexturePaths.size());
-	for (uint32_t i = 0; i < modelData_.materialTexturePaths.size(); i++){
-		//マテリアル用のリソースを作る
-		materialResources_[i] = directXBase_->CreateBufferResource(sizeof(Material));
-		//書き込むためのアドレスを取得
-		materialResources_[i]->Map(0, nullptr, reinterpret_cast<void**>(&materialPtrs_[i]));
-		//色を書き込む
-		materialPtrs_[i]->color = { 1.0f, 1.0f, 1.0f, 1.0f };
-		materialPtrs_[i]->enableLighting = true;
-		materialPtrs_[i]->uvMatrix = Matrix4x4::Identity4x4();
-		materialPtrs_[i]->shininess = 10.0f;
-		materialPtrs_[i]->environmentCoefficient = 0.0f;
-	}
-}
-
-//リムライトのリソースを生成
-void Model::CreateRimLightResource(){
-	//マテリアル用のリソースを作る
-	rimLightResource_ = directXBase_->CreateBufferResource(sizeof(RimLight));
-	//書き込むためのアドレスを取得
-	rimLightResource_->Map(0, nullptr, reinterpret_cast<void**>(&rimLightPtr_));
-	//色を書き込む
-	rimLightPtr_->color = { 1.0f, 1.0f, 1.0f, 1.0f };
-	rimLightPtr_->outLinePower = 0.1f;
-	rimLightPtr_->power = 0.1f;
-	rimLightPtr_->softness = 5.0f;
-	rimLightPtr_->enableRimLighting = false;
 }
 
 //メッシュの構築
@@ -215,12 +132,10 @@ void Model::CreateModel(const std::vector<MeshData>& meshDatas, const std::strin
 	modelData_.meshDatas = { meshDatas };
 	//メッシュの再構築
 	RebuildMeshes(modelData_.meshDatas);
-	//各種リソースの生成
-	CreateResources();
-	//テクスチャの適応
-	SetTexture(modelData_.meshDatas[0].materialIndex, "white1x1.png");
-	//環境マッピング
-	SetEnvironmentMap(modelData_.meshDatas[0].materialIndex, "skybox_cube.dds");
+	//テクスチャの設定
+	modelData_.materialTexturePaths[0].textureFilePath = "engine/resources/textures/white1x1.png";
+	//環境マップの設定
+	modelData_.materialTexturePaths[0].environmentMap = "engine/resources/textures/skybox_cube.dds";
 	//ノードの初期化
 	Node& node = modelData_.rootNode;
 	node.name = nodeName;
@@ -238,10 +153,9 @@ void Model::CreateModel(const std::string& objectFileName){
 	modelData_ = modelLoader::LoadModelFile("engine/resources/models", objectFileName);
 	//メッシュの再構築
 	RebuildMeshes(modelData_.meshDatas);
-	//各種リソースの生成
-	CreateResources();
-	for (MeshData& meshData : modelData_.meshDatas){
-		SetEnvironmentMap(meshData.materialIndex, "skybox_cube.dds");
+	//環境マップの設定
+	for (MaterialTexturePaths& environmentMap : modelData_.materialTexturePaths){
+		environmentMap.environmentMap = "engine/resources/textures/skybox_cube.dds";
 	}
 	//マテリアルインスタンスの生成と初期化
 	defaultMaterialInstance_ = std::make_shared<MaterialInstance>();
@@ -255,22 +169,13 @@ void Model::CreateModel(const ModelData& modelData){
 	modelData_ = modelData;
 	//メッシュの再構成
 	RebuildMeshes(modelData_.meshDatas);
-	//各種リソースの生成
-	CreateResources();
-	for (MeshData& meshData : modelData_.meshDatas){
-		SetEnvironmentMap(meshData.materialIndex, "skybox_cube.dds");
+	//環境マップの設定
+	for (MaterialTexturePaths& environmentMap : modelData_.materialTexturePaths){
+		environmentMap.environmentMap = "engine/resources/textures/skybox_cube.dds";
 	}
 	//マテリアルインスタンスの生成と初期化
 	defaultMaterialInstance_ = std::make_shared<MaterialInstance>();
 	defaultMaterialInstance_->Initialize(modelData_.materialTexturePaths);
 	//描画データをまとめる
 	SetupRenderData();
-}
-
-//各種リソースの生成
-void Model::CreateResources(){
-	//マテリアルリソースの生成
-	CreateMaterialResource();
-	//リムライトリソースの生成
-	CreateRimLightResource();
 }

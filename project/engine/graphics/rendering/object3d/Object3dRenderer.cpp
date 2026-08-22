@@ -6,6 +6,7 @@
 #include "Logger.h"
 #include "Mesh.h"
 #include "Model.h"
+#include "MaterialInstance.h"
 #include <algorithm>
 #include <cassert>
 
@@ -153,6 +154,8 @@ void Object3dRenderer::SubmitBatch(Model* model, MaterialInstance* materialInsta
 
 	assert(transformations.size() <= maxInstanceCount_);
 
+	//現在のバッチのポインタ
+	Object3dBatchResource* currentBatchResource = nullptr;
 	Object3dRenderHandle handle = kInvalidObject3dRenderHandle;
 	//同じModel*とBlendModeのバッチを探す
 	auto batchIt = std::find_if(
@@ -168,6 +171,8 @@ void Object3dRenderer::SubmitBatch(Model* model, MaterialInstance* materialInsta
 	if (batchIt != batchResources_.end()){
 		//見つかった場合
 		handle = batchIt->handle;
+		//現在のバッチのポインタを保存
+		currentBatchResource = &(*batchIt);
 	} else{
 		//見つからなかった場合
 		handle = RegisterObject(1, maxInstanceCount_);
@@ -179,9 +184,18 @@ void Object3dRenderer::SubmitBatch(Model* model, MaterialInstance* materialInsta
 		newResource.blendMode = blendMode;
 		newResource.handle = handle;
 
+		//GPUリソースを生成
+		CreateMaterialInstanceResource(newResource);
+
 		//追加
-		batchResources_.push_back(newResource);
+		batchResources_.push_back(std::move(newResource));
+
+		//現在のバッチのポインタを保存
+		currentBatchResource = &batchResources_.back();
 	}
+
+	//マテリアルインスタンスリソース1の更新
+	UpdateMaterialInstanceResource(*currentBatchResource);
 
 	//ここからObject3dRenderDataを作る
 	Object3dRenderData renderData = {};
@@ -190,8 +204,22 @@ void Object3dRenderer::SubmitBatch(Model* model, MaterialInstance* materialInsta
 	renderData.renderCamera = renderCamera;
 	renderData.blendMode = blendMode;
 
-	//LOD0のModel
-	renderData.lodRenderData.modelRendererDatas.push_back(model->GetModelRenderData());
+	//Modelからメッシュを含む描画データをコピー
+	ModelRenderData modelRenderData = model->GetModelRenderData();
+	//マテリアル用のGPUリソースを差し替え　
+	modelRenderData.materialResources = currentBatchResource->materialResources;
+	//リムライト用のGPUリソースを差し替え
+	modelRenderData.rimLightResource = currentBatchResource->rimLightResource;
+	//マテリアルインスタンスのスロットを取得
+	const std::vector<MaterialInstanceSlot>& slots = materialInstance->GetSlots();
+	//モデルの描画データのテクスチャパスの要素数を設定
+	modelRenderData.modelData.materialTexturePaths.resize(slots.size());
+	//テクスチャパスをコピー
+	for (uint32_t i = 0; i < static_cast<uint32_t>(slots.size()); i++){
+		modelRenderData.modelData.materialTexturePaths[i] = slots[i].texturePaths;
+	}
+	//描画データに追加
+	renderData.lodRenderData.modelRendererDatas.push_back(std::move(modelRenderData));
 
 	//LOD0の描画数
 	renderData.lodRenderData.transformationData.push_back(transformations);
@@ -277,4 +305,61 @@ void Object3dRenderer::CreateStructuredBufferForWvp(LODGpuResource& lodGpuResour
 		lodGpuResource.capacity,
 		sizeof(TransformationMatrix)
 	);
+}
+
+//MaterialInstance用のGPUリソースを生成
+void Object3dRenderer::CreateMaterialInstanceResource(Object3dBatchResource& batchResource){
+	//マテリアルインスタンスがなければ
+	if (!batchResource.materialInstance){
+		return;
+	}
+
+	//マテリアルインスタンスのスロットを取得
+	const std::vector<MaterialInstanceSlot>& slots = batchResource.materialInstance->GetSlots();
+	batchResource.materialResources.resize(slots.size());
+	batchResource.materialPtrs.resize(slots.size());
+
+	//マテリアルの生成
+	for (uint32_t i = 0; i < static_cast<uint32_t>(slots.size()); i++){
+		batchResource.materialResources[i] = directXBase_->CreateBufferResource(sizeof(Material));
+		batchResource.materialResources[i]->Map(0, nullptr, reinterpret_cast<void**>(&batchResource.materialPtrs[i]));
+		*batchResource.materialPtrs[i] = slots[i].material;
+	}
+
+	//リムライトの生成
+	batchResource.rimLightResource = directXBase_->CreateBufferResource(sizeof(RimLight));
+	batchResource.rimLightResource->Map(0, nullptr, reinterpret_cast<void**>(&batchResource.rimLightPtr));
+	*batchResource.rimLightPtr = batchResource.materialInstance->GetRimLight();
+
+	//マテリアルが変更されたかを判断する変数をコピー
+	batchResource.uploadedRevision = batchResource.materialInstance->GetRevision();
+}
+
+//マテリアルインスタンスの更新
+void Object3dRenderer::UpdateMaterialInstanceResource(Object3dBatchResource& batchResource){
+	//マテリアルインスタンスがなければ
+	if (!batchResource.materialInstance){
+		return;
+	}
+
+	//変更バージョン
+	uint64_t revision = batchResource.materialInstance->GetRevision();
+
+	//バージョンを確認
+	if (batchResource.uploadedRevision == revision){
+		//変更がなかった場合
+		return;
+	}
+
+	//変更があった場合
+	//マテリアルを変更
+	const std::vector<MaterialInstanceSlot>& slots = batchResource.materialInstance->GetSlots();
+	for (uint32_t i = 0; i < static_cast<uint32_t>(slots.size()); i++){
+		*batchResource.materialPtrs[i] = slots[i].material;
+	}
+	//リムライトの変更
+	*batchResource.rimLightPtr = batchResource.materialInstance->GetRimLight();
+
+	//バージョンを更新
+	batchResource.uploadedRevision = revision;
 }

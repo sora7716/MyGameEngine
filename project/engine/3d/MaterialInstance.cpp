@@ -83,6 +83,51 @@ void MaterialInstance::SetEnvironmentMap(uint32_t index, const std::string& path
 	revision_++;
 }
 
+//UVのスケールの設定
+void MaterialInstance::SetUVScale(uint32_t index, const Vector2& scale){
+	//検索キーとスロットのサイズを比較して
+	if (index >= slots_.size()){
+		return;
+	}
+
+	slots_[index].uvTransform.scale = scale;
+
+	slots_[index].material.uvMatrix = matrixUtility::MakeAffineMatrix(slots_[index].uvTransform);
+
+	//変更があったので加算
+	revision_++;
+}
+
+//UVの回転の設定
+void MaterialInstance::SetUVRotate(uint32_t index, float rotate){
+	//検索キーとスロットのサイズを比較して
+	if (index >= slots_.size()){
+		return;
+	}
+
+	slots_[index].uvTransform.rotate = rotate;
+
+	slots_[index].material.uvMatrix = matrixUtility::MakeAffineMatrix(slots_[index].uvTransform);
+
+	//変更があったので加算
+	revision_++;
+}
+
+//UVの平行移動の設定
+void MaterialInstance::SetUVTranslate(uint32_t index, const Vector2& translate){
+	//検索キーとスロットのサイズを比較して
+	if (index >= slots_.size()){
+		return;
+	}
+
+	slots_[index].uvTransform.translate = translate;
+
+	slots_[index].material.uvMatrix = matrixUtility::MakeAffineMatrix(slots_[index].uvTransform);
+
+	//変更があったので加算
+	revision_++;
+}
+
 //UVトランスフォームの設定
 void MaterialInstance::SetUVTransform(uint32_t index, const Transform2d& transform){
 	//検索キーとスロットのサイズを比較して
@@ -92,7 +137,7 @@ void MaterialInstance::SetUVTransform(uint32_t index, const Transform2d& transfo
 
 	slots_[index].uvTransform = transform;
 
-	slots_[index].material.uvMatrix = matrixUtility::MakeAffineMatrix(transform);
+	slots_[index].material.uvMatrix = matrixUtility::MakeAffineMatrix(slots_[index].uvTransform);
 
 	//変更があったので加算
 	revision_++;

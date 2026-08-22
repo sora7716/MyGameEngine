@@ -75,16 +75,6 @@ public://メンバ関数
 	void PostDraw(uint32_t swapChainIndex);
 
 	/// <summary>
-	/// 描画開始位置
-	/// </summary>
-	void PreDrawDebug();
-
-	/// <summary>
-	/// 描画終了位置
-	/// </summary>
-	void PostDrawDebug();
-
-	/// <summary>
 	/// DescriptorHeapの作成
 	/// </summary>
 	/// <param name="heapType">ヒープタイプ</param>
@@ -111,9 +101,9 @@ public://メンバ関数
 	/// <summary>
 	/// テクスチャリソースの生成
 	/// </summary>
-	/// <param name="metadada">メタデータ</param>
+	/// <param name="metaDada">メタデータ</param>
 	/// <returns>テクスチャリソース</returns>
-	ComPtr<ID3D12Resource> CreateTextureResource(const DirectX::TexMetadata& metadada);
+	ComPtr<ID3D12Resource> CreateTextureResource(const DirectX::TexMetadata& metaDada);
 
 	/// <summary>
 	/// TextureResourceにデータを転送する 

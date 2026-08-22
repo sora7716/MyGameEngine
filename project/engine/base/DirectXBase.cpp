@@ -319,26 +319,26 @@ ComPtr<ID3D12Resource> DirectXBase::CreateBufferResource(size_t sizeInBytes) {
 }
 
 // テクスチャリソースの生成
-ComPtr<ID3D12Resource> DirectXBase::CreateTextureResource(const DirectX::TexMetadata& metadada) {
+ComPtr<ID3D12Resource> DirectXBase::CreateTextureResource(const DirectX::TexMetadata& metaDada) {
 	HRESULT hr = S_FALSE;
 	//1.metadataを基にResourceの設定
 	D3D12_RESOURCE_DESC resourceDesc{};
-	resourceDesc.Width = UINT(metadada.width);//Textureの幅
-	resourceDesc.Height = UINT(metadada.height);//Textureの高さ
-	resourceDesc.MipLevels = UINT16(metadada.mipLevels);//mipmapの数
-	resourceDesc.DepthOrArraySize = UINT16(metadada.arraySize);//奥行or配列Textureの配列数
-	resourceDesc.Format = metadada.format;//TextureのFormat
+	resourceDesc.Width = UINT(metaDada.width);//Textureの幅
+	resourceDesc.Height = UINT(metaDada.height);//Textureの高さ
+	resourceDesc.MipLevels = UINT16(metaDada.mipLevels);//mipmapの数
+	resourceDesc.DepthOrArraySize = UINT16(metaDada.arraySize);//奥行or配列Textureの配列数
+	resourceDesc.Format = metaDada.format;//TextureのFormat
 	resourceDesc.SampleDesc.Count = 1;//サンプリング。1固定
-	resourceDesc.Dimension = D3D12_RESOURCE_DIMENSION(metadada.dimension);//Textureの次元数。普段使っているのは2次元
+	resourceDesc.Dimension = D3D12_RESOURCE_DIMENSION(metaDada.dimension);//Textureの次元数。普段使っているのは2次元
 	//2.利用するHeapの設定
-	D3D12_HEAP_PROPERTIES heapProperities{};
-	heapProperities.Type = D3D12_HEAP_TYPE_CUSTOM;//細かい設定を行う
-	heapProperities.CPUPageProperty = D3D12_CPU_PAGE_PROPERTY_WRITE_BACK;//WriteBackポリシーでCPUアクセス可能
-	heapProperities.MemoryPoolPreference = D3D12_MEMORY_POOL_L0;//プロセッサの近くに配置
+	D3D12_HEAP_PROPERTIES heapProsperities{};
+	heapProsperities.Type = D3D12_HEAP_TYPE_CUSTOM;//細かい設定を行う
+	heapProsperities.CPUPageProperty = D3D12_CPU_PAGE_PROPERTY_WRITE_BACK;//WriteBackポリシーでCPUアクセス可能
+	heapProsperities.MemoryPoolPreference = D3D12_MEMORY_POOL_L0;//プロセッサの近くに配置
 	//3.Resourceを生成する
 	Microsoft::WRL::ComPtr<ID3D12Resource> resource = nullptr;
 	hr = device_->CreateCommittedResource(
-		&heapProperities,//Heapの設定
+		&heapProsperities,//Heapの設定
 		D3D12_HEAP_FLAG_NONE,//Heapの特殊な設定。特になし
 		&resourceDesc,//Resourceの設定
 		D3D12_RESOURCE_STATE_COPY_DEST,//初回のResourceState。Textureは基本読むだけ

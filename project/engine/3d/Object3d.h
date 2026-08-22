@@ -100,83 +100,77 @@ public://メンバ関数
 	/// <summary>
 	/// uvスケールの設定
 	/// </summary>
-	/// <param name="index">インデックス</param>
+	/// <param name="index">マテリアルスロット番号の検索キー</param>
 	/// <param name="uvScale">スケール</param>
 	void SetUVScale(uint32_t index, const Vector2& uvScale);
 
 	/// <summary>
 	/// uv回転の設定
 	/// </summary>
-	/// <param name="index">インデックス</param>
+	/// <param name="index">マテリアルスロット番号の検索キー</param>
 	/// <param name="uvRotate">回転</param>
 	void SetUVRotate(uint32_t index, float uvRotate);
 
 	/// <summary>
 	/// uv平行移動の設定
 	/// </summary>
-	/// <param name="index">インデックス</param>
+	/// <param name="index">マテリアルスロット番号の検索キー</param>
 	/// <param name="uvTranslate">平行移動</param>
 	void SetUVTranslate(uint32_t index, const Vector2& uvTranslate);
 
 	/// <summary>
 	/// 色の設定
 	/// </summary>
-	/// <param name="materialIndex">マテリアルの検索キー</param>
+	/// <param name="index">マテリアルスロット番号の検索キー</param>
 	/// <param name="color">色</param>
-	void SetColor(uint32_t materialIndex, const Vector4& color);
-
-	/// <summary>
-	/// 親の設定
-	/// </summary>
-	/// <param name="parent">親</param>
-	void SetParent(const WorldTransform* parent);
+	void SetColor(uint32_t index, const Vector4& color);
 
 	/// <summary>
 	/// テクスチャの設定
 	/// </summary>
-	/// <param name="meshIndex">メッシュの検索キー</param>
+	/// <param name="index">マテリアルスロット番号の検索キー</param>
 	/// <param name="imageFileName">画像のファイル名</param>
-	void SetTexture(uint32_t meshIndex, const std::string& imageFileName);
+	void SetTexture(uint32_t index, const std::string& imageFileName);
 
 	/// <summary>
 	/// 環境マップの設定
 	/// </summary>
-	/// <param name="meshIndex">メッシュの検索キー</param>
+	/// <param name="index">マテリアルスロット番号の検索キー</param>
 	/// <param name="environmentMapFileName">環境マップのファイル名</param>
-	void SetEnvironmentMap(uint32_t meshIndex, const std::string& environmentMapFileName);
+	void SetEnvironmentMap(uint32_t index, const std::string& environmentMapFileName);
 
 	/// <summary>
 	/// ライティングフラグの設定
 	/// </summary>
-	/// <param name="meshIndex">メッシュの検索キー</param>
+	/// <param name="index">マテリアルスロット番号の検索キー</param>
 	/// <param name="isLighting">ライティングフラグ</param>
-	void SetIsLighting(uint32_t meshIndex, bool isLighting);
+	void SetIsLighting(uint32_t index, bool isLighting);
 
 	/// <summary>
 	/// 輝度の設定
-	/// <param name="meshIndex">メッシュの検索キー</param>
+	/// <param name="index">マテリアルスロット番号の検索キー</param>
 	/// </summary>
 	/// <param name="shininess">輝度</param>
-	void SetShininess(uint32_t meshIndex, float shininess);
+	void SetShininess(uint32_t index, float shininess);
 
 	/// <summary>
 	/// 環境マップの映り込み度を調整
 	/// </summary>
-	/// <param name="meshIndex">メッシュの検索キー</param>
+	/// <param name="index">マテリアルスロット番号の検索キー</param>
 	/// <param name="environmentCoefficient">k環境マップの映り込み度</param>
-	void SetEnvironmentCoefficient(uint32_t meshIndex, float& environmentCoefficient);
+	void SetEnvironmentCoefficient(uint32_t index, float& environmentCoefficient);
 
 	/// <summary>
 	/// UV座標の設定
-	/// </summary>
-	/// <param name="index">インデックス</param>
+	/// </summary>マテリアルスロット番号の検索キー
+	/// <param name="index">マテリアルスロット番号の検索キー</param>
 	/// <param name="uvTransform">UV座標</param>
 	void SetUVTransform(uint32_t index, const Transform2d& uvTransform);
 
 	/// <summary>
 	/// ブレンドモードの設定
 	/// </summary>
-	/// <param name="blendMode"></param>
+	/// <param name="blendMode">ブレンドモード</param>
 	void SetBlendMode(BlendMode blendMode);
 
 	/// <summary>
@@ -229,7 +223,7 @@ public://メンバ関数
 	/// <summary>
 	/// ワールド座標の取得
 	/// </summary>
-	/// <param name="instanceIndex">インスタンスの検索キー</param>
+	/// <param name="instanceIndex">インスタンスのマテリアルスロット番号の検索キー</param>
 	/// <returns>ワールド座標</returns>
 	Vector3 GetWorldPos();
 
@@ -313,8 +307,8 @@ private://メンバ関数
 	/// <summary>
 	/// 座標の更新
 	/// </summary>
-	/// <param name="lodIndex">LODの検索キー</param>
-	/// <param name="drawIndex">描画の検索キー</param>
+	/// <param name="lodIndex">LODのマテリアルスロット番号の検索キー</param>
+	/// <param name="drawIndex">描画のマテリアルスロット番号の検索キー</param>
 	/// <param name="worldMatrix">ワールド行列</param>
 	void UpdateWorldTransform(uint32_t lodIndex, uint32_t drawIndex, const Matrix4x4& worldMatrix);
 

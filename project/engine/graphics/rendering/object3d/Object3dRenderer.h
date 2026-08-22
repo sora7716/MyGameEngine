@@ -4,6 +4,8 @@
 #include "Object3dRenderData.h"
 #include "Object3dGpuResource.h"
 #include <memory>
+#include <cstdint>
+#include <limits>
 
 //前方宣言
 class DirectXBase;
@@ -25,6 +27,11 @@ private://構造体など
 		MaterialInstance* materialInstance = nullptr;
 		BlendMode blendMode = BlendMode::kNone;
 		Object3dRenderHandle handle = kInvalidObject3dRenderHandle;
+		std::vector<ComPtr<ID3D12Resource>>materialResources;
+		std::vector<Material*>materialPtrs;
+		ComPtr<ID3D12Resource>rimLightResource = nullptr;
+		RimLight* rimLightPtr = nullptr;
+		uint64_t uploadedRevision = (std::numeric_limits<uint64_t>::max)();
 	};
 public://静的メンバ関数
 	/// <summary>
@@ -114,6 +121,18 @@ private://メンバ関数
 	/// </summary>
 	/// <param name="lodGpuResource">LodのGpuに送るデータ</param>
 	void CreateStructuredBufferForWvp(LODGpuResource& lodGpuResource);
+
+	/// <summary>
+    /// MaterialInstance用のGPUリソースを生成
+    /// </summary>
+	/// <param name="batchResource">バッチリソース</param>
+	void CreateMaterialInstanceResource(Object3dBatchResource& batchResource);
+
+	/// <summary>
+	/// マテリアルインスタンスの更新
+	/// </summary>
+	/// <param name="batchResource">バッチリソース</param>
+	void UpdateMaterialInstanceResource(Object3dBatchResource& batchResource);
 private://メンバ変数
 	//DirectXの基盤部分
 	DirectXBase* directXBase_ = nullptr;

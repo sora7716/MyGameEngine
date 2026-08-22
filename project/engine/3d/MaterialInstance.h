@@ -51,6 +51,27 @@ public://メンバ関数
 	void SetEnvironmentMap(uint32_t index, const std::string& path);
 
 	/// <summary>
+	/// UVのスケールの設定
+	/// </summary>
+	/// <param name="index">検索キー</param>
+	/// <param name="scale">スケール</param>
+	void SetUVScale(uint32_t index, const Vector2& scale);
+
+	/// <summary>
+	/// UVの回転の設定
+	/// </summary>
+	/// <param name="index">検索キー</param>
+	/// <param name="rotate">回転</param>
+	void SetUVRotate(uint32_t index, float rotate);
+
+	/// <summary>
+	/// UVの平行移動の設定
+	/// </summary>
+	/// <param name="index">検索キー</param>
+	/// <param name="translate">平行移動</param>
+	void SetUVTranslate(uint32_t index, const Vector2& translate);
+
+	/// <summary>
 	/// UVトランスフォームの設定
 	/// </summary>
 	/// <param name="index">検索キー</param>

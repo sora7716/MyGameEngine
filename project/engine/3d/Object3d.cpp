@@ -163,109 +163,112 @@ void Object3d::SetHysteresis(float hysteresis){
 
 // uvスケールの設定
 void Object3d::SetUVScale(uint32_t index, const Vector2& uvScale){
-	for (std::vector<Transform2d>& uvTransforms : lodUvTransforms_){
-		uvTransforms[index].scale = uvScale;
+	//マテリアルインスタンスがなければ
+	if (!materialInstance_){
+		return;
 	}
+	//マテリアルを個別化する
+	EnsureUniqueMaterialInstance();
+	materialInstance_->SetUVScale(index, uvScale);
 }
 
 // uv回転の設定
 void Object3d::SetUVRotate(uint32_t index, float uvRotate){
-	for (std::vector<Transform2d>& uvTransforms : lodUvTransforms_){
-		uvTransforms[index].rotate = uvRotate;
+	//マテリアルインスタンスがなければ
+	if (!materialInstance_){
+		return;
 	}
+	//マテリアルを個別化する
+	EnsureUniqueMaterialInstance();
+	materialInstance_->SetUVRotate(index, uvRotate);
 }
 
 // uv平行移動の設定
 void Object3d::SetUVTranslate(uint32_t index, const Vector2& uvTranslate){
-	for (std::vector<Transform2d>& uvTransforms : lodUvTransforms_){
-		uvTransforms[index].translate = uvTranslate;
+	//マテリアルインスタンスがなければ
+	if (!materialInstance_){
+		return;
 	}
+	//マテリアルを個別化する
+	EnsureUniqueMaterialInstance();
+	materialInstance_->SetUVTranslate(index, uvTranslate);
 }
 
 //色の設定
-void Object3d::SetColor(uint32_t materialIndex, const Vector4& color){
-	//元モデルにも適応
-	baseModel_->SetColor(materialIndex, color);
-	//LODモデルにも適応
-	lodBuilder_->SetColor(materialIndex, color);
-}
-
-//親の設定
-void Object3d::SetParent(const WorldTransform* parent){
-	(void)parent;
-	//worldTransform_->SetParent(parent);
+void Object3d::SetColor(uint32_t index, const Vector4& color){
+	//マテリアルインスタンスがなければ
+	if (!materialInstance_){
+		return;
+	}
+	//マテリアルを個別化する
+	EnsureUniqueMaterialInstance();
+	materialInstance_->SetColor(index, color);
 }
 
 //テクスチャの変更
-void Object3d::SetTexture(uint32_t meshIndex, const std::string& imageFileName){
-	uint32_t materialIndex = baseModel_->GetMeshes()[meshIndex]->GetMaterialIndex();
-	//元モデルにも適応
-	baseModel_->SetTexture(materialIndex, imageFileName);
-	//LODモデルにも適応
-	lodBuilder_->SetTexture(materialIndex, imageFileName);
+void Object3d::SetTexture(uint32_t index, const std::string& imageFileName){
+	//マテリアルインスタンスがなければ
+	if (!materialInstance_){
+		return;
+	}
+	//マテリアルを個別化する
+	EnsureUniqueMaterialInstance();
+	materialInstance_->SetTexture(index, "engine/resources/textures/" + imageFileName);
 }
+
 //環境マップの変更
-void Object3d::SetEnvironmentMap(uint32_t meshIndex, const std::string& environmentMapFileName){
-	//元のモデルがなければ
-	if (!baseModel_){
+void Object3d::SetEnvironmentMap(uint32_t index, const std::string& environmentMapFileName){
+	//マテリアルインスタンスがなければ
+	if (!materialInstance_){
 		return;
 	}
-
-	//メッシュのサイズを取得
-	const std::vector<std::unique_ptr<Mesh>>& meshes = baseModel_->GetMeshes();
-
-	//メッシュの検索キーとサイズを比較
-	if (meshIndex > meshes.size()){
-		return;
-	}
-
-	//メッシュのNullチェック
-	if (!meshes[meshIndex]){
-		return;
-	}
-
-	uint32_t materialIndex = baseModel_->GetMeshes()[meshIndex]->GetMaterialIndex();
-	//元モデルにも適応
-	baseModel_->SetEnvironmentMap(materialIndex, environmentMapFileName);
-	//LODモデルにも適応
-	lodBuilder_->SetEnvironmentMap(materialIndex, environmentMapFileName);
+	//マテリアルを個別化する
+	EnsureUniqueMaterialInstance();
+	materialInstance_->SetEnvironmentMap(index, "engine/resources/textures/" + environmentMapFileName);
 }
 
 //ライティングフラグの設定
-void Object3d::SetIsLighting(uint32_t meshIndex, bool isLighting){
-	uint32_t materialIndex = baseModel_->GetMeshes()[meshIndex]->GetMaterialIndex();
-	//元モデルにも適応
-	baseModel_->SetIsLighting(materialIndex, isLighting);
-	//LODモデルにも適応
-	lodBuilder_->SetIsLighting(materialIndex, isLighting);
+void Object3d::SetIsLighting(uint32_t index, bool isLighting){
+	//マテリアルインスタンスがなければ
+	if (!materialInstance_){
+		return;
+	}
+	//マテリアルを個別化する
+	EnsureUniqueMaterialInstance();
+	materialInstance_->SetIsLighting(index, isLighting);
 }
 
 //輝度の設定
-void Object3d::SetShininess(uint32_t meshIndex, float shininess){
-	uint32_t materialIndex = baseModel_->GetMeshes()[meshIndex]->GetMaterialIndex();
-	//元モデルにも適応
-	baseModel_->SetShininess(materialIndex, shininess);
-	//LODモデルにも適応
-	lodBuilder_->SetShininess(materialIndex, shininess);
+void Object3d::SetShininess(uint32_t index, float shininess){
+	//マテリアルインスタンスがなければ
+	if (!materialInstance_){
+		return;
+	}
+	//マテリアルを個別化する
+	EnsureUniqueMaterialInstance();
+	materialInstance_->SetShininess(index, shininess);
 }
 
 //環境マップの映り込み度を調整
-void Object3d::SetEnvironmentCoefficient(uint32_t meshIndex, float& environmentCoefficient){
-	//環境マップの映り込み度を0~1にクランプ
-	environmentCoefficient = std::clamp(environmentCoefficient, 0.0f, 1.0f);
-	//マテリアルインデックス
-	uint32_t materialIndex = baseModel_->GetMeshes()[meshIndex]->GetMaterialIndex();
-	//元モデルにも適応
-	baseModel_->SetEnvironmentCoefficient(materialIndex, environmentCoefficient);
-	//LODモデルにも適応
-	lodBuilder_->SetEnvironmentCoefficient(materialIndex, environmentCoefficient);
+void Object3d::SetEnvironmentCoefficient(uint32_t index, float& environmentCoefficient){
+	//マテリアルインスタンスがなければ
+	if (!materialInstance_){
+		return;
+	}
+	//マテリアルを個別化する
+	EnsureUniqueMaterialInstance();
+	materialInstance_->SetEnvironmentCoefficient(index, environmentCoefficient);
 }
 
 //UV座標の設定
 void Object3d::SetUVTransform(uint32_t index, const Transform2d& uvTransform){
-	for (std::vector<Transform2d>& uvTransforms : lodUvTransforms_){
-		uvTransforms[index] = uvTransform;
+	//マテリアルインスタンスがなければ
+	if (!materialInstance_){
+		return;
 	}
+	//マテリアルを個別化する
+	EnsureUniqueMaterialInstance();
+	materialInstance_->SetUVTransform(index, uvTransform);
 }
 
 //ブレンドモードの設定

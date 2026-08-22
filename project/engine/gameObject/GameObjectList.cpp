@@ -39,6 +39,7 @@ void GameObjectList::LoadTexture(){
 	core_->GetTextureManager()->AddTexture(directoryPath + "rostock_laage_airport_4k.dds");
 	core_->GetTextureManager()->AddTexture(directoryPath + "skybox_cube.dds");
 	core_->GetTextureManager()->AddTexture(directoryPath + "circle2.png");
+	core_->GetTextureManager()->AddTexture(directoryPath + "monsterBall.png");
 }
 
 //OBJファイルの読み込み

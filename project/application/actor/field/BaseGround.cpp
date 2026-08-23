@@ -74,7 +74,6 @@ void BaseGround::OnCollision(uint32_t index, ColliderState* other) {
 
 //カメラのセッター
 void BaseGround::SetCamera(Camera* camera) {
-	entityGroup_.renderObject.object3d->SetGameCamera(camera);
 	entityGroup_.renderObject.hitBox->SetCamera(camera);
 }
 

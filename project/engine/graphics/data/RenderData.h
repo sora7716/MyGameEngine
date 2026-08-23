@@ -74,10 +74,10 @@ struct RimLight{
 	int32_t enableRimLighting = 0; //リムライトを有効にするか
 };
 
-//列挙型
-enum class WorldMatrixType :uint32_t{
+//描画時のトランスフォームモード
+enum class RenderTransformMode :uint32_t{
 	kNormal,
-	kBilboard,
+	kBillboard,
 };
 
 //テクスチャデータ

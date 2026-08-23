@@ -49,48 +49,6 @@ public://メンバ関数
 	const std::vector<std::unique_ptr<Model>>& GetLODModels()const;
 
 	/// <summary>
-	/// カラーの設定
-	/// </summary>
-	/// <param name="materialIndex">マテリアルの検索キー</param>
-	/// <param name="color">色</param>
-	void SetColor(uint32_t materialIndex, const Vector4& color);
-
-	/// <summary>
-	/// テクスチャの設定
-	/// </summary>
-	/// <param name="materialIndex">マテリアルの検索キー</param>
-	/// <param name="imageFileName">画像のファイル名</param>
-	void SetTexture(uint32_t materialIndex, const std::string& imageFileName);
-
-	/// <summary>
-	/// 環境マップの映り込み度を調整
-	/// </summary>
-	/// <param name="materialIndex">マテリアルの検索キー</param>
-	/// <param name="environmentCoefficient">環境マップの映り込み度</param>
-	void SetEnvironmentCoefficient(uint32_t materialIndex, float environmentCoefficient);
-
-	/// <summary>
-	/// 環境マップの変更
-	/// </summary>
-	/// <param name="materialIndex">マテリアルインデックス</param>
-	/// <param name="environmentMapFileName">環境マップのファイル名</param>
-	void SetEnvironmentMap(uint32_t materialIndex, const std::string& environmentMapFileName);
-
-	/// <summary>
-	/// ライティングフラグの設定
-	/// </summary>
-	/// <param name="materialIndex">マテリアルの検索キー</param>
-	/// <param name="isLighting">ライティングフラグ</param>
-	void SetIsLighting(uint32_t materialIndex, bool isLighting);
-
-	/// <summary>
-	/// 輝度の設定
-	/// </summary>
-	/// <param name="materialIndex">マテリアルの検索キー</param>
-	/// <param name="shininess">輝度</param>
-	void SetShininess(uint32_t materialIndex, float shininess);
-
-	/// <summary>
 	/// モデルのサイズを取得
 	/// </summary>
 	/// <returns>モデルのサイズ</returns>

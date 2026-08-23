@@ -38,7 +38,6 @@ Matrix4x4 Matrix4x4::operator*(const Matrix4x4& mat) const {
 
 //加法(複合)
 Matrix4x4& Matrix4x4::operator+=(const Matrix4x4& mat) {
-	// TODO: return ステートメントをここに挿入します
 	for (int i = 0; i < 4; i++) {
 		for (int j = 0; j < 4; j++) {
 			m[i][j] += mat.m[i][j];
@@ -49,7 +48,6 @@ Matrix4x4& Matrix4x4::operator+=(const Matrix4x4& mat) {
 
 //減法(複合)
 Matrix4x4& Matrix4x4::operator-=(const Matrix4x4& mat) {
-	// TODO: return ステートメントをここに挿入します
 	for (int i = 0; i < 4; i++) {
 		for (int j = 0; j < 4; j++) {
 			m[i][j] -= mat.m[i][j];

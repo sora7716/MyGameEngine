@@ -1,7 +1,6 @@
 #pragma once
 #include "MatrixUtility.h"
 #include "BlendMode.h"
-#include "WorldTransform.h"
 #include "PrimitiveData.h"
 #include "RenderingData.h"
 #include "Object3dRenderData.h"
@@ -15,8 +14,6 @@
 #include <memory>
 
 //前方宣言
-class DirectXBase;
-class Camera;
 class Model;
 class GameObject;
 class MaterialInstance;
@@ -61,29 +58,18 @@ public://メンバ関数
 	void Update();
 
 	/// <summary>
+	/// ワールド行列を作成
+	/// </summary>
+	/// <param name="cameraWorldMatrix">カメラのワールド行列</param>
+	/// <returns>ワールド行列</returns>
+	Matrix4x4 MakeRenderWorldMatrix(const Matrix4x4& cameraWorldMatrix)const;
+
+	/// <summary>
 	/// モデルの設定
 	/// </summary>
 	/// <param name="model">モデル</param>
 	/// <param name="keepRates">モデルの保持する倍率</param>
 	void SetModel(Model* model, const std::vector<float>& keepRates = { 1.0f,0.75f,0.5f,0.25f });
-
-	/// <summary>
-	/// レンダラーを登録
-	/// </summary>
-	/// <param name="renderer">レンダラー</param>
-	void RegisterToRenderer(Object3dRenderer* renderer);
-
-	/// <summary>
-	/// ゲームで使用するカメラの設定
-	/// </summary>
-	/// <param name="camera">カメラ</param>
-	void SetGameCamera(Camera* camera);
-
-	/// <summary>
-	/// 描画に使用するカメラの設定
-	/// </summary>
-	/// <param name="camera">カメラ</param>
-	void SetRenderCamera(Camera* camera);
 
 	/// <summary>
 	/// LODの切り替え距離の設定
@@ -174,38 +160,10 @@ public://メンバ関数
 	void SetBlendMode(BlendMode blendMode);
 
 	/// <summary>
-	/// トランスフォームモードの設定
+	/// 描画時のトランスフォームモードの設定
 	/// </summary>
-	/// <param name="transformMode">トランスフォームモード</param>
-	void SetTransformMode(WorldMatrixType transformMode);
-
-	/// <summary>
-	/// uvスケールの取得
-	/// </summary>
-	/// <param name="index">インデックス</param>
-	/// <returns>uvスケール</returns>
-	const Vector2& GetUVScale(uint32_t index)const;
-
-	/// <summary>
-	/// uv回転の取得
-	/// </summary>
-	/// <param name="index">インデックス</param>
-	/// <returns>uv回転</returns>
-	const float GetUVRotate(uint32_t index)const;
-
-	/// <summary>
-	/// uv平行移動の取得
-	/// </summary>
-	/// <param name="index">インデックス</param>
-	/// <returns>uv平行移動</returns>
-	const Vector2& GetUVTranslate(uint32_t index)const;
-
-	/// <summary>
-	/// UV座標の取得
-	/// </summary>
-	/// <param name="index">インデックス</param>
-	/// <returns>UV座標</returns>
-	const Transform2d& GetUVTransform(uint32_t index)const;
+	/// <param name="transformMode">描画時のトランスフォームモード</param>
+	void SetRenderTransformMode(RenderTransformMode transformMode);
 
 	/// <summary>
 	/// ワールド行列の取得
@@ -225,12 +183,6 @@ public://メンバ関数
 	/// </summary>
 	/// <returns>メッシュのサイズ</returns>
 	uint32_t GetMeshDataSize();
-
-	/// <summary>
-	/// 描画データの取得
-	/// </summary>
-	/// <returns>描画データ</returns>
-	const Object3dRenderData& GetRenderData();
 
 	/// <summary>
 	/// モデルの取得
@@ -263,10 +215,10 @@ public://メンバ関数
 	BlendMode GetBlendMode()const;
 
 	/// <summary>
-	/// ワールド行列のタイプの取得
+	/// 描画時のトランスフォームモードの取得
 	/// </summary>
-	/// <returns>ワールド行列のタイプ</returns>
-	WorldMatrixType GetWorldMatrixType()const;
+	/// <returns>描画時のトランスフォームモード</returns>
+	RenderTransformMode GetRenderTransformMode()const;
 
 	/// <summary>
 	/// マテリアルインスタンスの取得
@@ -281,43 +233,19 @@ public://メンバ関数
 	const MaterialInstance* GetMaterialInstance()const;
 private://メンバ関数
 	/// <summary>
-	/// LOD関係のセットアップ
-	/// </summary>
-	void SetupLOD();
-
-	/// <summary>
 	/// ワールド行列を作成
 	/// </summary>
 	/// <returns>ワールド行列</returns>
 	void MakeWorldMatrix();
 
 	/// <summary>
-	/// ビルボード行列の作成
-	/// </summary>
-	/// <returns>ビルボード行列</returns>
-	void MakeBillboardWorldMatrix();
-
-	/// <summary>
-	/// 座標の更新
-	/// </summary>
-	/// <param name="lodIndex">LODのマテリアルスロット番号の検索キー</param>
-	/// <param name="drawIndex">描画のマテリアルスロット番号の検索キー</param>
-	/// <param name="worldMatrix">ワールド行列</param>
-	void UpdateWorldTransform(uint32_t lodIndex, uint32_t drawIndex, const Matrix4x4& worldMatrix);
-
-	/// <summary>
 	/// マテリアルを個別化する
 	/// </summary>
 	void EnsureUniqueMaterialInstance();
-private://メンバ関数テーブル
-	//座標の更新をまとめた
-	static void (Object3d::* UpdateWorldMatrixTable[])();
 private://定数
 	//インスタンスの最大数
 	static const inline uint32_t kMaxInstanceCount_ = 1024;
 private://メンバ変数
-	//DirectXの基盤部分
-	DirectXBase* directXBase_ = nullptr;
 	//モデル
 	Model* baseModel_ = nullptr;
 	//今現在のLOD番号
@@ -329,41 +257,19 @@ private://メンバ変数
 
 	//LODの数
 	uint32_t lodCount_ = 1;
-	//オブジェクトの表示非表示の管理用フラグ
-	bool isVisible_ = false;
 
 	//LODビルダー
 	std::unique_ptr<LODBuilder>lodBuilder_ = nullptr;
 	//LODの制御
 	std::unique_ptr<LODController>lodController_ = nullptr;
-	//描画数
-	std::vector<uint32_t>lodDrawCounts_;
-	//UV座標
-	std::vector<std::vector<Transform2d>> lodUvTransforms_;
 
 	//このObject3dが使用するマテリアル
 	std::shared_ptr<MaterialInstance>materialInstance_ = nullptr;
 
-	//描画用のカメラ
-	Camera* renderCamera_ = nullptr;
-	//ゲームで使用するカメラ
-	Camera* gameCamera_ = nullptr;
-
 	//オブジェクトの見た目
-	WorldMatrixType worldMatrixType_ = WorldMatrixType::kNormal;
+	RenderTransformMode renderTransformMode_ = RenderTransformMode::kNormal;
 	//ワールド行列
 	Matrix4x4 worldMatrix_ = {};
-	//親
-	const WorldTransform* parent_ = nullptr;
 	//ブレンドモード
 	BlendMode blendMode_ = BlendMode::kNone;
-
-	//カリング
-	std::unique_ptr<Culling>culling_ = nullptr;
-
-	//レンダーラークラスに渡す情報
-	Object3dRenderData rendererData_;
-
-	//ハンドル
-	Object3dRenderHandle renderHandle_ = UINT32_MAX;
 };

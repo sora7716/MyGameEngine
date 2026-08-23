@@ -1,7 +1,4 @@
 #include "Object3d.h"
-#include "DirectXBase.h"
-#include "Camera.h"
-#include "ModelManager.h"
 #include "MatrixUtility.h"
 #include "GameObject.h"
 #include "Model.h"
@@ -13,13 +10,6 @@
 #include "MaterialInstance.h"
 #include <algorithm>
 #include <cassert>
-
-//メンバ関数テーブルの初期化
-void(Object3d::* Object3d::UpdateWorldMatrixTable[])() = {
-	&MakeWorldMatrix,
-	&MakeBillboardWorldMatrix,
-};
-
 //コンストラクタ
 Object3d::Object3d(GameObject* gameObject) :Component(gameObject){
 
@@ -38,7 +28,7 @@ void Object3d::Initialize(){
 	blendMode_ = BlendMode::kNormal;
 
 	//トランスフォームモード
-	worldMatrixType_ = WorldMatrixType::kNormal;
+	renderTransformMode_ = RenderTransformMode::kNormal;
 
 	//ワールド行列の初期化
 	worldMatrix_ = Matrix4x4::Identity4x4();
@@ -49,6 +39,8 @@ void Object3d::Initialize(){
 	lodBuilder_ = std::make_unique<LODBuilder>();
 	//LODコントローラの生成
 	lodController_ = std::make_unique<LODController>();
+	//LODコントローラの初期化
+	lodController_->Initialize(lodBuilder_.get());
 }
 
 //複製　
@@ -62,7 +54,7 @@ std::unique_ptr<Component> Object3d::Clone(GameObject* gameObject) const{
 	//Object3d自信が持つ設定だけ複製
 	cloneInstance->SetEnabled(this->IsEnabled());
 	cloneInstance->SetBlendMode(this->blendMode_);
-	cloneInstance->SetTransformMode(this->worldMatrixType_);
+	cloneInstance->SetRenderTransformMode(this->renderTransformMode_);
 	return cloneInstance;
 }
 
@@ -82,15 +74,31 @@ void Object3d::Update(){
 	}
 
 	//ワールド行列の作成
-	//ビルボード作成の場合
-	if (worldMatrixType_ == WorldMatrixType::kBilboard){
-		//描画カメラがNullだったら
-		if (!renderCamera_){
-			return;
-		}
+	MakeWorldMatrix();
+}
+
+//ワールド行列を作成
+Matrix4x4 Object3d::MakeRenderWorldMatrix(const Matrix4x4& cameraWorldMatrix) const{
+	//Normalだった場合
+	if (renderTransformMode_ == RenderTransformMode::kNormal){
+		return worldMatrix_;
 	}
 
-	(this->*UpdateWorldMatrixTable[static_cast<uint32_t>(worldMatrixType_)])();
+	//もしBillboardだった場合
+	GameObject* gameObject = GetOwner();
+	//ゲームオブジェクトがない場合
+	if (!gameObject){
+		return worldMatrix_;
+	}
+
+	//ビルボードの作成
+	Matrix4x4 renderWorldMatrix = matrixUtility::MakeBillboardAffineMatrix(cameraWorldMatrix, gameObject->GetTransform());
+
+	//ノード分を乗算
+	renderWorldMatrix = node_.localMatrix * renderWorldMatrix;
+
+	//一時的に作成したワールド行列を返す
+	return renderWorldMatrix;
 }
 
 //モデルの設定
@@ -122,33 +130,6 @@ void Object3d::SetModel(Model* model, const std::vector<float>& keepRates){
 
 		materialInstance_.reset();
 	}
-}
-
-//レンダラーを登録
-void Object3d::RegisterToRenderer(Object3dRenderer* renderer){
-	assert(renderer);
-	assert(lodCount_ > 0);
-	assert(kMaxInstanceCount_ > 0);
-
-	//まだ登録されてない事の確認
-	assert(renderHandle_ == kInvalidObject3dRenderHandle);
-
-	renderHandle_ = renderer->RegisterObject(lodCount_, kMaxInstanceCount_);
-
-	rendererData_.renderHandle = renderHandle_;
-}
-
-//カメラの設定
-void Object3d::SetGameCamera(Camera* camera){
-	gameCamera_ = camera;
-	//カリングの初期化
-	culling_ = Culling::Create(gameCamera_);
-}
-
-//描画に使用するカメラの設定
-void Object3d::SetRenderCamera(Camera* camera){
-	renderCamera_ = camera;
-	rendererData_.renderCamera = renderCamera_;
 }
 
 //LODの切り替え距離
@@ -276,29 +257,9 @@ void Object3d::SetBlendMode(BlendMode blendMode){
 	blendMode_ = blendMode;
 }
 
-//トランスフォームモードの設定
-void Object3d::SetTransformMode(WorldMatrixType transformMode){
-	worldMatrixType_ = transformMode;
-}
-
-//uvスケールの取得
-const Vector2& Object3d::GetUVScale(uint32_t index) const{
-	return lodUvTransforms_[0][index].scale;
-}
-
-//uv回転の取得
-const float Object3d::GetUVRotate(uint32_t index) const{
-	return lodUvTransforms_[0][index].rotate;
-}
-
-//uv平行移動の取得
-const Vector2& Object3d::GetUVTranslate(uint32_t index) const{
-	return lodUvTransforms_[0][index].translate;
-}
-
-//UV座標の取得
-const Transform2d& Object3d::GetUVTransform(uint32_t index) const{
-	return lodUvTransforms_[0][index];
+//描画時のトランスフォームモードの設定
+void Object3d::SetRenderTransformMode(RenderTransformMode transformMode){
+	renderTransformMode_ = transformMode;
 }
 
 //ワールド行列の取得
@@ -317,11 +278,6 @@ uint32_t Object3d::GetMeshDataSize(){
 		return 0;
 	}
 	return static_cast<uint32_t>(baseModel_->GetModelData().meshDatas.size());
-}
-
-//描画データの取得
-const Object3dRenderData& Object3d::GetRenderData(){
-	return rendererData_;
 }
 
 //モデルの取得
@@ -352,9 +308,9 @@ BlendMode Object3d::GetBlendMode()const{
 	return blendMode_;
 }
 
-//ワールド行列タイプの取得
-WorldMatrixType Object3d::GetWorldMatrixType()const{
-	return worldMatrixType_;
+//描画時のトランスフォームモードの取得
+RenderTransformMode Object3d::GetRenderTransformMode()const{
+	return renderTransformMode_;
 }
 
 //マテリアルインスタンスの取得
@@ -367,26 +323,6 @@ const MaterialInstance* Object3d::GetMaterialInstance() const{
 	return materialInstance_.get();
 }
 
-//LOD関係のセットアップ
-void Object3d::SetupLOD(){
-	//UV座標
-	lodUvTransforms_.resize(lodCount_);
-	//描画する数
-	lodDrawCounts_.resize(lodCount_);
-	rendererData_.lodRenderData.matrixCounts.resize(lodCount_);
-	//TransformData
-	rendererData_.lodRenderData.transformationData.resize(lodCount_);
-
-	for (std::vector<TransformationMatrix>& lodData : rendererData_.lodRenderData.transformationData){
-		lodData.resize(kMaxInstanceCount_);
-		for (TransformationMatrix& transform : lodData){
-			transform.world = Matrix4x4::Identity4x4();
-			transform.wvp = Matrix4x4::Identity4x4();
-			transform.worldInverseTranspose = Matrix4x4::Identity4x4();
-		}
-	}
-}
-
 //ワールド行列を作成
 void Object3d::MakeWorldMatrix(){
 	GameObject* gameObject = GetOwner();
@@ -397,44 +333,11 @@ void Object3d::MakeWorldMatrix(){
 	//このオブジェクト本来のワールド行列を求める
 	worldMatrix = matrixUtility::MakeAffineMatrix(gameObject->GetTransform());
 
-	if (parent_){
-		worldMatrix = worldMatrix * parent_->GetWorldMatrix();
-	}
-
+	//ノードから、ワールド行列を作成
 	worldMatrix = node_.localMatrix * worldMatrix;
 
 	//ワールド行列の配列を上書き
 	worldMatrix_ = worldMatrix;
-}
-
-//ビルボード行列の作成
-void Object3d::MakeBillboardWorldMatrix(){
-	GameObject* gameObject = GetOwner();
-	//ゲームオブジェクトがNullじゃないか
-	assert(gameObject);
-	Matrix4x4 worldMatrix = Matrix4x4::Identity4x4();
-
-	//このオブジェクト本来のワールド行列を求める
-	worldMatrix = matrixUtility::MakeBillboardAffineMatrix(renderCamera_->GetWorldMatrix(), gameObject->GetTransform());
-
-	if (parent_){
-		worldMatrix = worldMatrix * parent_->GetWorldMatrix();
-	}
-
-	worldMatrix = node_.localMatrix * worldMatrix;
-
-	//ワールド行列の配列を上書き
-	worldMatrix_ = worldMatrix;
-}
-
-//座標の更新
-void Object3d::UpdateWorldTransform(uint32_t lodIndex, uint32_t drawIndex, const Matrix4x4& worldMatrix){
-	TransformationMatrix& transformation = rendererData_.lodRenderData.transformationData[lodIndex][drawIndex];
-
-	transformation.world = worldMatrix;
-
-	transformation.worldInverseTranspose = transformation.world.InverseTranspose();
-
 }
 
 //マテリアルを個別化する

@@ -26,11 +26,23 @@ void ModelManager::CreatePrimitiveModel(){
 	//Cubeモデルの追加
 	models_.insert(std::make_pair("cube", std::move(model)));
 
-	//Sphereモデルの生成
+	//Sphereモデルの生成(分割数16)
 	model = Model::CreateModel(directXBase_, { primitiveMeshFactory::CreateSphere() });
 
-	//Sphereモデルの追加
-	models_.insert(std::make_pair("sphere", std::move(model)));
+	//Sphereモデル(分割数16)の追加
+	models_.insert(std::make_pair("sphere_16", std::move(model)));
+
+	//Sphereモデルの生成(分割数32)
+	model = Model::CreateModel(directXBase_, { primitiveMeshFactory::CreateSphere({Vector3::MakeAllOne(),32,1.0f}) });
+
+	//Sphereモデル(分割数32)の追加
+	models_.insert(std::make_pair("sphere_32", std::move(model)));
+
+	//Planeモデルの生成
+	model = Model::CreateModel(directXBase_, { primitiveMeshFactory::CreatePlane() });
+
+	//Planeモデルの追加
+	models_.insert(std::make_pair("plane", std::move(model)));
 }
 
 //モデルの追加

@@ -145,6 +145,7 @@ void RenderSystem::CollectObject3ds(const std::vector<std::unique_ptr<GameObject
 
 		//視錐台カリング
 		bool isVisible = false;
+		const Matrix4x4 renderWorld = object3d->MakeRenderWorldMatrix(renderCamera_->GetWorldMatrix());
 		//メッシュごと
 		for (const std::unique_ptr<Mesh>& mesh : model->GetMeshes()){
 			//メッシュがなければ
@@ -153,7 +154,7 @@ void RenderSystem::CollectObject3ds(const std::vector<std::unique_ptr<GameObject
 			}
 
 			//カリングを行う
-			if (culling->IsVisibleInFrustum(mesh->GetAABB(), object3d->GetWorldMatrix())){
+			if (culling->IsVisibleInFrustum(mesh->GetAABB(), renderWorld)){
 				isVisible = true;
 				break;
 			}
@@ -290,8 +291,8 @@ void RenderSystem::BuildTransformationData(){
 		//サイズを確保
 		batch.transformations.reserve(batch.instances.size());
 		for (Object3d* object3d : batch.instances){
-			//ワールド行列を取得
-			Matrix4x4 world = object3d->GetWorldMatrix();
+			//今回の描画カメラに対応したワールド行列を作成
+			Matrix4x4 world = object3d->MakeRenderWorldMatrix(renderCamera_->GetWorldMatrix());
 
 			//トランスフォーメーション行列
 			TransformationMatrix transformation = {};

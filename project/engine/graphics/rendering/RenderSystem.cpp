@@ -102,6 +102,8 @@ void RenderSystem::CollectObject3ds(const std::vector<std::unique_ptr<GameObject
 		object3dBatches_.clear();
 		return;
 	}
+	//カメラのワールド座標を取得
+	Vector3 cameraWorldPos = renderCamera_->GetWorldPos();
 
 	//カリングの生成
 	std::unique_ptr<Culling> culling = Culling::Create(renderCamera);
@@ -135,8 +137,14 @@ void RenderSystem::CollectObject3ds(const std::vector<std::unique_ptr<GameObject
 			continue;
 		}
 
+
+		//LODを更新
+		//オブジェクト3dのワールド座標を取得
+		Vector3 object3dWorldPos = object3d->GetWorldPos();
+		object3d->UpdateLOD((object3dWorldPos - cameraWorldPos).Length());
+
 		//モデルを取得
-		Model* model = object3d->GetModel();
+		Model* model = object3d->GetRenderModel();
 
 		//モデルがなければ
 		if (!model){
@@ -238,7 +246,7 @@ void RenderSystem::BuildObject3dBatches(){
 		}
 
 		//Model*BlendModeを取得
-		Model* model = object3d->GetModel();
+		Model* model = object3d->GetRenderModel();
 		//マテリアルインスタンスを取得
 		MaterialInstance* materialInstance = object3d->GetMaterialInstance();
 		//ブレンドモードを取得

@@ -5,6 +5,7 @@
 #include "PrimitiveMeshFactory.h"
 #include "ModelLoader.h"
 #include "MaterialInstance.h"
+#include "LODBuilder.h"
 
 //モデルの生成(ファイルを読み込んでの)
 std::unique_ptr<Model>Model::CreateModel(DirectXBase* directXBase, const std::string& modelFileName){
@@ -80,8 +81,74 @@ void Model::RebuildMeshes(const std::vector<MeshData>& meshes){
 #endif // _DEBUG
 		modelData_.materialTexturePaths.push_back(material);
 	}
+
+	//テクスチャまたは環境マップのパスが空だった場合
+	for (MaterialTexturePaths& texturePath : modelData_.materialTexturePaths){
+		//テクスチャ
+		if (texturePath.textureFilePath.empty()){
+#ifdef _DEBUG
+			texturePath.textureFilePath = "engine/resources/textures/magenta1x1.png";
+#else
+			texturePath.textureFilePath = "engine/resources/textures/white1x1.png";
+#endif // _DEBUG
+		}
+
+		//環境マップ
+		if (texturePath.environmentMap.empty()){
+			texturePath.environmentMap = "engine/resources/textures/skybox_cube.dds";
+		}
+	}
+
 	//メッシュを構築
 	BuildMesh();
+
+	//描画データを修正
+	SetupRenderData();
+}
+
+//LODモデルの生成
+void Model::CreateLODModels(const std::vector<float>& keepRates){
+	//LODビルダーの生成
+	lodBuilder_ = std::make_unique<LODBuilder>();
+	//LODモデルの生成
+	std::vector<float>lodRate;
+	for (float rate : keepRates){
+		if (rate >= 1.0f){
+			continue;
+		}
+		lodRate.push_back(rate);
+	}
+	lodBuilder_->CreateLODModel(directXBase_, this, lodRate);
+}
+
+//LODモデルの取得
+Model* Model::GetLODModel(uint32_t lodIndex){
+	//LODビルダーがNullなら
+	if (!lodBuilder_){
+		return this;
+	}
+
+	//LODの検索キーが0なら
+	if (lodIndex == 0){
+		return this;
+	}
+
+	//LODの検索キーがLODのサイズより多いなら
+	if (lodIndex >= GetLODCount()){
+		return this;
+	}
+
+	return lodBuilder_->GetLODModel(lodIndex - 1);
+}
+
+//LODの数の取得
+uint32_t Model::GetLODCount() const{
+	//LODビルダーがNullなら
+	if (!lodBuilder_){
+		return 1;
+	}
+
+	return 1 + lodBuilder_->LODModelSize();
 }
 
 //描画に必要なデータのセットアップ

@@ -17,7 +17,6 @@
 class Model;
 class GameObject;
 class MaterialInstance;
-class LODBuilder;
 class LODController;
 class Culling;
 class Object3dRenderer;
@@ -58,6 +57,12 @@ public://メンバ関数
 	void Update();
 
 	/// <summary>
+	/// カメラとの距離からLODを更新
+	/// </summary>
+	/// <param name="distance">カメラとの距離</param>
+	void UpdateLOD(float distance);
+
+	/// <summary>
 	/// ワールド行列を作成
 	/// </summary>
 	/// <param name="cameraWorldMatrix">カメラのワールド行列</param>
@@ -68,8 +73,7 @@ public://メンバ関数
 	/// モデルの設定
 	/// </summary>
 	/// <param name="model">モデル</param>
-	/// <param name="keepRates">モデルの保持する倍率</param>
-	void SetModel(Model* model, const std::vector<float>& keepRates = { 1.0f,0.75f,0.5f,0.25f });
+	void SetModel(Model* model);
 
 	/// <summary>
 	/// LODの切り替え距離の設定
@@ -197,12 +201,6 @@ public://メンバ関数
 	const Model* GetModel()const;
 
 	/// <summary>
-	/// LODのポリゴンの割合の取得
-	/// </summary>
-	/// <returns>LODのポリゴンの割合</returns>
-	const std::vector<float>& GetLODKeepRates()const;
-
-	/// <summary>
 	/// モデルが設定されているかどうか
 	/// </summary>
 	/// <returns>モデルが設定されているかどうか</returns>
@@ -231,6 +229,18 @@ public://メンバ関数
 	/// </summary>
 	/// <returns>マテリアルインスタンス</returns>
 	const MaterialInstance* GetMaterialInstance()const;
+
+	/// <summary>
+	/// 現在のLODに対応した描画用モデルを取得
+	/// </summary>
+	/// <returns>描画用モデル</returns>
+	Model* GetRenderModel();
+
+	/// <summary>
+	/// 現在のLOD番号を取得
+	/// </summary>
+	/// <returns>現在のLOD番号</returns>
+	uint32_t GetCurrentLOD()const;
 private://メンバ関数
 	/// <summary>
 	/// ワールド行列を作成
@@ -246,30 +256,24 @@ private://定数
 	//インスタンスの最大数
 	static const inline uint32_t kMaxInstanceCount_ = 1024;
 private://メンバ変数
+	//ブレンドモード
+	BlendMode blendMode_ = BlendMode::kNone;
+
 	//モデル
 	Model* baseModel_ = nullptr;
-	//今現在のLOD番号
-	uint32_t currentLOD_ = 0;
-	//ノード
-	Node node_ = {};
-	//モデルのポリゴン数の割合
-	std::vector<float>lodKeepRates_;
-
-	//LODの数
-	uint32_t lodCount_ = 1;
-
-	//LODビルダー
-	std::unique_ptr<LODBuilder>lodBuilder_ = nullptr;
-	//LODの制御
-	std::unique_ptr<LODController>lodController_ = nullptr;
 
 	//このObject3dが使用するマテリアル
 	std::shared_ptr<MaterialInstance>materialInstance_ = nullptr;
+
+	//今現在のLOD番号
+	uint32_t currentLOD_ = 0;
+	//LODの制御
+	std::unique_ptr<LODController>lodController_ = nullptr;
 
 	//オブジェクトの見た目
 	RenderTransformMode renderTransformMode_ = RenderTransformMode::kNormal;
 	//ワールド行列
 	Matrix4x4 worldMatrix_ = {};
-	//ブレンドモード
-	BlendMode blendMode_ = BlendMode::kNone;
+	//ノード
+	Node node_ = {};
 };

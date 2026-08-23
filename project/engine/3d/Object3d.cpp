@@ -4,7 +4,6 @@
 #include "Model.h"
 #include "Mesh.h"
 #include "Culling.h"
-#include "LODBuilder.h"
 #include "LODController.h"
 #include "Object3dRenderer.h"
 #include "MaterialInstance.h"
@@ -35,12 +34,8 @@ void Object3d::Initialize(){
 	//Nodeのローカル行列の初期化
 	node_.localMatrix = Matrix4x4::Identity4x4();
 
-	//LODビルダーの生成
-	lodBuilder_ = std::make_unique<LODBuilder>();
 	//LODコントローラの生成
 	lodController_ = std::make_unique<LODController>();
-	//LODコントローラの初期化
-	lodController_->Initialize(lodBuilder_.get());
 }
 
 //複製　
@@ -77,6 +72,18 @@ void Object3d::Update(){
 	MakeWorldMatrix();
 }
 
+//カメラとの距離からLODを更新
+void Object3d::UpdateLOD(float distance){
+	//元モデルまたはLODコントローラがNullの場合
+	if (!baseModel_ || !lodController_){
+		currentLOD_ = 0;
+		return;
+	}
+
+	//距離からLODを選択
+	currentLOD_ = lodController_->SelectLOD(distance, currentLOD_, baseModel_->GetLODCount());
+}
+
 //ワールド行列を作成
 Matrix4x4 Object3d::MakeRenderWorldMatrix(const Matrix4x4& cameraWorldMatrix) const{
 	//Normalだった場合
@@ -102,16 +109,9 @@ Matrix4x4 Object3d::MakeRenderWorldMatrix(const Matrix4x4& cameraWorldMatrix) co
 }
 
 //モデルの設定
-void Object3d::SetModel(Model* model, const std::vector<float>& keepRates){
+void Object3d::SetModel(Model* model){
 	//元になるモデルを取得
 	baseModel_ = model;
-
-	//倍率を保存
-	if (!keepRates.empty()){
-		lodKeepRates_ = keepRates;
-	} else{
-		lodKeepRates_ = { 1.0f };
-	}
 
 	//currentLODを0に戻す
 	currentLOD_ = 0;
@@ -290,11 +290,6 @@ const Model* Object3d::GetModel() const{
 	return baseModel_;
 }
 
-//LODのポリゴンの割合の取得
-const std::vector<float>& Object3d::GetLODKeepRates()const{
-	return lodKeepRates_;
-}
-
 //モデルが設定されているかどうか
 bool Object3d::HasModel()const{
 	if (baseModel_){
@@ -321,6 +316,21 @@ MaterialInstance* Object3d::GetMaterialInstance(){
 //マテリアルインスタンスの取得
 const MaterialInstance* Object3d::GetMaterialInstance() const{
 	return materialInstance_.get();
+}
+
+//現在のLODに対応した描画用モデルを取得
+Model* Object3d::GetRenderModel(){
+	//元モデルがNullの場合
+	if (!baseModel_){
+		return nullptr;
+	}
+
+	return baseModel_->GetLODModel(currentLOD_);
+}
+
+//現在のLOD番号を取得
+uint32_t Object3d::GetCurrentLOD() const{
+	return currentLOD_;
 }
 
 //ワールド行列を作成

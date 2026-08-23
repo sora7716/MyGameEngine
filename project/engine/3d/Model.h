@@ -12,6 +12,7 @@
 class DirectXBase;
 class Mesh;
 class MaterialInstance;
+class LODBuilder;
 
 /// <summary>
 /// モデル
@@ -67,6 +68,25 @@ public://メンバ関数
 	void RebuildMeshes(const std::vector<MeshData>& meshes);
 
 	/// <summary>
+	/// LODモデルの生成
+	/// </summary>
+	/// <param name="keepRates">ポリゴン数の割合をまとめたもの</param>
+	void CreateLODModels(const std::vector<float>& keepRates);
+
+	/// <summary>
+	/// LODモデルの取得
+	/// </summary>
+	/// <param name="lodIndex">LODモデルの検索キー</param>
+	/// <returns>LODモデル</returns>
+	Model* GetLODModel(uint32_t lodIndex);
+
+	/// <summary>
+	/// LODの数の取得
+	/// </summary>
+	/// <returns>LODの数</returns>
+	uint32_t GetLODCount()const;
+
+	/// <summary>
 	/// 描画に必要なデータのセットアップ
 	/// </summary>
 	void SetupRenderData();
@@ -120,13 +140,20 @@ private://メンバ関数
 private://メンバ変数
 	//DirectXの基盤部分
 	DirectXBase* directXBase_ = nullptr;
+
 	//メッシュ
 	std::vector<std::unique_ptr<Mesh>>meshes_;
+
 	//Objファイルデータ
 	ModelData modelData_ = {};
+	
 	//マテリアルインスタンス
 	std::shared_ptr<MaterialInstance>defaultMaterialInstance_ = nullptr;
+	
 	//描画に必要なデータ
 	ModelRenderData modelRenderData_ = {};
+
+	//LODのビルダー
+	std::unique_ptr<LODBuilder>lodBuilder_ = nullptr;
 };
 

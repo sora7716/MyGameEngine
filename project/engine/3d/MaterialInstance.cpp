@@ -129,7 +129,7 @@ void MaterialInstance::SetUVTranslate(uint32_t index, const Vector2& translate){
 }
 
 //UVトランスフォームの設定
-void MaterialInstance::SetUVTransform(uint32_t index, const Transform2d& transform){
+void MaterialInstance::SetUVTransform(uint32_t index, const RectTransform& transform){
 	//検索キーとスロットのサイズを比較して
 	if (index >= slots_.size()){
 		return;

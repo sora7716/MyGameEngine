@@ -97,7 +97,7 @@ public://メンバ関数
 	/// ワールド座標のセッター(2D)
 	/// </summary>
 	/// <param name="transform2d">ワールド座標(2d)</param>
-	void SetTransform2d(const Transform2d& transform2d);
+	void SetTransform2d(const RectTransform& transform2d);
 
 	/// <summary>
 	/// スケールのセッター
@@ -211,7 +211,7 @@ private://メンバ変数
 	//ワールドビュープロジェクションのリソース
 	ComPtr<ID3D12Resource>wvpResource_ = nullptr;
 	//ワールドビュープロジェクションのデータ
-	worldMatrix_* wvpData_ = nullptr;
+	TransformationMatrix* wvpData_ = nullptr;
 	//カメラ
 	Camera* camera_ = nullptr;
 	//切り取る範囲

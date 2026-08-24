@@ -13,7 +13,7 @@ void Transform::Initialize() {
 }
 
 //初期化
-void Transform2d::Initialize() {
+void RectTransform::Initialize() {
 	scale = Vector2::MakeAllOne();
 	rotate = 0.0f;
 	translate = { 0.0f,0.0f };

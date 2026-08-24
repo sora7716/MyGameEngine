@@ -81,7 +81,7 @@ void Sprite::ChangeTexture(const std::string& spriteName) {
 }
 
 // UVの座標変換の更新
-void Sprite::UpdateUVTransform(Transform2d uvTransform) {
+void Sprite::UpdateUVTransform(RectTransform uvTransform) {
 	//UVTransform
 	materialData_->uvMatrix = matrixUtility::MakeAffineMatrix(uvTransform);
 }
@@ -98,7 +98,7 @@ void Sprite::SetColor(const Vector4& color) {
 }
 
 //トランスフォームのセッター
-void Sprite::SetTransformData(const Transform2d& transform) {
+void Sprite::SetTransformData(const RectTransform& transform) {
 	transform_.scale.x = transform.scale.x;
 	transform_.scale.y = transform.scale.y;
 	transform_.quaternion.z = transform.rotate;

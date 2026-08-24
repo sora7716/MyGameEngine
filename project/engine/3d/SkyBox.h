@@ -4,26 +4,14 @@
 #include "RenderingData.h"
 #include "SkyBoxRenderData.h"
 #include "Component.h"
-#include <d3d12.h>
-#include <dxgi1_6.h>
-#include <dxgidebug.h>
-#include <dxcapi.h>
-#include <wrl.h>
 #include <array>
 #include <string>
 #include <memory>
-
-//前方宣言
-class DirectXBase;
-class Camera;
-class GraphicsPipeline;
 
 /// <summary>
 /// スカイボックス
 /// </summary>
 class SkyBox :public Component{
-private://エイリアステンプレート
-	template <class T>using ComPtr = Microsoft::WRL::ComPtr<T>;
 public://メンバ関数
 	/// <summary>
 	/// コンストラクタ
@@ -42,13 +30,6 @@ public://メンバ関数
 	void Initialize()override;
 
 	/// <summary>
-	/// 初期化
-	/// </summary>
-	/// <param name="directXBase">DirectXの基盤部分</param>
-	/// <param name="imageFileName">画像のファイル名</param>
-	void Initialize(DirectXBase* directXBase, const std::string& imageFileName);
-
-	/// <summary>
 	/// 更新
 	/// </summary>
 	void Update()override;
@@ -57,6 +38,18 @@ public://メンバ関数
 	/// 描画に必要なデータのセットアップ
 	/// </summary>
 	void SetupRenderData();
+
+	/// <summary>
+	/// キューブマップの設定
+	/// </summary>
+	/// <param name="cubeMap">キューブマップ</param>
+	void SetCubeMap(const std::string& cubeMap);
+
+	/// <summary>
+	/// ブレンドモードの設定
+	/// </summary>
+	/// <param name="blendMode">ブレンドモード</param>
+	void SetBlendMode(BlendMode blendMode);
 
 	/// <summary>
 	/// 複製
@@ -76,9 +69,6 @@ private://メンバ関数
 	/// </summary>
 	void UpdateTransform();
 private://メンバ変数
-	//DirectXの基盤部分
-	DirectXBase* directXBase_ = nullptr;
-
 	//ブレンドモード
 	BlendMode blendMode_ = BlendMode::kNone;
 
@@ -86,7 +76,7 @@ private://メンバ変数
 	std::string imageFileName_ = "";
 
 	//マテリアル
-	Vector4 material_ = {};
+	Vector4 material_ = Vector4::MakeWhiteColor();
 
 	//ワールド行列
 	Matrix4x4 worldMatrix_ = {};

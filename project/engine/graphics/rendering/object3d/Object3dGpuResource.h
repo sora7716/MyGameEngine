@@ -7,7 +7,7 @@
 //LodのGPUに送る用のデータ
 struct LODGpuResource{
 	Microsoft::WRL::ComPtr<ID3D12Resource> wvpResource = nullptr;
-	worldMatrix_* wvpData = nullptr;
+	TransformationMatrix* wvpData = nullptr;
 	uint32_t srvIndex = 0;
 	uint32_t capacity = 0;
 };

@@ -30,7 +30,7 @@ struct Object3dBatch{
 
 	std::vector<Object3d*>instances;
 	//GPUへ送るインスタンスごとの行列
-	std::vector<worldMatrix_>transformations;
+	std::vector<TransformationMatrix>transformations;
 };
 
 /// <summary>

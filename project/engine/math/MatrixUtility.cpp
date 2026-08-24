@@ -210,7 +210,7 @@ Matrix4x4 matrixUtility::MakeSTRMatrix(const Vector3& scale, const Vector3& rota
 }
 
 //2次元のアフィン変換
-Matrix4x4 matrixUtility::MakeAffineMatrix(const Transform2d& uvTransform){
+Matrix4x4 matrixUtility::MakeAffineMatrix(const RectTransform& uvTransform){
 	return MakeScaleMatrix({ uvTransform.scale.x,uvTransform.scale.y,1.0f }) * MakeRotateZMatrix(uvTransform.rotate) * MakeTranslateMatrix({ uvTransform.translate.x,uvTransform.translate.y,1.0f });
 }
 

@@ -351,7 +351,7 @@ void RenderSystem::BuildTransformationData(){
 			Matrix4x4 world = object3d->MakeRenderWorldMatrix(renderCamera_->GetWorldMatrix());
 
 			//トランスフォーメーション行列
-			worldMatrix_ transformation = {};
+			TransformationMatrix transformation = {};
 			transformation.world = world;
 			transformation.wvp = world * renderCamera_->GetViewProjectionMatrix();
 			transformation.worldInverseTranspose = world.InverseTranspose();

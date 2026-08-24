@@ -5,7 +5,7 @@
 struct MaterialInstanceSlot{
 	Material material = {};
 	MaterialTexturePaths texturePaths = {};
-	Transform2d uvTransform = {};
+	RectTransform uvTransform = {};
 };
 
 /// <summary>
@@ -76,7 +76,7 @@ public://メンバ関数
 	/// </summary>
 	/// <param name="index">検索キー</param>
 	/// <param name="transform">UVトランスフォーム</param>
-	void SetUVTransform(uint32_t index, const Transform2d& transform);
+	void SetUVTransform(uint32_t index, const RectTransform& transform);
 
 	/// <summary>
 	/// ライティングするかの設定

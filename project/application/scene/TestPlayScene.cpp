@@ -60,6 +60,7 @@ void TestPlayScene::Initialize(){
 	sceneContext_.modelManager->FindModel("dekanu")->CreateLODModels({ 1.0f,0.75f,0.5f,0.25f });
 	object3d->SetModel(sceneContext_.modelManager->FindModel("dekanu"));
 	object3d->SetLODDistances({ 20.0f,40.0f,60.0f });
+	gameObject->AddComponent<SkyBox>();
 }
 
 //更新

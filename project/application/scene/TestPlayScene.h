@@ -72,7 +72,7 @@ public://メンバ関数
 	/// </summary>
 	void Finalize()override;
 private://メンバ変数
-	std::vector<Transform2d>transform2ds_;
+	std::vector<RectTransform>transform2ds_;
 
 	std::unique_ptr<debugDraw::Frustum>frustum_ = nullptr;
 

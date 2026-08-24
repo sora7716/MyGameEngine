@@ -3,6 +3,7 @@
 #include "Vector4.h"
 #include "Vector3.h"
 #include <vector>
+#include <wrl.h>
 #include <d3d12.h>
 #include <memory>
 
@@ -99,11 +100,6 @@ private://メンバ関数
 	/// インデックスリソースの生成
 	/// </summary>
 	void CreateIndexResource();
-
-	/// <summary>
-	/// マテリアルデータの初期化
-	/// </summary>
-	void InitializeMaterialData();
 
 	/// <summary>
 	/// マテリアルリソースの生成

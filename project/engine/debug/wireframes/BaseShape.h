@@ -121,7 +121,7 @@ namespace debugDraw {
 		ComPtr<ID3D12Resource>indexResource_ = nullptr;//インデックス
 		ComPtr<ID3D12Resource>wvpResource_ = nullptr;//ワールドビュープロジェクション
 		//ワールドビュープロジェクションのデータ
-		worldMatrix_* wvpData_ = nullptr;
+		TransformationMatrix* wvpData_ = nullptr;
 		//バッファリソースの使い道を補足するバッファビュー
 		D3D12_VERTEX_BUFFER_VIEW vertexBufferView_ = {};//頂点
 		D3D12_INDEX_BUFFER_VIEW indexBufferView_ = {};//インデックス	

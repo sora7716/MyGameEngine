@@ -132,7 +132,7 @@ namespace matrixUtility {
 	/// </summary>
 	/// <param name="uvTransform">uv座標</param>
 	/// <returns>アフィン行列</returns>
-	Matrix4x4 MakeAffineMatrix(const Transform2d& uvTransform);
+	Matrix4x4 MakeAffineMatrix(const RectTransform& uvTransform);
 
 	/// <summary>
 	/// 正射影行列

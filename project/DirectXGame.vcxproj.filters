@@ -135,9 +135,6 @@
     <ClCompile Include="engine\scene\SceneManager.cpp">
       <Filter>engine\scene</Filter>
     </ClCompile>
-    <ClCompile Include="application\actor\camera\GameCamera.cpp">
-      <Filter>application\actor</Filter>
-    </ClCompile>
     <ClCompile Include="engine\2d\Sprite.cpp">
       <Filter>engine\2d</Filter>
     </ClCompile>
@@ -376,9 +373,6 @@
     </ClInclude>
     <ClInclude Include="engine\scene\SceneManager.h">
       <Filter>engine\scene</Filter>
-    </ClInclude>
-    <ClInclude Include="application\actor\camera\GameCamera.h">
-      <Filter>application\actor</Filter>
     </ClInclude>
     <ClInclude Include="engine\2d\SpriteCommon.h">
       <Filter>engine\2d</Filter>

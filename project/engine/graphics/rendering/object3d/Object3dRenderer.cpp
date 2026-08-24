@@ -145,7 +145,7 @@ void Object3dRenderer::Draw(uint32_t instanceIndex){
 }
 
 //バッチを受け取る関数
-void Object3dRenderer::SubmitBatch(Model* model, MaterialInstance* materialInstance, BlendMode blendMode, const std::vector<worldMatrix_>& transformations, Camera* renderCamera){
+void Object3dRenderer::SubmitBatch(Model* model, MaterialInstance* materialInstance, BlendMode blendMode, const std::vector<TransformationMatrix>& transformations, Camera* renderCamera){
 	if (!model || !materialInstance || !renderCamera){
 		return;
 	} else if (transformations.empty()){
@@ -243,7 +243,7 @@ void Object3dRenderer::AddRenderData(const Object3dRenderData& renderData){
 	Object3dGpuResource& objectResource = objectResources_[renderData.renderHandle];
 
 	//LODごとのTransformationData
-	const std::vector<std::vector<worldMatrix_>>& transformationData = renderData.lodRenderData.transformationData;
+	const std::vector<std::vector<TransformationMatrix>>& transformationData = renderData.lodRenderData.transformationData;
 
 	//LODごとの描画数
 	const std::vector<uint32_t>drawCounts = renderData.lodRenderData.matrixCounts;
@@ -282,7 +282,7 @@ uint32_t Object3dRenderer::GetRenderDataSize(){
 void Object3dRenderer::CreateTransformationMatrixResource(LODGpuResource& lodGpuResource){
 	HRESULT result = S_FALSE;
 	// 配列サイズで確保
-	lodGpuResource.wvpResource = directXBase_->CreateBufferResource(sizeof(worldMatrix_) * lodGpuResource.capacity);
+	lodGpuResource.wvpResource = directXBase_->CreateBufferResource(sizeof(TransformationMatrix) * lodGpuResource.capacity);
 	//座標変換行列リソースにデータを書き込むためのアドレスを取得してtransformationMatrixDataに割り当てる
 	//書き込むためのアドレス
 	result = lodGpuResource.wvpResource->Map(0, nullptr, reinterpret_cast<void**>(&lodGpuResource.wvpData));
@@ -303,7 +303,7 @@ void Object3dRenderer::CreateStructuredBufferForWvp(LODGpuResource& lodGpuResour
 		lodGpuResource.srvIndex,
 		lodGpuResource.wvpResource.Get(),
 		lodGpuResource.capacity,
-		sizeof(worldMatrix_)
+		sizeof(TransformationMatrix)
 	);
 }
 

@@ -239,7 +239,7 @@ void Object3d::SetEnvironmentCoefficient(uint32_t index, float& environmentCoeff
 }
 
 //UV座標の設定
-void Object3d::SetUVTransform(uint32_t index, const Transform2d& uvTransform){
+void Object3d::SetUVTransform(uint32_t index, const RectTransform& uvTransform){
 	//マテリアルインスタンスがなければ
 	if (!materialInstance_){
 		return;

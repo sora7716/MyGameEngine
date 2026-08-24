@@ -148,7 +148,7 @@ public://メンバ関数
 	/// </summary>マテリアルスロット番号の検索キー
 	/// <param name="index">マテリアルスロット番号の検索キー</param>
 	/// <param name="uvTransform">UV座標</param>
-	void SetUVTransform(uint32_t index, const Transform2d& uvTransform);
+	void SetUVTransform(uint32_t index, const RectTransform& uvTransform);
 
 	/// <summary>
 	/// ブレンドモードの設定

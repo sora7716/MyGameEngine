@@ -38,6 +38,9 @@ void SkyBoxRenderer::Initialize(DirectXBase* directXBase, TextureManager* textur
 
 	//マテリアルのリソースの生成
 	CreateMaterialResource();
+
+	//ワールド行列のリソースの生成
+	CreateWorldMatrixResource();
 }
 
 //レンダーデータの追加
@@ -59,6 +62,13 @@ void SkyBoxRenderer::Draw(uint32_t instanceIndex, Camera* renderCamera){
 	if (!skyBoxRenderData.isActive){
 		return;
 	}
+
+	//描画データを反映
+	//マテリアル
+	*materialData_ = skyBoxRenderData.material;
+	//ワールド行列
+	*worldMatrix_ = skyBoxRenderData.worldMatrix;
+
 	//カメラ
 	renderCamera->DrawSetting(3);
 	//座標変換行列CBufferの場所を設定
@@ -177,7 +187,7 @@ void SkyBoxRenderer::CreateVertexResource(){
 	SkyBoxVertexData* vertexData = nullptr;
 	vertexResource_->Map(0, nullptr, reinterpret_cast<void**>(&vertexData));
 	//頂点データをリソースにコピー
-	std::memcpy(vertexData, vertices_.data(),vertices_.size());
+	std::memcpy(vertexData, vertices_.data(), sizeof(SkyBoxVertexData) * kVertexCount);
 }
 
 //インデックスデータの初期化
@@ -234,7 +244,7 @@ void SkyBoxRenderer::CreateIndexResource(){
 	InitializeIndexData();
 
 	//IndexResourceを作成する
-	indexResource_ = directXBase_->CreateBufferResource(indices_.size());
+	indexResource_ = directXBase_->CreateBufferResource(sizeof(uint32_t) * kIndexCount);
 	//IndexBufferViewを作成する
 	//リソースの先頭のアドレスから使う
 	indexBufferView_.BufferLocation = indexResource_->GetGPUVirtualAddress();
@@ -250,28 +260,20 @@ void SkyBoxRenderer::CreateIndexResource(){
 	std::memcpy(indexData, indices_.data(), sizeof(uint32_t) * kIndexCount);
 }
 
-//マテリアルデータの初期化
-void SkyBoxRenderer::InitializeMaterialData(){
-	//色を書き込む
-	*materialData_ = Vector4::MakeWhiteColor();
-}
-
 //マテリアルリソースの生成
 void SkyBoxRenderer::CreateMaterialResource(){
 	//マテリアルリソースを作る
-	materialResource_ = directXBase_->CreateBufferResource(sizeof(materialData_));
-	//マテリアルリソースにデータを書き込むためのアドレスを取得してmaterialDataに割り当てる
+	materialResource_ = directXBase_->CreateBufferResource(sizeof(Vector4));
 	//書き込むためのアドレスを取得
 	materialResource_->Map(0, nullptr, reinterpret_cast<void**>(&materialData_));
-	//マテリアルデータの初期値を書き込む
-	InitializeMaterialData();
+	//色を書き込む
+	*materialData_ = Vector4::MakeWhiteColor();
 }
 
 //座標変換行列リソースの生成
 void SkyBoxRenderer::CreateWorldMatrixResource(){
 	//座標変換行列リソースを作成する
-	worldMatrixResource_ = directXBase_->CreateBufferResource(sizeof(worldMatrix_));
-	//座標変換行列リソースにデータを書き込むためのアドレスを取得してtransformationMatrixDataに割り当てる
+	worldMatrixResource_ = directXBase_->CreateBufferResource(sizeof(Matrix4x4));
 	//書き込むためのアドレス
 	worldMatrixResource_->Map(0, nullptr, reinterpret_cast<void**>(&worldMatrix_));
 	//単位行列を書き込んでおく

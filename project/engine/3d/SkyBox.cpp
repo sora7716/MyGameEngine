@@ -21,23 +21,10 @@ void SkyBox::Initialize(){
 	//スカイボックス固有のデータの初期化
 	imageFileName_ = "engine/resources/textures/skybox_cube.dds";
 	blendMode_ = BlendMode::kNone;
-
-}
-
-//初期化
-void SkyBox::Initialize(DirectXBase* directXBase, const std::string& imageFileName){
-	//DirectXの基盤の記録
-	assert(directXBase);
-	directXBase_ = directXBase;
-
-	//スプライトファイルパスを記録
-	imageFileName_ = "engine/resources/textures/" + imageFileName;
 }
 
 //更新
 void SkyBox::Update(){
-	GameObject* gameObject = GetOwner();
-
 	//ワールド座標の更新
 	UpdateTransform();
 
@@ -59,6 +46,17 @@ void SkyBox::SetupRenderData(){
 	} else{
 		renderData_.isActive = false;
 	}
+}
+
+//キューブマップの設定
+void SkyBox::SetCubeMap(const std::string& cubeMap){
+	//スカイボックス固有のデータの初期化
+	imageFileName_ = "engine/resources/textures/" + cubeMap;
+}
+
+//ブレンドモードの設定
+void SkyBox::SetBlendMode(BlendMode blendMode){
+	blendMode_ = blendMode;
 }
 
 //複製

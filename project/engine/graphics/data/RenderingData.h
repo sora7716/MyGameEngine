@@ -28,7 +28,7 @@ struct Transform {
 };
 
 //Transform2D情報
-struct Transform2d {
+struct RectTransform {
 	Vector2 scale = Vector2::MakeAllOne();
 	float rotate = 0.0f;
 	Vector2 translate = {};
@@ -40,7 +40,7 @@ struct Transform2d {
 };
 
 //TransformationMatrix
-struct worldMatrix_ {
+struct TransformationMatrix {
 	Matrix4x4 wvp = {};
 	Matrix4x4 world = {};
 	Matrix4x4 worldInverseTranspose = {};

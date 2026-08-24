@@ -35,9 +35,11 @@ public://メンバ関数
 	void Update()override;
 
 	/// <summary>
-	/// 描画に必要なデータのセットアップ
-	/// </summary>
-	void SetupRenderData();
+    /// 複製
+    /// </summary>
+    /// <param name="gameObject">ゲームオブジェクト</param>
+    /// <returns>コンポーネント</returns>
+	std::unique_ptr<Component>Clone(GameObject* gameObject)const override;
 
 	/// <summary>
 	/// キューブマップの設定
@@ -52,13 +54,6 @@ public://メンバ関数
 	void SetBlendMode(BlendMode blendMode);
 
 	/// <summary>
-	/// 複製
-	/// </summary>
-	/// <param name="gameObject">ゲームオブジェクト</param>
-	/// <returns>コンポーネント</returns>
-	std::unique_ptr<Component>Clone(GameObject* gameObject)const override;
-
-	/// <summary>
 	/// 描画データの取得
 	/// </summary>
 	/// <returns>描画データ</returns>
@@ -68,6 +63,11 @@ private://メンバ関数
 	/// ワールド座標の更新
 	/// </summary>
 	void UpdateTransform();
+
+	/// <summary>
+	/// 描画に必要なデータのセットアップ
+	/// </summary>
+	void SetupRenderData();
 private://メンバ変数
 	//ブレンドモード
 	BlendMode blendMode_ = BlendMode::kNone;

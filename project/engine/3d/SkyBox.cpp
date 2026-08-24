@@ -32,6 +32,46 @@ void SkyBox::Update(){
 	SetupRenderData();
 }
 
+//複製
+std::unique_ptr<Component> SkyBox::Clone(GameObject* gameObject) const{
+	std::unique_ptr<SkyBox>cloneInstance = std::make_unique<SkyBox>(gameObject
+	);
+
+	//初期化
+	cloneInstance->Initialize();
+
+	//SkyBoxが持つ設定だけ複製
+	cloneInstance->SetEnabled(this->IsEnabled());
+	cloneInstance->imageFileName_ = this->imageFileName_;
+	cloneInstance->blendMode_ = this->blendMode_;
+	cloneInstance->material_ = this->material_;
+	cloneInstance->worldMatrix_ = this->worldMatrix_;
+	return cloneInstance;
+}
+
+//キューブマップの設定
+void SkyBox::SetCubeMap(const std::string& cubeMap){
+	//スカイボックス固有のデータの初期化
+	imageFileName_ = "engine/resources/textures/" + cubeMap;
+}
+
+//ブレンドモードの設定
+void SkyBox::SetBlendMode(BlendMode blendMode){
+	blendMode_ = blendMode;
+}
+
+//描画データの取得
+const SkyBoxRenderData& SkyBox::GetRenderData(){
+	return renderData_;
+}
+
+//ワールド座標の更新
+void SkyBox::UpdateTransform(){
+	GameObject* gameObject = GetOwner();
+	//ワールド行列の作成
+	worldMatrix_ = matrixUtility::MakeAffineMatrix(gameObject->GetTransform());
+}
+
 //描画に必要なデータのセットアップ
 void SkyBox::SetupRenderData(){
 	GameObject* gameObject = GetOwner();
@@ -46,43 +86,4 @@ void SkyBox::SetupRenderData(){
 	} else{
 		renderData_.isActive = false;
 	}
-}
-
-//キューブマップの設定
-void SkyBox::SetCubeMap(const std::string& cubeMap){
-	//スカイボックス固有のデータの初期化
-	imageFileName_ = "engine/resources/textures/" + cubeMap;
-}
-
-//ブレンドモードの設定
-void SkyBox::SetBlendMode(BlendMode blendMode){
-	blendMode_ = blendMode;
-}
-
-//複製
-std::unique_ptr<Component> SkyBox::Clone(GameObject* gameObject) const{
-	std::unique_ptr<SkyBox>cloneInstance = std::make_unique<SkyBox>(gameObject
-	);
-
-	//初期化
-	cloneInstance->Initialize();
-
-	//SkyBoxが持つ設定だけ複製
-	cloneInstance->SetEnabled(this->IsEnabled());
-	cloneInstance->imageFileName_ = this->imageFileName_;
-	cloneInstance->blendMode_ = this->blendMode_;
-	cloneInstance->material_ = this->material_;
-	return cloneInstance;
-}
-
-//描画データの取得
-const SkyBoxRenderData& SkyBox::GetRenderData(){
-	return renderData_;
-}
-
-//ワールド座標の更新
-void SkyBox::UpdateTransform(){
-	GameObject* gameObject = GetOwner();
-	//ワールド行列の作成
-	worldMatrix_ = matrixUtility::MakeAffineMatrix(gameObject->GetTransform());
 }

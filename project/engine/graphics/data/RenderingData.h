@@ -32,11 +32,6 @@ struct RectTransform {
 	Vector2 scale = Vector2::MakeAllOne();
 	float rotate = 0.0f;
 	Vector2 translate = {};
-
-	/// <summary>
-	/// 初期化
-	/// </summary>
-	void Initialize();
 };
 
 //TransformationMatrix
@@ -45,6 +40,13 @@ struct TransformationMatrix {
 	Matrix4x4 world = {};
 	Matrix4x4 worldInverseTranspose = {};
 };
+
+//TransformationMatrix
+struct TransformationMatrixForSprite{
+	Matrix4x4 wvp = {};
+	Matrix4x4 world = {};
+};
+
 
 //ノード構造体
 struct Node {

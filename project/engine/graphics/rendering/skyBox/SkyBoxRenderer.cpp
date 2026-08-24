@@ -44,19 +44,19 @@ void SkyBoxRenderer::Initialize(DirectXBase* directXBase, TextureManager* textur
 }
 
 //レンダーデータの追加
-void SkyBoxRenderer::AddRenderData(const SkyBoxRenderData& skyBoxRenderData){
-	skyBoxRenderDatas_.push_back(skyBoxRenderData);
+void SkyBoxRenderer::AddRenderData(const SkyBoxRenderData& renderData){
+	renderDatas_.push_back(renderData);
 }
 
 //リセット
 void SkyBoxRenderer::Reset(){
-	skyBoxRenderDatas_.clear();
+	renderDatas_.clear();
 }
 
 //描画
 void SkyBoxRenderer::Draw(uint32_t instanceIndex, Camera* renderCamera){
 	//スカイボックスの描画データ
-	SkyBoxRenderData skyBoxRenderData = skyBoxRenderDatas_[instanceIndex];
+	SkyBoxRenderData skyBoxRenderData = renderDatas_[instanceIndex];
 
 	//存在していなかったら
 	if (!skyBoxRenderData.isActive){
@@ -87,12 +87,12 @@ void SkyBoxRenderer::Draw(uint32_t instanceIndex, Camera* renderCamera){
 
 //ブレンドモードの取得
 BlendMode SkyBoxRenderer::GetBlendMode(uint32_t instanceIndex){
-	return skyBoxRenderDatas_[instanceIndex].blendMode;
+	return renderDatas_[instanceIndex].blendMode;
 }
 
 //描画データのサイズの取得
 uint32_t SkyBoxRenderer::GetRenderDataSize(){
-	return static_cast<uint32_t>(skyBoxRenderDatas_.size());
+	return static_cast<uint32_t>(renderDatas_.size());
 }
 
 //頂点データの初期化

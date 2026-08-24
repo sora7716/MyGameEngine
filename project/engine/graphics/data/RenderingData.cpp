@@ -11,10 +11,3 @@ void Transform::Initialize() {
 	eulerAngle = { 0.0f,0.0f,0.0f };
 	isUsingQuaternion = false;
 }
-
-//初期化
-void RectTransform::Initialize() {
-	scale = Vector2::MakeAllOne();
-	rotate = 0.0f;
-	translate = { 0.0f,0.0f };
-}

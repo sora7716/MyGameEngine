@@ -2,10 +2,12 @@
 #include "Model.h"
 #include "DirectXBase.h"
 #include "Mesh.h"
-#include "PrimitiveMeshFactory.h"
+#include "Logger.h"
 #include "ModelLoader.h"
 #include "MaterialInstance.h"
 #include "LODBuilder.h"
+#include <algorithm>
+#include <functional>
 
 //モデルの生成(ファイルを読み込んでの)
 std::unique_ptr<Model>Model::CreateModel(DirectXBase* directXBase, const std::string& modelFileName){
@@ -108,8 +110,6 @@ void Model::RebuildMeshes(const std::vector<MeshData>& meshes){
 
 //LODモデルの生成
 void Model::CreateLODModels(const std::vector<float>& keepRates){
-	//LODビルダーの生成
-	lodBuilder_ = std::make_unique<LODBuilder>();
 	//LODモデルの生成
 	std::vector<float>lodRate;
 	for (float rate : keepRates){
@@ -118,7 +118,43 @@ void Model::CreateLODModels(const std::vector<float>& keepRates){
 		}
 		lodRate.push_back(rate);
 	}
+	//ソート(降順)
+	std::sort(lodRate.begin(), lodRate.end(), std::greater<float>());
+
+	//LODがもうすでに作られているのなら
+	if (isLODGenerated_){
+		//比較用のRateともともとのRateのサイズを比べて
+		if (lodRate.size() != generatedLODRates_.size()){
+			Logger::OutputLog("LODの倍率が違う");
+			assert(false);
+			return;
+		}
+
+		//各要素に入っている値を比べて
+		for (uint32_t i = 0; i < static_cast<uint32_t>(generatedLODRates_.size()); i++){
+			if (lodRate[i] != generatedLODRates_[i]){
+				Logger::OutputLog("LODの倍率が違う");
+				assert(false);
+				return;
+			}
+		}
+
+		Logger::OutputLog("LOD生成済みなのでスキップした");
+		return;
+	}
+
+	Logger::OutputLog("LODを新しく生成した");
+
+	//LODビルダーの生成
+	lodBuilder_ = std::make_unique<LODBuilder>();
+
+	//LODの倍率を保存
+	generatedLODRates_ = lodRate;
+
 	lodBuilder_->CreateLODModel(directXBase_, this, lodRate);
+
+	//LODを作成したらtrueにする
+	isLODGenerated_ = true;
 }
 
 //LODモデルの取得

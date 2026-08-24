@@ -146,14 +146,20 @@ private://メンバ変数
 
 	//Objファイルデータ
 	ModelData modelData_ = {};
-	
+
 	//マテリアルインスタンス
 	std::shared_ptr<MaterialInstance>defaultMaterialInstance_ = nullptr;
-	
+
 	//描画に必要なデータ
 	ModelRenderData modelRenderData_ = {};
 
 	//LODのビルダー
 	std::unique_ptr<LODBuilder>lodBuilder_ = nullptr;
+
+	//LODを作成したかのフラグ
+	bool isLODGenerated_ = false;
+
+	//LOD倍率を保存
+	std::vector<float>generatedLODRates_;
 };
 

@@ -36,23 +36,6 @@ void TestPlayScene::Initialize(){
 	BaseScene::Initialize();
 	gameCamera_ = sceneContext_.cameraManager->FindCamera("testPlayCamera");
 
-	//object3d_->SetLODDistances({ 20.0f,30.0f,50.0f,80.0f });
-	GameObject* treePtr = nullptr;
-
-
-	std::unique_ptr<GameObject> skyBoxObject = std::make_unique<GameObject>();
-	skyBoxObject->Initialize("skyBox");
-	skyBoxObject->GetTransform().scale = { 50.0f,50.0f,50.0f };
-	treePtr = skyBoxObject.get();
-	gameObjects_.push_back(std::move(skyBoxObject));
-
-	skyBox_ = std::make_unique<SkyBox>();
-	skyBox_->Initialize(sceneContext_.directXBase, "skybox_cube.dds", gameCamera_);
-	skyBox_->SetGameObject(treePtr);
-	//for (uint32_t i = 0; i < object3d_->GetModel()->GetMeshes().size(); i++) {
-	//	transform2ds_.push_back({ object3d_->GetUVScale(i),object3d_->GetUVRotate(i),object3d_->GetUVTranslate(i) });
-	//}
-
 	frustum_ = std::make_unique<debugDraw::Frustum>();
 	frustum_->Initialize(sceneContext_.directXBase, gameCamera_);
 	frustum_->SetTargetCamera(gameCamera_);
@@ -93,8 +76,6 @@ void TestPlayScene::Update(){
 	frustum_->Update();
 
 	cube_->Update();
-
-	skyBox_->Update();
 
 	particleSystem_->Update();
 

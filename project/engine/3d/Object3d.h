@@ -1,16 +1,11 @@
 #pragma once
 #include "MatrixUtility.h"
 #include "BlendMode.h"
-#include "PrimitiveData.h"
 #include "RenderingData.h"
 #include "Object3dRenderData.h"
-#include "Object3dGpuResource.h"
 #include "Component.h"
 #include <vector>
 #include <string>
-#include <wrl.h>
-#include <d3d12.h>
-#include <array>
 #include <memory>
 
 //前方宣言
@@ -25,8 +20,6 @@ class Object3dRenderer;
 /// 3Dオブジェクト
 /// </summary>
 class Object3d :public Component{
-private://エイリアステンプレート
-	template <class T>using ComPtr = Microsoft::WRL::ComPtr<T>;
 public://メンバ関数
 	/// <summary>
 	/// コンストラクタ
@@ -37,7 +30,7 @@ public://メンバ関数
 	/// <summary>
 	/// デストラクタ
 	/// </summary>
-	~Object3d();
+	~Object3d()override;
 
 	/// <summary>
 	/// 初期化

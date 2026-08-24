@@ -9,6 +9,7 @@
 #include "Culling.h"
 #include "Model.h"
 #include "Mesh.h"
+#include "SkyBox.h"
 #include "SkyBoxRenderer.h"
 #include "DebugDrawRenderer.h"
 #include "ParticleRenderer.h"
@@ -82,20 +83,20 @@ void RenderSystem::Draw(){
 		//描画開始
 		PreDraw(skyBoxRenderer_->GetBlendMode(i), PipelineType::kSkyBox);
 		//スカイボックスの描画
-		skyBoxRenderer_->Draw(i);
+		skyBoxRenderer_->Draw(i, renderCamera_);
 	}
 	//描画オブジェクトのリセット
 	skyBoxRenderer_->Reset();
 
 }
 
-//Object3dを集める
-void RenderSystem::CollectObject3ds(const std::vector<std::unique_ptr<GameObject>>& gameObjects, Camera* renderCamera){
+//描画に有効なObject3dを集める
+void RenderSystem::CollectActiveObject3ds(const std::vector<std::unique_ptr<GameObject>>& gameObjects, Camera* renderCamera){
 	//今回描画で使用するカメラ
 	renderCamera_ = renderCamera;
 
 	//object3dsをクリア
-	object3ds_.clear();
+	activeObject3ds_.clear();
 
 	//描画で使用するカメラがなければ
 	if (!renderCamera_){
@@ -108,6 +109,7 @@ void RenderSystem::CollectObject3ds(const std::vector<std::unique_ptr<GameObject
 	//カリングの生成
 	std::unique_ptr<Culling> culling = Culling::Create(renderCamera);
 
+	//探索開始
 	for (const std::unique_ptr<GameObject>& gameObject : gameObjects){
 		//ゲームオブジェクトがNullじゃないか
 		if (!gameObject){
@@ -174,7 +176,7 @@ void RenderSystem::CollectObject3ds(const std::vector<std::unique_ptr<GameObject
 		}
 
 		//Object3dsに追加
-		object3ds_.push_back(object3d);
+		activeObject3ds_.push_back(object3d);
 	}
 
 	//収集したObject3dをグループ分け
@@ -183,6 +185,52 @@ void RenderSystem::CollectObject3ds(const std::vector<std::unique_ptr<GameObject
 	BuildTransformationData();
 	//作成したバッチをレンダラーに送信
 	SubmitObject3dBatches();
+}
+
+//描画に有効なSkyBoxを集める
+void RenderSystem::CollectActiveSkyBox(const std::vector<std::unique_ptr<GameObject>>& gameObjects, Camera* renderCamera){
+	renderCamera_ = renderCamera;
+	//描画に有効なSkyBoxをリセット
+	activeSkyBox_ = nullptr;
+
+	//描画カメラがNullだったら
+	if (!renderCamera_){
+		return;
+	}
+
+	//探索開始
+	for (const std::unique_ptr<GameObject>& gameObject : gameObjects){
+		//ゲームオブジェクトがNullじゃないか
+		if (!gameObject){
+			continue;
+		}
+
+		//ゲームオブジェクトが有効状態か
+		if (!gameObject->IsActive()){
+			continue;
+		}
+
+		//オブジェクト3dを取得
+		SkyBox* skyBox = gameObject->GetComponent<SkyBox>();
+
+		//オブジェクト3dがNullか
+		if (!skyBox){
+			continue;
+		}
+
+		//オブジェクト3dが有効状態か
+		if (!skyBox->IsEnabled()){
+			continue;
+		}
+
+		//activeSkyBoxを設定
+		activeSkyBox_ = skyBox;
+		break;
+	}
+
+	if (activeSkyBox_){
+		skyBoxRenderer_->AddRenderData(activeSkyBox_->GetRenderData());
+	}
 }
 
 //Object3dのレンダラーの取得
@@ -239,7 +287,7 @@ void RenderSystem::BuildObject3dBatches(){
 	object3dBatches_.clear();
 
 	//先頭からアクセス
-	for (Object3d* object3d : object3ds_){
+	for (Object3d* object3d : activeObject3ds_){
 		//オブジェクト3dがNullだった場合
 		if (!object3d){
 			continue;
@@ -303,7 +351,7 @@ void RenderSystem::BuildTransformationData(){
 			Matrix4x4 world = object3d->MakeRenderWorldMatrix(renderCamera_->GetWorldMatrix());
 
 			//トランスフォーメーション行列
-			TransformationMatrix transformation = {};
+			worldMatrix_ transformation = {};
 			transformation.world = world;
 			transformation.wvp = world * renderCamera_->GetViewProjectionMatrix();
 			transformation.worldInverseTranspose = world.InverseTranspose();

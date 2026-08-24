@@ -89,7 +89,7 @@ public://メンバ関数
 	/// <param name="blendMode">ブレンドモード</param>
 	/// <param name="transformations">トランスフォーメーションデータ</param>
 	/// <param name="renderCamera">描画用カメラ</param>
-	void SubmitBatch(Model* model, MaterialInstance* materialInstance, BlendMode blendMode, const std::vector<TransformationMatrix>& transformations, Camera* renderCamera);
+	void SubmitBatch(Model* model, MaterialInstance* materialInstance, BlendMode blendMode, const std::vector<worldMatrix_>& transformations, Camera* renderCamera);
 
 	/// <summary>
 	/// 描画データの追加

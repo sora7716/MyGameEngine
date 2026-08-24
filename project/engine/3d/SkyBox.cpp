@@ -6,7 +6,7 @@
 #include <cassert>
 
 //コンストラクタ
-SkyBox::SkyBox(){
+SkyBox::SkyBox(GameObject* gameObject) :Component(gameObject){
 }
 
 //デストラクタ
@@ -14,269 +14,77 @@ SkyBox::~SkyBox(){
 }
 
 //初期化
-void SkyBox::Initialize(DirectXBase* directXBase,const std::string& imageFileName, Camera* camera){
+void SkyBox::Initialize(){
+	//基底クラスの初期化
+	Component::Initialize();
+
+	//スカイボックス固有のデータの初期化
+	imageFileName_ = "engine/resources/textures/skybox_cube.dds";
+	blendMode_ = BlendMode::kNone;
+
+}
+
+//初期化
+void SkyBox::Initialize(DirectXBase* directXBase, const std::string& imageFileName){
 	//DirectXの基盤の記録
 	assert(directXBase);
 	directXBase_ = directXBase;
-	//カメラの設定
-	SetRenderCamera(camera);
-	//頂点データの生成
-	CreateVertexResource();
-	//インデックスデータの生成
-	CreateIndexResource();
-	//マテリアルデータの生成
-	CreateMaterialResource();
+
 	//スプライトファイルパスを記録
 	imageFileName_ = "engine/resources/textures/" + imageFileName;
-	//wvpリソースの初期化
-	CreateTransformationMatrixResource();
 }
 
 //更新
 void SkyBox::Update(){
+	GameObject* gameObject = GetOwner();
+
 	//ワールド座標の更新
 	UpdateTransform();
-	//UV座標の更新
-	UpdateUVTransform();
+
+	//描画に必要なデータのセットアップ
+	SetupRenderData();
+}
+
+//描画に必要なデータのセットアップ
+void SkyBox::SetupRenderData(){
+	GameObject* gameObject = GetOwner();
 
 	//描画データをまとめる
-	skyBoxRenderData_.blendMode = blendMode_;
-	skyBoxRenderData_.imageFileName = imageFileName_;
-	skyBoxRenderData_.indexBufferView = indexBufferView_;
-	skyBoxRenderData_.vertexBufferView = vertexBufferView_;
-	skyBoxRenderData_.indexCount = kIndexCount;
-	skyBoxRenderData_.materialResource = materialResource_;
-	skyBoxRenderData_.wvpResource = wvpResource_;
-	if (gameObject_){
-		skyBoxRenderData_.isActive = gameObject_->IsActive();
+	renderData_.blendMode = blendMode_;
+	renderData_.imageFileName = imageFileName_;
+	renderData_.material = material_;
+	renderData_.worldMatrix = worldMatrix_;
+	if (gameObject){
+		renderData_.isActive = gameObject->IsActive();
 	} else{
-		skyBoxRenderData_.isActive = false;
+		renderData_.isActive = false;
 	}
 }
 
-//ゲームオブジェクトの設定
-void SkyBox::SetGameObject(GameObject* gameObject){
-	gameObject_ = gameObject;
-}
+//複製
+std::unique_ptr<Component> SkyBox::Clone(GameObject* gameObject) const{
+	std::unique_ptr<SkyBox>cloneInstance = std::make_unique<SkyBox>(gameObject
+	);
 
-//描画する用のカメラの設定
-void SkyBox::SetRenderCamera(Camera* camera){
-	renderCamera_ = camera;
-	skyBoxRenderData_.renderCamera = camera;
+	//初期化
+	cloneInstance->Initialize();
+
+	//SkyBoxが持つ設定だけ複製
+	cloneInstance->SetEnabled(this->IsEnabled());
+	cloneInstance->imageFileName_ = this->imageFileName_;
+	cloneInstance->blendMode_ = this->blendMode_;
+	cloneInstance->material_ = this->material_;
+	return cloneInstance;
 }
 
 //描画データの取得
-const SkyBoxRenderData& SkyBox::GetSkyBoxRenderData(){
-	// TODO: return ステートメントをここに挿入します
-	return skyBoxRenderData_;
-}
-
-//頂点データの初期化
-void SkyBox::InitializeVertexData(){
-	//サイズを設定
-	skyBoxProp.resize(kVertexCount);
-	//右面
-	//位置
-	skyBoxProp[0].vertexPos = { 1.0f,1.0f,1.0f,1.0f };
-	skyBoxProp[1].vertexPos = { 1.0f,1.0f,-1.0f,1.0f };
-	skyBoxProp[2].vertexPos = { 1.0f,-1.0f,1.0f,1.0f };
-	skyBoxProp[3].vertexPos = { 1.0f,-1.0f,-1.0f,1.0f };
-	//Texcoord
-	skyBoxProp[0].texcoord = { 1.0f,1.0f,1.0f };
-	skyBoxProp[1].texcoord = { 1.0f,1.0f,-1.0f };
-	skyBoxProp[2].texcoord = { 1.0f,-1.0f,1.0f };
-	skyBoxProp[3].texcoord = { 1.0f,-1.0f,-1.0f };
-
-	//左面
-	skyBoxProp[4].vertexPos = { -1.0f,1.0f,-1.0f,1.0f };
-	skyBoxProp[5].vertexPos = { -1.0f,1.0f,1.0f,1.0f };
-	skyBoxProp[6].vertexPos = { -1.0f,-1.0f,-1.0f,1.0f };
-	skyBoxProp[7].vertexPos = { -1.0f,-1.0f,1.0f,1.0f };
-	//Texcoord
-	skyBoxProp[4].texcoord = { -1.0f,1.0f,-1.0f };
-	skyBoxProp[5].texcoord = { -1.0f,1.0f,1.0f };
-	skyBoxProp[6].texcoord = { -1.0f,-1.0f,-1.0f };
-	skyBoxProp[7].texcoord = { -1.0f,-1.0f,1.0f };
-
-	//前面
-	skyBoxProp[8].vertexPos = { -1.0f,1.0f,1.0f,1.0f };
-	skyBoxProp[9].vertexPos = { 1.0f,1.0f,1.0f,1.0f };
-	skyBoxProp[10].vertexPos = { -1.0f,-1.0f,1.0f,1.0f };
-	skyBoxProp[11].vertexPos = { 1.0f,-1.0f,1.0f,1.0f };
-	//Texcoord
-	skyBoxProp[8].texcoord = { -1.0f,1.0f,1.0f };
-	skyBoxProp[9].texcoord = { 1.0f,1.0f,1.0f };
-	skyBoxProp[10].texcoord = { -1.0f,-1.0f,1.0f };
-	skyBoxProp[11].texcoord = { 1.0f,-1.0f,1.0f };
-
-	//後面
-	skyBoxProp[12].vertexPos = { -1.0f,1.0f,-1.0f,1.0f };
-	skyBoxProp[13].vertexPos = { 1.0f,1.0f,-1.0f,1.0f };
-	skyBoxProp[14].vertexPos = { -1.0f,-1.0f,-1.0f,1.0f };
-	skyBoxProp[15].vertexPos = { 1.0f,-1.0f,-1.0f,1.0f };
-	//Texcoord
-	skyBoxProp[12].texcoord = { -1.0f,1.0f,-1.0f };
-	skyBoxProp[13].texcoord = { 1.0f,1.0f,-1.0f };
-	skyBoxProp[14].texcoord = { -1.0f,-1.0f,-1.0f };
-	skyBoxProp[15].texcoord = { 1.0f,-1.0f,-1.0f };
-
-	//上面
-	skyBoxProp[16].vertexPos = { -1.0f,1.0f,-1.0f,1.0f };
-	skyBoxProp[17].vertexPos = { 1.0f,1.0f,-1.0f,1.0f };
-	skyBoxProp[18].vertexPos = { 1.0f,1.0f,1.0f,1.0f };
-	skyBoxProp[19].vertexPos = { -1.0f,1.0f,1.0f,1.0f };
-	//Texcoord
-	skyBoxProp[16].texcoord = { -1.0f,1.0f,-1.0f };
-	skyBoxProp[17].texcoord = { 1.0f,1.0f,-1.0f };
-	skyBoxProp[18].texcoord = { 1.0f,1.0f,1.0f };
-	skyBoxProp[19].texcoord = { -1.0f,1.0f,1.0f };
-
-	//下面
-	skyBoxProp[20].vertexPos = { -1.0f,-1.0f,-1.0f,1.0f };
-	skyBoxProp[21].vertexPos = { 1.0f,-1.0f,-1.0f,1.0f };
-	skyBoxProp[22].vertexPos = { 1.0f,-1.0f,1.0f,1.0f };
-	skyBoxProp[23].vertexPos = { -1.0f,-1.0f,1.0f,1.0f };
-	//Texcoord
-	skyBoxProp[20].texcoord = { -1.0f,-1.0f,-1.0f };
-	skyBoxProp[21].texcoord = { 1.0f,-1.0f,-1.0f };
-	skyBoxProp[22].texcoord = { 1.0f,-1.0f,1.0f };
-	skyBoxProp[23].texcoord = { -1.0f,-1.0f,1.0f };
-
-}
-
-//頂点データの生成
-void SkyBox::CreateVertexResource(){
-	//頂点データの初期化
-	InitializeVertexData();
-	//VertexResourceを作成する
-	vertexResource_ = directXBase_->CreateBufferResource(sizeof(SkyBoxProp) * kVertexCount);
-	//VertexBufferViewを作成する
-	//リソースの先頭アドレスから使う
-	vertexBufferView_.BufferLocation = vertexResource_->GetGPUVirtualAddress();
-	//使用するリソースのサイズは頂点6つ分のサイズ
-	vertexBufferView_.SizeInBytes = sizeof(SkyBoxProp) * kVertexCount;
-	//1頂点当たりのサイズ
-	vertexBufferView_.StrideInBytes = sizeof(SkyBoxProp);
-
-	//VertexResourceにデータを書き込むためのアドレスを取得してvertexDataに割り当てる
-	SkyBoxProp* vertexData = nullptr;
-	vertexResource_->Map(0, nullptr, reinterpret_cast<void**>(&vertexData));
-	//頂点データをリソースにコピー
-	std::memcpy(vertexData, skyBoxProp.data(), sizeof(SkyBoxProp) * kVertexCount);
-}
-
-//インデックスデータの初期化
-void SkyBox::InitializeIndexData(){
-	//サイズを設定
-	index_.resize(kIndexCount);
-	//右面
-	index_[0] = 0;
-	index_[1] = 1;
-	index_[2] = 2;
-	index_[3] = 2;
-	index_[4] = 1;
-	index_[5] = 3;
-	//左面
-	index_[6] = 4;
-	index_[7] = 5;
-	index_[8] = 6;
-	index_[9] = 6;
-	index_[10] = 5;
-	index_[11] = 7;
-	//前面
-	index_[12] = 8;
-	index_[13] = 9;
-	index_[14] = 10;
-	index_[15] = 10;
-	index_[16] = 9;
-	index_[17] = 11;
-	//後面
-	index_[18] = 12;
-	index_[19] = 14;
-	index_[20] = 13;
-	index_[21] = 13;
-	index_[22] = 14;
-	index_[23] = 15;
-	//上面
-	index_[24] = 16;
-	index_[25] = 17;
-	index_[26] = 18;
-	index_[27] = 18;
-	index_[28] = 19;
-	index_[29] = 16;
-	//下面
-	index_[30] = 21;
-	index_[31] = 23;
-	index_[32] = 22;
-	index_[33] = 21;
-	index_[34] = 20;
-	index_[35] = 23;
-}
-
-//インデックスリソースの生成
-void SkyBox::CreateIndexResource(){
-	//インデックスデータの初期化
-	InitializeIndexData();
-	//IndexResourceを作成する
-	indexResource_ = directXBase_->CreateBufferResource(sizeof(uint32_t) * kIndexCount);
-	//IndexBufferViewを作成する
-	//リソースの先頭のアドレスから使う
-	indexBufferView_.BufferLocation = indexResource_->GetGPUVirtualAddress();
-	//使用するリソースのサイズはインデックス6つ分のサイズ
-	indexBufferView_.SizeInBytes = sizeof(uint32_t) * kIndexCount;
-	//インデックスはuint32_tとする
-	indexBufferView_.Format = DXGI_FORMAT_R32_UINT;
-
-	//IndexResourceにデータを書き込むためのアドレスを取得してindexDataに割り当てる
-	uint32_t* indexData = nullptr;
-	indexResource_->Map(0, nullptr, reinterpret_cast<void**>(&indexData));
-	//インデックスデータをリソースにコピー
-	std::memcpy(indexData, index_.data(), sizeof(uint32_t) * kIndexCount);
-}
-
-//マテリアルデータの初期化
-void SkyBox::InitializeMaterialData(){
-	//色を書き込む
-	materialData_->color = { 1.0f, 1.0f, 1.0f, 1.0f };
-	materialData_->enableLighting = false;
-	materialData_->uvMatrix = Matrix4x4::Identity4x4();
-}
-
-//マテリアルリソースの生成
-void SkyBox::CreateMaterialResource(){
-	//マテリアルリソースを作る
-	materialResource_ = directXBase_->CreateBufferResource(sizeof(Material));
-	//マテリアルリソースにデータを書き込むためのアドレスを取得してmaterialDataに割り当てる
-	//書き込むためのアドレスを取得
-	materialResource_->Map(0, nullptr, reinterpret_cast<void**>(&materialData_));
-	//マテリアルデータの初期値を書き込む
-	InitializeMaterialData();
-}
-
-//座標変換行列リソースの生成
-void SkyBox::CreateTransformationMatrixResource(){
-	//座標変換行列リソースを作成する
-	wvpResource_ = directXBase_->CreateBufferResource(sizeof(TransformationMatrix));
-	//座標変換行列リソースにデータを書き込むためのアドレスを取得してtransformationMatrixDataに割り当てる
-	//書き込むためのアドレス
-	wvpResource_->Map(0, nullptr, reinterpret_cast<void**>(&wvpData_));
-	//単位行列を書き込んでおく
-	wvpData_->wvp = Matrix4x4::Identity4x4();
-	wvpData_->world = Matrix4x4::Identity4x4();
-	wvpData_->worldInverseTranspose = Matrix4x4::Identity4x4();
-}
-
-// UVの座標変換の更新
-void SkyBox::UpdateUVTransform(){
-	//UVTransform
-	materialData_->uvMatrix = matrixUtility::MakeAffineMatrix(uvTransform_);
+const SkyBoxRenderData& SkyBox::GetRenderData(){
+	return renderData_;
 }
 
 //ワールド座標の更新
 void SkyBox::UpdateTransform(){
-	//TransformからWorldMatrixを作る
-	wvpData_->world = matrixUtility::MakeAffineMatrix(gameObject_->GetTransform());
-	//wvpの書き込み
-	const Matrix4x4& viewProjectionMatrix = renderCamera_->GetViewProjectionMatrix();
-	wvpData_->wvp = wvpData_->world * viewProjectionMatrix;
+	GameObject* gameObject = GetOwner();
+	//ワールド行列の作成
+	worldMatrix_ = matrixUtility::MakeAffineMatrix(gameObject->GetTransform());
 }

@@ -2,13 +2,10 @@
 #include "MatrixUtility.h"
 #include "GameObject.h"
 #include "Model.h"
-#include "Mesh.h"
-#include "Culling.h"
 #include "LODController.h"
-#include "Object3dRenderer.h"
 #include "MaterialInstance.h"
-#include <algorithm>
 #include <cassert>
+
 //コンストラクタ
 Object3d::Object3d(GameObject* gameObject) :Component(gameObject){
 
@@ -46,7 +43,7 @@ std::unique_ptr<Component> Object3d::Clone(GameObject* gameObject) const{
 	//初期化
 	cloneInstance->Initialize();
 
-	//Object3d自信が持つ設定だけ複製
+	//Object3dが持つ設定だけ複製
 	cloneInstance->SetEnabled(this->IsEnabled());
 	cloneInstance->SetBlendMode(this->blendMode_);
 	cloneInstance->SetRenderTransformMode(this->renderTransformMode_);

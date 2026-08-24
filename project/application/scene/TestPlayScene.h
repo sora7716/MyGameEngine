@@ -78,8 +78,6 @@ private://メンバ変数
 
 	std::unique_ptr<debugDraw::Cube>cube_ = nullptr;
 
-	std::unique_ptr<SkyBox>skyBox_ = nullptr;
-
 	std::unique_ptr<ParticleSystem>particleSystem_ = nullptr;
 	Vector3 emitterPos_ = {};
 

@@ -17,6 +17,7 @@ class Model;
 class Object3d;
 class Object3dRenderer;
 class MaterialInstance;
+class SkyBox;
 class SkyBoxRenderer;
 class DebugDrawRenderer;
 class ParticleRenderer;
@@ -26,10 +27,10 @@ struct Object3dBatch{
 	Model* model = nullptr;
 	MaterialInstance* materialInstance = nullptr;
 	BlendMode blendMode = BlendMode::kNone;
-	
+
 	std::vector<Object3d*>instances;
 	//GPUへ送るインスタンスごとの行列
-	std::vector<TransformationMatrix>transformations;
+	std::vector<worldMatrix_>transformations;
 };
 
 /// <summary>
@@ -63,11 +64,18 @@ public://メンバ関数
 	void Draw();
 
 	/// <summary>
-	/// Object3dを集める
+	/// 描画に有効なObject3dを集める
 	/// </summary>
-	/// <param name="gameObjects">ゲームオブジェクト</param>
+	/// <param name="gameObjects">ゲームオブジェクトの配列</param>
 	/// <param name="renderCamera">描画で使用するカメラ</param>
-	void CollectObject3ds(const std::vector<std::unique_ptr<GameObject>>& gameObjects, Camera* renderCamera);
+	void CollectActiveObject3ds(const std::vector<std::unique_ptr<GameObject>>& gameObjects, Camera* renderCamera);
+
+	/// <summary>
+	/// 描画に有効なSkyBoxを集める
+	/// </summary>
+	/// <param name="gameObjects">ゲームオブジェクトの配列</param>
+	/// <param name="renderCamera">描画で使用するカメラ</param>
+	void CollectActiveSkyBox(const std::vector<std::unique_ptr<GameObject>>& gameObjects, Camera* renderCamera);
 
 	/// <summary>
 	/// Object3dのレンダラーの取得
@@ -123,20 +131,28 @@ private://メンバ関数
 private://メンバ関数
 	//DirectXの基盤部分
 	DirectXBase* directXBase_ = nullptr;
+	
 	//パイプラインの管理
 	PipelineManager* pipelineManager_ = nullptr;
+	
 	//ライティングの管理
 	LightingManager* lightingManager_ = nullptr;
+	
 	//カメラ
 	Camera* renderCamera_ = nullptr;
-	//オブジェクト3d
-	std::vector<Object3d*>object3ds_;
+	
+	//描画に有効なObject3d
+	std::vector<Object3d*>activeObject3ds_;
 	//オブジェクト3dを描画グループごとに分ける
 	std::vector<Object3dBatch>object3dBatches_;
 	//Object3dのレンダラー
 	std::unique_ptr<Object3dRenderer>object3dRenderer_ = nullptr;
+
+	//描画に有効なSkyBox
+	SkyBox* activeSkyBox_ = nullptr;
 	//スカイボックスのレンダラー
 	std::unique_ptr<SkyBoxRenderer>skyBoxRenderer_ = nullptr;
+	
 	//デバッグ描画のレンダラー
 	std::unique_ptr<DebugDrawRenderer>debugDrawRenderer_ = nullptr;
 	//パーティクルの描画のレンダラー

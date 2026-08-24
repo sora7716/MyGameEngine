@@ -211,7 +211,7 @@ private://メンバ変数
 	//ワールドビュープロジェクションのリソース
 	ComPtr<ID3D12Resource>wvpResource_ = nullptr;
 	//ワールドビュープロジェクションのデータ
-	TransformationMatrix* wvpData_ = nullptr;
+	worldMatrix_* wvpData_ = nullptr;
 	//カメラ
 	Camera* camera_ = nullptr;
 	//切り取る範囲

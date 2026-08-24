@@ -113,18 +113,27 @@ void SceneManager::Debug(){
 #endif // USE_IMGUI
 }
 
+//描画
+void SceneManager::Draw(Camera* camera){
+	const std::vector<std::unique_ptr<GameObject>>& gameObjects = scene_->GetGameObjects();
+	//Object3dの追加
+	renderSystem_->CollectActiveObject3ds(gameObjects, camera);
+	//SkyBoxの追加
+	renderSystem_->CollectActiveSkyBox(gameObjects, camera);
+}
+
 //ゲーム画面の描画
 void SceneManager::GameDraw(){
-	//オブジェクト3dの追加
-	renderSystem_->CollectObject3ds(scene_->GetGameObjects(), scene_->GetGameCamera());
+	//描画
+	Draw(scene_->GetGameCamera());
 	//描画
 	scene_->GameDraw();
 }
 
 //デバッグ画面の描画
 void SceneManager::DebugDraw(){
-	//オブジェクト3dの追加
-	renderSystem_->CollectObject3ds(scene_->GetGameObjects(), scene_->GetDebugCamera());
+	//描画
+	Draw(scene_->GetDebugCamera());
 	//描画
 	scene_->DebugDraw();
 }

@@ -1,23 +1,16 @@
 #pragma once
 #include "BlendMode.h"
-#include <wrl.h>
-#include <d3d12.h>
+#include "Vector4.h"
+#include "Matrix4x4.h"
 #include <string>
-
-//前方宣言
-class Camera;
 
 /// <summary>
 /// スカイボックスの描画データ
 /// </summary>
 struct SkyBoxRenderData{
-	bool isActive;
-	Camera* renderCamera = nullptr;
-	D3D12_VERTEX_BUFFER_VIEW vertexBufferView = {};
-	D3D12_INDEX_BUFFER_VIEW indexBufferView = {};
-	Microsoft::WRL::ComPtr<ID3D12Resource>materialResource;
-	Microsoft::WRL::ComPtr<ID3D12Resource>wvpResource;
+	bool isActive = true;
+	Vector4 material = {};
+	Matrix4x4 worldMatrix;
 	std::string imageFileName = "";
 	BlendMode blendMode = BlendMode::kNone;
-	uint32_t indexCount = 0;
 };

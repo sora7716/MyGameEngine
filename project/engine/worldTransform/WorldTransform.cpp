@@ -163,7 +163,7 @@ void WorldTransform::SetFromAndToPos(const Vector3& fromPos, const Vector3& toPo
 //座標変換行列リソースの生成
 void WorldTransform::CreateTransformationMatrixResource(){
 	//座標変換行列リソースを作成する
-	wvpResource_ = directXBase_->CreateBufferResource(sizeof(TransformationMatrix));
+	wvpResource_ = directXBase_->CreateBufferResource(sizeof(worldMatrix_));
 	//座標変換行列リソースにデータを書き込むためのアドレスを取得してtransformationMatrixDataに割り当てる
 	//書き込むためのアドレス
 	wvpResource_->Map(0, nullptr, reinterpret_cast<void**>(&wvpData_));

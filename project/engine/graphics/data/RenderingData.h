@@ -40,7 +40,7 @@ struct Transform2d {
 };
 
 //TransformationMatrix
-struct TransformationMatrix {
+struct worldMatrix_ {
 	Matrix4x4 wvp = {};
 	Matrix4x4 world = {};
 	Matrix4x4 worldInverseTranspose = {};

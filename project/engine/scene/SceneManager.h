@@ -5,6 +5,7 @@
 //前方宣言
 class DebugEditor;
 class RenderSystem;
+class Camera;
 
 /// <summary>
 /// シーン管理
@@ -36,6 +37,12 @@ public://メンバ関数
 	/// デバッグ
 	/// </summary>
 	void Debug();
+
+	/// <summary>
+	/// 描画
+	/// </summary>
+	/// <param name="camera">カメラ</param>
+	void Draw(Camera* camera);
 
 	/// <summary>
 	/// ゲーム画面の描画

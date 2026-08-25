@@ -7,7 +7,8 @@ namespace debugDraw {
 		/// <summary>
 		/// コンストラクタ
 		/// </summary>
-		Sphere();
+		/// <param name="gameObject">ゲームオブジェクト</param>
+		explicit Sphere(GameObject* gameObject);
 
 		/// <summary>
 		/// デストラクタ

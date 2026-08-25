@@ -1,15 +1,24 @@
 #include "Cube.h"
 using namespace primitiveData;
-using namespace debugDraw;
 
 //コンストラクタ
-Cube::Cube() {}
+debugDraw::Cube::Cube(GameObject* gameObject) :BaseShape(gameObject){
+}
 
 //デストラクタ
-Cube::~Cube() {}
+debugDraw::Cube::~Cube(){}
 
 //初期化
-void Cube::Initialize(DirectXBase* directXBase, Camera* camera) {
+void debugDraw::Cube::Initialize(){
+	vertexCount_ = 8;
+	indexCount_ = 24;
+	//OBBを初期化
+	obb_.Initialize();
+	BaseShape::Initialize();
+}
+
+//初期化
+void debugDraw::Cube::Initialize(DirectXBase* directXBase, Camera* camera){
 	vertexCount_ = 8;
 	indexCount_ = 24;
 	//OBBを初期化
@@ -18,7 +27,7 @@ void Cube::Initialize(DirectXBase* directXBase, Camera* camera) {
 }
 
 //更新
-void Cube::Update() {
+void debugDraw::Cube::Update(){
 	//トランスフォームに送信
 	transform_.quaternion = obb_.quaternion;
 	transform_.translate = obb_.center;
@@ -27,18 +36,30 @@ void Cube::Update() {
 	BaseShape::Update();
 }
 
+//複製
+std::unique_ptr<Component> debugDraw::Cube::Clone(GameObject* gameObject) const{
+	std::unique_ptr<Cube>cloneInstance = std::make_unique<Cube>(gameObject);
+
+	//初期化
+	cloneInstance->Initialize();
+
+	//Spriteが持つ設定だけ複製
+	cloneInstance->SetEnabled(this->IsEnabled());
+	return cloneInstance;
+}
+
 //OBBのセッター
-void Cube::SetOBB(const OBB& obb) {
+void debugDraw::Cube::SetOBB(const OBB& obb){
 	obb_ = obb;
 }
 
 //OBBのゲッター
-OBB Cube::GetOBB() {
+OBB debugDraw::Cube::GetOBB(){
 	return obb_;
 }
 
 //AABBのゲッター
-AABB Cube::GetAABB() {
+AABB debugDraw::Cube::GetAABB(){
 	//AABB
 	AABB aabb = {
 		{obb_.center - obb_.size / 2.0f},
@@ -48,7 +69,7 @@ AABB Cube::GetAABB() {
 }
 
 //頂点データの設定
-void Cube::SettingVertexData() {
+void debugDraw::Cube::SettingVertexData(){
 	//AABB
 	AABB aabb = {
 		{-obb_.size / 2.0f},
@@ -75,14 +96,14 @@ void Cube::SettingVertexData() {
 	vertexData_[7].position = { aabb.min.x,aabb.max.y,aabb.max.z,1.0f };
 
 	//UVとNormalの初期化
-	for (int32_t i = 0; i < vertexCount_; i++) {
+	for (int32_t i = 0; i < vertexCount_; i++){
 		vertexData_[i].texcoord = { 0.0f,0.0f };
 		vertexData_[i].normal = { 0.0f,0.0f,1.0f };
 	}
 }
 
 //インデックスの設定
-void Cube::SettingIndexData() {
+void debugDraw::Cube::SettingIndexData(){
 	int32_t indices[] = {
 		//前面
 		0,1,
@@ -104,7 +125,7 @@ void Cube::SettingIndexData() {
 	};
 
 	//作成したインデックスデータを代入前面
-	for (int32_t i = 0; i < indexCount_; i++) {
+	for (int32_t i = 0; i < indexCount_; i++){
 		indexData_[i] = indices[i];
 	}
 }

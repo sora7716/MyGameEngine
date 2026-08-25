@@ -25,6 +25,9 @@ void Sprite::Initialize(){
 
 //更新
 void Sprite::Update(){
+	//基底クラスの更新
+	Component::Update();
+
 	//ワールド座標の更新
 	UpdateTransform();
 

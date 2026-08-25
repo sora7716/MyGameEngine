@@ -52,6 +52,9 @@ std::unique_ptr<Component> Object3d::Clone(GameObject* gameObject) const{
 
 //更新
 void Object3d::Update(){
+	//基底クラスの更新
+	Component::Update();
+
 	//リンクしているゲームオブジェクトを取得
 	GameObject* gameObject = GetOwner();
 

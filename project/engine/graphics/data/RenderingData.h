@@ -20,11 +20,6 @@ struct Transform {
 	Vector3 eulerAngle = {};
 	//クォータニオンかオイラーか
 	bool isUsingQuaternion = false;
-
-	/// <summary>
-	/// 初期化
-	/// </summary>
-	void Initialize();
 };
 
 //Transform2D情報

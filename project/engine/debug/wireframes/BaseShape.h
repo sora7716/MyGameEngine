@@ -3,15 +3,13 @@
 #include "RenderingData.h"
 #include "DebugDrawRenderData.h"
 #include "BlendMode.h"
-#include <string>
+#include "Component.h"
 #include <wrl.h>
 #include <d3d12.h>
-#include <dxcapi.h>
 #include <cstdint>
 #include <memory>
 
 //前方宣言
-class DirectXBase;
 class DirectXBase;
 class TextureManager;
 class Camera;
@@ -21,19 +19,25 @@ class GraphicsPipeline;
 /// 形
 /// </summary>
 namespace debugDraw {
-	class BaseShape {
+	class BaseShape :public Component{
 	private://エイリアステンプレート
 		template <class T>using ComPtr = Microsoft::WRL::ComPtr<T>;
 	public://メンバ関数
 		/// <summary>
-		/// コンストラクタ
-		/// </summary>
-		BaseShape();
+	    /// コンストラクタ
+	    /// </summary>
+	    /// <param name="gameObject">ゲームオブジェクト</param>
+		explicit BaseShape(GameObject* gameObject);
 
 		/// <summary>
 		/// デストラクタ
 		/// </summary>
-		virtual ~BaseShape();
+		virtual ~BaseShape()override;
+
+		/// <summary>
+		/// 初期化
+		/// </summary>
+		virtual void Initialize()override;
 
 		/// <summary>
 		/// 初期化
@@ -45,7 +49,7 @@ namespace debugDraw {
 		/// <summary>
 		/// 更新
 		/// </summary>
-		virtual void Update();
+		virtual void Update()override;
 
 		/// <summary>
 		/// 描画する用のカメラを設定

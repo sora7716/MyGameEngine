@@ -12,10 +12,17 @@ using namespace debugDraw;
 #pragma comment(lib,"d3d12.lib")
 
 //コンストラクタ
-BaseShape::BaseShape(){}
+debugDraw::BaseShape::BaseShape(GameObject* gameObject) :Component(gameObject){
+}
 
 //デストラクタ
 BaseShape::~BaseShape(){}
+
+//初期化
+void debugDraw::BaseShape::Initialize(){
+//基底クラスの初期化
+	Component::Initialize();
+}
 
 //初期化
 void BaseShape::Initialize(DirectXBase* directXBase, Camera* camera){
@@ -31,8 +38,6 @@ void BaseShape::Initialize(DirectXBase* directXBase, Camera* camera){
 	//マテリアルデータの生成
 	CreateMaterialResource();
 
-	transform_.Initialize();
-
 	//wvpリソースの初期化
 	CreateTransformationMatrixResource();
 }
@@ -45,18 +50,17 @@ void BaseShape::Update(){
 	UpdateTransform();
 
 	//描画データのまとめる
-	renderData_.blendMode = blendMode_;
-	renderData_.indexBufferView = indexBufferView_;
-	renderData_.vertexBufferView = vertexBufferView_;
-	renderData_.materialResource = materialResource_;
-	renderData_.wvpResource = wvpResource_;
-	renderData_.indexCount = indexCount_;
+	//renderData_.blendMode = blendMode_;
+	//renderData_.indexBufferView = indexBufferView_;
+	//renderData_.vertexBufferView = vertexBufferView_;
+	//renderData_.materialResource = materialResource_;
+	//renderData_.wvpResource = wvpResource_;
+	//renderData_.indexCount = indexCount_;
 }
 
 //描画する用のカメラを設定
 void BaseShape::SetRenderCamera(Camera* camera){
 	renderCamera_ = camera;
-	renderData_.renderCamera = renderCamera_;
 }
 
 //色の設定

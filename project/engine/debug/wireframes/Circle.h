@@ -2,12 +2,13 @@
 #include "BaseShape.h"
 #include "PrimitiveData.h"
 namespace debugDraw {
-	class Circle : public BaseShape {
+	class Circle : public BaseShape{
 	public://メンバ関数
 		/// <summary>
 		/// コンストラクタ
 		/// </summary>
-		Circle();
+		/// <param name="gameObject">ゲームオブジェクト</param>
+		explicit Circle(GameObject* gameObject);
 
 		/// <summary>
 		/// デストラクタ
@@ -51,4 +52,3 @@ namespace debugDraw {
 		primitiveData::Circle circle_ = {};
 	};
 }
-

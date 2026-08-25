@@ -155,13 +155,13 @@ void Object3dRenderer::SubmitBatch(Model* model, MaterialInstance* materialInsta
 	assert(transformations.size() <= maxInstanceCount_);
 
 	//現在のバッチのポインタ
-	Object3dBatchResource* currentBatchResource = nullptr;
+	BatchResource* currentBatchResource = nullptr;
 	Object3dRenderHandle handle = kInvalidObject3dRenderHandle;
 	//同じModel*とBlendModeのバッチを探す
 	auto batchIt = std::find_if(
 		batchResources_.begin(),
 		batchResources_.end(),
-		[model, materialInstance, blendMode](const Object3dBatchResource& batchResource){
+		[model, materialInstance, blendMode](const BatchResource& batchResource){
 			return batchResource.model == model &&
 				batchResource.materialInstance == materialInstance &&
 				batchResource.blendMode == blendMode;
@@ -178,7 +178,7 @@ void Object3dRenderer::SubmitBatch(Model* model, MaterialInstance* materialInsta
 		handle = RegisterObject(1, maxInstanceCount_);
 
 		//新しく生成
-		Object3dBatchResource newResource = {};
+		BatchResource newResource = {};
 		newResource.model = model;
 		newResource.materialInstance = materialInstance;
 		newResource.blendMode = blendMode;
@@ -308,7 +308,7 @@ void Object3dRenderer::CreateStructuredBufferForWvp(LODGpuResource& lodGpuResour
 }
 
 //MaterialInstance用のGPUリソースを生成
-void Object3dRenderer::CreateMaterialInstanceResource(Object3dBatchResource& batchResource){
+void Object3dRenderer::CreateMaterialInstanceResource(BatchResource& batchResource){
 	//マテリアルインスタンスがなければ
 	if (!batchResource.materialInstance){
 		return;
@@ -336,7 +336,7 @@ void Object3dRenderer::CreateMaterialInstanceResource(Object3dBatchResource& bat
 }
 
 //マテリアルインスタンスの更新
-void Object3dRenderer::UpdateMaterialInstanceResource(Object3dBatchResource& batchResource){
+void Object3dRenderer::UpdateMaterialInstanceResource(BatchResource& batchResource){
 	//マテリアルインスタンスがなければ
 	if (!batchResource.materialInstance){
 		return;

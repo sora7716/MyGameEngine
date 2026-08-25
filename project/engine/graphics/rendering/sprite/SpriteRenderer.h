@@ -17,7 +17,7 @@ private://エイリアステンプレート
 	template <class T>using ComPtr = Microsoft::WRL::ComPtr<T>;
 private://構造体
 	//スプライトのGPUリソース
-	struct SpriteGpuResource{
+	struct GPUResource{
 		//マテリアル情報
 		MaterialForSprite* materialData = nullptr;
 		//マテリアルのCBuffer
@@ -109,13 +109,13 @@ private://メンバ関数
 	/// マテリアルリソースの生成
 	/// </summary>
 	/// <param name="gpuResource">GPUリソース</param>
-	void CreateMaterialResource(SpriteGpuResource& gpuResource);
+	void CreateMaterialResource(GPUResource& gpuResource);
 
 	/// <summary>
 	/// トランスフォーメーション行列リソースの生成
 	/// </summary>
 	/// <param name="gpuResource">GPUリソース</param>
-	void CreateTransformationMatrixResource(SpriteGpuResource& gpuResource);
+	void CreateTransformationMatrixResource(GPUResource& gpuResource);
 
 	/// <summary>
 	/// GPUリソースの生成
@@ -148,7 +148,7 @@ private://メンバ変数
 	D3D12_INDEX_BUFFER_VIEW indexBufferView_ = {};
 
 	//スプライトのGPUリソース
-	std::vector<SpriteGpuResource>gpuResources_;
+	std::vector<GPUResource>gpuResources_;
 
 	//スプライトの描画データ
 	std::vector<SpriteRenderData> renderDatas_ = {};

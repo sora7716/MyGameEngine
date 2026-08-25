@@ -316,7 +316,7 @@ void DebugEditor::DrawInspector(){
 
 		//トランスフォームのリセットボタン
 		if (ImGui::Button("Reset Transform")){
-			transform.Initialize();
+			transform = {};
 		}
 
 		//スケールの切り替え

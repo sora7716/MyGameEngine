@@ -7,7 +7,8 @@ namespace debugDraw {
 		/// <summary>
 		/// コンストラクタ
 		/// </summary>
-		Line();
+		/// <param name="gameObject">ゲームオブジェクト</param>
+		explicit Line(GameObject* gameObject);
 
 		/// <summary>
 		/// デストラクタ

@@ -2,7 +2,6 @@
 #include <wrl.h>
 #include <d3d12.h>
 #include "Object3dRenderData.h"
-#include "Object3dGpuResource.h"
 #include <memory>
 #include <cstdint>
 #include <limits>
@@ -22,7 +21,7 @@ private://エイリアステンプレート
 	template <class T>using ComPtr = Microsoft::WRL::ComPtr<T>;
 private://構造体など
 	//オブジェクト3dのバッチリソース
-	struct Object3dBatchResource{
+	struct BatchResource{
 		Model* model = nullptr;
 		MaterialInstance* materialInstance = nullptr;
 		BlendMode blendMode = BlendMode::kNone;
@@ -32,6 +31,19 @@ private://構造体など
 		ComPtr<ID3D12Resource>rimLightResource = nullptr;
 		RimLight* rimLightPtr = nullptr;
 		uint64_t uploadedRevision = (std::numeric_limits<uint64_t>::max)();
+	};
+
+	//LodのGPUに送る用のデータ
+	struct LODGpuResource{
+		Microsoft::WRL::ComPtr<ID3D12Resource> wvpResource = nullptr;
+		TransformationMatrix* wvpData = nullptr;
+		uint32_t srvIndex = 0;
+		uint32_t capacity = 0;
+	};
+
+	//Object3dのGPUに送る用のデータ
+	struct Object3dGpuResource{
+		std::vector<LODGpuResource> lodResources;
 	};
 public://静的メンバ関数
 	/// <summary>
@@ -126,13 +138,13 @@ private://メンバ関数
     /// MaterialInstance用のGPUリソースを生成
     /// </summary>
 	/// <param name="batchResource">バッチリソース</param>
-	void CreateMaterialInstanceResource(Object3dBatchResource& batchResource);
+	void CreateMaterialInstanceResource(BatchResource& batchResource);
 
 	/// <summary>
 	/// マテリアルインスタンスの更新
 	/// </summary>
 	/// <param name="batchResource">バッチリソース</param>
-	void UpdateMaterialInstanceResource(Object3dBatchResource& batchResource);
+	void UpdateMaterialInstanceResource(BatchResource& batchResource);
 private://メンバ変数
 	//DirectXの基盤部分
 	DirectXBase* directXBase_ = nullptr;
@@ -147,6 +159,6 @@ private://メンバ変数
 	//Object3dが生存している間保持する
 	std::vector<Object3dGpuResource>objectResources_;
 	//バッチリソース
-	std::vector<Object3dBatchResource>batchResources_;
+	std::vector<BatchResource>batchResources_;
 };
 

@@ -1,19 +1,22 @@
 #pragma once
 #include "BlendMode.h"
+#include "Vector4.h"
+#include "Vector2.h"
 #include <wrl.h>
 #include <d3d12.h>
-#include <string>
+#include <vector>
 
-//前方宣言
-class Camera;
+//頂点データ
+struct DebugDrawVertexData{
+	Vector4 position;
+	Vector2 texcoord;
+};
 
 //デバッグ描画で必要な描画データ
 struct DebugDrawRenderData{
-	Camera* renderCamera = nullptr;
-	D3D12_VERTEX_BUFFER_VIEW vertexBufferView = {};
-	D3D12_INDEX_BUFFER_VIEW indexBufferView = {};
+	std::vector<DebugDrawVertexData>vertices_ = {};
+	std::vector<uint32_t>indices_ = {};
 	Microsoft::WRL::ComPtr<ID3D12Resource>materialResource;
 	Microsoft::WRL::ComPtr<ID3D12Resource>wvpResource;
 	BlendMode blendMode = BlendMode::kNone;
-	uint32_t indexCount = 0;
 };

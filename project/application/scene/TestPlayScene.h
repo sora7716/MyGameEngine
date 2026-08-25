@@ -6,20 +6,8 @@
 #include <vector>
 
 //前方宣言
-class Object3d;
-class GameObject;
 class Audio;
-class SkyBox;
 class ParticleSystem;
-
-namespace debugDraw {
-	class Cube;
-	class Frustum;
-	class Line;
-	class Plane;
-	class Sphere;
-}
-
 
 /// <summary>
 /// テストプレイシーン
@@ -72,12 +60,6 @@ public://メンバ関数
 	/// </summary>
 	void Finalize()override;
 private://メンバ変数
-	std::vector<RectTransform>transform2ds_;
-
-	std::unique_ptr<debugDraw::Frustum>frustum_ = nullptr;
-
-	std::unique_ptr<debugDraw::Cube>cube_ = nullptr;
-
 	std::unique_ptr<ParticleSystem>particleSystem_ = nullptr;
 	Vector3 emitterPos_ = {};
 

@@ -60,7 +60,6 @@
     <ClCompile Include="engine\geometry\Culling.cpp" />
     <ClCompile Include="engine\geometry\PrimitiveData.cpp" />
     <ClCompile Include="engine\geometry\PrimitiveMeshFactory.cpp" />
-    <ClCompile Include="engine\graphics\data\RenderingData.cpp" />
     <ClCompile Include="engine\graphics\descriptor\SRVManager.cpp" />
     <ClCompile Include="engine\graphics\pipeline\Blend.cpp" />
     <ClCompile Include="engine\graphics\pipeline\GraphicsPipeline.cpp" />
@@ -156,7 +155,6 @@
     <ClInclude Include="engine\graphics\pipeline\PipelineManagerData.h" />
     <ClInclude Include="engine\graphics\rendering\debugDraw\DebugDrawRenderData.h" />
     <ClInclude Include="engine\graphics\rendering\debugDraw\DebugDrawRenderer.h" />
-    <ClInclude Include="engine\graphics\rendering\object3d\Object3dGpuResource.h" />
     <ClInclude Include="engine\graphics\rendering\object3d\Object3dRenderer.h" />
     <ClInclude Include="engine\graphics\rendering\object3d\Object3dRenderData.h" />
     <ClInclude Include="engine\graphics\rendering\particle\ParticleGpuResource.h" />

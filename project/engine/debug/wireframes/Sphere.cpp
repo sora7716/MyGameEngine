@@ -4,13 +4,14 @@
 using namespace debugDraw;
 
 //コンストラクタ
-Sphere::Sphere() {}
+debugDraw::Sphere::Sphere(GameObject* gameObject) :BaseShape(gameObject){
+}
 
 //デストラクタ
-Sphere::~Sphere() {}
+Sphere::~Sphere(){}
 
 //初期化
-void Sphere::Initialize(DirectXBase* directXBase, Camera* camera) {
+void Sphere::Initialize(DirectXBase* directXBase, Camera* camera){
 	vertexCount_ = kCircleVertexCount * 3;
 	indexCount_ = vertexCount_ * 2;
 	BaseShape::Initialize(directXBase, camera);
@@ -20,7 +21,7 @@ void Sphere::Initialize(DirectXBase* directXBase, Camera* camera) {
 }
 
 //更新
-void Sphere::Update() {
+void Sphere::Update(){
 	//トランスフォームに送信
 	transform_.translate = sphere_.center;
 
@@ -29,18 +30,18 @@ void Sphere::Update() {
 }
 
 //球のセッター
-void Sphere::SetSphere(const primitiveData::Sphere& sphere) {
+void Sphere::SetSphere(const primitiveData::Sphere& sphere){
 	sphere_ = sphere;
 }
 
 //球のゲッター
-primitiveData::Sphere Sphere::GetSphere() {
+primitiveData::Sphere Sphere::GetSphere(){
 	return sphere_;
 }
 
 //頂点データの設定
-void Sphere::SettingVertexData() {
-	for (int32_t i = 0; i < kCircleVertexCount; i++) {
+void Sphere::SettingVertexData(){
+	for (int32_t i = 0; i < kCircleVertexCount; i++){
 		float t = static_cast<float>(i) / static_cast<float>(kCircleVertexCount);
 		float angle = t * mathUtility::kPi * 2.0f;
 
@@ -75,13 +76,13 @@ void Sphere::SettingVertexData() {
 }
 
 //インデックスの設定
-void Sphere::SettingIndexData() {
+void Sphere::SettingIndexData(){
 	int32_t index = 0;
 
-	for (int32_t circle = 0; circle < 3; circle++) {
+	for (int32_t circle = 0; circle < 3; circle++){
 		int32_t offset = circle * kCircleVertexCount;
 
-		for (int32_t i = 0; i < kCircleVertexCount; i++) {
+		for (int32_t i = 0; i < kCircleVertexCount; i++){
 			int32_t next = (i + 1) % kCircleVertexCount;
 
 			indexData_[index++] = offset + i;

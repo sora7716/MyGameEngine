@@ -25,6 +25,8 @@ void SkyBox::Initialize(){
 
 //更新
 void SkyBox::Update(){
+	//基底クラスの更新
+	Component::Update();
 	//ワールド座標の更新
 	UpdateTransform();
 

@@ -4,13 +4,14 @@ using namespace debugDraw;
 
 
 //コンストラクタ
-Line::Line() {}
+debugDraw::Line::Line(GameObject* gameObject) :BaseShape(gameObject){
+}
 
 //デストラクタ
-Line::~Line() {}
+Line::~Line(){}
 
 //初期化
-void Line::Initialize(DirectXBase* directXBase, Camera* camera) {
+void Line::Initialize(DirectXBase* directXBase, Camera* camera){
 	vertexCount_ = 2;
 	indexCount_ = 2;
 	BaseShape::Initialize(directXBase, camera);
@@ -20,23 +21,23 @@ void Line::Initialize(DirectXBase* directXBase, Camera* camera) {
 }
 
 //更新
-void Line::Update() {
+void Line::Update(){
 	//基底クラスの更新
 	BaseShape::Update();
 }
 
 //線分のゲッター
-void Line::SetSegment(const Segment& segment) {
+void Line::SetSegment(const Segment& segment){
 	segment_ = segment;
 }
 
 //線分のゲッター
-Segment Line::GetSegment() {
+Segment Line::GetSegment(){
 	return segment_;
 }
 
 //頂点データの設定
-void Line::SettingVertexData() {
+void Line::SettingVertexData(){
 	//始点
 	vertexData_[0].position = segment_.origin;
 	vertexData_[0].texcoord = { 0.0f,0.0f };
@@ -49,7 +50,7 @@ void Line::SettingVertexData() {
 }
 
 //インデックスの設定
-void Line::SettingIndexData() {
+void Line::SettingIndexData(){
 	//始点
 	indexData_[0] = 0;
 

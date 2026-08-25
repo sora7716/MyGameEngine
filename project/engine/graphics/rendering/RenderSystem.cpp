@@ -77,7 +77,7 @@ void RenderSystem::Draw(){
 		//描画開始
 		PreDraw(debugDrawRenderer_->GetBlendMode(i));
 		//DebugDrawの描画
-		debugDrawRenderer_->Draw(i);
+		debugDrawRenderer_->Draw(i, renderCamera_);
 	}
 	//描画オブジェクトのリセット
 	debugDrawRenderer_->Reset();

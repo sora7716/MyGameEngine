@@ -11,6 +11,7 @@
 #include "Collision.h"
 #include "SkyBox.h"
 #include "Sprite.h"
+#include "Cube.h"
 #include "ParticleSystem.h"
 #include "ModelManager.h"
 #include "LightingManager.h"
@@ -28,14 +29,6 @@ void TestPlayScene::Initialize(){
 	BaseScene::Initialize();
 	gameCamera_ = sceneContext_.cameraManager->FindCamera("testPlayCamera");
 
-	frustum_ = std::make_unique<debugDraw::Frustum>();
-	frustum_->Initialize(sceneContext_.directXBase, gameCamera_);
-	frustum_->SetTargetCamera(gameCamera_);
-	frustum_->SetColor({ 1.0f,0.0f,0.0f,1.0f });
-
-	cube_ = std::make_unique<debugDraw::Cube>();
-	cube_->Initialize(sceneContext_.directXBase, gameCamera_);
-
 	particleSystem_ = std::make_unique<ParticleSystem>();
 	particleSystem_->Initialize(sceneContext_.directXBase, sceneContext_.srvManager, sceneContext_.pipelineManager, gameCamera_, "circle2.png");
 	particleSystem_->SetGameCamera(gameCamera_);
@@ -43,7 +36,6 @@ void TestPlayScene::Initialize(){
 	particleSystem_->SetFrequency(0.3f);
 	particleSystem_->RegisterToRenderer(particleRenderer_);
 
-	//particleSystem_->SetModelData(sceneContext_.object3dCommon->GetModelManager()->FindModel("dekanu")->GetModelData());
 	directionalLight_ = *sceneContext_.lightingManager->GetDirectionalLight();
 
 	GameObject* gameObject = CreateGameObject();
@@ -74,23 +66,7 @@ void TestPlayScene::Update(){
 	//ベースシーンの更新
 	BaseScene::Update();
 
-	//for (uint32_t i = 0; i < object3d_->GetModel()->GetMeshes().size(); i++) {
-	//	object3d_->SetUVScale(i, transform2ds_[i].scale);
-	//	object3d_->SetUVRotate(i, transform2ds_[i].rotate);
-	//	object3d_->SetUVTranslate(i, transform2ds_[i].translate);
-	//}
-
-	frustum_->Update();
-
-	cube_->Update();
-
 	particleSystem_->Update();
-
-	if (collision::IsCollision(gameCamera_->GetFrustum(), cube_->GetAABB())){
-		cube_->SetColor(Vector4::MakeRedColor());
-	} else{
-		cube_->SetColor(Vector4::MakeWhiteColor());
-	}
 }
 
 //デバッグ
@@ -127,9 +103,6 @@ void TestPlayScene::Debug(){
 	if (ImGui::TreeNode("particle")){
 		ImGui::DragFloat3("emitter", &emitterPos_.x, 0.01f);
 		particleSystem_->SetEmitterPosition(emitterPos_);
-		primitiveData::OBB obb = cube_->GetOBB();
-		obb.center = emitterPos_;
-		cube_->SetOBB(obb);
 		ImGui::TreePop();
 	}
 
@@ -149,15 +122,6 @@ void TestPlayScene::Debug(){
 //描画
 void TestPlayScene::Draw(Camera* camera){
 	(void)camera;
-	//frustum_->SetRenderCamera(camera);
-	//debugDrawRenderer_->AddRenderData(frustum_->GetRenderData());
-
-	//cube_->SetRenderCamera(camera);
-	//debugDrawRenderer_->AddRenderData(cube_->GetRenderData());
-
-	//skyBox_->SetRenderCamera(camera);
-	//skyBoxRenderer_->AddRenderData(skyBox_->GetSkyBoxRenderData());
-
 	//particleSystem_->SetRenderCamera(camera);
 	//particleSystem_->DrawSetting();
 	//particleRenderer_->AddRenderData(particleSystem_->GetRenderData());

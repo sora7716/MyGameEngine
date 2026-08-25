@@ -14,7 +14,8 @@ namespace debugDraw {
 		/// <summary>
 		/// コンストラクタ
 		/// </summary>
-		Frustum();
+		/// <param name="gameObject">ゲームオブジェクト</param>
+		explicit Frustum(GameObject* gameObject);
 
 		/// <summary>
 		/// デストラクタ

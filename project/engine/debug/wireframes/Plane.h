@@ -8,7 +8,8 @@ namespace debugDraw {
 		/// <summary>
 		/// コンストラクタ
 		/// </summary>
-		Plane();
+		/// <param name="gameObject">ゲームオブジェクト</param>
+		explicit Plane(GameObject* gameObject);
 
 		/// <summary>
 		/// デストラクタ

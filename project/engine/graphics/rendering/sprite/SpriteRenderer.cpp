@@ -50,7 +50,7 @@ void SpriteRenderer::AddRenderData(const SpriteRenderData& renderData){
 //描画
 void SpriteRenderer::Draw(uint32_t instanceIndex){
 	const SpriteRenderData& renderData = renderDatas_[instanceIndex];
-	SpriteGpuResource& gpuResource = gpuResources_[instanceIndex];
+	GPUResource& gpuResource = gpuResources_[instanceIndex];
 
 	//描画データの情報をGPUリソースに反映
 	//マテリアル
@@ -165,7 +165,7 @@ void SpriteRenderer::CreateIndexResource(){
 }
 
 //マテリアルリソースの生成
-void SpriteRenderer::CreateMaterialResource(SpriteGpuResource& gpuResource){
+void SpriteRenderer::CreateMaterialResource(GPUResource& gpuResource){
 	//マテリアルリソースを作る
 	gpuResource.materialResource = directXBase_->CreateBufferResource(sizeof(MaterialForSprite));
 	//マテリアルリソースにデータを書き込むためのアドレスを取得してmaterialDataに割り当てる
@@ -178,7 +178,7 @@ void SpriteRenderer::CreateMaterialResource(SpriteGpuResource& gpuResource){
 }
 
 //トランスフォーメーション行列リソースの生成
-void SpriteRenderer::CreateTransformationMatrixResource(SpriteGpuResource& gpuResource){
+void SpriteRenderer::CreateTransformationMatrixResource(GPUResource& gpuResource){
 	//座標変換行列リソースを作成する
 	gpuResource.transformationMatrixResource = directXBase_->CreateBufferResource(sizeof(TransformationMatrixForSprite));
 	//座標変換行列リソースにデータを書き込むためのアドレスを取得してtransformationMatrixDataに割り当てる
@@ -191,7 +191,7 @@ void SpriteRenderer::CreateTransformationMatrixResource(SpriteGpuResource& gpuRe
 
 //GPUリソースの生成
 void SpriteRenderer::CreateGpuResource(){
-	SpriteGpuResource gpuResource = {};
+	GPUResource gpuResource = {};
 	//マテリアルのリソースの生成
 	CreateMaterialResource(gpuResource);
 

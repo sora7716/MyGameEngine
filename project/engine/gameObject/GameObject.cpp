@@ -40,7 +40,7 @@ std::unique_ptr<GameObject> GameObject::Clone() const{
 //初期化
 void GameObject::Initialize(const std::string& name){
 	name_ = name;
-	transform_.Initialize();
+	transform_ = {};
 	isActive_ = true;
 	tag_ = TagManager::kDefaultTagName;
 }

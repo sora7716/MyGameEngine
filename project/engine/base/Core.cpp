@@ -39,9 +39,6 @@ void Core::Initialize(){
 	pipelineManager_ = std::make_unique<PipelineManager>(PipelineManager::ConstructorKey{});
 	pipelineManager_->Initialize(directXBase_.get());
 	pipelineManager_->CreatePSO();
-	//スプライトの共通部分
-	spriteCommon_ = std::make_unique<SpriteCommon>(SpriteCommon::ConstructorKey{});
-	spriteCommon_->Initialize(directXBase_.get(), textureManager_.get());
 	//シーンファクトリ
 	sceneFactory_ = std::make_unique<SceneFactory>(AbstractSceneFactory::ConstructorKey{});
 	//オーディオマネージャー
@@ -106,11 +103,6 @@ ImGuiManager* Core::GetImGuiManager() const{
 //カメラマネージャーの取得
 CameraManager* Core::GetCameraManager()const{
 	return cameraManager_.get();
-}
-
-//スプライトの共通部分の取得
-SpriteCommon* Core::GetSpriteCommon() const{
-	return spriteCommon_.get();
 }
 
 //シーンマネージャーの取得

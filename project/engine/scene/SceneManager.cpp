@@ -120,6 +120,8 @@ void SceneManager::Draw(Camera* camera){
 	renderSystem_->CollectActiveObject3ds(gameObjects, camera);
 	//SkyBoxの追加
 	renderSystem_->CollectActiveSkyBox(gameObjects, camera);
+	//スプライトの描画
+	renderSystem_->CollectActiveSprites(gameObjects);
 }
 
 //ゲーム画面の描画

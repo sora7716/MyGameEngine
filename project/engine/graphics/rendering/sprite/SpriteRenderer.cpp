@@ -2,6 +2,7 @@
 #include "DirectXBase.h"
 #include "TextureManager.h"
 #include <cassert>
+#include <cstring>
 
 //生成
 std::unique_ptr<SpriteRenderer> SpriteRenderer::Create(DirectXBase* directXBase, TextureManager* textureManager){
@@ -33,46 +34,65 @@ void SpriteRenderer::Initialize(DirectXBase* directXBase, TextureManager* textur
 
 	//インデックスリソースの生成
 	CreateIndexResource();
-
-	//マテリアルのリソースの生成
-	CreateMaterialResource();
-
-	//トランスフォーメーション行列のリソースの生成
-	CreateTransformationMatrixResource();
 }
 
 //描画データの追加
 void SpriteRenderer::AddRenderData(const SpriteRenderData& renderData){
 	renderDatas_.push_back(renderData);
+
+
+	if (gpuResources_.size() < renderDatas_.size()){
+		//GPUリソースの生成
+		CreateGpuResource();
+	}
 }
 
 //描画
 void SpriteRenderer::Draw(uint32_t instanceIndex){
-	SpriteRenderData renderData = renderDatas_[instanceIndex];
+	const SpriteRenderData& renderData = renderDatas_[instanceIndex];
+	SpriteGpuResource& gpuResource = gpuResources_[instanceIndex];
 
-	//描画データを反映
+	//描画データの情報をGPUリソースに反映
 	//マテリアル
-	*materialData_ = renderData.material;
+	*gpuResource.materialData = renderData.material;
 	//トランスフォーメーション行列
-	*transformationMatrix_ = renderData.transformationMatrix;
+	*gpuResource.transformationMatrix = renderData.transformationMatrix;
 
 	//座標変換行列CBufferの場所を設定
-	directXBase_->GetCommandList()->SetGraphicsRootConstantBufferView(1, transformationMatrixResource_->GetGPUVirtualAddress());
+	directXBase_->GetCommandList()->SetGraphicsRootConstantBufferView(1, gpuResource.transformationMatrixResource->GetGPUVirtualAddress());
 	//VertexBufferViewの設定
 	directXBase_->GetCommandList()->IASetVertexBuffers(0, 1, &vertexBufferView_);
 	//IndexBufferViewを設定
 	directXBase_->GetCommandList()->IASetIndexBuffer(&indexBufferView_);
 	//マテリアルCBufferの場所を設定
-	directXBase_->GetCommandList()->SetGraphicsRootConstantBufferView(0, materialResource_->GetGPUVirtualAddress());//material
+	directXBase_->GetCommandList()->SetGraphicsRootConstantBufferView(0, gpuResource.materialResource->GetGPUVirtualAddress());//material
 	//SRVのDescriptorTableの先頭を設定
 	directXBase_->GetCommandList()->SetGraphicsRootDescriptorTable(2, textureManager_->GetSRVHandleGPU(renderData.imageFileName));
 	//描画(DrawCall/ドローコール)
 	directXBase_->GetCommandList()->DrawIndexedInstanced(kIndexCount, 1, 0, 0, 0);
 }
 
+//リセット
+void SpriteRenderer::Reset(){
+	renderDatas_.clear();
+}
+
+//ブレンドモードの取得
+BlendMode SpriteRenderer::GetBlendMode(uint32_t instanceIndex){
+	return renderDatas_[instanceIndex].blendMode;
+}
+
+//描画データの配列のサイズの取得
+uint32_t SpriteRenderer::GetRenderDataSize(){
+	return static_cast<uint32_t>(renderDatas_.size());
+}
+
 //頂点データの初期化
 void SpriteRenderer::InitializeVertexData(){
-	//矩形
+	//要素数を設定
+	vertices_.resize(kVertexCount);
+
+	//頂点の初期化
 	vertices_[0].position = { 0.0f,1.0f,0.0f,1.0f };//左下
 	vertices_[0].texcoord = { 0.0f,1.0f };
 	vertices_[0].normal = { 0.0f,0.0f,-1.0f };
@@ -102,15 +122,24 @@ void SpriteRenderer::CreateVertexResource(){
 	//1頂点当たりのサイズ
 	vertexBufferView_.StrideInBytes = sizeof(VertexData);
 
+	//頂点データ
+	VertexData* vertexData = nullptr;
 	//VertexResourceにデータを書き込むためのアドレスを取得してvertexDataに割り当てる
-	vertexResource_->Map(0, nullptr, reinterpret_cast<void**>(&vertices_));
+	vertexResource_->Map(0, nullptr, reinterpret_cast<void**>(&vertexData));
 	InitializeVertexData();
+
+	//配列の中身をポインタにコピー
+	std::memcpy(vertexData, vertices_.data(), sizeof(VertexData) * kVertexCount);
 }
 
 //インデックスデータの初期化
 void SpriteRenderer::InitializeIndexData(){
+	//要素数を設定
+	indices_.resize(kIndexCount);
+
+	//インデックスの初期化
 	indices_[0] = 0; indices_[1] = 1; indices_[2] = 2;
-	indices_[3] = 0; indices_[4] = 3; indices_[5] = 2;
+	indices_[3] = 1; indices_[4] = 3; indices_[5] = 2;
 }
 
 //インデックスリソースの生成
@@ -125,37 +154,48 @@ void SpriteRenderer::CreateIndexResource(){
 	//インデックスはuint32_tとする
 	indexBufferView_.Format = DXGI_FORMAT_R32_UINT;
 
+	//インデックスデータ
+	uint32_t* indexData = nullptr;
 	//IndexResourceにデータを書き込むためのアドレスを取得してindexDataに割り当てる
-	indexResource_->Map(0, nullptr, reinterpret_cast<void**>(&indices_));
+	indexResource_->Map(0, nullptr, reinterpret_cast<void**>(&indexData));
 	InitializeIndexData();
-}
 
-//マテリアルデータの初期化
-void SpriteRenderer::InitializeMaterialData(){
-	//色を書き込む
-	materialData_->color = { 1.0f, 1.0f, 1.0f, 1.0f };
-	materialData_->uvMatrix = Matrix4x4::Identity4x4();
+	//配列の中身をポインタにコピー
+	std::memcpy(indexData, indices_.data(), sizeof(uint32_t) * kIndexCount);
 }
 
 //マテリアルリソースの生成
-void SpriteRenderer::CreateMaterialResource(){
+void SpriteRenderer::CreateMaterialResource(SpriteGpuResource& gpuResource){
 	//マテリアルリソースを作る
-	materialResource_ = directXBase_->CreateBufferResource(sizeof(MaterialForSprite));
+	gpuResource.materialResource = directXBase_->CreateBufferResource(sizeof(MaterialForSprite));
 	//マテリアルリソースにデータを書き込むためのアドレスを取得してmaterialDataに割り当てる
 	//書き込むためのアドレスを取得
-	materialResource_->Map(0, nullptr, reinterpret_cast<void**>(&materialData_));
+	gpuResource.materialResource->Map(0, nullptr, reinterpret_cast<void**>(&gpuResource.materialData));
 	//マテリアルデータの初期値を書き込む
-	InitializeMaterialData();
+	//色を書き込む
+	gpuResource.materialData->color = { 1.0f, 1.0f, 1.0f, 1.0f };
+	gpuResource.materialData->uvMatrix = Matrix4x4::Identity4x4();
 }
 
 //トランスフォーメーション行列リソースの生成
-void SpriteRenderer::CreateTransformationMatrixResource(){
+void SpriteRenderer::CreateTransformationMatrixResource(SpriteGpuResource& gpuResource){
 	//座標変換行列リソースを作成する
-	transformationMatrixResource_ = directXBase_->CreateBufferResource(sizeof(TransformationMatrixForSprite));
+	gpuResource.transformationMatrixResource = directXBase_->CreateBufferResource(sizeof(TransformationMatrixForSprite));
 	//座標変換行列リソースにデータを書き込むためのアドレスを取得してtransformationMatrixDataに割り当てる
 	//書き込むためのアドレス
-	transformationMatrixResource_->Map(0, nullptr, reinterpret_cast<void**>(&transformationMatrix_));
+	gpuResource.transformationMatrixResource->Map(0, nullptr, reinterpret_cast<void**>(&gpuResource.transformationMatrix));
 	//単位行列を書き込んでおく
-	transformationMatrix_->wvp = Matrix4x4::Identity4x4();
-	transformationMatrix_->world = Matrix4x4::Identity4x4();
+	gpuResource.transformationMatrix->wvp = Matrix4x4::Identity4x4();
+	gpuResource.transformationMatrix->world = Matrix4x4::Identity4x4();
+}
+
+//GPUリソースの生成
+void SpriteRenderer::CreateGpuResource(){
+	SpriteGpuResource gpuResource = {};
+	//マテリアルのリソースの生成
+	CreateMaterialResource(gpuResource);
+
+	//トランスフォーメーション行列のリソースの生成
+	CreateTransformationMatrixResource(gpuResource);
+	gpuResources_.push_back(std::move(gpuResource));
 }

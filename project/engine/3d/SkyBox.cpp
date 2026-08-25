@@ -45,7 +45,6 @@ std::unique_ptr<Component> SkyBox::Clone(GameObject* gameObject) const{
 	cloneInstance->imageFileName_ = this->imageFileName_;
 	cloneInstance->blendMode_ = this->blendMode_;
 	cloneInstance->material_ = this->material_;
-	cloneInstance->worldMatrix_ = this->worldMatrix_;
 	return cloneInstance;
 }
 

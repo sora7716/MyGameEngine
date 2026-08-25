@@ -15,6 +15,19 @@ class TextureManager;
 class SpriteRenderer{
 private://エイリアステンプレート
 	template <class T>using ComPtr = Microsoft::WRL::ComPtr<T>;
+private://構造体
+	//スプライトのGPUリソース
+	struct SpriteGpuResource{
+		//マテリアル情報
+		MaterialForSprite* materialData = nullptr;
+		//マテリアルのCBuffer
+		ComPtr<ID3D12Resource>materialResource = nullptr;
+
+		//トランスフォーメーション行列の情報
+		TransformationMatrixForSprite* transformationMatrix = nullptr;
+		//トランスフォーメーション行列のCBuffer
+		ComPtr<ID3D12Resource>transformationMatrixResource = nullptr;
+	};
 public://静的メンバ関数
 	/// <summary>
 	/// 生成
@@ -53,6 +66,24 @@ public://メンバ関数
 	/// </summary>
 	/// <param name="instanceIndex">インスタンスの検索キー</param>
 	void Draw(uint32_t instanceIndex);
+
+	/// <summary>
+	/// リセット
+	/// </summary>
+	void Reset();
+
+	/// <summary>
+	/// ブレンドモードの取得
+	/// </summary>
+	/// <param name="instanceIndex">インスタンス検索キー</param>
+	/// <returns>ブレンドモード</returns>
+	BlendMode GetBlendMode(uint32_t instanceIndex);
+
+	/// <summary>
+	/// 描画データの配列のサイズの取得
+	/// </summary>
+	/// <returns>描画データの配列のサイズ</returns>
+	uint32_t GetRenderDataSize();
 private://メンバ関数
 	/// <summary>
 	/// 頂点データの初期化
@@ -75,19 +106,21 @@ private://メンバ関数
 	void CreateIndexResource();
 
 	/// <summary>
-	/// マテリアルデータの初期化
-	/// </summary>
-	void InitializeMaterialData();
-
-	/// <summary>
 	/// マテリアルリソースの生成
 	/// </summary>
-	void CreateMaterialResource();
+	/// <param name="gpuResource">GPUリソース</param>
+	void CreateMaterialResource(SpriteGpuResource& gpuResource);
 
 	/// <summary>
 	/// トランスフォーメーション行列リソースの生成
 	/// </summary>
-	void CreateTransformationMatrixResource();
+	/// <param name="gpuResource">GPUリソース</param>
+	void CreateTransformationMatrixResource(SpriteGpuResource& gpuResource);
+
+	/// <summary>
+	/// GPUリソースの生成
+	/// </summary>
+	void CreateGpuResource();
 private://定数
 	//頂点数
 	static inline const uint32_t kVertexCount = 4;
@@ -114,15 +147,8 @@ private://メンバ変数
 	//IBV
 	D3D12_INDEX_BUFFER_VIEW indexBufferView_ = {};
 
-	//マテリアル情報
-	MaterialForSprite* materialData_ = nullptr;
-	//マテリアルのCBuffer
-	ComPtr<ID3D12Resource>materialResource_ = nullptr;
-
-	//トランスフォーメーション行列の情報
-	TransformationMatrixForSprite* transformationMatrix_ = nullptr;
-	//トランスフォーメーション行列のCBuffer
-	ComPtr<ID3D12Resource>transformationMatrixResource_ = nullptr;
+	//スプライトのGPUリソース
+	std::vector<SpriteGpuResource>gpuResources_;
 
 	//スプライトの描画データ
 	std::vector<SpriteRenderData> renderDatas_ = {};

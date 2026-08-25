@@ -19,6 +19,8 @@ class Object3dRenderer;
 class MaterialInstance;
 class SkyBox;
 class SkyBoxRenderer;
+class Sprite;
+class SpriteRenderer;
 class DebugDrawRenderer;
 class ParticleRenderer;
 
@@ -76,6 +78,12 @@ public://メンバ関数
 	/// <param name="gameObjects">ゲームオブジェクトの配列</param>
 	/// <param name="renderCamera">描画で使用するカメラ</param>
 	void CollectActiveSkyBox(const std::vector<std::unique_ptr<GameObject>>& gameObjects, Camera* renderCamera);
+
+	/// <summary>
+	/// 描画に有効なSpriteを集める
+	/// </summary>
+	/// <param name="gameObjects">ゲームオブジェクトの配列</param>
+	void CollectActiveSprites(const std::vector<std::unique_ptr<GameObject>>& gameObjects);
 
 	/// <summary>
 	/// Object3dのレンダラーの取得
@@ -143,7 +151,7 @@ private://メンバ関数
 	
 	//描画に有効なObject3d
 	std::vector<Object3d*>activeObject3ds_;
-	//オブジェクト3dを描画グループごとに分ける
+	//Object3dを描画グループごとに分ける
 	std::vector<Object3dBatch>object3dBatches_;
 	//Object3dのレンダラー
 	std::unique_ptr<Object3dRenderer>object3dRenderer_ = nullptr;
@@ -152,8 +160,13 @@ private://メンバ関数
 	SkyBox* activeSkyBox_ = nullptr;
 	//スカイボックスのレンダラー
 	std::unique_ptr<SkyBoxRenderer>skyBoxRenderer_ = nullptr;
+
+	//描画に有効なSprite
+	std::vector<Sprite*>activeSprites_;
+	//スプライトのレンダラー
+	std::unique_ptr<SpriteRenderer>spriteRenderer_ = nullptr;
 	
-	//デバッグ描画のレンダラー
+	//DebugDrawのレンダラー
 	std::unique_ptr<DebugDrawRenderer>debugDrawRenderer_ = nullptr;
 	//パーティクルの描画のレンダラー
 	std::unique_ptr<ParticleRenderer>particleRenderer_ = nullptr;

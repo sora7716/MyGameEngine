@@ -11,6 +11,8 @@
 #include "Mesh.h"
 #include "SkyBox.h"
 #include "SkyBoxRenderer.h"
+#include "Sprite.h"
+#include "SpriteRenderer.h"
 #include "DebugDrawRenderer.h"
 #include "ParticleRenderer.h"
 #include <algorithm>
@@ -34,6 +36,8 @@ void RenderSystem::Initialize(DirectXBase* directXBase, SRVManager* srvManager, 
 	//ライティングの管理の記録
 	assert(lightingManager);
 	lightingManager_ = lightingManager;
+	//スプライトのレンダラー
+	spriteRenderer_ = SpriteRenderer::Create(directXBase, textureManager);
 	//Object3dのレンダラー
 	object3dRenderer_ = Object3dRenderer::Create(directXBase, srvManager, textureManager);
 	//スカイボックスのレンダラー
@@ -52,7 +56,7 @@ void RenderSystem::Draw(){
 		PreDraw(object3dRenderer_->GetBlendMode(i), PipelineType::kObject3d);
 		//ライティングの設定
 		lightingManager_->DrawSetting();
-		//3dオブジェクトの描画
+		//Object3dの描画
 		object3dRenderer_->Draw(i);
 	}
 	//描画オブジェクトのリセット
@@ -68,11 +72,11 @@ void RenderSystem::Draw(){
 	//描画オブジェクトのリセット
 	particleRenderer_->Reset();
 
-	//デバッグ描画
+	//DebugDraw
 	for (uint32_t i = 0; i < debugDrawRenderer_->GetRenderDataSize(); i++){
 		//描画開始
 		PreDraw(debugDrawRenderer_->GetBlendMode(i));
-		//デバッグ描画の描画
+		//DebugDrawの描画
 		debugDrawRenderer_->Draw(i);
 	}
 	//描画オブジェクトのリセット
@@ -87,6 +91,16 @@ void RenderSystem::Draw(){
 	}
 	//描画オブジェクトのリセット
 	skyBoxRenderer_->Reset();
+
+	//スプライト
+	for (uint32_t i = 0; i < spriteRenderer_->GetRenderDataSize(); i++){
+		//描画開始
+		PreDraw(spriteRenderer_->GetBlendMode(i), PipelineType::kSprite);
+		//Spriteの描画
+		spriteRenderer_->Draw(i);
+	}
+	//描画オブジェクトのリセット
+	spriteRenderer_->Reset();
 
 }
 
@@ -121,15 +135,15 @@ void RenderSystem::CollectActiveObject3ds(const std::vector<std::unique_ptr<Game
 			continue;
 		}
 
-		//オブジェクト3dを取得
+		//object3dを取得
 		Object3d* object3d = gameObject->GetComponent<Object3d>();
 
-		//オブジェクト3dがNullか
+		//object3dがNullか
 		if (!object3d){
 			continue;
 		}
 
-		//オブジェクト3dが有効状態か
+		//object3dが有効状態か
 		if (!object3d->IsEnabled()){
 			continue;
 		}
@@ -141,7 +155,7 @@ void RenderSystem::CollectActiveObject3ds(const std::vector<std::unique_ptr<Game
 
 
 		//LODを更新
-		//オブジェクト3dのワールド座標を取得
+		//object3dのワールド座標を取得
 		Vector3 object3dWorldPos = object3d->GetWorldPos();
 		object3d->UpdateLOD((object3dWorldPos - cameraWorldPos).Length());
 
@@ -210,15 +224,15 @@ void RenderSystem::CollectActiveSkyBox(const std::vector<std::unique_ptr<GameObj
 			continue;
 		}
 
-		//オブジェクト3dを取得
+		//SkyBoxを取得
 		SkyBox* skyBox = gameObject->GetComponent<SkyBox>();
 
-		//オブジェクト3dがNullか
+		//SkyBoxがNullか
 		if (!skyBox){
 			continue;
 		}
 
-		//オブジェクト3dが有効状態か
+		//SkyBoxが有効状態か
 		if (!skyBox->IsEnabled()){
 			continue;
 		}
@@ -230,6 +244,46 @@ void RenderSystem::CollectActiveSkyBox(const std::vector<std::unique_ptr<GameObj
 
 	if (activeSkyBox_){
 		skyBoxRenderer_->AddRenderData(activeSkyBox_->GetRenderData());
+	}
+}
+
+//描画に有効なSpriteを集める
+void RenderSystem::CollectActiveSprites(const std::vector<std::unique_ptr<GameObject>>& gameObjects){
+	//描画に有効なSpriteをリセット
+	activeSprites_.clear();
+
+	//探索開始
+	for (const std::unique_ptr<GameObject>& gameObject : gameObjects){
+		//ゲームオブジェクトがNullじゃないか
+		if (!gameObject){
+			continue;
+		}
+
+		//ゲームオブジェクトが有効状態か
+		if (!gameObject->IsActive()){
+			continue;
+		}
+
+		//Spriteを取得
+		Sprite* sprite = gameObject->GetComponent<Sprite>();
+
+		//オブジェクト3dがNullか
+		if (!sprite){
+			continue;
+		}
+
+		//オブジェクト3dが有効状態か
+		if (!sprite->IsEnabled()){
+			continue;
+		}
+
+		//activeSpritesを追加
+		activeSprites_.push_back(sprite);
+	}
+
+	//レンダラーに追加
+	for (Sprite* sprite : activeSprites_){
+		spriteRenderer_->AddRenderData(sprite->GetRenderData());
 	}
 }
 

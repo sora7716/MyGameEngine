@@ -40,6 +40,7 @@ void GameObjectList::LoadTexture(){
 	core_->GetTextureManager()->AddTexture(directoryPath + "skybox_cube.dds");
 	core_->GetTextureManager()->AddTexture(directoryPath + "circle2.png");
 	core_->GetTextureManager()->AddTexture(directoryPath + "monsterBall.png");
+	core_->GetTextureManager()->AddTexture(directoryPath + "uvChecker.png");
 }
 
 //OBJファイルの読み込み
@@ -91,7 +92,7 @@ void GameObjectList::LoadModel(){
 	//core_->GetModelManager()->LoadModel("low", "low", "low.obj");
 
 	//デカヌ
-	core_->GetModelManager()->AddModel("dekanu","dekanu/dekanu.gltf");
+	core_->GetModelManager()->AddModel("dekanu", "dekanu/dekanu.gltf");
 
 	//人
 	//core_->GetModelManager()->LoadModel("walk", "human", "walk.gltf");

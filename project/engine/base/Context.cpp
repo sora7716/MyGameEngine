@@ -9,7 +9,6 @@ void SceneContext::operator=(Core* core){
 	srvManager = core->GetSRVManager();
 	textureManager = core->GetTextureManager();
 	modelManager = core->GetModelManager();
-	spriteCommon = core->GetSpriteCommon();
 	sceneManager = core->GetSceneManager();
 	cameraManager = core->GetCameraManager();
 	particleManager = core->GetParticleManager();

@@ -8,20 +8,12 @@
 #include "Mesh.h"
 #include "Cube.h"
 #include "Frustum.h"
-#include "Line.h"
-#include "Plane.h"
-#include "Sphere.h"
 #include "Collision.h"
-#include "TextureManager.h"
 #include "SkyBox.h"
+#include "Sprite.h"
 #include "ParticleSystem.h"
 #include "ModelManager.h"
-#include "WinApi.h"
 #include "LightingManager.h"
-#include "Object3dRenderer.h"
-#include "SkyBoxRenderer.h"
-#include "DebugDrawRenderer.h"
-#include "ParticleRenderer.h"
 #include <numbers>
 
 //コンストラクタ
@@ -60,7 +52,21 @@ void TestPlayScene::Initialize(){
 	sceneContext_.modelManager->FindModel("dekanu")->CreateLODModels({ 1.0f,0.75f,0.5f,0.25f });
 	object3d->SetModel(sceneContext_.modelManager->FindModel("dekanu"));
 	object3d->SetLODDistances({ 20.0f,40.0f,60.0f });
-	gameObject->AddComponent<SkyBox>();
+
+	GameObject* spriteObject = CreateGameObject();
+	Sprite* sprite = spriteObject->AddComponent<Sprite>();
+	sprite->ChangeTexture("uvChecker.png");
+	spriteObject->SetName("sprite");
+
+	GameObject* spriteObject2 = CreateGameObject();
+	Sprite* sprite2 = spriteObject2->AddComponent<Sprite>();
+	sprite2->ChangeTexture("monsterBall.png");
+	spriteObject2->SetName("sprite2");
+
+	GameObject* skyBoxGameObject = CreateGameObject();
+	skyBoxGameObject->AddComponent<SkyBox>();
+	skyBoxGameObject->SetName("skyBox");
+	skyBoxGameObject->GetTransform().scale = { 50.0f,50.0f,50.0f };
 }
 
 //更新

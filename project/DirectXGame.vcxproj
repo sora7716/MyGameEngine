@@ -13,7 +13,6 @@
   <ItemGroup>
     <ClCompile Include="application\scene\TestPlayScene.cpp" />
     <ClCompile Include="engine\2d\Sprite.cpp" />
-    <ClCompile Include="engine\2d\SpriteCommon.cpp" />
     <ClCompile Include="engine\3d\LightingManager.cpp" />
     <ClCompile Include="engine\3d\LODBuilder.cpp" />
     <ClCompile Include="engine\3d\LODController.cpp" />
@@ -98,7 +97,6 @@
   <ItemGroup>
     <ClInclude Include="application\scene\TestPlayScene.h" />
     <ClInclude Include="engine\2d\Sprite.h" />
-    <ClInclude Include="engine\2d\SpriteCommon.h" />
     <ClInclude Include="engine\3d\LightingData.h" />
     <ClInclude Include="engine\3d\LightingManager.h" />
     <ClInclude Include="engine\3d\LODBuilder.h" />

@@ -1,5 +1,4 @@
 #include "Sprite.h"
-#include "SpriteCommon.h"
 #include <cassert>
 #include "MatrixUtility.h"
 #include "TextureManager.h"
@@ -44,13 +43,12 @@ std::unique_ptr<Component> Sprite::Clone(GameObject* gameObject) const{
 	//初期化
 	cloneInstance->Initialize();
 
-	//SkyBoxが持つ設定だけ複製
+	//Spriteが持つ設定だけ複製
 	cloneInstance->SetEnabled(this->IsEnabled());
 	cloneInstance->imageFileName_ = this->imageFileName_;
 	cloneInstance->blendMode_ = this->blendMode_;
 	cloneInstance->material_ = this->material_;
 	cloneInstance->uvTransform_ = uvTransform_;
-	cloneInstance->transformationMatrix_ = transformationMatrix_;
 	return cloneInstance;
 }
 
@@ -138,4 +136,5 @@ void Sprite::SetupRenderData(){
 	renderData_.isActive = gameObject->IsActive();
 	renderData_.material = material_;
 	renderData_.transformationMatrix = transformationMatrix_;
+	renderData_.imageFileName = imageFileName_;
 }

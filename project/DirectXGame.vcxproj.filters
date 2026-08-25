@@ -138,9 +138,6 @@
     <ClCompile Include="engine\2d\Sprite.cpp">
       <Filter>engine\2d</Filter>
     </ClCompile>
-    <ClCompile Include="engine\2d\SpriteCommon.cpp">
-      <Filter>engine\2d</Filter>
-    </ClCompile>
     <ClCompile Include="engine\3d\LODBuilder.cpp">
       <Filter>engine\3d</Filter>
     </ClCompile>
@@ -376,9 +373,6 @@
     </ClInclude>
     <ClInclude Include="engine\scene\SceneManager.h">
       <Filter>engine\scene</Filter>
-    </ClInclude>
-    <ClInclude Include="engine\2d\SpriteCommon.h">
-      <Filter>engine\2d</Filter>
     </ClInclude>
     <ClInclude Include="engine\2d\Sprite.h">
       <Filter>engine\2d</Filter>

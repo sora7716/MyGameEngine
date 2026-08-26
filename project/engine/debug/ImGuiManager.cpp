@@ -31,6 +31,9 @@ void ImGuiManager::Initialize([[maybe_unused]] WinApi* winApi, [[maybe_unused]] 
 	ImGui::CreateContext();
 	ImGuiIO& io = ImGui::GetIO();
 	io.ConfigFlags |= ImGuiConfigFlags_DockingEnable;
+	ImFont* JapaneseFont = io.Fonts->AddFontFromFileTTF("engine/resources/fonts/BIZ-UDMinchoM.ttc", 18.0f, nullptr,
+		io.Fonts->GetGlyphRangesJapanese());
+	assert(JapaneseFont);
 	io.Fonts->Build();
 	//ImGuiのスタイルを設定
 	ImGui::StyleColorsDark();

@@ -44,12 +44,12 @@ void TestPlayScene::Initialize(){
 	GameObject* spriteObject = CreateGameObject();
 	Sprite* sprite = spriteObject->AddComponent<Sprite>();
 	sprite->ChangeTexture("uvChecker.png");
-	spriteObject->SetName("sprite");
+	spriteObject->SetName("uvChecker");
 
 	GameObject* spriteObject2 = CreateGameObject();
 	Sprite* sprite2 = spriteObject2->AddComponent<Sprite>();
 	sprite2->ChangeTexture("monsterBall.png");
-	spriteObject2->SetName("sprite2");
+	spriteObject2->SetName("モンスターボール");
 
 	GameObject* skyBoxGameObject = CreateGameObject();
 	skyBoxGameObject->AddComponent<SkyBox>();
@@ -58,11 +58,12 @@ void TestPlayScene::Initialize(){
 
 	GameObject* cubeWireframe = CreateGameObject();
 	cubeWireframe->AddComponent<debugDraw::Plane>();
-	cubeWireframe->SetName("debugDraw");
+	cubeWireframe->SetName("ワイヤーフレーム");
 
 	GameObject* frustumObject = CreateGameObject();
 	debugDraw::Frustum* frustum = frustumObject->AddComponent<debugDraw::Frustum>();
 	frustum->SetTargetCamera(gameCamera_);
+	frustumObject->SetName("カメラの視錐台");
 }
 
 //更新

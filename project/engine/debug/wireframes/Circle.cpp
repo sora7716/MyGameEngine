@@ -1,5 +1,6 @@
 #include "Circle.h"
 #include "MathUtility.h"
+#include "GameObject.h"
 
 //コンストラクタ
 debugDraw::Circle::Circle(GameObject* gameObject) :BaseShape(gameObject){
@@ -9,22 +10,29 @@ debugDraw::Circle::Circle(GameObject* gameObject) :BaseShape(gameObject){
 debugDraw::Circle::~Circle(){}
 
 //初期化
-void debugDraw::Circle::Initialize(DirectXBase* directXBase, Camera* camera){
+void debugDraw::Circle::InitializeShape(){
 	vertexCount_ = 32;
 	indexCount_ = vertexCount_ * 2;
-	BaseShape::Initialize(directXBase, camera);
-
 	circle_.radius = 1.0f;
 }
 
 //更新
-void debugDraw::Circle::Update(){
-	//トランスフォームに送信
-	transform_.quaternion = Quaternion::MakeQuaternionForEulerAngle(circle_.eulerAngle);
-	transform_.translate = circle_.center;
+void debugDraw::Circle::UpdateShape(){
+}
 
-	//基底クラスの更新
-	BaseShape::Update();
+//複製
+std::unique_ptr<Component> debugDraw::Circle::Clone(GameObject* gameObject) const{
+	std::unique_ptr<Circle>cloneInstance = std::make_unique<Circle>(gameObject);
+
+	//初期化
+	cloneInstance->Initialize();
+
+	//基底クラスの内容コピー
+	CopyBaseSetting(*cloneInstance);
+
+	//内容をコピー
+	cloneInstance->circle_ = this->circle_;
+	return cloneInstance;
 }
 
 //円のセッター
@@ -39,11 +47,11 @@ primitiveData::Circle debugDraw::Circle::GetCircle(){
 
 //頂点データの設定
 void debugDraw::Circle::SettingVertexData(){
-	for (int32_t i = 0; i < vertexCount_; i++){
+	for (uint32_t i = 0; i < vertexCount_; i++){
 		float t = static_cast<float>(i) / static_cast<float>(vertexCount_);
 		float angle = t * mathUtility::kPi * 2.0f;
 
-		vertexData_[i] = {
+		vertices_[i] = {
 			std::cos(angle) * circle_.radius,
 			std::sin(angle) * circle_.radius,
 			0.0f,
@@ -54,13 +62,13 @@ void debugDraw::Circle::SettingVertexData(){
 
 //インデックスの設定
 void debugDraw::Circle::SettingIndexData(){
-	for (int32_t i = 0; i < vertexCount_; i++){
-		int32_t next = (i + 1) % vertexCount_;
+	for (uint32_t i = 0; i < vertexCount_; i++){
+		uint32_t next = (i + 1) % vertexCount_;
 
 		//始点
-		indexData_[i * 2] = i;
+		indices_[i * 2] = i;
 
 		//終点
-		indexData_[i * 2 + 1] = next;
+		indices_[i * 2 + 1] = next;
 	}
 }

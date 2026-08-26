@@ -13,6 +13,7 @@
 #include "SkyBoxRenderer.h"
 #include "Sprite.h"
 #include "SpriteRenderer.h"
+#include "BaseShape.h"
 #include "DebugDrawRenderer.h"
 #include "ParticleRenderer.h"
 #include <algorithm>
@@ -287,24 +288,45 @@ void RenderSystem::CollectActiveSprites(const std::vector<std::unique_ptr<GameOb
 	}
 }
 
-//Object3dのレンダラーの取得
-Object3dRenderer* RenderSystem::GetObject3dRenderer(){
-	return object3dRenderer_.get();
-}
+//描画に有効なDebugDrawを集める
+void RenderSystem::CollectActiveDebugDraw(const std::vector<std::unique_ptr<GameObject>>& gameObjects, Camera* renderCamera){
+	renderCamera_ = renderCamera;
+	//描画に有効なDebugDrawをリセット
+	activeDebugDraws_.clear();
 
-//SkyBoxのレンダラーの取得
-SkyBoxRenderer* RenderSystem::GetSkyBoxRenderer(){
-	return skyBoxRenderer_.get();
-}
+	//探索開始
+	for (const std::unique_ptr<GameObject>& gameObject : gameObjects){
+		//ゲームオブジェクトがNullじゃないか
+		if (!gameObject){
+			continue;
+		}
 
-//デバッグ描画のレンダラーの取得
-DebugDrawRenderer* RenderSystem::GetDebugDrawRenderer(){
-	return debugDrawRenderer_.get();
-}
+		//ゲームオブジェクトが有効状態か
+		if (!gameObject->IsActive()){
+			continue;
+		}
 
-//パーティクルのレンダラーの取得
-ParticleRenderer* RenderSystem::GetParticleRenderer(){
-	return particleRenderer_.get();
+		//DebugDrawを取得
+		debugDraw::BaseShape* debugDraw = gameObject->GetComponent<debugDraw::BaseShape>();
+
+		//オブジェクト3dがNullか
+		if (!debugDraw){
+			continue;
+		}
+
+		//オブジェクト3dが有効状態か
+		if (!debugDraw->IsEnabled()){
+			continue;
+		}
+
+		//activeDebugDrawを追加
+		activeDebugDraws_.push_back(debugDraw);
+	}
+
+	//レンダラーに追加
+	for (debugDraw::BaseShape* debugDraw : activeDebugDraws_){
+		debugDrawRenderer_->AddRenderData(debugDraw->GetRenderData());
+	}
 }
 
 //描画開始

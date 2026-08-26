@@ -6,12 +6,15 @@
 #include "Object3d.h"
 #include "Model.h"
 #include "Mesh.h"
-#include "Cube.h"
-#include "Frustum.h"
 #include "Collision.h"
 #include "SkyBox.h"
 #include "Sprite.h"
 #include "Cube.h"
+#include "Circle.h"
+#include "Plane.h"
+#include "Line.h"
+#include "Sphere.h"
+#include "Frustum.h"
 #include "ParticleSystem.h"
 #include "ModelManager.h"
 #include "LightingManager.h"
@@ -28,13 +31,6 @@ void TestPlayScene::Initialize(){
 	//ベースシーンの初期化
 	BaseScene::Initialize();
 	gameCamera_ = sceneContext_.cameraManager->FindCamera("testPlayCamera");
-
-	particleSystem_ = std::make_unique<ParticleSystem>();
-	particleSystem_->Initialize(sceneContext_.directXBase, sceneContext_.srvManager, sceneContext_.pipelineManager, gameCamera_, "circle2.png");
-	particleSystem_->SetGameCamera(gameCamera_);
-	particleSystem_->SetParticleCount(2);
-	particleSystem_->SetFrequency(0.3f);
-	particleSystem_->RegisterToRenderer(particleRenderer_);
 
 	directionalLight_ = *sceneContext_.lightingManager->GetDirectionalLight();
 
@@ -59,14 +55,20 @@ void TestPlayScene::Initialize(){
 	skyBoxGameObject->AddComponent<SkyBox>();
 	skyBoxGameObject->SetName("skyBox");
 	skyBoxGameObject->GetTransform().scale = { 50.0f,50.0f,50.0f };
+
+	GameObject* cubeWireframe = CreateGameObject();
+	cubeWireframe->AddComponent<debugDraw::Plane>();
+	cubeWireframe->SetName("debugDraw");
+
+	GameObject* frustumObject = CreateGameObject();
+	debugDraw::Frustum* frustum = frustumObject->AddComponent<debugDraw::Frustum>();
+	frustum->SetTargetCamera(gameCamera_);
 }
 
 //更新
 void TestPlayScene::Update(){
 	//ベースシーンの更新
 	BaseScene::Update();
-
-	particleSystem_->Update();
 }
 
 //デバッグ
@@ -99,12 +101,6 @@ void TestPlayScene::Debug(){
 	//	ImGuiManager::DragTransform(skyBoxObject_->GetTransform());
 	//	ImGui::TreePop();
 	//}
-
-	if (ImGui::TreeNode("particle")){
-		ImGui::DragFloat3("emitter", &emitterPos_.x, 0.01f);
-		particleSystem_->SetEmitterPosition(emitterPos_);
-		ImGui::TreePop();
-	}
 
 	if (ImGui::TreeNode("directionalLight")){
 		directionalLight_ = *sceneContext_.lightingManager->GetDirectionalLight();

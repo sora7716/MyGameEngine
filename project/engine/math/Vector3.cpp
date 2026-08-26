@@ -5,7 +5,7 @@
 #include <cassert>
 
 //Vector3のメンバ変数すべてに1.0fを代入したVector3を作成
-Vector3 Vector3::MakeAllOne() {
+Vector3 Vector3::MakeAllOne(){
 	return Vector3(1.0f, 1.0f, 1.0f);
 }
 
@@ -21,7 +21,7 @@ Vector3 Vector3::Clamp(float min, float max){
 }
 
 //最小値
-Vector3 Vector3::Min(const Vector3& v) const {
+Vector3 Vector3::Min(const Vector3& v) const{
 	Vector3 result = {};
 	result.x = std::min(x, v.x);
 	result.y = std::min(y, v.y);
@@ -31,7 +31,7 @@ Vector3 Vector3::Min(const Vector3& v) const {
 }
 
 //最大値
-Vector3 Vector3::Max(const Vector3& v) const {
+Vector3 Vector3::Max(const Vector3& v) const{
 	Vector3 result = {};
 	result.x = std::max(x, v.x);
 	result.y = std::max(y, v.y);
@@ -40,8 +40,18 @@ Vector3 Vector3::Max(const Vector3& v) const {
 	return result;
 }
 
+//最小値
+float Vector3::Min() const{
+	return std::min({ x, y, z });
+}
+
+//最大値
+float Vector3::Max() const{
+	return std::max({ x, y, z });
+}
+
 //絶対値
-Vector3 Vector3::Abs() const {
+Vector3 Vector3::Abs() const{
 	Vector3 result = {};
 	result.x = std::abs(x);
 	result.y = std::abs(y);
@@ -50,7 +60,7 @@ Vector3 Vector3::Abs() const {
 }
 
 //小数点切り捨て
-Vector3 Vector3::Floor() const {
+Vector3 Vector3::Floor() const{
 	Vector3 result = {};
 	result.x = std::floor(x);
 	result.y = std::floor(y);
@@ -60,22 +70,22 @@ Vector3 Vector3::Floor() const {
 }
 
 //長さ(ノルム)
-float Vector3::Length() {
+float Vector3::Length(){
 	float result = std::sqrt(Vector3(x, y, z).Dot(Vector3(x, y, z)));
 	return result;
 }
 
 //長さ(平方根を使用しない)
-float Vector3::LengthSquared() {
+float Vector3::LengthSquared(){
 	float result = Vector3(x, y, z).Dot(Vector3(x, y, z));
 	return result;
 }
 
 //正規化
-Vector3 Vector3::Normalize()const {
+Vector3 Vector3::Normalize()const{
 	Vector3 result = {};
 	float len = Vector3(x, y, z).Length();
-	if (len != 0.0f) {
+	if (len != 0.0f){
 		result.x = x / len;
 		result.y = y / len;
 		result.z = z / len;
@@ -84,14 +94,14 @@ Vector3 Vector3::Normalize()const {
 }
 
 //内積
-float Vector3::Dot(const Vector3& v)const {
+float Vector3::Dot(const Vector3& v)const{
 	Vector3 tempVector = Vector3(x, y, z) * v;
 	float dot = tempVector.x + tempVector.y + tempVector.z;
 	return dot;
 }
 
 //クロス積
-Vector3 Vector3::Cross(const Vector3& v)const {
+Vector3 Vector3::Cross(const Vector3& v)const{
 	// TODO: return ステートメントをここに挿入します
 	Vector3 result{};
 	result.x = y * v.z - z * v.y;
@@ -101,7 +111,7 @@ Vector3 Vector3::Cross(const Vector3& v)const {
 }
 
 //線形補間
-Vector3 Vector3::Lerp(const Vector3& begin, const Vector3& end, float frame) {
+Vector3 Vector3::Lerp(const Vector3& begin, const Vector3& end, float frame){
 	// TODO: return ステートメントをここに挿入します
 	Vector3 result = {};
 	result.x = std::lerp(begin.x, end.x, frame);
@@ -111,22 +121,22 @@ Vector3 Vector3::Lerp(const Vector3& begin, const Vector3& end, float frame) {
 }
 
 //加法
-Vector3 Vector3::operator+(const Vector3& v)const {
+Vector3 Vector3::operator+(const Vector3& v)const{
 	return { x + v.x,y + v.y,z + v.z };
 }
 
 //減法
-Vector3 Vector3::operator-(const Vector3& v)const {
+Vector3 Vector3::operator-(const Vector3& v)const{
 	return { x - v.x,y - v.y,z - v.z };
 }
 
 //乗法
-Vector3 Vector3::operator*(const Vector3& v) const {
+Vector3 Vector3::operator*(const Vector3& v) const{
 	return { x * v.x,y * v.y,z * v.z };
 }
 
 //乗法(行列)
-Vector3 Vector3::operator*(const Matrix4x4& m) const {
+Vector3 Vector3::operator*(const Matrix4x4& m) const{
 	Vector3 result{};
 	result.x = x * m.m[0][0] + y * m.m[1][0] + z * m.m[2][0] + 1.0f * m.m[3][0];
 	result.y = x * m.m[0][1] + y * m.m[1][1] + z * m.m[2][1] + 1.0f * m.m[3][1];
@@ -141,12 +151,12 @@ Vector3 Vector3::operator*(const Matrix4x4& m) const {
 }
 
 //除法
-Vector3 Vector3::operator/(const Vector3& v)const {
+Vector3 Vector3::operator/(const Vector3& v)const{
 	return { x / v.x,y / v.y,z / v.z };
 }
 
 //加法(複合)
-Vector3& Vector3::operator+=(const Vector3& v) {
+Vector3& Vector3::operator+=(const Vector3& v){
 	// TODO: return ステートメントをここに挿入します
 	x += v.x;
 	y += v.y;
@@ -155,7 +165,7 @@ Vector3& Vector3::operator+=(const Vector3& v) {
 }
 
 //減法(複合)
-Vector3& Vector3::operator-=(const Vector3& v) {
+Vector3& Vector3::operator-=(const Vector3& v){
 	// TODO: return ステートメントをここに挿入します
 	x -= v.x;
 	y -= v.y;
@@ -164,7 +174,7 @@ Vector3& Vector3::operator-=(const Vector3& v) {
 }
 
 //乗法(複合)
-Vector3& Vector3::operator*=(const Vector3& v) {
+Vector3& Vector3::operator*=(const Vector3& v){
 	// TODO: return ステートメントをここに挿入します
 	x *= v.x;
 	y *= v.y;
@@ -173,7 +183,7 @@ Vector3& Vector3::operator*=(const Vector3& v) {
 }
 
 //除法
-Vector3& Vector3::operator/=(const Vector3& v) {
+Vector3& Vector3::operator/=(const Vector3& v){
 	// TODO: return ステートメントをここに挿入します
 	x /= v.x;
 	y /= v.y;
@@ -182,12 +192,12 @@ Vector3& Vector3::operator/=(const Vector3& v) {
 }
 
 // スカラー倍
-Vector3 Vector3::operator*(float n)const {
+Vector3 Vector3::operator*(float n)const{
 	return { x * n,y * n,z * n };
 }
 
 // スカラー倍(複合)
-Vector3& Vector3::operator*=(float n) {
+Vector3& Vector3::operator*=(float n){
 	// TODO: return ステートメントをここに挿入します
 	x *= n;
 	y *= n;
@@ -195,12 +205,12 @@ Vector3& Vector3::operator*=(float n) {
 	return *this;
 }
 
-Vector3 Vector3::operator-(float n) const {
+Vector3 Vector3::operator-(float n) const{
 	return { x - n,y - n,z - n };
 }
 
 // 除法(float複合)
-Vector3& Vector3::operator/=(float n) {
+Vector3& Vector3::operator/=(float n){
 	// TODO: return ステートメントをここに挿入します
 	x /= n;
 	y /= n;
@@ -209,12 +219,12 @@ Vector3& Vector3::operator/=(float n) {
 }
 
 //除法(float)
-Vector3 Vector3::operator/(float n)const {
+Vector3 Vector3::operator/(float n)const{
 	return { x / n,y / n,z / n };
 }
 
 //加法(float)
-Vector3 Vector3::operator+(float n) {
+Vector3 Vector3::operator+(float n){
 	Vector3 result = {
 		x + n,
 		y + n,
@@ -224,7 +234,7 @@ Vector3 Vector3::operator+(float n) {
 }
 
 //加法(float)
-Vector3& Vector3::operator+=(float n) {
+Vector3& Vector3::operator+=(float n){
 	// TODO: return ステートメントをここに挿入します
 	x -= n;
 	y -= n;
@@ -233,7 +243,7 @@ Vector3& Vector3::operator+=(float n) {
 }
 
 //マイナスにする
-Vector3 Vector3::operator-()const {
+Vector3 Vector3::operator-()const{
 	Vector3 result{
 	-x,
 	-y,
@@ -243,31 +253,31 @@ Vector3 Vector3::operator-()const {
 }
 
 // vのほうが小さい
-bool Vector3::operator<(const Vector3& v) {
+bool Vector3::operator<(const Vector3& v){
 	return x < v.x && y < v.y && z < v.z;
 }
 
 //float*Vector3
-const Vector3 operator*(float n, const Vector3& v) {
+const Vector3 operator*(float n, const Vector3& v){
 	return v * n;
 }
 
 //Vector3Int同士の比較
-bool Vector3Int::operator<(const Vector3Int& v) const {
-	if (x != v.x) {
+bool Vector3Int::operator<(const Vector3Int& v) const{
+	if (x != v.x){
 		return x < v.x;
-	} else if (y != v.y) {
+	} else if (y != v.y){
 		return y < v.y;
 	}
 	return z < v.z;
 }
 //Vector3Intが一致しているか
-bool Vector3Int::operator!=(const Vector3Int& v) const {
+bool Vector3Int::operator!=(const Vector3Int& v) const{
 	return v.x != x || v.y != y || v.z != z;
 }
 
 //Vector3からVector3Intへ変換
-Vector3Int& Vector3Int::operator=(const Vector3& v) {
+Vector3Int& Vector3Int::operator=(const Vector3& v){
 	// TODO: return ステートメントをここに挿入します
 	x = static_cast<int32_t>(v.x);
 	y = static_cast<int32_t>(v.y);

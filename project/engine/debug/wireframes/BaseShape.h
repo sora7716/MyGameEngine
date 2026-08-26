@@ -2,60 +2,35 @@
 #include "RenderData.h"
 #include "RenderingData.h"
 #include "DebugDrawRenderData.h"
-#include "BlendMode.h"
 #include "Component.h"
-#include <wrl.h>
-#include <d3d12.h>
-#include <cstdint>
-#include <memory>
-
-//前方宣言
-class DirectXBase;
-class TextureManager;
-class Camera;
-class GraphicsPipeline;
+#include "BlendMode.h"
 
 /// <summary>
 /// 形
 /// </summary>
 namespace debugDraw {
 	class BaseShape :public Component{
-	private://エイリアステンプレート
-		template <class T>using ComPtr = Microsoft::WRL::ComPtr<T>;
 	public://メンバ関数
 		/// <summary>
-	    /// コンストラクタ
-	    /// </summary>
-	    /// <param name="gameObject">ゲームオブジェクト</param>
+		/// コンストラクタ
+		/// </summary>
+		/// <param name="gameObject">ゲームオブジェクト</param>
 		explicit BaseShape(GameObject* gameObject);
 
 		/// <summary>
 		/// デストラクタ
 		/// </summary>
-		virtual ~BaseShape()override;
+		~BaseShape()override;
 
 		/// <summary>
 		/// 初期化
 		/// </summary>
-		virtual void Initialize()override;
-
-		/// <summary>
-		/// 初期化
-		/// </summary>
-		/// <param name="directXBase">DirectXの基盤部分</param>
-		/// <param name="camera">カメラ</param>
-		virtual void Initialize(DirectXBase* directXBase, Camera* camera);
+		void Initialize()final override;
 
 		/// <summary>
 		/// 更新
 		/// </summary>
-		virtual void Update()override;
-
-		/// <summary>
-		/// 描画する用のカメラを設定
-		/// </summary>
-		/// <param name="camera">カメラ</param>
-		void SetRenderCamera(Camera* camera);
+		void Update()final override;
 
 		/// <summary>
 		/// カラーの設定
@@ -64,10 +39,22 @@ namespace debugDraw {
 		void SetColor(const Vector4& color);
 
 		/// <summary>
-		/// カラーの取得
+		/// ブレンドモードの設定
+		/// </summary>
+		/// <param name="blendMode">ブレンドモード</param>
+		void SetBlendMode(BlendMode blendMode);
+
+		/// <summary>
+		/// 色の取得
 		/// </summary>
 		/// <returns>色</returns>
-		Vector4 GetColor();
+		const Vector4& GetColor();
+
+		/// <summary>
+		/// ブレンドモードの取得
+		/// </summary>
+		/// <returns>ブレンドモード</returns>
+		BlendMode GetBlendMode()const;
 
 		/// <summary>
 		/// 描画データの取得
@@ -84,71 +71,52 @@ namespace debugDraw {
 		/// インデックスの設定
 		/// </summary>
 		virtual void SettingIndexData() = 0;
+
+		/// <summary>
+		/// 形の初期化
+		/// </summary>
+		virtual void InitializeShape() = 0;
+
+		/// <summary>
+		/// 形の更新
+		/// </summary>
+		virtual void UpdateShape() = 0;
+
+		/// <summary>
+		/// 複製する際の元となる設定
+		/// </summary>
+		/// <param name="baseShape">元の形</param>
+		void CopyBaseSetting(BaseShape& baseShape)const;
 	private://メンバ関数
-		/// <summary>
-		/// 頂点リソースの生成
-		/// </summary>
-		void CreateVertexResource();
-
-		/// <summary>
-		/// インデックスリソースの生成
-		/// </summary>
-		void CreateIndexResource();
-
-		/// <summary>
-		/// マテリアルデータの初期化
-		/// </summary>
-		void InitializeMaterialData();
-
-		/// <summary>
-		/// マテリアルリソースの生成
-		/// </summary>
-		void CreateMaterialResource();
-
-		/// <summary>
-		/// WorldTransformation行列リソースの生成
-		/// </summary>
-		void CreateTransformationMatrixResource();
-
 		/// <summary>
 		/// 座標の更新
 		/// </summary>
 		void UpdateTransform();
-	private://メンバ変数
-		//DirectXの基盤部分
-		DirectXBase* directXBase_ = nullptr;
-		//カメラ
-		Camera* renderCamera_ = nullptr;
-		//バッファリソース
-		ComPtr<ID3D12Resource>vertexResource_ = nullptr;//頂点
-		ComPtr<ID3D12Resource>materialResource_ = nullptr;//マテリアル
-		ComPtr<ID3D12Resource>indexResource_ = nullptr;//インデックス
-		ComPtr<ID3D12Resource>wvpResource_ = nullptr;//ワールドビュープロジェクション
-		//ワールドビュープロジェクションのデータ
-		TransformationMatrix* wvpData_ = nullptr;
-		//バッファリソースの使い道を補足するバッファビュー
-		D3D12_VERTEX_BUFFER_VIEW vertexBufferView_ = {};//頂点
-		D3D12_INDEX_BUFFER_VIEW indexBufferView_ = {};//インデックス	
 
+		/// <summary>
+		/// 描画に必要なデータのセットアップ
+		/// </summary>
+		void SetupRenderData();
+	private://メンバ変数
 		//描画データ
 		DebugDrawRenderData renderData_ = {};
-	protected://メンバ変数
-		//頂点数
-		int32_t vertexCount_ = 0;
-		//インデックス数
-		int32_t indexCount_ = 0;
+
+		//色
+		Vector4 color_ = {};
 		//ワールド行列
 		Matrix4x4 worldMatrix_ = {};
-		//ワールド座標
-		Transform transform_ = {};
-		//バッファリソース内のデータを指すポインタ
-		Vector4* color_ = nullptr;
-		//頂点データ
-		VertexData* vertexData_ = nullptr;
-		//インデックスデータ
-		uint32_t* indexData_ = nullptr;
 		//ブレンドモード
-		BlendMode blendMode_ = BlendMode::kNormal;
+		BlendMode blendMode_ = BlendMode::kNone;
+	protected://メンバ変数
+		//頂点数
+		uint32_t vertexCount_ = 0;
+		//頂点データ
+		std::vector<Vector4>vertices_ = {};
+
+		//インデックス数
+		uint32_t indexCount_ = 0;
+		//インデックスデータ
+		std::vector<uint32_t>indices_ = {};
 	};
 }
 

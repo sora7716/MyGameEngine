@@ -8,20 +8,32 @@ debugDraw::Plane::Plane(GameObject* gameObject) :BaseShape(gameObject){
 debugDraw::Plane::~Plane(){}
 
 //初期化
-void debugDraw::Plane::Initialize(DirectXBase* directXBase, Camera* camera){
+void debugDraw::Plane::InitializeShape(){
 	vertexCount_ = 4;
 	indexCount_ = 8;
 	plane_ = {
 		.normal = {0.0f,1.0f,0.0f},
 		.distance = 0.0f
 	};
-	BaseShape::Initialize(directXBase, camera);
 }
 
 //更新
-void debugDraw::Plane::Update(){
-	//基底クラスの更新
-	BaseShape::Update();
+void debugDraw::Plane::UpdateShape(){
+}
+
+//複製
+std::unique_ptr<Component> debugDraw::Plane::Clone(GameObject* gameObject) const{
+	std::unique_ptr<Plane>cloneInstance = std::make_unique<Plane>(gameObject);
+
+	//初期化
+	cloneInstance->Initialize();
+
+	//基底クラスの内容コピー
+	CopyBaseSetting(*cloneInstance);
+
+	//内容をコピー
+	cloneInstance->plane_ = this->plane_;
+	return cloneInstance;
 }
 
 //平面の設定
@@ -31,7 +43,6 @@ void debugDraw::Plane::SetPlane(const primitiveData::Plane& plane){
 
 //平面の取得
 const primitiveData::Plane& debugDraw::Plane::GetPlane() const{
-	// TODO: return ステートメントをここに挿入します
 	return plane_;
 }
 
@@ -58,21 +69,18 @@ void debugDraw::Plane::SettingVertexData(){
 	};
 
 	for (uint32_t i = 0; i < 4; i++){
-		vertexData_[i].position = {
+		vertices_[i] = {
 			positions[i].x,
 			positions[i].y,
 			positions[i].z,
 			1.0f
 		};
-
-		vertexData_[i].normal = normal;
-		vertexData_[i].texcoord = { 0.0f,0.0f };
 	}
 }
 
 //インデックスの設定
 void debugDraw::Plane::SettingIndexData(){
-	int32_t indices[] = {
+	uint32_t indices[] = {
 		//前面
 		0,1,
 		1,2,
@@ -81,8 +89,8 @@ void debugDraw::Plane::SettingIndexData(){
 	};
 
 	//作成したインデックスデータを代入前面
-	for (int32_t i = 0; i < indexCount_; i++){
-		indexData_[i] = indices[i];
+	for (uint32_t i = 0; i < indexCount_; i++){
+		indices_[i] = indices[i];
 	}
 
 }

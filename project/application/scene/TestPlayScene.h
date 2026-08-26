@@ -60,8 +60,5 @@ public://メンバ関数
 	/// </summary>
 	void Finalize()override;
 private://メンバ変数
-	std::unique_ptr<ParticleSystem>particleSystem_ = nullptr;
-	Vector3 emitterPos_ = {};
-
 	DirectionalLight directionalLight_ = {};
 };

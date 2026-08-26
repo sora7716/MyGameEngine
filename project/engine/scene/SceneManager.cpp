@@ -46,8 +46,6 @@ void SceneManager::Update(){
 		nextScene_ = nullptr;
 		//シーンに必要な情報の設定
 		scene_->SetSceneContext(sceneContext_);
-		//描画システムの設定
-		scene_->SetRenderSystem(renderSystem_);
 		//次のシーン
 		scene_->Initialize();
 		//ゲームオブジェクト一覧をDebugEditorに登録
@@ -120,8 +118,10 @@ void SceneManager::Draw(Camera* camera){
 	renderSystem_->CollectActiveObject3ds(gameObjects, camera);
 	//SkyBoxの追加
 	renderSystem_->CollectActiveSkyBox(gameObjects, camera);
-	//スプライトの描画
+	//Spriteの描画
 	renderSystem_->CollectActiveSprites(gameObjects);
+	//DebugDrawの描画
+	renderSystem_->CollectActiveDebugDraw(gameObjects, camera);
 }
 
 //ゲーム画面の描画

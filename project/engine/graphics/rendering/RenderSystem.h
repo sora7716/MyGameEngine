@@ -10,7 +10,6 @@ class SRVManager;
 class TextureManager;
 class PipelineManager;
 class LightingManager;
-class Blend;
 class Camera;
 class GameObject;
 class Model;
@@ -21,6 +20,9 @@ class SkyBox;
 class SkyBoxRenderer;
 class Sprite;
 class SpriteRenderer;
+namespace debugDraw{
+	class BaseShape;
+}
 class DebugDrawRenderer;
 class ParticleRenderer;
 
@@ -86,28 +88,11 @@ public://メンバ関数
 	void CollectActiveSprites(const std::vector<std::unique_ptr<GameObject>>& gameObjects);
 
 	/// <summary>
-	/// Object3dのレンダラーの取得
+	/// 描画に有効なDebugDrawを集める
 	/// </summary>
-	/// <returns>Object3dのレンダラー</returns>
-	Object3dRenderer* GetObject3dRenderer();
-
-	/// <summary>
-	/// SkyBoxのレンダラーの取得
-	/// </summary>
-	/// <returns>SkyBoxのレンダラー</returns>
-	SkyBoxRenderer* GetSkyBoxRenderer();
-
-	/// <summary>
-	/// デバッグ描画のレンダラーの取得
-	/// </summary>
-	/// <returns>デバッグ描画のレンダラー</returns>
-	DebugDrawRenderer* GetDebugDrawRenderer();
-
-	/// <summary>
-	/// パーティクルのレンダラーの取得
-	/// </summary>
-	/// <returns>パーティクルのレンダラー</returns>
-	ParticleRenderer* GetParticleRenderer();
+	/// <param name="gameObjects">ゲームオブジェクトの配列</param>
+	/// <param name="renderCamera">描画で使用するカメラ</param>
+	void CollectActiveDebugDraw(const std::vector<std::unique_ptr<GameObject>>& gameObjects, Camera* renderCamera);
 private://メンバ関数
 	/// <summary>
 	/// 描画の開始
@@ -139,16 +124,16 @@ private://メンバ関数
 private://メンバ関数
 	//DirectXの基盤部分
 	DirectXBase* directXBase_ = nullptr;
-	
+
 	//パイプラインの管理
 	PipelineManager* pipelineManager_ = nullptr;
-	
+
 	//ライティングの管理
 	LightingManager* lightingManager_ = nullptr;
-	
+
 	//カメラ
 	Camera* renderCamera_ = nullptr;
-	
+
 	//描画に有効なObject3d
 	std::vector<Object3d*>activeObject3ds_;
 	//Object3dを描画グループごとに分ける
@@ -165,9 +150,12 @@ private://メンバ関数
 	std::vector<Sprite*>activeSprites_;
 	//スプライトのレンダラー
 	std::unique_ptr<SpriteRenderer>spriteRenderer_ = nullptr;
-	
+
+	//描画に有効なDebugDraw
+	std::vector<debugDraw::BaseShape*>activeDebugDraws_;
 	//DebugDrawのレンダラー
 	std::unique_ptr<DebugDrawRenderer>debugDrawRenderer_ = nullptr;
+
 	//パーティクルの描画のレンダラー
 	std::unique_ptr<ParticleRenderer>particleRenderer_ = nullptr;
 };

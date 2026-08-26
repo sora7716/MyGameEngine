@@ -19,15 +19,25 @@ private://エイリアステンプレート
 private://構造体
 	//GPUリソース
 	struct GpuResource{
-		DebugDrawVertexData* vertexData = nullptr;
+		//頂点
+		Vector4* vertexData = nullptr;
 		ComPtr<ID3D12Resource>vertexResource = nullptr;
 		D3D12_VERTEX_BUFFER_VIEW vertexBufferView = {};
 		uint32_t vertexCapacity = 0;
 
+		//インデックス
 		uint32_t* indexData = nullptr;
 		ComPtr<ID3D12Resource>indexResource = nullptr;
 		D3D12_INDEX_BUFFER_VIEW indexBufferView = {};
 		uint32_t indexCapacity = 0;
+
+		//マテリアル
+		Vector4* materialData = {};
+		ComPtr<ID3D12Resource>materialResource = nullptr;
+
+		//ワールド行列
+		ComPtr<ID3D12Resource>worldMatrixResource = nullptr;
+		Matrix4x4* worldMatrixData = nullptr;
 	};
 public://静的メンバ関数
 	/// <summary>
@@ -99,10 +109,16 @@ private://メンバ関数
 	void CreateIndexResource(GpuResource& gpuResource, uint32_t indexCount);
 
 	/// <summary>
-	/// GPUリソースの生成
+	/// マテリアルリソースの生成
 	/// </summary>
-	/// <param name="renderData">描画データ</param>
-	void CreateGpuResource(const DebugDrawRenderData& renderData);
+	/// <param name="gpuResource">gpuリソース</param>
+	void CreateMaterialResource(GpuResource& gpuResource);
+
+	/// <summary>
+    /// ワールド行列リソースの生成
+    /// </summary>
+	/// <param name="gpuResource">gpuリソース</param>
+	void CreateWorldMatrixResource(GpuResource& gpuResource);
 private://メンバ変数
 	//DirectXの基盤部分
 	DirectXBase* directXBase_ = nullptr;

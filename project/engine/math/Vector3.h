@@ -38,6 +38,18 @@ struct Vector3 final {
 	Vector3 Max(const Vector3& v)const;
 
 	/// <summary>
+	/// 最小値
+	/// </summary>
+	/// <returns>最小値</returns>
+	float Min()const;
+
+	/// <summary>
+	/// 最大値
+	/// </summary>
+	/// <returns>最大値</returns>
+	float Max()const;
+
+	/// <summary>
 	/// 絶対値
 	/// </summary>
 	/// <returns>絶対値</returns>

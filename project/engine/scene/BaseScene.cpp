@@ -37,15 +37,6 @@ void BaseScene::Initialize(){
 		}
 	}
 
-	//オブジェクト3dのレンダラーの記録
-	object3dRenderer_ = renderSystem_->GetObject3dRenderer();
-	//スカイボックスのレンダラーの記録
-	skyBoxRenderer_ = renderSystem_->GetSkyBoxRenderer();
-	//デバッグ描画のレンダラーの記録
-	debugDrawRenderer_ = renderSystem_->GetDebugDrawRenderer();
-	//パーティクルのレンダラーの記録
-	particleRenderer_ = renderSystem_->GetParticleRenderer();
-
 	//コライダーマネージャー
 	//colliderManager_ = std::make_unique<ColliderManager>();
 	////調整ファイルの読み込み
@@ -181,11 +172,6 @@ const std::vector<std::unique_ptr<GameObject>>& BaseScene::GetGameObjects()const
 //シーンで必要な情報の設定
 void BaseScene::SetSceneContext(const SceneContext& sceneContext){
 	sceneContext_ = sceneContext;
-}
-
-//レンダーシステムの設定
-void BaseScene::SetRenderSystem(RenderSystem* renderSystem){
-	renderSystem_ = renderSystem;
 }
 
 //ゲームカメラの取得

@@ -1,6 +1,5 @@
 #pragma once
 #include "BaseShape.h"
-#include "PrimitiveData.h"
 
 //前方宣言
 class Camera;
@@ -25,14 +24,19 @@ namespace debugDraw {
 		/// <summary>
 		/// 初期化
 		/// </summary>
-		/// <param name="directXBase">DirectXの基盤部分</param>
-		/// <param name="camera">カメラ</param>
-		void Initialize(DirectXBase* directXBase, Camera* camera)override;
+		void InitializeShape()override;
 
 		/// <summary>
 		/// 更新
 		/// </summary>
-		void Update()override;
+		void UpdateShape()override;
+
+		/// <summary>
+	    /// 複製
+	    /// </summary>
+	    /// <param name="gameObject">ゲームオブジェクト</param>
+	    /// <returns>コンポーネント</returns>
+		std::unique_ptr<Component>Clone(GameObject* gameObject)const override;
 
 		/// <summary>
 		/// 対象となるカメラの設定

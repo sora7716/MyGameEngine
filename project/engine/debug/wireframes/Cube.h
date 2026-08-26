@@ -19,19 +19,12 @@ namespace debugDraw {
 		/// <summary>
 		/// 初期化
 		/// </summary>
-		void Initialize()override;
-
-		/// <summary>
-		/// 初期化
-		/// </summary>
-		/// <param name="directXBase">DirectXの基盤部分</param>
-		/// <param name="camera">カメラ</param>
-		void Initialize(DirectXBase* directXBase, Camera* camera)override;
+		void InitializeShape()override;
 
 		/// <summary>
 		/// 更新
 		/// </summary>
-		void Update()override;
+		void UpdateShape()override;
 
 		/// <summary>
 		/// 複製

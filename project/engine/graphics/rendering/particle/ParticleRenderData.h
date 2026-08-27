@@ -2,14 +2,13 @@
 #include "RenderData.h"
 #include "BlendMode.h"
 #include "ParticleGpuResource.h"
-#include <wrl.h>
-#include <d3d12.h>
+#include "ParticleData.h"
+#include <list>
 #include <vector>
-#include <memory>
 
 //前方宣言
-class Camera;
-class Mesh;
+class Model;
+class MaterialInstance;
 
 //Particleの描画ハンドル
 using ParticleRenderHandle = uint32_t;
@@ -17,15 +16,10 @@ constexpr ParticleRenderHandle kInvalidParticleRenderHandle = UINT32_MAX;
 
 //パーティクルの描画に使用するデータ
 struct ParticleRenderData{
-	Camera* renderCamera = nullptr;
-	D3D12_VERTEX_BUFFER_VIEW vertexBufferView = {};
-	D3D12_INDEX_BUFFER_VIEW indexBufferView = {};
-	std::vector<Microsoft::WRL::ComPtr<ID3D12Resource>>materialResources;
-	std::vector<std::string> imageTexturePaths;
-	ParticleForGPU* instanceData;
+	Model* model = nullptr;
+	MaterialInstance* materialInstance = nullptr;
+	const std::list<Particle>* particles = nullptr;
 	BlendMode blendMode = BlendMode::kNone;
-	std::vector <std::shared_ptr<Mesh>> meshes;
 	uint32_t numInstance = 0;
-	std::vector<ParticleForGPU>particleForGpuDatas;
 	ParticleRenderHandle renderHandle = kInvalidParticleRenderHandle;
 };

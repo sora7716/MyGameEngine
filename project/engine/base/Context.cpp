@@ -11,7 +11,6 @@ void SceneContext::operator=(Core* core){
 	modelManager = core->GetModelManager();
 	sceneManager = core->GetSceneManager();
 	cameraManager = core->GetCameraManager();
-	particleManager = core->GetParticleManager();
 	audioManager = core->GetAudioManager();
 	imGuiManager = core->GetImGuiManager();
 	tagManager = core->GetTagManager();

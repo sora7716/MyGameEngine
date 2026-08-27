@@ -1,23 +1,13 @@
 #pragma once
 #include "RenderingData.h"
-#include "Vector4.h"
 #include "ParticleData.h"
-#include "ParticleRenderData.h"
-#include "ParticleGpuResource.h"
 #include <list>
 #include <random>
-#include <vector>
-#include <memory>
-
-//前方宣言
-class Camera;
-class Culling;
-class Mesh;
 
 /// <summary>
 /// パーティクルの発生源
 /// </summary>
-class ParticleEmitter {
+class ParticleEmitter{
 public://メンバ関数
 	/// <summary>
 	/// コンストラクタ
@@ -32,38 +22,18 @@ public://メンバ関数
 	/// <summary>
 	/// 初期化
 	/// </summary>
-	/// <param name="renderCamera">描画用カメラ</param>
-	void Initialize(Camera* renderCamera);
+	void Initialize();
 
 	/// <summary>
 	/// 更新
 	/// </summary>
-	/// <param name="instancingData">インスタンシングデータ</param>
-	void Update(ParticleForGPU* instancingData);
-
-	/// <summary>
-	/// ワールド行列の更新
-	/// </summary>
-	/// <param name="instancingData">インスタンシングデータ</param>
-	void UpdateWorldMatrix(ParticleForGPU* instancingData);
+	void Update();
 
 	/// <summary>
 	/// 生存しているパーティクルの数の取得
 	/// </summary>
-	/// <returns></returns>
+	/// <returns>生存しているパーティクルの数</returns>
 	const uint32_t GetNumInstance()const;
-
-	/// <summary>
-	/// ゲームカメラの設定
-	/// </summary>
-	/// <param name="camera">カメラ</param>
-	void SetGameCamera(Camera* camera);
-
-	/// <summary>
-	/// 描画カメラの設定
-	/// </summary>
-	/// <param name="camera">カメラ</param>
-	void SetRenderCamera(Camera* camera);
 
 	/// <summary>
 	/// エミッター位置の設定の設定
@@ -96,10 +66,10 @@ public://メンバ関数
 	void SetFrequency(float frequency);
 
 	/// <summary>
-	/// メッシュの設定
+	/// パーティクルを取得
 	/// </summary>
-	/// <param name="meshes"></param>
-	void SetMeshes(const std::vector<std::shared_ptr<Mesh>>& meshes);
+	/// <returns>パーティクル</returns>
+	const std::list<Particle>& GetParticles()const;
 private://メンバ関数
 	/// <summary>
 	/// パーティクルの生成
@@ -112,14 +82,6 @@ private://メンバ関数
 	/// </summary>
 	/// <returns>パーティクル</returns>
 	Particle MakeNormalParticle();
-
-	/// <summary>
-	/// ワールドトランスフォームの更新
-	/// </summary>
-	/// <param name="numInstance">インスタンス数</param>
-	/// <param name="iterator"イテレータ></param>
-	/// <param name="instancingData">インスタンシングデータ</param>
-	void UpdateWorldTransform(uint32_t numInstance, auto iterator, ParticleForGPU* instancingData);
 
 	/// <summary>
 	/// パーティクルの発生
@@ -138,10 +100,6 @@ public://静的メンバ変数
 	//パーティクルの数
 	static const uint32_t kNumMaxInstance = 1024;
 private://メンバ変数
-	//カメラ
-	Camera* gameCamera_ = nullptr;
-	//描画用のカメラ
-	Camera* renderCamera_ = nullptr;
 	//ランダムエンジン
 	std::mt19937 randomEngine_;
 	//パーティクルのデータ
@@ -163,11 +121,5 @@ private://メンバ変数
 		.acceleration = {0.0f,0.0f,0.0f},
 		.area = {{-1.0f,-1.0f,-1.0f},1.0f,1.0f,1.0f}
 	};
-
-	//カリング
-	std::unique_ptr<Culling>culling_ = nullptr;
-	
-	//メッシュ
-	std::vector<std::shared_ptr<Mesh>>meshes_;
 };
 

@@ -1,20 +1,13 @@
 #define NOMINMAX
-#include <algorithm>
-#include <string>
 #include "ParticleSystem.h"
-#include "DirectXBase.h"
-#include "Camera.h"
-#include "TextureManager.h"
-#include "SRVManager.h"
 #include "Model.h"
-#include "Mesh.h"
-#include "PrimitiveMeshFactory.h"
+#include "MaterialInstance.h"
 #include "ParticleEmitter.h"
-#include "PipelineManager.h"
-#include "ParticleRenderer.h"
+#include "GameObject.h"
+#include <string>
 
 //コンストラクタ
-ParticleSystem::ParticleSystem(){
+ParticleSystem::ParticleSystem(GameObject* gameObject) :Component(gameObject){
 }
 
 //デストラクタ
@@ -22,112 +15,50 @@ ParticleSystem::~ParticleSystem(){
 }
 
 //初期化
-void ParticleSystem::Initialize(DirectXBase* directXBase, SRVManager* srvManager, PipelineManager* pipelineManager, Camera* renderCamera, const std::string& textureName){
-	//DirectXの基盤部分を記録する
-	assert(directXBase);
-	directXBase_ = directXBase;
-	//SRVの管理の記録
-	assert(srvManager);
-	srvManager_ = srvManager;
-
-	//パイプラインの管理
-	assert(pipelineManager);
-	pipelineManager_ = pipelineManager;
-	pipelineSet_ = pipelineManager_->GetPipelineSet(PipelineType::kParticle);
-
-	//GPUリソースのサイズ設定
-	particleForGpuDatas_.resize(ParticleEmitter::kNumMaxInstance);
+void ParticleSystem::Initialize(){
+	//基底クラスの初期化
+	Component::Initialize();
 
 	//エミッター
 	emitter_ = std::make_unique<ParticleEmitter>();
-	emitter_->Initialize(renderCamera);
-
-	//描画用のカメラの記録
-	SetRenderCamera(renderCamera);
-
-	//メッシュデータを作成
-	modelData_.meshDatas.reserve(1);
-	modelData_.meshDatas.push_back(primitiveMeshFactory::CreatePlane());
-	modelData_.materialTexturePaths.resize(1);
-
-	//メッシュの生成
-	meshes_.reserve(modelData_.meshDatas.size());
-	for (MeshData& meshData : modelData_.meshDatas){
-		std::unique_ptr<Mesh>mesh = std::make_unique<Mesh>();
-		mesh->Initialize(directXBase_, meshData);
-		meshes_.push_back(std::move(mesh));
-	}
-
-	//メッシュの設定
-	emitter_->SetMeshes(meshes_);
-
-	for (uint32_t i = 0; i < meshes_.size(); i++){
-		//テクスチャファイルの記録
-		modelData_.materialTexturePaths[i].textureFilePath = "engine/resources/textures/" + textureName;
-	}
-
-	//マテリアルリソースの生成
-	CreateMaterialResources();
+	emitter_->Initialize();
 }
 
 //更新
 void ParticleSystem::Update(){
-	emitter_->Update(particleForGpuDatas_.data());
+	//基底クラスの更新
+	Component::Update();
 
-	//描画データをまとめる
-	renderData_.indexBufferView = indexBufferView_;
-	renderData_.vertexBufferView = vertexBufferView_;
-	renderData_.blendMode = blendMode_;
-	renderData_.imageTexturePaths.resize(meshes_.size());
-	for (uint32_t i = 0; i < meshes_.size(); i++){
-		renderData_.imageTexturePaths[i] = modelData_.materialTexturePaths[i].textureFilePath;
-	}
-	renderData_.materialResources = materialResources_;
-	renderData_.meshes = meshes_;
-	renderData_.numInstance = emitter_->GetNumInstance();
+	GameObject* gameObject = GetOwner();
+	//エミッターの位置を設定
+	emitter_->SetEmitterPosition(gameObject->GetTransform().translate);
 
+	//エミッターの更新
+	emitter_->Update();
+
+	//描画に必要なデータのセットアップ
+	SetupRenderData();
 }
 
-//レンダラーを登録
-void ParticleSystem::RegisterToRenderer(ParticleRenderer* renderer){
-	assert(renderer);
-	//まだ登録されてない事の確認
-	assert(renderHandle_ == kInvalidParticleRenderHandle);
+//複製
+std::unique_ptr<Component> ParticleSystem::Clone(GameObject* gameObject) const{
+	std::unique_ptr<ParticleSystem>cloneInstance = std::make_unique<ParticleSystem>(gameObject);
 
-	renderHandle_ = renderer->RegisterParticle(ParticleEmitter::kNumMaxInstance);
+	//初期化
+	cloneInstance->Initialize();
 
-	renderData_.renderHandle = renderHandle_;
-}
-
-void ParticleSystem::DrawSetting(){
-	emitter_->UpdateWorldMatrix(particleForGpuDatas_.data());
-
-	//有効なParticleだけ描画データへ格納
-	renderData_.particleForGpuDatas.assign(particleForGpuDatas_.begin(), particleForGpuDatas_.begin() + renderData_.numInstance);
-}
-
-//カメラの設定
-void ParticleSystem::SetGameCamera(Camera* camera){
-	emitter_->SetGameCamera(camera);
-}
-
-//描画カメラの設定
-void ParticleSystem::SetRenderCamera(Camera* camera){
-	emitter_->SetRenderCamera(camera);
-	//カメラの記録
-	renderCamera_ = camera;
-	//描画データのカメラを設定
-	renderData_.renderCamera = renderCamera_;
+	//Spriteが持つ設定だけ複製
+	cloneInstance->SetEnabled(this->IsEnabled());
+	cloneInstance->blendMode_ = this->blendMode_;
+	cloneInstance->model_ = this->model_;
+	cloneInstance->node_ = this->node_;
+	cloneInstance->materialInstance_ = this->materialInstance_;
+	return cloneInstance;
 }
 
 //ブレンドモードの設定
 void ParticleSystem::SetBlendMode(BlendMode blendMode){
 	blendMode_ = blendMode;
-}
-
-//エミッター位置の設定
-void ParticleSystem::SetEmitterPosition(const Vector3& position){
-	emitter_->SetEmitterPosition(position);
 }
 
 //パーティクルの数の設定
@@ -150,56 +81,128 @@ void ParticleSystem::SetFrequency(float frequency){
 	emitter_->SetFrequency(frequency);
 }
 
-//モデルデータの設定
-void ParticleSystem::SetModelData(const ModelData& modelData){
-	//モデルデータを記録
-	modelData_ = modelData;
-	//メッシュデータをクリア
-	meshes_.clear();
-	//メモリのサイズを確保(要素数は増えない)
-	meshes_.reserve(modelData_.meshDatas.size());
-	//メッシュを生成
-	for (MeshData& meshData : modelData_.meshDatas){
-		std::unique_ptr<Mesh>mesh = std::make_unique<Mesh>();
-		mesh->Initialize(directXBase_, meshData);
-		meshes_.push_back(std::move(mesh));
+//モデルの設定
+void ParticleSystem::SetModel(Model* model){
+	//元になるモデルを取得
+	model_ = model;
+
+	//モデルが存在する場合
+	if (model_){
+		//nodeにrootNodeを保存
+		node_ = model_->GetModelData().rootNode;
+
+		//マテリアルインスタンスを取得
+		materialInstance_ = model_->GetDefaultMaterialInstance();
+	} else{
+		//モデルがなければリセット
+		node_ = {};
+		node_.localMatrix = Matrix4x4::Identity4x4();
+
+		materialInstance_.reset();
 	}
-
-	//マテリアルリソースを生成
-	CreateMaterialResources();
-
-	//メッシュの設定
-	emitter_->SetMeshes(meshes_);
+}
+// uvスケールの設定
+void ParticleSystem::SetUVScale(uint32_t index, const Vector2& uvScale){
+	//マテリアルインスタンスがなければ
+	if (!materialInstance_){
+		return;
+	}
+	//マテリアルを個別化する
+	EnsureUniqueMaterialInstance();
+	materialInstance_->SetUVScale(index, uvScale);
 }
 
-//テクスチャの設定
-void ParticleSystem::SetTexture(uint32_t meshIndex, const std::string& imageFileName){
-	//マテリアルの検索キーを取得
-	uint32_t materialIndex = meshes_[meshIndex]->GetMaterialIndex();
-	modelData_.materialTexturePaths[materialIndex].textureFilePath = "engine/resources/textures/" + imageFileName;
+// uv回転の設定
+void ParticleSystem::SetUVRotate(uint32_t index, float uvRotate){
+	//マテリアルインスタンスがなければ
+	if (!materialInstance_){
+		return;
+	}
+	//マテリアルを個別化する
+	EnsureUniqueMaterialInstance();
+	materialInstance_->SetUVRotate(index, uvRotate);
+}
+
+// uv平行移動の設定
+void ParticleSystem::SetUVTranslate(uint32_t index, const Vector2& uvTranslate){
+	//マテリアルインスタンスがなければ
+	if (!materialInstance_){
+		return;
+	}
+	//マテリアルを個別化する
+	EnsureUniqueMaterialInstance();
+	materialInstance_->SetUVTranslate(index, uvTranslate);
+}
+
+//色の設定
+void ParticleSystem::SetColor(uint32_t index, const Vector4& color){
+	//マテリアルインスタンスがなければ
+	if (!materialInstance_){
+		return;
+	}
+	//マテリアルを個別化する
+	EnsureUniqueMaterialInstance();
+	materialInstance_->SetColor(index, color);
+}
+
+//テクスチャの変更
+void ParticleSystem::SetTexture(uint32_t index, const std::string& imageFileName){
+	//マテリアルインスタンスがなければ
+	if (!materialInstance_){
+		return;
+	}
+	//マテリアルを個別化する
+	EnsureUniqueMaterialInstance();
+	materialInstance_->SetTexture(index, "engine/resources/textures/" + imageFileName);
+}
+
+//UV座標の設定
+void ParticleSystem::SetUVTransform(uint32_t index, const RectTransform& uvTransform){
+	//マテリアルインスタンスがなければ
+	if (!materialInstance_){
+		return;
+	}
+	//マテリアルを個別化する
+	EnsureUniqueMaterialInstance();
+	materialInstance_->SetUVTransform(index, uvTransform);
+}
+
+//モデルの取得
+Model* ParticleSystem::GetModel(){
+	return model_;
 }
 
 //描画データの取得
 const ParticleRenderData& ParticleSystem::GetRenderData(){
-	// TODO: return ステートメントをここに挿入します
 	return renderData_;
 }
 
-//マテリアルリソースの生成
-void ParticleSystem::CreateMaterialResources(){
-	//マテリアルリソースとポインタのサイズ設定
-	materialResources_.resize(modelData_.materialTexturePaths.size());
-	materialPtrs_.resize(modelData_.materialTexturePaths.size());
-	for (uint32_t i = 0; i < modelData_.materialTexturePaths.size(); i++){
-		//マテリアル用のリソースを作る
-		materialResources_[i] = directXBase_->CreateBufferResource(sizeof(Material));
-		//書き込むためのアドレスを取得
-		materialResources_[i]->Map(0, nullptr, reinterpret_cast<void**>(&materialPtrs_[i]));
-		//色を書き込む
-		materialPtrs_[i]->color = Vector4::MakeWhiteColor();
-		materialPtrs_[i]->enableLighting = true;
-		materialPtrs_[i]->uvMatrix = Matrix4x4::Identity4x4();
-		materialPtrs_[i]->shininess = 10.0f;
-		materialPtrs_[i]->environmentCoefficient = 0.0f;
+//モデルを所有しているか
+bool ParticleSystem::HasModel() const{
+	if (model_){
+		return true;
 	}
+	return false;
+}
+
+//マテリアルを個別化する
+void ParticleSystem::EnsureUniqueMaterialInstance(){
+	//マテリアルインスタンスがなければ
+	if (!materialInstance_){
+		return;
+	}
+
+	//ModelやほかのObject3dと共有中なら個別コピー
+	if (materialInstance_.use_count() > 1){
+		materialInstance_ = std::make_shared<MaterialInstance>(*materialInstance_);
+	}
+}
+
+//描画に必要なデータのセットアップ
+void ParticleSystem::SetupRenderData(){
+	renderData_.blendMode = blendMode_;
+	renderData_.materialInstance = materialInstance_.get();
+	renderData_.model = model_;
+	renderData_.numInstance = emitter_->GetNumInstance();
+	renderData_.particles = &emitter_->GetParticles();
 }

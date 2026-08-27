@@ -2,8 +2,8 @@
 #include "DirectXBase.h"
 #include "SRVManager.h"
 #include "TextureManager.h"
-#include "Camera.h"
-#include "Mesh.h"
+#include "Model.h"
+#include "ParticleEmitter.h"
 #include <cassert>
 
 //生成
@@ -41,9 +41,9 @@ void ParticleRenderer::Draw(uint32_t instanceIndex){
 
 	//ハンドルが登録済みか確認
 	assert(renderData.renderHandle != kInvalidParticleRenderHandle);
-	assert(renderData.renderHandle < particleResources_.size());
+	assert(renderData.renderHandle < gpuResources_.size());
 	//GPUリソースを取得
-	const ParticleGpuResource& particleResource = particleResources_[renderData.renderHandle];
+	const GpuResource& particleResource = gpuResources_[renderData.renderHandle];
 
 	//ワールド行列の更新
 	//emitter_->UpdateWorldMatrix(instancingData_);
@@ -78,23 +78,24 @@ void ParticleRenderer::Reset(){
 
 //描画データの追加
 void ParticleRenderer::AddRenderData(const ParticleRenderData& renderData){
-	//ハンドルが有効か
-	assert(renderData.renderHandle != kInvalidParticleRenderHandle);
-
-	//ハンドルが範囲内か
-	assert(renderData.renderHandle < particleResources_.size());
-
-	//対応リソースの取得
-	ParticleGpuResource& particleResource = particleResources_[renderData.renderHandle];
-
-	//描画数がGPUリソースの最大格納数を超えていないか確認
-	assert(renderData.numInstance <= static_cast<uint32_t>(renderData.particleForGpuDatas.size()));
-
-	//CPU側で計算したParticleの情報をGPUから参照されるMappedResourceへコピー
-	std::copy_n(renderData.particleForGpuDatas.data(), renderData.numInstance, particleResource.instanceData);
-
 	//レンダーデータの追加
 	renderDatas_.push_back(renderData);
+
+	//インスタンスの検索キー
+	const uint32_t instanceIndex = static_cast<uint32_t>(renderDatas_.size() - 1);
+
+	//描画データとGPUデータのサイズを比べる
+	if (gpuResources_.size() <= instanceIndex){
+		GpuResource& gpuResource = gpuResources_.emplace_back();
+
+		//パーティクルのキャパシティを設定
+		gpuResource.capacity = ParticleEmitter::kNumMaxInstance;
+
+		//リソースの生成
+		CreateTransformationMatrixResource(gpuResource);
+		CreateStructuredBufferForParticleGpu(gpuResource);
+		CreateMaterialResources(gpuResource, renderData.model->GetModelData().materialTexturePaths.size());
+	}
 }
 
 //描画データのサイズを取得
@@ -113,11 +114,11 @@ ParticleRenderHandle ParticleRenderer::RegisterParticle(uint32_t maxInstance){
 	assert(maxInstance > 0);
 
 	//ハンドルを作成
-	const ParticleRenderHandle handle = static_cast<ParticleRenderHandle>(particleResources_.size());
+	const ParticleRenderHandle handle = static_cast<ParticleRenderHandle>(gpuResources_.size());
 
-	particleResources_.emplace_back();
+	gpuResources_.emplace_back();
 
-	ParticleGpuResource& particleResource = particleResources_.back();
+	GpuResource& particleResource = gpuResources_.back();
 
 	//キャパシティを設定
 	particleResource.capacity = maxInstance;
@@ -126,13 +127,13 @@ ParticleRenderHandle ParticleRenderer::RegisterParticle(uint32_t maxInstance){
 	CreateTransformationMatrixResource(particleResource);
 
 	//ストラクチャバッファの作成
-	CreateStructuredBufferForWvp(particleResource);
+	CreateStructuredBufferForParticleGpu(particleResource);
 
 	return handle;
 }
 
 //座標変換行列リソースの生成
-void ParticleRenderer::CreateTransformationMatrixResource(ParticleGpuResource& gpuResource){
+void ParticleRenderer::CreateTransformationMatrixResource(GpuResource& gpuResource){
 	//座標変換行列リソースを作成する	
 	gpuResource.instancingResource = directXBase_->CreateBufferResource(sizeof(ParticleForGPU) * gpuResource.capacity);
 	//座標変換行列リソースにデータを書き込むためのアドレスを取得してtransformationMatrixDataに割り当てる
@@ -145,8 +146,8 @@ void ParticleRenderer::CreateTransformationMatrixResource(ParticleGpuResource& g
 	}
 }
 
-//座標変換行列リソースのストラクチャバッファの生成
-void ParticleRenderer::CreateStructuredBufferForWvp(ParticleGpuResource& gpuResource){
+//インスタンシングリソースのストラクチャバッファの生成
+void ParticleRenderer::CreateStructuredBufferForParticleGpu(GpuResource& gpuResource){
 	//ストラクチャバッファを生成
 	gpuResource.srvIndex = srvManager_->Allocate() + TextureManager::kSRVIndexTop;
 	srvManager_->CreateSRVForStructuredBuffer(
@@ -155,4 +156,24 @@ void ParticleRenderer::CreateStructuredBufferForWvp(ParticleGpuResource& gpuReso
 		gpuResource.capacity,
 		sizeof(ParticleForGPU)
 	);
+}
+
+//マテリアルリソースの生成
+void ParticleRenderer::CreateMaterialResources(GpuResource& gpuResource, uint32_t materialCount){
+	//マテリアルのサイズ設定
+	gpuResource.materialData.resize(materialCount);
+	gpuResource.materialResources.resize(materialCount);
+
+	for (uint32_t i = 0; i < materialCount; i++){
+		//マテリアル用のリソースを作る
+		gpuResource.materialResources[i] = directXBase_->CreateBufferResource(sizeof(Material));
+		//書き込むためのアドレスを取得
+		gpuResource.materialResources[i]->Map(0, nullptr, reinterpret_cast<void**>(&gpuResource.materialData[i]));
+		//色を書き込む
+		gpuResource.materialData[i]->color = Vector4::MakeWhiteColor();
+		gpuResource.materialData[i]->enableLighting = true;
+		gpuResource.materialData[i]->uvMatrix = Matrix4x4::Identity4x4();
+		gpuResource.materialData[i]->shininess = 10.0f;
+		gpuResource.materialData[i]->environmentCoefficient = 0.0f;
+	}
 }

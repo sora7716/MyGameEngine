@@ -9,7 +9,6 @@
 #include "CameraManager.h"
 #include "SceneManager.h"
 #include "AudioManager.h"
-#include "ParticleManager.h"
 #include "GameObjectList.h"
 #include "AbstractSceneFactory.h"
 #include "TagManager.h"
@@ -101,12 +100,6 @@ public://メンバ関数
 	AudioManager* GetAudioManager()const;
 
 	/// <summary>
-	/// パーティクルのマネージャーの取得
-	/// </summary>
-	/// <returns>パーティクルマネージャー</returns>
-	ParticleManager* GetParticleManager()const;
-
-	/// <summary>
 	/// ゲームオブジェクトのリストの取得
 	/// </summary>
 	/// <returns>ゲームオブジェクトのリストの取得</returns>
@@ -167,8 +160,6 @@ private://メンバ変数
 	std::unique_ptr<SceneManager>sceneManager_ = nullptr;
 	//オーディオマネージャー
 	std::unique_ptr<AudioManager>audioManager_ = nullptr;
-	//パーティクルマネージャー
-	std::unique_ptr<ParticleManager>particleManager_ = nullptr;
 	//ゲームオブジェクトのリスト
 	std::unique_ptr<GameObjectList>gameObjectList_ = nullptr;
 	//シーンファクトリ

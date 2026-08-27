@@ -43,8 +43,6 @@ void Core::Initialize(){
 	sceneFactory_ = std::make_unique<SceneFactory>(AbstractSceneFactory::ConstructorKey{});
 	//オーディオマネージャー
 	audioManager_ = std::make_unique<AudioManager>(AudioManager::ConstructorKey{});
-	//パーティクルマネージャー
-	particleManager_ = std::make_unique<ParticleManager>(ParticleManager::ConstructorKey{});
 	//ゲームオブジェクトのリスト
 	gameObjectList_ = std::make_unique<GameObjectList>(GameObjectList::ConstructorKey{});
 	gameObjectList_->Initialize(this);
@@ -113,11 +111,6 @@ SceneManager* Core::GetSceneManager() const{
 //オーディオマネージャー
 AudioManager* Core::GetAudioManager() const{
 	return audioManager_.get();
-}
-
-//パーティクルマネージャーの取得
-ParticleManager* Core::GetParticleManager() const{
-	return particleManager_.get();
 }
 
 //ゲームオブジェクトのリストの取得

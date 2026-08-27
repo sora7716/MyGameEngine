@@ -81,7 +81,6 @@
     <ClCompile Include="engine\math\Vector3.cpp" />
     <ClCompile Include="engine\math\Vector4.cpp" />
     <ClCompile Include="engine\particle\ParticleEmitter.cpp" />
-    <ClCompile Include="engine\particle\ParticleManager.cpp" />
     <ClCompile Include="engine\particle\ParticleSystem.cpp" />
     <ClCompile Include="engine\physics\Physics.cpp" />
     <ClCompile Include="engine\physics\PhysicsData.cpp" />
@@ -157,7 +156,6 @@
     <ClInclude Include="engine\graphics\rendering\debugDraw\DebugDrawRenderer.h" />
     <ClInclude Include="engine\graphics\rendering\object3d\Object3dRenderer.h" />
     <ClInclude Include="engine\graphics\rendering\object3d\Object3dRenderData.h" />
-    <ClInclude Include="engine\graphics\rendering\particle\ParticleGpuResource.h" />
     <ClInclude Include="engine\graphics\rendering\particle\ParticleRenderData.h" />
     <ClInclude Include="engine\graphics\rendering\particle\ParticleRenderer.h" />
     <ClInclude Include="engine\graphics\rendering\RenderSystem.h" />
@@ -177,7 +175,6 @@
     <ClInclude Include="engine\math\Vector4.h" />
     <ClInclude Include="engine\particle\ParticleData.h" />
     <ClInclude Include="engine\particle\ParticleEmitter.h" />
-    <ClInclude Include="engine\particle\ParticleManager.h" />
     <ClInclude Include="engine\particle\ParticleSystem.h" />
     <ClInclude Include="engine\physics\Physics.h" />
     <ClInclude Include="engine\physics\PhysicsData.h" />

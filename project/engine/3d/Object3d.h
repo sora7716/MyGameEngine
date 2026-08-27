@@ -14,7 +14,6 @@ class GameObject;
 class MaterialInstance;
 class LODController;
 class Culling;
-class Object3dRenderer;
 
 /// <summary>
 /// 3Dオブジェクト

@@ -8,7 +8,6 @@ class TextureManager;
 class ModelManager;
 class SceneManager;
 class CameraManager;
-class ParticleManager;
 class AudioManager;
 class ImGuiManager;
 class TagManager;
@@ -26,7 +25,6 @@ struct SceneContext {
 	ModelManager* modelManager;
 	SceneManager* sceneManager;
 	CameraManager* cameraManager;
-	ParticleManager* particleManager;
 	AudioManager* audioManager;
 	ImGuiManager* imGuiManager;
 	TagManager* tagManager;

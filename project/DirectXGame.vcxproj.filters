@@ -300,9 +300,6 @@
     <ClCompile Include="engine\particle\ParticleEmitter.cpp">
       <Filter>engine\particle</Filter>
     </ClCompile>
-    <ClCompile Include="engine\particle\ParticleManager.cpp">
-      <Filter>engine\particle</Filter>
-    </ClCompile>
     <ClCompile Include="engine\particle\ParticleSystem.cpp">
       <Filter>engine\particle</Filter>
     </ClCompile>
@@ -551,9 +548,6 @@
     <ClInclude Include="engine\particle\ParticleEmitter.h">
       <Filter>engine\particle</Filter>
     </ClInclude>
-    <ClInclude Include="engine\particle\ParticleManager.h">
-      <Filter>engine\particle</Filter>
-    </ClInclude>
     <ClInclude Include="engine\particle\ParticleSystem.h">
       <Filter>engine\particle</Filter>
     </ClInclude>
@@ -627,9 +621,6 @@
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
     <ClInclude Include="engine\graphics\rendering\particle\ParticleRenderData.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="engine\graphics\rendering\particle\ParticleGpuResource.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
     <ClInclude Include="engine\3d\MaterialInstance.h">

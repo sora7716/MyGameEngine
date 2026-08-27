@@ -40,8 +40,7 @@ void Sprite::Update(){
 
 //複製
 std::unique_ptr<Component> Sprite::Clone(GameObject* gameObject) const{
-	std::unique_ptr<Sprite>cloneInstance = std::make_unique<Sprite>(gameObject
-	);
+	std::unique_ptr<Sprite>cloneInstance = std::make_unique<Sprite>(gameObject);
 
 	//初期化
 	cloneInstance->Initialize();

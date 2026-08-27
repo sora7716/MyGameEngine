@@ -1,9 +1,6 @@
 #define NOMINMAX
 #include "ParticleEmitter.h"
 #include "MathUtility.h"
-#include "Camera.h"
-#include "Culling.h"
-#include "Mesh.h"
 using namespace primitiveData;
 
 //コンストラクタ
@@ -15,18 +12,14 @@ ParticleEmitter::~ParticleEmitter(){
 }
 
 //初期化
-void ParticleEmitter::Initialize(Camera* renderCamera){
-	//カメラを設定
-	gameCamera_ = renderCamera;
-	//描画用カメラの記録
-	renderCamera_ = renderCamera;
+void ParticleEmitter::Initialize(){
 	//乱数エンジンの初期化
 	std::random_device seedGenerator;
 	randomEngine_.seed(seedGenerator());
 }
 
 //更新
-void ParticleEmitter::Update(ParticleForGPU* instancingData){
+void ParticleEmitter::Update(){
 	//生存しているパーティクルの数を0に初期化
 	numInstance_ = 0;
 
@@ -37,24 +30,16 @@ void ParticleEmitter::Update(ParticleForGPU* instancingData){
 				it = particles_.erase(it); //生存期間を過ぎたらパーティクルをlistから削除
 				continue;//削除したので次のループへ
 			}
-			// パーティクルの色を設定
-			instancingData[numInstance_].color.SetRGB((*it).color.GetRGB());
 			//移動
 			(*it).transform.translate += (*it).velocity * mathUtility::kDeltaTime;
 			//経過時間を足す
 			(*it).currentTime += mathUtility::kDeltaTime;
 			float alpha = 1.0f - ((*it).currentTime / (*it).lifeTime);
-			instancingData[numInstance_].color.w = alpha;
-			for (std::shared_ptr<Mesh>& mesh : meshes_){
-				//カリング
-				if (!culling_->IsVisibleInFrustum(mesh->GetAABB(), instancingData->world)){
-					it->isEnabled = false;
-				}
-			}
+			(*it).color.w = alpha;
 
 			//表示するかチェック
 			if (!it->isEnabled){
-				continue;
+				numInstance_++;
 			}
 
 			//生きているパーティクルの数を記録
@@ -82,37 +67,9 @@ void ParticleEmitter::Update(ParticleForGPU* instancingData){
 	}
 }
 
-//ワールド行列の更新
-void ParticleEmitter::UpdateWorldMatrix(ParticleForGPU* instancingData){
-	uint32_t index = 0;
-	//更新処理
-	for (auto it = particles_.begin(); it != particles_.end();){
-		if (index < kNumMaxInstance){
-			//ワールドトランスフォームの更新
-			UpdateWorldTransform(index, it, instancingData);
-			index++;
-
-		}
-		//次のイテレータに進める
-		it++;
-	}
-}
-
 //生存しているパーティクルの数の取得
 const uint32_t ParticleEmitter::GetNumInstance() const{
 	return numInstance_;
-}
-
-//ゲームカメラの設定
-void ParticleEmitter::SetGameCamera(Camera* camera){
-	gameCamera_ = camera;
-	//カリングの生成
-	culling_ = Culling::Create(gameCamera_);
-}
-
-//描画カメラの設定
-void ParticleEmitter::SetRenderCamera(Camera* camera){
-	renderCamera_ = camera;
 }
 
 //エミッター位置の設定
@@ -140,9 +97,9 @@ void ParticleEmitter::SetFrequency(float frequency){
 	emitter_.frequency = frequency;
 }
 
-//メッシュの設定
-void ParticleEmitter::SetMeshes(const std::vector<std::shared_ptr<Mesh>>& meshes){
-	meshes_ = meshes;
+//パーティクルの取得
+const std::list<Particle>& ParticleEmitter::GetParticles()const{
+	return particles_;
 }
 
 //パーティクルの生成
@@ -194,14 +151,6 @@ Particle ParticleEmitter::MakeNormalParticle(){
 	particle.currentTime = 0;
 
 	return particle;
-}
-
-//ワールドトランスフォームの更新
-void ParticleEmitter::UpdateWorldTransform(uint32_t numInstance, auto iterator, ParticleForGPU* instancingData){
-	//ワールド行列の初期化
-	Matrix4x4 worldMatrix = matrixUtility::MakeBillboardAffineMatrix(renderCamera_->GetWorldMatrix(), (*iterator).transform);
-	//ワールド行列を送信
-	instancingData[numInstance].world = worldMatrix;
 }
 
 //パーティクルの発生

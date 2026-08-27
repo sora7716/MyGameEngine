@@ -1,6 +1,5 @@
 #pragma once
 #include "ParticleRenderData.h"
-#include "ParticleGpuResource.h"
 #include <cstdint>
 #include <memory>
 
@@ -22,6 +21,24 @@ public://静的メンバ関数
 	/// <param name="textureManager">Textureの管理</param>
 	/// <returns>インスタンス</returns>
 	static std::unique_ptr<ParticleRenderer>Create(DirectXBase* directXBase, SRVManager* srvManager, TextureManager* textureManager);
+private://構造体
+	//パーティクルの情報をGPUに送るための構造体
+	struct ParticleForGPU{
+		Matrix4x4 world = Matrix4x4::Identity4x4();
+		Vector4 color = Vector4::MakeWhiteColor();
+	};
+
+	//パーティクルのGPUリソース
+	struct GpuResource{
+		Microsoft::WRL::ComPtr<ID3D12Resource>instancingResource = nullptr;
+		ParticleForGPU* instanceData = nullptr;
+		uint32_t srvIndex = 0;
+		uint32_t capacity = 0;
+
+		//マテリアル
+		std::vector<Material*> materialData;
+		std::vector<Microsoft::WRL::ComPtr<ID3D12Resource>>materialResources;
+	};
 public://メンバ関数
 	/// <summary>
 	/// コンストラクタ
@@ -82,13 +99,20 @@ private://メンバ関数
 	/// 座標変換行列リソースの生成
 	/// </summary>
 	/// <param name="gpuResource">パーティクルのGpuに送るデータ</param>
-	void CreateTransformationMatrixResource(ParticleGpuResource& gpuResource);
+	void CreateTransformationMatrixResource(GpuResource& gpuResource);
 
 	/// <summary>
-	/// 座標変換行列リソースのストラクチャバッファの生成
+	/// インスタンシングリソースのストラクチャバッファの生成
 	/// </summary>
 	/// <param name="gpuResource">パーティクルのGpuに送るデータ</param>
-	void CreateStructuredBufferForWvp(ParticleGpuResource& gpuResource);
+	void CreateStructuredBufferForParticleGpu(GpuResource& gpuResource);
+
+	/// <summary>
+	/// マテリアルリソースの生成
+	/// </summary>
+	/// <param name="gpuResource">パーティクルのGpuに送るデータ</param>
+	/// <param name="materialCount">マテリアル数</param>
+	void CreateMaterialResources(GpuResource& gpuResource,uint32_t materialCount);
 private://メンバ変数
 	//DirectXの基盤部分
 	DirectXBase* directXBase_ = nullptr;
@@ -99,6 +123,6 @@ private://メンバ変数
 	//描画データ
 	std::vector<ParticleRenderData>renderDatas_;
 	//GPUリソース
-	std::vector<ParticleGpuResource>particleResources_;
+	std::vector<GpuResource>gpuResources_;
 };
 

@@ -1,5 +1,6 @@
 #pragma once
 #include "PrimitiveData.h"
+#include "Vector4.h"
 
 //パーティクル単体のデータ
 struct Particle{

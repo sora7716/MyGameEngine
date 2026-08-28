@@ -51,11 +51,6 @@ public://メンバ関数
 	/// </summary>
 	virtual void Finalize();
 
-	//純粋仮想関数
-	virtual void Draw(Camera* camera) = 0;
-	virtual void DebugDraw() = 0;
-	virtual void GameDraw() = 0;
-
 	/// <summary>
 	/// ゲームオブジェクトの削除
 	/// </summary>

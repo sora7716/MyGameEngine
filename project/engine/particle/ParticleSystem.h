@@ -45,6 +45,13 @@ public://メンバ関数
 	std::unique_ptr<Component>Clone(GameObject* gameObject)const override;
 
 	/// <summary>
+	/// ワールド行列を作成
+	/// </summary>
+	/// <param name="cameraWorldMatrix">カメラのワールド行列</param>
+	/// <returns>ワールド行列</returns>
+	Matrix4x4 MakeRenderWorldMatrix(const Matrix4x4& cameraWorldMatrix)const;
+
+	/// <summary>
 	/// ブレンドモードの設定
 	/// </summary>
 	/// <param name="blendMode">ブレンドモード</param>

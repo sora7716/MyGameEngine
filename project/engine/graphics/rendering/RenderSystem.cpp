@@ -15,6 +15,7 @@
 #include "SpriteRenderer.h"
 #include "BaseShape.h"
 #include "DebugDrawRenderer.h"
+#include "ParticleSystem.h"
 #include "ParticleRenderer.h"
 #include <algorithm>
 
@@ -58,7 +59,7 @@ void RenderSystem::Draw(){
 		//ライティングの設定
 		lightingManager_->DrawSetting();
 		//Object3dの描画
-		object3dRenderer_->Draw(i);
+		object3dRenderer_->Draw(i, renderCamera_);
 	}
 	//描画オブジェクトのリセット
 	object3dRenderer_->Reset();
@@ -68,7 +69,7 @@ void RenderSystem::Draw(){
 		//描画の開始
 		PreDraw(particleRenderer_->GetBlendMode(i), PipelineType::kParticle);
 		//Particleの描画
-		particleRenderer_->Draw(i);
+		particleRenderer_->Draw(i, renderCamera_);
 	}
 	//描画オブジェクトのリセット
 	particleRenderer_->Reset();
@@ -329,6 +330,71 @@ void RenderSystem::CollectActiveDebugDraw(const std::vector<std::unique_ptr<Game
 	}
 }
 
+//描画に有効なパーティクルシステムを集める
+void RenderSystem::CollectActiveParticleSystems(const std::vector<std::unique_ptr<GameObject>>& gameObjects, Camera* renderCamera){
+	//今回描画で使用するカメラ
+	renderCamera_ = renderCamera;
+
+	//パーティクルシステムの配列をクリア
+	activeParticleSystems_.clear();
+
+	//描画で使用するカメラがなければ
+	if (!renderCamera_){
+		return;
+	}
+
+	//カメラのワールド座標を取得
+	Vector3 cameraWorldPos = renderCamera_->GetWorldPos();
+
+	//カリングの生成
+	std::unique_ptr<Culling> culling = Culling::Create(renderCamera);
+
+	//探索開始
+	for (const std::unique_ptr<GameObject>& gameObject : gameObjects){
+		//ゲームオブジェクトがNullじゃないか
+		if (!gameObject){
+			continue;
+		}
+
+		//ゲームオブジェクトが有効状態か
+		if (!gameObject->IsActive()){
+			continue;
+		}
+
+		//object3dを取得
+		ParticleSystem* particleSystem = gameObject->GetComponent<ParticleSystem>();
+
+		//object3dがNullか
+		if (!particleSystem){
+			continue;
+		}
+
+		//object3dが有効状態か
+		if (!particleSystem->IsEnabled()){
+			continue;
+		}
+
+		//モデルが設定されているか
+		if (!particleSystem->HasModel()){
+			continue;
+		}
+
+		//モデルの取得
+		Model* model = particleSystem->GetModel();
+		if (!model){
+			continue;
+		}
+
+		//activeParticleSystemsに追加
+		activeParticleSystems_.push_back(particleSystem);
+	}
+
+	//レンダラーに追加
+	for (ParticleSystem* particleSystem : activeParticleSystems_){
+		particleRenderer_->AddRenderData(particleSystem->GetRenderData());
+	}
+}
+
 //描画開始
 void RenderSystem::PreDraw(BlendMode blendMode, PipelineType pipelineType){
 	//パイプラインのセットを取得
@@ -440,12 +506,12 @@ void RenderSystem::BuildTransformationData(){
 
 //オブジェクト3dのバッチをレンダラーの送る
 void RenderSystem::SubmitObject3dBatches(){
-	if (!object3dRenderer_ || !renderCamera_){
+	if (!object3dRenderer_){
 		return;
 	}
 
 	//レンダラーにバッチを送信
 	for (const Object3dBatch& batch : object3dBatches_){
-		object3dRenderer_->SubmitBatch(batch.model, batch.materialInstance, batch.blendMode, batch.transformations, renderCamera_);
+		object3dRenderer_->SubmitBatch(batch.model, batch.materialInstance, batch.blendMode, batch.transformations);
 	}
 }

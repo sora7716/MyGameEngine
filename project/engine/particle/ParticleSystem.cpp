@@ -56,6 +56,25 @@ std::unique_ptr<Component> ParticleSystem::Clone(GameObject* gameObject) const{
 	return cloneInstance;
 }
 
+//ワールド行列を作成
+Matrix4x4 ParticleSystem::MakeRenderWorldMatrix(const Matrix4x4& cameraWorldMatrix) const{
+	//もしBillboardだった場合
+	GameObject* gameObject = GetOwner();
+	//ゲームオブジェクトがない場合
+	if (!gameObject){
+		return  Matrix4x4::Identity4x4();
+	}
+
+	//ビルボードの作成
+	Matrix4x4 renderWorldMatrix = matrixUtility::MakeBillboardAffineMatrix(cameraWorldMatrix, gameObject->GetTransform());
+
+	//ノード分を乗算
+	renderWorldMatrix = node_.localMatrix * renderWorldMatrix;
+
+	//一時的に作成したワールド行列を返す
+	return renderWorldMatrix;
+}
+
 //ブレンドモードの設定
 void ParticleSystem::SetBlendMode(BlendMode blendMode){
 	blendMode_ = blendMode;

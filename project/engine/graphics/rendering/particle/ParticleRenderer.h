@@ -7,6 +7,7 @@
 class DirectXBase;
 class SRVManager;
 class TextureManager;
+class Camera;
 
 /// <summary>
 /// パーティクルの描画
@@ -36,7 +37,7 @@ private://構造体
 		uint32_t capacity = 0;
 
 		//マテリアル
-		std::vector<Material*> materialData;
+		std::vector<Material*> materialDatas;
 		std::vector<Microsoft::WRL::ComPtr<ID3D12Resource>>materialResources;
 	};
 public://メンバ関数
@@ -62,7 +63,8 @@ public://メンバ関数
 	/// 描画
 	/// </summary>
 	/// <param name="instanceIndex">インスタンスの検索キー</param>
-	void Draw(uint32_t instanceIndex);
+	/// <param name="renderCamera">描画用のカメラ</param>
+	void Draw(uint32_t instanceIndex, Camera* renderCamera);
 
 	/// <summary>
 	/// リセット
@@ -87,13 +89,6 @@ public://メンバ関数
 	/// <param name="instanceIndex">インスタンス検索キー</param>
 	/// <returns>ブレンドモード</returns>
 	BlendMode GetBlendMode(uint32_t instanceIndex);
-
-	/// <summary>
-	/// パーティクルを登録
-	/// </summary>
-	/// <param name="maxInstance">インスタンスの最大値</param>
-	/// <returns>パーティクルのハンドル</returns>
-	ParticleRenderHandle RegisterParticle(uint32_t maxInstance);
 private://メンバ関数
 	/// <summary>
 	/// 座標変換行列リソースの生成
@@ -112,7 +107,16 @@ private://メンバ関数
 	/// </summary>
 	/// <param name="gpuResource">パーティクルのGpuに送るデータ</param>
 	/// <param name="materialCount">マテリアル数</param>
-	void CreateMaterialResources(GpuResource& gpuResource,uint32_t materialCount);
+	void CreateMaterialResources(GpuResource& gpuResource, uint32_t materialCount);
+
+	/// <summary>
+    /// パーティクルのインスタンスの更新
+    /// </summary>
+    /// <param name="gpuResource">gpuリソース</param>
+    /// <param name="renderData">描画データ</param>
+    /// <param name="renderCamera">描画カメラ</param>
+	/// <returns>描画に使用する数</returns>
+	uint32_t UpdateParticleInstance(GpuResource& gpuResource, const ParticleRenderData& renderData, Camera* renderCamera);
 private://メンバ変数
 	//DirectXの基盤部分
 	DirectXBase* directXBase_ = nullptr;

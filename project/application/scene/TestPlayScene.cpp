@@ -35,11 +35,11 @@ void TestPlayScene::Initialize(){
 	directionalLight_ = *sceneContext_.lightingManager->GetDirectionalLight();
 
 	GameObject* gameObject = CreateGameObject();
-
 	Object3d* object3d = gameObject->AddComponent<Object3d>();
 	sceneContext_.modelManager->FindModel("dekanu")->CreateLODModels({ 1.0f,0.75f,0.5f,0.25f });
 	object3d->SetModel(sceneContext_.modelManager->FindModel("dekanu"));
 	object3d->SetLODDistances({ 20.0f,40.0f,60.0f });
+	gameObject->SetName("デカヌチャン");
 
 	GameObject* spriteObject = CreateGameObject();
 	Sprite* sprite = spriteObject->AddComponent<Sprite>();
@@ -64,6 +64,13 @@ void TestPlayScene::Initialize(){
 	debugDraw::Frustum* frustum = frustumObject->AddComponent<debugDraw::Frustum>();
 	frustum->SetTargetCamera(gameCamera_);
 	frustumObject->SetName("カメラの視錐台");
+
+	GameObject* particleObject = CreateGameObject();
+	ParticleSystem* particleSystem = particleObject->AddComponent<ParticleSystem>();
+	particleSystem->SetModel(sceneContext_.modelManager->FindModel("plane"));
+	particleSystem->SetTexture(0, "circle2.png");
+	particleObject->SetName("particleSystem");
+	particleSystem->SetFrequency(0.5f);
 }
 
 //更新
@@ -114,24 +121,6 @@ void TestPlayScene::Debug(){
 
 	ImGui::End();
 #endif // USE_IMGUI
-}
-
-//描画
-void TestPlayScene::Draw(Camera* camera){
-	(void)camera;
-	//particleSystem_->SetRenderCamera(camera);
-	//particleSystem_->DrawSetting();
-	//particleRenderer_->AddRenderData(particleSystem_->GetRenderData());
-}
-
-//デバッグでの描画
-void TestPlayScene::DebugDraw(){
-	Draw(debugCamera_->GetCamera());
-}
-
-//ゲームでの描画
-void TestPlayScene::GameDraw(){
-	Draw(gameCamera_);
 }
 
 //終了

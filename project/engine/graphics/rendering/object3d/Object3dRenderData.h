@@ -38,7 +38,6 @@ struct LODRenderData{
 //描画に必要なデータ
 struct Object3dRenderData{
 	Object3dRenderHandle renderHandle = kInvalidObject3dRenderHandle;
-	Camera* renderCamera = nullptr;
 	LODRenderData lodRenderData;
 	BlendMode blendMode = BlendMode::kNone;
 };

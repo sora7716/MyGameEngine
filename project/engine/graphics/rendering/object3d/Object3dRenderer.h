@@ -10,6 +10,7 @@
 class DirectXBase;
 class SRVManager;
 class TextureManager;
+class Camera;
 class Model;
 class MaterialInstance;
 
@@ -91,7 +92,8 @@ public://メンバ関数
 	/// 描画
 	/// </summary>
 	/// <param name="instanceIndex">インスタンス検索キー</param>
-	void Draw(uint32_t instanceIndex);
+	/// <param name="renderCamera">描画で使用するカメラ</param>
+	void Draw(uint32_t instanceIndex, Camera* renderCamera);
 
 	/// <summary>
 	/// バッチを受け取る関数
@@ -100,8 +102,7 @@ public://メンバ関数
 	/// <param name="materialInstance">マテリアルインスタンス</param>
 	/// <param name="blendMode">ブレンドモード</param>
 	/// <param name="transformations">トランスフォーメーションデータ</param>
-	/// <param name="renderCamera">描画用カメラ</param>
-	void SubmitBatch(Model* model, MaterialInstance* materialInstance, BlendMode blendMode, const std::vector<TransformationMatrix>& transformations, Camera* renderCamera);
+	void SubmitBatch(Model* model, MaterialInstance* materialInstance, BlendMode blendMode, const std::vector<TransformationMatrix>& transformations);
 
 	/// <summary>
 	/// 描画データの追加
@@ -135,8 +136,8 @@ private://メンバ関数
 	void CreateStructuredBufferForWvp(LODGpuResource& lodGpuResource);
 
 	/// <summary>
-    /// MaterialInstance用のGPUリソースを生成
-    /// </summary>
+	/// MaterialInstance用のGPUリソースを生成
+	/// </summary>
 	/// <param name="batchResource">バッチリソース</param>
 	void CreateMaterialInstanceResource(BatchResource& batchResource);
 

@@ -55,13 +55,11 @@ uint32_t Mesh::GetMaterialIndex(){
 
 //AABBの取得
 const primitiveData::AABB& Mesh::GetAABB() const{
-	// TODO: return ステートメントをここに挿入します
 	return aabb_;
 }
 
 //メッシュの描画データの取得
 const MeshRenderData& Mesh::GetMeshRenderData(){
-	// TODO: return ステートメントをここに挿入します
 	return meshRenderData_;
 }
 

@@ -237,7 +237,6 @@ private://メンバ関数
 	/// <summary>
 	/// ワールド行列を作成
 	/// </summary>
-	/// <returns>ワールド行列</returns>
 	void MakeWorldMatrix();
 
 	/// <summary>

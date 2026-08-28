@@ -38,12 +38,9 @@ void ParticleEmitter::Update(){
 			(*it).color.w = alpha;
 
 			//表示するかチェック
-			if (!it->isEnabled){
+			if (it->isEnabled){
 				numInstance_++;
 			}
-
-			//生きているパーティクルの数を記録
-			numInstance_++;
 
 		}
 		//次のイテレータに進める

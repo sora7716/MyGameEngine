@@ -24,6 +24,7 @@ namespace debugDraw{
 	class BaseShape;
 }
 class DebugDrawRenderer;
+class ParticleSystem;
 class ParticleRenderer;
 
 //描画グループごとにObject3dを分ける
@@ -93,6 +94,13 @@ public://メンバ関数
 	/// <param name="gameObjects">ゲームオブジェクトの配列</param>
 	/// <param name="renderCamera">描画で使用するカメラ</param>
 	void CollectActiveDebugDraw(const std::vector<std::unique_ptr<GameObject>>& gameObjects, Camera* renderCamera);
+
+	/// <summary>
+	/// 描画に有効なパーティクルシステムを集める
+	/// </summary>
+	/// <param name="gameObjects">ゲームオブジェクトの配列</param>
+	/// <param name="renderCamera">描画で使用するカメラ</param>
+	void CollectActiveParticleSystems(const std::vector<std::unique_ptr<GameObject>>& gameObjects, Camera* renderCamera);
 private://メンバ関数
 	/// <summary>
 	/// 描画の開始
@@ -156,6 +164,8 @@ private://メンバ関数
 	//DebugDrawのレンダラー
 	std::unique_ptr<DebugDrawRenderer>debugDrawRenderer_ = nullptr;
 
+	//描画に有効なパーティクルシステム
+	std::vector<ParticleSystem*>activeParticleSystems_;
 	//パーティクルの描画のレンダラー
 	std::unique_ptr<ParticleRenderer>particleRenderer_ = nullptr;
 };

@@ -1,7 +1,6 @@
 #pragma once
 #include "RenderData.h"
 #include "BlendMode.h"
-#include "ParticleGpuResource.h"
 #include "ParticleData.h"
 #include <list>
 #include <vector>
@@ -10,10 +9,6 @@
 class Model;
 class MaterialInstance;
 
-//Particleの描画ハンドル
-using ParticleRenderHandle = uint32_t;
-constexpr ParticleRenderHandle kInvalidParticleRenderHandle = UINT32_MAX;
-
 //パーティクルの描画に使用するデータ
 struct ParticleRenderData{
 	Model* model = nullptr;
@@ -21,5 +16,4 @@ struct ParticleRenderData{
 	const std::list<Particle>* particles = nullptr;
 	BlendMode blendMode = BlendMode::kNone;
 	uint32_t numInstance = 0;
-	ParticleRenderHandle renderHandle = kInvalidParticleRenderHandle;
 };

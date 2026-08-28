@@ -83,10 +83,10 @@ void Object3dRenderer::Reset(){
 }
 
 //描画
-void Object3dRenderer::Draw(uint32_t instanceIndex){
+void Object3dRenderer::Draw(uint32_t instanceIndex, Camera* renderCamera){
 
 	//カメラ
-	renderDatas_[instanceIndex].renderCamera->DrawSetting(4);
+	renderCamera->DrawSetting(4);
 
 	for (uint32_t lodIndex = 0; lodIndex < renderDatas_[instanceIndex].lodRenderData.modelRendererDatas.size(); lodIndex++){
 		//LODモデルが存在してなかったら
@@ -119,6 +119,12 @@ void Object3dRenderer::Draw(uint32_t instanceIndex){
 		for (const MeshRenderData& meshRenderData : modelRenderData.meshRenderDatas){
 			uint32_t materialIndex = meshRenderData.meshData.materialIndex;
 
+			//VertexBufferViewの設定
+			directXBase_->GetCommandList()->IASetVertexBuffers(0, 1, &meshRenderData.vertexBufferView);
+
+			//IndexBufferViewの設定
+			directXBase_->GetCommandList()->IASetIndexBuffer(&meshRenderData.indexBufferView);
+
 			//マテリアルCBufferの場所を設定
 			directXBase_->GetCommandList()->SetGraphicsRootConstantBufferView(0, modelRenderData.materialResources[materialIndex]->GetGPUVirtualAddress());
 
@@ -129,9 +135,7 @@ void Object3dRenderer::Draw(uint32_t instanceIndex){
 
 			//環境マップのセット
 			directXBase_->GetCommandList()->SetGraphicsRootDescriptorTable(8, textureManager_->GetSRVHandleGPU(materialTexturePath.environmentMap));
-			//VertexBufferViewの設定
-			directXBase_->GetCommandList()->IASetVertexBuffers(0, 1, &meshRenderData.vertexBufferView);//VBVを設定
-			directXBase_->GetCommandList()->IASetIndexBuffer(&meshRenderData.indexBufferView);//IBVを設定
+
 			//オブジェクト数が0より大きければ
 			if (drawCount > 0){
 				//メッシュが空じゃなければ
@@ -145,8 +149,8 @@ void Object3dRenderer::Draw(uint32_t instanceIndex){
 }
 
 //バッチを受け取る関数
-void Object3dRenderer::SubmitBatch(Model* model, MaterialInstance* materialInstance, BlendMode blendMode, const std::vector<TransformationMatrix>& transformations, Camera* renderCamera){
-	if (!model || !materialInstance || !renderCamera){
+void Object3dRenderer::SubmitBatch(Model* model, MaterialInstance* materialInstance, BlendMode blendMode, const std::vector<TransformationMatrix>& transformations){
+	if (!model || !materialInstance){
 		return;
 	} else if (transformations.empty()){
 		return;
@@ -194,14 +198,13 @@ void Object3dRenderer::SubmitBatch(Model* model, MaterialInstance* materialInsta
 		currentBatchResource = &batchResources_.back();
 	}
 
-	//マテリアルインスタンスリソース1の更新
+	//マテリアルインスタンスリソースの更新
 	UpdateMaterialInstanceResource(*currentBatchResource);
 
 	//ここからObject3dRenderDataを作る
 	Object3dRenderData renderData = {};
 
 	renderData.renderHandle = handle;
-	renderData.renderCamera = renderCamera;
 	renderData.blendMode = blendMode;
 
 	//Modelからメッシュを含む描画データをコピー

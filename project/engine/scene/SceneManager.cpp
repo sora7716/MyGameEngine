@@ -122,22 +122,20 @@ void SceneManager::Draw(Camera* camera){
 	renderSystem_->CollectActiveSprites(gameObjects);
 	//DebugDrawの描画
 	renderSystem_->CollectActiveDebugDraw(gameObjects, camera);
+	//ParticleSystemの描画
+	renderSystem_->CollectActiveParticleSystems(gameObjects, camera);
 }
 
 //ゲーム画面の描画
 void SceneManager::GameDraw(){
 	//描画
 	Draw(scene_->GetGameCamera());
-	//描画
-	scene_->GameDraw();
 }
 
 //デバッグ画面の描画
 void SceneManager::DebugDraw(){
 	//描画
 	Draw(scene_->GetDebugCamera());
-	//描画
-	scene_->DebugDraw();
 }
 
 //シーンファクトリーのセッター

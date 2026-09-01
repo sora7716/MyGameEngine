@@ -7,7 +7,6 @@
 
 // 前方宣言
 class DirectXBase;
-class DebugCamera;
 class AbstractSceneFactory;
 class ColliderManager;
 class GameObject;
@@ -100,12 +99,6 @@ public://メンバ関数
 	/// </summary>
 	/// <returns>ゲームカメラ</returns>
 	Camera* GetGameCamera();
-
-	/// <summary>
-	/// デバッグカメラの取得
-	/// </summary>
-	/// <returns>デバッグカメラ</returns>
-	Camera* GetDebugCamera();
 private://メンバ関数
 	/// <summary>
 	/// 名前を重複しないようにする
@@ -121,8 +114,6 @@ protected://メンバ変数
 	DWORD xBoxPadNumber_ = 0;
 	//シーンで必要なもの
 	SceneContext sceneContext_ = {};
-	//デバックカメラ
-	std::unique_ptr<DebugCamera>debugCamera_ = nullptr;
 	//シーンファクトリー
 	AbstractSceneFactory* sceneFactory_ = nullptr;
 	//コライダーマネージャー

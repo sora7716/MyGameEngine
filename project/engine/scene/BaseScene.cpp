@@ -1,5 +1,4 @@
 #include "BaseScene.h"
-#include "DebugCamera.h"
 #include "AbstractSceneFactory.h"
 #include "WinApi.h"
 #include "GameObject.h"
@@ -19,9 +18,6 @@ BaseScene::~BaseScene(){
 
 //初期化
 void BaseScene::Initialize(){
-	//デバックカメラ
-	debugCamera_ = std::make_unique<DebugCamera>();
-	debugCamera_->Initialize(sceneContext_.input, sceneContext_.cameraManager);
 	//ゲームオブジェクトの大きさを確保しておく(要素数は増えない)
 	gameObjects_.reserve(kGameObjectSize);
 	//ゲームオブジェクトのタグを見て、タグのマネージャに存在しているか確認
@@ -45,9 +41,6 @@ void BaseScene::Initialize(){
 
 //更新
 void BaseScene::Update(){
-	//デバックカメラ
-	debugCamera_->Update();
-
 	//ゲームカメラの更新
 	if (gameCamera_){
 		gameCamera_->Update();
@@ -177,15 +170,6 @@ void BaseScene::SetSceneContext(const SceneContext& sceneContext){
 //ゲームカメラの取得
 Camera* BaseScene::GetGameCamera(){
 	return gameCamera_;
-}
-
-//デバッグカメラの取得
-Camera* BaseScene::GetDebugCamera(){
-	//デバッグカメラがなかった場合
-	if (!debugCamera_){
-		return nullptr;
-	}
-	return debugCamera_->GetCamera();
 }
 
 //名前を重複しないようにする

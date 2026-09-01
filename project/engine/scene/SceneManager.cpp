@@ -1,8 +1,10 @@
 #include "SceneManager.h"
 #include "ImGuiManager.h"
-#include "debugEditor.h"
+#include "DebugEditor.h"
+#include "CameraManager.h"
 #include "TagManager.h"
 #include "RenderSystem.h"
+#include "DebugCamera.h"
 #include <cassert>
 
 //コンストラクタ
@@ -24,6 +26,9 @@ void SceneManager::Initialize(const SceneContext& sceneContext, RenderSystem* re
 	//デバッグエディターの生成と初期化
 	debugEditor_ = std::make_unique<DebugEditor>();
 	debugEditor_->Initialize(sceneContext_.tagManager);
+	//デバックカメラ
+	debugCamera_ = std::make_unique<DebugCamera>();
+	debugCamera_->Initialize(sceneContext_.cameraManager->FindCamera("debugCamera"));
 	//描画システムの記録
 	assert(renderSystem);
 	renderSystem_ = renderSystem;
@@ -55,12 +60,19 @@ void SceneManager::Update(){
 	scene_->Update();
 	//デバッグエディタの更新
 	debugEditor_->Update();
+
+#ifdef USE_IMGUI
+	sceneContext_.imGuiManager->Begin();
+	//デバックカメラ
+	debugCamera_->Update();
+#endif // USE_IMGUI
+
 }
 
 //デバッグ
 void SceneManager::Debug(){
 #ifdef USE_IMGUI
-	sceneContext_.imGuiManager->Begin();
+
 	//デバッグエディタの描画
 	debugEditor_->Draw();
 
@@ -135,7 +147,7 @@ void SceneManager::GameDraw(){
 //デバッグ画面の描画
 void SceneManager::DebugDraw(){
 	//描画
-	Draw(scene_->GetDebugCamera());
+	Draw(debugCamera_->GetCamera());
 }
 
 //シーンファクトリーのセッター

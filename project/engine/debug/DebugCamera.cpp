@@ -1,33 +1,33 @@
 #include "DebugCamera.h"
-#include "Input.h"
 #include "MathUtility.h"
-#include "CameraManager.h"
 #include "ImGuiManager.h"
+#include "Camera.h"
+#include "Quaternion.h" 
 #include <algorithm>
 
 //初期化
-void DebugCamera::Initialize(Input* input, CameraManager* cameraManager) {
-	//入力
-	input_ = input;
-
+void DebugCamera::Initialize(Camera* debugCamera){
 	//カメラ
-	camera_ = cameraManager->FindCamera("debugCamera");
+	camera_ = debugCamera;
 
 	//fovYの設定
 	fovY_ = camera_->GetFovY();
 }
 
 //更新
-void DebugCamera::Update() {
+void DebugCamera::Update(){
+#ifdef USE_IMGUI
 	//エスケープキーを入力したら
-	if (input_->TriggerKey(DIK_ESCAPE)){
+	if (ImGui::IsKeyPressed(ImGuiKey_Escape)){
 		isDebug_ = !isDebug_;
 	}
+#endif // USE_IMGUI
 
 	//デバッグモードがfalseだった場合
 	if (!isDebug_){
 		return;
 	}
+
 	//平行移動の更新
 	TranslateUpdate();
 
@@ -40,21 +40,15 @@ void DebugCamera::Update() {
 	//カメラ
 	camera_->SetQuaternion(Quaternion::MakeQuaternionForEulerAngle(rotate_));
 	camera_->SetTranslate(translate_);
-	camera_->Update();
 }
 
 //カメラのゲッター
-Camera* DebugCamera::GetCamera() {
+Camera* DebugCamera::GetCamera(){
 	return camera_;
 }
 
-//XboxPadの番号のセッター
-void DebugCamera::SetXBoxPadNumber(DWORD xboxPadNumber) {
-	xBoxPadNumber_ = xboxPadNumber;
-}
-
 //デバックに使用する
-void DebugCamera::Debug() {
+void DebugCamera::Debug(){
 #ifdef USE_IMGUI
 	ImGui::DragFloat4("rotate", &rotate_.x, 0.1f);
 	ImGui::DragFloat2("flick", &mouseFlick_.x, 0.1f);
@@ -63,91 +57,96 @@ void DebugCamera::Debug() {
 }
 
 //左右移動の操作
-void DebugCamera::StrafeControl() {
+void DebugCamera::StrafeControl(){
+#ifdef USE_IMGUI
 	//横移動
-	if (input_->PressKey(DIK_A)) {
+	if (ImGui::IsKeyDown(ImGuiKey_A)){
 		moveDir_.x = -1.0f;
-	} else if (input_->PressKey(DIK_D)) {
+	} else if (ImGui::IsKeyDown(ImGuiKey_D)){
 		moveDir_.x = 1.0f;
-	} else {
+	} else{
 		moveDir_.x = 0.0f;
 	}
+#endif // USE_IMGUI
 }
 
 //上下移動の操作
-void DebugCamera::ElevateControl() {
-	if (input_->PressKey(DIK_Q)) {
+void DebugCamera::ElevateControl(){
+#ifdef USE_IMGUI
+	if (ImGui::IsKeyDown(ImGuiKey_Q)){
 		moveDir_.y = -1.0f;
-	} else if (input_->PressKey(DIK_E)) {
+	} else if (ImGui::IsKeyDown(ImGuiKey_E)){
 		moveDir_.y = 1.0f;
-	} else if (input_->PressXboxPad(xBoxPadNumber_, XboxInput::kLT)) {
-		moveDir_.y = -1.0f;
-	} else if (input_->PressXboxPad(xBoxPadNumber_, XboxInput::kRT)) {
-		moveDir_.y = 1.0f;
-	} else {
+	} else{
 		moveDir_.y = 0.0f;
 	}
+#endif // USE_IMGUI
 }
 
 //前後移動の操作
-void DebugCamera::DollyControl() {
-	if (input_->PressKey(DIK_W)) {
+void DebugCamera::DollyControl(){
+#ifdef USE_IMGUI
+	if (ImGui::IsKeyDown(ImGuiKey_W)){
 		moveDir_.z = 1.0f;
-	} else if (input_->PressKey(DIK_S)) {
+	} else if (ImGui::IsKeyDown(ImGuiKey_S)){
 		moveDir_.z = -1.0f;
-	} else {
+	} else{
 		moveDir_.z = 0.0f;
 	}
-
+#endif // USE_IMGUI
 }
 
 //ズーム操作
-void DebugCamera::ZoomControl() {
-	//マウスホイールの回転量でズームイン、ズームアウト
-	fovY_ -= static_cast<float>(input_->GetWheelRotate()) * kZoomSpeedMagnification;
-
-	//パッドの操作
-	if (input_->PressXboxPad(xBoxPadNumber_, XboxInput::kDPadUp)) {
-		fovY_ -= kXboxPadZoomSpeed;
-	} else if (input_->PressXboxPad(xBoxPadNumber_, XboxInput::kDPadDown)) {
-		fovY_ += kXboxPadZoomSpeed;
+void DebugCamera::ZoomControl(){
+#ifdef USE_IMGUI
+	//ImGuiを使用していた場合
+	if (ImGui::GetIO().WantCaptureMouse){
+		return;
 	}
 
+	//マウスホイールの回転量でズームイン、ズームアウト
+	fovY_ -= ImGui::GetIO().MouseWheel * kZoomSpeedMagnification;
+	//ズーム操作のリセット
+	if (ImGui::IsMouseClicked(ImGuiMouseButton_Middle)){
+		fovY_ = 0.45f;
+	}
 	//fovYを範囲内で止める
 	fovY_ = std::clamp(fovY_, kMinFovY, kMaxFovY);
 	//fovYのセット
 	camera_->SetFovY(fovY_);
-
-	//ズーム操作のリセット
-	if (input_->PressMouseButton(Click::kMiddle) || input_->PressXboxPad(xBoxPadNumber_, XboxInput::kRTHUMB)) {
-		fovY_ = 0.45f;
-	}
+#endif // USE_IMGUI
 }
 
 //回転の操作
-void DebugCamera::RotateControl() {
+void DebugCamera::RotateControl(){
+#ifdef USE_IMGUI
+	//ImGuiを使用していた場合
+	if (ImGui::GetIO().WantCaptureMouse){
+		return;
+	}
+
 	//マウスのフリックを取得
-	if (input_->PressMouseButton(Click::kRight)) {
-		Vector2Int mouseFlick = input_->GetMouseMoveAmount();
+	if (ImGui::IsMouseDown(ImGuiMouseButton_Right)){
+		ImVec2 mouseFlick = ImGui::GetIO().MouseDelta;
 		//フリックの値をVector2に格納
-		mouseFlick_.x = static_cast<float>(mouseFlick.x);
-		mouseFlick_.y = static_cast<float>(mouseFlick.y);
+		mouseFlick_.x = mouseFlick.x;
+		mouseFlick_.y = mouseFlick.y;
 
 		//フリックの値をカメラの回転に反映
 		rotate_.x += mouseFlick_.y * kLookRadPerCount;
 		rotate_.y += mouseFlick_.x * kLookRadPerCount;
 	}
-
-	//Xboxの右スティックの入力
-	if (input_->IsXboxPadConnected(xBoxPadNumber_)) {
-		Vector2 dir = input_->GetXboxPadRightStick(xBoxPadNumber_);
-		rotate_.x -= dir.Normalize().y * kXboxPadRotSpeed;
-		rotate_.y += dir.Normalize().x * kXboxPadRotSpeed;
-	}
+#endif // USE_IMGUI
 }
 
 //平行移動の更新
-void DebugCamera::TranslateUpdate() {
+void DebugCamera::TranslateUpdate(){
+#ifdef USE_IMGUI
+	//ImGuiを使用していた場合
+	if (ImGui::GetIO().WantCaptureKeyboard){
+		return;
+	}
+#endif // USE_IMGUI
 	//X軸方向の移動
 	StrafeControl();
 
@@ -156,15 +155,6 @@ void DebugCamera::TranslateUpdate() {
 
 	//Z軸方向の移動
 	DollyControl();
-
-	//XboxPadの平行移動
-	if (input_->IsXboxPadConnected(xBoxPadNumber_)) {
-		if (std::fabs(input_->GetXboxPadLeftStick(xBoxPadNumber_).x) > 0.0f
-			|| std::fabs(input_->GetXboxPadLeftStick(xBoxPadNumber_).y) > 0.0f) {
-			moveDir_.x = input_->GetXboxPadLeftStick(xBoxPadNumber_).x;
-			moveDir_.z = input_->GetXboxPadLeftStick(xBoxPadNumber_).y;
-		}
-	}
 
 	//カメラの角度をもとに回転行列を求める
 	Matrix4x4 rotMat = matrixUtility::MakeRotateMatrix(Quaternion::MakeQuaternionForEulerAngle(rotate_));

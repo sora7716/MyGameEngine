@@ -4,6 +4,7 @@
 
 //前方宣言
 class DebugEditor;
+class DebugCamera;
 class RenderSystem;
 class Camera;
 
@@ -98,6 +99,8 @@ private://メンバ変数
 	BaseScene* nextScene_ = nullptr;
 	//デバッグエディタ
 	std::unique_ptr<DebugEditor>debugEditor_ = nullptr;
+	//デバックカメラ
+	std::unique_ptr<DebugCamera>debugCamera_ = nullptr;
 	//描画システム
 	RenderSystem* renderSystem_ = nullptr;
 };

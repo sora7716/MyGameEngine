@@ -38,7 +38,7 @@ public://メンバ関数
 	/// <summary>
 	/// 更新
 	/// </summary>
-	virtual void Update();
+	void Update();
 
 	/// <summary>
 	/// デバッグ
@@ -48,7 +48,7 @@ public://メンバ関数
 	/// <summary>
 	/// 終了
 	/// </summary>
-	virtual void Finalize();
+	void Finalize();
 
 	/// <summary>
 	/// ゲームオブジェクトの削除
@@ -114,12 +114,13 @@ protected://メンバ変数
 	DWORD xBoxPadNumber_ = 0;
 	//シーンで必要なもの
 	SceneContext sceneContext_ = {};
-	//シーンファクトリー
-	std::unique_ptr<AbstractSceneFactory> sceneFactory_ = nullptr;
 	//コライダーマネージャー
 	//std::unique_ptr<ColliderManager>colliderManager_ = nullptr;
 	//ゲームプレイ用のカメラ
 	Camera* gameCamera_ = nullptr;
+private://メンバ変数
+	//シーンファクトリー
+	std::unique_ptr<AbstractSceneFactory> sceneFactory_ = nullptr;
 	//ゲームオブジェクトの一覧
 	std::vector<std::unique_ptr<GameObject>> gameObjects_;
 };

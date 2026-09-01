@@ -1,5 +1,6 @@
 #pragma once
 #include <memory>
+
 //前方宣言
 class GameObject;
 

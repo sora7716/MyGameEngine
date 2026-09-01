@@ -2,6 +2,7 @@
 #include "GameObject.h"
 #include "Object3d.h"
 #include "ModelManager.h"
+#include "Player.h"
 
 //コンストラクタ
 GameScene::GameScene(){
@@ -85,18 +86,15 @@ void GameScene::Initialize(){
 			}
 		}
 	}
-}
 
-//更新
-void GameScene::Update(){
-	//基底クラスの更新
-	BaseScene::Update();
+	//プレイヤー
+	GameObject* playerObject = CreateGameObject();
+	Object3d* playerModel = playerObject->AddComponent<Object3d>();
+	playerModel->SetModel(sceneContext_.modelManager->FindModel("sphere_32"));
+	Player* player = playerObject->AddComponent<Player>();
+	player->SetInput(sceneContext_.input);
 }
 
 //デバッグ
 void GameScene::Debug(){
-}
-
-//終了
-void GameScene::Finalize(){
 }

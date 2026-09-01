@@ -78,12 +78,6 @@ void TestPlayScene::Initialize(){
 	cubeObject->SetName("cube");
 }
 
-//更新
-void TestPlayScene::Update(){
-	//ベースシーンの更新
-	BaseScene::Update();
-}
-
 //デバッグ
 void TestPlayScene::Debug(){
 #ifdef USE_IMGUI
@@ -126,10 +120,4 @@ void TestPlayScene::Debug(){
 
 	ImGui::End();
 #endif // USE_IMGUI
-}
-
-//終了
-void TestPlayScene::Finalize(){
-	//ベースシーンのの終了
-	BaseScene::Finalize();
 }

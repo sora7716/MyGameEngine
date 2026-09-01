@@ -23,19 +23,9 @@ public://メンバ関数
 	void Initialize()override;
 
 	/// <summary>
-	/// 更新
-	/// </summary>
-	void Update()override;
-
-	/// <summary>
 	/// デバッグ
 	/// </summary>
 	void Debug()override;
-
-	/// <summary>
-	/// 終了
-	/// </summary>
-	void Finalize()override;
 private://定数
 	//マップ全体の幅
 	static inline const Vector3Int kMapSize = { 6,3,6 };

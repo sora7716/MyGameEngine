@@ -5,6 +5,7 @@
 #include <string>
 #include <memory>
 #include <type_traits>
+#include <utility>
 
 //ゲームオブジェクト
 class GameObject{
@@ -97,15 +98,15 @@ public://メンバ関数
 	/// </summary>
 	/// <typeparam name="T">コンポーネントの型</typeparam>
 	/// <returns>コンポーネントのポインタ</returns>
-	template<class T>
-	T* AddComponent(){
+	template<class T, class... Args >
+	T* AddComponent(Args&&... args){
 		static_assert(
 			std::is_base_of_v<Component, T>,
 			"TはComponentを継承している必要があります"
 		);
 
 		//Componentを生成
-		std::unique_ptr<T>component = std::make_unique<T>(this);
+		std::unique_ptr<T>component = std::make_unique<T>(this, std::forward<Args>(args)...);
 
 		//返却値のポインタを保存する
 		T* componentPtr = component.get();

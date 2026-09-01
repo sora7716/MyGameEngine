@@ -13,8 +13,9 @@ public://メンバ関数
 	/// <summary>
 	/// コンストラクタ
 	/// </summary>
-	/// <param name="GameObject"></param>
-	explicit Player(GameObject* GameObject);
+	/// <param name="gameObject">ゲームオブジェクト</param>
+	/// <param name="input">入力</param>
+	explicit Player(GameObject* gameObject, Input& input);
 
 	/// <summary>
 	/// デストラクタ
@@ -37,17 +38,11 @@ public://メンバ関数
 	/// <param name="gameObject">ゲームオブジェクト</param>
 	/// <returns>コンポーネント</returns>
 	std::unique_ptr<Component>Clone(GameObject* gameObject)const override;
-
-	/// <summary>
-	/// 入力の取得
-	/// </summary>
-	/// <param name="input">入力</param>
-	void SetInput(Input* input);
 private://定数
 	static inline const float kSpeed = 0.5f;
 private://メンバ変数
 	//入力
-	Input* input_ = nullptr;
+	Input& input_;
 	//ゲームオブジェクト
 	GameObject* gameObject_ = nullptr;
 	//速度

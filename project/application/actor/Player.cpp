@@ -3,7 +3,8 @@
 #include "GameObject.h"
 
 //コンストラクタ
-Player::Player(GameObject* gameObject) :Component(gameObject){
+Player::Player(GameObject* gameObject, Input& input)
+	:Component(gameObject), input_(input){
 }
 
 //デストラクタ
@@ -22,18 +23,18 @@ void Player::Update(){
 	gameObject_->GetTransform().translate += velocity_;
 
 	//横移動
-	if (input_->PressKey(DIK_A)){
-		velocity_.x = kSpeed;
-	} else if (input_->PressKey(DIK_D)){
+	if (input_.PressKey(DIK_A)){
 		velocity_.x = -kSpeed;
+	} else if (input_.PressKey(DIK_D)){
+		velocity_.x = kSpeed;
 	} else{
 		velocity_.x = 0.0f;
 	}
 
 	//縦移動
-	if (input_->PressKey(DIK_W)){
+	if (input_.PressKey(DIK_W)){
 		velocity_.z = kSpeed;
-	} else if (input_->PressKey(DIK_S)){
+	} else if (input_.PressKey(DIK_S)){
 		velocity_.z = -kSpeed;
 	} else{
 		velocity_.z = 0.0f;
@@ -42,7 +43,7 @@ void Player::Update(){
 
 //複製
 std::unique_ptr<Component> Player::Clone(GameObject* gameObject) const{
-	std::unique_ptr<Player>cloneInstance = std::make_unique<Player>(gameObject);
+	std::unique_ptr<Player>cloneInstance = std::make_unique<Player>(gameObject, this->input_);
 
 	//初期化
 	cloneInstance->Initialize();
@@ -50,9 +51,4 @@ std::unique_ptr<Component> Player::Clone(GameObject* gameObject) const{
 	//Playerが持つ設定だけ複製
 	cloneInstance->SetEnabled(this->IsEnabled());
 	return cloneInstance;
-}
-
-//入力の取得
-void Player::SetInput(Input* input){
-	input_ = input;
 }

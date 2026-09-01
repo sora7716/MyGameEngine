@@ -62,17 +62,15 @@ void SceneManager::Update(){
 	debugEditor_->Update();
 
 #ifdef USE_IMGUI
-	sceneContext_.imGuiManager->Begin();
 	//デバックカメラ
 	debugCamera_->Update();
 #endif // USE_IMGUI
-
 }
 
 //デバッグ
 void SceneManager::Debug(){
 #ifdef USE_IMGUI
-
+	sceneContext_.imGuiManager->Begin();
 	//デバッグエディタの描画
 	debugEditor_->Draw();
 

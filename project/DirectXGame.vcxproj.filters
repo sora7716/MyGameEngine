@@ -124,6 +124,9 @@
     <Filter Include="engine\graphics\rendering\particle">
       <UniqueIdentifier>{45a0f329-24c2-4885-b42b-2b821b1ffa51}</UniqueIdentifier>
     </Filter>
+    <Filter Include="engine\graphics\rendering\sprite">
+      <UniqueIdentifier>{83bc8f28-34cf-408a-9a37-04b720169555}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="engine\main.cpp">
@@ -351,13 +354,19 @@
     <ClCompile Include="engine\graphics\rendering\debugDraw\DebugDrawRenderer.cpp">
       <Filter>engine\graphics\rendering\debugDraw</Filter>
     </ClCompile>
-    <ClCompile Include="engine\graphics\rendering\particle\ParticleRenderer.cpp">
-      <Filter>ソース ファイル</Filter>
+    <ClCompile Include="application\scene\GameScene.cpp">
+      <Filter>application\scene</Filter>
     </ClCompile>
     <ClCompile Include="engine\3d\MaterialInstance.cpp">
-      <Filter>ソース ファイル</Filter>
+      <Filter>engine\3d</Filter>
+    </ClCompile>
+    <ClCompile Include="engine\graphics\rendering\particle\ParticleRenderer.cpp">
+      <Filter>engine\graphics\rendering\particle</Filter>
     </ClCompile>
     <ClCompile Include="engine\graphics\rendering\sprite\SpriteRenderer.cpp">
+      <Filter>engine\graphics\rendering\sprite</Filter>
+    </ClCompile>
+    <ClCompile Include="application\actor\Player.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
   </ItemGroup>
@@ -617,19 +626,25 @@
     <ClInclude Include="engine\particle\ParticleData.h">
       <Filter>engine\particle</Filter>
     </ClInclude>
-    <ClInclude Include="engine\graphics\rendering\particle\ParticleRenderer.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="engine\graphics\rendering\particle\ParticleRenderData.h">
-      <Filter>ヘッダー ファイル</Filter>
+    <ClInclude Include="application\scene\GameScene.h">
+      <Filter>application\scene</Filter>
     </ClInclude>
     <ClInclude Include="engine\3d\MaterialInstance.h">
-      <Filter>ヘッダー ファイル</Filter>
+      <Filter>engine\3d</Filter>
+    </ClInclude>
+    <ClInclude Include="engine\graphics\rendering\particle\ParticleRenderData.h">
+      <Filter>engine\graphics\rendering\particle</Filter>
+    </ClInclude>
+    <ClInclude Include="engine\graphics\rendering\particle\ParticleRenderer.h">
+      <Filter>engine\graphics\rendering\particle</Filter>
     </ClInclude>
     <ClInclude Include="engine\graphics\rendering\sprite\SpriteRenderer.h">
-      <Filter>ヘッダー ファイル</Filter>
+      <Filter>engine\graphics\rendering\sprite</Filter>
     </ClInclude>
     <ClInclude Include="engine\graphics\rendering\sprite\SpriteRenderData.h">
+      <Filter>engine\graphics\rendering\sprite</Filter>
+    </ClInclude>
+    <ClInclude Include="application\actor\Player.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
   </ItemGroup>

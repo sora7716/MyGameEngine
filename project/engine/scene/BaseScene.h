@@ -93,7 +93,7 @@ public://メンバ関数
 	/// </summary>
 	/// <param name="sceneContext">シーンに必要な情報</param>
 	void SetSceneContext(const SceneContext& sceneContext);
-	
+
 	/// <summary>
 	/// ゲームカメラの取得
 	/// </summary>
@@ -115,7 +115,7 @@ protected://メンバ変数
 	//シーンで必要なもの
 	SceneContext sceneContext_ = {};
 	//シーンファクトリー
-	AbstractSceneFactory* sceneFactory_ = nullptr;
+	std::unique_ptr<AbstractSceneFactory> sceneFactory_ = nullptr;
 	//コライダーマネージャー
 	//std::unique_ptr<ColliderManager>colliderManager_ = nullptr;
 	//ゲームプレイ用のカメラ

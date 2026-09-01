@@ -1,13 +1,7 @@
 #include "BaseShape.h"
-#include "DirectXBase.h"
+#include "GameObject.h"
 #include "MatrixUtility.h"
-#include "MathUtility.h"
-#include "Logger.h"
-#include "GraphicsPipeline.h"
-#include "Camera.h"
-#include "ImGuiManager.h"
 using namespace Microsoft::WRL;
-using namespace debugDraw;
 
 #pragma comment(lib,"d3d12.lib")
 
@@ -16,7 +10,7 @@ debugDraw::BaseShape::BaseShape(GameObject* gameObject) :Component(gameObject){
 }
 
 //デストラクタ
-BaseShape::~BaseShape(){}
+debugDraw::BaseShape::~BaseShape(){}
 
 //初期化
 void debugDraw::BaseShape::Initialize(){
@@ -40,7 +34,7 @@ void debugDraw::BaseShape::Initialize(){
 }
 
 //更新
-void BaseShape::Update(){
+void debugDraw::BaseShape::Update(){
 	//形の更新
 	UpdateShape();
 
@@ -55,7 +49,7 @@ void BaseShape::Update(){
 }
 
 //色の設定
-void BaseShape::SetColor(const Vector4& color){
+void debugDraw::BaseShape::SetColor(const Vector4& color){
 	color_ = color;
 }
 
@@ -80,7 +74,7 @@ const DebugDrawRenderData& debugDraw::BaseShape::GetRenderData(){
 }
 
 //座標の更新
-void BaseShape::UpdateTransform(){
+void debugDraw::BaseShape::UpdateTransform(){
 	GameObject* gameObject = GetOwner();
 	worldMatrix_ = matrixUtility::MakeAffineMatrix(gameObject->GetTransform());
 }

@@ -20,27 +20,34 @@ void ModelManager::Initialize(DirectXBase* directXBase, TextureManager* textureM
 
 //プリミティブなモデルの生成
 void ModelManager::CreatePrimitiveModel(){
-	//Cubeモデルの生成
-	std::unique_ptr<Model>model = Model::CreateModel(directXBase_, { primitiveMeshFactory::CreateCube() });
+	//モデル
+	std::unique_ptr<Model>model = nullptr;
+	//設定項目
+	primitiveMeshFactory::Desc desc = {};
 
-	//Cubeモデルの追加
+	//Cubeモデルの生成(半径1.0)
+	model = Model::CreateModel(directXBase_, { primitiveMeshFactory::CreateCube() });
+	//Cubeモデルの追加(半径1.0)
 	models_.insert(std::make_pair("cube", std::move(model)));
+
+	//Tileモデルの生成(半径0.5)
+	desc.size = { 0.5f,0.5f,0.5f };
+	model = Model::CreateModel(directXBase_, { primitiveMeshFactory::CreateCube(desc) });
+	//Tileモデルの追加(半径0.5)
+	models_.insert(std::make_pair("tile", std::move(model)));
 
 	//Sphereモデルの生成(分割数16)
 	model = Model::CreateModel(directXBase_, { primitiveMeshFactory::CreateSphere() });
-
 	//Sphereモデル(分割数16)の追加
 	models_.insert(std::make_pair("sphere_16", std::move(model)));
 
 	//Sphereモデルの生成(分割数32)
 	model = Model::CreateModel(directXBase_, { primitiveMeshFactory::CreateSphere({Vector3::MakeAllOne(),32,1.0f}) });
-
 	//Sphereモデル(分割数32)の追加
 	models_.insert(std::make_pair("sphere_32", std::move(model)));
 
 	//Planeモデルの生成
 	model = Model::CreateModel(directXBase_, { primitiveMeshFactory::CreatePlane() });
-
 	//Planeモデルの追加
 	models_.insert(std::make_pair("plane", std::move(model)));
 }

@@ -1,25 +1,21 @@
 #pragma once
 #include "BaseScene.h"
-#include "LightingData.h"
-
-//前方宣言
-class Audio;
-class ParticleSystem;
+#include "Vector3.h"
 
 /// <summary>
-/// テストプレイシーン
+/// ゲームシーン
 /// </summary>
-class TestPlayScene :public BaseScene {
+class GameScene :public BaseScene{
 public://メンバ関数
 	/// <summary>
 	/// コンストラクタ
 	/// </summary>
-	TestPlayScene();
+	GameScene();
 
 	/// <summary>
 	/// デストラクタ
 	/// </summary>
-	~TestPlayScene()override;
+	~GameScene()override;
 
 	/// <summary>
 	/// 初期化
@@ -40,6 +36,10 @@ public://メンバ関数
 	/// 終了
 	/// </summary>
 	void Finalize()override;
+private://定数
+	//マップ全体の幅
+	static inline const Vector3Int kMapSize = { 6,3,6 };
+	//ブロックの幅
+	static inline const Vector3 kTileSize = { 1.0f,1.0f,1.0f };
 private://メンバ変数
-	DirectionalLight directionalLight_ = {};
 };

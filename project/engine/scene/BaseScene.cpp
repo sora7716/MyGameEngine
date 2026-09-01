@@ -66,8 +66,7 @@ void BaseScene::Debug(){
 //終了
 void BaseScene::Finalize(){
 	//シーンファクトリーの解放
-	delete sceneFactory_;
-	sceneFactory_ = nullptr;
+	sceneFactory_.reset();
 }
 
 //ゲームオブジェクトの削除

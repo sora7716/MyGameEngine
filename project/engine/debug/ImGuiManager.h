@@ -1,5 +1,4 @@
 #pragma once
-#include "ActorData.h"
 #ifdef USE_IMGUI
 #include "imgui/imgui.h"
 #include "imgui/imgui_impl_dx12.h"
@@ -8,6 +7,7 @@
 #include <string>
 #include "Vector3.h"
 #include "PrimitiveData.h"
+#include "RenderingData.h"
 //前方宣言
 class WinApi;
 class DirectXBase;
@@ -16,7 +16,7 @@ class SRVManager;
 /// <summary>
 /// ImGuiの管理
 /// </summary>
-class ImGuiManager {
+class ImGuiManager{
 public://メンバ関数
 	/// <summary>
 	/// デストラクタ
@@ -113,7 +113,7 @@ public://メンバ関数
 	/// <param name="label">ラベル</param>
 	static void AABBText([[maybe_unused]] const primitiveData::AABB& aabb, [[maybe_unused]] const char* label);
 public://PassKey
-	class ConstructorKey {
+	class ConstructorKey{
 	private:
 		ConstructorKey() = default;
 		friend class Core;

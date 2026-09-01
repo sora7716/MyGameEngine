@@ -1,11 +1,7 @@
 #include "Sprite.h"
-#include <cassert>
 #include "MatrixUtility.h"
-#include "TextureManager.h"
-#include "DirectXBase.h"
 #include "WinApi.h"
-#include "WorldTransform.h"
-#include "ImGuiManager.h"
+#include "GameObject.h"
 
 //コンストラクタ
 Sprite::Sprite(GameObject* gameObject) :Component(gameObject){

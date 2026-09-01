@@ -71,6 +71,11 @@ void TestPlayScene::Initialize(){
 	particleSystem->SetTexture(0, "circle2.png");
 	particleObject->SetName("particleSystem");
 	particleSystem->SetFrequency(0.5f);
+
+	GameObject* cubeObject = CreateGameObject();
+	Object3d* cube = cubeObject->AddComponent<Object3d>();
+	cube->SetModel(sceneContext_.modelManager->FindModel("tile"));
+	cubeObject->SetName("cube");
 }
 
 //更新

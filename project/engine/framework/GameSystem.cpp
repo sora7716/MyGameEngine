@@ -15,7 +15,7 @@ GameSystem::~GameSystem(){
 void GameSystem::Initialize(){
 	Framework::Initialize();
 	//シーンを呼び出す
-	core_->GetSceneManager()->ChangeScene("TestPlay");
+	core_->GetSceneManager()->ChangeScene("Game");
 }
 
 //更新

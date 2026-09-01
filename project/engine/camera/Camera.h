@@ -1,14 +1,19 @@
 #pragma once
-#include "algorithms/Rendering.h"
+#include "MatrixUtility.h"
 #include "PrimitiveData.h"
-#include <memory>
+#include "RenderData.h"
+#include <wrl.h>
+#include <d3d12.h>
 
+//前方宣言
 class DirectXBase;
 
 /// <summary>
 /// カメラ
 /// </summary>
 class Camera {
+private://エイリアステンプレート
+	template <class T>using ComPtr = Microsoft::WRL::ComPtr<T>;
 public://メンバ関数
 	/// <summary>
 	/// コンストラクタ
@@ -23,13 +28,19 @@ public://メンバ関数
 	/// <summary>
 	/// 初期化
 	/// </summary>
-	/// <param name="directXBase">DirectXの基盤部分</param>
-	void Initialize(DirectXBase*directXBase);
+	/// <param name="directXBase">DirectXの基盤</param>
+	void Initialize(DirectXBase* directXBase);
 
 	/// <summary>
 	/// 更新
 	/// </summary>
 	void Update();
+
+	/// <summary>
+	/// 描画準備
+	/// </summary>
+	/// <param name="rootParameterIndex">ルートパラメータの配列番号</param>
+	void DrawSetting(uint32_t rootParameterIndex);
 
 	/// <summary>
 	/// オイラー角の設定
@@ -125,7 +136,7 @@ public://メンバ関数
 	/// 視錐台の取得
 	/// </summary>
 	/// <returns>視錐台</returns>
-	PrimitiveData::Frustum& GetFrustum();
+	primitiveData::Frustum& GetFrustum();
 
 	/// <summary>
 	/// ニアクリップ距離の取得
@@ -151,6 +162,13 @@ public://メンバ関数
 	/// <returns></returns>
 	const float GetAspectRation()const;
 private://メンバ変数
+	/// <summary>
+	/// カメラリソースの生成
+	/// </summary>
+	void CreateCameraResource();
+private://メンバ変数
+	//DirectXの基盤部分
+	DirectXBase* directXBase_ = nullptr;
 	//ローカル座標
 	Transform transform_ = {};
 	//ワールド行列
@@ -170,6 +188,10 @@ private://メンバ変数
 	//ビュープロジェクション行列
 	Matrix4x4 viewProjectionMatrix_ = {};
 	//視錐台
-	PrimitiveData::Frustum frustum_ = {};
+	primitiveData::Frustum frustum_ = {};
+	//カメラのリソース
+	ComPtr<ID3D12Resource> cameraResource_ = nullptr;
+	//GPUに送るカメラ情報
+	CameraForGPU* cameraForGPU_ = nullptr;
 };
 

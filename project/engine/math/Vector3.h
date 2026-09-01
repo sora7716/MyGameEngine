@@ -5,15 +5,23 @@
 /// 3次元ベクトル
 /// </summary>
 struct Vector3 final {
-	float x;
-	float y;
-	float z;
+	float x = 0.0f;
+	float y = 0.0f;
+	float z = 0.0f;
 
 	/// <summary>
 	/// Vector3のメンバ変数すべてに1.0fを代入したVector3を作成
 	/// </summary>
 	/// <returns>Vector3</returns>
 	static Vector3 MakeAllOne();
+
+	/// <summary>
+	/// クランプ
+	/// </summary>
+	/// <param name="min">最小値</param>
+	/// <param name="max">最大値</param>
+	/// <returns>クランプした値</returns>
+	Vector3 Clamp(float min, float max);
 
 	/// <summary>
 	/// 最小値
@@ -28,6 +36,18 @@ struct Vector3 final {
 	/// <param name="v">ベクトル</param>
 	/// <returns>最大値</returns>
 	Vector3 Max(const Vector3& v)const;
+
+	/// <summary>
+	/// 最小値
+	/// </summary>
+	/// <returns>最小値</returns>
+	float Min()const;
+
+	/// <summary>
+	/// 最大値
+	/// </summary>
+	/// <returns>最大値</returns>
+	float Max()const;
 
 	/// <summary>
 	/// 絶対値
@@ -82,7 +102,6 @@ struct Vector3 final {
 	/// <returns>現在のベクトル</returns>
 	static Vector3 Lerp(const Vector3& begin, const Vector3& end, float frame);
 
-	// 円関数を使用した線形補間
 	//加法
 	Vector3 operator+(const Vector3& v)const;
 	//減法
@@ -128,9 +147,9 @@ const Vector3 operator*(float n, const Vector3& v);
 /// 3次元ベクトルの整数型
 /// </summary>
 struct Vector3Int {
-	int32_t x;
-	int32_t y;
-	int32_t z;
+	int32_t x = 0;
+	int32_t y = 0;
+	int32_t z = 0;
 
 	//Vector3Int同士の比較
 	bool operator<(const Vector3Int& v)const;

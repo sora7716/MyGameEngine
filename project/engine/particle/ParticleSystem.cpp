@@ -1,240 +1,227 @@
 #define NOMINMAX
-#include <algorithm>
 #include "ParticleSystem.h"
-#include "engine/base/DirectXBase.h"
-#include "engine/particle/ParticleCommon.h"
-#include "engine/camera/Camera.h"
-#include "engine/2d/TextureManager.h"
-#include "engine/base/SRVManager.h"
-#include "engine/3d/Model.h"
+#include "Model.h"
+#include "MaterialInstance.h"
+#include "ParticleEmitter.h"
+#include "GameObject.h"
+#include <string>
+
+//コンストラクタ
+ParticleSystem::ParticleSystem(GameObject* gameObject) :Component(gameObject){
+}
+
+//デストラクタ
+ParticleSystem::~ParticleSystem(){
+}
 
 //初期化
-void ParticleSystem::Initialize(ParticleCommon* particleCommon, const std::string& textureName, Model* model) {
-	////パーティクルの共通部分
-	//particleCommon_ = particleCommon_;
+void ParticleSystem::Initialize(){
+	//基底クラスの初期化
+	Component::Initialize();
 
-	////DirectXの基盤部分を記録する
-	//directXBase_ = particleCommon_->GetDirectXBase();
-
-	////エミッター
-	//emitter_ = std::make_unique<ParticleEmitter>();
-	//emitter_->Initialize(particleCommon_, model);
-
-	////ワールドトランスフォームのリソースの生成
-	//CreateWorldTransformResource();
-
-	////頂点リソースの生成
-	//CreateVertexResource();
-
-	////テクスチャファイルの記録
-	//modelData_.material.textureFilePath = "engine/resources/textures/" + textureName;
-	////テクスチャの読み込み
-	//particleCommon_->GetTextureManager()->LoadTexture(modelData_.material.textureFilePath);
-
-	////マテリアルリソースの生成
-	//CreateMaterialResource();
-
-	////インデックスリソースの生成
-	//CreateIndexResource();
-
-	////ストラクチャバッファの生成
-	//CreateStructuredBuffer();
+	//エミッター
+	emitter_ = std::make_unique<ParticleEmitter>();
+	emitter_->Initialize();
 }
 
 //更新
-void ParticleSystem::Update() {
-	emitter_->Update(instancingData_);
+void ParticleSystem::Update(){
+	//基底クラスの更新
+	Component::Update();
+
+	GameObject* gameObject = GetOwner();
+	//エミッターの位置を設定
+	emitter_->SetEmitterPosition(gameObject->GetTransform().translate);
+
+	//エミッターの更新
+	emitter_->Update();
+
+	//描画に必要なデータのセットアップ
+	SetupRenderData();
 }
 
-//描画
-void ParticleSystem::Draw() {
-	////描画準備
-	//particleCommon_->DrawSetting();
-	////PSOの設定
-	//auto pso = particleCommon_->GetGraphicsPipelineStates()[static_cast<int32_t>(blendMode_)].Get();
-	////グラフィックスパイプラインをセットするコマンド
-	//directXBase_->GetCommandList()->SetPipelineState(pso);
-	////VertexBufferViewの設定
-	//directXBase_->GetCommandList()->IASetVertexBuffers(0, 1, &vertexBufferView_);//VBVを設定
-	////IndexBufferViewの設定
-	//directXBase_->GetCommandList()->IASetIndexBuffer(&indexBufferView_);//IBVを設定
-	////マテリアルCBufferの場所を設定
-	//directXBase_->GetCommandList()->SetGraphicsRootConstantBufferView(0, materialResource_->GetGPUVirtualAddress());//material
-	////ワールドトランスフォームの描画
-	//directXBase_->GetCommandList()->SetGraphicsRootDescriptorTable(1, particleCommon_->GetSRVManager()->GetGPUDescriptorHandle(srvIndex_));
-	////SRVのDescriptorTableの先頭を設定
-	//directXBase_->GetCommandList()->SetGraphicsRootDescriptorTable(2, particleCommon_->GetTextureManager()->GetSRVHandleGPU(modelData_.material.textureFilePath));
-	////描画(DrawCall/ドローコール)
-	//directXBase_->GetCommandList()->DrawIndexedInstanced(static_cast<UINT>(modelData_.meshes.vertices.size()), emitter_->GetNumInstance(), 0, 0, 0);
+//複製
+std::unique_ptr<Component> ParticleSystem::Clone(GameObject* gameObject) const{
+	std::unique_ptr<ParticleSystem>cloneInstance = std::make_unique<ParticleSystem>(gameObject);
+
+	//初期化
+	cloneInstance->Initialize();
+
+	//Spriteが持つ設定だけ複製
+	cloneInstance->SetEnabled(this->IsEnabled());
+	cloneInstance->blendMode_ = this->blendMode_;
+	cloneInstance->model_ = this->model_;
+	cloneInstance->node_ = this->node_;
+	cloneInstance->materialInstance_ = this->materialInstance_;
+	return cloneInstance;
 }
 
+//ワールド行列を作成
+Matrix4x4 ParticleSystem::MakeRenderWorldMatrix(const Matrix4x4& cameraWorldMatrix) const{
+	//もしBillboardだった場合
+	GameObject* gameObject = GetOwner();
+	//ゲームオブジェクトがない場合
+	if (!gameObject){
+		return  Matrix4x4::Identity4x4();
+	}
 
-//デバッグ
-void ParticleSystem::Debug() {
-	emitter_->Debug();
+	//ビルボードの作成
+	Matrix4x4 renderWorldMatrix = matrixUtility::MakeBillboardAffineMatrix(cameraWorldMatrix, gameObject->GetTransform());
+
+	//ノード分を乗算
+	renderWorldMatrix = node_.localMatrix * renderWorldMatrix;
+
+	//一時的に作成したワールド行列を返す
+	return renderWorldMatrix;
 }
 
-//終了
-void ParticleSystem::Finalize() {
-
-}
-
-//テクスチャ名のゲッター
-std::string ParticleSystem::GetTextureName() {
-	//return modelData_.material.textureFilePath;
-	return 0;
-}
-
-//カメラのセッター
-void ParticleSystem::SetCamera(Camera* camera) {
-	emitter_->SetCamera(camera);
-}
-
-//ブレンドモードのセッター
-void ParticleSystem::SetBlendMode(BlendMode blendMode) {
+//ブレンドモードの設定
+void ParticleSystem::SetBlendMode(BlendMode blendMode){
 	blendMode_ = blendMode;
 }
 
-//トランスフォームデータのセッター
-void ParticleSystem::SetTransformData(const Transform& transfrom) {
-	emitter_->SetTransformData(transfrom);
-}
-
-//パーティクルの数のセッター
-void ParticleSystem::SetParticleCount(uint32_t cont) {
+//パーティクルの数の設定
+void ParticleSystem::SetParticleCount(uint32_t cont){
 	emitter_->SetParticleCount(cont);
 }
 
-//発生範囲のセッター
-void ParticleSystem::SetEmitRange(float range) {
+//発生範囲の設定
+void ParticleSystem::SetEmitRange(float range){
 	emitter_->SetEmitRange(range);
 }
 
-//加速度が起こるフィールドのセッター
-void ParticleSystem::SetAccelerationField(const AccelerationField& field) {
+//加速度が起こるフィールドの設定
+void ParticleSystem::SetAccelerationField(const AccelerationField& field){
 	emitter_->SetAccelerationField(field);
 }
 
-//モデルデータの初期化
-void ParticleSystem::InitializeQuadModelData() {
-	//modelData_.meshes.vertices.push_back({
-	//	.position = {1.0f,1.0f,0.0f,1.0f},
-	//	.texcoord = {0.0f,0.0f},
-	//	.normal = {0.0f,0.0f,1.0f}
-	//	});//左上
-	//modelData_.meshes.vertices.push_back({
-	//	.position = {-1.0f,1.0f,0.0f,1.0f},
-	//	.texcoord = {1.0f,0.0f},
-	//	.normal = {0.0f,0.0f,1.0f}
-	//	});//右上
-	//modelData_.meshes.vertices.push_back({
-	//	.position = {1.0f,-1.0f,0.0f,1.0f},
-	//	.texcoord = {0.0f,1.0f},
-	//	.normal = {0.0f,0.0f,1.0f}
-	//	});//左下
-	//modelData_.meshes.vertices.push_back({
-	//	.position = {1.0f,-1.0f,0.0f,1.0f},
-	//	.texcoord = {0.0f,1.0f},
-	//	.normal = {0.0f,0.0f,1.0f}
-	//	});//左下
-	//modelData_.meshes.vertices.push_back({
-	//	.position = {-1.0f,1.0f,0.0f,1.0f},
-	//	.texcoord = {1.0f,0.0f},
-	//	.normal = {0.0f,0.0f,1.0f}
-	//	});//右上
-	//modelData_.meshes.vertices.push_back({
-	//	.position = {-1.0f,-1.0f,0.0f,1.0f},
-	//	.texcoord = {1.0f,1.0f},
-	//	.normal = {0.0f,0.0f,1.0f}
-	//	});//右下
+//パーティクルの発生感覚[秒]の設定
+void ParticleSystem::SetFrequency(float frequency){
+	emitter_->SetFrequency(frequency);
 }
 
-//マテリアルデータの初期化
-void ParticleSystem::InitializeMaterialData() {
-	//色を書き込む
-	materialData_->color = { 1.0f, 1.0f, 1.0f, 1.0f };
-	materialData_->enableLighting = false;
-	materialData_->uvMatrix = Matrix4x4::Identity4x4();
+//モデルの設定
+void ParticleSystem::SetModel(Model* model){
+	//元になるモデルを取得
+	model_ = model;
+
+	//モデルが存在する場合
+	if (model_){
+		//nodeにrootNodeを保存
+		node_ = model_->GetModelData().rootNode;
+
+		//マテリアルインスタンスを取得
+		materialInstance_ = model_->GetDefaultMaterialInstance();
+	} else{
+		//モデルがなければリセット
+		node_ = {};
+		node_.localMatrix = Matrix4x4::Identity4x4();
+
+		materialInstance_.reset();
+	}
+}
+// uvスケールの設定
+void ParticleSystem::SetUVScale(uint32_t index, const Vector2& uvScale){
+	//マテリアルインスタンスがなければ
+	if (!materialInstance_){
+		return;
+	}
+	//マテリアルを個別化する
+	EnsureUniqueMaterialInstance();
+	materialInstance_->SetUVScale(index, uvScale);
 }
 
-//頂点リソースの生成
-void ParticleSystem::CreateVertexResource() {
-	////頂点データの初期化
-	//if (emitter_->GetModel()) {
-	//	//モデルがあればモデルデータを取得
-	//	modelData_ = emitter_->GetModel()->GetModelData();
-	//} else {
-	//	//モデルがなければ四角形を生成
-	//	InitializeQuadModelData();
-	//}
-	////頂点リソースを生成
-	//vertexResource_ = directXBase_->CreateBufferResource(sizeof(VertexData) * modelData_.meshes.vertices.size());
-	////VertexBufferViewを作成する(頂点バッファービュー)
-	////リソースの先頭アドレスから使う
-	//vertexBufferView_.BufferLocation = vertexResource_->GetGPUVirtualAddress();
-	////使用するリソースのサイズは頂点3つ分のサイズ
-	//vertexBufferView_.SizeInBytes = UINT(sizeof(VertexData) * modelData_.meshes.vertices.size());
-	////1頂点当たりのサイズ
-	//vertexBufferView_.StrideInBytes = sizeof(VertexData);
-
-	////頂点リソースにデータを書き込む
-	//VertexData* vertexData = nullptr;
-	////書き込むためのアドレスを取得
-	//vertexResource_->Map(0, nullptr, reinterpret_cast<void**>(&vertexData));//書き込むためのアドレスを取得
-	//std::memcpy(vertexData, modelData_.meshes.vertices.data(), sizeof(VertexData) * modelData_.meshes.vertices.size());//頂点データをリソースにコピー
+// uv回転の設定
+void ParticleSystem::SetUVRotate(uint32_t index, float uvRotate){
+	//マテリアルインスタンスがなければ
+	if (!materialInstance_){
+		return;
+	}
+	//マテリアルを個別化する
+	EnsureUniqueMaterialInstance();
+	materialInstance_->SetUVRotate(index, uvRotate);
 }
 
-//マテリアルリソースの生成
-void ParticleSystem::CreateMaterialResource() {
-	//マテリアルリソースを作る
-	materialResource_ = directXBase_->CreateBufferResource(sizeof(Material));
-	//マテリアルリソースにデータを書き込むためのアドレスを取得してmaterialDataに割り当てる
-	//書き込むためのアドレスを取得
-	materialResource_->Map(0, nullptr, reinterpret_cast<void**>(&materialData_));
-	//マテリアルデータの初期値を書き込む
-	InitializeMaterialData();
+// uv平行移動の設定
+void ParticleSystem::SetUVTranslate(uint32_t index, const Vector2& uvTranslate){
+	//マテリアルインスタンスがなければ
+	if (!materialInstance_){
+		return;
+	}
+	//マテリアルを個別化する
+	EnsureUniqueMaterialInstance();
+	materialInstance_->SetUVTranslate(index, uvTranslate);
 }
 
-void ParticleSystem::CreateIndexResource() {
-	////Index用(3dGameObject)
-	//indexResource_ = directXBase_->CreateBufferResource(sizeof(uint32_t) * modelData_.meshes.vertices.size());
-	////リソースの先頭のアドレスから使う
-	//indexBufferView_.BufferLocation = indexResource_->GetGPUVirtualAddress();
-	////使用するリソースのサイズはインデックス6つ分のサイズ
-	//indexBufferView_.SizeInBytes = UINT(sizeof(uint32_t) * modelData_.meshes.vertices.size());
-	////インデックスはuint32_tとする
-	//indexBufferView_.Format = DXGI_FORMAT_R32_UINT;
-	////IndexResourceにデータを書き込む
-	//indexResource_->Map(0, nullptr, reinterpret_cast<void**>(&indexData_));
-	//for (int i = 0; i < modelData_.meshes.vertices.size(); i++) {
-	//	indexData_[i] = i; indexData_[i + 1] = i + 1; indexData_[i + 2] = i + 2;
-	//	indexData_[i + 3] = i + 1; indexData_[i + 4] = i + 3; indexData_[i + 5] = i + 2;
-	//}
+//色の設定
+void ParticleSystem::SetColor(uint32_t index, const Vector4& color){
+	//マテリアルインスタンスがなければ
+	if (!materialInstance_){
+		return;
+	}
+	//マテリアルを個別化する
+	EnsureUniqueMaterialInstance();
+	materialInstance_->SetColor(index, color);
 }
 
-//ワールドトランスフォームのリソースの生成
-void ParticleSystem::CreateWorldTransformResource() {
-	//座標変換行列リソースを作成する	
-	instancingResource_ = directXBase_->CreateBufferResource(sizeof(ParticleForGPU) * ParticleEmitter::kNumMaxInstance);
-	//座標変換行列リソースにデータを書き込むためのアドレスを取得してtransformationMatrixDataに割り当てる
-	//書き込むためのアドレス
-	instancingResource_->Map(0, nullptr, reinterpret_cast<void**>(&instancingData_));
-	for (uint32_t i = 0; i < ParticleEmitter::kNumMaxInstance; i++) {
-		//単位行列を書き込んでおく
-		instancingData_[i].WVP = Matrix4x4::Identity4x4();
-		instancingData_[i].World = Matrix4x4::Identity4x4();
-		instancingData_[i].color = Vector4(1.0f, 1.0f, 1.0f, 1.0f); // 初期色を白に設定
+//テクスチャの変更
+void ParticleSystem::SetTexture(uint32_t index, const std::string& imageFileName){
+	//マテリアルインスタンスがなければ
+	if (!materialInstance_){
+		return;
+	}
+	//マテリアルを個別化する
+	EnsureUniqueMaterialInstance();
+	materialInstance_->SetTexture(index, "engine/resources/textures/" + imageFileName);
+}
+
+//UV座標の設定
+void ParticleSystem::SetUVTransform(uint32_t index, const RectTransform& uvTransform){
+	//マテリアルインスタンスがなければ
+	if (!materialInstance_){
+		return;
+	}
+	//マテリアルを個別化する
+	EnsureUniqueMaterialInstance();
+	materialInstance_->SetUVTransform(index, uvTransform);
+}
+
+//モデルの取得
+Model* ParticleSystem::GetModel(){
+	return model_;
+}
+
+//描画データの取得
+const ParticleRenderData& ParticleSystem::GetRenderData(){
+	return renderData_;
+}
+
+//モデルを所有しているか
+bool ParticleSystem::HasModel() const{
+	if (model_){
+		return true;
+	}
+	return false;
+}
+
+//マテリアルを個別化する
+void ParticleSystem::EnsureUniqueMaterialInstance(){
+	//マテリアルインスタンスがなければ
+	if (!materialInstance_){
+		return;
+	}
+
+	//ModelやほかのObject3dと共有中なら個別コピー
+	if (materialInstance_.use_count() > 1){
+		materialInstance_ = std::make_shared<MaterialInstance>(*materialInstance_);
 	}
 }
 
-//ストラクチャバッファの生成
-void ParticleSystem::CreateStructuredBuffer() {
-	//ストラクチャバッファを生成
-	srvIndex_ = particleCommon_->GetSRVManager()->Allocate() + TextureManager::kSRVIndexTop;
-	particleCommon_->GetSRVManager()->CreateSRVForStructuredBuffer(
-		srvIndex_,
-		instancingResource_.Get(),
-		ParticleEmitter::kNumMaxInstance,
-		sizeof(ParticleForGPU)
-	);
+//描画に必要なデータのセットアップ
+void ParticleSystem::SetupRenderData(){
+	renderData_.blendMode = blendMode_;
+	renderData_.materialInstance = materialInstance_.get();
+	renderData_.model = model_;
+	renderData_.numInstance = emitter_->GetNumInstance();
+	renderData_.particles = &emitter_->GetParticles();
 }

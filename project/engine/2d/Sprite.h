@@ -1,58 +1,42 @@
 #pragma once
-#include "ResourceData.h"
-#include "algorithms/Rendering.h"
+#include "SpriteRenderData.h"
+#include "RenderData.h"
 #include "BlendMode.h"
-#include <d3d12.h>
-#include <dxgi1_6.h>
-#include <dxgidebug.h>
-#include <dxcapi.h>
-#include <wrl.h>
+#include "Component.h"
 #include <string>
-
-//前方宣言
-class DirectXBase;
-class WorldTransform;
-class SpriteCommon;
 
 /// <summary>
 /// スプライト
 /// </summary>
-class Sprite {
-private://エイリアステンプレート
-	template <class T>using ComPtr = Microsoft::WRL::ComPtr<T>;
+class Sprite :public Component{
 public://メンバ関数
 	/// <summary>
 	/// コンストラクタ
 	/// </summary>
-	Sprite() = default;
+	/// <param name="gameObject">ゲームオブジェクト</param>
+	explicit Sprite(GameObject* gameObject);
 
 	/// <summary>
 	/// デストラクタ
 	/// </summary>
-	~Sprite();
+	~Sprite()override;
 
 	/// <summary>
 	/// 初期化
 	/// </summary>
-	/// <param name="spriteCommon">スプライトの共通部分</param>
-	/// <param name="spriteName">スプライト名</param>
-	void Initialize(SpriteCommon* spriteCommon, const std::string& spriteName);
+	void Initialize()override;
 
 	/// <summary>
 	/// 更新
 	/// </summary>
-	void Update();
+	void Update()override;
 
 	/// <summary>
-	/// 描画処理
+	/// 複製
 	/// </summary>
-	void Draw();
-
-	/// <summary>
-	/// テキストのセッター
-	/// </summary>
-	/// <param name="textName">テキストのテクスチャ名</param>
-	void SetText(const std::string& textName);
+	/// <param name="gameObject">ゲームオブジェクト</param>
+	/// <returns>コンポーネント</returns>
+	std::unique_ptr<Component>Clone(GameObject* gameObject)const override;
 
 	/// <summary>
 	/// テクスチャの変更
@@ -61,89 +45,100 @@ public://メンバ関数
 	void ChangeTexture(const std::string& spriteName);
 
 	/// <summary>
-	/// UVの座標変換の更新
-	/// </summary>
-	/// <param name="uvTransform">uv座標</param>
-	void UpdateUVTransform(Transform2d uvTransform);
-
-	/// <summary>
-	/// 色のゲッター
-	/// </summary>
-	/// <returns>色</returns>
-	const Vector4& GetColor()const;
-
-	/// <summary>
 	/// 色のセッター
 	/// </summary>
 	/// <param name="color">色</param>
 	void SetColor(const Vector4& color);
 
 	/// <summary>
-	/// トランスフォームのセッター
-	/// </summary>
-	/// <param name="transformData">トランスフォームデータ(scaleは100,100に初期設定してる)</param>
-	void SetTransformData(const Transform2d& transformData);
-
-	/// <summary>
 	/// ブレンドモードのセッター
 	/// </summary>
 	void SetBlendMode(BlendMode blendMode);
+
+	/// <summary>
+	/// UVスケールの設定
+	/// </summary>
+	/// <param name="scale">スケール</param>
+	void SetUVScale(const Vector2& scale);
+
+	/// <summary>
+	/// UV回転の設定
+	/// </summary>
+	/// <param name="rotate">回転</param>
+	void SetUVRotate(float rotate);
+
+	/// <summary>
+	/// UV平行移動の設定
+	/// </summary>
+	/// <param name="translate">平行移動</param>
+	void SetUVTranslate(const Vector2& translate);
+
+	/// <summary>
+	/// UVのトランスフォームの設定
+	/// </summary>
+	/// <param name="rectTransform">トランスフォーム</param>
+	void SetUVRectTransform(const RectTransform& rectTransform);
+
+	/// <summary>
+	/// UVスケールの取得
+	/// </summary>
+	/// <returns>スケール</returns>
+	const Vector2& GetUVScale();
+
+	/// <summary>
+	/// UV回転の取得
+	/// </summary>
+	/// <returns>回転</returns>
+	float GetUVRotate();
+
+	/// <summary>
+	/// UV平行移動の取得
+	/// </summary>
+	/// <returns>平行移動</returns>
+	const Vector2& GetUVTranslate();
+
+	/// <summary>
+	/// UVのトランスフォームの取得
+	/// </summary>
+	/// <returns></returns>
+	const RectTransform& GetUVRectTransform();
+
+	/// <summary>
+	/// 描画データの取得
+	/// </summary>
+	/// <returns>描画データ</returns>
+	const SpriteRenderData& GetRenderData();
 private://メンバ関数
 	/// <summary>
-	/// 頂点データの初期化
+	/// ワールド座標の更新
 	/// </summary>
-	void InitializeVertexData();
+	void UpdateTransform();
 
 	/// <summary>
-	/// 頂点リソースの生成
-	/// </summary>
-	void CreateVertexResource();
+    /// UVの座標変換の更新
+    /// </summary>
+	void UpdateUVTransform();
 
 	/// <summary>
-	/// インデックスデータの初期化
+	/// 描画に必要なデータのセットアップ
 	/// </summary>
-	void InitializeIndexData();
-
-	/// <summary>
-	/// インデックスリソースの生成
-	/// </summary>
-	void CreateIndexResource();
-
-	/// <summary>
-	/// マテリアルデータの初期化
-	/// </summary>
-	void InitializeMaterialData();
-
-	/// <summary>
-	/// マテリアルリソースの生成
-	/// </summary>
-	void CreateMaterialResource();
+	void SetupRenderData();
 private://メンバ変数
 	//テクスチャ番号
-	std::string spriteName_ = {};
-	Transform transform_ = { {100.0f,100.0f ,1.0f},{},{} };//トランスフォームの情報
-	//DirectXの基盤
-	DirectXBase* directXBase_ = nullptr;
-	
-	//スプライトの共通部分
-	SpriteCommon* spriteCommon_ = nullptr;
+	std::string imageFileName_ = {};
 
-	//バッファリソース
-	ComPtr<ID3D12Resource>vertexResource_ = nullptr;//頂点
-	ComPtr<ID3D12Resource>indexResource_ = nullptr;//インデックス
-	ComPtr<ID3D12Resource>materialResource_ = nullptr;//マテリアル
-	
-	//バッファリソース内のデータを指すポインタ
-	VertexData* vertexData_ = nullptr;//頂点
-	uint32_t* indexData_ = nullptr;//インデックス
-	Material* materialData_ = nullptr;//マテリアル
-	
-	//バッファリソースの使い道を補足するバッファビュー
-	D3D12_VERTEX_BUFFER_VIEW vertexBufferView_ = {};//頂点
-	D3D12_INDEX_BUFFER_VIEW indexBufferView_ = {};//インデックス
-	
-	//ワールドトランスフォーム
-	WorldTransform* worldTransform_ = nullptr;
+	//UVTransform
+	RectTransform uvTransform_ = {};
+
 	//ブレンドモード
 	BlendMode blendMode_ = BlendMode::kNone;
+
+	//マテリアル
+	MaterialForSprite material_ = {};
+
+	//トランスフォーメーション行列
+	TransformationMatrixForSprite transformationMatrix_ = {};
+
+	//描画データ
+	SpriteRenderData renderData_ = {};
 };

@@ -1,7 +1,8 @@
 #include "ImGuiManager.h"
 #include "DirectXBase.h"
 #include "SRVManager.h"
-#include "algorithms/Rendering.h"
+#include "MatrixUtility.h"
+#include "MathUtility.h"
 #include "WinApi.h"
 
 //デストラクタ
@@ -14,18 +15,29 @@ ImGuiManager::~ImGuiManager() {
 }
 
 //初期化
-void ImGuiManager::Initialize(WinApi* winApi, DirectXBase* directXBase, SRVManager* srvManager) {
+void ImGuiManager::Initialize([[maybe_unused]] WinApi* winApi, [[maybe_unused]] DirectXBase* directXBase, [[maybe_unused]] SRVManager* srvManager) {
 #ifdef USE_IMGUI
+	//WindowApiを記録する
+	assert(winApi);
+	winApi_ = winApi;
 	//DirectXの基盤部分を記録する
+	assert(directXBase);
 	directXBase_ = directXBase;
 	//SRVの管理を記録する
+	assert(srvManager);
 	srvManager_ = srvManager;
 	IMGUI_CHECKVERSION();
 	//ImGuiのコンテキストを生成
 	ImGui::CreateContext();
+	ImGuiIO& io = ImGui::GetIO();
+	io.ConfigFlags |= ImGuiConfigFlags_DockingEnable;
+	ImFont* JapaneseFont = io.Fonts->AddFontFromFileTTF("engine/resources/fonts/BIZ-UDMinchoM.ttc", 18.0f, nullptr,
+		io.Fonts->GetGlyphRangesJapanese());
+	assert(JapaneseFont);
+	io.Fonts->Build();
 	//ImGuiのスタイルを設定
 	ImGui::StyleColorsDark();
-	ImGui_ImplWin32_Init(winApi->GetHwnd(0));
+	ImGui_ImplWin32_Init(winApi->GetHwnd(WindowType::kDebug));
 	//srvの確保
 	srvManager_->Allocate();
 	ImGui_ImplDX12_Init(
@@ -35,8 +47,6 @@ void ImGuiManager::Initialize(WinApi* winApi, DirectXBase* directXBase, SRVManag
 		srvManager_->GetDescriptorHeap(),
 		srvManager_->GetCPUDescriptorHandle(0),
 		srvManager_->GetGPUDescriptorHandle(0));
-	//srvの解放
-	srvManager_->Free(0);
 #endif // USE_IMGUI
 }
 
@@ -70,25 +80,26 @@ void ImGuiManager::Draw() {
 }
 
 //トランスフォームデータ用のImGui
-void ImGuiManager::DragTransform(Transform& transformData) {
+void ImGuiManager::DragTransform([[maybe_unused]] Transform& transformData) {
 #ifdef USE_IMGUI
 	ImGui::Checkbox("isUsingQuaternion", &transformData.isUsingQuaternion);
 	ImGui::DragFloat3("scale", &transformData.scale.x, 0.1f);
 	if (transformData.isUsingQuaternion) {
 		ImGui::DragFloat3("axis", &transformData.axis.x, 0.01f, -1.0f, 1.0f);
 		ImGui::SliderAngle("angle", &transformData.angle);
-		transformData.quaternion = Rendering::MakeRotateAxisAngleQuaternion(transformData.axis, transformData.angle);
+		transformData.quaternion = matrixUtility::MakeRotateAxisAngleQuaternion(transformData.axis, transformData.angle);
+		transformData.eulerAngle = mathUtility::MakeEulerAngleForQuaternion(transformData.quaternion);
 	} else {
 		ImGui::DragFloat3("eulerAngle", &transformData.eulerAngle.x, 0.1f);
 		transformData.quaternion = Quaternion::MakeQuaternionForEulerAngle(transformData.eulerAngle);
 	}
 	ImGui::DragFloat4("rotate", &transformData.quaternion.x, 0.0f);
-	ImGui::DragFloat3("translate", &transformData.translate.x, 0.1f);
+	ImGui::DragFloat3("translate", &transformData.translate.x, 0.01f);
 #endif // USE_IMGUI
 }
 
 //OBBデータ用のImGui
-void ImGuiManager::DragOBB(PrimitiveData::OBB& obb) {
+void ImGuiManager::DragOBB([[maybe_unused]] primitiveData::OBB& obb) {
 #ifdef USE_IMGUI
 	ImGui::DragFloat3("size", &obb.size.x, 0.1f);
 	static Vector3 obbRadian = {};
@@ -99,7 +110,7 @@ void ImGuiManager::DragOBB(PrimitiveData::OBB& obb) {
 }
 
 //円用のImGui
-void ImGuiManager::DragCircle(PrimitiveData::Circle& circle) {
+void ImGuiManager::DragCircle([[maybe_unused]] primitiveData::Circle& circle) {
 #ifdef USE_IMGUI
 	ImGui::DragFloat3("center", &circle.center.x, 0.1f);
 	ImGui::DragFloat3("eulerAngle", &circle.eulerAngle.x, 0.1f);
@@ -108,7 +119,7 @@ void ImGuiManager::DragCircle(PrimitiveData::Circle& circle) {
 }
 
 //球用のImGui
-void ImGuiManager::DragSphere(PrimitiveData::Sphere& sphere) {
+void ImGuiManager::DragSphere([[maybe_unused]] primitiveData::Sphere& sphere) {
 #ifdef USE_IMGUI
 	ImGui::DragFloat3("center", &sphere.center.x, 0.1f);
 	ImGui::DragFloat("radius", &sphere.radius, 0.01f);
@@ -116,7 +127,7 @@ void ImGuiManager::DragSphere(PrimitiveData::Sphere& sphere) {
 }
 
 //int型でcheckBoxを表示する
-bool ImGuiManager::CheckBoxToInt(const std::string& label, int32_t& frag) {
+bool ImGuiManager::CheckBoxToInt([[maybe_unused]] const std::string& label, [[maybe_unused]] int32_t& frag) {
 	bool checkBox = static_cast<bool>(frag);
 #ifdef USE_IMGUI
 	ImGui::Checkbox(label.c_str(), &checkBox);
@@ -126,7 +137,7 @@ bool ImGuiManager::CheckBoxToInt(const std::string& label, int32_t& frag) {
 }
 
 //4x4の行列の表示
-void ImGuiManager::Matrix4x4Text(const Matrix4x4& matrix, const char* label) {
+void ImGuiManager::Matrix4x4Text([[maybe_unused]] const Matrix4x4& matrix, [[maybe_unused]] const char* label) {
 #ifdef USE_IMGUI
 	ImGui::SeparatorText(label);
 	for (int32_t i = 0; i < 4; i++) {
@@ -143,7 +154,7 @@ void ImGuiManager::Matrix4x4Text(const Matrix4x4& matrix, const char* label) {
 }
 
 //3次元ベクトルの表示
-void ImGuiManager::Vector3Text(const Vector3& vector, const char* label) {
+void ImGuiManager::Vector3Text([[maybe_unused]] const Vector3& vector, [[maybe_unused]] const char* label) {
 #ifdef USE_IMGUI
 	ImGui::SeparatorText(label);
 	ImGui::Text("%5.3f %5.3f %5.3f", vector.x, vector.y, vector.z);
@@ -151,7 +162,7 @@ void ImGuiManager::Vector3Text(const Vector3& vector, const char* label) {
 }
 
 //クオータニオンの表示
-void ImGuiManager::QuaternionText(const Quaternion& quaternion, const char* label) {
+void ImGuiManager::QuaternionText([[maybe_unused]] const Quaternion& quaternion, [[maybe_unused]] const char* label) {
 #ifdef USE_IMGUI
 	ImGui::SeparatorText(label);
 	ImGui::Text("%5.3f %5.3f %5.3f %5.3f", quaternion.x, quaternion.y, quaternion.z, quaternion.w);
@@ -159,7 +170,7 @@ void ImGuiManager::QuaternionText(const Quaternion& quaternion, const char* labe
 }
 
 //浮動小数の表示
-void ImGuiManager::FloatText(float num, const char* label) {
+void ImGuiManager::FloatText([[maybe_unused]] float num, [[maybe_unused]] const char* label) {
 #ifdef USE_IMGUI
 	ImGui::SeparatorText(label);
 	ImGui::Text("%5.3f", num);
@@ -167,7 +178,7 @@ void ImGuiManager::FloatText(float num, const char* label) {
 }
 
 //AABBの表示
-void ImGuiManager::AABBText(const PrimitiveData::AABB& aabb, const char* label) {
+void ImGuiManager::AABBText([[maybe_unused]] const primitiveData::AABB& aabb, [[maybe_unused]] const char* label) {
 #ifdef _DEBUG
 	ImGuiManager::Vector3Text(aabb.min, (static_cast<std::string>(label) + ".min").c_str());
 	ImGuiManager::Vector3Text(aabb.max, (static_cast<std::string>(label) + ".max").c_str());

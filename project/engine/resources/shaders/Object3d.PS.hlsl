@@ -6,6 +6,7 @@ struct Material {
     int32_t enableLighring;
     float32_t4x4 uvMatrix;
     float32_t shininess;
+    float32_t environmentCoefficient;
 };
 
 //平行光源
@@ -53,14 +54,9 @@ struct RimLight {
     int32_t enableRimLighting; //リムライトを有効にするか
 };
 
-//カメラ
-struct Camera {
-    float32_t3 worldPosition;
-    float32_t padding;
-};
-
 ConstantBuffer<Material> gMaterial : register(b0);
 Texture2D<float4> gTexture : register(t0);
+TextureCube<float32_t4> gEnvironmentTexture : register(t3);
 SamplerState gSampler : register(s0);
 ConstantBuffer<DirectionalLight> gDirectionalLight : register(b1);
 ConstantBuffer<Camera> gCamera : register(b2);
@@ -74,8 +70,7 @@ struct Lighting {
     float32_t3 specular;
 };
 
-struct PixelShaderOutput
-{
+struct PixelShaderOutput {
     float32_t4 color : SV_TARGET0;
 };
 
@@ -260,15 +255,15 @@ float32_t3 SetLightingMode(VertexShaderOutput input, float32_t4 textureColor, fl
 }
 
 //リムライト
-float32_t4 RimLighting(VertexShaderOutput input, float32_t3 toEye){
+float32_t4 RimLighting(VertexShaderOutput input, float32_t3 toEye) {
     //リムライト
     float32_t4 rimColor = { 0.0f, 0.0f, 0.0f, 0.0f };
-    if (!gRimLight.enableRimLighting){
+    if (!gRimLight.enableRimLighting) {
         return rimColor;
     }
     
     //カメラ基準
-    float32_t rim = 1.0f - saturate(dot(toEye,input.normal));
+    float32_t rim = 1.0f - saturate(dot(toEye, input.normal));
     
     //合成
     float32_t rimValue = pow(rim, gRimLight.power);
@@ -296,6 +291,12 @@ PixelShaderOutput main(VertexShaderOutput input) {
         
         //リムライトを加算
         output.color.rgb += rimColor.rgb;
+        
+        //環境マップ
+        float32_t3 cameraToPosition = normalize(input.worldPosition - gCamera.worldPosition);
+        float32_t3 reflectedVector = reflect(cameraToPosition, normalize(input.normal));
+        float32_t4 environmentColor = gEnvironmentTexture.Sample(gSampler, reflectedVector);
+        output.color.rgb += environmentColor.rgb * gMaterial.environmentCoefficient;
       
         //アルファ  
         output.color.a = gMaterial.color.a * textureColor.a;
@@ -315,5 +316,6 @@ PixelShaderOutput main(VertexShaderOutput input) {
     if (output.color.a == 0.0f) {
         discard;
     }
+    output.color.rgb = output.color.rgb;
     return output;
 }

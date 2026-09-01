@@ -1,35 +1,35 @@
 #pragma once
 //前方宣言
+class WinApi;
 class Input;
 class DirectXBase;
+class SRVManager;
 class TextureManager;
-class Object3dCommon;
-class Object2dCommon;
-class SpriteCommon;
-class ParticleCommon;
-class ModelCommon;
+class ModelManager;
 class SceneManager;
 class CameraManager;
-class ParticleManager;
 class AudioManager;
 class ImGuiManager;
+class TagManager;
+class PipelineManager;
+class LightingManager;
 class Core;
 
 //シーンで必要なクラス
 struct SceneContext {
+	WinApi* winApi;
 	Input* input;
 	DirectXBase* directXBase;
+	SRVManager* srvManager;
 	TextureManager* textureManager;
-	Object3dCommon* object3dCommon;
-	Object2dCommon* object2dCommon;
-	SpriteCommon* spriteCommon;
-	ParticleCommon* particleCommon;
-	ModelCommon* modelCommon;
+	ModelManager* modelManager;
 	SceneManager* sceneManager;
 	CameraManager* cameraManager;
-	ParticleManager* particleManager;
 	AudioManager* audioManager;
-	ImGuiManager* imguiManager;
+	ImGuiManager* imGuiManager;
+	TagManager* tagManager;
+	PipelineManager* pipelineManager;
+	LightingManager* lightingManager;
 
 	/// <summary>
 	/// ゲームエンジンの核から必要な物を抽出する

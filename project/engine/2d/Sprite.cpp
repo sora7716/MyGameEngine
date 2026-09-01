@@ -1,191 +1,142 @@
 #include "Sprite.h"
-#include "SpriteCommon.h"
 #include <cassert>
-#include "algorithms/Math.h"
+#include "MatrixUtility.h"
 #include "TextureManager.h"
 #include "DirectXBase.h"
 #include "WinApi.h"
 #include "WorldTransform.h"
 #include "ImGuiManager.h"
 
+//コンストラクタ
+Sprite::Sprite(GameObject* gameObject) :Component(gameObject){
+}
+
 //デストラクタ
-Sprite::~Sprite() {
-	delete worldTransform_;
+Sprite::~Sprite(){
 }
 
 //初期化
-void Sprite::Initialize(SpriteCommon* spriteCommon, const std::string& spriteName) {
-	spriteCommon_ = spriteCommon;
-	directXBase_ = spriteCommon_->GetDirectXBase();//DirectXの基盤部分を受け取る
-	//頂点データの生成
-	CreateVertexResource();
-	//インデックスデータの生成
-	CreateIndexResource();
-	//マテリアルデータの生成
-	CreateMaterialResource();
+void Sprite::Initialize(){
+	//基底クラスの初期化
+	Component::Initialize();
 	//スプライトファイルパスを記録
-	spriteName_ = "engine/resources/textures/" + spriteName;
-	//スプライトの共通部分
-	spriteCommon_->LoadTexture(spriteName_);
-	//スクリーンに表示する範囲を設定
-	WorldTransform::ScreenArea screenArea = {
-		.left = 0,
-		.top = 0,
-		.right = (float)WinApi::kClientWidth,
-		.bottom = (float)WinApi::kClientHeight,
-	};
-	//ワールドトランスフォーム
-	worldTransform_ = new WorldTransform();
-	worldTransform_->Initialize(directXBase_, TransformMode::k2d);
-	worldTransform_->SetScreenArea(screenArea);
+	imageFileName_ = "engine/resources/textures/white1x1.png";
 }
 
 //更新
-void Sprite::Update() {
-	worldTransform_->SetTransformData(transform_);
-	//ワールドトランスフォームの更新
-	worldTransform_->Update();
+void Sprite::Update(){
+	//基底クラスの更新
+	Component::Update();
+
+	//ワールド座標の更新
+	UpdateTransform();
+
+	//UV座標の更新
+	UpdateUVTransform();
+
+	//描画データのセットアップ
+	SetupRenderData();
 }
 
-//描画処理
-void Sprite::Draw() {
-	//描画準備
-	spriteCommon_->DrawSetting();
-	//PSOの設定
-	auto pso = spriteCommon_->GetGraphicsPipelineStates()[static_cast<int32_t>(blendMode_)].Get();
-	//グラフィックスパイプラインをセットするコマンド
-	directXBase_->GetCommandList()->SetPipelineState(pso);
-	//ワールドトランスフォームの描画
-	worldTransform_->Draw();
-	//VertexBufferViewの設定
-	directXBase_->GetCommandList()->IASetVertexBuffers(0, 1, &vertexBufferView_);//VBVを設定
-	//IndexBufferViewを設定
-	directXBase_->GetCommandList()->IASetIndexBuffer(&indexBufferView_);//IBVを設定
-	//マテリアルCBufferの場所を設定
-	directXBase_->GetCommandList()->SetGraphicsRootConstantBufferView(0, materialResource_->GetGPUVirtualAddress());//material
-	//SRVのDescriptorTableの先頭を設定
-	directXBase_->GetCommandList()->SetGraphicsRootDescriptorTable(2, spriteCommon_->GetTextureManager()->GetSRVHandleGPU(spriteName_));
-	//描画(DrawCall/ドローコール)
-	directXBase_->GetCommandList()->DrawIndexedInstanced(6, 1, 0, 0, 0);
-}
+//複製
+std::unique_ptr<Component> Sprite::Clone(GameObject* gameObject) const{
+	std::unique_ptr<Sprite>cloneInstance = std::make_unique<Sprite>(gameObject);
 
-//テキストのセッター
-void Sprite::SetText(const std::string& textName) {
-	spriteName_ = textName;
+	//初期化
+	cloneInstance->Initialize();
+
+	//Spriteが持つ設定だけ複製
+	cloneInstance->SetEnabled(this->IsEnabled());
+	cloneInstance->imageFileName_ = this->imageFileName_;
+	cloneInstance->blendMode_ = this->blendMode_;
+	cloneInstance->material_ = this->material_;
+	cloneInstance->uvTransform_ = uvTransform_;
+	return cloneInstance;
 }
 
 //テクスチャの変更
-void Sprite::ChangeTexture(const std::string& spriteName) {
-	spriteName_ = "engine/resources/textures/" + spriteName;
-	spriteCommon_->LoadTexture(spriteName_);
-}
-
-// UVの座標変換の更新
-void Sprite::UpdateUVTransform(Transform2d uvTransform) {
-	//UVTransform
-	materialData_->uvMatrix = Rendering::MakeUVAffineMatrix(uvTransform);
-}
-
-//色のゲッター
-const Vector4& Sprite::GetColor() const {
-	// TODO: return ステートメントをここに挿入します
-	return materialData_->color;
+void Sprite::ChangeTexture(const std::string& spriteName){
+	imageFileName_ = "engine/resources/textures/" + spriteName;
 }
 
 //色のセッター
-void Sprite::SetColor(const Vector4& color) {
-	materialData_->color = color;
-}
-
-//トランスフォームのセッター
-void Sprite::SetTransformData(const Transform2d& transform) {
-	transform_.scale.x = transform.scale.x;
-	transform_.scale.y = transform.scale.y;
-	transform_.quaternion.z = transform.rotate;
-	transform_.translate.x = transform.translate.x;
-	transform_.translate.y = transform.translate.y;
+void Sprite::SetColor(const Vector4& color){
+	material_.color = color;
 }
 
 //ブレンドモードのセッター
-void Sprite::SetBlendMode(BlendMode blendMode) {
+void Sprite::SetBlendMode(BlendMode blendMode){
 	blendMode_ = blendMode;
 }
 
-//頂点データの初期化
-void Sprite::InitializeVertexData() {
-	//矩形
-	vertexData_[0].position = { 0.0f,1.0f,0.0f,1.0f };//左下
-	vertexData_[0].texcoord = { 0.0f,1.0f };
-	vertexData_[0].normal = { 0.0f,0.0f,-1.0f };
-
-	vertexData_[1].position = { 0.0f,0.0f,0.0f,1.0f };//左上
-	vertexData_[1].texcoord = { 0.0f,0.0f };
-	vertexData_[1].normal = { 0.0f,0.0f,-1.0f };
-
-	vertexData_[2].position = { 1.0f,1.0f,0.0f,1.0f };//右下
-	vertexData_[2].texcoord = { 1.0f,1.0f };
-	vertexData_[2].normal = { 0.0f,0.0f,-1.0f };
-
-	vertexData_[3].position = { 1.0f,0.0f,0.0f,1.0f };//右上
-	vertexData_[3].texcoord = { 1.0f,0.0f };
-	vertexData_[3].normal = { 0.0f,0.0f,-1.0f };
+//UVスケールの設定
+void Sprite::SetUVScale(const Vector2& scale){
+	uvTransform_.scale = scale;
 }
 
-//頂点データの生成
-void Sprite::CreateVertexResource() {
-	//VertexResourceを作成する
-	vertexResource_ = directXBase_->CreateBufferResource(sizeof(VertexData) * 6);
-	//VertexBufferViewを作成する
-	//リソースの先頭アドレスから使う
-	vertexBufferView_.BufferLocation = vertexResource_->GetGPUVirtualAddress();
-	//使用するリソースのサイズは頂点6つ分のサイズ
-	vertexBufferView_.SizeInBytes = sizeof(VertexData) * 6;
-	//1頂点当たりのサイズ
-	vertexBufferView_.StrideInBytes = sizeof(VertexData);
-
-	//VertexResourceにデータを書き込むためのアドレスを取得してvertexDataに割り当てる
-	vertexResource_->Map(0, nullptr, reinterpret_cast<void**>(&vertexData_));
-	InitializeVertexData();
+//UV回転の設定
+void Sprite::SetUVRotate(float rotate){
+	uvTransform_.rotate = rotate;
 }
 
-//インデックスデータの初期化
-void Sprite::InitializeIndexData() {
-	indexData_[0] = 0; indexData_[1] = 1; indexData_[2] = 2;
-	indexData_[3] = 1; indexData_[4] = 3; indexData_[5] = 2;
+//UV平行移動の設定
+void Sprite::SetUVTranslate(const Vector2& translate){
+	uvTransform_.translate = translate;
 }
 
-//インデックスリソースの生成
-void Sprite::CreateIndexResource() {
-	//IndexResourceを作成する
-	indexResource_ = directXBase_->CreateBufferResource(sizeof(uint32_t) * 6);
-	//IndexBufferViewを作成する
-	//リソースの先頭のアドレスから使う
-	indexBufferView_.BufferLocation = indexResource_->GetGPUVirtualAddress();
-	//使用するリソースのサイズはインデックス6つ分のサイズ
-	indexBufferView_.SizeInBytes = sizeof(uint32_t) * 6;
-	//インデックスはuint32_tとする
-	indexBufferView_.Format = DXGI_FORMAT_R32_UINT;
-
-	//IndexResourceにデータを書き込むためのアドレスを取得してindexDataに割り当てる
-	indexResource_->Map(0, nullptr, reinterpret_cast<void**>(&indexData_));
-	InitializeIndexData();
+//UVのトランスフォームの設定
+void Sprite::SetUVRectTransform(const RectTransform& rectTransform){
+	uvTransform_ = rectTransform;
 }
 
-//マテリアルデータの初期化
-void Sprite::InitializeMaterialData() {
-	//色を書き込む
-	materialData_->color = { 1.0f, 1.0f, 1.0f, 1.0f };
-	materialData_->enableLighting = false;
-	materialData_->uvMatrix = Matrix4x4::Identity4x4();
+//UVスケールの取得
+const Vector2& Sprite::GetUVScale(){
+	return uvTransform_.scale;
 }
 
-//マテリアルリソースの生成
-void Sprite::CreateMaterialResource() {
-	//マテリアルリソースを作る
-	materialResource_ = directXBase_->CreateBufferResource(sizeof(Material));
-	//マテリアルリソースにデータを書き込むためのアドレスを取得してmaterialDataに割り当てる
-	//書き込むためのアドレスを取得
-	materialResource_->Map(0, nullptr, reinterpret_cast<void**>(&materialData_));
-	//マテリアルデータの初期値を書き込む
-	InitializeMaterialData();
+//UV回転の取得
+float Sprite::GetUVRotate(){
+	return uvTransform_.rotate;
+}
+
+//UV平行移動の取得
+const Vector2& Sprite::GetUVTranslate(){
+	return uvTransform_.translate;
+}
+
+//UVのトランスフォームの取得
+const RectTransform& Sprite::GetUVRectTransform(){
+	return uvTransform_;
+}
+
+//描画データの取得
+const SpriteRenderData& Sprite::GetRenderData(){
+	return renderData_;
+}
+
+//ワールド座標の更新
+void Sprite::UpdateTransform(){
+	GameObject* gameObject = GetOwner();
+	transformationMatrix_.world = matrixUtility::MakeAffineMatrix(gameObject->GetTransform());
+	//ProjectionMatrixを作って平行投影行列を書き込む
+	const Matrix4x4& projectionMatrix = matrixUtility::MakeOrthographicMatrix(0.0f, 0.0f, static_cast<float>(WinApi::kClientWidth), static_cast<float>(WinApi::kClientHeight), 0.1f, 100.0f);
+	//wvpの書き込み
+	const Matrix4x4& viewProjectionMatrix = Matrix4x4::Identity4x4() * projectionMatrix;
+	transformationMatrix_.wvp = transformationMatrix_.world * viewProjectionMatrix;
+}
+
+// UVの座標変換の更新
+void Sprite::UpdateUVTransform(){
+	//UVTransform
+	material_.uvMatrix = matrixUtility::MakeAffineMatrix(uvTransform_);
+}
+
+//描画に必要なデータのセットアップ
+void Sprite::SetupRenderData(){
+	GameObject* gameObject = GetOwner();
+	renderData_.blendMode = blendMode_;
+	renderData_.isActive = gameObject->IsActive();
+	renderData_.material = material_;
+	renderData_.transformationMatrix = transformationMatrix_;
+	renderData_.imageFileName = imageFileName_;
 }

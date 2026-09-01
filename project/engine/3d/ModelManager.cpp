@@ -1,55 +1,80 @@
 #include "ModelManager.h"
-#include "engine/3d/ModelCommon.h"
-#include "engine/3d/Model.h"
+#include "Model.h"
+#include "PrimitiveMeshFactory.h"
+#include "TextureManager.h"
 #include <cassert>
 
 //デストラクタ
-ModelManager::~ModelManager() {}
+ModelManager::~ModelManager(){}
 
 //初期化
-void ModelManager::Initialize(ModelCommon* modelCommon) {
-	assert(modelCommon);
-	modelCommon_ = modelCommon;
+void ModelManager::Initialize(DirectXBase* directXBase, TextureManager* textureManager){
+	//DirectXの基盤部分の記録
+	assert(directXBase);
+	directXBase_ = directXBase;
+	//テクスチャの管理の記録
+	assert(textureManager);
+	textureManager_ = textureManager;
+
 }
 
 //プリミティブなモデルの生成
-void ModelManager::CreatePrimitiveModel() {
-	//モデルの生成とファイル読み込み、初期化
-	std::unique_ptr<Model>model = Model::CreateCube(modelCommon_);
+void ModelManager::CreatePrimitiveModel(){
+	//Cubeモデルの生成
+	std::unique_ptr<Model>model = Model::CreateModel(directXBase_, { primitiveMeshFactory::CreateCube() });
 
-	//モデルをmapコンテナに格納する
+	//Cubeモデルの追加
 	models_.insert(std::make_pair("cube", std::move(model)));
+
+	//Sphereモデルの生成(分割数16)
+	model = Model::CreateModel(directXBase_, { primitiveMeshFactory::CreateSphere() });
+
+	//Sphereモデル(分割数16)の追加
+	models_.insert(std::make_pair("sphere_16", std::move(model)));
+
+	//Sphereモデルの生成(分割数32)
+	model = Model::CreateModel(directXBase_, { primitiveMeshFactory::CreateSphere({Vector3::MakeAllOne(),32,1.0f}) });
+
+	//Sphereモデル(分割数32)の追加
+	models_.insert(std::make_pair("sphere_32", std::move(model)));
+
+	//Planeモデルの生成
+	model = Model::CreateModel(directXBase_, { primitiveMeshFactory::CreatePlane() });
+
+	//Planeモデルの追加
+	models_.insert(std::make_pair("plane", std::move(model)));
 }
 
-// objモデルの読み込み
-void ModelManager::LoadModel(const std::string& name, const std::string& storedFileName, const std::string& filePath) {
+//モデルの追加
+void ModelManager::AddModel(const std::string& name, const std::string& modelFileName){
 	//読み込み済みならモデルを検索
-	if (models_.contains(name)) {
+	if (models_.contains(name)){
 		//読み込み済みなら早期return
 		return;
 	}
 	//モデルの生成とファイル読み込み、初期化
-	std::unique_ptr<Model>model = Model::CreateFromModel(modelCommon_, storedFileName, filePath);
+	std::unique_ptr<Model>model = Model::CreateModel(directXBase_, modelFileName);
+
+	//テクスチャの読み込み
+	for (const MaterialTexturePaths& textureFilePaths : model->GetModelData().materialTexturePaths){
+		textureManager_->AddTexture(textureFilePaths.textureFilePath);
+	}
 
 	//モデルをmapコンテナに格納する
 	models_.insert(std::make_pair(name, std::move(model)));
 }
 
 //モデルの検索
-Model* ModelManager::FindModel(const std::string& name) {
-	//読み込み済みモデルを検索
-	if (models_.contains(name)) {
-		//読み込み済みモデルを戻り値としてreturn
-		return models_.at(name).get();
-	}
-	//ファイル名一致なし
-	return nullptr;
-}
+Model* ModelManager::FindModel(const std::string& name){
+	auto it = models_.find(name);
 
-//モデルの共通部分のゲッター
-ModelCommon* ModelManager::GetModelCommon() {
-	return modelCommon_;
+	//モデルのイテレーターが末尾と一緒だった場合
+	if (it == models_.end()){
+		return nullptr;
+	}
+
+	return it->second.get();
 }
 
 //コンストラクタ
-ModelManager::ModelManager(ConstructorKey) {}
+ModelManager::ModelManager(ConstructorKey){}

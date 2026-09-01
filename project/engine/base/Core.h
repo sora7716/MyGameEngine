@@ -7,33 +7,32 @@
 #include "ModelManager.h"
 #include "ImGuiManager.h"
 #include "CameraManager.h"
-#include "SpriteCommon.h"
-#include "Object2dCommon.h"
-#include "Object3dCommon.h"
-#include "ParticleCommon.h"
-#include "ModelCommon.h"
 #include "SceneManager.h"
 #include "AudioManager.h"
-#include "ParticleManager.h"
 #include "GameObjectList.h"
 #include "AbstractSceneFactory.h"
+#include "TagManager.h"
+#include "PipelineManager.h"
+#include "LightingManager.h"
+#include "RenderSystem.h"
 #include "Context.h"
+
 #include <memory>
 
 /// <summary>
 /// エンジンの核
 /// </summary>
-class Core {
+class Core{
 public://メンバ関数
 	/// <summary>
 	/// コンストラクタ
 	/// </summary>
-	Core() = default;
+	Core();
 
 	/// <summary>
 	/// デストラクタ
 	/// </summary>
-	~Core() = default;
+	~Core();
 
 	/// <summary>
 	/// 初期化
@@ -89,36 +88,6 @@ public://メンバ関数
 	CameraManager* GetCameraManager()const;
 
 	/// <summary>
-	/// スプライトの共通部分の取得
-	/// </summary>
-	/// <returns>スプライトの共通部分</returns>
-	SpriteCommon* GetSpriteCommon()const;
-
-	/// <summary>
-	/// 2Dオブジェクトの共通部分の取得
-	/// </summary>
-	/// <returns>2Dオブジェクトの共通部分</returns>
-	Object2dCommon* GetObject2dCommon()const;
-
-	/// <summary>
-	/// 3Dオブジェクトの共通部分の取得
-	/// </summary>
-	/// <returns>3Dオブジェクトの共通部分</returns>
-	Object3dCommon* GetObject3dCommon()const;
-
-	/// <summary>
-	/// パーティクルの共通部分の取得
-	/// </summary>
-	/// <returns>パーティクルの共通部分</returns>
-	ParticleCommon* GetParticleCommon()const;
-
-	/// <summary>
-	/// モデルの共通部分の取得
-	/// </summary>
-	/// <returns>モデルの共通部分</returns>
-	ModelCommon* GetModelCommon()const;
-
-	/// <summary>
 	/// シーンマネージャーの取得
 	/// </summary>
 	/// <returns>シーンマネージャー</returns>
@@ -131,12 +100,6 @@ public://メンバ関数
 	AudioManager* GetAudioManager()const;
 
 	/// <summary>
-	/// パーティクルのマネージャーの取得
-	/// </summary>
-	/// <returns>パーティクルマネージャー</returns>
-	ParticleManager* GetParticleManager()const;
-
-	/// <summary>
 	/// ゲームオブジェクトのリストの取得
 	/// </summary>
 	/// <returns>ゲームオブジェクトのリストの取得</returns>
@@ -147,6 +110,35 @@ public://メンバ関数
 	/// </summary>
 	/// <returns>シーンファクトリ</returns>
 	AbstractSceneFactory* GetSceneFactory()const;
+
+	/// <summary>
+	/// タグの管理の取得
+	/// </summary>
+	/// <returns>タグの管理</returns>
+	TagManager* GetTagManager()const;
+
+	/// <summary>
+	/// パイプラインの管理の取得
+	/// </summary>
+	/// <returns>パイプラインの管理</returns>
+	PipelineManager* GetPipelineManager()const;
+
+	/// <summary>
+	/// ライティングの管理の取得
+	/// </summary>
+	/// <returns>ライティングの管理</returns>
+	LightingManager* GetLightingManager()const;
+
+	/// <summary>
+	/// 描画システムの取得
+	/// </summary>
+	/// <returns>描画システム</returns>
+	RenderSystem* GetRenderSystem()const;
+private://メンバ関数
+	//コピーコンストラクタ禁止
+	Core(const Core&) = delete;
+	//代入演算子の禁止
+	Core operator=(const Core&) = delete;
 private://メンバ変数
 	//WinApi
 	std::unique_ptr<WinApi>winApi_ = nullptr;
@@ -161,29 +153,25 @@ private://メンバ変数
 	//モデルマネージャー
 	std::unique_ptr<ModelManager>modelManager_ = nullptr;
 	//ImGuiマネージャー
-	std::unique_ptr<ImGuiManager>imguiManager_ = nullptr;
+	std::unique_ptr<ImGuiManager>imGuiManager_ = nullptr;
 	//カメラマネージャー
 	std::unique_ptr<CameraManager>cameraManager_ = nullptr;
-	//スプライトの共通部分
-	std::unique_ptr<SpriteCommon>spriteCommon_ = nullptr;
-	//2Dオブジェクトの共通部分
-	std::unique_ptr<Object2dCommon>object2dCommon_ = nullptr;
-	//3Dオブジェクトの共通部分
-	std::unique_ptr<Object3dCommon>object3dCommon_ = nullptr;
-	//パーティクルの共通部分
-	std::unique_ptr<ParticleCommon>particleCommon_ = nullptr;
-	//モデルの共通部分
-	std::unique_ptr<ModelCommon> modelCommon_ = nullptr;
 	//シーンマネージャー
 	std::unique_ptr<SceneManager>sceneManager_ = nullptr;
 	//オーディオマネージャー
 	std::unique_ptr<AudioManager>audioManager_ = nullptr;
-	//パーティクルマネージャー
-	std::unique_ptr<ParticleManager>particleManager_ = nullptr;
 	//ゲームオブジェクトのリスト
 	std::unique_ptr<GameObjectList>gameObjectList_ = nullptr;
 	//シーンファクトリ
 	std::unique_ptr< AbstractSceneFactory> sceneFactory_ = nullptr;
+	//タグの管理
+	std::unique_ptr<TagManager>tagManager_ = nullptr;
+	//パイプラインの管理
+	std::unique_ptr<PipelineManager>pipelineManager_ = nullptr;
+	//ライティングの管理
+	std::unique_ptr<LightingManager>lightingManager_ = nullptr;
+	//描画システム
+	std::unique_ptr<RenderSystem>renderSystem_ = nullptr;
 	//シーンで必要なもの
 	SceneContext sceneContext_ = {};
 };

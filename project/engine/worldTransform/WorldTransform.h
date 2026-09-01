@@ -1,6 +1,6 @@
 #pragma once
-#include "engine/math/ResourceData.h"
-#include "engine/math/RenderingData.h"
+#include "RenderData.h"
+#include "RenderingData.h"
 #include <string>
 #include <wrl.h>
 #include <d3d12.h>
@@ -97,7 +97,7 @@ public://メンバ関数
 	/// ワールド座標のセッター(2D)
 	/// </summary>
 	/// <param name="transform2d">ワールド座標(2d)</param>
-	void SetTransform2d(const Transform2d& transform2d);
+	void SetTransform2d(const RectTransform& transform2d);
 
 	/// <summary>
 	/// スケールのセッター

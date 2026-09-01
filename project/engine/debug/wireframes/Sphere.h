@@ -1,13 +1,14 @@
 #pragma once
 #include "BaseShape.h"
 #include "PrimitiveData.h"
-namespace Primitive {
+namespace debugDraw {
 	class Sphere :public BaseShape {
 	public://メンバ関数
 		/// <summary>
 		/// コンストラクタ
 		/// </summary>
-		Sphere();
+		/// <param name="gameObject">ゲームオブジェクト</param>
+		explicit Sphere(GameObject* gameObject);
 
 		/// <summary>
 		/// デストラクタ
@@ -17,26 +18,31 @@ namespace Primitive {
 		/// <summary>
 		/// 初期化
 		/// </summary>
-		/// <param name="directXBase">DirectXの基盤部分</param>
-		/// <param name="camera">カメラ</param>
-		void Initialize(DirectXBase* directXBase, Camera* camera)override;
+		void InitializeShape()override;
 
 		/// <summary>
 		/// 更新
 		/// </summary>
-		void Update()override;
+		void UpdateShape()override;
+
+		/// <summary>
+		/// 複製
+		/// </summary>
+		/// <param name="gameObject">ゲームオブジェクト</param>
+		/// <returns>コンポーネント</returns>
+		std::unique_ptr<Component>Clone(GameObject* gameObject)const override;
 
 		/// <summary>
 		/// 球のセッター
 		/// </summary>
 		/// <param name="sphere">球</param>
-		void SetSphere(const PrimitiveData::Sphere& sphere);
+		void SetSphere(const primitiveData::Sphere& sphere);
 
 		/// <summary>
 		/// 球のゲッター
 		/// </summary>
 		/// <returns>球</returns>
-		PrimitiveData::Sphere GetSphere();
+		primitiveData::Sphere GetSphere();
 	private://メンバ変数
 		/// <summary>
 		/// 頂点データの設定
@@ -51,6 +57,6 @@ namespace Primitive {
 		static inline const int32_t kCircleVertexCount = 32;
 	private://メンバ変数
 		//球
-		PrimitiveData::Sphere sphere_ = {};
+		primitiveData::Sphere sphere_ = {};
 	};
 }

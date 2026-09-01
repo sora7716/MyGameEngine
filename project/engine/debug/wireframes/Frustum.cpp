@@ -1,59 +1,61 @@
 #include "Frustum.h"
 #include "Camera.h"
-#include "algorithms/Math.h"
-#include <cmath>
+#include "GameObject.h"
 
 //コンストラクタ
-Primitive::Frustum::Frustum() {
+debugDraw::Frustum::Frustum(GameObject* gameObject) :BaseShape(gameObject){
 }
 
 //デストラクタ
-Primitive::Frustum::~Frustum() {
+debugDraw::Frustum::~Frustum(){
 }
 
 //初期化
-void Primitive::Frustum::Initialize(DirectXBase* directXBase, Camera* camera) {
+void debugDraw::Frustum::InitializeShape(){
 	vertexCount_ = 8;
 	indexCount_ = 24;
-	targetCamera_ = camera;
-
-	//基底クラスの更新
-	BaseShape::Initialize(directXBase, camera);
 }
 
 //更新
-void Primitive::Frustum::Update() {
+void debugDraw::Frustum::UpdateShape(){
+	GameObject* gameObject = GetOwner();
 	//トランスフォームに送信
-	transform_.eulerAngle = targetCamera_->GetEulerAngle();
-	transform_.quaternion = targetCamera_->GetQuaternion();
-	transform_.translate = targetCamera_->GetTranslate();
+	gameObject->GetTransform().eulerAngle = targetCamera_->GetEulerAngle();
+	gameObject->GetTransform().quaternion = targetCamera_->GetQuaternion();
+	gameObject->GetTransform().translate = targetCamera_->GetTranslate();
+}
 
-	//基底クラスの更新
-	BaseShape::Update();
+//複製
+std::unique_ptr<Component> debugDraw::Frustum::Clone(GameObject* gameObject) const{
+	std::unique_ptr<Frustum>cloneInstance = std::make_unique<Frustum>(gameObject);
+
+	//初期化
+	cloneInstance->Initialize();
+
+	//基底クラスの内容コピー
+	CopyBaseSetting(*cloneInstance);
+
+	//内容をコピー
+	cloneInstance->targetCamera_ = this->targetCamera_;
+	return cloneInstance;
 }
 
 //対象となるカメラの設定
-void Primitive::Frustum::SetTargetCamera(Camera* targetCamera) {
+void debugDraw::Frustum::SetTargetCamera(Camera* targetCamera){
 	targetCamera_ = targetCamera;
 }
 
 //頂点の設定
-void Primitive::Frustum::SettingVertexData() {
-	for (uint32_t i = 0; i < 8; i++) {
+void debugDraw::Frustum::SettingVertexData(){
+	for (uint32_t i = 0; i < 8; i++){
 		//w=1.0fを入れて同次座標系に変換
-		vertexData_[i].position = targetCamera_->GetFrustum().localCorners[i];
-	}
-
-	//texcoordとnormalは同じ
-	for (int32_t i = 0; i < vertexCount_; i++) {
-		vertexData_[i].texcoord = { 0.0f,0.0f };
-		vertexData_[i].normal = { 0.0f,0.0f,1.0f };
+		vertices_[i] = targetCamera_->GetFrustum().localCorners[i];
 	}
 }
 
 //インデックスの設定
-void Primitive::Frustum::SettingIndexData() {
-	int32_t indices[] = {
+void debugDraw::Frustum::SettingIndexData(){
+	uint32_t indices[] = {
 		//前面
 		0,1,
 		1,2,
@@ -74,7 +76,7 @@ void Primitive::Frustum::SettingIndexData() {
 	};
 
 	//作成したインデックスデータを代入前面
-	for (int32_t i = 0; i < indexCount_; i++) {
-		indexData_[i] = indices[i];
+	for (uint32_t i = 0; i < indexCount_; i++){
+		indices_[i] = indices[i];
 	}
 }

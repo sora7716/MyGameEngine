@@ -1,6 +1,7 @@
 #pragma once
-#include "ResourceData.h"
-#include "algorithms/Rendering.h"
+#include "RenderData.h"
+#include "MatrixUtility.h"
+#include "Object3dRenderData.h"
 #include <string>
 #include <vector>
 #include <wrl.h>
@@ -8,16 +9,41 @@
 #include <memory>
 
 //前方宣言
-class ModelCommon;
 class DirectXBase;
 class Mesh;
+class MaterialInstance;
+class LODBuilder;
 
 /// <summary>
 /// モデル
 /// </summary>
-class Model {
+class Model{
 private://エイリアステンプレート
 	template <class T>using ComPtr = Microsoft::WRL::ComPtr<T>;
+public://静的メンバ関数
+	/// <summary>
+	/// モデルの生成(ファイルを読み込み)
+	/// </summary>
+	/// <param name="directXBase">DirectXの基盤部分</param>
+	/// <param name="modelFileName">モデルのファイル名</param>
+	/// <returns>モデル</returns>
+	static std::unique_ptr<Model> CreateModel(DirectXBase* directXBase, const std::string& modelFileName);
+
+	/// <summary>
+	/// モデルの生成(メッシュデータ)
+	/// </summary>
+	/// <param name="directXBase">DirectXの基盤部分</param>
+	/// <param name="meshDatas">メッシュデータ</param>
+	/// <returns>モデル</returns>
+	static std::unique_ptr<Model> CreateModel(DirectXBase* directXBase, const std::vector<MeshData>& meshDatas);
+
+	/// <summary>
+	/// モデルの生成(モデルデータ)
+	/// </summary>
+	/// <param name="directXBase">DirectXの基盤部分</param>
+	/// <param name="modelData">モデルデータ</param>
+	/// <returns>モデル</returns>
+	static std::unique_ptr<Model> CreateModel(DirectXBase* directXBase, const ModelData& modelData);
 public://メンバ関数
 	/// <summary>
 	/// コンストラクタ
@@ -30,34 +56,10 @@ public://メンバ関数
 	~Model();
 
 	/// <summary>
-	/// モデルの生成(ファイルを読み込み)
-	/// </summary>
-	/// <param name="modelCommon">モデルの共通部分</param>
-	/// <param name="storedFilePath">モデルを保管しているファイル名(最初と最後に"/"入らない)</param>
-	/// <param name="filename">ファイル名(最初に"/"入らない</param>
-	/// <returns>モデル</returns>
-	static std::unique_ptr<Model> CreateFromModel(ModelCommon* modelCommon, const std::string& storedFilePath, const std::string& filename);
-
-	/// <summary>
-	/// モデルの生成(キューブ)
-	/// </summary>
-	/// <param name="modelCommon">モデルの共通部分</param>
-	/// <returns>モデル</returns>
-	static std::unique_ptr<Model> CreateCube(ModelCommon* modelCommon);
-
-	/// <summary>
-	/// モデルの生成(モデルデータ)
-	/// </summary>
-	/// <param name="modelCommon">モデルの共通部分</param>
-	/// <param name="modelData">モデルデータ</param>
-	/// <returns>モデル</returns>
-	static std::unique_ptr<Model> CreateModelFromModelData(ModelCommon* modelCommon, const ModelData& modelData);
-
-	/// <summary>
 	/// 初期化
 	/// </summary>
-	/// <param name="modelCommon">モデルの共通部分</param>
-	void Initialize(ModelCommon* modelCommon);
+	/// <param name="directXBase">DirectXの基盤部分</param>
+	void Initialize(DirectXBase* directXBase);
 
 	/// <summary>
 	/// メッシュの再構成
@@ -66,54 +68,28 @@ public://メンバ関数
 	void RebuildMeshes(const std::vector<MeshData>& meshes);
 
 	/// <summary>
-	/// 頂点を合成する
+	/// LODモデルの生成
 	/// </summary>
-	/// <param name="rate">どれくらい合成するかの割合</param>
-	/// <param name="minGridSize">グリッドサイズの最小値</param>
-	/// <param name="maxGridSize">グリッドサイズの最大値</param>
-	/// <returns>合成後のメッシュデータ</returns>
-	std::vector<MeshData> VertexClustering(float rate, float min = 0.001f, float max = 1.0f);
+	/// <param name="keepRates">ポリゴン数の割合をまとめたもの</param>
+	void CreateLODModels(const std::vector<float>& keepRates);
 
 	/// <summary>
-	/// 辺縮約
+	/// LODモデルの取得
 	/// </summary>
-	/// <param name="rate">どれくらい頂点を減らすかの割合</param>
-	/// <returns>辺縮約したメッシュデータ</returns>
-	std::vector<MeshData> EdgeCollapse(float rate);
+	/// <param name="lodIndex">LODモデルの検索キー</param>
+	/// <returns>LODモデル</returns>
+	Model* GetLODModel(uint32_t lodIndex);
 
 	/// <summary>
-	/// 描画
+	/// LODの数の取得
 	/// </summary>
-	/// <param name="objectCount">表示したいオブジェクト数</param>
-	void Draw(uint32_t objectCount = 1);
+	/// <returns>LODの数</returns>
+	uint32_t GetLODCount()const;
 
 	/// <summary>
-	/// UV変換
+	/// 描画に必要なデータのセットアップ
 	/// </summary>
-	/// <param name="index">インデックス</param>
-	/// <param name="uvTransform">uv座標</param>
-	void UVTransform(uint32_t index, Transform2d uvTransform);
-
-	/// <summary>
-	/// 色を変更
-	/// </summary>
-	/// <param name="index">インデックス</param>
-	/// <param name="color">色</param>
-	void SetColor(uint32_t index, const Vector4& color);
-
-	/// <summary>
-	/// テクスチャの変更
-	/// </summary>
-	/// <param name="materialIndex">マテリアルインデックス</param>
-	/// <param name="imageName">画像の名前</param>
-	void SetTexture(uint32_t materialIndex, const std::string& imageName);
-
-	/// <summary>
-	/// 色を取得
-	/// </summary>
-	/// <param name="index">インデックス</param>
-	/// <returns>色</returns>
-	const Vector4& GetColor(uint32_t index)const;
+	void SetupRenderData();
 
 	/// <summary>
 	/// モデルデータのゲッター
@@ -122,119 +98,68 @@ public://メンバ関数
 	const ModelData& GetModelData()const;
 
 	/// <summary>
-	/// .mtlファイルの読み取り	
-	/// </summary>
-	/// <param name="directoryPath">ディレクトリファイルパス</param>
-	/// <param name="filename">ファイル名</param>
-	/// <returns>マテリアルデータ</returns>
-	static MaterialData LoadMaterialTemplateFile(const std::string& directoryPath, const std::string& filename);
-
-	/// <summary>
-	/// モデルファイルの読み込み
-	/// </summary>
-	/// <param name="directoryPath">ディレクトリファイルパス(最後に"/"はいらない)</param>
-	/// <param name="storedFilePath">モデルを保管しているファイル名(最初と最後に"/"入らない)</param>
-	/// <param name="filename">ファイル名(最初に"/"入らない</param>
-	/// <returns>モデルデータ</returns>
-	static ModelData LoadModelFile(const std::string& directoryPath, const std::string& storedFilePath, const std::string& filename);
-
-	/// <summary>
-	/// ライティングの設定
-	/// </summary>
-	/// <param name="index">インデックス</param>
-	/// <param name="materialData">ライティングフラグ</param>
-	void SetIsLighting(uint32_t index, bool isLighting);
-
-	/// <summary>
-	/// 輝度の設定
-	/// </summary>
-	/// <param name="index">インデックス</param>
-	/// <param name="shininess">輝度</param>
-	void SetShininess(uint32_t index, float shininess);
-
-	/// <summary>
-	/// リムライトのセッター
-	/// </summary>
-	/// <param name="rimLight">リムライト</param>
-	void SetRimLight(const RimLight& rimLight);
-
-	/// <summary>
 	/// メッシュ達の取得
 	/// </summary>
 	/// <returns>メッシュ達</returns>
 	const std::vector<std::unique_ptr<Mesh>>& GetMeshes()const;
 
 	/// <summary>
-	/// モデルの共通部分の取得
+	/// 描画に必要なデータの取得
 	/// </summary>
-	/// <returns>モデルの共通部分</returns>
-	ModelCommon* GetModelCommon();
+	/// <returns>描画に必要なデータ</returns>
+	const ModelRenderData& GetModelRenderData();
+
+	/// <summary>
+	/// デフォルトのマテリアルインスタンスの取得
+	/// </summary>
+	/// <returns>デフォルトのマテリアルインスタンス</returns>
+	std::shared_ptr<MaterialInstance>GetDefaultMaterialInstance()const;
 private://メンバ関数
-	/// <summary>
-	/// マテリアルリソースの生成
-	/// </summary>
-	void CreateMaterialResource();
-
-	/// <summary>
-	/// リムライトのリソースを生成
-	/// </summary>
-	void CreateRimLightResource();
-
 	/// <summary>
 	/// メッシュの構築
 	/// </summary>
 	void BuildMesh();
 
 	/// <summary>
-	/// キューブの作成
+	/// モデルの作成(メッシュデータから1)
 	/// </summary>
-	MeshData MakeCubeData();
+	/// <param name="meshDatas">メッシュデータ</param>
+	void CreateModel(const std::vector<MeshData>& meshDatas, const std::string& nodeName = "primitive");
 
 	/// <summary>
-	/// キューブの生成
+	/// モデルの生成(モデルのファイルから)
 	/// </summary>
-	void CreateCube();
-
-	/// <summary>
-	/// モデルの生成
-	/// </summary>
-	/// <param name="storedFilePath">モデルを保管しているファイル名(最初と最後に"/"入らない)</param>
-	/// <param name="filename">ファイル名(最初に"/"入らない</param>
-	void CreateFromModel(const std::string& storedFilePath, const std::string& filename);
+	/// <param name="objectFileName">オブジェクトのファイル名</param>
+	void CreateModel(const std::string& objectFileName);
 
 	/// <summary>
 	/// モデルの生成(モデルデータ)
 	/// </summary>
 	/// <param name="modelData">モデルデータ</param>
-	void CreateModelFromModelData(const ModelData& modelData);
-
-	/// <summary>
-	/// 各種リソースの生成
-	/// </summary>
-	void CreateResources();
-
-	/// <summary>
-	/// 近くにある頂点をまとめる
-	/// </summary>
-	/// <param name="size">グリッドサイズ</param>
-	/// <returns>メッシュデータ</returns>
-	MeshData VertexClusteringByGridSize(const MeshData& meshData, float size);
+	void CreateModel(const ModelData& modelData);
 private://メンバ変数
-	//ModelCommonのポインタ
-	ModelCommon* modelCommon_ = nullptr;
 	//DirectXの基盤部分
 	DirectXBase* directXBase_ = nullptr;
+
 	//メッシュ
 	std::vector<std::unique_ptr<Mesh>>meshes_;
+
 	//Objファイルデータ
 	ModelData modelData_ = {};
-	//マテリアルリソース
-	std::vector<ComPtr<ID3D12Resource>>materialResources_;
-	//マテリアルリソースにデータを書き込むためのポインタ
-	std::vector<Material*> materialPtrs_;
-	//リムライト
-	RimLight* rimLightPtr_ = nullptr;
-	//リムライトリソース
-	ComPtr<ID3D12Resource>rimLightResource_ = nullptr;
+
+	//マテリアルインスタンス
+	std::shared_ptr<MaterialInstance>defaultMaterialInstance_ = nullptr;
+
+	//描画に必要なデータ
+	ModelRenderData modelRenderData_ = {};
+
+	//LODのビルダー
+	std::unique_ptr<LODBuilder>lodBuilder_ = nullptr;
+
+	//LODを作成したかのフラグ
+	bool isLODGenerated_ = false;
+
+	//LOD倍率を保存
+	std::vector<float>generatedLODRates_;
 };
 

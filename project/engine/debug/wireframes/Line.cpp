@@ -1,58 +1,67 @@
 #include "Line.h"
-using namespace PrimitiveData;
-using namespace Primitive;
+using namespace primitiveData;
+using namespace debugDraw;
 
 
 //コンストラクタ
-Line::Line() {}
+debugDraw::Line::Line(GameObject* gameObject) :BaseShape(gameObject){
+}
 
 //デストラクタ
-Line::~Line() {}
+Line::~Line(){}
 
 //初期化
-void Line::Initialize(DirectXBase* directXBase, Camera* camera) {
+void Line::InitializeShape(){
 	vertexCount_ = 2;
 	indexCount_ = 2;
-	BaseShape::Initialize(directXBase, camera);
 
 	//差分を設定
 	segment_.diff = { 1.0f,0.0f,0.0f };
 }
 
 //更新
-void Line::Update() {
-	//基底クラスの更新
-	BaseShape::Update();
+void Line::UpdateShape(){
+}
+
+//複製
+std::unique_ptr<Component> debugDraw::Line::Clone(GameObject* gameObject) const{
+	std::unique_ptr<Line>cloneInstance = std::make_unique<Line>(gameObject);
+
+	//初期化
+	cloneInstance->Initialize();
+
+	//基底クラスの内容コピー
+	CopyBaseSetting(*cloneInstance);
+
+	//内容をコピー
+	cloneInstance->segment_ = this->segment_;
+	return cloneInstance;
 }
 
 //線分のゲッター
-void Line::SetSegment(const Segment& segment) {
+void Line::SetSegment(const Segment& segment){
 	segment_ = segment;
 }
 
 //線分のゲッター
-Segment Line::GetSegment() {
+Segment Line::GetSegment(){
 	return segment_;
 }
 
 //頂点データの設定
-void Line::SettingVertexData() {
+void Line::SettingVertexData(){
 	//始点
-	vertexData_[0].position = segment_.origin;
-	vertexData_[0].texcoord = { 0.0f,0.0f };
-	vertexData_[0].normal = { 0.0f,0.0f,1.0f };
+	vertices_[0] = segment_.origin;
 
 	//終点
-	vertexData_[1].position = segment_.origin + segment_.diff;
-	vertexData_[1].texcoord = { 1.0f,0.0f };
-	vertexData_[1].normal = { 0.0f,0.0f,1.0f };
+	vertices_[1] = segment_.origin + segment_.diff;
 }
 
 //インデックスの設定
-void Line::SettingIndexData() {
+void Line::SettingIndexData(){
 	//始点
-	indexData_[0] = 0;
+	indices_[0] = 0;
 
 	//終点
-	indexData_[1] = 1;
+	indices_[1] = 1;
 }

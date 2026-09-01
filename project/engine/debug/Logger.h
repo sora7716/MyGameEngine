@@ -1,11 +1,17 @@
 #pragma once
 #include <string>
+#include <fstream>
 
-/// <summary>
+// <summary>
 /// ログ
 /// </summary>
-class Logger final{
+class Logger{
 public://メンバ関数
+	/// <summary>
+	/// 初期化
+	/// </summary>
+	static void Initialize();
+
 	/// <summary>
 	/// コンソールプリント(ロガー)
 	/// </summary>
@@ -17,10 +23,20 @@ public://メンバ関数
 	/// </summary>
 	/// <param name="message">メッセージ</param>
 	static void ConsolePrintf(const std::wstring& message);
-private://メンバ関数
-	Logger() = default;
-	~Logger() = default;
-	Logger(const Logger&) = delete;
-	const Logger operator=(const Logger&) = delete;
+
+	/// <summary>
+	/// ログの書き出し
+	/// </summary>
+	/// <param name="message">メッセージ</param>
+	static void OutputLog(const std::string& message);
+
+	/// <summary>
+	/// ログの書き出し
+	/// </summary>
+	/// <param name="message">メッセージ</param>
+	static void OutputLog(const std::wstring& message);
+private:
+	//ログのストリーム
+	static inline std::ofstream logStream;
 };
 

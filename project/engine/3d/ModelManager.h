@@ -2,17 +2,17 @@
 #include <map>
 #include <string>
 #include <memory>
+#include <vector>
 
 //前方宣言
 class DirectXBase;
-class ModelCommon;
-class Model;
 class TextureManager;
+class Model;
 
 /// <summary>
 /// モデルの管理
 /// </summary>
-class ModelManager {
+class ModelManager{
 public://メンバ関数
 	/// <summary>
 	/// デストラクタ
@@ -22,8 +22,9 @@ public://メンバ関数
 	/// <summary>
 	/// 初期化
 	/// </summary>
-	/// <param name="modelCommon">モデルの共通部分</param>
-	void Initialize(ModelCommon* modelCommon);
+	/// <param name="directXBase">DirectXの基盤部分</param>
+	/// <param name="textureManager">テクスチャの管理</param>
+	void Initialize(DirectXBase* directXBase, TextureManager* textureManager);
 
 	/// <summary>
 	/// プリミティブなモデルの生成
@@ -31,12 +32,11 @@ public://メンバ関数
 	void CreatePrimitiveModel();
 
 	/// <summary>
-	/// objモデルの読み込み
+	/// モデルの追加
 	/// </summary>
 	/// <param name="name">名前</param>
-    /// <param name="storedFileName">保管しているファイル名("/"は書かなくていい)</param>
-	/// <param name="filePath">ファイル名("/"と".obj"は書かなくていい)</param>
-	void LoadModel(const std::string& name, const std::string& storedFileName, const std::string& filePath);
+	/// <param name="modelFileName">モデルのファイル名</param>
+	void AddModel(const std::string& name, const std::string& modelFileName);
 
 	/// <summary>
 	/// モデルの検索(.objはいらない)
@@ -44,14 +44,8 @@ public://メンバ関数
 	/// <param name="name">名前</param>
 	/// <returns>モデル</returns>
 	Model* FindModel(const std::string& name);
-
-	/// <summary>
-	/// モデルの共通部分のゲッター
-	/// </summary>
-	/// <returns>モデルの共通部分</returns>
-	ModelCommon* GetModelCommon();
 public://PassKey
-	class ConstructorKey {
+	class ConstructorKey{
 		ConstructorKey() = default;
 		friend class Core;
 	};
@@ -66,9 +60,11 @@ private://メンバ関数
 	//代入演算子禁止
 	ModelManager operator=(const ModelManager&) = delete;
 private://メンバ変数
-	//モデルデータコンテナ
+	//モデルのコンテナ
 	std::map<std::string, std::unique_ptr<Model>>models_;
-	//モデルの共通部分
-	ModelCommon* modelCommon_ = nullptr;
+	//DirectXの基盤部分
+	DirectXBase* directXBase_ = nullptr;
+	//Textureの管理
+	TextureManager* textureManager_ = nullptr;
 };
 

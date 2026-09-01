@@ -2,13 +2,14 @@
 #include "BaseShape.h"
 #include "PrimitiveData.h"
 #include <Vector3.h>
-namespace Primitive {
+namespace debugDraw {
 	class Plane :public BaseShape {
 	public://メンバ関数
 		/// <summary>
 		/// コンストラクタ
 		/// </summary>
-		Plane();
+		/// <param name="gameObject">ゲームオブジェクト</param>
+		explicit Plane(GameObject* gameObject);
 
 		/// <summary>
 		/// デストラクタ
@@ -18,26 +19,31 @@ namespace Primitive {
 		/// <summary>
 		/// 初期化
 		/// </summary>
-		/// <param name="directXBase">DirectXの基盤部分</param>
-		/// <param name="camera">カメラ</param>
-		void Initialize(DirectXBase* directXBase, Camera* camera)override;
+		void InitializeShape()override;
 
 		/// <summary>
 		/// 更新
 		/// </summary>
-		void Update()override;
+		void UpdateShape()override;
+
+		/// <summary>
+        /// 複製
+        /// </summary>
+        /// <param name="gameObject">ゲームオブジェクト</param>
+        /// <returns>コンポーネント</returns>
+		std::unique_ptr<Component>Clone(GameObject* gameObject)const override;
 
 		/// <summary>
 		/// 平面の設定
 		/// </summary>
 		/// <param name="plane">平面</param>
-		void SetPlane(const PrimitiveData::Plane& plane);
+		void SetPlane(const primitiveData::Plane& plane);
 
 		/// <summary>
 		/// 平面の取得
 		/// </summary>
 		/// <returns>平面</returns>
-		const PrimitiveData::Plane& GetPlane()const;
+		const primitiveData::Plane& GetPlane()const;
 	private://メンバ変数
 		/// <summary>
 		/// 頂点データの設定
@@ -55,6 +61,6 @@ namespace Primitive {
 		/// <param name="v">ベクトル</param>
 		Vector3 Perpendicular(const Vector3& v);
 	private://メンバ変数
-		PrimitiveData::Plane plane_ = {};
+		primitiveData::Plane plane_ = {};
 	};
 }

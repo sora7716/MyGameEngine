@@ -318,10 +318,19 @@ DirectXGame/imgui.ini
 # DirectXTex Compiled Shaders
 **/DirectXTex/Shaders/Compiled/
 
+# resource
+!resource/**/*.obj
+
 #Dump
 *.dmp
 Dumps/
 
 #ImGui
 imgui.ini
-/project/application/actor/Enemy.cpp
+
+#log
+logs/
+*.log
+
+#json
+*.json

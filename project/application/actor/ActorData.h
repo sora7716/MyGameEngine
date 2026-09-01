@@ -1,7 +1,7 @@
 #pragma once
 #include "GameObject.h"
 #include "ColliderData.h"
-#include "ResourceData.h"
+#include "RenderData.h"
 #include <memory>
 
 //前方宣言

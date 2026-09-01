@@ -1,26 +1,33 @@
 #include "Framework.h"
-#include "algorithms/Math.h"
+#include "MathUtility.h"
+#include "Logger.h"
 #include "Input.h"
 
 //初期化
 void Framework::Initialize() {
+	//ログの初期化
+	Logger::Initialize();
 	//エンジンの核
 	core_ = std::make_unique<Core>();
 	core_->Initialize();
-	//カメラの設定
-	core_->GetObject2dCommon()->SetDefaultCamera(core_->GetCameraManager()->FindCamera("defaultCamera"));
-	core_->GetObject3dCommon()->SetDefaultCamera(core_->GetCameraManager()->FindCamera("defaultCamera"));
-	core_->GetParticleCommon()->SetDefaultCamera(core_->GetCameraManager()->FindCamera("defaultCamera"));
 }
 
 //更新
 void Framework::Update() {
 	//入力処理
 	core_->GetInput()->Update();
-	//カメラの管理
-	core_->GetCameraManager()->Update();
+	//ライトの管理
+	core_->GetLightingManager()->Update();
 	//シーンの管理
 	core_->GetSceneManager()->Update();
+	//カメラの管理
+	core_->GetCameraManager()->Update();
+}
+
+//デバッグ
+void Framework::Debug() {
+	//シーンの管理
+	core_->GetSceneManager()->Debug();
 }
 
 //終了
@@ -35,6 +42,12 @@ void Framework::Run() {
 	while (isEndRequest()) {
 		//ゲームシステムの更新
 		Update();
+
+		if (core_->GetWinApi()->IsActiveHwnd(WindowType::kDebug)) {
+			//デバッグのウィンドウの時だけ
+			Debug();
+		}
+
 		//ゲームシステムの描画
 		Draw();
 #ifdef _DEBUG

@@ -1,55 +1,68 @@
 #include "Sphere.h"
-#include "algorithms/Math.h"
+#include "MathUtility.h"
 #include "ImGuiManager.h"
-using namespace Primitive;
+#include "GameObject.h"
+using namespace debugDraw;
 
 //コンストラクタ
-Sphere::Sphere() {}
+debugDraw::Sphere::Sphere(GameObject* gameObject) :BaseShape(gameObject){
+}
 
 //デストラクタ
-Sphere::~Sphere() {}
+Sphere::~Sphere(){}
 
 //初期化
-void Sphere::Initialize(DirectXBase* directXBase, Camera* camera) {
+void Sphere::InitializeShape(){
 	vertexCount_ = kCircleVertexCount * 3;
 	indexCount_ = vertexCount_ * 2;
-	BaseShape::Initialize(directXBase, camera);
-
 	//半径を設定
 	sphere_.radius = 1.0f;
 }
 
 //更新
-void Sphere::Update() {
-	//トランスフォームに送信
-	transform_.translate = sphere_.center;
+void Sphere::UpdateShape(){
+	GameObject* gameObject = GetOwner();
+	sphere_.center = gameObject->GetTransform().translate;
+	sphere_.radius = gameObject->GetTransform().scale.Max();
+}
 
-	//基底クラスの更新
-	BaseShape::Update();
+//複製
+std::unique_ptr<Component> debugDraw::Sphere::Clone(GameObject* gameObject) const{
+	std::unique_ptr<Sphere>cloneInstance = std::make_unique<Sphere>(gameObject);
+
+	//初期化
+	cloneInstance->Initialize();
+
+	//基底クラスの内容コピー
+	CopyBaseSetting(*cloneInstance);
+
+	//内容をコピー
+	cloneInstance->sphere_ = this->sphere_;
+	return cloneInstance;
 }
 
 //球のセッター
-void Sphere::SetSphere(const PrimitiveData::Sphere& sphere) {
+void Sphere::SetSphere(const primitiveData::Sphere& sphere){
 	sphere_ = sphere;
 }
 
 //球のゲッター
-PrimitiveData::Sphere Sphere::GetSphere() {
+primitiveData::Sphere Sphere::GetSphere(){
 	return sphere_;
 }
 
 //頂点データの設定
-void Sphere::SettingVertexData() {
-	for (int32_t i = 0; i < kCircleVertexCount; i++) {
+void Sphere::SettingVertexData(){
+	for (int32_t i = 0; i < kCircleVertexCount; i++){
 		float t = static_cast<float>(i) / static_cast<float>(kCircleVertexCount);
-		float angle = t * Math::kPi * 2.0f;
+		float angle = t * mathUtility::kPi * 2.0f;
 
 		int32_t xy = i;
 		int32_t xz = kCircleVertexCount + i;
 		int32_t yz = kCircleVertexCount * 2 + i;
 
 		//Z軸を向いている
-		vertexData_[xy] = {
+		vertices_[xy] = {
 			std::cos(angle) * sphere_.radius,
 			std::sin(angle) * sphere_.radius,
 			0.0f,
@@ -57,7 +70,7 @@ void Sphere::SettingVertexData() {
 		};
 
 		//Y軸を向いている
-		vertexData_[xz] = {
+		vertices_[xz] = {
 			std::cos(angle) * sphere_.radius,
 			0.0f,
 			std::sin(angle) * sphere_.radius,
@@ -65,7 +78,7 @@ void Sphere::SettingVertexData() {
 		};
 
 		//X軸を向いている
-		vertexData_[yz] = {
+		vertices_[yz] = {
 			0.0f,
 			std::cos(angle) * sphere_.radius,
 			std::sin(angle) * sphere_.radius,
@@ -75,17 +88,17 @@ void Sphere::SettingVertexData() {
 }
 
 //インデックスの設定
-void Sphere::SettingIndexData() {
+void Sphere::SettingIndexData(){
 	int32_t index = 0;
 
-	for (int32_t circle = 0; circle < 3; circle++) {
+	for (int32_t circle = 0; circle < 3; circle++){
 		int32_t offset = circle * kCircleVertexCount;
 
-		for (int32_t i = 0; i < kCircleVertexCount; i++) {
+		for (int32_t i = 0; i < kCircleVertexCount; i++){
 			int32_t next = (i + 1) % kCircleVertexCount;
 
-			indexData_[index++] = offset + i;
-			indexData_[index++] = offset + next;
+			indices_[index++] = offset + i;
+			indices_[index++] = offset + next;
 		}
 	}
 }

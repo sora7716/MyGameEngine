@@ -47,8 +47,13 @@ Vector4 Vector4::ColorCodeTransform(const std::string& colorCode) {
 	return Vector4(r / 255.0f, g / 255.0f, b / 255.0f, alpha / 255.0f);
 }
 
-//Vector3に変換
-const Vector3 Vector4::ToVector3() const {
+//Vector3の設定
+void Vector4::SetVector3(const Vector3& v) {
+	*this = { v.x,v.y,v.z,w };
+}
+
+//Vector3の取得
+const Vector3 Vector4::GetVector3() const {
 	return { x,y,z };
 }
 
@@ -87,6 +92,11 @@ void Vector4::operator*=(float n) {
 	y *= n;
 	z *= n;
 	w *= n;
+}
+
+//乗算
+void Vector4::operator+=(const Vector4& v) {
+	*this = *this + v;
 }
 
 //乗法

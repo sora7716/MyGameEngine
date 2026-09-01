@@ -1,5 +1,5 @@
 #pragma once
-#include "engine/base/Core.h"
+#include "Core.h"
 
 /// <summary>
 /// ゲーム全体
@@ -25,6 +25,11 @@ public://メンバ関数
 	/// 更新
 	/// </summary>
 	virtual void Update();
+	
+	/// <summary>
+	/// デバッグ
+	/// </summary>
+	virtual void Debug();
 
 	/// <summary>
 	/// 描画
@@ -49,5 +54,7 @@ public://メンバ関数
 protected://メンバ変数
 	//エンジンの核
 	std::unique_ptr<Core>core_ = nullptr;
+	//ウィンドウの検索キー
+	uint32_t windowIndex_ = 0;
 };
 

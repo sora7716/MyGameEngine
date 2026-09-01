@@ -1,8 +1,8 @@
 #include "Input.h"
 #include "WinApi.h"
 #include "Camera.h"
-#include "algorithms/Rendering.h"
-#include "algorithms/Math.h"
+#include "MatrixUtility.h"
+#include "MathUtility.h"
 #include <cassert>
 #include <climits>
 #pragma comment(lib,"dinput8.lib")
@@ -68,9 +68,9 @@ bool Input::ReleaseTriggerKey(BYTE keyNumber) {
 }
 
 //マウスのボタンの押下をチェック
-bool Input::PressMouseButton(Click mouseClicPos) {
+bool Input::PressMouseButton(Click mouseClickPos) {
 	//マウスの押していればtrueを返す
-	if (mouseState_.rgbButtons[static_cast<uint32_t>(mouseClicPos)]) {
+	if (mouseState_.rgbButtons[static_cast<uint32_t>(mouseClickPos)]) {
 		return true;
 	}
 	//そうでなければfalseを返す
@@ -117,7 +117,7 @@ Vector3 Input::GetWorldMousePosition(Camera* camera) const {
 	GetCursorPos(&mousePosition);
 
 	// クライアントエリア座標に変換する
-	HWND hwnd = winApi_->GetHwnd();
+	HWND hwnd = winApi_->GetActiveHwnd();
 	ScreenToClient(hwnd, &mousePosition);
 
 	// ビューポートサイズを取得
@@ -152,7 +152,7 @@ Vector2Int Input::GetMousePosition() const {
 	GetCursorPos(&mousePosition);
 
 	// クライアントエリア座標に変換する
-	HWND hwnd = winApi_->GetHwnd();
+	HWND hwnd = winApi_->GetActiveHwnd();
 	ScreenToClient(hwnd, &mousePosition);
 	Vector2Int result = { mousePosition.x,mousePosition.y };
 	return result;
@@ -233,7 +233,7 @@ const Vector2 Input::GetXboxPadLeftStick(DWORD xBoxPadNumber) {
 }
 
 //Xboxの右スティックのゲッター
-const Vector2 Input::GetXboxPadRighttStick(DWORD xBoxPadNumber) {
+const Vector2 Input::GetXboxPadRightStick(DWORD xBoxPadNumber) {
 	//横軸
 	xboxPadDatas_[static_cast<uint32_t>(xBoxPadNumber)].rightStick.x = static_cast<float>(xboxPadDatas_[static_cast<uint32_t>(xBoxPadNumber)].state.Gamepad.sThumbRX) / static_cast<float>(SHRT_MAX);
 
@@ -276,7 +276,7 @@ void Input::KeyboardInitialize() {
 	result = keyboard_->SetDataFormat(&c_dfDIKeyboard);
 	assert(SUCCEEDED(result));
 	//排他制御レベルのセット
-	result = keyboard_->SetCooperativeLevel(winApi_->GetHwnd(), DISCL_FOREGROUND | DISCL_NONEXCLUSIVE | DISCL_NOWINKEY);
+	result = keyboard_->SetCooperativeLevel(winApi_->GetHwnd(WindowType::kGame), DISCL_FOREGROUND | DISCL_NONEXCLUSIVE | DISCL_NOWINKEY);
 	assert(SUCCEEDED(result));
 }
 
@@ -304,7 +304,7 @@ void Input::MouseInitialize() {
 	result = mouse_->SetDataFormat(&c_dfDIMouse);
 	assert(SUCCEEDED(result));
 	//排他制御レベルのセット
-	result = mouse_->SetCooperativeLevel(winApi_->GetHwnd(), DISCL_FOREGROUND | DISCL_NONEXCLUSIVE);
+	result = mouse_->SetCooperativeLevel(winApi_->GetHwnd(WindowType::kGame), DISCL_FOREGROUND | DISCL_NONEXCLUSIVE);
 	assert(SUCCEEDED(result));
 }
 

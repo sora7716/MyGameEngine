@@ -3,10 +3,10 @@
 
 //クォータニオン
 struct Quaternion {
-	float x;
-	float y;
-	float z;
-	float w;
+	float x = 0.0f;
+	float y = 0.0f;
+	float z = 0.0f;
+	float w = 0.0f;
 
 	/// <summary>
 	/// 乗法単位元
@@ -28,10 +28,10 @@ struct Quaternion {
 	float Dot(const Quaternion& q)const;
 
 	/// <summary>
-	/// ノルム
+	/// 長さ(ノルム)
 	/// </summary>
-	/// <returns>ノルム</returns>
-	float Norm()const;
+	/// <returns>長さ(ノルム)</returns>
+	float Length()const;
 
 	/// <summary>
 	/// 逆クォータニオン

@@ -1,120 +1,75 @@
 #pragma once
+#include "RenderingData.h"
+#include "ParticleData.h"
 #include <list>
 #include <random>
-#include "engine/math/RenderingData.h"
-#include "engine/math/Vector4.h"
-#include "PrimitiveData.h"
-
-//前方宣言
-class ParticleCommon;
-class Camera;
-class Model;
-
-//パーティクルの情報をGPUに送るための構造体
-struct ParticleForGPU {
-	Matrix4x4 WVP;
-	Matrix4x4 World;
-	Vector4 color;
-};
-
-//パーティクル単体のデータ
-struct Particle {
-	Transform transform;//SRVの情報
-	Vector3 velocity;//方向
-	Vector4 color;//色
-	float lifeTime;//生存時間
-	float currentTime;//発生してからの
-};
-
-//発生源
-struct Emitter {
-	Transform transform;//エミッターのTransform
-	uint32_t count;//発生数
-	float frequency;//発生頻度
-	float frequencyTime;//頻度用時刻
-	float range;//発生範囲
-};
-
-//フィールドの加速度
-struct AccelerationField {
-	Vector3 acceleration;//加速度
-	PrimitiveData::AABB area;//範囲
-};
 
 /// <summary>
 /// パーティクルの発生源
 /// </summary>
-class ParticleEmitter {
+class ParticleEmitter{
 public://メンバ関数
 	/// <summary>
 	/// コンストラクタ
 	/// </summary>
-	ParticleEmitter() = default;
+	ParticleEmitter();
 
 	/// <summary>
 	/// デストラクタ
 	/// </summary>
-	~ParticleEmitter() = default;
+	~ParticleEmitter();
 
 	/// <summary>
 	/// 初期化
 	/// </summary>
-	/// <param name="particleCommon">パーティクルの共通部分</param>
-	/// <param name="model">モデル</param>
-	void Initialize(ParticleCommon* particleCommon, Model* model);
+	void Initialize();
 
 	/// <summary>
 	/// 更新
 	/// </summary>
-	/// <param name="instancingData">インスタンシングデータ</param>
-	void Update(ParticleForGPU* instancingData);
+	void Update();
 
 	/// <summary>
-	/// デバッグ
+	/// 生存しているパーティクルの数の取得
 	/// </summary>
-	void Debug();
-
-	/// <summary>
-	/// モデルのゲッター
-	/// </summary>
-	/// <returns></returns>
-	Model* GetModel()const;
-
-	/// <summary>
-	/// 生存しているパーティクルの数のゲッター
-	/// </summary>
-	/// <returns></returns>
+	/// <returns>生存しているパーティクルの数</returns>
 	const uint32_t GetNumInstance()const;
 
 	/// <summary>
-	/// カメラのセッター
+	/// エミッター位置の設定の設定
 	/// </summary>
-	/// <param name="camera"></param>
-	void SetCamera(Camera* camera);
+	/// <param name="position">エミッター位置の設定</param>
+	void SetEmitterPosition(const Vector3& position);
 
 	/// <summary>
-	/// トランスフォームデータのセッター
-	/// </summary>
-	/// <param name="transfrom">トランスフォーム</param>
-	void SetTransformData(const Transform& transfrom);
-
-	/// <summary>
-	/// パーティクルの数のセッター
+	/// パーティクルの数の設定
 	/// </summary>
 	/// <param name="cont">パーティクルの数</param>
 	void SetParticleCount(uint32_t cont);
 
 	/// <summary>
-	/// 発生範囲のセッター
+	/// 発生範囲の設定
 	/// </summary>
 	/// <param name="range">範囲</param>
 	void SetEmitRange(float range);
 
 	/// <summary>
-	/// 加速度が起こるフィールドのセッター
+	/// 加速度が起こるフィールドの設定
 	/// </summary>
 	/// <param name="field">フィールド</param>
 	void SetAccelerationField(const AccelerationField& field);
+
+	/// <summary>
+	/// パーティクルの発生感覚[秒]の設定
+	/// </summary>
+	/// <param name="frequency">パーティクルの発生感覚</param>
+	void SetFrequency(float frequency);
+
+	/// <summary>
+	/// パーティクルを取得
+	/// </summary>
+	/// <returns>パーティクル</returns>
+	const std::list<Particle>& GetParticles()const;
 private://メンバ関数
 	/// <summary>
 	/// パーティクルの生成
@@ -129,14 +84,6 @@ private://メンバ関数
 	Particle MakeNormalParticle();
 
 	/// <summary>
-	/// ワールドトランスフォームの更新
-	/// </summary>
-	/// <param name="numInstance">インスタンス数</param>
-	/// <param name="iterator"イテレータ></param>
-	/// <param name="instancingData">インスタンシングデータ</param>
-	void UpdateWorldTransform(uint32_t numInstance, auto iterator, ParticleForGPU* instancingData);
-
-	/// <summary>
 	/// パーティクルの発生
 	/// </summary>
 	/// <returns>パーティクル</returns>
@@ -148,38 +95,30 @@ private://メンバ関数
 	/// <param name="aabb">AABB</param>
 	/// <param name="point">point</param>
 	/// <returns>衝突判定</returns>
-	bool IsCollision(const PrimitiveData::AABB& aabb, const Vector3& point);
+	bool IsCollision(const primitiveData::AABB& aabb, const Vector3& point);
 public://静的メンバ変数
 	//パーティクルの数
 	static const uint32_t kNumMaxInstance = 1024;
 private://メンバ変数
-	//パーティクルの共通部分
-	ParticleCommon* particleCommon_ = nullptr;
-	//カメラ
-	Camera* camera_ = nullptr;
-	//モデル
-	Model* model_ = nullptr;
 	//ランダムエンジン
 	std::mt19937 randomEngine_;
 	//パーティクルのデータ
 	std::list<Particle> particles_ = {};
-	//ワールドマトリックス
-	Matrix4x4 worldMatrix_ = {};
 	//生存しているパーティクルの数
 	uint32_t numInstance_ = 0;
 
 	//発生源
 	Emitter emitter_ = {
-		.transform = {{1.0f,1.0f,1.0f},{0.0f,0.0f,0.0f},{0.0f,0.0f,0.0f}},
+		.translate = {0.0f,0.0f,0.0f},
 		.count = 1,
-		.frequency = 0.1f,//発生頻度
+		.frequency = 1.0f,//発生頻度
 		.frequencyTime = 0.0f,//発生頻度用の時刻,0.0fで初期化
 		.range = 1.0f
 	};
 
 	//フィールドの加速度
 	AccelerationField accelerationField_ = {
-		.acceleration = {15.0f,0.0f,0.0f},
+		.acceleration = {0.0f,0.0f,0.0f},
 		.area = {{-1.0f,-1.0f,-1.0f},1.0f,1.0f,1.0f}
 	};
 };

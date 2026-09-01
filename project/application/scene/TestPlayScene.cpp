@@ -6,107 +6,83 @@
 #include "Object3d.h"
 #include "Model.h"
 #include "Mesh.h"
+#include "Collision.h"
+#include "SkyBox.h"
+#include "Sprite.h"
 #include "Cube.h"
-#include "Frustum.h"
-#include "Line.h"
+#include "Circle.h"
 #include "Plane.h"
+#include "Line.h"
 #include "Sphere.h"
-#include "algorithms/Collision.h"
+#include "Frustum.h"
+#include "ParticleSystem.h"
+#include "ModelManager.h"
+#include "LightingManager.h"
+#include <numbers>
 
 //コンストラクタ
-TestPlayScene::TestPlayScene() {};
+TestPlayScene::TestPlayScene(){};
 
 //デストラクタ
-TestPlayScene::~TestPlayScene() {};
+TestPlayScene::~TestPlayScene(){};
 
 //初期化
-void TestPlayScene::Initialize(const SceneContext& sceneContext) {
+void TestPlayScene::Initialize(){
 	//ベースシーンの初期化
-	BaseScene::Initialize(sceneContext);
-	renderCamera_ = *sceneContext_.cameraManager->FindCamera("testPlayCamera");
+	BaseScene::Initialize();
 	gameCamera_ = sceneContext_.cameraManager->FindCamera("testPlayCamera");
 
-	object3d_ = std::make_unique<Object3d>();
-	object3d_->Initialize(sceneContext_.object3dCommon, &renderCamera_, 1);
-	object3d_->SetGameCamera(gameCamera_);
-	//object3d_->SetModel("sphere");
-	object3d_->SetModel("dekanu");
-	//object3d_->SetModel("cube");
-	object3d_->SetLODDistances({ 20.0f,30.0f,50.0f,80.0f });
-	std::unique_ptr<GameObject>tree = std::make_unique<GameObject>();
-	tree->Initialize("tree");
-	tree->GetTransform().translate = { 0.0f,0.0f,10.0f };
-	tree->GetTransform().scale = Vector3::MakeAllOne();
+	directionalLight_ = *sceneContext_.lightingManager->GetDirectionalLight();
 
-	GameObject* treePtr = tree.get();
+	GameObject* gameObject = CreateGameObject();
+	Object3d* object3d = gameObject->AddComponent<Object3d>();
+	sceneContext_.modelManager->FindModel("dekanu")->CreateLODModels({ 1.0f,0.75f,0.5f,0.25f });
+	object3d->SetModel(sceneContext_.modelManager->FindModel("dekanu"));
+	object3d->SetLODDistances({ 20.0f,40.0f,60.0f });
+	gameObject->SetName("デカヌチャン");
 
-	gameObjects_.push_back(std::move(tree));
-	object3d_->AddInstance(treePtr);
+	GameObject* spriteObject = CreateGameObject();
+	Sprite* sprite = spriteObject->AddComponent<Sprite>();
+	sprite->ChangeTexture("uvChecker.png");
+	spriteObject->SetName("uvChecker");
 
-	//for (uint32_t i = 0; i < object3d_->GetModel()->GetMeshes().size(); i++) {
-	//	transform2ds_.push_back({ object3d_->GetUVScale(i),object3d_->GetUVRotate(i),object3d_->GetUVTranslate(i) });
-	//}
+	GameObject* spriteObject2 = CreateGameObject();
+	Sprite* sprite2 = spriteObject2->AddComponent<Sprite>();
+	sprite2->ChangeTexture("monsterBall.png");
+	spriteObject2->SetName("モンスターボール");
 
-	frustum_ = std::make_unique<Primitive::Frustum>();
-	frustum_->Initialize(sceneContext_.directXBase, &renderCamera_);
-	frustum_->SetTargetCamera(gameCamera_);
+	GameObject* skyBoxGameObject = CreateGameObject();
+	skyBoxGameObject->AddComponent<SkyBox>();
+	skyBoxGameObject->SetName("skyBox");
+	skyBoxGameObject->GetTransform().scale = { 50.0f,50.0f,50.0f };
 
-	cube_ = std::make_unique<Primitive::Cube>();
-	cube_->Initialize(sceneContext_.directXBase, &renderCamera_);
+	GameObject* cubeWireframe = CreateGameObject();
+	cubeWireframe->AddComponent<debugDraw::Plane>();
+	cubeWireframe->SetName("ワイヤーフレーム");
+
+	GameObject* frustumObject = CreateGameObject();
+	debugDraw::Frustum* frustum = frustumObject->AddComponent<debugDraw::Frustum>();
+	frustum->SetTargetCamera(gameCamera_);
+	frustumObject->SetName("カメラの視錐台");
+
+	GameObject* particleObject = CreateGameObject();
+	ParticleSystem* particleSystem = particleObject->AddComponent<ParticleSystem>();
+	particleSystem->SetModel(sceneContext_.modelManager->FindModel("plane"));
+	particleSystem->SetTexture(0, "circle2.png");
+	particleObject->SetName("particleSystem");
+	particleSystem->SetFrequency(0.5f);
 }
 
 //更新
-void TestPlayScene::Update() {
+void TestPlayScene::Update(){
 	//ベースシーンの更新
 	BaseScene::Update();
-
-	//for (uint32_t i = 0; i < object3d_->GetModel()->GetMeshes().size(); i++) {
-	//	object3d_->SetUVScale(i, transform2ds_[i].scale);
-	//	object3d_->SetUVRotate(i, transform2ds_[i].rotate);
-	//	object3d_->SetUVTranslate(i, transform2ds_[i].translate);
-	//}
-
-	object3d_->Update();
-
-	frustum_->Update();
-
-	cube_->Update();
-
-	if (Collision::IsCollision(gameCamera_->GetFrustum(), cube_->GetAABB())) {
-		cube_->SetColor(Vector4::MakeRedColor());
-	} else {
-		cube_->SetColor(Vector4::MakeWhiteColor());
-	}
-
-	if (debugCamera_->IsDebug()) {
-		renderCamera_ = *debugCamera_->GetCamera();
-	} else {
-		renderCamera_ = *sceneContext_.cameraManager->FindCamera("testPlayCamera");
-	}
-
-	if (sceneContext_.input->PressKey(DIK_UP)) {
-		gameObjects_[0]->GetTransform().translate.z -= 1.0f;
-	} else if (sceneContext_.input->PressKey(DIK_DOWN)) {
-		gameObjects_[0]->GetTransform().translate.z += 1.0f;
-	}
-	;
 }
 
 //デバッグ
-void TestPlayScene::Debug() {
+void TestPlayScene::Debug(){
 #ifdef USE_IMGUI
-	ImGui::Begin("object3d");
-
-	for (int32_t i = 0; i < gameObjects_.size(); i++) {
-		ImGui::PushID(i);
-
-		if (ImGui::TreeNode(("object" + std::to_string(i)).c_str())) {
-			ImGuiManager::DragTransform(gameObjects_[i]->GetTransform());
-			ImGui::TreePop();
-		}
-
-		ImGui::PopID();
-	}
+	ImGui::Begin("Object");
 	//for (uint32_t i = 0; i < transform2ds_.size(); i++) {
 	//	ImGui::PushID(i);
 	//	ImGui::DragFloat2("uvScale", &transform2ds_[i].scale.x, 0.1f);
@@ -114,51 +90,41 @@ void TestPlayScene::Debug() {
 	//	ImGui::DragFloat2("uvTranslate", &transform2ds_[i].translate.x, 0.1f);
 	//	ImGui::PopID();
 	//}
-	Vector3 cameraTranslate2 = gameCamera_->GetTranslate();
-	ImGui::Text("cameraToPlayer:%f", gameObjects_[0]->GetTransform().translate - cameraTranslate2);
-	ImGui::End();
 
-	ImGui::Begin("camera");
-	Vector3 cameraTranslate = gameCamera_->GetTranslate();
-	Vector3 cameraRotate = gameCamera_->GetEulerAngle();
-	ImGui::DragFloat3("rotate", &cameraRotate.x, 0.1f);
-	ImGui::DragFloat3("translate", &cameraTranslate.x, 0.1f);
-	gameCamera_->SetEulerAngle(cameraRotate);
-	gameCamera_->SetTranslate(cameraTranslate);
+	if (ImGui::TreeNode("camera")){
+		Vector3 cameraTranslate = gameCamera_->GetTranslate();
+		Vector3 cameraRotate = gameCamera_->GetEulerAngle();
+		ImGui::DragFloat3("rotate", &cameraRotate.x, 0.1f);
+		ImGui::DragFloat3("translate", &cameraTranslate.x, 0.1f);
+		gameCamera_->SetEulerAngle(cameraRotate);
+		gameCamera_->SetTranslate(cameraTranslate);
 
-	float farClip = gameCamera_->GetFarClip();
-	ImGui::DragFloat("farClip", &farClip);
-	gameCamera_->SetFarClip(farClip);
-	ImGui::End();
+		float farClip = gameCamera_->GetFarClip();
+		ImGui::DragFloat("farClip", &farClip);
+		gameCamera_->SetFarClip(farClip);
+		ImGui::TreePop();
+	}
 
-	ImGui::Begin("cube");
-	PrimitiveData::OBB obb = cube_->GetOBB();
-	ImGui::DragFloat3("size", &obb.size.x, 0.1f);
-	ImGui::DragFloat3("translate", &obb.center.x, 0.1f);
-	cube_->SetOBB(obb);
+	//if (ImGui::TreeNode("skyBox")) {
+	//	ImGuiManager::DragTransform(skyBoxObject_->GetTransform());
+	//	ImGui::TreePop();
+	//}
+
+	if (ImGui::TreeNode("directionalLight")){
+		directionalLight_ = *sceneContext_.lightingManager->GetDirectionalLight();
+		ImGui::ColorEdit4("color", &directionalLight_.color.x);
+		ImGui::DragFloat3("direction", &directionalLight_.direction.x, 0.01f);
+		ImGui::DragFloat("intensity", &directionalLight_.intensity, 0.05f, 0.0f, 10.0f);
+		sceneContext_.lightingManager->SetDirectionalLight(directionalLight_);
+		ImGui::TreePop();
+	}
+
 	ImGui::End();
 #endif // USE_IMGUI
-
-	//#ifdef _DEBUG
-	if (debugCamera_->IsDebug()) {
-		renderCamera_ = *debugCamera_->GetCamera();
-	} else {
-		renderCamera_ = *sceneContext_.cameraManager->FindCamera("testPlayCamera");
-	}
-	//#endif // _DEBUG
-}
-
-//描画
-void TestPlayScene::Draw() {
-	object3d_->Draw();
-
-	frustum_->Draw();
-
-	cube_->Draw();
 }
 
 //終了
-void TestPlayScene::Finalize() {
+void TestPlayScene::Finalize(){
 	//ベースシーンのの終了
 	BaseScene::Finalize();
 }

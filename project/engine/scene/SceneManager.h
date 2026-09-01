@@ -2,11 +2,22 @@
 #include "BaseScene.h"
 #include "AbstractSceneFactory.h"
 
+//前方宣言
+class DebugEditor;
+class DebugCamera;
+class RenderSystem;
+class Camera;
+
 /// <summary>
 /// シーン管理
 /// </summary>
-class SceneManager {
+class SceneManager{
 public://メンバ関数
+	/// <summary>
+	/// コンストラクタ
+	/// </summary>
+	SceneManager();
+
 	/// <summary>
 	/// デストラクタ
 	/// </summary>
@@ -16,7 +27,7 @@ public://メンバ関数
 	/// 初期化
 	/// </summary>
 	/// <param name="sceneContext">シーンで必要なもの</param>
-	void Initialize(const SceneContext& sceneContext);
+	void Initialize(const SceneContext& sceneContext, RenderSystem* renderSystem);
 
 	/// <summary>
 	/// 更新
@@ -24,9 +35,25 @@ public://メンバ関数
 	void Update();
 
 	/// <summary>
+	/// デバッグ
+	/// </summary>
+	void Debug();
+
+	/// <summary>
 	/// 描画
 	/// </summary>
-	void Draw();
+	/// <param name="camera">カメラ</param>
+	void Draw(Camera* camera);
+
+	/// <summary>
+	/// ゲーム画面の描画
+	/// </summary>
+	void GameDraw();
+
+	/// <summary>
+	/// デバッグ画面の描画
+	/// </summary>
+	void DebugDraw();
 
 	/// <summary>
 	/// シーンファクトリーのセッター
@@ -40,7 +67,7 @@ public://メンバ関数
 	/// <param name="sceneName"></param>
 	void ChangeScene(const std::string& sceneName);
 public://PassKey
-	class ConstructorKey {
+	class ConstructorKey{
 	private:
 		ConstructorKey() = default;
 		friend class Core;
@@ -70,5 +97,11 @@ private://メンバ変数
 	BaseScene* scene_ = nullptr;
 	//次のシーン
 	BaseScene* nextScene_ = nullptr;
+	//デバッグエディタ
+	std::unique_ptr<DebugEditor>debugEditor_ = nullptr;
+	//デバックカメラ
+	std::unique_ptr<DebugCamera>debugCamera_ = nullptr;
+	//描画システム
+	RenderSystem* renderSystem_ = nullptr;
 };
 

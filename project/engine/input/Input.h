@@ -109,7 +109,7 @@ public://メンバ関数
 	/// </summary>
 	/// <param name="mouseClicPos">マウスのボタン</param>
 	/// <returns>押されてるか</returns>
-	bool PressMouseButton(Click mouseClicPos);
+	bool PressMouseButton(Click mouseClickPos);
 
 	/// <summary>
 	/// マウスのボタンの押下した瞬間をチェック
@@ -194,7 +194,7 @@ public://メンバ関数
 	/// </summary>
 	/// <param name="xBoxPadNumber">何番目(0~4)</param>
 	/// <returns>右スティック</returns>
-	const Vector2 GetXboxPadRighttStick(DWORD xBoxPadNumber);
+	const Vector2 GetXboxPadRightStick(DWORD xBoxPadNumber);
 
 	/// <summary>
 	/// Xboxのデッドゾーン
@@ -202,7 +202,7 @@ public://メンバ関数
 	/// <param name="xBoxPadNumber">何番目(0~4)</param>
 	/// <param name="deadZone">デッドゾーン</param>
 	void SetDeadZone(DWORD xBoxPadNumber, float deadZone);
-public://PrassKey
+public://PassKey
 	class ConstructorKey {
 		private:
 		ConstructorKey() = default;
@@ -211,7 +211,7 @@ public://PrassKey
 	/// <summary>
 	/// コンストラクタ
 	/// </summary>
-	/// <param name="">PrassKeyを受け取る</param>
+	/// <param name="">PassKeyを受け取る</param>
 	explicit Input(ConstructorKey);
 private://メンバ関数
 	//コピーコンストラクタを禁止

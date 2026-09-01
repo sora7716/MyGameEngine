@@ -6,8 +6,8 @@ struct Vector3;
 /// 2次元ベクトル
 /// </summary>
 struct Vector2 final {
-	float x;
-	float y;
+	float x = 0.0f;
+	float y = 0.0f;
 
 	/// <summary>
 	/// 正規化
@@ -57,8 +57,8 @@ struct Vector2 final {
 /// 2次元ベクトルの整数型
 /// </summary>
 struct Vector2Int final {
-	int32_t x;
-	int32_t y;
+	int32_t x = 0;
+	int32_t y = 0;
 
 	//Vector2Int同士の比較
 	bool operator<(const Vector2Int& v)const;

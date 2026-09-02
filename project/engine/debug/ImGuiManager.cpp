@@ -79,25 +79,6 @@ void ImGuiManager::Draw() {
 #endif // USE_IMGUI
 }
 
-//トランスフォームデータ用のImGui
-void ImGuiManager::DragTransform([[maybe_unused]] Transform& transformData) {
-#ifdef USE_IMGUI
-	ImGui::Checkbox("isUsingQuaternion", &transformData.isUsingQuaternion);
-	ImGui::DragFloat3("scale", &transformData.scale.x, 0.1f);
-	if (transformData.isUsingQuaternion) {
-		ImGui::DragFloat3("axis", &transformData.axis.x, 0.01f, -1.0f, 1.0f);
-		ImGui::SliderAngle("angle", &transformData.angle);
-		transformData.quaternion = matrixUtility::MakeRotateAxisAngleQuaternion(transformData.axis, transformData.angle);
-		transformData.eulerAngle = mathUtility::MakeEulerAngleForQuaternion(transformData.quaternion);
-	} else {
-		ImGui::DragFloat3("eulerAngle", &transformData.eulerAngle.x, 0.1f);
-		transformData.quaternion = Quaternion::MakeQuaternionForEulerAngle(transformData.eulerAngle);
-	}
-	ImGui::DragFloat4("rotate", &transformData.quaternion.x, 0.0f);
-	ImGui::DragFloat3("translate", &transformData.translate.x, 0.01f);
-#endif // USE_IMGUI
-}
-
 //OBBデータ用のImGui
 void ImGuiManager::DragOBB([[maybe_unused]] primitiveData::OBB& obb) {
 #ifdef USE_IMGUI

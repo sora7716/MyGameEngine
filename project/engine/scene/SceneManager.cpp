@@ -1,7 +1,6 @@
 #include "SceneManager.h"
 #include "ImGuiManager.h"
 #include "DebugEditor.h"
-#include "CameraManager.h"
 #include "TagManager.h"
 #include "RenderSystem.h"
 #include "DebugCamera.h"
@@ -26,9 +25,6 @@ void SceneManager::Initialize(const SceneContext& sceneContext, RenderSystem* re
 	//デバッグエディターの生成と初期化
 	debugEditor_ = std::make_unique<DebugEditor>();
 	debugEditor_->Initialize(sceneContext_.tagManager);
-	//デバックカメラ
-	debugCamera_ = std::make_unique<DebugCamera>();
-	debugCamera_->Initialize(sceneContext_.cameraManager->FindCamera("debugCamera"));
 	//描画システムの記録
 	assert(renderSystem);
 	renderSystem_ = renderSystem;
@@ -60,11 +56,6 @@ void SceneManager::Update(){
 	scene_->Update();
 	//デバッグエディタの更新
 	debugEditor_->Update();
-
-#ifdef USE_IMGUI
-	//デバックカメラ
-	debugCamera_->Update();
-#endif // USE_IMGUI
 }
 
 //デバッグ
@@ -122,30 +113,35 @@ void SceneManager::Debug(){
 }
 
 //描画
-void SceneManager::Draw(Camera* camera){
+void SceneManager::Draw(CameraMode cameraMode){
 	const std::vector<std::unique_ptr<GameObject>>& gameObjects = scene_->GetGameObjects();
+	//カメラの追加
+	renderSystem_->CollectActiveCameras(gameObjects);
+	//カメラのモードを設定
+	renderSystem_->SetCameraMode(cameraMode);
+
 	//Object3dの追加
-	renderSystem_->CollectActiveObject3ds(gameObjects, camera);
+	renderSystem_->CollectActiveObject3ds(gameObjects);
 	//SkyBoxの追加
-	renderSystem_->CollectActiveSkyBox(gameObjects, camera);
+	renderSystem_->CollectActiveSkyBox(gameObjects);
 	//Spriteの描画
 	renderSystem_->CollectActiveSprites(gameObjects);
 	//DebugDrawの描画
-	renderSystem_->CollectActiveDebugDraw(gameObjects, camera);
+	renderSystem_->CollectActiveDebugDraw(gameObjects);
 	//ParticleSystemの描画
-	renderSystem_->CollectActiveParticleSystems(gameObjects, camera);
+	renderSystem_->CollectActiveParticleSystems(gameObjects);
 }
 
 //ゲーム画面の描画
 void SceneManager::GameDraw(){
 	//描画
-	Draw(scene_->GetGameCamera());
+	Draw(CameraMode::kMain);
 }
 
 //デバッグ画面の描画
 void SceneManager::DebugDraw(){
 	//描画
-	Draw(debugCamera_->GetCamera());
+	Draw(CameraMode::kDebug);
 }
 
 //シーンファクトリーのセッター

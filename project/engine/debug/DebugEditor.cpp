@@ -334,7 +334,6 @@ void DebugEditor::DrawInspector(){
 		ImGui::SameLine();
 		//回転のリセット
 		if (ImGui::SmallButton("Reset##rotate")){
-			transform.eulerAngle = { 0.0f,0.0f,0.0f };
 			transform.quaternion = Quaternion::IdentityQuaternion();
 		}
 

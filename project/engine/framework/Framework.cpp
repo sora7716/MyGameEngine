@@ -20,8 +20,6 @@ void Framework::Update() {
 	core_->GetLightingManager()->Update();
 	//シーンの管理
 	core_->GetSceneManager()->Update();
-	//カメラの管理
-	core_->GetCameraManager()->Update();
 }
 
 //デバッグ

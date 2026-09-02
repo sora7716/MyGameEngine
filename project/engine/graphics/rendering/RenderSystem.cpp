@@ -17,6 +17,9 @@
 #include "DebugDrawRenderer.h"
 #include "ParticleSystem.h"
 #include "ParticleRenderer.h"
+#include "Camera.h"
+#include "DebugCamera.h"
+#include "CameraRenderer.h"
 #include <algorithm>
 
 //コンストラクタ
@@ -48,6 +51,8 @@ void RenderSystem::Initialize(DirectXBase* directXBase, SRVManager* srvManager, 
 	debugDrawRenderer_ = DebugDrawRenderer::Create(directXBase);
 	//パーティクルのレンダラー
 	particleRenderer_ = ParticleRenderer::Create(directXBase, srvManager, textureManager);
+	//カメラのレンダラー
+	cameraRenderer_ = CameraRenderer::Create(directXBase);
 }
 
 //描画
@@ -57,9 +62,11 @@ void RenderSystem::Draw(){
 		//描画開始
 		PreDraw(object3dRenderer_->GetBlendMode(i), PipelineType::kObject3d);
 		//ライティングの設定
-		lightingManager_->DrawSetting();
+		lightingManager_->Bind();
+		//カメラの設定
+		cameraRenderer_->Bind(selectCamera_.index, 4);
 		//Object3dの描画
-		object3dRenderer_->Draw(i, renderCamera_);
+		object3dRenderer_->Draw(i);
 	}
 	//描画オブジェクトのリセット
 	object3dRenderer_->Reset();
@@ -68,8 +75,10 @@ void RenderSystem::Draw(){
 	for (uint32_t i = 0; i < particleRenderer_->GetRenderDataSize(); i++){
 		//描画の開始
 		PreDraw(particleRenderer_->GetBlendMode(i), PipelineType::kParticle);
+		//カメラの設定
+		cameraRenderer_->Bind(selectCamera_.index, 3);
 		//Particleの描画
-		particleRenderer_->Draw(i, renderCamera_);
+		particleRenderer_->Draw(i, selectCamera_.camera);
 	}
 	//描画オブジェクトのリセット
 	particleRenderer_->Reset();
@@ -78,8 +87,10 @@ void RenderSystem::Draw(){
 	for (uint32_t i = 0; i < debugDrawRenderer_->GetRenderDataSize(); i++){
 		//描画開始
 		PreDraw(debugDrawRenderer_->GetBlendMode(i));
+		//カメラの設定
+		cameraRenderer_->Bind(selectCamera_.index, 2);
 		//DebugDrawの描画
-		debugDrawRenderer_->Draw(i, renderCamera_);
+		debugDrawRenderer_->Draw(i);
 	}
 	//描画オブジェクトのリセット
 	debugDrawRenderer_->Reset();
@@ -88,8 +99,10 @@ void RenderSystem::Draw(){
 	for (uint32_t i = 0; i < skyBoxRenderer_->GetRenderDataSize(); i++){
 		//描画開始
 		PreDraw(skyBoxRenderer_->GetBlendMode(i), PipelineType::kSkyBox);
+		//カメラの設定
+		cameraRenderer_->Bind(selectCamera_.index, 3);
 		//スカイボックスの描画
-		skyBoxRenderer_->Draw(i, renderCamera_);
+		skyBoxRenderer_->Draw(i);
 	}
 	//描画オブジェクトのリセット
 	skyBoxRenderer_->Reset();
@@ -104,23 +117,26 @@ void RenderSystem::Draw(){
 	//描画オブジェクトのリセット
 	spriteRenderer_->Reset();
 
+	//カメラのリセット
+	cameraRenderer_->Reset();
+
 }
 
 //描画に有効なObject3dを集める
-void RenderSystem::CollectActiveObject3ds(const std::vector<std::unique_ptr<GameObject>>& gameObjects, Camera* renderCamera){
+void RenderSystem::CollectActiveObject3ds(const std::vector<std::unique_ptr<GameObject>>& gameObjects){
 	//今回描画で使用するカメラ
-	renderCamera_ = renderCamera;
+	Camera* renderCamera = selectCamera_.camera;
 
 	//object3dsをクリア
 	activeObject3ds_.clear();
 
 	//描画で使用するカメラがなければ
-	if (!renderCamera_){
+	if (!renderCamera){
 		object3dBatches_.clear();
 		return;
 	}
 	//カメラのワールド座標を取得
-	Vector3 cameraWorldPos = renderCamera_->GetWorldPos();
+	Vector3 cameraWorldPos = renderCamera->GetWorldPos();
 
 	//カリングの生成
 	std::unique_ptr<Culling> culling = Culling::Create(renderCamera);
@@ -171,7 +187,7 @@ void RenderSystem::CollectActiveObject3ds(const std::vector<std::unique_ptr<Game
 
 		//視錐台カリング
 		bool isVisible = false;
-		const Matrix4x4 renderWorld = object3d->MakeRenderWorldMatrix(renderCamera_->GetWorldMatrix());
+		const Matrix4x4 renderWorld = object3d->MakeRenderWorldMatrix(renderCamera->GetWorldMatrix());
 		//メッシュごと
 		for (const std::unique_ptr<Mesh>& mesh : model->GetMeshes()){
 			//メッシュがなければ
@@ -204,13 +220,14 @@ void RenderSystem::CollectActiveObject3ds(const std::vector<std::unique_ptr<Game
 }
 
 //描画に有効なSkyBoxを集める
-void RenderSystem::CollectActiveSkyBox(const std::vector<std::unique_ptr<GameObject>>& gameObjects, Camera* renderCamera){
-	renderCamera_ = renderCamera;
+void RenderSystem::CollectActiveSkyBox(const std::vector<std::unique_ptr<GameObject>>& gameObjects){
+	//今回描画で使用するカメラ
+	Camera* renderCamera = selectCamera_.camera;
 	//描画に有効なSkyBoxをリセット
 	activeSkyBox_ = nullptr;
 
 	//描画カメラがNullだったら
-	if (!renderCamera_){
+	if (!renderCamera){
 		return;
 	}
 
@@ -290,8 +307,7 @@ void RenderSystem::CollectActiveSprites(const std::vector<std::unique_ptr<GameOb
 }
 
 //描画に有効なDebugDrawを集める
-void RenderSystem::CollectActiveDebugDraw(const std::vector<std::unique_ptr<GameObject>>& gameObjects, Camera* renderCamera){
-	renderCamera_ = renderCamera;
+void RenderSystem::CollectActiveDebugDraw(const std::vector<std::unique_ptr<GameObject>>& gameObjects){
 	//描画に有効なDebugDrawをリセット
 	activeDebugDraws_.clear();
 
@@ -331,20 +347,20 @@ void RenderSystem::CollectActiveDebugDraw(const std::vector<std::unique_ptr<Game
 }
 
 //描画に有効なパーティクルシステムを集める
-void RenderSystem::CollectActiveParticleSystems(const std::vector<std::unique_ptr<GameObject>>& gameObjects, Camera* renderCamera){
+void RenderSystem::CollectActiveParticleSystems(const std::vector<std::unique_ptr<GameObject>>& gameObjects){
 	//今回描画で使用するカメラ
-	renderCamera_ = renderCamera;
+	Camera* renderCamera = selectCamera_.camera;
 
 	//パーティクルシステムの配列をクリア
 	activeParticleSystems_.clear();
 
 	//描画で使用するカメラがなければ
-	if (!renderCamera_){
+	if (!renderCamera){
 		return;
 	}
 
 	//カメラのワールド座標を取得
-	Vector3 cameraWorldPos = renderCamera_->GetWorldPos();
+	Vector3 cameraWorldPos = renderCamera->GetWorldPos();
 
 	//カリングの生成
 	std::unique_ptr<Culling> culling = Culling::Create(renderCamera);
@@ -393,6 +409,52 @@ void RenderSystem::CollectActiveParticleSystems(const std::vector<std::unique_pt
 	for (ParticleSystem* particleSystem : activeParticleSystems_){
 		particleRenderer_->AddRenderData(particleSystem->GetRenderData());
 	}
+}
+
+//描画に有効なカメラを集める
+void RenderSystem::CollectActiveCameras(const std::vector<std::unique_ptr<GameObject>>& gameObjects){
+	//描画に有効なCameraをリセット
+	activeCameras_.clear();
+
+	//探索開始
+	for (const std::unique_ptr<GameObject>& gameObject : gameObjects){
+		//ゲームオブジェクトがNullじゃないか
+		if (!gameObject){
+			continue;
+		}
+
+		//ゲームオブジェクトが有効状態か
+		if (!gameObject->IsActive()){
+			continue;
+		}
+
+		//Cameraを取得
+		Camera* camera = gameObject->GetComponent<Camera>();
+
+		//オブジェクト3dがNullか
+		if (!camera){
+			continue;
+		}
+
+		//オブジェクト3dが有効状態か
+		if (!camera->IsEnabled()){
+			continue;
+		}
+
+		//activeCameraを追加
+		activeCameras_.push_back(camera);
+	}
+
+	//レンダラーに追加
+	for (Camera* camera : activeCameras_){
+		cameraRenderer_->AddRenderData(camera->GetRenderData());
+	}
+}
+
+//カメラモードの設定
+bool RenderSystem::SetCameraMode(CameraMode cameraMode){
+	cameraMode_ = cameraMode;
+	return FindSelectCamera(cameraMode_);
 }
 
 //描画開始
@@ -479,7 +541,7 @@ void RenderSystem::BuildObject3dBatches(){
 //トランスフォーメーションデータの構築
 void RenderSystem::BuildTransformationData(){
 	//もしカメラがなければ
-	if (!renderCamera_){
+	if (!selectCamera_.camera){
 		return;
 	}
 
@@ -490,12 +552,12 @@ void RenderSystem::BuildTransformationData(){
 		batch.transformations.reserve(batch.instances.size());
 		for (Object3d* object3d : batch.instances){
 			//今回の描画カメラに対応したワールド行列を作成
-			Matrix4x4 world = object3d->MakeRenderWorldMatrix(renderCamera_->GetWorldMatrix());
+			Matrix4x4 world = object3d->MakeRenderWorldMatrix(selectCamera_.camera->GetWorldMatrix());
 
 			//トランスフォーメーション行列
 			TransformationMatrix transformation = {};
 			transformation.world = world;
-			transformation.wvp = world * renderCamera_->GetViewProjectionMatrix();
+			transformation.wvp = world * selectCamera_.camera->GetViewProjectionMatrix();
 			transformation.worldInverseTranspose = world.InverseTranspose();
 
 			//バッチに追加
@@ -514,4 +576,42 @@ void RenderSystem::SubmitObject3dBatches(){
 	for (const Object3dBatch& batch : object3dBatches_){
 		object3dRenderer_->SubmitBatch(batch.model, batch.materialInstance, batch.blendMode, batch.transformations);
 	}
+}
+
+//セレクトカメラの取得
+bool RenderSystem::FindSelectCamera(CameraMode cameraMode){
+	selectCamera_ = {};
+
+	for (uint32_t i = 0; i < activeCameras_.size(); i++){
+		//カメラ
+		Camera* camera = activeCameras_[i];
+
+		//ゲームオブジェクトを取得
+		GameObject* gameObject = camera->GetOwner();
+		//カメラがないまたはゲームオブジェクトが無い場合
+		if (!camera || !gameObject){
+			continue;
+		}
+
+		//デバッグカメラを取得
+		DebugCamera* debugCamera = camera->GetOwner()->GetComponent<DebugCamera>();
+		if (debugCamera){
+			if (cameraMode == CameraMode::kDebug){
+				selectCamera_.camera = camera;
+				selectCamera_.index = i;
+				return true;
+			}
+		}
+
+		//メインカメラの場合
+		if (cameraMode == CameraMode::kMain){
+			if (!debugCamera){
+				selectCamera_.camera = camera;
+				selectCamera_.index = i;
+				return true;
+			}
+		}
+	}
+
+	return false;
 }

@@ -7,7 +7,6 @@ class SRVManager;
 class TextureManager;
 class ModelManager;
 class SceneManager;
-class CameraManager;
 class AudioManager;
 class ImGuiManager;
 class TagManager;
@@ -24,7 +23,6 @@ struct SceneContext {
 	TextureManager* textureManager;
 	ModelManager* modelManager;
 	SceneManager* sceneManager;
-	CameraManager* cameraManager;
 	AudioManager* audioManager;
 	ImGuiManager* imGuiManager;
 	TagManager* tagManager;

@@ -48,11 +48,6 @@ private://メンバ関数
 	/// OBJファイルの読み込み
 	/// </summary>
 	void LoadModel();
-
-	/// <summary>
-	/// カメラの生成
-	/// </summary>
-	void CreateCamera();
 private://静的メンバ変数
 	//インスタンス
 	static inline GameObjectList* instance = nullptr;

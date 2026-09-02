@@ -1,6 +1,7 @@
 #pragma once
 #include "PipelineManagerData.h"
 #include "RenderingData.h"
+#include "CameraRenderData.h"
 #include <vector>
 #include <memory>
 
@@ -26,6 +27,8 @@ namespace debugDraw{
 class DebugDrawRenderer;
 class ParticleSystem;
 class ParticleRenderer;
+class Camera;
+class CameraRenderer;
 
 //描画グループごとにObject3dを分ける
 struct Object3dBatch{
@@ -42,6 +45,12 @@ struct Object3dBatch{
 /// 描画のシステム
 /// </summary>
 class RenderSystem{
+private://構造体
+	//選択するカメラ
+	struct SelectCamera{
+		Camera* camera = nullptr;
+		uint32_t index;
+	};
 public://メンバ関数
 	/// <summary>
 	/// コンストラクタ
@@ -72,15 +81,13 @@ public://メンバ関数
 	/// 描画に有効なObject3dを集める
 	/// </summary>
 	/// <param name="gameObjects">ゲームオブジェクトの配列</param>
-	/// <param name="renderCamera">描画で使用するカメラ</param>
-	void CollectActiveObject3ds(const std::vector<std::unique_ptr<GameObject>>& gameObjects, Camera* renderCamera);
+	void CollectActiveObject3ds(const std::vector<std::unique_ptr<GameObject>>& gameObjects);
 
 	/// <summary>
 	/// 描画に有効なSkyBoxを集める
 	/// </summary>
 	/// <param name="gameObjects">ゲームオブジェクトの配列</param>
-	/// <param name="renderCamera">描画で使用するカメラ</param>
-	void CollectActiveSkyBox(const std::vector<std::unique_ptr<GameObject>>& gameObjects, Camera* renderCamera);
+	void CollectActiveSkyBox(const std::vector<std::unique_ptr<GameObject>>& gameObjects);
 
 	/// <summary>
 	/// 描画に有効なSpriteを集める
@@ -92,15 +99,26 @@ public://メンバ関数
 	/// 描画に有効なDebugDrawを集める
 	/// </summary>
 	/// <param name="gameObjects">ゲームオブジェクトの配列</param>
-	/// <param name="renderCamera">描画で使用するカメラ</param>
-	void CollectActiveDebugDraw(const std::vector<std::unique_ptr<GameObject>>& gameObjects, Camera* renderCamera);
+	void CollectActiveDebugDraw(const std::vector<std::unique_ptr<GameObject>>& gameObjects);
 
 	/// <summary>
 	/// 描画に有効なパーティクルシステムを集める
 	/// </summary>
 	/// <param name="gameObjects">ゲームオブジェクトの配列</param>
-	/// <param name="renderCamera">描画で使用するカメラ</param>
-	void CollectActiveParticleSystems(const std::vector<std::unique_ptr<GameObject>>& gameObjects, Camera* renderCamera);
+	void CollectActiveParticleSystems(const std::vector<std::unique_ptr<GameObject>>& gameObjects);
+
+	/// <summary>
+	/// 描画に有効なカメラを集める
+	/// </summary>
+	/// <param name="gameObjects">ゲームオブジェクトの配列</param>
+	void CollectActiveCameras(const std::vector<std::unique_ptr<GameObject>>& gameObjects);
+
+	/// <summary>
+	/// カメラモードの設定
+	/// </summary>
+	/// <param name="cameraMode">カメラモード</param>
+	/// <returns>セレクトカメラが取得できたか</returns>
+	bool SetCameraMode(CameraMode cameraMode);
 private://メンバ関数
 	/// <summary>
 	/// 描画の開始
@@ -129,6 +147,13 @@ private://メンバ関数
 	/// オブジェクト3dのバッチをレンダラーの送る
 	/// </summary>
 	void SubmitObject3dBatches();
+
+	/// <summary>
+	/// セレクトカメラの取得
+	/// </summary>
+	/// <param name="cameraMode">カメラモード</param>
+	/// <returns>セレクトカメラを取得できたか</returns>
+	bool FindSelectCamera(CameraMode cameraMode);
 private://メンバ関数
 	//DirectXの基盤部分
 	DirectXBase* directXBase_ = nullptr;
@@ -139,8 +164,9 @@ private://メンバ関数
 	//ライティングの管理
 	LightingManager* lightingManager_ = nullptr;
 
-	//カメラ
-	Camera* renderCamera_ = nullptr;
+	//カメラモード
+	CameraMode cameraMode_ = CameraMode::kMain;
+	SelectCamera selectCamera_ = {};
 
 	//描画に有効なObject3d
 	std::vector<Object3d*>activeObject3ds_;
@@ -168,5 +194,10 @@ private://メンバ関数
 	std::vector<ParticleSystem*>activeParticleSystems_;
 	//パーティクルの描画のレンダラー
 	std::unique_ptr<ParticleRenderer>particleRenderer_ = nullptr;
+
+	//描画に有効なカメラ
+	std::vector<Camera*> activeCameras_;
+	//カメラの描画レンダラー
+	std::unique_ptr<CameraRenderer>cameraRenderer_ = nullptr;
 };
 

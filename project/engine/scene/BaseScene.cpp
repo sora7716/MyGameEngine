@@ -35,17 +35,15 @@ void BaseScene::Initialize(){
 
 	//コライダーマネージャー
 	//colliderManager_ = std::make_unique<ColliderManager>();
-	////調整ファイルの読み込み
-	//GlobalVariables::GetInstance()->LoadFiles();
+
+	//デバッグカメラ
+	GameObject* debugCameraObject = CreateGameObject();
+	debugCameraObject->AddComponent<Camera>();
+	debugCameraObject->AddComponent<DebugCamera>();
 }
 
 //更新
 void BaseScene::Update(){
-	//ゲームカメラの更新
-	if (gameCamera_){
-		gameCamera_->Update();
-	}
-
 	//ゲームオブジェクトのコンポーネントの更新
 	for (const std::unique_ptr<GameObject>& gameObject : gameObjects_){
 		//gameObjectがNullじゃなければ
@@ -164,11 +162,6 @@ const std::vector<std::unique_ptr<GameObject>>& BaseScene::GetGameObjects()const
 //シーンで必要な情報の設定
 void BaseScene::SetSceneContext(const SceneContext& sceneContext){
 	sceneContext_ = sceneContext;
-}
-
-//ゲームカメラの取得
-Camera* BaseScene::GetGameCamera(){
-	return gameCamera_;
 }
 
 //名前を重複しないようにする

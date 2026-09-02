@@ -1,7 +1,6 @@
 #include "GameScene.h"
 #include "GameObject.h"
 #include "Object3d.h"
-#include "CameraManager.h"
 #include "ModelManager.h"
 #include "Player.h"
 
@@ -18,7 +17,9 @@ void GameScene::Initialize(){
 	//基底クラスの初期化
 	BaseScene::Initialize();
 	//ゲームカメラの設定
-	gameCamera_ = sceneContext_.cameraManager->FindCamera("gameCamera");
+	GameObject* gameCameraObject = CreateGameObject();
+	gameCameraObject->AddComponent<Camera>();
+	gameCameraObject->GetTransform().translate = { 0.0f,0.0f,-10.0f };
 
 	//マップを作成
 	std::array<std::array<std::array<uint32_t, 6>, 6>, 3> map = { {

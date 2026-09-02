@@ -47,13 +47,11 @@ void GameObject::Initialize(const std::string& name){
 
 //トランスフォームの取得
 Transform& GameObject::GetTransform(){
-	// TODO: return ステートメントをここに挿入します
 	return transform_;
 }
 
 //トランスフォームの取得
 const Transform& GameObject::GetTransform() const{
-	// TODO: return ステートメントをここに挿入します
 	return transform_;
 }
 
@@ -74,7 +72,6 @@ void GameObject::SetName(const std::string& name){
 
 //名前を取得
 const std::string& GameObject::GetName() const{
-	// TODO: return ステートメントをここに挿入します
 	return name_;
 }
 
@@ -85,7 +82,6 @@ void GameObject::SetTag(const std::string& tag){
 
 //タグの取得
 const std::string& GameObject::GetTag() const{
-	// TODO: return ステートメントをここに挿入します
 	return tag_;
 }
 

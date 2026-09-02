@@ -17,8 +17,6 @@ void GameObjectList::Initialize(Core* core){
 	LoadAudio();
 	//OBJファイルの読み込み
 	LoadModel();
-	//カメラの生成
-	CreateCamera();
 }
 
 //コンストラクタ
@@ -51,18 +49,4 @@ void GameObjectList::LoadModel(){
 	core_->GetModelManager()->AddModel("dekanu", "dekanu/dekanu.gltf");
 	//人
 	core_->GetModelManager()->AddModel("sneakWalk", "human/sneakWalk.gltf");
-}
-
-//カメラの生成
-void GameObjectList::CreateCamera(){
-	//カメラの管理
-	core_->GetCameraManager()->CreateCamera("defaultCamera");
-	//デバッグカメラ
-	core_->GetCameraManager()->CreateCamera("debugCamera");
-	//タイトルカメラ
-	core_->GetCameraManager()->CreateCamera("titleCamera");
-	//ゲームカメラ
-	core_->GetCameraManager()->CreateCamera("gameCamera");
-	//テストプレイカメラ
-	core_->GetCameraManager()->CreateCamera("testPlayCamera");
 }

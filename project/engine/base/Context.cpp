@@ -10,7 +10,6 @@ void SceneContext::operator=(Core* core){
 	textureManager = core->GetTextureManager();
 	modelManager = core->GetModelManager();
 	sceneManager = core->GetSceneManager();
-	cameraManager = core->GetCameraManager();
 	audioManager = core->GetAudioManager();
 	imGuiManager = core->GetImGuiManager();
 	tagManager = core->GetTagManager();

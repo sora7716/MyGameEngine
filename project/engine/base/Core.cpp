@@ -32,9 +32,6 @@ void Core::Initialize(){
 	//ImGuiマネージャー
 	imGuiManager_ = std::make_unique<ImGuiManager>(ImGuiManager::ConstructorKey{});
 	imGuiManager_->Initialize(winApi_.get(), directXBase_.get(), srvManager_.get());
-	//カメラマナージャー
-	cameraManager_ = std::make_unique<CameraManager>(CameraManager::ConstructorKey{});
-	cameraManager_->Initialize(directXBase_.get());
 	//パイプラインの管理
 	pipelineManager_ = std::make_unique<PipelineManager>(PipelineManager::ConstructorKey{});
 	pipelineManager_->Initialize(directXBase_.get());
@@ -96,11 +93,6 @@ ModelManager* Core::GetModelManager() const{
 //ImGuiマネージャーの取得
 ImGuiManager* Core::GetImGuiManager() const{
 	return imGuiManager_.get();
-}
-
-//カメラマネージャーの取得
-CameraManager* Core::GetCameraManager()const{
-	return cameraManager_.get();
 }
 
 //シーンマネージャーの取得

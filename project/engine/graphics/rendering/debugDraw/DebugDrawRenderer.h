@@ -73,8 +73,7 @@ public://メンバ関数
 	/// 描画
 	/// </summary>
 	/// <param name="instanceIndex">インスタンスの検索キー</param>
-	/// <param name="renderCamera">描画カメラ</param>
-	void Draw(uint32_t instanceIndex, Camera* renderCamera);
+	void Draw(uint32_t instanceIndex);
 
 	/// <summary>
 	/// リセット

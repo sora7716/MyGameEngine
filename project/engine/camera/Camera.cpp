@@ -1,13 +1,11 @@
 #include "Camera.h"
 #include "WinApi.h"
-#include "DirectXBase.h"
 #include "MathUtility.h"
-#include <cassert>
-using namespace Microsoft::WRL;
-
+#include "MatrixUtility.h"
+#include "GameObject.h"
 
 //コンストラクタ
-Camera::Camera(){
+Camera::Camera(GameObject* gameObject) :Component(gameObject){
 }
 
 //デストラクタ
@@ -15,26 +13,24 @@ Camera::~Camera(){
 }
 
 //初期化
-void Camera::Initialize(DirectXBase* directXBase){
-	//DirectXの基盤部分がNullかどうか確認
-	assert(directXBase);
-	directXBase_ = directXBase;
-	transform_ = {};
-	transform_.translate.z = -10.0f;
+void Camera::Initialize(){
+	//基底クラスの初期化
+	Component::Initialize();
+	gameObject_ = GetOwner();
 	fovY_ = 0.45f;
 	aspectRation_ = float(WinApi::kClientWidth) / float(WinApi::kClientHeight);
 	nearClip_ = 0.1f;
 	farClip_ = 100.0f;
 	//視錐台のローカルの頂点を作成
 	frustum_.localCorners = mathUtility::CreateFrustumVertex(nearClip_, farClip_, fovY_, aspectRation_);
-	//カメラリソースを生成
-	CreateCameraResource();
 }
 
 //更新
 void Camera::Update(){
+	//基底クラスの更新
+	Component::Update();
 	//アフィン変換行列の作成
-	worldMatrix_ = matrixUtility::MakeAffineMatrix(transform_);
+	worldMatrix_ = matrixUtility::MakeAffineMatrix(gameObject_->GetTransform());
 	//worldMatrixの逆行列
 	viewMatrix_ = worldMatrix_.Inverse();
 	//透視投影行列の作成
@@ -43,8 +39,8 @@ void Camera::Update(){
 	viewProjectionMatrix_ = viewMatrix_ * projectionMatrix_;
 
 	//GPUに送信する用のポインタを保存
-	cameraForGPU_->viewProjection = viewProjectionMatrix_;
-	cameraForGPU_->worldPosition = GetWorldPos();
+	renderData_.viewProjection = viewProjectionMatrix_;
+	renderData_.worldPosition = GetWorldPos();
 
 	//視錐台のローカルの頂点を作成
 	frustum_.localCorners = mathUtility::CreateFrustumVertex(nearClip_, farClip_, fovY_, aspectRation_);
@@ -53,26 +49,35 @@ void Camera::Update(){
 
 }
 
-//描画準備
-void Camera::DrawSetting(uint32_t rootParameterIndex){
-	//カメラCBufferの場所を設定
-	directXBase_->GetCommandList()->SetGraphicsRootConstantBufferView(rootParameterIndex, cameraResource_.Get()->GetGPUVirtualAddress());
+//複製
+std::unique_ptr<Component> Camera::Clone(GameObject* gameObject) const{
+	std::unique_ptr<Camera>cloneInstance = std::make_unique<Camera>(gameObject);
+
+	//初期化
+	cloneInstance->Initialize();
+
+	//Cameraが持つ設定だけ複製
+	cloneInstance->SetEnabled(this->IsEnabled());
+	cloneInstance->SetFovY(fovY_);
+	cloneInstance->SetNearClip(nearClip_);
+	cloneInstance->SetFarClip(farClip_);
+	cloneInstance->SetAspectRation(aspectRation_);
+	return cloneInstance;
 }
 
 //オイラー角の設定
 void Camera::SetEulerAngle(const Vector3& eulerAngle){
-	transform_.eulerAngle = eulerAngle;
-	transform_.quaternion = Quaternion::MakeQuaternionForEulerAngle(transform_.eulerAngle);
+	gameObject_->GetTransform().SetEulerAngle(eulerAngle);
 }
 
 //クォータニオンの設定
 void Camera::SetQuaternion(const Quaternion& quaternion){
-	transform_.quaternion = quaternion;
+	gameObject_->GetTransform().quaternion = quaternion;
 }
 
 // 平行移動の設定
 void Camera::SetTranslate(const Vector3& translate){
-	transform_.translate = translate;
+	gameObject_->GetTransform().translate = translate;
 }
 
 // 水平方向視野角の設定
@@ -97,44 +102,32 @@ void Camera::SetFarClip(const float farClip){
 
 // ワールド行列の取得
 const Matrix4x4& Camera::GetWorldMatrix() const{
-	// TODO: return ステートメントをここに挿入します
 	return worldMatrix_;
-}
-
-//オイラー角の取得
-const Vector3& Camera::GetEulerAngle() const{
-	// TODO: return ステートメントをここに挿入します
-	return transform_.eulerAngle;
 }
 
 // ビュー行列の取得
 const Matrix4x4& Camera::GetViewMatrix() const{
-	// TODO: return ステートメントをここに挿入します
 	return viewMatrix_;
 }
 
 // 透視投影行列の取得
 const Matrix4x4& Camera::GetProjectionMatrix() const{
-	// TODO: return ステートメントをここに挿入します
 	return projectionMatrix_;
 }
 
 // ビュープロジェクション行列
 const Matrix4x4& Camera::GetViewProjectionMatrix() const{
-	// TODO: return ステートメントをここに挿入します
 	return viewProjectionMatrix_;
 }
 
 // 回転の取得
 const Quaternion& Camera::GetQuaternion() const{
-	// TODO: return ステートメントをここに挿入します
-	return transform_.quaternion;
+	return gameObject_->GetTransform().quaternion;
 }
 
 // 平行移動の取得
 const Vector3& Camera::GetTranslate() const{
-	// TODO: return ステートメントをここに挿入します
-	return transform_.translate;
+	return gameObject_->GetTransform().translate;
 }
 
 //ワールド座標の取得
@@ -144,7 +137,6 @@ Vector3 Camera::GetWorldPos() const{
 
 //視錐台の取得
 primitiveData::Frustum& Camera::GetFrustum(){
-	// TODO: return ステートメントをここに挿入します
 	return frustum_;
 }
 
@@ -168,12 +160,7 @@ const float Camera::GetAspectRation() const{
 	return aspectRation_;
 }
 
-//カメラリソースの生成
-void Camera::CreateCameraResource(){
-	//光源のリソースを作成
-	cameraResource_ = directXBase_->CreateBufferResource(sizeof(CameraForGPU));
-	//光源データの書きこみ
-	cameraResource_->Map(0, nullptr, reinterpret_cast<void**>(&cameraForGPU_));
-	cameraForGPU_->worldPosition = {};
-	cameraForGPU_->viewProjection = Matrix4x4::Identity4x4();
+//描画データの取得
+const CameraRenderData& Camera::GetRenderData(){
+	return renderData_;
 }

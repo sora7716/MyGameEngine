@@ -1,7 +1,11 @@
 #pragma once
 #include "ParticleRenderData.h"
+#include "RenderData.h"
+#include <vector>
 #include <cstdint>
 #include <memory>
+#include <wrl.h>
+#include <d3d12.h>
 
 //前方宣言
 class DirectXBase;
@@ -63,8 +67,8 @@ public://メンバ関数
 	/// 描画
 	/// </summary>
 	/// <param name="instanceIndex">インスタンスの検索キー</param>
-	/// <param name="renderCamera">描画用のカメラ</param>
-	void Draw(uint32_t instanceIndex, Camera* renderCamera);
+	/// <param name="renderCamera">描画カメラ</param>
+	void Draw(uint32_t instanceIndex,Camera*renderCamera);
 
 	/// <summary>
 	/// リセット

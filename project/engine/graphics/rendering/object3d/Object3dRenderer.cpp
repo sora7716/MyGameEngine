@@ -83,11 +83,7 @@ void Object3dRenderer::Reset(){
 }
 
 //描画
-void Object3dRenderer::Draw(uint32_t instanceIndex, Camera* renderCamera){
-
-	//カメラ
-	renderCamera->DrawSetting(4);
-
+void Object3dRenderer::Draw(uint32_t instanceIndex){
 	for (uint32_t lodIndex = 0; lodIndex < renderDatas_[instanceIndex].lodRenderData.modelRendererDatas.size(); lodIndex++){
 		//LODモデルが存在してなかったら
 		if (renderDatas_[instanceIndex].lodRenderData.modelRendererDatas.empty()){

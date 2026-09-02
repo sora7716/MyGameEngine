@@ -1,9 +1,7 @@
 #pragma once
-#include "RenderData.h"
 #include "BlendMode.h"
 #include "ParticleData.h"
 #include <list>
-#include <vector>
 
 //前方宣言
 class Model;

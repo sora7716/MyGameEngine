@@ -10,10 +10,6 @@ class DirectXBase;
 class AbstractSceneFactory;
 class ColliderManager;
 class GameObject;
-class Object3dRenderer;
-class SkyBoxRenderer;
-class DebugDrawRenderer;
-class ParticleRenderer;
 
 /// <summary>
 /// シーンの基底クラス
@@ -93,12 +89,6 @@ public://メンバ関数
 	/// </summary>
 	/// <param name="sceneContext">シーンに必要な情報</param>
 	void SetSceneContext(const SceneContext& sceneContext);
-
-	/// <summary>
-	/// ゲームカメラの取得
-	/// </summary>
-	/// <returns>ゲームカメラ</returns>
-	Camera* GetGameCamera();
 private://メンバ関数
 	/// <summary>
 	/// 名前を重複しないようにする
@@ -116,8 +106,6 @@ protected://メンバ変数
 	SceneContext sceneContext_ = {};
 	//コライダーマネージャー
 	//std::unique_ptr<ColliderManager>colliderManager_ = nullptr;
-	//ゲームプレイ用のカメラ
-	Camera* gameCamera_ = nullptr;
 private://メンバ変数
 	//シーンファクトリー
 	std::unique_ptr<AbstractSceneFactory> sceneFactory_ = nullptr;

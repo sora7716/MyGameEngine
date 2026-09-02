@@ -1,46 +1,41 @@
 #pragma once
-#include "MatrixUtility.h"
 #include "PrimitiveData.h"
 #include "RenderData.h"
-#include <wrl.h>
-#include <d3d12.h>
-
-//前方宣言
-class DirectXBase;
+#include "CameraRenderData.h"
+#include "Component.h"
 
 /// <summary>
 /// カメラ
 /// </summary>
-class Camera {
-private://エイリアステンプレート
-	template <class T>using ComPtr = Microsoft::WRL::ComPtr<T>;
+class Camera:public Component {
 public://メンバ関数
 	/// <summary>
 	/// コンストラクタ
 	/// </summary>
-	Camera();
+	/// <param name="gameObject">ゲームオブジェクト</param>
+	explicit Camera(GameObject*gameObject);
 
 	/// <summary>
 	/// デストラクタ
 	/// </summary>
-	~Camera();
+	~Camera()override;
 
 	/// <summary>
 	/// 初期化
 	/// </summary>
-	/// <param name="directXBase">DirectXの基盤</param>
-	void Initialize(DirectXBase* directXBase);
+	void Initialize()override;
 
 	/// <summary>
 	/// 更新
 	/// </summary>
-	void Update();
+	void Update()override;
 
 	/// <summary>
-	/// 描画準備
-	/// </summary>
-	/// <param name="rootParameterIndex">ルートパラメータの配列番号</param>
-	void DrawSetting(uint32_t rootParameterIndex);
+    /// 複製
+    /// </summary>
+    /// <param name="gameObject">ゲームオブジェクト</param>
+    /// <returns>コンポーネント</returns>
+	std::unique_ptr<Component>Clone(GameObject* gameObject)const override;
 
 	/// <summary>
 	/// オイラー角の設定
@@ -89,12 +84,6 @@ public://メンバ関数
 	/// </summary>
 	/// <returns>ワールド行列</returns>
 	const Matrix4x4& GetWorldMatrix()const;
-
-	/// <summary>
-	/// オイラー角の取得
-	/// </summary>
-	/// <returns>オイラー角</returns>
-	const Vector3& GetEulerAngle()const;
 
 	/// <summary>
 	/// ビュー行列の取得
@@ -161,16 +150,15 @@ public://メンバ関数
 	/// </summary>
 	/// <returns></returns>
 	const float GetAspectRation()const;
-private://メンバ変数
+
 	/// <summary>
-	/// カメラリソースの生成
+	/// 描画データの取得
 	/// </summary>
-	void CreateCameraResource();
+	/// <returns>描画データ</returns>
+	const CameraRenderData& GetRenderData();
 private://メンバ変数
-	//DirectXの基盤部分
-	DirectXBase* directXBase_ = nullptr;
-	//ローカル座標
-	Transform transform_ = {};
+	//ゲームオブジェクト
+	GameObject* gameObject_ = nullptr;
 	//ワールド行列
 	Matrix4x4 worldMatrix_ = {};
 	//ビュー行列
@@ -189,9 +177,7 @@ private://メンバ変数
 	Matrix4x4 viewProjectionMatrix_ = {};
 	//視錐台
 	primitiveData::Frustum frustum_ = {};
-	//カメラのリソース
-	ComPtr<ID3D12Resource> cameraResource_ = nullptr;
-	//GPUに送るカメラ情報
-	CameraForGPU* cameraForGPU_ = nullptr;
+	//描画データ
+	CameraRenderData renderData_ = {};
 };
 

@@ -6,31 +6,28 @@
 #include <string>
 #include <vector>
 //Transform情報
-struct Transform {
+struct Transform{
 	Vector3 scale = Vector3::MakeAllOne();
 	Quaternion quaternion = Quaternion::IdentityQuaternion();
 	Vector3 translate = {};
-
-	//デバック用
-	//軸
-	Vector3 axis = {};
-	//角度
-	float angle = 0.0f;
-	//オイラー角
 	Vector3 eulerAngle = {};
-	//クォータニオンかオイラーか
-	bool isUsingQuaternion = false;
+
+	/// <summary>
+	/// オイラー角の設定
+	/// </summary>
+	/// <param name="rotate">オイラー角</param>
+	void SetEulerAngle(const Vector3& rotate);
 };
 
 //Transform2D情報
-struct RectTransform {
+struct RectTransform{
 	Vector2 scale = Vector2::MakeAllOne();
 	float rotate = 0.0f;
 	Vector2 translate = {};
 };
 
 //TransformationMatrix
-struct TransformationMatrix {
+struct TransformationMatrix{
 	Matrix4x4 wvp = {};
 	Matrix4x4 world = {};
 	Matrix4x4 worldInverseTranspose = {};
@@ -44,7 +41,7 @@ struct TransformationMatrixForSprite{
 
 
 //ノード構造体
-struct Node {
+struct Node{
 	Matrix4x4 localMatrix = {};
 	std::string name = "";
 	std::vector<Node> children;

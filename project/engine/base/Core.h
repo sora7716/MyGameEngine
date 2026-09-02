@@ -6,7 +6,6 @@
 #include "TextureManager.h"
 #include "ModelManager.h"
 #include "ImGuiManager.h"
-#include "CameraManager.h"
 #include "SceneManager.h"
 #include "AudioManager.h"
 #include "GameObjectList.h"
@@ -82,12 +81,6 @@ public://メンバ関数
 	ImGuiManager* GetImGuiManager()const;
 
 	/// <summary>
-	/// カメラマネージャーの取得
-	/// </summary>
-	/// <returns>カメラマネージャー</returns>
-	CameraManager* GetCameraManager()const;
-
-	/// <summary>
 	/// シーンマネージャーの取得
 	/// </summary>
 	/// <returns>シーンマネージャー</returns>
@@ -154,8 +147,6 @@ private://メンバ変数
 	std::unique_ptr<ModelManager>modelManager_ = nullptr;
 	//ImGuiマネージャー
 	std::unique_ptr<ImGuiManager>imGuiManager_ = nullptr;
-	//カメラマネージャー
-	std::unique_ptr<CameraManager>cameraManager_ = nullptr;
 	//シーンマネージャー
 	std::unique_ptr<SceneManager>sceneManager_ = nullptr;
 	//オーディオマネージャー

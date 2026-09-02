@@ -71,7 +71,7 @@ void DebugDrawRenderer::AddRenderData(const DebugDrawRenderData& renderData){
 }
 
 //描画
-void DebugDrawRenderer::Draw(uint32_t instanceIndex, Camera* renderCamera){
+void DebugDrawRenderer::Draw(uint32_t instanceIndex){
 	//デバッグ描画の描画データ
 	const DebugDrawRenderData& renderData = renderDatas_[instanceIndex];
 	//GPUリソース
@@ -81,9 +81,6 @@ void DebugDrawRenderer::Draw(uint32_t instanceIndex, Camera* renderCamera){
 	*gpuResource.materialData = renderData.material;
 	//ワールド行列
 	*gpuResource.worldMatrixData = renderData.worldMatrix;
-
-	//カメラ
-	renderCamera->DrawSetting(2);
 	//座標変換行列CBufferの場所を設定
 	directXBase_->GetCommandList()->SetGraphicsRootConstantBufferView(1, gpuResource.worldMatrixResource->GetGPUVirtualAddress());//wvp
 	//IndexBufferViewの設定

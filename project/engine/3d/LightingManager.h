@@ -48,7 +48,7 @@ public://メンバ関数
 	/// <summary>
 	/// 描画の設定
 	/// </summary>
-	void DrawSetting();
+	void Bind();
 
 	/// <summary>
 	/// 平行光源の設定

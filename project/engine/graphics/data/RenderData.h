@@ -1,6 +1,5 @@
 #pragma once
 #include "RenderingData.h"
-#include "LightingData.h"
 #include "Vector4.h"
 #include <cstdint>
 #include <string>

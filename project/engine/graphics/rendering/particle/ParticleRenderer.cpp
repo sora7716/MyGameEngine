@@ -50,9 +50,6 @@ void ParticleRenderer::Draw(uint32_t instanceIndex, Camera* renderCamera){
 	//GPUリソースを取得
 	GpuResource& gpuResource = gpuResources_[instanceIndex];
 
-	//Nullチェック
-	assert(renderCamera);
-
 	//マテリアルインスタンスのスロットを取得
 	const std::vector <MaterialInstanceSlot>& slots = renderData.materialInstance->GetSlots();
 	//サイズを確認
@@ -65,11 +62,6 @@ void ParticleRenderer::Draw(uint32_t instanceIndex, Camera* renderCamera){
 
 	//インスタンスデータの適応
 	uint32_t drawCount = UpdateParticleInstance(gpuResource, renderData, renderCamera);
-
-	//ワールド行列の更新
-	//emitter_->UpdateWorldMatrix(instancingData_);
-	//カメラ
-	renderCamera->DrawSetting(3);
 
 	//ワールドトランスフォームの描画
 	directXBase_->GetCommandList()->SetGraphicsRootDescriptorTable(1, srvManager_->GetGPUDescriptorHandle(gpuResource.srvIndex));

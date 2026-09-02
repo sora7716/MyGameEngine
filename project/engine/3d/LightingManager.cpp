@@ -42,7 +42,7 @@ void LightingManager::Update(){
 }
 
 //描画の設定
-void LightingManager::DrawSetting(){
+void LightingManager::Bind(){
 	//平光源CBufferの場所を設定
 	directXBase_->GetCommandList()->SetGraphicsRootConstantBufferView(3, directionalLightResource_->GetGPUVirtualAddress());
 	//点光源のStructuredBufferの場所を設定

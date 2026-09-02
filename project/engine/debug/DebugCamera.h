@@ -1,48 +1,44 @@
 #pragma once
 #include "Vector3.h"
 #include "Vector2.h"
+#include "Component.h"
 
 //前方宣言
 class Camera;
-class CameraManager;
 
 /// <summary>
 /// デバックカメラ
 /// </summary>
-class DebugCamera{
+class DebugCamera :public Component{
 public://メンバ関数
 	/// <summary>
 	/// コンストラクタ
 	/// </summary>
-	DebugCamera() = default;
+	/// <param name="gameObject">ゲームオブジェクト</param>
+	explicit DebugCamera(GameObject*gameObject);
 
 	/// <summary>
 	/// デストラクタ
 	/// </summary>
-	~DebugCamera() = default;
+	~DebugCamera()override;
 
 
 	/// <summary>
 	/// 初期化
 	/// </summary>
-	/// <param name="debugCamera">デバッグカメラ</param>
-	void Initialize(Camera* debugCamera);
+	void Initialize()override;
 
 	/// <summary>
 	/// 更新
 	/// </summary>
-	void Update();
+	void Update()override;
 
 	/// <summary>
-	/// カメラのゲッター
+	/// 複製
 	/// </summary>
-	/// <returns>カメラ</returns>
-	Camera* GetCamera();
-
-	/// <summary>
-	/// デバックに使用する
-	/// </summary>
-	void Debug();
+	/// <param name="gameObject">ゲームオブジェクト</param>
+	/// <returns>コンポーネント</returns>
+	std::unique_ptr<Component>Clone(GameObject* gameObject)const override;
 private://メンバ関数
 	/// <summary>
 	/// 左右移動の操作
@@ -87,10 +83,8 @@ public://定数
 private://メンバ変数
 	//カメラ
 	Camera* camera_ = nullptr;
-	//X,Y,Z軸回りのローカル回転角
-	Vector3 rotate_ = { 0.0f,0.0f,0.0f };
-	//ローカル座標
-	Vector3 translate_ = { 0.0f,0.0f,-10.0f };
+	//ゲームオブジェクト
+	GameObject* gameObject_ = nullptr;
 	//マウスのフリック量
 	Vector2 mouseFlick_ = {};
 	//カメラの移動方向のベクトル
@@ -98,6 +92,6 @@ private://メンバ変数
 	//FovY
 	float fovY_ = 0.0f;
 	//デバッグモード
-	bool isDebug_ = false;
+	bool isControlEnabled_ = false;
 };
 

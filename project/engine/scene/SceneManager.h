@@ -1,12 +1,11 @@
 #pragma once
 #include "BaseScene.h"
 #include "AbstractSceneFactory.h"
+#include "CameraRenderData.h"
 
 //前方宣言
 class DebugEditor;
-class DebugCamera;
 class RenderSystem;
-class Camera;
 
 /// <summary>
 /// シーン管理
@@ -42,8 +41,8 @@ public://メンバ関数
 	/// <summary>
 	/// 描画
 	/// </summary>
-	/// <param name="camera">カメラ</param>
-	void Draw(Camera* camera);
+	/// <param name="cameraMode">カメラモード</param>
+	void Draw(CameraMode cameraMode);
 
 	/// <summary>
 	/// ゲーム画面の描画
@@ -99,8 +98,6 @@ private://メンバ変数
 	BaseScene* nextScene_ = nullptr;
 	//デバッグエディタ
 	std::unique_ptr<DebugEditor>debugEditor_ = nullptr;
-	//デバックカメラ
-	std::unique_ptr<DebugCamera>debugCamera_ = nullptr;
 	//描画システム
 	RenderSystem* renderSystem_ = nullptr;
 };

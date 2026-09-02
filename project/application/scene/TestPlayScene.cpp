@@ -1,6 +1,5 @@
 #include "TestPlayScene.h"
 #include "Input.h"
-#include "CameraManager.h"
 #include "ImGuiManager.h"
 #include "GameObject.h"
 #include "Object3d.h"
@@ -30,7 +29,9 @@ TestPlayScene::~TestPlayScene(){};
 void TestPlayScene::Initialize(){
 	//ベースシーンの初期化
 	BaseScene::Initialize();
-	gameCamera_ = sceneContext_.cameraManager->FindCamera("testPlayCamera");
+	//テストプレイのカメラを作成
+	GameObject* cameraObject = CreateGameObject();
+	Camera* gameCamera = cameraObject->AddComponent<Camera>();
 
 	directionalLight_ = *sceneContext_.lightingManager->GetDirectionalLight();
 
@@ -62,7 +63,7 @@ void TestPlayScene::Initialize(){
 
 	GameObject* frustumObject = CreateGameObject();
 	debugDraw::Frustum* frustum = frustumObject->AddComponent<debugDraw::Frustum>();
-	frustum->SetTargetCamera(gameCamera_);
+	frustum->SetTargetCamera(gameCamera);
 	frustumObject->SetName("カメラの視錐台");
 
 	GameObject* particleObject = CreateGameObject();
@@ -89,20 +90,6 @@ void TestPlayScene::Debug(){
 	//	ImGui::DragFloat2("uvTranslate", &transform2ds_[i].translate.x, 0.1f);
 	//	ImGui::PopID();
 	//}
-
-	if (ImGui::TreeNode("camera")){
-		Vector3 cameraTranslate = gameCamera_->GetTranslate();
-		Vector3 cameraRotate = gameCamera_->GetEulerAngle();
-		ImGui::DragFloat3("rotate", &cameraRotate.x, 0.1f);
-		ImGui::DragFloat3("translate", &cameraTranslate.x, 0.1f);
-		gameCamera_->SetEulerAngle(cameraRotate);
-		gameCamera_->SetTranslate(cameraTranslate);
-
-		float farClip = gameCamera_->GetFarClip();
-		ImGui::DragFloat("farClip", &farClip);
-		gameCamera_->SetFarClip(farClip);
-		ImGui::TreePop();
-	}
 
 	//if (ImGui::TreeNode("skyBox")) {
 	//	ImGuiManager::DragTransform(skyBoxObject_->GetTransform());

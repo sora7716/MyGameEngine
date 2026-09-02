@@ -47,12 +47,6 @@ public://メンバ関数
 	void Draw();
 
 	/// <summary>
-	/// トランスフォームデータ用のImGui
-	/// </summary>
-	/// <param name="transformData">トランスフォームデータ</param>
-	static void DragTransform([[maybe_unused]] Transform& transformData);
-
-	/// <summary>
 	/// OBBデータ用のImGui
 	/// </summary>
 	/// <param name="obb">obb</param>

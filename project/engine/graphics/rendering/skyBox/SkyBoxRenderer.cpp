@@ -54,7 +54,7 @@ void SkyBoxRenderer::Reset(){
 }
 
 //描画
-void SkyBoxRenderer::Draw(uint32_t instanceIndex, Camera* renderCamera){
+void SkyBoxRenderer::Draw(uint32_t instanceIndex){
 	//スカイボックスの描画データ
 	SkyBoxRenderData skyBoxRenderData = renderDatas_[instanceIndex];
 
@@ -69,8 +69,6 @@ void SkyBoxRenderer::Draw(uint32_t instanceIndex, Camera* renderCamera){
 	//ワールド行列
 	*worldMatrix_ = skyBoxRenderData.worldMatrix;
 
-	//カメラ
-	renderCamera->DrawSetting(3);
 	//座標変換行列CBufferの場所を設定
 	directXBase_->GetCommandList()->SetGraphicsRootConstantBufferView(1, worldMatrixResource_->GetGPUVirtualAddress());
 	//VertexBufferViewの設定

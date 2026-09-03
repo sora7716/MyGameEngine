@@ -139,8 +139,7 @@ Particle ParticleEmitter::MakeNormalParticle(){
 	std::uniform_real_distribution<float>distScale(0.4f, 1.5f);
 	particle.transform.scale = { 0.05f,distScale(randomEngine_),1.0f };
 	std::uniform_real_distribution<float>distRotate(-std::numbers::pi_v<float>, std::numbers::pi_v<float>);
-	particle.transform.eulerAngle = { 0.0f,0.0f,distRotate(randomEngine_) };
-	particle.transform.quaternion = Quaternion::MakeQuaternionForEulerAngle(particle.transform.eulerAngle);
+	particle.transform.SetEulerAngle({ 0.0f,0.0f,distRotate(randomEngine_) });
 	particle.transform.translate = emitter_.translate;
 	particle.velocity = { 0.0f,0.0f,0.0f };
 	particle.color = Vector4::MakeWhiteColor();

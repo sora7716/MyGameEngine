@@ -2,7 +2,7 @@
 #include "Vector3.h"
 
 //クォータニオン
-struct Quaternion {
+struct Quaternion{
 	float x = 0.0f;
 	float y = 0.0f;
 	float z = 0.0f;
@@ -60,6 +60,21 @@ struct Quaternion {
 	/// <param name="rotate">オイラー角</param>
 	/// <returns>クォータニオン</returns>
 	static Quaternion MakeQuaternionForEulerAngle(const Vector3& rotate);
+
+	/// <summary>
+	/// ベクトルをクォータニオンで回転させた結果のベクトルを求める
+	/// </summary>
+	/// <param name="vector">ベクトル</param>
+	/// <returns>クォータニオンで回転させたベクトル</returns>
+	Vector3 RotateVector(const Vector3& vector);
+
+	/// <summary>
+	/// 任意軸回転を表すクォータニオンの生成
+	/// </summary>
+	/// <param name="axis">3軸</param>
+	/// <param name="angle">角度</param>
+	/// <returns>任意軸回転を表すクォータニオン</returns>
+	static Quaternion MakeRotateAxisAngleQuaternion(const Vector3& axis, float angle);
 
 	/// <summary>
 	/// 加算

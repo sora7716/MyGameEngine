@@ -102,4 +102,6 @@ void GameScene::Initialize(){
 
 //デバッグ
 void GameScene::Debug(){
+	//基底クラスのデバッグ
+	BaseScene::Debug();
 }

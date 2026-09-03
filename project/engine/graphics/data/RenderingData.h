@@ -10,13 +10,18 @@ struct Transform{
 	Vector3 scale = Vector3::MakeAllOne();
 	Quaternion quaternion = Quaternion::IdentityQuaternion();
 	Vector3 translate = {};
-	Vector3 eulerAngle = {};
 
 	/// <summary>
 	/// オイラー角の設定
 	/// </summary>
 	/// <param name="rotate">オイラー角</param>
 	void SetEulerAngle(const Vector3& rotate);
+
+	/// <summary>
+	/// クォータニオンの設定
+	/// </summary>
+	/// <param name="rotate">クォータニオン</param>
+	void SetRotate(const Quaternion& rotate);
 };
 
 //Transform2D情報

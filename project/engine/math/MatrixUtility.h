@@ -65,22 +65,6 @@ namespace matrixUtility {
 	Matrix4x4 DirectionToDirection(const Vector3& from, const Vector3& to);
 
 	/// <summary>
-	/// 任意軸回転を表すクォータニオンの生成
-	/// </summary>
-	/// <param name="axis">3軸</param>
-	/// <param name="angle">角度</param>
-	/// <returns>任意軸回転を表すクォータニオン</returns>
-	Quaternion MakeRotateAxisAngleQuaternion(const Vector3& axis, float angle);
-
-	/// <summary>
-	/// ベクトルをクォータニオンで回転させた結果のベクトルを求める
-	/// </summary>
-	/// <param name="vector">ベクトル</param>
-	/// <param name="quaternion">クォータニオン</param>
-	/// <returns>クォータニオンで回転させたベクトル</returns>
-	Vector3 RotateVector(const Vector3& vector, const Quaternion& quaternion);
-
-	/// <summary>
 	/// Quaternionから回転行列を求める
 	/// </summary>
 	/// <param name="quaternion">クオータニオン</param>
@@ -191,12 +175,5 @@ namespace matrixUtility {
 	/// <param name="transform">トランスフォーム</param>
 	/// <returns>ビルボード行列を含んだアフィン行列</returns>
 	Matrix4x4 MakeBillboardAffineMatrix(const Matrix4x4& cameraWorldMatrix, const Transform& transform);
-
-	/// <summary>
-	/// 行列をTransformDataに分解
-	/// </summary>
-	/// <param name="mat">行列</param>
-	/// <returns>TransformData</returns>
-	Transform DecomposeMatrix(const Matrix4x4& mat);
 };
 

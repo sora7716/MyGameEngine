@@ -3,6 +3,7 @@
 #include "GameObject.h"
 #include "ImGuiManager.h"
 #include "TagManager.h"
+#include <cassert>
 
 //コンストラクタ
 DebugEditor::DebugEditor(){
@@ -328,8 +329,8 @@ void DebugEditor::DrawInspector(){
 		}
 
 		//回転の切り替え(オイラー角からクォータニオンを求めてる)
-		if (ImGui::DragFloat3("rotate", &transform.eulerAngle.x, 0.1f)){
-			transform.quaternion = Quaternion::MakeQuaternionForEulerAngle(transform.eulerAngle);
+		if (ImGui::DragFloat3("rotate", &eulerAngle_.x, 0.1f)){
+			transform.quaternion = Quaternion::MakeQuaternionForEulerAngle(eulerAngle_);
 		}
 		ImGui::SameLine();
 		//回転のリセット

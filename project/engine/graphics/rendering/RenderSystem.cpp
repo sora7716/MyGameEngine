@@ -17,8 +17,7 @@
 #include "DebugDrawRenderer.h"
 #include "ParticleSystem.h"
 #include "ParticleRenderer.h"
-#include "Camera.h"
-#include "DebugCamera.h"
+#include "DebugCameraController.h"
 #include "CameraRenderer.h"
 #include <algorithm>
 
@@ -594,7 +593,7 @@ bool RenderSystem::FindSelectCamera(CameraMode cameraMode){
 		}
 
 		//デバッグカメラを取得
-		DebugCamera* debugCamera = camera->GetOwner()->GetComponent<DebugCamera>();
+		DebugCameraController* debugCamera = camera->GetOwner()->GetComponent<DebugCameraController>();
 		if (debugCamera){
 			if (cameraMode == CameraMode::kDebug){
 				selectCamera_.camera = camera;

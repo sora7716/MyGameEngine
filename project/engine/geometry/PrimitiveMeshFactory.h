@@ -6,14 +6,6 @@
 /// プリミティブのメッシュを作成
 /// </summary>
 namespace primitiveMeshFactory {
-	//プリミティブのタイプ
-	enum class Type :uint32_t {
-		kCube,
-		kSphere,
-		kPlane,
-		kTypeCount
-	};
-
 	//設定データ
 	struct Desc {
 		Vector3 size = Vector3::MakeAllOne();
@@ -44,8 +36,5 @@ namespace primitiveMeshFactory {
 	/// <param name="desc">設定データ</param>
 	/// <returns>平面メッシュ</returns>
 	MeshData CreatePlane(const Desc& desc = {});
-
-	//プリミティブのメッシュ作成関数のテーブル
-	extern std::array<CrateMeshData, static_cast<uint32_t>(Type::kTypeCount)> createMeshDataTable;
 }
 

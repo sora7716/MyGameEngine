@@ -86,7 +86,7 @@ const std::string& GameObject::GetTag() const{
 }
 
 //コンポーネントの更新
-void GameObject::UpdateComponents(){
+void GameObject::UpdateComponents(UpdatePhase phase){
 	//ゲームオブジェクトが有効か
 	if (!isActive_){
 		return;
@@ -100,6 +100,9 @@ void GameObject::UpdateComponents(){
 
 		} else if (!component->IsEnabled()){
 			//コンポーネントが有効か
+			continue;
+		} else if (component->GetUpdatePhase() != phase){
+			//設定したフェーズか
 			continue;
 		}
 

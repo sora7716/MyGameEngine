@@ -117,29 +117,6 @@ Matrix4x4 matrixUtility::DirectionToDirection(const Vector3& from, const Vector3
 	return result;
 }
 
-//任意軸回転を表すクォータニオンの生成
-Quaternion matrixUtility::MakeRotateAxisAngleQuaternion(const Vector3& axis, float angle){
-	Quaternion result = Quaternion::IdentityQuaternion();
-	//cos
-	float cos = std::cos(angle / 2.0f);
-	//sin
-	float sin = std::sin(angle / 2.0f);
-
-	//3軸を正規化
-	Vector3 n = axis.Normalize();
-
-	return { n.x * sin,n.y * sin,n.z * sin,cos };
-}
-
-//ベクトルをクォータニオンで回転させた結果のベクトルを求める
-Vector3 matrixUtility::RotateVector(const Vector3& vector, const Quaternion& quaternion){
-	Quaternion result = Quaternion::IdentityQuaternion();
-	Quaternion q = quaternion.Normalize();
-	Quaternion r = { vector.x,vector.y,vector.z,0.0f };
-	result = q * r * q.Conjugate();
-	return { result.x,result.y,result.z };
-}
-
 //Quaternionから回転行列を求める
 Matrix4x4 matrixUtility::MakeRotateMatrix(const Quaternion& quaternion){
 	Matrix4x4 result = Matrix4x4::Identity4x4();
@@ -276,52 +253,4 @@ Matrix4x4 matrixUtility::MakeBillboardMatrix(const Matrix4x4& cameraWorldMatrix,
 //ビルボード行列を含んだアフィン行列の作成
 Matrix4x4 matrixUtility::MakeBillboardAffineMatrix(const Matrix4x4& cameraWorldMatrix, const Transform& transform){
 	return (MakeScaleMatrix(transform.scale) * MakeBillboardMatrix(cameraWorldMatrix, transform.quaternion)) * MakeTranslateMatrix(transform.translate);
-}
-
-//行列をTransformDataに分解
-Transform matrixUtility::DecomposeMatrix(const Matrix4x4& mat){
-	Transform result{};
-	//拡縮
-	result.scale.x = std::sqrt(
-		std::pow(mat.m[0][0], 2.0f) +
-		std::pow(mat.m[0][1], 2.0f) +
-		std::pow(mat.m[0][2], 2.0f)
-	);
-	result.scale.y = std::sqrt(
-		std::pow(mat.m[1][0], 2.0f) +
-		std::pow(mat.m[1][1], 2.0f) +
-		std::pow(mat.m[1][2], 2.0f)
-	);
-	result.scale.z = std::sqrt(
-		std::pow(mat.m[2][0], 2.0f) +
-		std::pow(mat.m[2][1], 2.0f) +
-		std::pow(mat.m[2][2], 2.0f)
-	);
-
-	//回転
-	// 回転行列の正規化（スケール除去）
-	//float rm00 = mat.m[0][0] / result.scale.x;
-	float rm01 = mat.m[0][1] / result.scale.x;
-	//float rm02 = mat.m[0][2] / result.scale.x;
-
-	//float rm10 = mat.m[1][0] / result.scale.y;
-	float rm11 = mat.m[1][1] / result.scale.y;
-	//float rm12 = mat.m[1][2] / result.scale.y;
-
-	float rm20 = mat.m[2][0] / result.scale.z;
-	float rm21 = mat.m[2][1] / result.scale.z;
-	float rm22 = mat.m[2][2] / result.scale.z;
-
-	// オイラー角 (Yaw-Pitch-Roll 順)
-	result.quaternion.x = std::atan2(-rm21, sqrtf(rm20 * rm20 + rm22 * rm22));//Pitch
-	result.quaternion.y = std::atan2(rm20, rm22);//Yaw
-	result.quaternion.z = std::atan2(rm01, rm11);//Roll
-
-	//平行移動
-	result.translate = {
-		mat.m[3][0],
-		mat.m[3][1],
-		mat.m[3][2]
-	};
-	return result;
 }

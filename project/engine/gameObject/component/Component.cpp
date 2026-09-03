@@ -12,6 +12,11 @@ void Component::Initialize(){
 void Component::Update(){
 }
 
+//更新のフェーズの取得
+UpdatePhase Component::GetUpdatePhase(){
+	return UpdatePhase::kMain;
+}
+
 //取り付け先を取得
 GameObject* Component::GetOwner() const{
 	return owner_;

@@ -91,9 +91,6 @@
     <Filter Include="engine\utility">
       <UniqueIdentifier>{2c696d75-d9d3-4dda-8d3e-b7a4efa0895e}</UniqueIdentifier>
     </Filter>
-    <Filter Include="engine\worldTransform">
-      <UniqueIdentifier>{d8abc2da-d4af-46df-80ee-06f569e37463}</UniqueIdentifier>
-    </Filter>
     <Filter Include="engine\scene">
       <UniqueIdentifier>{f0c32dd3-20a3-410c-b44e-0eee00afd293}</UniqueIdentifier>
     </Filter>
@@ -192,7 +189,7 @@
     <ClCompile Include="engine\debug\CrashHandler.cpp">
       <Filter>engine\debug</Filter>
     </ClCompile>
-    <ClCompile Include="engine\debug\DebugCamera.cpp">
+    <ClCompile Include="engine\debug\DebugCameraController.cpp">
       <Filter>engine\debug</Filter>
     </ClCompile>
     <ClCompile Include="engine\debug\ImGuiManager.cpp">
@@ -287,9 +284,6 @@
     </ClCompile>
     <ClCompile Include="engine\scene\SceneManager.cpp">
       <Filter>engine\scene</Filter>
-    </ClCompile>
-    <ClCompile Include="engine\worldTransform\WorldTransform.cpp">
-      <Filter>engine\worldTransform</Filter>
     </ClCompile>
     <ClCompile Include="engine\physics\Physics.cpp">
       <Filter>engine\physics</Filter>
@@ -434,7 +428,7 @@
     <ClInclude Include="engine\debug\CrashHandler.h">
       <Filter>engine\debug</Filter>
     </ClInclude>
-    <ClInclude Include="engine\debug\DebugCamera.h">
+    <ClInclude Include="engine\debug\DebugCameraController.h">
       <Filter>engine\debug</Filter>
     </ClInclude>
     <ClInclude Include="engine\debug\ImGuiManager.h">
@@ -544,9 +538,6 @@
     </ClInclude>
     <ClInclude Include="engine\scene\SceneManager.h">
       <Filter>engine\scene</Filter>
-    </ClInclude>
-    <ClInclude Include="engine\worldTransform\WorldTransform.h">
-      <Filter>engine\worldTransform</Filter>
     </ClInclude>
     <ClInclude Include="engine\physics\Physics.h">
       <Filter>engine\physics</Filter>

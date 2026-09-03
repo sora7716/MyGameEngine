@@ -7,20 +7,20 @@
 class Camera;
 
 /// <summary>
-/// デバックカメラ
+/// デバックカメラの操作
 /// </summary>
-class DebugCamera :public Component{
+class DebugCameraController :public Component{
 public://メンバ関数
 	/// <summary>
 	/// コンストラクタ
 	/// </summary>
 	/// <param name="gameObject">ゲームオブジェクト</param>
-	explicit DebugCamera(GameObject*gameObject);
+	explicit DebugCameraController(GameObject*gameObject);
 
 	/// <summary>
 	/// デストラクタ
 	/// </summary>
-	~DebugCamera()override;
+	~DebugCameraController()override;
 
 
 	/// <summary>
@@ -32,6 +32,12 @@ public://メンバ関数
 	/// 更新
 	/// </summary>
 	void Update()override;
+
+	/// <summary>
+	/// 更新のフェーズの取得
+	/// </summary>
+	/// <returns>更新のフェーズ</returns>
+	UpdatePhase GetUpdatePhase()override;
 
 	/// <summary>
 	/// 複製
@@ -85,6 +91,8 @@ private://メンバ変数
 	Camera* camera_ = nullptr;
 	//ゲームオブジェクト
 	GameObject* gameObject_ = nullptr;
+	//オイラー角
+	Vector3 eulerAngle_ = {};
 	//マウスのフリック量
 	Vector2 mouseFlick_ = {};
 	//カメラの移動方向のベクトル

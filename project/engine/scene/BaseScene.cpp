@@ -1,10 +1,10 @@
 #include "BaseScene.h"
 #include "AbstractSceneFactory.h"
 #include "WinApi.h"
+#include "DebugCameraController.h"
 #include "GameObject.h"
 #include "StringUtility.h"
 #include "TagManager.h"
-#include "RenderSystem.h"
 #include <algorithm>
 //#include "algorithms/ColliderManager.h"
 
@@ -39,7 +39,8 @@ void BaseScene::Initialize(){
 	//デバッグカメラ
 	GameObject* debugCameraObject = CreateGameObject();
 	debugCameraObject->AddComponent<Camera>();
-	debugCameraObject->AddComponent<DebugCamera>();
+	debugCameraObject->AddComponent<DebugCameraController>();
+	debugCameraObject->SetName("debugCamera");
 }
 
 //更新
@@ -48,7 +49,7 @@ void BaseScene::Update(){
 	for (const std::unique_ptr<GameObject>& gameObject : gameObjects_){
 		//gameObjectがNullじゃなければ
 		if (gameObject){
-			gameObject->UpdateComponents();
+			gameObject->UpdateComponents(UpdatePhase::kMain);
 		}
 	}
 
@@ -58,7 +59,13 @@ void BaseScene::Update(){
 
 //デバッグ
 void BaseScene::Debug(){
-
+	//ゲームオブジェクトのコンポーネントの更新
+	for (const std::unique_ptr<GameObject>& gameObject : gameObjects_){
+		//gameObjectがNullじゃなければ
+		if (gameObject){
+			gameObject->UpdateComponents(UpdatePhase::kDebug);
+		}
+	}
 }
 
 //終了

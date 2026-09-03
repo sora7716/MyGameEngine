@@ -147,7 +147,8 @@ public://メンバ関数
 	/// <summary>
 	/// コンポーネントの更新
 	/// </summary>
-	void UpdateComponents();
+	/// <param name="phase">更新のフェーズ</param>
+	void UpdateComponents(UpdatePhase phase);
 private://メンバ変数
 	//名前
 	std::string name_ = "\0";

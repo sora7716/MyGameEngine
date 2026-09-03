@@ -1,15 +1,6 @@
 #include "PrimitiveMeshFactory.h"
 #include "MathUtility.h"
 
-//関数ポインタテーブルの初期化
-namespace primitiveMeshFactory {
-	std::array<CrateMeshData, static_cast<uint32_t>(Type::kTypeCount)> createMeshDataTable = {
-		&CreateCube,
-		&CreateSphere,
-		&CreatePlane
-	};
-}
-
 //キューブ
 MeshData primitiveMeshFactory::CreateCube(const Desc& desc) {
 	//半分のサイズ

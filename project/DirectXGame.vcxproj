@@ -37,7 +37,7 @@
     <ClCompile Include="engine\camera\Camera.cpp" />
     <ClCompile Include="engine\collision\Collision.cpp" />
     <ClCompile Include="engine\debug\CrashHandler.cpp" />
-    <ClCompile Include="engine\debug\DebugCamera.cpp" />
+    <ClCompile Include="engine\debug\DebugCameraController.cpp" />
     <ClCompile Include="engine\debug\DebugEditor.cpp" />
     <ClCompile Include="engine\debug\ImGuiManager.cpp">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -93,7 +93,6 @@
     <ClCompile Include="engine\scene\SceneManager.cpp" />
     <ClCompile Include="engine\utility\HashUtility.cpp" />
     <ClCompile Include="engine\utility\StringUtility.cpp" />
-    <ClCompile Include="engine\worldTransform\WorldTransform.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="application\actor\Player.h" />
@@ -123,7 +122,7 @@
     <ClInclude Include="engine\camera\Camera.h" />
     <ClInclude Include="engine\collision\Collision.h" />
     <ClInclude Include="engine\debug\CrashHandler.h" />
-    <ClInclude Include="engine\debug\DebugCamera.h" />
+    <ClInclude Include="engine\debug\DebugCameraController.h" />
     <ClInclude Include="engine\debug\DebugEditor.h" />
     <ClInclude Include="engine\debug\ImGuiManager.h">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -190,7 +189,6 @@
     <ClInclude Include="engine\scene\SceneManager.h" />
     <ClInclude Include="engine\utility\HashUtility.h" />
     <ClInclude Include="engine\utility\StringUtility.h" />
-    <ClInclude Include="engine\worldTransform\WorldTransform.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="engine\resources\shaders\CommonTypes.hlsli">

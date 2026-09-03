@@ -3,7 +3,6 @@
 #include "DebugEditor.h"
 #include "TagManager.h"
 #include "RenderSystem.h"
-#include "DebugCamera.h"
 #include <cassert>
 
 //コンストラクタ

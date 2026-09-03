@@ -1,25 +1,25 @@
-#include "DebugCamera.h"
+#include "DebugCameraController.h"
 #include "MathUtility.h"
 #include "ImGuiManager.h"
 #include "Camera.h"
-#include "Quaternion.h" 
 #include "GameObject.h"
 #include "MatrixUtility.h"
 #include <algorithm>
 
 //コンストラクタ
-DebugCamera::DebugCamera(GameObject* gameObject) :Component(gameObject){
+DebugCameraController::DebugCameraController(GameObject* gameObject) :Component(gameObject){
 }
 
 //デストラクタ
-DebugCamera::~DebugCamera(){
+DebugCameraController::~DebugCameraController(){
 }
 
 //初期化
-void DebugCamera::Initialize(){
+void DebugCameraController::Initialize(){
 	//基底クラスの初期化
 	Component::Initialize();
 	gameObject_ = GetOwner();
+	gameObject_->GetTransform().translate.z = -10.0f;
 	camera_ = gameObject_->GetComponent<Camera>();
 
 	assert(camera_);
@@ -28,7 +28,7 @@ void DebugCamera::Initialize(){
 }
 
 //更新
-void DebugCamera::Update(){
+void DebugCameraController::Update(){
 	//基底クラスの更新
 	Component::Update();
 #ifdef USE_IMGUI
@@ -53,9 +53,14 @@ void DebugCamera::Update(){
 	ZoomControl();
 }
 
+//更新のフェーズの取得
+UpdatePhase DebugCameraController::GetUpdatePhase(){
+	return UpdatePhase::kDebug;
+}
+
 //複製
-std::unique_ptr<Component> DebugCamera::Clone(GameObject* gameObject) const{
-	std::unique_ptr<DebugCamera>cloneInstance = std::make_unique<DebugCamera>(gameObject);
+std::unique_ptr<Component> DebugCameraController::Clone(GameObject* gameObject) const{
+	std::unique_ptr<DebugCameraController>cloneInstance = std::make_unique<DebugCameraController>(gameObject);
 
 	//初期化
 	cloneInstance->Initialize();
@@ -67,7 +72,7 @@ std::unique_ptr<Component> DebugCamera::Clone(GameObject* gameObject) const{
 }
 
 //左右移動の操作
-void DebugCamera::StrafeControl(){
+void DebugCameraController::StrafeControl(){
 #ifdef USE_IMGUI
 	//横移動
 	if (ImGui::IsKeyDown(ImGuiKey_A)){
@@ -81,7 +86,7 @@ void DebugCamera::StrafeControl(){
 }
 
 //上下移動の操作
-void DebugCamera::ElevateControl(){
+void DebugCameraController::ElevateControl(){
 #ifdef USE_IMGUI
 	if (ImGui::IsKeyDown(ImGuiKey_Q)){
 		moveDir_.y = -1.0f;
@@ -94,7 +99,7 @@ void DebugCamera::ElevateControl(){
 }
 
 //前後移動の操作
-void DebugCamera::DollyControl(){
+void DebugCameraController::DollyControl(){
 #ifdef USE_IMGUI
 	if (ImGui::IsKeyDown(ImGuiKey_W)){
 		moveDir_.z = 1.0f;
@@ -107,7 +112,7 @@ void DebugCamera::DollyControl(){
 }
 
 //ズーム操作
-void DebugCamera::ZoomControl(){
+void DebugCameraController::ZoomControl(){
 #ifdef USE_IMGUI
 	//ImGuiを使用していた場合
 	if (ImGui::GetIO().WantCaptureMouse){
@@ -123,16 +128,13 @@ void DebugCamera::ZoomControl(){
 	//fovYを範囲内で止める
 	fovY_ = std::clamp(fovY_, kMinFovY, kMaxFovY);
 
-	if (camera_){
-		//fovYのセット
-		camera_->SetFovY(fovY_);
-	}
+	//fovYのセット
+	camera_->SetFovY(fovY_);
 #endif // USE_IMGUI
 }
 
 //回転の操作
-void DebugCamera::RotateControl(){
-	Vector3 rotate = {};
+void DebugCameraController::RotateControl(){
 #ifdef USE_IMGUI
 	//ImGuiを使用していた場合
 	if (ImGui::GetIO().WantCaptureMouse){
@@ -147,15 +149,15 @@ void DebugCamera::RotateControl(){
 		mouseFlick_.y = mouseFlick.y;
 
 		//フリックの値をカメラの回転に反映
-		rotate.x += mouseFlick_.y * kLookRadPerCount;
-		rotate.y += mouseFlick_.x * kLookRadPerCount;
-		gameObject_->GetTransform().SetEulerAngle(rotate);
+		eulerAngle_.x += mouseFlick_.y * kLookRadPerCount;
+		eulerAngle_.y += mouseFlick_.x * kLookRadPerCount;
+		gameObject_->GetTransform().SetEulerAngle(eulerAngle_);
 	}
 #endif // USE_IMGUI
 }
 
 //平行移動の更新
-void DebugCamera::TranslateUpdate(){
+void DebugCameraController::TranslateUpdate(){
 #ifdef USE_IMGUI
 	//ImGuiを使用していた場合
 	if (ImGui::GetIO().WantCaptureKeyboard){

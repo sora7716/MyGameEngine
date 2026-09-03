@@ -2,12 +2,12 @@
 #include <cmath>
 
 //乗法単位元
-Quaternion Quaternion::IdentityQuaternion() {
+Quaternion Quaternion::IdentityQuaternion(){
 	return { 0.0f,0.0f,0.0f,1.0f };
 }
 
 //共役
-Quaternion Quaternion::Conjugate()const {
+Quaternion Quaternion::Conjugate()const{
 	Quaternion result = *this;
 	result.x *= -1.0f;
 	result.y *= -1.0f;
@@ -16,17 +16,17 @@ Quaternion Quaternion::Conjugate()const {
 }
 
 //内積
-float Quaternion::Dot(const Quaternion& q) const {
+float Quaternion::Dot(const Quaternion& q) const{
 	return { x * q.x + y * q.y + z * q.z + w * q.w };
 }
 
 //長さ(ノルム)
-float Quaternion::Length()const {
+float Quaternion::Length()const{
 	return std::sqrt(std::pow(x, 2.0f) + std::pow(y, 2.0f) + std::pow(z, 2.0f) + std::pow(w, 2.0f));
 }
 
 //逆クォータニオン
-Quaternion Quaternion::Inverse()const {
+Quaternion Quaternion::Inverse()const{
 	//共役
 	Quaternion conjugate = this->Conjugate();
 	//ノルム
@@ -37,17 +37,17 @@ Quaternion Quaternion::Inverse()const {
 }
 
 //単位クォータニオン
-Quaternion Quaternion::Normalize()const {
+Quaternion Quaternion::Normalize()const{
 	Quaternion normalize = *this;
 	float norm = this->Length();
-	if (norm != 0.0f) {
+	if (norm != 0.0f){
 		normalize = normalize / norm;
 	}
 	return normalize;
 }
 
 //球面線形補間
-Quaternion Quaternion::Slerp(const Quaternion& q1, const Quaternion& q2, float t) {
+Quaternion Quaternion::Slerp(const Quaternion& q1, const Quaternion& q2, float t){
 	Quaternion result = {};
 
 	//球面線形補間の開始位置
@@ -61,10 +61,10 @@ Quaternion Quaternion::Slerp(const Quaternion& q1, const Quaternion& q2, float t
 	float dot = nq1.Dot(nq2);
 
 	//最短距離を求める
-	if (dot < 0.0f) {
+	if (dot < 0.0f){
 		begin = -nq1;
 		dot = -dot;
-	} else {
+	} else{
 		begin = nq1;
 	}
 
@@ -78,7 +78,7 @@ Quaternion Quaternion::Slerp(const Quaternion& q1, const Quaternion& q2, float t
 }
 
 //オイラー角からクォータニオンを生成
-Quaternion Quaternion::MakeQuaternionForEulerAngle(const Vector3& rotate) {
+Quaternion Quaternion::MakeQuaternionForEulerAngle(const Vector3& rotate){
 	float rx = rotate.x;
 	float ry = rotate.y;
 	float rz = rotate.z;
@@ -93,8 +93,31 @@ Quaternion Quaternion::MakeQuaternionForEulerAngle(const Vector3& rotate) {
 	return q;
 }
 
+//ベクトルをクォータニオンで回転させた結果のベクトルを求める
+Vector3 Quaternion::RotateVector(const Vector3& vector){
+	Quaternion result = Quaternion::IdentityQuaternion();
+	Quaternion q = (*this).Normalize();
+	Quaternion r = { vector.x,vector.y,vector.z,0.0f };
+	result = q * r * q.Conjugate();
+	return { result.x,result.y,result.z };
+}
+
+//任意軸回転を表すクォータニオンの生成
+Quaternion Quaternion::MakeRotateAxisAngleQuaternion(const Vector3& axis, float angle){
+	Quaternion result = Quaternion::IdentityQuaternion();
+	//cos
+	float cos = std::cos(angle / 2.0f);
+	//sin
+	float sin = std::sin(angle / 2.0f);
+
+	//3軸を正規化
+	Vector3 n = axis.Normalize();
+
+	return { n.x * sin,n.y * sin,n.z * sin,cos };
+}
+
 //加算
-Quaternion Quaternion::operator+(const Quaternion& q) const {
+Quaternion Quaternion::operator+(const Quaternion& q) const{
 	Quaternion result = {};
 	result.x = x + q.x;
 	result.y = y + q.y;
@@ -104,7 +127,7 @@ Quaternion Quaternion::operator+(const Quaternion& q) const {
 }
 
 //負の数にする
-Quaternion Quaternion::operator-() const {
+Quaternion Quaternion::operator-() const{
 	Quaternion result = {};
 	result.x = -x;
 	result.y = -y;
@@ -114,7 +137,7 @@ Quaternion Quaternion::operator-() const {
 }
 
 //乗法
-Quaternion Quaternion::operator*(const Quaternion& q)const {
+Quaternion Quaternion::operator*(const Quaternion& q)const{
 	//クォータニオン
 	Quaternion r = q;
 
@@ -132,7 +155,7 @@ Quaternion Quaternion::operator*(const Quaternion& q)const {
 }
 
 //除算(float)
-Quaternion Quaternion::operator/(float num)const {
+Quaternion Quaternion::operator/(float num)const{
 	Quaternion result;
 	result.x = x / num;
 	result.y = y / num;
@@ -142,7 +165,7 @@ Quaternion Quaternion::operator/(float num)const {
 }
 
 //浮動小数 * クォータニオン
-Quaternion operator*(float num, const Quaternion& q) {
+Quaternion operator*(float num, const Quaternion& q){
 	Quaternion result = {};
 	result.x = q.x * num;
 	result.y = q.y * num;

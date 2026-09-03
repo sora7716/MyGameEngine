@@ -5,6 +5,14 @@
 class GameObject;
 
 /// <summary>
+/// 更新のフェーズ
+/// </summary>
+enum class UpdatePhase{
+	kMain,
+	kDebug
+};
+
+/// <summary>
 /// コンポーネント
 /// </summary>
 class Component{
@@ -23,6 +31,12 @@ public://メンバ関数
 	/// 更新
 	/// </summary>
 	virtual void Update();
+
+	/// <summary>
+	/// 更新のフェーズの取得
+	/// </summary>
+	/// <returns>更新のフェーズ</returns>
+	virtual UpdatePhase GetUpdatePhase();
 
 	/// <summary>
 	/// コピー

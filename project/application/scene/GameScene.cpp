@@ -3,6 +3,7 @@
 #include "Object3d.h"
 #include "ModelManager.h"
 #include "Player.h"
+#include "SkyBox.h"
 
 //コンストラクタ
 GameScene::GameScene(){
@@ -20,6 +21,13 @@ void GameScene::Initialize(){
 	GameObject* gameCameraObject = CreateGameObject();
 	gameCameraObject->AddComponent<Camera>();
 	gameCameraObject->GetTransform().translate = { 0.0f,0.0f,-10.0f };
+	gameCameraObject->SetName("ゲームカメラ");
+
+	//SkyBox
+	GameObject* skyBoxObject = CreateGameObject();
+	skyBoxObject->AddComponent<SkyBox>();
+	skyBoxObject->GetTransform().scale = { 100.0f,100.0f,100.0f };
+	skyBoxObject->SetName("SkyBox");
 
 	//マップを作成
 	std::array<std::array<std::array<uint32_t, 6>, 6>, 3> map = { {
@@ -96,8 +104,9 @@ void GameScene::Initialize(){
 	//プレイヤー
 	GameObject* playerObject = CreateGameObject();
 	Object3d* playerModel = playerObject->AddComponent<Object3d>();
-	playerModel->SetModel(sceneContext_.modelManager->FindModel("capsule"));
+	playerModel->SetModel(sceneContext_.modelManager->FindModel("sphere_32"));
 	playerObject->AddComponent<Player>(*sceneContext_.input);
+	playerObject->GetTransform().translate = { 0.0f,1.0f,0.0f };
 }
 
 //デバッグ
@@ -105,5 +114,5 @@ void GameScene::Debug(){
 	//基底クラスのデバッグ
 	BaseScene::Debug();
 
-	
+
 }

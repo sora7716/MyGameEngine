@@ -144,14 +144,15 @@ void DebugCameraController::RotateControl(){
 	//マウスのフリックを取得
 	if (ImGui::IsMouseDown(ImGuiMouseButton_Right)){
 		ImVec2 mouseFlick = ImGui::GetIO().MouseDelta;
-		//フリックの値をVector2に格納
-		mouseFlick_.x = mouseFlick.x;
-		mouseFlick_.y = mouseFlick.y;
 
 		//フリックの値をカメラの回転に反映
-		eulerAngle_.x += mouseFlick_.y * kLookRadPerCount;
-		eulerAngle_.y += mouseFlick_.x * kLookRadPerCount;
-		gameObject_->GetTransform().SetEulerAngle(eulerAngle_);
+		pitch_ += mouseFlick.y * kLookRadPerCount;
+		yaw_ += mouseFlick.x * kLookRadPerCount;
+
+		constexpr float kPitchLimit = mathUtility::kPi / 2.0f - 0.01f;
+
+		pitch_ = std::clamp(pitch_, -kPitchLimit, kPitchLimit);
+		gameObject_->GetTransform().SetEulerAngle({ pitch_,yaw_,0.0f });
 	}
 #endif // USE_IMGUI
 }

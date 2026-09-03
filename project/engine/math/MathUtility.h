@@ -157,9 +157,9 @@ namespace mathUtility {
 
 	//定数
 	//デルタタイム
-	inline const float kDeltaTime = 1.0f / 60.0f;
+	inline constexpr float kDeltaTime = 1.0f / 60.0f;
 	//円周率
-	inline const float kPi = std::numbers::pi_v<float>;
+	inline constexpr float kPi = std::numbers::pi_v<float>;
 	//ラジアン変換用定数
-	inline const float kRad = std::numbers::pi_v<float> / 180.0f;
+	inline constexpr float kRad = std::numbers::pi_v<float> / 180.0f;
 };

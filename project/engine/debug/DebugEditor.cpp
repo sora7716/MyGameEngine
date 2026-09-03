@@ -329,8 +329,10 @@ void DebugEditor::DrawInspector(){
 		}
 
 		//回転の切り替え(オイラー角からクォータニオンを求めてる)
-		if (ImGui::DragFloat3("rotate", &eulerAngle_.x, 0.1f)){
-			transform.quaternion = Quaternion::MakeQuaternionForEulerAngle(eulerAngle_);
+		//オイラー角
+		Vector3 eulerAngle = transform.GetEulerAngle();
+		if (ImGui::DragFloat3("rotate", &eulerAngle.x, 0.1f)){
+			transform.quaternion = Quaternion::MakeQuaternionForEulerAngle(eulerAngle);
 		}
 		ImGui::SameLine();
 		//回転のリセット

@@ -364,7 +364,7 @@
       <Filter>ソース ファイル</Filter>
     </ClCompile>
     <ClCompile Include="engine\graphics\data\RenderingData.cpp">
-      <Filter>ソース ファイル</Filter>
+      <Filter>engine\graphics\data</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

@@ -91,10 +91,10 @@ private://メンバ変数
 	Camera* camera_ = nullptr;
 	//ゲームオブジェクト
 	GameObject* gameObject_ = nullptr;
-	//オイラー角
-	Vector3 eulerAngle_ = {};
-	//マウスのフリック量
-	Vector2 mouseFlick_ = {};
+	//ピッチ
+	float pitch_ = 0.0f;
+	//ヨー
+	float yaw_ = 0.0f;
 	//カメラの移動方向のベクトル
 	Vector3 moveDir_ = {};
 	//FovY

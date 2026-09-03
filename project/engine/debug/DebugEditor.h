@@ -132,8 +132,6 @@ private://定数
 private://メンバ変数
 	//選択するゲームオブジェクト
 	GameObject* selectedGameObject_ = nullptr;
-	//オイラー角
-	Vector3 eulerAngle_ = {};
 	//ゲームオブジェクトの一覧へのポインタ
 	const std::vector<std::unique_ptr<GameObject>>* gameObjects_;
 	//作成要求

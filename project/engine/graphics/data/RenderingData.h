@@ -22,6 +22,12 @@ struct Transform{
 	/// </summary>
 	/// <param name="rotate">クォータニオン</param>
 	void SetRotate(const Quaternion& rotate);
+
+	/// <summary>
+	/// オイラー角の取得
+	/// </summary>
+	/// <returns>オイラー角</returns>
+	Vector3 GetEulerAngle();
 };
 
 //Transform2D情報

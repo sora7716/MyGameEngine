@@ -96,7 +96,7 @@ void GameScene::Initialize(){
 	//プレイヤー
 	GameObject* playerObject = CreateGameObject();
 	Object3d* playerModel = playerObject->AddComponent<Object3d>();
-	playerModel->SetModel(sceneContext_.modelManager->FindModel("sphere_32"));
+	playerModel->SetModel(sceneContext_.modelManager->FindModel("capsule"));
 	playerObject->AddComponent<Player>(*sceneContext_.input);
 }
 
@@ -104,4 +104,6 @@ void GameScene::Initialize(){
 void GameScene::Debug(){
 	//基底クラスのデバッグ
 	BaseScene::Debug();
+
+	
 }

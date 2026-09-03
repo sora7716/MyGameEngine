@@ -7,9 +7,10 @@
 /// </summary>
 namespace primitiveMeshFactory {
 	//設定データ
-	struct Desc {
+	struct Desc{
 		Vector3 size = Vector3::MakeAllOne();
-		uint32_t subdivision = 16;
+		uint32_t radialSubdivision = 16;
+		uint32_t verticalSubdivision = 16;
 		float radius = 1.0f;
 	};
 	//関数ポインタの型定義
@@ -36,5 +37,12 @@ namespace primitiveMeshFactory {
 	/// <param name="desc">設定データ</param>
 	/// <returns>平面メッシュ</returns>
 	MeshData CreatePlane(const Desc& desc = {});
+
+	/// <summary>
+	/// カプセルメッシュの生成
+	/// </summary>
+	/// <param name="desc">設定データ</param>
+	/// <returns>カプセルメッシュ</returns>
+	MeshData CreateCapsule(const Desc& desc = {});
 }
 

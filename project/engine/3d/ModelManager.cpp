@@ -42,7 +42,8 @@ void ModelManager::CreatePrimitiveModel(){
 	models_.insert(std::make_pair("sphere_16", std::move(model)));
 
 	//Sphereモデルの生成(分割数32)
-	model = Model::CreateModel(directXBase_, { primitiveMeshFactory::CreateSphere({Vector3::MakeAllOne(),32,1.0f}) });
+	desc.radialSubdivision = 32;
+	model = Model::CreateModel(directXBase_, { primitiveMeshFactory::CreateSphere(desc) });
 	//Sphereモデル(分割数32)の追加
 	models_.insert(std::make_pair("sphere_32", std::move(model)));
 
@@ -50,6 +51,11 @@ void ModelManager::CreatePrimitiveModel(){
 	model = Model::CreateModel(directXBase_, { primitiveMeshFactory::CreatePlane() });
 	//Planeモデルの追加
 	models_.insert(std::make_pair("plane", std::move(model)));
+
+	////Capsuleモデルの生成
+	//model = Model::CreateModel(directXBase_, { primitiveMeshFactory::CreateCapsule() });
+	////Capsuleモデルの追加
+	//models_.insert(std::make_pair("capsule", std::move(model)));
 }
 
 //モデルの追加

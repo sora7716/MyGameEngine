@@ -94,7 +94,7 @@ Quaternion Quaternion::MakeQuaternionForEulerAngle(const Vector3& rotate){
 }
 
 //ベクトルをクォータニオンで回転させた結果のベクトルを求める
-Vector3 Quaternion::RotateVector(const Vector3& vector){
+Vector3 Quaternion::RotateVector(const Vector3& vector)const{
 	Quaternion result = Quaternion::IdentityQuaternion();
 	Quaternion q = (*this).Normalize();
 	Quaternion r = { vector.x,vector.y,vector.z,0.0f };

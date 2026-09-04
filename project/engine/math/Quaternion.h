@@ -66,7 +66,7 @@ struct Quaternion{
 	/// </summary>
 	/// <param name="vector">ベクトル</param>
 	/// <returns>クォータニオンで回転させたベクトル</returns>
-	Vector3 RotateVector(const Vector3& vector);
+	Vector3 RotateVector(const Vector3& vector)const;
 
 	/// <summary>
 	/// 任意軸回転を表すクォータニオンの生成

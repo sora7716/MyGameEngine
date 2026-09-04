@@ -5,15 +5,15 @@
 extern IMGUI_IMPL_API LRESULT ImGui_ImplWin32_WndProcHandler(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam);
 
 //デストラクタ
-WinApi::~WinApi() {
-	for (HWND& hwnd : hwnds_) {
+WinApi::~WinApi(){
+	for (HWND& hwnd : hwnds_){
 		CloseWindow(hwnd);
 	}
 	CoUninitialize();
 }
 
 // ウィンドウの生成するための初期化
-void WinApi::Initialize() {
+void WinApi::Initialize(){
 	HRESULT hr = S_FALSE;
 	//システムタイマーの分解能を上げる
 	timeBeginPeriod(1);
@@ -43,15 +43,22 @@ void WinApi::Initialize() {
 #else 
 	uint32_t windowCount = 1;
 #endif // _DEBUG
+
+#ifdef _DEBUG
+	Vector2Int windowPos = {100,kClientHeight / 2 };
+#else
+	Vector2Int windowPos = { CW_USEDEFAULT,CW_USEDEFAULT };
+#endif // _DEBUG
+
 	//ウィンドウの作成
-	for (uint32_t i = 0; i < windowCount; i++) {
+	for (uint32_t i = 0; i < windowCount; i++){
 		//ウィンドウを作成
 		hwnds_[i] = CreateWindow(
 		wndClass_.lpszClassName,//利用するクラス
 		(labels_[i]).c_str(),
 		WS_OVERLAPPEDWINDOW,//よく見るウィンドウのスタイル
-		CW_USEDEFAULT,//ウィンドウの表示位置(X座標)
-		CW_USEDEFAULT,//ウィンドウの表示位置(Y座標)
+		windowPos.x + kClientWidth * i,//ウィンドウの表示位置(X座標)
+		windowPos.y,//ウィンドウの表示位置(Y座標)
 		windowRect_.right - windowRect_.left,//ウィンドウの横幅
 		windowRect_.bottom - windowRect_.top,//ウィンドウの縦幅
 		nullptr,
@@ -67,7 +74,7 @@ void WinApi::Initialize() {
 }
 
 // プロセスメッセージ
-bool WinApi::ProcessMessage() {
+bool WinApi::ProcessMessage(){
 	MSG msg;
 	while (PeekMessage(&msg, NULL, 0, 0, PM_REMOVE)){
 		if (msg.message == WM_QUIT){
@@ -81,40 +88,40 @@ bool WinApi::ProcessMessage() {
 }
 
 //HWNDの取得
-HWND WinApi::GetHwnd(uint32_t windowIndex) const {
+HWND WinApi::GetHwnd(uint32_t windowIndex) const{
 	return  hwnds_[windowIndex];
 }
 
 //HWNDの取得
-HWND WinApi::GetHwnd(WindowType windowType)const {
+HWND WinApi::GetHwnd(WindowType windowType)const{
 	return hwnds_[static_cast<uint32_t>(windowType)];
 }
 
 //現在使用しているウィンドウのハンドルを取得
-HWND WinApi::GetActiveHwnd() const {
+HWND WinApi::GetActiveHwnd() const{
 	return activeHwnd_;
 }
 
 //指定したウィンドウと今選択しているウィンドウが一致しているか
-bool WinApi::IsActiveHwnd(WindowType windowType) const {
+bool WinApi::IsActiveHwnd(WindowType windowType) const{
 	return GetActiveHwnd() == GetHwnd(windowType);
 }
 
 //WNDクラスのゲッター
-WNDCLASS WinApi::GetWndClass()const {
+WNDCLASS WinApi::GetWndClass()const{
 	return wndClass_;
 }
 
 //コンストラクタ
-WinApi::WinApi(ConstructorKey) {}
+WinApi::WinApi(ConstructorKey){}
 
 //ウィンドウプロシージャ
-LRESULT WinApi::WindowProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam) {
-	if (ImGui_ImplWin32_WndProcHandler(hwnd, msg, wParam, lParam)) {
+LRESULT WinApi::WindowProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam){
+	if (ImGui_ImplWin32_WndProcHandler(hwnd, msg, wParam, lParam)){
 		return true;
 	}
 	//メッセージに応じてゲーム固有の処理を行う
-	switch (msg) {
+	switch (msg){
 		//ウィンドウが破棄された
 	case WM_DESTROY:
 		//OSに対して、アプリの終了を伝える

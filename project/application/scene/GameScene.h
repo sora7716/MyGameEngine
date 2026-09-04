@@ -26,10 +26,5 @@ public://メンバ関数
 	/// デバッグ
 	/// </summary>
 	void Debug()override;
-private://定数
-	//マップ全体の幅
-	static inline const Vector3Int kMapSize = { 6,3,6 };
-	//ブロックの幅
-	static inline const Vector3 kTileSize = { 1.0f,1.0f,1.0f };
 private://メンバ変数
 };

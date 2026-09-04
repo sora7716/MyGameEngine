@@ -366,6 +366,9 @@
     <ClCompile Include="engine\graphics\data\RenderingData.cpp">
       <Filter>engine\graphics\data</Filter>
     </ClCompile>
+    <ClCompile Include="application\actor\OrbitCameraController.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="application\scene\TestPlayScene.h">
@@ -642,6 +645,9 @@
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
     <ClInclude Include="engine\graphics\rendering\camera\CameraRenderData.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="application\actor\OrbitCameraController.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
   </ItemGroup>

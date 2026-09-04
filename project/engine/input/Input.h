@@ -129,13 +129,13 @@ public://メンバ関数
 	/// マウスの移動量のゲッター
 	/// </summary>
 	/// <returns>マウスの移動量</returns>
-	Vector2Int GetMouseMoveAmount()const;
+	Vector2 GetMouseMoveAmount()const;
 
 	/// <summary>
 	/// マウスホイールの回転量のゲッター
 	/// </summary>
 	/// <returns>マウスホイールの回転量</returns>
-	int32_t GetWheelRotate()const;
+	float GetWheelRotate()const;
 
 	/// <summary>
 	/// ワールド座標系のマウスの位置のゲッター
@@ -148,7 +148,7 @@ public://メンバ関数
 	/// スクリーン座標系のマウスの位置のゲッター
 	/// </summary>
 	/// <returns>スクリーン座標系のマウスの位置</returns>
-	Vector2Int GetMousePosition()const;
+	Vector2 GetMousePosition()const;
 
 	/// <summary>
 	/// Xboxが接続できたかどうか

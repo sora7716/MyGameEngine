@@ -11,6 +11,7 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="application\actor\OrbitCameraController.cpp" />
     <ClCompile Include="application\actor\Player.cpp" />
     <ClCompile Include="application\scene\GameScene.cpp" />
     <ClCompile Include="application\scene\TestPlayScene.cpp" />
@@ -95,6 +96,7 @@
     <ClCompile Include="engine\utility\StringUtility.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="application\actor\OrbitCameraController.h" />
     <ClInclude Include="application\actor\Player.h" />
     <ClInclude Include="application\scene\GameScene.h" />
     <ClInclude Include="application\scene\TestPlayScene.h" />

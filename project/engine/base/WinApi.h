@@ -94,10 +94,17 @@ public://静的メンバ関数
 	/// <returns></returns>
 	static LRESULT CALLBACK WindowProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam);
 public://定数
+#ifdef _DEBUG
+	//画面の横幅
+	static inline const int32_t kClientWidth = 854;
+	//画面の縦幅
+	static inline const int32_t kClientHeight = 480;
+#else
 	//画面の横幅
 	static inline const int32_t kClientWidth = 1280;
 	//画面の縦幅
 	static inline const int32_t kClientHeight = 720;
+#endif // _DEBUG
 	//ウィンドウの数
 	static inline const uint32_t kWindowCount = static_cast<uint32_t>(WindowType::kWindowTypeCount);
 	//タイトル名

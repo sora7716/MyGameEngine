@@ -20,7 +20,8 @@ void GameScene::Initialize(){
 	//ゲームカメラの設定
 	GameObject* gameCameraObject = CreateGameObject();
 	gameCameraObject->AddComponent<Camera>();
-	gameCameraObject->GetTransform().translate = { 0.0f,0.0f,-10.0f };
+	gameCameraObject->GetTransform().SetEulerAngle({ 0.4f,0.0f,0.0f });
+	gameCameraObject->GetTransform().translate = { 2.4f,7.9f,-14.1f };
 	gameCameraObject->SetName("ゲームカメラ");
 
 	//SkyBox
@@ -40,20 +41,20 @@ void GameScene::Initialize(){
 			{{1, 1, 1, 1, 1, 1}}
 		}},
 		{{
-			{{1, 0, 0, 0, 0, 1}},
+			{{0, 0, 0, 0, 0, 0}},
 			{{0, 0, 0, 0, 0, 0}},
 			{{0, 0, 1, 1, 0, 0}},
 			{{0, 0, 1, 1, 0, 0}},
 			{{0, 0, 1, 1, 0, 0}},
-			{{0, 0, 0, 0, 0, 0}}
+			{{1, 0, 0, 0, 0, 0}}
 		}},
 		{{
-			{{1, 0, 0, 0, 0, 1}},
+			{{0, 0, 0, 0, 0, 1}},
 			{{0, 0, 0, 0, 0, 0}},
 			{{0, 0, 0, 0, 0, 0}},
 			{{0, 0, 1, 1, 0, 0}},
 			{{0, 0, 0, 0, 0, 0}},
-			{{0, 0, 0, 0, 0, 0}}
+			{{1, 0, 0, 0, 0, 1}}
 		}},
 	} };
 
@@ -106,7 +107,8 @@ void GameScene::Initialize(){
 	Object3d* playerModel = playerObject->AddComponent<Object3d>();
 	playerModel->SetModel(sceneContext_.modelManager->FindModel("sphere_32"));
 	playerObject->AddComponent<Player>(*sceneContext_.input);
-	playerObject->GetTransform().translate = { 0.0f,1.0f,0.0f };
+	playerObject->SetName("player");
+	playerModel->SetColor(0, Vector4::MakeRedColor());
 }
 
 //デバッグ

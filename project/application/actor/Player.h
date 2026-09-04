@@ -38,8 +38,23 @@ public://メンバ関数
 	/// <param name="gameObject">ゲームオブジェクト</param>
 	/// <returns>コンポーネント</returns>
 	std::unique_ptr<Component>Clone(GameObject* gameObject)const override;
+private://メンバ関数
+	/// <summary>
+	/// 移動の操作
+	/// </summary>
+	void MoveControl();
+
+	/// <summary>
+	/// ジャンプの操作
+	/// </summary>
+	void JumpControl();
 private://定数
-	static inline const float kSpeed = 0.5f;
+	//移動速度
+	static inline const float kMoveSpeed = 10.0f;
+	//ジャンプ速度
+	static inline const float kJumpSpeed = 10.0f;
+	//重力
+	static inline const float kGravity = -30.0f;
 private://メンバ変数
 	//入力
 	Input& input_;
@@ -47,5 +62,7 @@ private://メンバ変数
 	GameObject* gameObject_ = nullptr;
 	//速度
 	Vector3 velocity_ = {};
+	//地面の上にいるか
+	bool isOnGround_ = true;
 };
 

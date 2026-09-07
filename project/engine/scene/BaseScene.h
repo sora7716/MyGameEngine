@@ -36,6 +36,11 @@ public://メンバ関数
 	void Update();
 
 	/// <summary>
+	/// 更新のステート
+	/// </summary>
+	virtual void UpdateState();
+
+	/// <summary>
 	/// デバッグ
 	/// </summary>
 	virtual void Debug();

@@ -45,6 +45,9 @@ void BaseScene::Initialize(){
 
 //更新
 void BaseScene::Update(){
+	//更新のステート
+	UpdateState();
+
 	//ゲームオブジェクトのコンポーネントの更新
 	for (const std::unique_ptr<GameObject>& gameObject : gameObjects_){
 		//gameObjectがNullじゃなければ
@@ -55,6 +58,10 @@ void BaseScene::Update(){
 
 	//コライダーマネージャー
 	//colliderManager_->ProcessCollision();
+}
+
+//更新のステート
+void BaseScene::UpdateState(){
 }
 
 //デバッグ

@@ -45,7 +45,7 @@ void WinApi::Initialize(){
 #endif // _DEBUG
 
 #ifdef _DEBUG
-	Vector2Int windowPos = {100,kClientHeight / 2 };
+	Vector2Int windowPos = { 100,kClientHeight / 2 };
 #else
 	Vector2Int windowPos = { CW_USEDEFAULT,CW_USEDEFAULT };
 #endif // _DEBUG
@@ -70,7 +70,6 @@ void WinApi::Initialize(){
 		//ウィンドウを表示する
 		ShowWindow(hwnds_[i], SW_SHOW);
 	}
-
 }
 
 // プロセスメッセージ
@@ -110,6 +109,14 @@ bool WinApi::IsActiveHwnd(WindowType windowType) const{
 //WNDクラスのゲッター
 WNDCLASS WinApi::GetWndClass()const{
 	return wndClass_;
+}
+
+//マウスカーソルの表示非表示
+void WinApi::SetShowCursor(bool isShowCursor){
+	if (isShowCursor_ != isShowCursor){
+		isShowCursor_ = isShowCursor;
+		ShowCursor(isShowCursor);
+	}
 }
 
 //コンストラクタ

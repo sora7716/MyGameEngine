@@ -22,6 +22,11 @@ public://メンバ関数
 	void Initialize()override;
 
 	/// <summary>
+	/// 更新のステート
+	/// </summary>
+	void UpdateState()override;
+
+	/// <summary>
 	/// デバッグ
 	/// </summary>
 	void Debug()override;

@@ -68,6 +68,12 @@ public://メンバ関数
 	/// <returns>wndClass</returns>
 	WNDCLASS GetWndClass()const;
 
+	/// <summary>
+	/// マウスカーソルの表示非表示の設定
+	/// </summary>
+	/// <param name="isShowCursor">マウスカーソルを表示非表示</param>
+	void SetShowCursor(bool isShowCursor);
+
 	//コピーコンストラクタ禁止
 	WinApi(const WinApi&) = delete;
 	//代入演算子禁止
@@ -118,5 +124,7 @@ private://メンバ変数
 	//今アクティブなウィンドウハンドル
 	static inline HWND activeHwnd_ = nullptr;
 	RECT windowRect_{};
+	//マウスカーソルの表示非表示
+	bool isShowCursor_ = true;
 };
 

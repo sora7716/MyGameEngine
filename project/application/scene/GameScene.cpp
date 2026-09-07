@@ -1,4 +1,5 @@
 #include "GameScene.h"
+#include "WinApi.h"
 #include "GameObject.h"
 #include "Object3d.h"
 #include "ModelManager.h"
@@ -52,6 +53,11 @@ void GameScene::Initialize(){
 	groundObject->GetTransform().scale = { 20.0f,1.0f,20.0f };
 	groundModel->SetTexture(0, "uvChecker.png");;
 	groundObject->SetName("地面");
+}
+
+//更新のステート
+void GameScene::UpdateState(){
+	sceneContext_.winApi->SetShowCursor(false);
 }
 
 //デバッグ

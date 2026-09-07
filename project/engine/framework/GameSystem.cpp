@@ -48,6 +48,8 @@ void GameSystem::Draw(){
 
 	//デバッグ画面のときにしか表示しない
 	if (isDebugWindow){
+		//マウスカーソルの表示
+		core_->GetWinApi()->SetShowCursor(true);
 		//シーン
 		core_->GetSceneManager()->DebugDraw();
 	} else{

@@ -56,4 +56,5 @@ struct Node{
 	Matrix4x4 localMatrix = {};
 	std::string name = "";
 	std::vector<Node> children;
+	std::vector<uint32_t> meshIndices;
 };

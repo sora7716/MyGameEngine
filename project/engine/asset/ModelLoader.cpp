@@ -1,4 +1,5 @@
 #include "ModelLoader.h"
+#include "MathUtility.h"
 #include <cassert>
 #include <fstream>
 #include <sstream>
@@ -25,17 +26,58 @@ static Node ReadNode(aiNode* node){
 			result.localMatrix.m[i][j] = aiLocalMatrix[i][j];
 		}
 	}
+
+	//Zだけを反転させる
+	Matrix4x4 flipZ = Matrix4x4::Identity4x4();
+	flipZ.m[2][2] = -1.0f;
+
+	//頂点と同じ座標系へ変換
+	result.localMatrix = flipZ * result.localMatrix * flipZ;
+
 	//Nodeの名前を取得
 	result.name = node->mName.C_Str();
 	//子の数だけ
 	result.children.resize(node->mNumChildren);
 
+	//このNodeが持つメッシュの数に合わせる
+	result.meshIndices.resize(node->mNumMeshes);
+	//各メッシュの番号を保存
+	for (uint32_t meshIndex = 0; meshIndex < node->mNumMeshes; meshIndex++){
+		result.meshIndices[meshIndex] = node->mMeshes[meshIndex];
+	}
+
+	//再帰的に呼んで階層構造を作っていく
 	for (uint32_t childIndex = 0; childIndex < node->mNumChildren; childIndex++){
-		//再帰的に呼んで階層構造を作っていく
 		result.children[childIndex] = ReadNode(node->mChildren[childIndex]);
 	}
 
 	return result;
+}
+
+//Nodeを巡回して、対応するメッシュへ変換を反映する
+static void ApplyNodeTransform(Node& node, const Matrix4x4& parentMatrix, std::vector<MeshData>& meshDatas){
+	//親までの変換を含んだ、このNodeの行列
+	Matrix4x4 nodeMatrix = node.localMatrix * parentMatrix;
+
+	for (uint32_t meshIndex : node.meshIndices){
+		//nodeに入っているメッシュのインデックスに入っている各メッシュにアクセス
+		assert(meshIndex < static_cast<uint32_t>(meshDatas.size()));
+		MeshData & mesh = meshDatas[meshIndex];
+
+		//メッシュの各頂点にnodeMatrixを適応
+		for (VertexData& vertex : mesh.vertices){
+			vertex.position = vertex.position * nodeMatrix;
+
+			//法線の位置を正しくする
+			Matrix4x4 normalMatrix = nodeMatrix.InverseTranspose();
+			vertex.normal = mathUtility::TransformNormal(vertex.normal, normalMatrix).Normalize();
+		}
+	}
+
+	//子Nodeには、現在のnodeMatrixを親行列として渡す
+	for (Node& child : node.children){
+		ApplyNodeTransform(child, nodeMatrix, meshDatas);
+	}
 }
 
 //.mtlファイルの読み取り	
@@ -119,6 +161,12 @@ ModelData modelLoader::LoadModelFile(const std::string& directoryPath, const std
 
 	//RootNodeの解析
 	modelData.rootNode = ReadNode(scene->mRootNode);
+
+	//RootNodeを各メッシュに適応
+	ApplyNodeTransform(modelData.rootNode, Matrix4x4::Identity4x4(), modelData.meshDatas);
+
+	//Node変換は頂点で焼きこみ済み
+	modelData.rootNode.localMatrix = Matrix4x4::Identity4x4();
 
 	//materialを解析
 	//ディレクトリパスを作成

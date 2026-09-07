@@ -40,6 +40,9 @@ void Player::Update(){
 	//速度を位置へ反映する
 	Movement();
 
+	//移動方向に向かせる
+	LookAt();
+
 	//地面との接地
 	ResolveGround();
 }
@@ -65,41 +68,41 @@ void Player::SetCameraObject(GameObject* cameraObject){
 void Player::MoveControl(){
 	//横移動
 	if (input_.PressKey(DIK_A)){
-		moveDirection_.x = -1.0f;
+		inputDirection_.x = -1.0f;
 	} else if (input_.PressKey(DIK_D)){
-		moveDirection_.x = 1.0f;
+		inputDirection_.x = 1.0f;
 	} else{
-		moveDirection_.x = 0.0f;
+		inputDirection_.x = 0.0f;
 	}
 
 	//縦移動
 	if (input_.PressKey(DIK_W)){
-		moveDirection_.z = 1.0f;
+		inputDirection_.z = 1.0f;
 	} else if (input_.PressKey(DIK_S)){
-		moveDirection_.z = -1.0f;
+		inputDirection_.z = -1.0f;
 	} else{
-		moveDirection_.z = 0.0f;
+		inputDirection_.z = 0.0f;
 	}
 
-	if (moveDirection_.LengthSquared() > 0.0f){
-		moveDirection_ = moveDirection_.Normalize();
+	if (inputDirection_.LengthSquared() > 0.0f){
+		inputDirection_ = inputDirection_.Normalize();
 	}
 
 	//カメラの角度をもとに回転行列を求める
 	Matrix4x4 rotMat = matrixUtility::MakeRotateMatrix(cameraObject_->GetTransform().quaternion);
 
 	//カメラの向いてる方向を正にする(XとZ軸限定)
-	Vector3 worldDirection = mathUtility::TransformNormal(moveDirection_, rotMat);
+	worldDirection_ = mathUtility::TransformNormal(inputDirection_, rotMat);
 	//Y軸は考えない
-	worldDirection.y = 0.0f;
+	worldDirection_.y = 0.0f;
 
 	//長さが0より大きければ
-	if (worldDirection.LengthSquared() > 0.0f){
-		worldDirection = worldDirection.Normalize();
+	if (worldDirection_.LengthSquared() > 0.0f){
+		worldDirection_ = worldDirection_.Normalize();
 	}
 
 	//目標速度を決定
-	const Vector3 targetVelocity = worldDirection * kMoveSpeed;
+	const Vector3 targetVelocity = worldDirection_ * kMoveSpeed;
 
 	//水平移動の加速度を目標速度に近づける
 	acceleration_.x = (targetVelocity.x - velocity_.x) * kMoveResponse;
@@ -153,4 +156,23 @@ void Player::ResolveGround(){
 
 		isOnGround_ = true;
 	}
+}
+
+//移動方向に向かせる
+void Player::LookAt(){
+	Transform& transform = gameObject_->GetTransform();
+
+	//長さが十分に大きくないと
+	if (worldDirection_.LengthSquared() < 0.001f){
+		return;
+	}
+
+	//方向ベクトルからヨーを取得
+	float yaw = std::atan2(worldDirection_.x, worldDirection_.z);
+
+	//目標のクォータニオンを作成
+	Quaternion targetQuaternion = Quaternion::MakeQuaternionForEulerAngle({ 0.0f,yaw,0.0f });
+
+	//目標のクォータニオンの方向に向かせる
+	transform.quaternion = Quaternion::Slerp(transform.quaternion, targetQuaternion, kLookAtSpeed * mathUtility::kDeltaTime);
 }

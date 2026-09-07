@@ -1,5 +1,6 @@
 #include "Quaternion.h"
 #include <cmath>
+#include <algorithm>
 
 //乗法単位元
 Quaternion Quaternion::IdentityQuaternion(){
@@ -50,31 +51,36 @@ Quaternion Quaternion::Normalize()const{
 Quaternion Quaternion::Slerp(const Quaternion& q1, const Quaternion& q2, float t){
 	Quaternion result = {};
 
-	//球面線形補間の開始位置
-	Quaternion begin = q1;
-
 	//クォータニオンの正規化
-	Quaternion nq1 = q1.Normalize();
-	Quaternion nq2 = q2.Normalize();
+	Quaternion begin = q1.Normalize();
+	Quaternion end = q2.Normalize();
 
 	//内積
-	float dot = nq1.Dot(nq2);
+	float dot = begin.Dot(end);
 
 	//最短距離を求める
 	if (dot < 0.0f){
-		begin = -nq1;
+		begin = -begin;
 		dot = -dot;
-	} else{
-		begin = nq1;
+	}
+
+	//浮動小数の誤差でacosの範囲を超えないようにする
+	dot = std::clamp(dot, 0.0f, 1.0f);
+
+	//ほぼ同じ向きなら線形補完する
+	if (dot > 0.9995f){
+		result = (1.0f - t) * begin + t * end;
+
+		return result.Normalize();
 	}
 
 	//acosでθを求める
 	float theta = std::acos(dot);
 
 	//球面線形補間
-	result = std::sin((1.0f - t) * theta) / std::sin(theta) * begin + std::sin(t * theta) / std::sin(theta) * nq2;
+	result = std::sin((1.0f - t) * theta) / std::sin(theta) * begin + std::sin(t * theta) / std::sin(theta) * end;
 
-	return result;
+	return result.Normalize();
 }
 
 //オイラー角からクォータニオンを生成

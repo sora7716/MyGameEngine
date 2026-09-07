@@ -69,6 +69,11 @@ private://メンバ関数
 	/// 地面との接触
 	/// </summary>
 	void ResolveGround();
+
+	/// <summary>
+	/// 移動方向に向かせる
+	/// </summary>
+	void LookAt();
 private://定数
 	//移動速度
 	static inline const float kMoveSpeed = 10.0f;
@@ -78,6 +83,8 @@ private://定数
 	static inline const float kJumpSpeed = 15.0f;
 	//重力
 	static inline const float kGravity = -30.0f;
+	//向くスピード
+	static inline const float kLookAtSpeed = 8.0f;
 private://メンバ変数
 	//入力
 	Input& input_;
@@ -85,12 +92,17 @@ private://メンバ変数
 	GameObject* cameraObject_ = nullptr;
 	//ゲームオブジェクト
 	GameObject* gameObject_ = nullptr;
+
 	//加速度
 	Vector3 acceleration_ = {};
 	//速度
 	Vector3 velocity_ = {};
-	//移動方向
-	Vector3 moveDirection_ = {};
+
+	//入力されて移動方向ベクトル
+	Vector3 inputDirection_ = {};
+	//World座標系での移動方向ベクトル
+	Vector3 worldDirection_ = {};
+
 	//地面の上にいるか
 	bool isOnGround_ = true;
 };

@@ -39,7 +39,6 @@ void OrbitCameraController::Update(){
 
 	//カメラの位置
 	gameObject_->GetTransform().translate = targetPos + rotatedCameraPos;
-	gameObject_->GetTransform().translate.y = std::max(gameObject_->GetTransform().translate.y, 1.0f);
 
 	//回転を設定
 	gameObject_->GetTransform().SetRotate(rotation);
@@ -70,7 +69,7 @@ void OrbitCameraController::ViewRotationControl(){
 	Vector2 mouseDelta = input_.GetMouseMoveAmount();
 
 	//デッドゾーンを考慮する
-	if (std::fabs(deadZone_.x) > mouseDelta.x && std::fabs(deadZone_.y) > mouseDelta.y){
+	if (deadZone_.x > std::fabs(mouseDelta.x) && deadZone_.y > std::fabs(mouseDelta.y)){
 		return;
 	}
 

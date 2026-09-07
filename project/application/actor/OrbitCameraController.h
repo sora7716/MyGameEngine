@@ -67,7 +67,7 @@ private://メンバ変数
 	Vector3 targetOffset_ = { 0.0f,0.0f,0.0f };
 
 	//マウスの感度
-	Vector2 sensitivity_ = { 0.01f,0.01f };
+	Vector2 sensitivity_ = { 1.0f/300.0f,1.0f / 300.0f };
 
 	//デッドゾーン
 	Vector2 deadZone_ = { 0.1f,0.1f };

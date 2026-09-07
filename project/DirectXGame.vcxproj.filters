@@ -25,12 +25,6 @@
     <Filter Include="application\actor">
       <UniqueIdentifier>{27e5a16f-78eb-4123-ac65-8f26cccee1a6}</UniqueIdentifier>
     </Filter>
-    <Filter Include="application\actor\field">
-      <UniqueIdentifier>{9ed0086f-1d8b-452f-9643-ea39d989dc8e}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="application\actor\character">
-      <UniqueIdentifier>{e4c0b8d1-d6ef-4fb1-b2ec-c827f4987ed5}</UniqueIdentifier>
-    </Filter>
     <Filter Include="engine">
       <UniqueIdentifier>{781a2588-abfc-4012-aa27-518ef259056b}</UniqueIdentifier>
     </Filter>
@@ -123,6 +117,9 @@
     </Filter>
     <Filter Include="engine\graphics\rendering\sprite">
       <UniqueIdentifier>{83bc8f28-34cf-408a-9a37-04b720169555}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="engine\graphics\rendering\camera">
+      <UniqueIdentifier>{930f3d62-3908-4ac4-844f-3ae9047af2dc}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -357,17 +354,17 @@
     <ClCompile Include="engine\graphics\rendering\sprite\SpriteRenderer.cpp">
       <Filter>engine\graphics\rendering\sprite</Filter>
     </ClCompile>
-    <ClCompile Include="application\actor\Player.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
-    <ClCompile Include="engine\graphics\rendering\camera\CameraRenderer.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
     <ClCompile Include="engine\graphics\data\RenderingData.cpp">
       <Filter>engine\graphics\data</Filter>
     </ClCompile>
+    <ClCompile Include="engine\graphics\rendering\camera\CameraRenderer.cpp">
+      <Filter>engine\graphics\rendering\camera</Filter>
+    </ClCompile>
+    <ClCompile Include="application\actor\Player.cpp">
+      <Filter>application\actor</Filter>
+    </ClCompile>
     <ClCompile Include="application\actor\OrbitCameraController.cpp">
-      <Filter>ソース ファイル</Filter>
+      <Filter>application\actor</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -638,17 +635,17 @@
     <ClInclude Include="engine\graphics\rendering\sprite\SpriteRenderData.h">
       <Filter>engine\graphics\rendering\sprite</Filter>
     </ClInclude>
-    <ClInclude Include="application\actor\Player.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
     <ClInclude Include="engine\graphics\rendering\camera\CameraRenderer.h">
-      <Filter>ヘッダー ファイル</Filter>
+      <Filter>engine\graphics\rendering\camera</Filter>
     </ClInclude>
     <ClInclude Include="engine\graphics\rendering\camera\CameraRenderData.h">
-      <Filter>ヘッダー ファイル</Filter>
+      <Filter>engine\graphics\rendering\camera</Filter>
+    </ClInclude>
+    <ClInclude Include="application\actor\Player.h">
+      <Filter>application\actor</Filter>
     </ClInclude>
     <ClInclude Include="application\actor\OrbitCameraController.h">
-      <Filter>ヘッダー ファイル</Filter>
+      <Filter>application\actor</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

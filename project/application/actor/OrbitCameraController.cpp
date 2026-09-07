@@ -1,7 +1,9 @@
+#define NOMINMAX
 #include "OrbitCameraController.h"
 #include "GameObject.h"
 #include "MathUtility.h"
 #include "Input.h"
+#include <algorithm>
 
 //コンストラクタ
 OrbitCameraController::OrbitCameraController(GameObject* gameObject, Input& input) :Component(gameObject), input_(input){
@@ -24,9 +26,10 @@ void OrbitCameraController::Update(){
 	//カメラの回転
 	ViewRotationControl();
 
-	constexpr float kPitchLimit = mathUtility::kPi / 2.0f - 0.01f;
-
-	pitch_ = std::clamp(pitch_, -kPitchLimit, kPitchLimit);
+	//ピッチを制限
+	float minPitch = std::asin((1.0f - targetPos.y) / distance_);
+	float maxPitch = 70.0f * mathUtility::kRad;
+	pitch_ = std::clamp(pitch_, minPitch, maxPitch);
 
 	//カメラの向いている方向を取得
 	Quaternion rotation = Quaternion::MakeQuaternionForEulerAngle({ pitch_,yaw_,0.0f });
@@ -36,6 +39,7 @@ void OrbitCameraController::Update(){
 
 	//カメラの位置
 	gameObject_->GetTransform().translate = targetPos + rotatedCameraPos;
+	gameObject_->GetTransform().translate.y = std::max(gameObject_->GetTransform().translate.y, 1.0f);
 
 	//回転を設定
 	gameObject_->GetTransform().SetRotate(rotation);
@@ -65,7 +69,12 @@ void OrbitCameraController::ViewRotationControl(){
 	//マウスの移動量の取得
 	Vector2 mouseDelta = input_.GetMouseMoveAmount();
 
+	//デッドゾーンを考慮する
+	if (std::fabs(deadZone_.x) > mouseDelta.x && std::fabs(deadZone_.y) > mouseDelta.y){
+		return;
+	}
+
 	//ピッチとヨーに適応
-	pitch_ = mouseDelta.x * sensitivity_.x;
-	yaw_ = mouseDelta.y * sensitivity_.y;
+	pitch_ += mouseDelta.y * sensitivity_.y;
+	yaw_ -= mouseDelta.x * sensitivity_.x;
 }

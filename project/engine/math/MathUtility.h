@@ -161,5 +161,5 @@ namespace mathUtility {
 	//円周率
 	inline constexpr float kPi = std::numbers::pi_v<float>;
 	//ラジアン変換用定数
-	inline constexpr float kRad = std::numbers::pi_v<float> / 180.0f;
+	inline constexpr float kRad = kPi / 180.0f;
 };

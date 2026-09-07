@@ -34,7 +34,6 @@ void GameObjectList::LoadTexture(){
 	std::string directoryPath = "engine/resources/textures/";
 	core_->GetTextureManager()->AddTexture(directoryPath + "magenta1x1.png");
 	core_->GetTextureManager()->AddTexture(directoryPath + "white1x1.png");
-	core_->GetTextureManager()->AddTexture(directoryPath + "rostock_laage_airport_4k.dds");
 	core_->GetTextureManager()->AddTexture(directoryPath + "skybox_cube.dds");
 	core_->GetTextureManager()->AddTexture(directoryPath + "circle2.png");
 	core_->GetTextureManager()->AddTexture(directoryPath + "monsterBall.png");
@@ -45,8 +44,12 @@ void GameObjectList::LoadTexture(){
 void GameObjectList::LoadModel(){
 	//プリミティブなモデルの生成
 	core_->GetModelManager()->CreatePrimitiveModel();
+	//カメラ
+	//core_->GetModelManager()->AddModel("camera", "camera/camera.obj");
+	//プレイヤー
+	core_->GetModelManager()->AddModel("player", "player/player.gltf");
 	//デカヌ
-	core_->GetModelManager()->AddModel("dekanu", "dekanu/dekanu.gltf");
+	//core_->GetModelManager()->AddModel("dekanu", "dekanu/dekanu.gltf");
 	//人
-	core_->GetModelManager()->AddModel("sneakWalk", "human/sneakWalk.gltf");
+	//core_->GetModelManager()->AddModel("sneakWalk", "human/sneakWalk.gltf");
 }

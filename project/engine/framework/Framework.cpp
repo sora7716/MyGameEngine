@@ -41,10 +41,8 @@ void Framework::Run() {
 		//ゲームシステムの更新
 		Update();
 
-		if (core_->GetWinApi()->IsActiveHwnd(WindowType::kDebug)) {
-			//デバッグのウィンドウの時だけ
-			Debug();
-		}
+		//デバッグ
+		Debug();
 
 		//ゲームシステムの描画
 		Draw();

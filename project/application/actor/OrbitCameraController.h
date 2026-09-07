@@ -68,5 +68,8 @@ private://メンバ変数
 
 	//マウスの感度
 	Vector2 sensitivity_ = { 0.01f,0.01f };
+
+	//デッドゾーン
+	Vector2 deadZone_ = { 0.1f,0.1f };
 };
 

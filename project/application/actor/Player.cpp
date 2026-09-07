@@ -3,6 +3,8 @@
 #include "Input.h"
 #include "GameObject.h"
 #include "MathUtility.h"
+#include "matrixUtility.h"
+#include "Camera.h"
 
 //コンストラクタ
 Player::Player(GameObject* gameObject, Input& input)
@@ -54,35 +56,50 @@ std::unique_ptr<Component> Player::Clone(GameObject* gameObject) const{
 	return cloneInstance;
 }
 
+//カメラのオブジェクトの設定
+void Player::SetCameraObject(GameObject* cameraObject){
+	cameraObject_ = cameraObject;
+}
+
 //移動の操作
 void Player::MoveControl(){
-	//移動方向
-	Vector3 moveDirection = {};
-
 	//横移動
 	if (input_.PressKey(DIK_A)){
-		moveDirection.x = -1.0f;
+		moveDirection_.x = -1.0f;
 	} else if (input_.PressKey(DIK_D)){
-		moveDirection.x = 1.0f;
+		moveDirection_.x = 1.0f;
 	} else{
-		moveDirection.x = 0.0f;
+		moveDirection_.x = 0.0f;
 	}
 
 	//縦移動
 	if (input_.PressKey(DIK_W)){
-		moveDirection.z = 1.0f;
+		moveDirection_.z = 1.0f;
 	} else if (input_.PressKey(DIK_S)){
-		moveDirection.z = -1.0f;
+		moveDirection_.z = -1.0f;
 	} else{
-		moveDirection.z = 0.0f;
+		moveDirection_.z = 0.0f;
 	}
 
-	if (moveDirection.LengthSquared() > 0.0f){
-		moveDirection = moveDirection.Normalize();
+	if (moveDirection_.LengthSquared() > 0.0f){
+		moveDirection_ = moveDirection_.Normalize();
+	}
+
+	//カメラの角度をもとに回転行列を求める
+	Matrix4x4 rotMat = matrixUtility::MakeRotateMatrix(cameraObject_->GetTransform().quaternion);
+
+	//カメラの向いてる方向を正にする(XとZ軸限定)
+	Vector3 worldDirection = mathUtility::TransformNormal(moveDirection_, rotMat);
+	//Y軸は考えない
+	worldDirection.y = 0.0f;
+
+	//長さが0より大きければ
+	if (worldDirection.LengthSquared() > 0.0f){
+		worldDirection = worldDirection.Normalize();
 	}
 
 	//目標速度を決定
-	const Vector3 targetVelocity = moveDirection * kMoveSpeed;
+	const Vector3 targetVelocity = worldDirection * kMoveSpeed;
 
 	//水平移動の加速度を目標速度に近づける
 	acceleration_.x = (targetVelocity.x - velocity_.x) * kMoveResponse;

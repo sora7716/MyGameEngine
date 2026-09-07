@@ -1,6 +1,5 @@
 #pragma once
 #include "BaseScene.h"
-#include "Vector3.h"
 
 /// <summary>
 /// ゲームシーン

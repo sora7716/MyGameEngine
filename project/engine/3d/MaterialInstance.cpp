@@ -21,7 +21,7 @@ void MaterialInstance::Initialize(const std::vector<MaterialTexturePaths>& textu
 		slot.material.color = Vector4::MakeWhiteColor();
 		slot.material.enableLighting = true;
 		slot.material.environmentCoefficient = 0.0f;
-		slot.material.shininess = 10.0f;
+		slot.material.shininess = 100.0f;
 		slot.material.uvMatrix = Matrix4x4::Identity4x4();
 
 		//UVトランスフォームの初期化

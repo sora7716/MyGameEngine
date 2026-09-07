@@ -19,7 +19,8 @@ void DebugCameraController::Initialize(){
 	//基底クラスの初期化
 	Component::Initialize();
 	gameObject_ = GetOwner();
-	gameObject_->GetTransform().translate.z = -10.0f;
+	gameObject_->GetTransform().SetEulerAngle({ 0.35f,0.04f,0.0f });
+	gameObject_->GetTransform().translate = { -2.9f,11.0f,-29.0f };
 	camera_ = gameObject_->GetComponent<Camera>();
 
 	assert(camera_);

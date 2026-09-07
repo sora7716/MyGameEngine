@@ -38,6 +38,12 @@ public://メンバ関数
 	/// <param name="gameObject">ゲームオブジェクト</param>
 	/// <returns>コンポーネント</returns>
 	std::unique_ptr<Component>Clone(GameObject* gameObject)const override;
+
+	/// <summary>
+	/// カメラのオブジェクトの設定
+	/// </summary>
+	/// <param name="cameraObject">カメラのオブジェクト</param>
+	void SetCameraObject(GameObject* cameraObject);
 private://メンバ関数
 	/// <summary>
 	/// 移動の操作
@@ -75,12 +81,16 @@ private://定数
 private://メンバ変数
 	//入力
 	Input& input_;
+	//カメラオブジェクト
+	GameObject* cameraObject_ = nullptr;
 	//ゲームオブジェクト
 	GameObject* gameObject_ = nullptr;
 	//加速度
 	Vector3 acceleration_ = {};
 	//速度
 	Vector3 velocity_ = {};
+	//移動方向
+	Vector3 moveDirection_ = {};
 	//地面の上にいるか
 	bool isOnGround_ = true;
 };

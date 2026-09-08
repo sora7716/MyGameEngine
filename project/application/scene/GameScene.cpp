@@ -53,11 +53,17 @@ void GameScene::Initialize(){
 	groundObject->GetTransform().scale = { 20.0f,1.0f,20.0f };
 	groundModel->SetTexture(0, "uvChecker.png");;
 	groundObject->SetName("地面");
+
+	//キューブオブジェクト
+	GameObject* cubeObject = CreateGameObject();
+	cubeObject->SetName("cube");
+	cubeObject->GetTransform().translate = { 0.0f,1.0f,2.0f };
+	Object3d* cubeModel = cubeObject->AddComponent<Object3d>();
+	cubeModel->SetModel(sceneContext_.modelManager->FindModel("cube"));
 }
 
 //更新のステート
 void GameScene::UpdateState(){
-	sceneContext_.winApi->SetShowCursor(false);
 }
 
 //デバッグ

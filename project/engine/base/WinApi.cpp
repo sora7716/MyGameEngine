@@ -64,7 +64,7 @@ void WinApi::Initialize(){
 		nullptr,
 		nullptr,
 		wndClass_.hInstance,//インスタンスハンドル
-		nullptr
+		this
 		);
 
 		//ウィンドウを表示する
@@ -124,6 +124,33 @@ WinApi::WinApi(ConstructorKey){}
 
 //ウィンドウプロシージャ
 LRESULT WinApi::WindowProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam){
+	//WinApi
+	WinApi* winApi = reinterpret_cast<WinApi*>(GetWindowLongPtr(hwnd, GWLP_USERDATA));
+	if (msg == WM_NCCREATE){
+		CREATESTRUCT* createStruct = reinterpret_cast<CREATESTRUCT*>(lParam);
+		winApi = static_cast<WinApi*>(createStruct->lpCreateParams);
+		SetWindowLongPtr(hwnd, GWLP_USERDATA, reinterpret_cast<LONG_PTR>(winApi));
+	}
+
+	//マウスカーソルの表示非表示
+	if (msg == WM_SETCURSOR){
+		if (winApi){
+			if (LOWORD(lParam) == HTCLIENT){
+				//ゲーム画面ではカーソルを非表示
+				if (hwnd == winApi->GetHwnd(WindowType::kGame)){
+					SetCursor(nullptr);
+					return TRUE;
+				}
+
+				//デバッグ画面ではカーソルを表示
+				if (hwnd == winApi->GetHwnd(WindowType::kDebug)){
+					SetCursor(LoadCursor(nullptr, IDC_ARROW));
+					return TRUE;
+				}
+			}
+		}
+	}
+
 	if (ImGui_ImplWin32_WndProcHandler(hwnd, msg, wParam, lParam)){
 		return true;
 	}

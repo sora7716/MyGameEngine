@@ -14,17 +14,10 @@ debugDraw::Cube::~Cube(){}
 void debugDraw::Cube::InitializeShape(){
 	vertexCount_ = 8;
 	indexCount_ = 24;
-	//OBBを初期化
-	obb_.Initialize();
 }
 
 //更新
 void debugDraw::Cube::UpdateShape(){
-	GameObject* gameObject = GetOwner();
-	obb_.quaternion = gameObject->GetTransform().quaternion;
-	obb_.center = gameObject->GetTransform().translate;
-	obb_.size = gameObject->GetTransform().scale.Abs();
-	matrixUtility::MakeOBBRotateMatrix(obb_.orientations, obb_.quaternion);
 }
 
 //複製
@@ -36,58 +29,35 @@ std::unique_ptr<Component> debugDraw::Cube::Clone(GameObject* gameObject) const{
 
 	//基底クラスの内容コピー
 	CopyBaseSetting(*cloneInstance);
-
-	//内容をコピー
-	cloneInstance->obb_ = this->obb_;
 	return cloneInstance;
-}
-
-//OBBのセッター
-void debugDraw::Cube::SetOBB(const OBB& obb){
-	obb_ = obb;
-}
-
-//OBBのゲッター
-OBB debugDraw::Cube::GetOBB(){
-	return obb_;
-}
-
-//AABBのゲッター
-AABB debugDraw::Cube::GetAABB(){
-	//AABB
-	AABB aabb = {
-		{obb_.center - obb_.size / 2.0f},
-		{obb_.center + obb_.size / 2.0f},
-	};
-	return aabb;
 }
 
 //頂点データの設定
 void debugDraw::Cube::SettingVertexData(){
 	//AABB
-	AABB aabb = {
-		{-obb_.size / 2.0f},
-		{obb_.size / 2.0f},
+	AABB localAABB = {
+		{-0.5f,-0.5f,-0.5f},
+		{0.5f,0.5f,0.5f}
 	};
 	////前面
 	// 左上
-	vertices_[0] = { aabb.min.x,aabb.min.y,aabb.min.z,1.0f };
+	vertices_[0] = { localAABB.min.x,localAABB.min.y,localAABB.min.z,1.0f };
 	// 右上
-	vertices_[1] = { aabb.max.x,aabb.min.y,aabb.min.z,1.0f };
+	vertices_[1] = { localAABB.max.x,localAABB.min.y,localAABB.min.z,1.0f };
 	// 右下
-	vertices_[2] = { aabb.max.x,aabb.max.y,aabb.min.z,1.0f };
+	vertices_[2] = { localAABB.max.x,localAABB.max.y,localAABB.min.z,1.0f };
 	// 左下
-	vertices_[3] = { aabb.min.x,aabb.max.y,aabb.min.z,1.0f };
+	vertices_[3] = { localAABB.min.x,localAABB.max.y,localAABB.min.z,1.0f };
 
 	//背面
 	// 左上
-	vertices_[4] = { aabb.min.x,aabb.min.y,aabb.max.z,1.0f };
+	vertices_[4] = { localAABB.min.x,localAABB.min.y,localAABB.max.z,1.0f };
 	// 右上
-	vertices_[5] = { aabb.max.x,aabb.min.y,aabb.max.z,1.0f };
+	vertices_[5] = { localAABB.max.x,localAABB.min.y,localAABB.max.z,1.0f };
 	// 右下
-	vertices_[6] = { aabb.max.x,aabb.max.y,aabb.max.z,1.0f };
+	vertices_[6] = { localAABB.max.x,localAABB.max.y,localAABB.max.z,1.0f };
 	// 左下
-	vertices_[7] = { aabb.min.x,aabb.max.y,aabb.max.z,1.0f };
+	vertices_[7] = { localAABB.min.x,localAABB.max.y,localAABB.max.z,1.0f };
 }
 
 //インデックスの設定

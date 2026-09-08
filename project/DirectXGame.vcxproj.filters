@@ -366,6 +366,9 @@
     <ClCompile Include="application\actor\OrbitCameraController.cpp">
       <Filter>application\actor</Filter>
     </ClCompile>
+    <ClCompile Include="engine\collision\AABBCollider.cpp">
+      <Filter>engine\collision</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="application\scene\TestPlayScene.h">
@@ -646,6 +649,9 @@
     </ClInclude>
     <ClInclude Include="application\actor\OrbitCameraController.h">
       <Filter>application\actor</Filter>
+    </ClInclude>
+    <ClInclude Include="engine\collision\AABBCollider.h">
+      <Filter>engine\collision</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

@@ -58,6 +58,21 @@ void debugDraw::BaseShape::SetBlendMode(BlendMode blendMode){
 	blendMode_ = blendMode;
 }
 
+//ローカルスケールを設定
+void debugDraw::BaseShape::SetLocalScale(const Vector3& scale){
+	localTransform_.scale = scale;
+}
+
+//ローカルの回転を設定
+void debugDraw::BaseShape::SetLocalRotate(const Quaternion& rotate){
+	localTransform_.quaternion = rotate;
+}
+
+//ローカルの平行移動を設定
+void debugDraw::BaseShape::SetLocalTranslate(const Vector3& translate){
+	localTransform_.translate = translate;
+}
+
 //色の取得
 const Vector4& debugDraw::BaseShape::GetColor(){
 	return color_;
@@ -76,7 +91,13 @@ const DebugDrawRenderData& debugDraw::BaseShape::GetRenderData(){
 //座標の更新
 void debugDraw::BaseShape::UpdateTransform(){
 	GameObject* gameObject = GetOwner();
-	worldMatrix_ = matrixUtility::MakeAffineMatrix(gameObject->GetTransform());
+	//ローカルのワールド行列
+	Matrix4x4 localMatrix = matrixUtility::MakeAffineMatrix(localTransform_);
+	//ゲームオブジェクトのワールド行列
+	Matrix4x4 ownerMatrix = matrixUtility::MakeAffineMatrix(gameObject->GetTransform());
+
+	//ワールド行列を設定
+	worldMatrix_ = localMatrix * ownerMatrix;
 }
 
 //描画に必要なデータのセットアップ

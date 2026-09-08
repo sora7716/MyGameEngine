@@ -1,11 +1,13 @@
 #include "GameScene.h"
-#include "WinApi.h"
 #include "GameObject.h"
 #include "Object3d.h"
 #include "ModelManager.h"
 #include "Player.h"
 #include "SkyBox.h"
 #include "OrbitCameraController.h"
+#include "AABBCollider.h"
+#include "Cube.h"
+#include "ImGuiManager.h"
 
 //コンストラクタ
 GameScene::GameScene(){
@@ -26,12 +28,15 @@ void GameScene::Initialize(){
 	skyBoxObject->SetName("SkyBox");
 
 	//プレイヤー
+	playerHitBoxSize_ = { 1.9f,2.0f,1.4f };
 	GameObject* playerObject = CreateGameObject();
+	playerAABB_ = playerObject->AddComponent<AABBCollider>();
+	playerCube_ = playerObject->AddComponent<debugDraw::Cube>();
 	Object3d* playerModel = playerObject->AddComponent<Object3d>();
 	playerModel->SetModel(sceneContext_.modelManager->FindModel("player"));
 	Player* player = playerObject->AddComponent<Player>(*sceneContext_.input);
 	playerObject->SetName("player");
-	//playerModel->SetColor(0, Vector4::MakeRedColor());
+
 
 	//ゲームカメラの設定
 	GameObject* gameCameraObject = CreateGameObject();
@@ -64,10 +69,17 @@ void GameScene::Initialize(){
 
 //更新のステート
 void GameScene::UpdateState(){
+	//サイズの設定
+	playerAABB_->SetHalfSize(playerHitBoxSize_);
+	playerCube_->SetLocalScale(playerHitBoxSize_);
 }
 
 //デバッグ
 void GameScene::Debug(){
 	//基底クラスのデバッグ
 	BaseScene::Debug();
+
+	ImGui::Begin("デバッグ");
+	ImGui::DragFloat3("aabb.size", &playerHitBoxSize_.x, 0.1f);
+	ImGui::End();
 }

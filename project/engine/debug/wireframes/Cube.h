@@ -32,24 +32,6 @@ namespace debugDraw {
 		/// <param name="gameObject">ゲームオブジェクト</param>
 		/// <returns>コンポーネント</returns>
 		std::unique_ptr<Component>Clone(GameObject* gameObject)const override;
-
-		/// <summary>
-		/// OBBのセッター
-		/// </summary>
-		/// <param name="obb">OBB</param>
-		void SetOBB(const primitiveData::OBB& obb);
-
-		/// <summary>
-		/// OBBのゲッター
-		/// </summary>
-		/// <returns>OBB</returns>
-		primitiveData::OBB GetOBB();
-
-		/// <summary>
-		/// AABBのゲッター
-		/// </summary>
-		/// <returns>AABB</returns>
-		primitiveData::AABB GetAABB();
 	private://メンバ変数
 		/// <summary>
 		/// 頂点データの設定
@@ -61,7 +43,5 @@ namespace debugDraw {
 		/// </summary>
 		void SettingIndexData()override;
 	private://メンバ変数
-		//OBB
-		primitiveData::OBB obb_ = {};
 	};
 }

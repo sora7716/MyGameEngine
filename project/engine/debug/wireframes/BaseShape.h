@@ -4,6 +4,13 @@
 #include "DebugDrawRenderData.h"
 #include "Component.h"
 #include "BlendMode.h"
+#include <cstdint>
+#include <vector>
+#include <GameObject.h>
+#include <Matrix4x4.h>
+#include <Quaternion.h>
+#include <Vector3.h>
+#include <Vector4.h>
 
 /// <summary>
 /// 形
@@ -43,6 +50,24 @@ namespace debugDraw {
 		/// </summary>
 		/// <param name="blendMode">ブレンドモード</param>
 		void SetBlendMode(BlendMode blendMode);
+
+		/// <summary>
+		/// ローカルスケールを設定
+		/// </summary>
+		/// <param name="scale">スケール</param>
+		void SetLocalScale(const Vector3& scale);
+
+		/// <summary>
+		/// ローカルの回転を設定
+		/// </summary>
+		/// <param name="rotate">回転</param>
+		void SetLocalRotate(const Quaternion& rotate);
+
+		/// <summary>
+		/// ローカルの平行移動を設定
+		/// </summary>
+		/// <param name="translate">平行移動</param>
+		void SetLocalTranslate(const Vector3& translate);
 
 		/// <summary>
 		/// 色の取得
@@ -103,6 +128,8 @@ namespace debugDraw {
 
 		//色
 		Vector4 color_ = {};
+		//ローカルのトランスフォーム
+		Transform localTransform_ = {};
 		//ワールド行列
 		Matrix4x4 worldMatrix_ = {};
 		//ブレンドモード

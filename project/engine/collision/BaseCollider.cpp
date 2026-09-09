@@ -13,9 +13,13 @@ void BaseCollider::Initialize(){
 	gameObject_ = GetOwner();
 }
 
-//衝突したときの判定	
+//衝突したときの判定(押し戻しあり)
 void BaseCollider::OnCollision(const CollisionInfo& info){
 
+}
+
+//衝突したときの判定(押し戻しなし)
+void BaseCollider::OnTrigger(BaseCollider* other){
 }
 
 //めり込むかを判定するフラグの設定

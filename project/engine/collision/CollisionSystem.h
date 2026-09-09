@@ -4,6 +4,7 @@
 
 //前方宣言
 class GameObject;
+class BaseCollider;
 class AABBCollider;
 
 /// <summary>
@@ -22,17 +23,26 @@ public://メンバ関数
 	~CollisionSystem();
 private://メンバ関数
 	/// <summary>
-	/// AABBコライダーを集める
+	/// コライダーを集める
 	/// </summary>
 	/// <param name="gameObjects">ゲームオブジェクトの配列</param>
-	void CollectAABBCollider(const std::vector<std::unique_ptr<GameObject>>& gameObjects);
+	void CollectCollider(const std::vector<std::unique_ptr<GameObject>>& gameObjects);
+
+	/// <summary>
+	/// コライダーのペアを確認
+	/// </summary>
+	/// <param name="collider1">コライダー1</param>
+	/// <param name="collider2">コライダー2</param>
+	void CheckCollisionPair(BaseCollider* collider1, BaseCollider* collider2);
 
 	/// <summary>
 	/// AABBの衝突判定を確認
 	/// </summary>
-	void CheckCollisonAABB();
+	/// <param name="collider1">コライダー1</param>
+	/// <param name="collider2">コライダー2</param>
+	void CheckCollisionAABB(AABBCollider* collider1, AABBCollider* collider2);
 private://メンバ変数
-	//AABBコライダー
-	std::vector<AABBCollider*>aabbColliders_;
+	//コライダー
+	std::vector<BaseCollider*>colliders_;
 };
 

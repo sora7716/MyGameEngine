@@ -31,11 +31,27 @@ struct Vector3 final {
 	Vector3 Min(const Vector3& v)const;
 
 	/// <summary>
+	/// 最小値
+	/// </summary>
+	/// <param name="v1">ベクトル1</param>
+	/// <param name="v2">ベクトル2</param>
+	/// <returns>最小値</returns>
+	Vector3 Min(const Vector3& v1,const Vector3& v2)const;
+
+	/// <summary>
 	/// 最大値
 	/// </summary>
 	/// <param name="v">ベクトル</param>
 	/// <returns>最大値</returns>
 	Vector3 Max(const Vector3& v)const;
+
+	/// <summary>
+	/// 最大値
+	/// </summary>
+	/// <param name="v1">ベクトル1</param>
+	/// <param name="v2">ベクトル2</param>
+	/// <returns>最大値</returns>
+	Vector3 Max(const Vector3& v1, const Vector3& v2)const;
 
 	/// <summary>
 	/// 最小値

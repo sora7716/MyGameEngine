@@ -30,12 +30,32 @@ Vector3 Vector3::Min(const Vector3& v) const{
 	return result;
 }
 
+//最小値
+Vector3 Vector3::Min(const Vector3& v1, const Vector3& v2) const{
+	Vector3 result = {};
+	result.x = std::min({ x, v1.x,v2.x });
+	result.y = std::min({ y, v1.y,v2.y });
+	result.z = std::min({ z, v1.z,v2.z });
+
+	return result;
+}
+
 //最大値
 Vector3 Vector3::Max(const Vector3& v) const{
 	Vector3 result = {};
 	result.x = std::max(x, v.x);
 	result.y = std::max(y, v.y);
 	result.z = std::max(z, v.z);
+
+	return result;
+}
+
+//最大値
+Vector3 Vector3::Max(const Vector3& v1, const Vector3& v2) const{
+	Vector3 result = {};
+	result.x = std::max({ x, v1.x,v2.x });
+	result.y = std::max({ y, v1.y,v2.y });
+	result.z = std::max({ z, v1.z,v2.z });
 
 	return result;
 }

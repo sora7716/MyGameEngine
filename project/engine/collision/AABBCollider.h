@@ -46,6 +46,12 @@ public://メンバ関数
 	/// <param name="gameObject">ゲームオブジェクト</param>
 	/// <returns>コピーしたインスタンス</returns>
 	std::unique_ptr<Component> Clone(GameObject* gameObject)const override;
+
+	/// <summary>
+	/// コライダータイプの取得
+	/// </summary>
+	/// <returns>コライダータイプ</returns>
+	ColliderType GetColliderType()const override;
 private://メンバ変数
 	//AABB
 	primitiveData::AABB aabb_ = {};

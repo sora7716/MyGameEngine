@@ -48,3 +48,8 @@ std::unique_ptr<Component> AABBCollider::Clone(GameObject* gameObject) const{
 
 	return cloneInstance;
 }
+
+//コライダータイプの取得
+ColliderType AABBCollider::GetColliderType() const{
+	return ColliderType::kAABB;
+}

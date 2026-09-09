@@ -2,6 +2,9 @@
 #include "Component.h"
 #include <GameObject.h>
 
+//前方宣言
+class BaseCollider;
+
 //衝突判定の情報
 struct CollisionInfo{
 	//衝突した対象
@@ -10,6 +13,13 @@ struct CollisionInfo{
 	Vector3 normal = {};
 	//めり込んだ距離
 	float penetrationDepth = 0.0f;
+};
+
+//コライダータイプ
+enum class ColliderType{
+	kAABB,
+	kSphere,
+	kOBB
 };
 
 /// <summary>
@@ -34,10 +44,16 @@ public://メンバ関数
 	void Initialize()override;
 
 	/// <summary>
-	/// 衝突したときの判定
+	/// 衝突したときの判定(押し戻しあり)
 	/// </summary>
 	/// <param name="info">衝突情報</param>
-	void OnCollision(const CollisionInfo& info);
+	virtual void OnCollision(const CollisionInfo& info);
+
+	/// <summary>
+	/// 衝突したときの判定(押し戻しなし)
+	/// </summary>
+	/// <param name="other">コライダーの情報</param>
+	virtual void OnTrigger(BaseCollider* other);
 
 	/// <summary>
 	/// めり込むかを判定するフラグの設定
@@ -50,6 +66,12 @@ public://メンバ関数
 	/// </summary>
 	/// <returns>めり込むかを判定する</returns>
 	bool IsTrigger();
+
+	/// <summary>
+	/// コライダータイプの取得
+	/// </summary>
+	/// <returns>コライダータイプ　</returns>
+	virtual ColliderType GetColliderType()const = 0;
 protected://メンバ変数
 	//ゲームオブジェクト
 	GameObject* gameObject_ = nullptr;

@@ -1,11 +1,11 @@
 #pragma once
-#include "Component.h"
 #include "PrimitiveData.h"
+#include "BaseCollider.h"
 
 /// <summary>
 /// AABBのコライダー
 /// </summary>
-class AABBCollider :public Component{
+class AABBCollider :public BaseCollider{
 public://メンバ関数
 	/// <summary>
 	/// コンストラクタ
@@ -49,8 +49,6 @@ public://メンバ関数
 private://メンバ変数
 	//AABB
 	primitiveData::AABB aabb_ = {};
-	//ゲームオブジェクト
-	GameObject* gameObject_ = nullptr;
 	//ハーフサイズ
 	Vector3 halfSize_ = {};
 };

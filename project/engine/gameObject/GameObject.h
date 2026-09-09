@@ -145,6 +145,33 @@ public://メンバ関数
 	}
 
 	/// <summary>
+	/// コンポーネントの取得
+	/// </summary>
+	/// <typeparam name="T">コンポーネントの型</typeparam>
+	/// <returns>コンポーネントのポインタ</returns>
+	template <class T>
+	std::vector<T*> GetComponents(){
+		static_assert(
+			std::is_base_of_v<Component, T>,
+			"TはComponentを継承している必要があります"
+		);
+
+		//対象の配列
+		std::vector<T*>targets;
+
+		for (const std::unique_ptr<Component>& component : components_){
+			T* target = dynamic_cast<T*>(component.get());
+
+			if (target){
+				targets.push_back(target);
+			}
+		}
+
+		//配列を返す
+		return targets;
+	}
+
+	/// <summary>
 	/// コンポーネントの更新
 	/// </summary>
 	/// <param name="phase">更新のフェーズ</param>

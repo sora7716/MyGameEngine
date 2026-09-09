@@ -2,7 +2,7 @@
 #include "GameObject.h"
 
 //コンストラクタ
-AABBCollider::AABBCollider(GameObject* gameObject) :Component(gameObject){
+AABBCollider::AABBCollider(GameObject* gameObject) :BaseCollider(gameObject){
 }
 
 //デストラクタ
@@ -11,7 +11,8 @@ AABBCollider::~AABBCollider(){
 
 //初期化
 void AABBCollider::Initialize(){
-	gameObject_ = GetOwner();
+	//基底クラスの更新
+	BaseCollider::Initialize();
 	halfSize_ = { 0.5f,0.5f,0.5f };
 }
 

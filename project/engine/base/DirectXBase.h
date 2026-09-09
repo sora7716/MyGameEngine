@@ -6,9 +6,9 @@
 #include <wrl.h>
 #include <vector>
 #include <array>
-#include "engine/math/Vector4.h"
-#include "externals/DirectXTex/DirectXTex.h"
-#include "externals/DirectXTex/d3dx12.h"
+#include "Vector4.h"
+#include "DirectXTex/DirectXTex.h"
+#include "DirectXTex/d3dx12.h"
 
 //前方宣言
 class WinApi;
@@ -17,7 +17,7 @@ class Core;
 /// <summary>
 /// DirectXコモン
 /// </summary>
-class DirectXBase {
+class DirectXBase{
 private://エイリアステンプレート
 	template <class T>using ComPtr = Microsoft::WRL::ComPtr<T>;
 public://メンバ関数
@@ -166,7 +166,7 @@ public://メンバ関数
 	/// <returns>デプスステンシルテクスチャ</returns>
 	ID3D12Resource* GetDepthStencilTexture()const;
 public://PassKey
-	class ConstructorKey {
+	class ConstructorKey{
 		ConstructorKey() = default;
 		friend class Core;
 	};
@@ -251,7 +251,7 @@ private://メンバ関数
 	/// <param name="bufferSize">バッファサイズ</param>
 	/// <param name="hwndIndex">windowの検索キー</param>
 	/// <returns></returns>
-/// <returns>スワップチェーン</returns>
+	/// <returns>スワップチェーン</returns>
 	ComPtr<IDXGISwapChain4> CreateSwapChain(int32_t windowWidth, int32_t windowHeight, uint32_t bufferSize, uint32_t hwndIndex);
 
 	/// <summary>
@@ -329,7 +329,7 @@ private://メンバ変数
 	//FenceValue
 	uint64_t fenceValue_ = 0;
 	//ビューポート
-	D3D12_VIEWPORT viewport_{};
+	std::vector<D3D12_VIEWPORT> viewports_{};
 	//シーザー矩形
-	D3D12_RECT scissorRect_{};
+	std::vector<D3D12_RECT> scissorRects_{};
 };

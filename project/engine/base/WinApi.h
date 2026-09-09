@@ -102,9 +102,9 @@ public://静的メンバ関数
 public://定数
 #ifdef _DEBUG
 	//画面の横幅
-	static inline const int32_t kClientWidth = 854;
+	static inline const int32_t kClientWidth = 960;
 	//画面の縦幅
-	static inline const int32_t kClientHeight = 480;
+	static inline const int32_t kClientHeight = 540;
 #else
 	//画面の横幅
 	static inline const int32_t kClientWidth = 1280;

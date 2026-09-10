@@ -1,6 +1,7 @@
 #pragma once
 #include <vector>
 #include <memory>
+#include "Vector3.h"
 
 //前方宣言
 class GameObject;
@@ -21,6 +22,11 @@ public://メンバ関数
 	/// デストラクタ
 	/// </summary>
 	~CollisionSystem();
+
+	/// <summary>
+	/// 更新
+	/// </summary>
+	void Update(const std::vector<std::unique_ptr<GameObject>>& gameObjects);
 private://メンバ関数
 	/// <summary>
 	/// コライダーを集める
@@ -41,6 +47,14 @@ private://メンバ関数
 	/// <param name="collider1">コライダー1</param>
 	/// <param name="collider2">コライダー2</param>
 	void CheckCollisionAABB(AABBCollider* collider1, AABBCollider* collider2);
+
+	/// <summary>
+	/// 押し出す方向を取得
+	/// </summary>
+	/// <param name="diff">差分</param>
+	/// <param name="overlap">どれくらい重なってるか</param>
+	/// <returns>押し出す方向</returns>
+	Vector3 CalculatePushOutNormal(const Vector3& diff, const Vector3& overlap);
 private://メンバ変数
 	//コライダー
 	std::vector<BaseCollider*>colliders_;

@@ -45,6 +45,8 @@ std::unique_ptr<Component> AABBCollider::Clone(GameObject* gameObject) const{
 
 	//Cameraが持つ設定だけ複製
 	cloneInstance->SetEnabled(this->IsEnabled());
+	cloneInstance->SetIsTrigger(this->IsTrigger());
+	cloneInstance->SetBodyType(this->GetBodyType());
 
 	return cloneInstance;
 }

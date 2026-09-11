@@ -16,10 +16,16 @@ struct CollisionInfo{
 };
 
 //コライダータイプ
-enum class ColliderType{
+enum class ColliderType :uint32_t{
 	kAABB,
 	kSphere,
 	kOBB
+};
+
+//ボディタイプ
+enum class BodyType :uint32_t{
+	kStatic,//動かせない
+	kDynamic//動かせる
 };
 
 /// <summary>
@@ -62,10 +68,22 @@ public://メンバ関数
 	void SetIsTrigger(bool isTrigger);
 
 	/// <summary>
+	/// ボディタイプの設定
+	/// </summary>
+	/// <param name="bodyType">ボディタイプ</param>
+	void SetBodyType(BodyType bodyType);
+
+	/// <summary>
 	/// めり込むかを判定するフラグを取得
 	/// </summary>
 	/// <returns>めり込むかを判定する</returns>
-	bool IsTrigger();
+	bool IsTrigger()const;
+
+	/// <summary>
+	/// ボディタイプの取得
+	/// </summary>
+	/// <returns>ボディタイプ</returns>
+	BodyType GetBodyType()const;
 
 	/// <summary>
 	/// コライダータイプの取得
@@ -78,5 +96,7 @@ protected://メンバ変数
 private://メンバ変数
 	//めり込むかを判定するフラグ
 	bool isTrigger_ = false;
+	//BodyTye
+	BodyType bodyType_ = BodyType::kStatic;
 };
 

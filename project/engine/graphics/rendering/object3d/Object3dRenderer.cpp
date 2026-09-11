@@ -11,14 +11,14 @@
 #include <cassert>
 
 //生成
-std::unique_ptr<Object3dRenderer> Object3dRenderer::Create(DirectXBase* directXBase, SRVManager* srvManager, TextureManager* textureManager, uint32_t maxInstance){
-	std::unique_ptr<Object3dRenderer>instance = std::make_unique<Object3dRenderer>();
+std::unique_ptr<Object3dRenderer> Object3dRenderer::Create(ConstructorKey key, DirectXBase* directXBase, SRVManager* srvManager, TextureManager* textureManager, uint32_t maxInstance){
+	std::unique_ptr<Object3dRenderer>instance = std::make_unique<Object3dRenderer>(key);
 	instance->Initialize(directXBase, srvManager, textureManager, maxInstance);
 	return instance;
 }
 
 //コンストラクタ
-Object3dRenderer::Object3dRenderer(){
+Object3dRenderer::Object3dRenderer(ConstructorKey){
 }
 
 //デストラクタ

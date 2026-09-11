@@ -13,13 +13,6 @@ class DirectXBase;
 /// カメラの描画を担当
 /// </summary>
 class CameraRenderer{
-public://静的メンバ関数
-	/// <summary>
-	/// 生成
-	/// </summary>
-	/// <param name="directXBase">DirectXの基盤部分</param>
-	/// <returns>インスタンス</returns>
-	static std::unique_ptr<CameraRenderer>Create(DirectXBase* directXBase);
 private://構造体
 	//カメラのデータの構造体
 	struct CameraForGPU{
@@ -33,11 +26,29 @@ private://構造体
 		CameraForGPU* cameraForGPU = nullptr;
 		Microsoft::WRL::ComPtr<ID3D12Resource> cameraResource = nullptr;
 	};
+public://PassKey
+	class ConstructorKey{
+	private:
+		ConstructorKey() = default;
+		friend class RenderSystem;
+	};
+public://静的メンバ関数
+	/// <summary>
+	/// 生成
+	/// </summary>
+	/// <param name="key">コンストラクタKey</param>
+	/// <param name="directXBase">DirectXの基盤部分</param>
+	/// <param name="srvManager">SRVの管理</param>
+	/// <param name="textureManager">テクスチャの管理</param>
+	/// <param name="maxInstance">インスタンスの最大値</param>
+	/// <returns>インスタンス</returns>
+	static std::unique_ptr<CameraRenderer>Create(ConstructorKey key, DirectXBase* directXBase);
 public://メンバ関数
 	/// <summary>
 	/// コンストラクタ
 	/// </summary>
-	CameraRenderer();
+	/// <param name="">PassKeyを受け取る</param>
+	explicit CameraRenderer(ConstructorKey);
 
 	/// <summary>
 	/// デストラクタ
@@ -68,6 +79,11 @@ public://メンバ関数
 	/// <param name="renderData">描画データ</param>
 	void AddRenderData(const CameraRenderData& renderData);
 private://メンバ関数
+	//コピーコンストラクタ禁止
+	CameraRenderer(const CameraRenderer&) = delete;
+	//代入演算子の禁止
+	CameraRenderer operator=(const CameraRenderer&) = delete;
+
 	/// <summary>
 	/// カメラリソースの生成
 	/// </summary>

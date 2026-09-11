@@ -2,16 +2,36 @@
 #include "BaseScene.h"
 #include "AbstractSceneFactory.h"
 #include "CameraRenderData.h"
+#include <memory>
 
 //前方宣言
 class DebugEditor;
-class RenderSystem;
 
 /// <summary>
 /// シーン管理
 /// </summary>
 class SceneManager{
+public://PassKey
+	class ConstructorKey{
+	private:
+		ConstructorKey() = default;
+		friend class Core;
+	};
+public://静的メンバ関数
+	/// <summary>
+	/// 生成
+	/// </summary>
+	/// <param name="key">コンストラクタのKey</param>
+	/// <param name="sceneContext">シーンで必要なもの</param>
+	/// <returns>インスタンス</returns>
+	static std::unique_ptr<SceneManager>Create(ConstructorKey key, const SceneContext& sceneContext);
 public://メンバ関数
+	/// <summary>
+	/// コンストラクタ
+	/// </summary>
+	/// <param name="">PassKeyを受け取る</param>
+	explicit SceneManager(ConstructorKey);
+
 	/// <summary>
 	/// コンストラクタ
 	/// </summary>
@@ -26,7 +46,7 @@ public://メンバ関数
 	/// 初期化
 	/// </summary>
 	/// <param name="sceneContext">シーンで必要なもの</param>
-	void Initialize(const SceneContext& sceneContext, RenderSystem* renderSystem);
+	void Initialize(const SceneContext& sceneContext);
 
 	/// <summary>
 	/// 更新
@@ -65,28 +85,11 @@ public://メンバ関数
 	/// </summary>
 	/// <param name="sceneName"></param>
 	void ChangeScene(const std::string& sceneName);
-public://PassKey
-	class ConstructorKey{
-	private:
-		ConstructorKey() = default;
-		friend class Core;
-	};
-
-	/// <summary>
-	/// コンストラクタ
-	/// </summary>
-	/// <param name="">PassKeyを受け取る</param>
-	explicit SceneManager(ConstructorKey);
 private://メンバ関数
 	//コピーコンストラクタを禁止
 	SceneManager(const SceneManager&) = delete;
 	//代入演算子を禁止
 	SceneManager operator=(const SceneManager&) = delete;
-private://静的メンバ変数
-	//インスタンス
-	static inline SceneManager* instance = nullptr;
-	//Finalizeをしたかどうか
-	static inline bool isFinalize = false;
 private://メンバ変数
 	//シーンで必要なもの
 	SceneContext sceneContext_ = {};
@@ -98,7 +101,5 @@ private://メンバ変数
 	BaseScene* nextScene_ = nullptr;
 	//デバッグエディタ
 	std::unique_ptr<DebugEditor>debugEditor_ = nullptr;
-	//描画システム
-	RenderSystem* renderSystem_ = nullptr;
 };
 

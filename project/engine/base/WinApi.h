@@ -3,6 +3,7 @@
 #include <cstdint>
 #include <string>
 #include <array>
+#include <memory>
 
 //前方宣言
 class Core;
@@ -18,7 +19,36 @@ enum class WindowType :uint32_t {
 /// ウィンドウズAPI
 /// </summary>
 class WinApi {
+public://PassKey
+	class ConstructorKey{
+	private:
+		ConstructorKey() = default;
+		friend class Core;
+	};
+public://静的メンバ関数
+	/// <summary>
+	/// 生成
+	/// </summary>
+	/// <param name="key">コンストラクタのKey</param>
+	/// <returns>インスタンス</returns>
+	static std::unique_ptr<WinApi>Create(ConstructorKey key);
+
+	/// <summary>
+	/// ウィンドウプロシージャ
+	/// </summary>
+	/// <param name="hwnd">メッセージが送信されたウィンドウのハンドル</param>
+	/// <param name="msg">メッセージの識別子</param>
+	/// <param name="wParam">メッセージの追加情報</param>
+	/// <param name="lParam">メッセージの追加情報</param>
+	/// <returns></returns>
+	static LRESULT CALLBACK WindowProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam);
 public://メンバ関数
+	/// <summary>
+	/// コンストラクタ
+	/// </summary>
+	/// <param name="">PassKeyを受け取る</param>
+	explicit WinApi(ConstructorKey);
+
 	/// <summary>
 	/// デストラクタ
 	/// </summary>
@@ -73,32 +103,11 @@ public://メンバ関数
 	/// </summary>
 	/// <param name="isShowCursor">マウスカーソルを表示非表示</param>
 	void SetShowCursor(bool isShowCursor);
-
+private://メンバ関数
 	//コピーコンストラクタ禁止
 	WinApi(const WinApi&) = delete;
 	//代入演算子禁止
 	const WinApi& operator=(const WinApi&) = delete;
-public://PassKey
-	class ConstructorKey {
-	private:
-		ConstructorKey() = default;
-		friend class Core;
-	};
-	/// <summary>
-	/// コンストラクタ
-	/// </summary>
-	/// <param name="">PassKeyを受け取る</param>
-	explicit WinApi(ConstructorKey);
-public://静的メンバ関数
-	/// <summary>
-	/// ウィンドウプロシージャ
-	/// </summary>
-	/// <param name="hwnd">メッセージが送信されたウィンドウのハンドル</param>
-	/// <param name="msg">メッセージの識別子</param>
-	/// <param name="wParam">メッセージの追加情報</param>
-	/// <param name="lParam">メッセージの追加情報</param>
-	/// <returns></returns>
-	static LRESULT CALLBACK WindowProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam);
 public://定数
 #ifdef _DEBUG
 	//画面の横幅

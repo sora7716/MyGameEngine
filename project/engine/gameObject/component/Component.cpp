@@ -12,6 +12,16 @@ void Component::Initialize(){
 void Component::Update(){
 }
 
+//衝突したときの処理
+void Component::OnCollision(const CollisionInfo& info){
+	(void)info;
+}
+
+//衝突したときの処理
+void Component::OnTrigger(BaseCollider* other){
+	(void)other;
+}
+
 //更新のフェーズの取得
 UpdatePhase Component::GetUpdatePhase(){
 	return UpdatePhase::kMain;

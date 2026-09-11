@@ -20,7 +20,45 @@ class Core;
 class DirectXBase{
 private://エイリアステンプレート
 	template <class T>using ComPtr = Microsoft::WRL::ComPtr<T>;
+public://PassKey
+	class ConstructorKey{
+	private:
+		ConstructorKey() = default;
+		friend class Core;
+	};
+public://静的メンバ関数
+	/// <summary>
+	/// 生成
+	/// </summary>
+	/// <param name="key">コンストラクタのKey</param>
+	/// <param name="winApi">ウィンドウズAPI</param>
+	/// <returns>インスタンス</returns>
+	static std::unique_ptr<DirectXBase>Create(ConstructorKey key, WinApi* winApi);
+
+	/// <summary>
+	/// デスクリプターCPUハンドルのゲッター
+	/// </summary>
+	/// <param name="descriptorHeap">デスクリプターヒープ</param>
+	/// <param name="descriptorSize">デスクリプターサイズ</param>
+	/// <param name="index">インデックス</param>
+	/// <returns>デスクリプターCPUハンドル</returns>
+	static D3D12_CPU_DESCRIPTOR_HANDLE GetCPUDescriptorHandle(Microsoft::WRL::ComPtr<ID3D12DescriptorHeap> descriptorHeap, uint32_t descriptorSize, uint32_t index);
+
+	/// <summary>
+	/// デスクリプターGPUハンドルのゲッター
+	/// </summary>
+	/// <param name="descriptorHeap">デスクリプターヒープ</param>
+	/// <param name="descriptorSize">デスクリプターサイズ</param>
+	/// <param name="index">インデックス</param>
+	/// <returns>デスクリプターGPUハンドル</returns>
+	static D3D12_GPU_DESCRIPTOR_HANDLE GetGPUDescriptorHandle(Microsoft::WRL::ComPtr<ID3D12DescriptorHeap> descriptorHeap, uint32_t descriptorSize, uint32_t index);
 public://メンバ関数
+	/// <summary>
+	/// コンストラクタ
+	/// </summary>
+	/// <param name="">PassKeyを受け取る</param>
+	DirectXBase(ConstructorKey);
+
 	/// <summary>
 	/// デストラクタ
 	/// </summary>
@@ -165,40 +203,12 @@ public://メンバ関数
 	/// </summary>
 	/// <returns>デプスステンシルテクスチャ</returns>
 	ID3D12Resource* GetDepthStencilTexture()const;
-public://PassKey
-	class ConstructorKey{
-		ConstructorKey() = default;
-		friend class Core;
-	};
-	/// <summary>
-	/// コンストラクタ
-	/// </summary>
-	/// <param name="">PressKeyを受け取る</param>
-	explicit DirectXBase(ConstructorKey);
-public://静的メンバ関数
-	/// <summary>
-	/// デスクリプターCPUハンドルのゲッター
-	/// </summary>
-	/// <param name="descriptorHeap">デスクリプターヒープ</param>
-	/// <param name="descriptorSize">デスクリプターサイズ</param>
-	/// <param name="index">インデックス</param>
-	/// <returns>デスクリプターCPUハンドル</returns>
-	static D3D12_CPU_DESCRIPTOR_HANDLE GetCPUDescriptorHandle(Microsoft::WRL::ComPtr<ID3D12DescriptorHeap> descriptorHeap, uint32_t descriptorSize, uint32_t index);
-
-	/// <summary>
-	/// デスクリプターGPUハンドルのゲッター
-	/// </summary>
-	/// <param name="descriptorHeap">デスクリプターヒープ</param>
-	/// <param name="descriptorSize">デスクリプターサイズ</param>
-	/// <param name="index">インデックス</param>
-	/// <returns>デスクリプターGPUハンドル</returns>
-	static D3D12_GPU_DESCRIPTOR_HANDLE GetGPUDescriptorHandle(Microsoft::WRL::ComPtr<ID3D12DescriptorHeap> descriptorHeap, uint32_t descriptorSize, uint32_t index);
-
 private://メンバ関数
 	//コピーコンストラクタ禁止
 	DirectXBase(const DirectXBase&) = delete;
 	//代入演算子を禁止
 	const DirectXBase operator=(const DirectXBase&) = delete;
+
 	/// <summary>
 	/// 深度バッファリソースの設定
 	/// </summary>

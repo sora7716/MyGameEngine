@@ -46,21 +46,29 @@ private://構造体など
 	struct Object3dGpuResource{
 		std::vector<LODGpuResource> lodResources;
 	};
+public://PassKey
+	class ConstructorKey{
+	private:
+		ConstructorKey() = default;
+		friend class RenderSystem;
+	};
 public://静的メンバ関数
 	/// <summary>
 	/// 生成
 	/// </summary>
+	/// <param name="key">コンストラクタKey</param>
 	/// <param name="directXBase">DirectXの基盤部分</param>
 	/// <param name="srvManager">SRVの管理</param>
 	/// <param name="textureManager">テクスチャの管理</param>
 	/// <param name="maxInstance">インスタンスの最大値</param>
 	/// <returns>インスタンス</returns>
-	static std::unique_ptr<Object3dRenderer>Create(DirectXBase* directXBase, SRVManager* srvManager, TextureManager* textureManager, uint32_t maxInstance = 1024);
+	static std::unique_ptr<Object3dRenderer>Create(ConstructorKey key, DirectXBase* directXBase, SRVManager* srvManager, TextureManager* textureManager, uint32_t maxInstance = 1024);
 public://メンバ関数
 	/// <summary>
 	/// コンストラクタ
 	/// </summary>
-	Object3dRenderer();
+	/// <param name="">PassKeyを受け取る</param>
+	explicit Object3dRenderer(ConstructorKey);
 
 	/// <summary>
 	/// デストラクタ
@@ -145,6 +153,11 @@ private://メンバ関数
 	/// </summary>
 	/// <param name="batchResource">バッチリソース</param>
 	void UpdateMaterialInstanceResource(BatchResource& batchResource);
+private://メンバ関数
+	//コピーコンストラクタ禁止
+	Object3dRenderer(const Object3dRenderer&) = delete;
+	//代入演算子の禁止
+	Object3dRenderer operator=(const Object3dRenderer&) = delete;
 private://メンバ変数
 	//DirectXの基盤部分
 	DirectXBase* directXBase_ = nullptr;

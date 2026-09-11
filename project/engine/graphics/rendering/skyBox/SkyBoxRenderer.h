@@ -24,19 +24,27 @@ struct SkyBoxVertexData{
 class SkyBoxRenderer{
 private://エイリアステンプレート
 	template <class T>using ComPtr = Microsoft::WRL::ComPtr<T>;
+public://PassKey
+	class ConstructorKey{
+	private:
+		ConstructorKey() = default;
+		friend class RenderSystem;
+	};
 public://静的メンバ関数
 	/// <summary>
 	/// 生成
 	/// </summary>
+	/// <param name="key">コンストラクタKey</param>
 	/// <param name="directXBase">DirectXの基盤部分</param>
-	/// <param name="textureManager">Textureの管理</param>
+	/// <param name="textureManager">テクスチャの管理</param>
 	/// <returns>インスタンス</returns>
-	static std::unique_ptr<SkyBoxRenderer>Create(DirectXBase* directXBase, TextureManager* textureManager);
+	static std::unique_ptr<SkyBoxRenderer>Create(ConstructorKey key, DirectXBase* directXBase, TextureManager* textureManager);
 public://メンバ関数
 	/// <summary>
 	/// コンストラクタ
 	/// </summary>
-	SkyBoxRenderer();
+	/// <param name="">PassKeyを受け取る</param>
+	explicit SkyBoxRenderer(ConstructorKey);
 
 	/// <summary>
 	/// デストラクタ
@@ -80,6 +88,11 @@ public://メンバ関数
 	/// <returns>描画データのサイズ</returns>
 	uint32_t GetRenderDataSize();
 private://メンバ関数
+	//コピーコンストラクタ禁止
+	SkyBoxRenderer(const SkyBoxRenderer&) = delete;
+	//代入演算子の禁止
+	SkyBoxRenderer operator=(const SkyBoxRenderer&) = delete;
+
 	/// <summary>
 	/// 頂点データの初期化
 	/// </summary>

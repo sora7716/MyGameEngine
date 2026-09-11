@@ -2,14 +2,14 @@
 #include "DirectXBase.h"
 
 //生成
-std::unique_ptr<CameraRenderer> CameraRenderer::Create(DirectXBase* directXBase){
-	std::unique_ptr<CameraRenderer>instance = std::make_unique<CameraRenderer>();
+std::unique_ptr<CameraRenderer> CameraRenderer::Create(ConstructorKey key, DirectXBase* directXBase){
+	std::unique_ptr<CameraRenderer>instance = std::make_unique<CameraRenderer>(key);
 	instance->Initialize(directXBase);
 	return instance;
 }
 
 //コンストラクタ
-CameraRenderer::CameraRenderer(){
+CameraRenderer::CameraRenderer(ConstructorKey){
 }
 
 //デストラクタ

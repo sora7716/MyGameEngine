@@ -3,8 +3,8 @@
 #include <dinput.h>
 #include <memory>
 #include <wrl.h>
-#include "engine/math/Vector2.h"
-#include "engine/math/Vector3.h"
+#include "Vector2.h"
+#include "Vector3.h"
 #include "Xinput.h"
 #include <cstdint>
 //前方宣言
@@ -13,14 +13,14 @@ class Core;
 class Camera;
 
 //マウスのクリック位置
-enum class Click {
+enum class Click{
 	kLeft,
 	kRight,
 	kMiddle
 };
 
 //Xboxのボタンの位置
-enum class XboxInput :WORD {
+enum class XboxInput :WORD{
 	kDPadUp = XINPUT_GAMEPAD_DPAD_UP,
 	kDPadRight = XINPUT_GAMEPAD_DPAD_RIGHT,
 	kDPadDown = XINPUT_GAMEPAD_DPAD_DOWN,
@@ -40,14 +40,14 @@ enum class XboxInput :WORD {
 };
 
 //Xboxのボタン用構造体
-struct XboxButton {
+struct XboxButton{
 	WORD button;
 	bool leftTriggerButton;
 	bool rightTriggerButton;
 };
 
 //XboxPadのデータ
-struct XboxPadData {
+struct XboxPadData{
 	XINPUT_STATE state;//ステータス
 	bool isConnected;//接続できたか
 	XboxButton currButton;//現在のボタン
@@ -62,11 +62,31 @@ struct XboxPadData {
 /// <summary>
 /// 入力
 /// </summary>
-class Input final {
+class Input final{
 public://エイリアステンプレート
 	//namespace省略
 	template <class T>using ComPtr = Microsoft::WRL::ComPtr<T>;
+public://PassKey
+	class ConstructorKey{
+	private:
+		ConstructorKey() = default;
+		friend class Core;
+	};
+public://静的メンバ関数
+	/// <summary>
+	/// 生成
+	/// </summary>
+	/// <param name="key">コンストラクタのKey</param>
+	/// <param name="winApp">ウィンドウズアプリケーション</param>
+	/// <returns>インスタンス</returns>
+	static std::unique_ptr<Input>Create(ConstructorKey key, WinApi* winApi);
 public://メンバ関数
+	/// <summary>
+	/// コンストラクタ
+	/// </summary>
+	/// <param name="">PassKeyを受け取る</param>
+	explicit Input(ConstructorKey);
+
 	/// <summary>
 	/// デストラクタ
 	/// </summary>
@@ -107,7 +127,7 @@ public://メンバ関数
 	/// <summary>
 	/// マウスのボタンの押下をチェック
 	/// </summary>
-	/// <param name="mouseClicPos">マウスのボタン</param>
+	/// <param name="mouseClickPos">マウスのボタン</param>
 	/// <returns>押されてるか</returns>
 	bool PressMouseButton(Click mouseClickPos);
 
@@ -202,17 +222,6 @@ public://メンバ関数
 	/// <param name="xBoxPadNumber">何番目(0~4)</param>
 	/// <param name="deadZone">デッドゾーン</param>
 	void SetDeadZone(DWORD xBoxPadNumber, float deadZone);
-public://PassKey
-	class ConstructorKey {
-		private:
-		ConstructorKey() = default;
-		friend class Core;
-	};
-	/// <summary>
-	/// コンストラクタ
-	/// </summary>
-	/// <param name="">PassKeyを受け取る</param>
-	explicit Input(ConstructorKey);
 private://メンバ関数
 	//コピーコンストラクタを禁止
 	Input(const Input&) = delete;

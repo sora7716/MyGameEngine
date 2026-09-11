@@ -1,5 +1,20 @@
 #include "Core.h"
-#include "engine/scene/SceneFactory.h"
+#include "WinApi.h"
+#include "DirectXBase.h"
+#include "SRVManager.h"
+#include "Input.h"
+#include "TextureManager.h"
+#include "ModelManager.h"
+#include "ImGuiManager.h"
+#include "SceneManager.h"
+#include "AudioManager.h"
+#include "DefaultResourceLoader.h"
+#include "AbstractSceneFactory.h"
+#include "TagManager.h"
+#include "PipelineManager.h"
+#include "LightingManager.h"
+#include "RenderSystem.h"
+#include "SceneFactory.h"
 
 //コンストラクタ
 Core::Core(){
@@ -12,51 +27,40 @@ Core::~Core(){
 //初期化
 void Core::Initialize(){
 	//WinApi
-	winApi_ = std::make_unique<WinApi>(WinApi::ConstructorKey{});
-	winApi_->Initialize();
+	winApi_ = WinApi::Create(WinApi::ConstructorKey{});
 	//DirectXの基盤部分
-	directXBase_ = std::make_unique<DirectXBase>(DirectXBase::ConstructorKey{});
-	directXBase_->Initialize(winApi_.get());
+	directXBase_ = DirectXBase::Create(DirectXBase::ConstructorKey{}, winApi_.get());
 	//SRVマネージャー
-	srvManager_ = std::make_unique<SRVManager>(SRVManager::ConstructorKey{});
-	srvManager_->Initialize(directXBase_.get());
+	srvManager_ = SRVManager::Create(SRVManager::ConstructorKey{}, directXBase_.get());
 	//入力
-	input_ = std::make_unique<Input>(Input::ConstructorKey{});
-	input_->Initialize(winApi_.get());
+	input_ = Input::Create(Input::ConstructorKey{}, winApi_.get());
 	//テクスチャマネージャー
-	textureManager_ = std::make_unique<TextureManager>(TextureManager::ConstructorKey{});
-	textureManager_->Initialize(directXBase_.get(), srvManager_.get());
+	textureManager_ = TextureManager::Create(TextureManager::ConstructorKey{}, directXBase_.get(), srvManager_.get());
 	//モデルマネージャー
-	modelManager_ = std::make_unique<ModelManager>(ModelManager::ConstructorKey{});
-	modelManager_->Initialize(directXBase_.get(), textureManager_.get());
+	modelManager_ = ModelManager::Create(ModelManager::ConstructorKey{}, directXBase_.get(), textureManager_.get());
 	//ImGuiマネージャー
-	imGuiManager_ = std::make_unique<ImGuiManager>(ImGuiManager::ConstructorKey{});
-	imGuiManager_->Initialize(winApi_.get(), directXBase_.get(), srvManager_.get());
+	imGuiManager_ = ImGuiManager::Create(ImGuiManager::ConstructorKey{}, winApi_.get(), directXBase_.get(), srvManager_.get());
 	//パイプラインの管理
-	pipelineManager_ = std::make_unique<PipelineManager>(PipelineManager::ConstructorKey{});
-	pipelineManager_->Initialize(directXBase_.get());
+	pipelineManager_ = PipelineManager::Create(PipelineManager::ConstructorKey{}, directXBase_.get());
 	pipelineManager_->CreatePSO();
 	//シーンファクトリ
 	sceneFactory_ = std::make_unique<SceneFactory>(AbstractSceneFactory::ConstructorKey{});
 	//オーディオマネージャー
 	audioManager_ = std::make_unique<AudioManager>(AudioManager::ConstructorKey{});
 	//ゲームオブジェクトのリスト
-	gameObjectList_ = std::make_unique<GameObjectList>(GameObjectList::ConstructorKey{});
-	gameObjectList_->Initialize(this);
+	gameObjectList_ = DefaultResourceLoader::Create(DefaultResourceLoader::ConstructorKey{}, modelManager_.get(), textureManager_.get(), audioManager_.get());
 	//タグの管理
-	tagManager_ = std::make_unique<TagManager>(TagManager::ConstructorKey{});
-	tagManager_->Initialize();
+	tagManager_ = TagManager::Create(TagManager::ConstructorKey{});
 	//ライティングの管理
-	lightingManager_ = std::make_unique<LightingManager>(LightingManager::ConstructorKey{});
-	lightingManager_->Initialize(directXBase_.get(), srvManager_.get());
+	lightingManager_ = LightingManager::Create(LightingManager::ConstructorKey{}, directXBase_.get(), srvManager_.get());
+	//描画システム
+	renderSystem_ = RenderSystem::Create(RenderSystem::ConstructorKey{}, directXBase_.get(), srvManager_.get(), textureManager_.get(), pipelineManager_.get(), lightingManager_.get());
+	
 	//シーンでの必要なものを取得
 	sceneContext_ = this;
-	//描画システム
-	renderSystem_ = std::make_unique<RenderSystem>();
-	renderSystem_->Initialize(directXBase_.get(), srvManager_.get(), textureManager_.get(), pipelineManager_.get(), lightingManager_.get());
+
 	//シーンマネージャー
-	sceneManager_ = std::make_unique<SceneManager>(SceneManager::ConstructorKey{});
-	sceneManager_->Initialize(sceneContext_, renderSystem_.get());
+	sceneManager_ = SceneManager::Create(SceneManager::ConstructorKey{},sceneContext_);
 	sceneManager_->SetSceneFactory(sceneFactory_.get());
 }
 
@@ -106,7 +110,7 @@ AudioManager* Core::GetAudioManager() const{
 }
 
 //ゲームオブジェクトのリストの取得
-GameObjectList* Core::GetGameObjectList() const{
+DefaultResourceLoader* Core::GetGameObjectList() const{
 	return gameObjectList_.get();
 }
 

@@ -10,6 +10,34 @@
 #pragma comment(lib,"dxcompiler.lib")
 using namespace Microsoft::WRL;
 
+//生成
+std::unique_ptr<DirectXBase> DirectXBase::Create(ConstructorKey key, WinApi* winApi){
+	//生成
+	std::unique_ptr<DirectXBase>instance = std::make_unique<DirectXBase>(key);
+	//初期化
+	instance->Initialize(winApi);
+
+	return instance;
+}
+
+// デスクリプターCPUハンドルのゲッター
+D3D12_CPU_DESCRIPTOR_HANDLE  DirectXBase::GetCPUDescriptorHandle(ComPtr<ID3D12DescriptorHeap> descriptorHeap, uint32_t descriptorSize, uint32_t index){
+	D3D12_CPU_DESCRIPTOR_HANDLE handleCPU = descriptorHeap->GetCPUDescriptorHandleForHeapStart();
+	handleCPU.ptr += (descriptorSize * index);
+	return handleCPU;
+}
+
+// デスクリプターGPUハンドルのゲッター
+D3D12_GPU_DESCRIPTOR_HANDLE DirectXBase::GetGPUDescriptorHandle(ComPtr<ID3D12DescriptorHeap> descriptorHeap, uint32_t descriptorSize, uint32_t index){
+	D3D12_GPU_DESCRIPTOR_HANDLE handleGPU = descriptorHeap->GetGPUDescriptorHandleForHeapStart();
+	handleGPU.ptr += (descriptorSize * index);
+	return handleGPU;
+}
+
+//コンストラクタ
+DirectXBase::DirectXBase(ConstructorKey){
+}
+
 //デストラクタ
 DirectXBase::~DirectXBase(){
 	//オブジェクトの開放
@@ -305,9 +333,6 @@ ComPtr<IDxcBlob> DirectXBase::CompilerShader(const std::wstring& filePath, const
 	assert(SUCCEEDED(hr));
 	//成功したらログを出す
 	Logger::OutputLog(stringUtility::ConvertString(std::format(L"Compile Succeeded, path:{},profile:{}\n", filePath, profile)));
-	//もう使わないリソースを解放
-	shaderSource->Release();
-	shaderResult->Release();
 	//実行用のバイナリを返却
 	return shaderBlob;
 }
@@ -436,24 +461,6 @@ size_t DirectXBase::GetSwapChainResourceNum() const{
 //デプスステンシルテクスチャの取得
 ID3D12Resource* DirectXBase::GetDepthStencilTexture() const{
 	return depthStencilResource_.Get();
-}
-
-//コンストラクタ
-DirectXBase::DirectXBase(ConstructorKey){
-}
-
-// デスクリプターCPUハンドルのゲッター
-D3D12_CPU_DESCRIPTOR_HANDLE  DirectXBase::GetCPUDescriptorHandle(ComPtr<ID3D12DescriptorHeap> descriptorHeap, uint32_t descriptorSize, uint32_t index){
-	D3D12_CPU_DESCRIPTOR_HANDLE handleCPU = descriptorHeap->GetCPUDescriptorHandleForHeapStart();
-	handleCPU.ptr += (descriptorSize * index);
-	return handleCPU;
-}
-
-// デスクリプターGPUハンドルのゲッター
-D3D12_GPU_DESCRIPTOR_HANDLE DirectXBase::GetGPUDescriptorHandle(ComPtr<ID3D12DescriptorHeap> descriptorHeap, uint32_t descriptorSize, uint32_t index){
-	D3D12_GPU_DESCRIPTOR_HANDLE handleGPU = descriptorHeap->GetGPUDescriptorHandleForHeapStart();
-	handleGPU.ptr += (descriptorSize * index);
-	return handleGPU;
 }
 
 //深度バッファリソースの生成

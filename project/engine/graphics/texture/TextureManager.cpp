@@ -12,6 +12,22 @@ using namespace Microsoft::WRL;
 //ImGuiで0番目を使用するため、1番目から使用
 uint32_t TextureManager::kSRVIndexTop = textureLoader::kSRVIndexTop;
 
+//生成
+std::unique_ptr<TextureManager> TextureManager::Create(ConstructorKey key, DirectXBase* directXBase, SRVManager* srvManager){
+	//生成
+	std::unique_ptr<TextureManager>instance = std::make_unique<TextureManager>(key);
+	//初期化
+	instance->Initialize(directXBase, srvManager);
+
+	return instance;
+}
+
+//コンストラクタ
+TextureManager::TextureManager(ConstructorKey){}
+
+//デストラクタ
+TextureManager::~TextureManager(){}
+
 //初期化
 void TextureManager::Initialize(DirectXBase* directXBase, SRVManager* srvManager){
 	//DirectXの基盤部分を記録する
@@ -137,6 +153,3 @@ uint32_t TextureManager::GetSRVIndex(const std::string& filePath){
 D3D12_GPU_DESCRIPTOR_HANDLE TextureManager::GetSRVHandleGPU(const std::string& filePath){
 	return textureDatas_[filePath].srvHandleGPU;
 }
-
-//コンストラクタ
-TextureManager::TextureManager(ConstructorKey){}

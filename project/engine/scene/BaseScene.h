@@ -48,7 +48,7 @@ public://メンバ関数
 	/// <summary>
 	/// 終了
 	/// </summary>
-	void Finalize();
+	virtual void Finalize();
 
 	/// <summary>
 	/// ゲームオブジェクトの削除

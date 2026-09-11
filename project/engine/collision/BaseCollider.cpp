@@ -45,6 +45,7 @@ void BaseCollider::OnCollision(const CollisionInfo& info){
 
 //衝突したときの判定(押し戻しなし)
 void BaseCollider::OnTrigger(BaseCollider* other){
+	(void)other;
 }
 
 //めり込むかを判定するフラグの設定

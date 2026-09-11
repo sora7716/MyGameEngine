@@ -4,6 +4,19 @@
 #include "TextureManager.h"
 #include <cassert>
 
+//生成
+std::unique_ptr<ModelManager> ModelManager::Create(ConstructorKey key, DirectXBase* directXBase, TextureManager* textureManager){
+	//生成
+	std::unique_ptr<ModelManager>instance = std::make_unique<ModelManager>(key);
+	//初期化
+	instance->Initialize(directXBase, textureManager);
+
+	return instance;
+}
+
+//コンストラクタ
+ModelManager::ModelManager(ConstructorKey){}
+
 //デストラクタ
 ModelManager::~ModelManager(){}
 
@@ -88,6 +101,3 @@ Model* ModelManager::FindModel(const std::string& name){
 
 	return it->second.get();
 }
-
-//コンストラクタ
-ModelManager::ModelManager(ConstructorKey){}

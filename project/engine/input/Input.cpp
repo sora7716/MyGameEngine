@@ -9,6 +9,20 @@
 #pragma comment(lib,"dxguid.lib")
 #pragma comment(lib,"xinput.lib")
 
+//生成
+std::unique_ptr<Input> Input::Create(ConstructorKey key, WinApi* winApi){
+	//生成
+	std::unique_ptr<Input>instance = std::make_unique<Input>(key);
+	//初期化
+	instance->Initialize(winApi);
+
+	return instance;
+}
+
+//コンストラクタ
+Input::Input(ConstructorKey){
+}
+
 //デストラクタ
 Input::~Input(){
 }
@@ -256,10 +270,6 @@ const Vector2 Input::GetXboxPadRightStick(DWORD xBoxPadNumber){
 //Xboxのデッドゾーン
 void Input::SetDeadZone(DWORD xBoxPadNumber, float deadZone){
 	xboxPadDatas_[static_cast<uint32_t>(xBoxPadNumber)].deadZone = deadZone;
-}
-
-//コンストラクタ
-Input::Input(ConstructorKey){
 }
 
 //キーボード入力の初期化

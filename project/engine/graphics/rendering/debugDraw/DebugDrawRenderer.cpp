@@ -5,14 +5,14 @@
 #include <cstring>
 
 //生成
-std::unique_ptr<DebugDrawRenderer> DebugDrawRenderer::Create(DirectXBase* directXBase){
-	std::unique_ptr<DebugDrawRenderer>instance = std::make_unique<DebugDrawRenderer>();
+std::unique_ptr<DebugDrawRenderer> DebugDrawRenderer::Create(ConstructorKey key, DirectXBase* directXBase){
+	std::unique_ptr<DebugDrawRenderer>instance = std::make_unique<DebugDrawRenderer>(key);
 	instance->Initialize(directXBase);
 	return instance;
 }
 
 //コンストラクタ
-DebugDrawRenderer::DebugDrawRenderer(){
+DebugDrawRenderer::DebugDrawRenderer(ConstructorKey){
 }
 
 //デストラクタ

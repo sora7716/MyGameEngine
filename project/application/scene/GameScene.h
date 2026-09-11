@@ -36,6 +36,11 @@ public://メンバ関数
 	/// デバッグ
 	/// </summary>
 	void Debug()override;
+
+	/// <summary>
+	/// 解放処理
+	/// </summary>
+	void Finalize()override;
 private://メンバ変数
 	//AABBのコライダー
 	AABBCollider* playerAABB_ = nullptr;

@@ -51,11 +51,30 @@ private://構造体
 		Camera* camera = nullptr;
 		uint32_t index;
 	};
+public://PassKey
+	class ConstructorKey{
+	private:
+		ConstructorKey() = default;
+		friend class Core;
+	};
+public://静的メンバ関数
+	/// <summary>
+	/// 生成
+	/// </summary>
+	/// <param name="key">コンストラクタのKey</param>
+	/// <param name="directXBase">DirectXの基盤</param>
+	/// <param name="srvManager">SRVの管理</param>
+	/// <param name="textureManager">Textureの管理</param>
+	/// <param name="pipelineManager">パイプラインの管理</param>
+	/// <param name="lightingManager">ライティングの管理</param>
+	/// <returns>インスタンス</returns>
+	static std::unique_ptr<RenderSystem>Create(ConstructorKey key, DirectXBase* directXBase, SRVManager* srvManager, TextureManager* textureManager, PipelineManager* pipelineManager, LightingManager* lightingManager);
 public://メンバ関数
 	/// <summary>
 	/// コンストラクタ
 	/// </summary>
-	RenderSystem();
+	/// <param name="">PassKeyを受け取る</param>
+	explicit RenderSystem(ConstructorKey);
 
 	/// <summary>
 	/// デストラクタ
@@ -120,6 +139,11 @@ public://メンバ関数
 	/// <returns>セレクトカメラが取得できたか</returns>
 	bool SetCameraMode(CameraMode cameraMode);
 private://メンバ関数
+	//コピーコンストラクタ禁止
+	RenderSystem(const RenderSystem&) = delete;
+	//代入演算子の禁止
+	RenderSystem operator=(const RenderSystem&) = delete;
+
 	/// <summary>
 	/// 描画の開始
 	/// </summary>

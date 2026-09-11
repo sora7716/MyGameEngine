@@ -15,4 +15,5 @@ void SceneContext::operator=(Core* core){
 	tagManager = core->GetTagManager();
 	pipelineManager = core->GetPipelineManager();
 	lightingManager = core->GetLightingManager();
+	renderSystem = core->GetRenderSystem();
 }

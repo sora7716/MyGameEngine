@@ -6,14 +6,14 @@
 #include <cstring>
 
 //生成
-std::unique_ptr<SkyBoxRenderer> SkyBoxRenderer::Create(DirectXBase* directXBase, TextureManager* textureManager){
-	std::unique_ptr<SkyBoxRenderer>instance = std::make_unique<SkyBoxRenderer>();
+std::unique_ptr<SkyBoxRenderer> SkyBoxRenderer::Create(ConstructorKey key, DirectXBase* directXBase, TextureManager* textureManager){
+	std::unique_ptr<SkyBoxRenderer>instance = std::make_unique<SkyBoxRenderer>(key);
 	instance->Initialize(directXBase, textureManager);
 	return instance;
 }
 
 //コンストラクタ
-SkyBoxRenderer::SkyBoxRenderer(){
+SkyBoxRenderer::SkyBoxRenderer(ConstructorKey){
 }
 
 //デストラクタ

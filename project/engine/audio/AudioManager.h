@@ -7,7 +7,19 @@
 /// Audioの管理
 /// </summary>
 class AudioManager{
+public://PassKey
+	class ConstructorKey{
+	private:
+		ConstructorKey() = default;
+		friend class Core;
+	};
 public://メンバ関数
+	/// <summary>
+	/// コンストラクタ
+	/// </summary>
+	/// <param name="">PassKeyを受け取る</param>
+	explicit AudioManager(ConstructorKey);
+
 	/// <summary>
 	/// デストラクタ
 	/// </summary>
@@ -26,17 +38,6 @@ public://メンバ関数
 	/// <param name="name">名前</param>
 	/// <returns>オーディオ</returns>
 	Audio* FindAudio(const std::string& name);
-public://PrassKey
-	class ConstructorKey {
-	private:
-		ConstructorKey() = default;
-		friend class Core;
-	};
-	/// <summary>
-	/// コンストラクタ
-	/// </summary>
-	/// <param name="">PrassKeyを受け取る</param>
-	explicit 	AudioManager(ConstructorKey);
 private://メンバ関数
 	//コピーコンストラクタ禁止
 	AudioManager(const AudioManager&) = delete;

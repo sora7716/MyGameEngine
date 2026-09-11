@@ -3,6 +3,8 @@
 
 //前方宣言
 class GameObject;
+class BaseCollider;
+struct CollisionInfo;
 
 /// <summary>
 /// 更新のフェーズ
@@ -31,6 +33,18 @@ public://メンバ関数
 	/// 更新
 	/// </summary>
 	virtual void Update();
+
+	/// <summary>
+	/// 衝突したときの処理
+	/// </summary>
+	/// <param name="info">衝突情報</param>
+	virtual void OnCollision(const CollisionInfo& info);
+
+	/// <summary>
+	/// 衝突したときの処理
+	/// </summary>
+	/// <param name="other">コライダー</param>
+	virtual void OnTrigger(BaseCollider* other);
 
 	/// <summary>
 	/// 更新のフェーズの取得

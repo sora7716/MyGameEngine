@@ -1,22 +1,23 @@
 #pragma once
-#include "WinApi.h"
-#include "DirectXBase.h"
-#include "SRVManager.h"
-#include "Input.h"
-#include "TextureManager.h"
-#include "ModelManager.h"
-#include "ImGuiManager.h"
-#include "SceneManager.h"
-#include "AudioManager.h"
-#include "GameObjectList.h"
-#include "AbstractSceneFactory.h"
-#include "TagManager.h"
-#include "PipelineManager.h"
-#include "LightingManager.h"
-#include "RenderSystem.h"
 #include "Context.h"
-
 #include <memory>
+
+//前方宣言
+class WinApi;
+class DirectXBase;
+class SRVManager;
+class Input;
+class TextureManager;
+class ModelManager;
+class ImGuiManager;
+class SceneManager;
+class AudioManager;
+class DefaultResourceLoader;
+class AbstractSceneFactory;
+class TagManager;
+class PipelineManager;
+class LightingManager;
+class RenderSystem;
 
 /// <summary>
 /// エンジンの核
@@ -96,7 +97,7 @@ public://メンバ関数
 	/// ゲームオブジェクトのリストの取得
 	/// </summary>
 	/// <returns>ゲームオブジェクトのリストの取得</returns>
-	GameObjectList* GetGameObjectList()const;
+	DefaultResourceLoader* GetGameObjectList()const;
 
 	/// <summary>
 	/// シーンファクトリの取得
@@ -152,7 +153,7 @@ private://メンバ変数
 	//オーディオマネージャー
 	std::unique_ptr<AudioManager>audioManager_ = nullptr;
 	//ゲームオブジェクトのリスト
-	std::unique_ptr<GameObjectList>gameObjectList_ = nullptr;
+	std::unique_ptr<DefaultResourceLoader>gameObjectList_ = nullptr;
 	//シーンファクトリ
 	std::unique_ptr< AbstractSceneFactory> sceneFactory_ = nullptr;
 	//タグの管理

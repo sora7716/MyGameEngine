@@ -3,10 +3,21 @@
 #include <cassert>
 using namespace Microsoft::WRL;
 
-//デストラクタ
-SRVManager::~SRVManager() {
+//生成
+std::unique_ptr<SRVManager> SRVManager::Create(ConstructorKey key, DirectXBase* directXBase){
+	//生成
+	std::unique_ptr<SRVManager>instance = std::make_unique<SRVManager>(key);
+	//初期化
+	instance->Initialize(directXBase);
 
+	return instance;
 }
+
+//コンストラクタ
+SRVManager::SRVManager(ConstructorKey){}
+
+//デストラクタ
+SRVManager::~SRVManager() {}
 
 //初期化
 void SRVManager::Initialize(DirectXBase* directXBase) {
@@ -105,6 +116,3 @@ D3D12_GPU_DESCRIPTOR_HANDLE SRVManager::GetGPUDescriptorHandle(uint32_t index) {
 ID3D12DescriptorHeap* SRVManager::GetDescriptorHeap() const {
 	return descriptorHeap_.Get();
 }
-
-//コンストラクタ
-SRVManager::SRVManager(ConstructorKey) {}

@@ -28,19 +28,27 @@ private://構造体
 		//トランスフォーメーション行列のCBuffer
 		ComPtr<ID3D12Resource>transformationMatrixResource = nullptr;
 	};
+public://PassKey
+	class ConstructorKey{
+	private:
+		ConstructorKey() = default;
+		friend class RenderSystem;
+	};
 public://静的メンバ関数
 	/// <summary>
 	/// 生成
 	/// </summary>
+	/// <param name="key">コンストラクタKey</param>
 	/// <param name="directXBase">DirectXの基盤部分</param>
-	/// <param name="textureManager">Textureの管理</param>
+	/// <param name="textureManager">テクスチャの管理</param>
 	/// <returns>インスタンス</returns>
-	static std::unique_ptr<SpriteRenderer>Create(DirectXBase* directXBase, TextureManager* textureManager);
+	static std::unique_ptr<SpriteRenderer>Create(ConstructorKey key, DirectXBase* directXBase, TextureManager* textureManager);
 public://メンバ関数
 	/// <summary>
 	/// コンストラクタ
 	/// </summary>
-	SpriteRenderer();
+	/// <param name="">PassKeyを受け取る</param>
+	explicit SpriteRenderer(ConstructorKey);
 
 	/// <summary>
 	/// デストラクタ
@@ -85,6 +93,11 @@ public://メンバ関数
 	/// <returns>描画データの配列のサイズ</returns>
 	uint32_t GetRenderDataSize();
 private://メンバ関数
+	//コピーコンストラクタ禁止
+	SpriteRenderer(const SpriteRenderer&) = delete;
+	//代入演算子の禁止
+	SpriteRenderer operator=(const SpriteRenderer&) = delete;
+
 	/// <summary>
 	/// 頂点データの初期化
 	/// </summary>

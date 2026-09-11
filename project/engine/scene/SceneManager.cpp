@@ -5,28 +5,33 @@
 #include "RenderSystem.h"
 #include <cassert>
 
-//コンストラクタ
-SceneManager::SceneManager(){
+//生成
+std::unique_ptr<SceneManager> SceneManager::Create(ConstructorKey key, const SceneContext& sceneContext){
+	//生成
+	std::unique_ptr<SceneManager>instance = std::make_unique<SceneManager>(key);
+	//初期化
+	instance->Initialize(sceneContext);
+
+	return instance;
 }
+
+//コンストラクタ
+SceneManager::SceneManager(ConstructorKey){}
 
 //デストラクタ
 SceneManager::~SceneManager(){
 	scene_->Finalize();
 	delete scene_;
-	delete instance;
 }
 
 //初期化
-void SceneManager::Initialize(const SceneContext& sceneContext, RenderSystem* renderSystem){
+void SceneManager::Initialize(const SceneContext& sceneContext){
 	sceneContext_ = sceneContext;
 	//シーンマネージャだけ自分から渡す
 	sceneContext_.sceneManager = this;
 	//デバッグエディターの生成と初期化
 	debugEditor_ = std::make_unique<DebugEditor>();
 	debugEditor_->Initialize(sceneContext_.tagManager);
-	//描画システムの記録
-	assert(renderSystem);
-	renderSystem_ = renderSystem;
 }
 
 //更新
@@ -115,20 +120,20 @@ void SceneManager::Debug(){
 void SceneManager::Draw(CameraMode cameraMode){
 	const std::vector<std::unique_ptr<GameObject>>& gameObjects = scene_->GetGameObjects();
 	//カメラの追加
-	renderSystem_->CollectActiveCameras(gameObjects);
+	sceneContext_.renderSystem->CollectActiveCameras(gameObjects);
 	//カメラのモードを設定
-	renderSystem_->SetCameraMode(cameraMode);
+	sceneContext_.renderSystem->SetCameraMode(cameraMode);
 
 	//Object3dの追加
-	renderSystem_->CollectActiveObject3ds(gameObjects);
+	sceneContext_.renderSystem->CollectActiveObject3ds(gameObjects);
 	//SkyBoxの追加
-	renderSystem_->CollectActiveSkyBox(gameObjects);
+	sceneContext_.renderSystem->CollectActiveSkyBox(gameObjects);
 	//Spriteの描画
-	renderSystem_->CollectActiveSprites(gameObjects);
+	sceneContext_.renderSystem->CollectActiveSprites(gameObjects);
 	//DebugDrawの描画
-	renderSystem_->CollectActiveDebugDraw(gameObjects);
+	sceneContext_.renderSystem->CollectActiveDebugDraw(gameObjects);
 	//ParticleSystemの描画
-	renderSystem_->CollectActiveParticleSystems(gameObjects);
+	sceneContext_.renderSystem->CollectActiveParticleSystems(gameObjects);
 }
 
 //ゲーム画面の描画
@@ -153,8 +158,4 @@ void SceneManager::ChangeScene(const std::string& sceneName){
 	assert(sceneFactory_);
 	assert(nextScene_ == nullptr);
 	nextScene_ = sceneFactory_->CreateScene(sceneName);
-}
-
-//コンストラクタ
-SceneManager::SceneManager(ConstructorKey){
 }

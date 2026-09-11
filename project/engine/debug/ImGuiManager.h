@@ -4,10 +4,11 @@
 #include "imgui/imgui_impl_dx12.h"
 #include "imgui/imgui_impl_win32.h"
 #endif // USE_IMGUI
-#include <string>
 #include "Vector3.h"
 #include "PrimitiveData.h"
 #include "RenderingData.h"
+#include <string>
+#include <memory>
 //前方宣言
 class WinApi;
 class DirectXBase;
@@ -17,7 +18,29 @@ class SRVManager;
 /// ImGuiの管理
 /// </summary>
 class ImGuiManager{
+public://PassKey
+	class ConstructorKey{
+	private:
+		ConstructorKey() = default;
+		friend class Core;
+	};
+public://静的メンバ関数
+	/// <summary>
+	/// 生成
+	/// </summary>
+	/// <param name="key">コンストラクタのKey</param>
+	/// <param name="winApi">ウィンドウズアプリケーション</param>
+	/// <param name="directXBase">DirectXの基盤部分</param>
+	/// <param name="srvManager">SRVマネージャー</param>
+	/// <returns>インスタンス</returns>
+	static std::unique_ptr<ImGuiManager>Create(ConstructorKey key, [[maybe_unused]] WinApi* winApi, [[maybe_unused]] DirectXBase* directXBase, [[maybe_unused]] SRVManager* srvManager);
 public://メンバ関数
+	/// <summary>
+	/// コンストラクタ
+	/// </summary>
+	/// <param name="">PassKeyを受け取る</param>
+	explicit ImGuiManager(ConstructorKey);
+
 	/// <summary>
 	/// デストラクタ
 	/// </summary>
@@ -106,18 +129,6 @@ public://メンバ関数
 	/// <param name="aabb">aabb</param>
 	/// <param name="label">ラベル</param>
 	static void AABBText([[maybe_unused]] const primitiveData::AABB& aabb, [[maybe_unused]] const char* label);
-public://PassKey
-	class ConstructorKey{
-	private:
-		ConstructorKey() = default;
-		friend class Core;
-	};
-
-	/// <summary>
-	/// コンストラクタ
-	/// </summary>
-	/// <param name="">PassKeyを受け取る</param>
-	explicit ImGuiManager(ConstructorKey);
 private://メンバ関数
 	//デストラクタの封印
 	//コピーコンストラクタ禁止

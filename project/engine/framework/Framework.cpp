@@ -1,10 +1,14 @@
 #include "Framework.h"
 #include "MathUtility.h"
+#include "WinApi.h"
+#include "Input.h"
+#include "SceneManager.h"
+#include "LightingManager.h"
 #include "Logger.h"
 #include "Input.h"
 
 //初期化
-void Framework::Initialize() {
+void Framework::Initialize(){
 	//ログの初期化
 	Logger::Initialize();
 	//エンジンの核
@@ -13,7 +17,7 @@ void Framework::Initialize() {
 }
 
 //更新
-void Framework::Update() {
+void Framework::Update(){
 	//入力処理
 	core_->GetInput()->Update();
 	//ライトの管理
@@ -23,21 +27,21 @@ void Framework::Update() {
 }
 
 //デバッグ
-void Framework::Debug() {
+void Framework::Debug(){
 	//シーンの管理
 	core_->GetSceneManager()->Debug();
 }
 
 //終了
-void Framework::Finalize() {
+void Framework::Finalize(){
 }
 
 //ゲームループ
-void Framework::Run() {
+void Framework::Run(){
 	//ゲームシステムの初期化
 	Initialize();
 	//ウィンドウの✖ボタンが押されるまでループ
-	while (isEndRequest()) {
+	while (isEndRequest()){
 		//ゲームシステムの更新
 		Update();
 
@@ -48,7 +52,7 @@ void Framework::Run() {
 		Draw();
 #ifdef _DEBUG
 		//エスケイプを押したらループを抜ける
-		if (core_->GetInput()->TriggerKey(DIK_ESCAPE) && core_->GetInput()->PressKey(DIK_LSHIFT)) {
+		if (core_->GetInput()->TriggerKey(DIK_ESCAPE) && core_->GetInput()->PressKey(DIK_LSHIFT)){
 			break;
 		}
 #endif // _DEBUG
@@ -58,6 +62,6 @@ void Framework::Run() {
 }
 
 //終了リクエスト
-bool Framework::isEndRequest() {
+bool Framework::isEndRequest(){
 	return core_->GetWinApi()->ProcessMessage();
 }

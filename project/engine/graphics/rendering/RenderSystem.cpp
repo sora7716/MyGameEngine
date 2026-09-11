@@ -21,8 +21,18 @@
 #include "CameraRenderer.h"
 #include <algorithm>
 
+//生成
+std::unique_ptr<RenderSystem> RenderSystem::Create(ConstructorKey key, DirectXBase* directXBase, SRVManager* srvManager, TextureManager* textureManager, PipelineManager* pipelineManager, LightingManager* lightingManager){
+	//生成
+	std::unique_ptr<RenderSystem>instance = std::make_unique<RenderSystem>(key);
+	//初期化
+	instance->Initialize(directXBase, srvManager, textureManager, pipelineManager, lightingManager);
+
+	return instance;
+}
+
 //コンストラクタ
-RenderSystem::RenderSystem(){
+RenderSystem::RenderSystem(ConstructorKey){
 }
 
 //デストラクタ
@@ -41,17 +51,17 @@ void RenderSystem::Initialize(DirectXBase* directXBase, SRVManager* srvManager, 
 	assert(lightingManager);
 	lightingManager_ = lightingManager;
 	//スプライトのレンダラー
-	spriteRenderer_ = SpriteRenderer::Create(directXBase, textureManager);
+	spriteRenderer_ = SpriteRenderer::Create(SpriteRenderer::ConstructorKey{}, directXBase, textureManager);
 	//Object3dのレンダラー
-	object3dRenderer_ = Object3dRenderer::Create(directXBase, srvManager, textureManager);
+	object3dRenderer_ = Object3dRenderer::Create(Object3dRenderer::ConstructorKey{}, directXBase, srvManager, textureManager);
 	//スカイボックスのレンダラー
-	skyBoxRenderer_ = SkyBoxRenderer::Create(directXBase, textureManager);
+	skyBoxRenderer_ = SkyBoxRenderer::Create(SkyBoxRenderer::ConstructorKey{}, directXBase, textureManager);
 	//デバッグ描画のレンダラー
-	debugDrawRenderer_ = DebugDrawRenderer::Create(directXBase);
+	debugDrawRenderer_ = DebugDrawRenderer::Create(DebugDrawRenderer::ConstructorKey{}, directXBase);
 	//パーティクルのレンダラー
-	particleRenderer_ = ParticleRenderer::Create(directXBase, srvManager, textureManager);
+	particleRenderer_ = ParticleRenderer::Create(ParticleRenderer::ConstructorKey{}, directXBase, srvManager, textureManager);
 	//カメラのレンダラー
-	cameraRenderer_ = CameraRenderer::Create(directXBase);
+	cameraRenderer_ = CameraRenderer::Create(CameraRenderer::ConstructorKey{}, directXBase);
 }
 
 //描画

@@ -79,7 +79,15 @@ void GameScene::Debug(){
 	//基底クラスのデバッグ
 	BaseScene::Debug();
 
+#ifdef USE_IMGUI
 	ImGui::Begin("デバッグ");
 	ImGui::DragFloat3("aabb.size", &playerHitBoxSize_.x, 0.1f);
 	ImGui::End();
+#endif // USE_IMGUI
+}
+
+//解放処理
+void GameScene::Finalize(){
+	//基底クラスの解放
+	BaseScene::Finalize();
 }

@@ -3,6 +3,7 @@
 #include <wrl.h>
 #include <d3d12.h>
 #include <vector>
+#include <memory>
 
 //前方宣言
 class Core;
@@ -21,23 +22,32 @@ public://PassKey
 		ConstructorKey() = default;
 		friend class Core;
 	};
-
+public://静的メンバ関数
+	/// <summary>
+	/// 生成
+	/// </summary>
+	/// <param name="key">コンストラクタのKey</param>
+	/// <param name="directXBase">DirectXの基盤部分</param>
+	/// <param name="srvManager">SRVの管理</param>
+	/// <returns>インスタンス</returns>
+	static std::unique_ptr<LightingManager>Create(ConstructorKey key, DirectXBase* directXBase, SRVManager* srvManager);
+public://メンバ関数
 	/// <summary>
 	/// コンストラクタ
 	/// </summary>
 	/// <param name="">PassKeyを受け取る</param>
 	explicit LightingManager(ConstructorKey);
-public://メンバ関数
+
 	/// <summary>
 	/// デストラクタ
 	/// </summary>
 	~LightingManager();
 
 	/// <summary>
-	/// 初期化1
+	/// 初期化
 	/// </summary>
+	/// <param name="directXBase">DirectXの基盤部分</param>
 	/// <param name="srvManager">SRVの管理</param>
-	/// <param name="camera">カメラ</param>
 	void Initialize(DirectXBase* directXBase, SRVManager* srvManager);
 
 	/// <summary>

@@ -7,6 +7,16 @@
 #include <algorithm>
 #include <cassert>
 
+//生成
+std::unique_ptr<LightingManager> LightingManager::Create(ConstructorKey key, DirectXBase* directXBase, SRVManager* srvManager){
+	//生成
+	std::unique_ptr<LightingManager>instance = std::make_unique<LightingManager>(key);
+	//初期化
+	instance->Initialize(directXBase, srvManager);
+
+	return instance;
+}
+
 //コンストラクタ
 LightingManager::LightingManager(ConstructorKey){
 }

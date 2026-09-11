@@ -39,18 +39,26 @@ private://構造体
 		ComPtr<ID3D12Resource>worldMatrixResource = nullptr;
 		Matrix4x4* worldMatrixData = nullptr;
 	};
+public://PassKey
+	class ConstructorKey{
+	private:
+		ConstructorKey() = default;
+		friend class RenderSystem;
+	};
 public://静的メンバ関数
 	/// <summary>
 	/// 生成
 	/// </summary>
+	/// <param name="key">コンストラクタKey</param>
 	/// <param name="directXBase">DirectXの基盤部分</param>
 	/// <returns>インスタンス</returns>
-	static std::unique_ptr<DebugDrawRenderer>Create(DirectXBase* directXBase);
+	static std::unique_ptr<DebugDrawRenderer>Create(ConstructorKey key, DirectXBase* directXBase);
 public://メンバ関数
 	/// <summary>
 	/// コンストラクタ
 	/// </summary>
-	DebugDrawRenderer();
+	/// <param name="">PassKeyを受け取る</param>
+	explicit DebugDrawRenderer(ConstructorKey);
 
 	/// <summary>
 	/// デストラクタ
@@ -93,6 +101,11 @@ public://メンバ関数
 	/// <returns>ブレンドモード</returns>
 	BlendMode GetBlendMode(uint32_t instanceIndex);
 private://メンバ関数
+	//コピーコンストラクタ禁止
+	DebugDrawRenderer(const DebugDrawRenderer&) = delete;
+	//代入演算子の禁止
+	DebugDrawRenderer operator=(const DebugDrawRenderer&) = delete;
+
 	/// <summary>
 	/// 頂点リソースの生成
 	/// </summary>
@@ -114,8 +127,8 @@ private://メンバ関数
 	void CreateMaterialResource(GpuResource& gpuResource);
 
 	/// <summary>
-    /// ワールド行列リソースの生成
-    /// </summary>
+	/// ワールド行列リソースの生成
+	/// </summary>
 	/// <param name="gpuResource">gpuリソース</param>
 	void CreateWorldMatrixResource(GpuResource& gpuResource);
 private://メンバ変数

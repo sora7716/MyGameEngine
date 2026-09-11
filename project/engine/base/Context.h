@@ -12,6 +12,7 @@ class ImGuiManager;
 class TagManager;
 class PipelineManager;
 class LightingManager;
+class RenderSystem;
 class Core;
 
 //シーンで必要なクラス
@@ -28,6 +29,7 @@ struct SceneContext {
 	TagManager* tagManager;
 	PipelineManager* pipelineManager;
 	LightingManager* lightingManager;
+	RenderSystem* renderSystem;
 
 	/// <summary>
 	/// ゲームエンジンの核から必要な物を抽出する

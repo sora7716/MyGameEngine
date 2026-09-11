@@ -11,14 +11,14 @@
 #include <cassert>
 
 //生成
-std::unique_ptr<ParticleRenderer> ParticleRenderer::Create(DirectXBase* directXBase, SRVManager* srvManager, TextureManager* textureManager){
-	std::unique_ptr<ParticleRenderer>instance = std::make_unique<ParticleRenderer>();
+std::unique_ptr<ParticleRenderer> ParticleRenderer::Create(ConstructorKey key, DirectXBase* directXBase, SRVManager* srvManager, TextureManager* textureManager){
+	std::unique_ptr<ParticleRenderer>instance = std::make_unique<ParticleRenderer>(key);
 	instance->Initialize(directXBase, srvManager, textureManager);
 	return instance;
 }
 
 //コンストラクタ
-ParticleRenderer::ParticleRenderer(){
+ParticleRenderer::ParticleRenderer(ConstructorKey){
 }
 
 //デストラクタ

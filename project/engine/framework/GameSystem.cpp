@@ -1,4 +1,8 @@
 #include "GameSystem.h"
+#include "WinApi.h"
+#include "DirectXBase.h"
+#include "SRVManager.h"
+#include "ImGuiManager.h"
 #include "SceneManager.h"
 #include "SceneFactory.h"
 #include "RenderSystem.h"

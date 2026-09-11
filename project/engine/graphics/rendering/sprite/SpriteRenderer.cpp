@@ -5,14 +5,14 @@
 #include <cstring>
 
 //生成
-std::unique_ptr<SpriteRenderer> SpriteRenderer::Create(DirectXBase* directXBase, TextureManager* textureManager){
-	std::unique_ptr<SpriteRenderer>instance = std::make_unique<SpriteRenderer>();
+std::unique_ptr<SpriteRenderer> SpriteRenderer::Create(ConstructorKey key, DirectXBase* directXBase, TextureManager* textureManager){
+	std::unique_ptr<SpriteRenderer>instance = std::make_unique<SpriteRenderer>(key);
 	instance->Initialize(directXBase, textureManager);
 	return instance;
 }
 
 //コンストラクタ
-SpriteRenderer::SpriteRenderer(){
+SpriteRenderer::SpriteRenderer(ConstructorKey){
 }
 
 //デストラクタ

@@ -53,13 +53,13 @@ public://メンバ関数
 	/// 衝突したときの判定(押し戻しあり)
 	/// </summary>
 	/// <param name="info">衝突情報</param>
-	virtual void OnCollision(const CollisionInfo& info);
+	void OnCollision(const CollisionInfo& info)override;
 
 	/// <summary>
 	/// 衝突したときの判定(押し戻しなし)
 	/// </summary>
 	/// <param name="other">コライダーの情報</param>
-	virtual void OnTrigger(BaseCollider* other);
+	void OnTrigger(BaseCollider* other)override;
 
 	/// <summary>
 	/// めり込むかを判定するフラグの設定

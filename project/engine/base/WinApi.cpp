@@ -4,6 +4,66 @@
 #include "Vector2.h"
 extern IMGUI_IMPL_API LRESULT ImGui_ImplWin32_WndProcHandler(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam);
 
+//生成
+std::unique_ptr<WinApi> WinApi::Create(ConstructorKey key){
+	//生成
+	std::unique_ptr<WinApi>instance = std::make_unique<WinApi>(key);
+	//初期化
+	instance->Initialize();
+
+	return instance;
+}
+
+//ウィンドウプロシージャ
+LRESULT WinApi::WindowProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam){
+	//WinApi
+	WinApi* winApi = reinterpret_cast<WinApi*>(GetWindowLongPtr(hwnd, GWLP_USERDATA));
+	if (msg == WM_NCCREATE){
+		CREATESTRUCT* createStruct = reinterpret_cast<CREATESTRUCT*>(lParam);
+		winApi = static_cast<WinApi*>(createStruct->lpCreateParams);
+		SetWindowLongPtr(hwnd, GWLP_USERDATA, reinterpret_cast<LONG_PTR>(winApi));
+	}
+
+	//マウスカーソルの表示非表示
+	if (msg == WM_SETCURSOR){
+		if (winApi){
+			if (LOWORD(lParam) == HTCLIENT){
+				//ゲーム画面ではカーソルを非表示
+				if (hwnd == winApi->GetHwnd(WindowType::kGame)){
+					SetCursor(nullptr);
+					return TRUE;
+				}
+
+				//デバッグ画面ではカーソルを表示
+				if (hwnd == winApi->GetHwnd(WindowType::kDebug)){
+					SetCursor(LoadCursor(nullptr, IDC_ARROW));
+					return TRUE;
+				}
+			}
+		}
+	}
+
+	if (ImGui_ImplWin32_WndProcHandler(hwnd, msg, wParam, lParam)){
+		return true;
+	}
+	//メッセージに応じてゲーム固有の処理を行う
+	switch (msg){
+		//ウィンドウが破棄された
+	case WM_DESTROY:
+		//OSに対して、アプリの終了を伝える
+		PostQuitMessage(0);
+		return 0;
+	case WM_SETFOCUS:
+		//現在選択しているウィンドウハンドルを取得
+		activeHwnd_ = hwnd;
+	}
+	//標準のメッセージ処理を行う
+	return DefWindowProc(hwnd, msg, wParam, lParam);
+}
+
+//コンストラクタ
+WinApi::WinApi(ConstructorKey){}
+
 //デストラクタ
 WinApi::~WinApi(){
 	for (HWND& hwnd : hwnds_){
@@ -45,7 +105,7 @@ void WinApi::Initialize(){
 #endif // _DEBUG
 
 #ifdef _DEBUG
-	Vector2Int windowPos = { 100,kClientHeight / 2 };
+	Vector2Int windowPos = { 0,kClientHeight / 2 };
 #else
 	Vector2Int windowPos = { CW_USEDEFAULT,CW_USEDEFAULT };
 #endif // _DEBUG
@@ -117,54 +177,4 @@ void WinApi::SetShowCursor(bool isShowCursor){
 		isShowCursor_ = isShowCursor;
 		ShowCursor(isShowCursor);
 	}
-}
-
-//コンストラクタ
-WinApi::WinApi(ConstructorKey){}
-
-//ウィンドウプロシージャ
-LRESULT WinApi::WindowProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam){
-	//WinApi
-	WinApi* winApi = reinterpret_cast<WinApi*>(GetWindowLongPtr(hwnd, GWLP_USERDATA));
-	if (msg == WM_NCCREATE){
-		CREATESTRUCT* createStruct = reinterpret_cast<CREATESTRUCT*>(lParam);
-		winApi = static_cast<WinApi*>(createStruct->lpCreateParams);
-		SetWindowLongPtr(hwnd, GWLP_USERDATA, reinterpret_cast<LONG_PTR>(winApi));
-	}
-
-	//マウスカーソルの表示非表示
-	if (msg == WM_SETCURSOR){
-		if (winApi){
-			if (LOWORD(lParam) == HTCLIENT){
-				//ゲーム画面ではカーソルを非表示
-				if (hwnd == winApi->GetHwnd(WindowType::kGame)){
-					SetCursor(nullptr);
-					return TRUE;
-				}
-
-				//デバッグ画面ではカーソルを表示
-				if (hwnd == winApi->GetHwnd(WindowType::kDebug)){
-					SetCursor(LoadCursor(nullptr, IDC_ARROW));
-					return TRUE;
-				}
-			}
-		}
-	}
-
-	if (ImGui_ImplWin32_WndProcHandler(hwnd, msg, wParam, lParam)){
-		return true;
-	}
-	//メッセージに応じてゲーム固有の処理を行う
-	switch (msg){
-		//ウィンドウが破棄された
-	case WM_DESTROY:
-		//OSに対して、アプリの終了を伝える
-		PostQuitMessage(0);
-		return 0;
-	case WM_SETFOCUS:
-		//現在選択しているウィンドウハンドルを取得
-		activeHwnd_ = hwnd;
-	}
-	//標準のメッセージ処理を行う
-	return DefWindowProc(hwnd, msg, wParam, lParam);
 }

@@ -12,6 +12,20 @@ void(PipelineManager::* PipelineManager::createPSOTable[])() = {
 	&CreatePSOForSprite,
 };
 
+//生成
+std::unique_ptr<PipelineManager> PipelineManager::Create(ConstructorKey key, DirectXBase* directXBase){
+	//生成
+	std::unique_ptr<PipelineManager>instance = std::make_unique<PipelineManager>(key);
+	//初期化
+	instance->Initialize(directXBase);
+
+	return instance;
+}
+
+//コンストラクタ
+PipelineManager::PipelineManager(ConstructorKey){
+}
+
 //デストラクタ
 PipelineManager::~PipelineManager(){
 }
@@ -175,8 +189,4 @@ void PipelineManager::CreatePSOForDebugDraw(){
 	}
 	//ルートシグネイチャの記録
 	pipelineSets_[static_cast<uint32_t>(PipelineType::kDebugDraw)].rootSignature = graphicsPipeline_->GetRootSignature();
-}
-
-//コンストラクタ
-PipelineManager::PipelineManager(ConstructorKey){
 }

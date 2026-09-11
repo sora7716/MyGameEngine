@@ -1,12 +1,32 @@
 #pragma once
 #include <string>
 #include <vector>
+#include <memory>
 
 /// <summary>
 /// タグの管理
 /// </summary>
 class TagManager{
+public://PassKey
+	class ConstructorKey{
+	private:
+		ConstructorKey() = default;
+		friend class Core;
+	};
+public://静的メンバ関数
+	/// <summary>
+	/// 生成
+	/// </summary>
+	/// <param name="key">コンストラクタのKey</param>
+	/// <returns>インスタンス</returns>
+	static std::unique_ptr<TagManager>Create(ConstructorKey key);
 public://メンバ関数
+	/// <summary>
+	/// コンストラクタ
+	/// </summary>
+	/// <param name="">PassKeyを受け取る</param>
+	explicit TagManager(ConstructorKey);
+
 	/// <summary>
 	/// デストラクタ
 	/// </summary>
@@ -57,22 +77,15 @@ public://メンバ関数
 	/// </summary>
 	/// <returns>タグ一覧</returns>
 	const std::vector<std::string>& GetTagList()const;
-public://PassKey
-	class ConstructorKey{
-	private:
-		ConstructorKey() = default;
-		friend class Core;
-	};
-
-	/// <summary>
-	/// コンストラクタ
-	/// </summary>
-	/// <param name="">PassKeyを受け取る</param>
-	explicit TagManager(ConstructorKey);
 public://定数
 	//デフォルトで存在するタグ
 	static inline const std::string kDefaultTagName = "UnTagged";
 private://メンバ関数
+	//コピーコンストラクタ禁止
+	TagManager(const TagManager&) = delete;
+	//代入演算子の禁止
+	TagManager operator=(const TagManager&) = delete;
+
 	/// <summary>
 	/// タグがListに存在しているか
 	/// </summary>

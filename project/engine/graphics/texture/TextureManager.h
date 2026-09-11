@@ -2,6 +2,7 @@
 #include "TextureLoader.h"
 #include "RenderData.h"
 #include <unordered_map>
+#include <memory>
 
 //前方宣言
 class DirectXBase;
@@ -14,11 +15,32 @@ class Core;
 class TextureManager{
 private://エイリアステンプレート
 	template <class T>using ComPtr = Microsoft::WRL::ComPtr<T>;
+public://PassKey
+	class ConstructorKey{
+	private:
+		ConstructorKey() = default;
+		friend class Core;
+	};
+public://静的メンバ関数
+	/// <summary>
+	/// 生成
+	/// </summary>
+	/// <param name="key">コンストラクタのKey</param>
+	/// <param name="directXBase">DirectXの基盤</param>
+	/// <param name="srvManager">SRVマネージャー</param>
+	/// <returns>インスタンス</returns>
+	static std::unique_ptr<TextureManager>Create(ConstructorKey key, DirectXBase* directXBase, SRVManager* srvManager);
 public://メンバ関数
+	/// <summary>
+	/// コンストラクタ
+	/// </summary>
+	/// <param name="">PassKeyを受け取る</param>
+	explicit TextureManager(ConstructorKey);
+
 	/// <summary>
 	/// デストラクタ
 	/// </summary>
-	~TextureManager() = default;
+	~TextureManager();
 
 	/// <summary>
 	/// 初期化
@@ -73,16 +95,6 @@ public://メンバ関数
 	/// <param name="filePath">ファイルパス</param>
 	/// <returns>GPUハンドル</returns>
 	D3D12_GPU_DESCRIPTOR_HANDLE GetSRVHandleGPU(const std::string& filePath);
-public://PassKey
-	class ConstructorKey{
-		ConstructorKey() = default;
-		friend class Core;
-	};
-	/// <summary>
-	/// コンストラクタ
-	/// </summary>
-	/// <param name="">PassKeyを受け取る</param>
-	explicit TextureManager(ConstructorKey);
 private://メンバ関数
 	//コピーコンストラクタ禁止
 	TextureManager(TextureManager&) = delete;

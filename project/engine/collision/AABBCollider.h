@@ -57,5 +57,7 @@ private://メンバ変数
 	primitiveData::AABB aabb_ = {};
 	//ハーフサイズ
 	Vector3 halfSize_ = {};
+	//ワールドのハーフサイズ
+	Vector3 worldHalfSize_ = {};
 };
 

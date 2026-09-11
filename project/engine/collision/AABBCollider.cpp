@@ -13,7 +13,7 @@ AABBCollider::~AABBCollider(){
 void AABBCollider::Initialize(){
 	//基底クラスの更新
 	BaseCollider::Initialize();
-	halfSize_ = { 0.5f,0.5f,0.5f };
+	halfSize_ = Vector3::MakeAllOne();
 }
 
 //更新
@@ -21,9 +21,12 @@ void AABBCollider::Update(){
 	//中心座標
 	const Vector3& center = gameObject_->GetTransform().translate;
 
+	//ワールドのハーフサイズを取得
+	worldHalfSize_ = halfSize_ * gameObject_->GetTransform().scale.Abs();
+
 	//中心からAABBを求める
-	aabb_.min = center - halfSize_;
-	aabb_.max = center + halfSize_;
+	aabb_.min = center - worldHalfSize_;
+	aabb_.max = center + worldHalfSize_;
 }
 
 //ハーフサイズの設定

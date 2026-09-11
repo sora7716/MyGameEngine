@@ -176,6 +176,18 @@ public://メンバ関数
 	/// </summary>
 	/// <param name="phase">更新のフェーズ</param>
 	void UpdateComponents(UpdatePhase phase);
+
+	/// <summary>
+	/// 衝突したことを各コンポーネントに通知する
+	/// </summary>
+	/// <param name="info">衝突したときの情報</param>
+	void NotifyOnCollision(const CollisionInfo& info);
+
+	/// <summary>
+	/// 衝突したことを各コンポーネントに通知する
+	/// </summary>
+	/// <param name="other">ほかのコライダー</param>
+	void NotifyOnTrigger(BaseCollider* other);
 private://メンバ変数
 	//名前
 	std::string name_ = "\0";

@@ -42,7 +42,7 @@ private://メンバ関数
 	//コピーコンストラクタ禁止
 	AudioManager(const AudioManager&) = delete;
 	//代入演算子の禁止
-	AudioManager operator=(const AudioManager&) = delete;
+	AudioManager& operator=(const AudioManager&) = delete;
 private://静的メンバ変数
 	//インスタンス
 	static inline AudioManager* instance = nullptr;

@@ -69,7 +69,7 @@ private://メンバ関数
 	//コピーコンストラクタ禁止
 	ModelManager(const ModelManager&) = delete;
 	//代入演算子禁止
-	ModelManager operator=(const ModelManager&) = delete;
+	ModelManager& operator=(const ModelManager&) = delete;
 private://メンバ変数
 	//モデルのコンテナ
 	std::map<std::string, std::unique_ptr<Model>>models_;

@@ -48,7 +48,7 @@ private://メンバ関数
 	//コピーコンストラクタ禁止
 	DefaultResourceLoader(const DefaultResourceLoader&) = delete;
 	//代入演算子の禁止
-	DefaultResourceLoader operator=(const DefaultResourceLoader&) = delete;
+	DefaultResourceLoader& operator=(const DefaultResourceLoader&) = delete;
 
 	/// <summary>
 	/// オーディオの読み込み

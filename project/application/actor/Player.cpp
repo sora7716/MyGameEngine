@@ -21,7 +21,6 @@ void Player::Initialize(){
 	gameObject_ = GetOwner();
 
 	//SRTの調整
-	gameObject_->GetTransform().scale = { 0.5f,0.5f,0.5f };
 	gameObject_->GetTransform().translate = { 0.0f,1.0f,0.0f };
 }
 

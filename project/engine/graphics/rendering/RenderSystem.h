@@ -142,7 +142,7 @@ private://メンバ関数
 	//コピーコンストラクタ禁止
 	RenderSystem(const RenderSystem&) = delete;
 	//代入演算子の禁止
-	RenderSystem operator=(const RenderSystem&) = delete;
+	RenderSystem& operator=(const RenderSystem&) = delete;
 
 	/// <summary>
 	/// 描画の開始

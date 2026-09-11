@@ -121,7 +121,7 @@ private://メンバ関数
 	//コピーコンストラクタ禁止
 	SRVManager(const SRVManager&) = delete;
 	//代入演算子の禁止
-	SRVManager operator=(const SRVManager&) = delete;
+	SRVManager& operator=(const SRVManager&) = delete;
 public://定数
 	static inline const uint32_t kMaxSRVCount = 65536;
 private://メンバ変数

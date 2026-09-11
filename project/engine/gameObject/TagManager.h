@@ -84,7 +84,7 @@ private://メンバ関数
 	//コピーコンストラクタ禁止
 	TagManager(const TagManager&) = delete;
 	//代入演算子の禁止
-	TagManager operator=(const TagManager&) = delete;
+	TagManager& operator=(const TagManager&) = delete;
 
 	/// <summary>
 	/// タグがListに存在しているか

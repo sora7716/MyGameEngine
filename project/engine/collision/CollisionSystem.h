@@ -7,16 +7,24 @@
 class GameObject;
 class BaseCollider;
 class AABBCollider;
+struct CollisionInfo;
 
 /// <summary>
 /// 衝突判定のシステム
 /// </summary>
 class CollisionSystem{
+public://PassKey
+	class ConstructorKey{
+	private:
+		ConstructorKey() = default;
+		friend class Core;
+	};
 public://メンバ関数
 	/// <summary>
 	/// コンストラクタ
 	/// </summary>
-	CollisionSystem();
+	/// <param name="">PassKeyを受け取る</param>
+	explicit CollisionSystem(ConstructorKey);
 
 	/// <summary>
 	/// デストラクタ
@@ -28,6 +36,11 @@ public://メンバ関数
 	/// </summary>
 	void Update(const std::vector<std::unique_ptr<GameObject>>& gameObjects);
 private://メンバ関数
+	//コピーコンストラクタ禁止
+	CollisionSystem(const CollisionSystem&) = delete;
+	//代入演算子の禁止
+	CollisionSystem& operator=(const CollisionSystem&) = delete;
+
 	/// <summary>
 	/// コライダーを集める
 	/// </summary>
@@ -55,6 +68,15 @@ private://メンバ関数
 	/// <param name="overlap">どれくらい重なってるか</param>
 	/// <returns>押し出す方向</returns>
 	Vector3 CalculatePushOutNormal(const Vector3& diff, const Vector3& overlap);
+
+	/// <summary>
+	/// オブジェクトの押し出し
+	/// </summary>
+	/// <param name="collider1">コライダー1</param>
+	/// <param name="collider2">コライダー2</param>
+	/// <param name="info1">衝突したときの情報1</param>
+	/// <param name="info2">衝突したときの情報2</param>
+	void ResolveCollision(BaseCollider* collider1, BaseCollider* collider2, const CollisionInfo& info1, const CollisionInfo& info2);
 private://メンバ変数
 	//コライダー
 	std::vector<BaseCollider*>colliders_;

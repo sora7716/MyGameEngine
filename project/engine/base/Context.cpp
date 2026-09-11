@@ -5,8 +5,6 @@
 void SceneContext::operator=(Core* core){
 	winApi = core->GetWinApi();
 	input = core->GetInput();
-	directXBase = core->GetDirectXBase();
-	srvManager = core->GetSRVManager();
 	textureManager = core->GetTextureManager();
 	modelManager = core->GetModelManager();
 	sceneManager = core->GetSceneManager();
@@ -15,5 +13,4 @@ void SceneContext::operator=(Core* core){
 	tagManager = core->GetTagManager();
 	pipelineManager = core->GetPipelineManager();
 	lightingManager = core->GetLightingManager();
-	renderSystem = core->GetRenderSystem();
 }

@@ -373,7 +373,7 @@
       <Filter>engine\collision</Filter>
     </ClCompile>
     <ClCompile Include="engine\collision\BaseCollider.cpp">
-      <Filter>ソース ファイル</Filter>
+      <Filter>engine\collision</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -663,7 +663,7 @@
       <Filter>engine\collision</Filter>
     </ClInclude>
     <ClInclude Include="engine\collision\BaseCollider.h">
-      <Filter>ヘッダー ファイル</Filter>
+      <Filter>engine\collision</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

@@ -55,6 +55,11 @@ public://メンバ関数
 	/// <returns>パイプラインセット</returns>
 	const PipelineSet& GetPipelineSet(PipelineType pipelineSetType)const;
 private://メンバ関数
+	//コピーコンストラクタ禁止
+	PipelineManager(const PipelineManager&) = delete;
+	//代入演算子の禁止
+	PipelineManager& operator=(const PipelineManager&) = delete;
+
 	/// <summary>
 	/// PSOの作成(Object3d)
 	/// </summary>

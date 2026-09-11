@@ -45,7 +45,7 @@ private://メンバ変数
 	//AABBのコライダー
 	AABBCollider* playerAABB_ = nullptr;
 	//ヒットボックス用のキューブ
-	debugDraw::Cube* playerCube_ = nullptr;
+	debugDraw::Cube* playerHitBox_ = nullptr;
 	//プレイヤーのヒットボックスのサイズ
 	Vector3 playerHitBoxSize_ = {};
 };

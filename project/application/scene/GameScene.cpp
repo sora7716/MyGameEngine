@@ -28,14 +28,15 @@ void GameScene::Initialize(){
 	skyBoxObject->SetName("SkyBox");
 
 	//プレイヤー
-	playerHitBoxSize_ = { 1.9f,2.0f,1.4f };
+	playerHitBoxSize_ = Vector3::MakeAllOne();
 	GameObject* playerObject = CreateGameObject();
 	playerAABB_ = playerObject->AddComponent<AABBCollider>();
-	playerCube_ = playerObject->AddComponent<debugDraw::Cube>();
+	playerHitBox_ = playerObject->AddComponent<debugDraw::Cube>();
 	Object3d* playerModel = playerObject->AddComponent<Object3d>();
 	playerModel->SetModel(sceneContext_.modelManager->FindModel("player"));
 	Player* player = playerObject->AddComponent<Player>(*sceneContext_.input);
 	playerObject->SetName("player");
+	playerAABB_->SetBodyType(BodyType::kDynamic);
 
 
 	//ゲームカメラの設定
@@ -65,13 +66,18 @@ void GameScene::Initialize(){
 	cubeObject->GetTransform().translate = { 0.0f,1.0f,2.0f };
 	Object3d* cubeModel = cubeObject->AddComponent<Object3d>();
 	cubeModel->SetModel(sceneContext_.modelManager->FindModel("cube"));
+	Vector3 cubeHitBoxSize = Vector3::MakeAllOne();
+	AABBCollider* cubeAABB = cubeObject->AddComponent<AABBCollider>();
+	debugDraw::Cube* cubeHitBox = cubeObject->AddComponent<debugDraw::Cube>();
+	cubeAABB->SetHalfSize(cubeHitBoxSize / 2.0f);
+	cubeHitBox->SetLocalScale(cubeHitBoxSize);
 }
 
 //更新のステート
 void GameScene::UpdateState(){
 	//サイズの設定
-	playerAABB_->SetHalfSize(playerHitBoxSize_);
-	playerCube_->SetLocalScale(playerHitBoxSize_);
+	playerAABB_->SetHalfSize(playerHitBoxSize_ / 2.0f);
+	playerHitBox_->SetLocalScale(playerHitBoxSize_);
 }
 
 //デバッグ

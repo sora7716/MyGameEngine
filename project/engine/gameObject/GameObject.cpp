@@ -110,3 +110,37 @@ void GameObject::UpdateComponents(UpdatePhase phase){
 		component->Update();
 	}
 }
+
+//衝突したことを各コンポーネントに通知する
+void GameObject::NotifyOnCollision(const CollisionInfo& info){
+	//各コンポーネントごとに
+	for (const std::unique_ptr<Component>& component : components_){
+		if (!component){
+			//コンポーネントが存在しているか	
+			continue;
+		} else if (!component->IsEnabled()){
+			//コンポーネントが有効か
+			continue;
+		}
+
+		//コンポーネントに衝突を通知
+		component->OnCollision(info);
+	}
+}
+
+//衝突したことを各コンポーネントに通知する
+void GameObject::NotifyOnTrigger(BaseCollider* other){
+	//各コンポーネントごとに
+	for (const std::unique_ptr<Component>& component : components_){
+		if (!component){
+			//コンポーネントが存在しているか	
+			continue;
+		} else if (!component->IsEnabled()){
+			//コンポーネントが有効か
+			continue;
+		}
+
+		//コンポーネントに衝突を通知
+		component->OnTrigger(other);
+	}
+}

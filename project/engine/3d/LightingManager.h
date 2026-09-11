@@ -75,7 +75,7 @@ private://メンバ関数
 	//コピーコンストラクタ禁止
 	LightingManager(const LightingManager&) = delete;
 	//代入演算子の禁止
-	LightingManager operator=(const LightingManager&) = delete;
+	LightingManager& operator=(const LightingManager&) = delete;
 
 	/// <summary>
 	/// 平行光源の生成

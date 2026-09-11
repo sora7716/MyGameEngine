@@ -18,6 +18,7 @@ class TagManager;
 class PipelineManager;
 class LightingManager;
 class RenderSystem;
+class CollisionSystem;
 
 /// <summary>
 /// エンジンの核
@@ -128,6 +129,12 @@ public://メンバ関数
 	/// </summary>
 	/// <returns>描画システム</returns>
 	RenderSystem* GetRenderSystem()const;
+
+	/// <summary>
+	/// 衝突判定システムの取得
+	/// </summary>
+	/// <returns>衝突判定システム</returns>
+	CollisionSystem* GetCollisionSystem()const;
 private://メンバ関数
 	//コピーコンストラクタ禁止
 	Core(const Core&) = delete;
@@ -164,6 +171,8 @@ private://メンバ変数
 	std::unique_ptr<LightingManager>lightingManager_ = nullptr;
 	//描画システム
 	std::unique_ptr<RenderSystem>renderSystem_ = nullptr;
+	//衝突判定システム
+	std::unique_ptr<CollisionSystem>collisionSystem_ = nullptr;  
 	//シーンで必要なもの
 	SceneContext sceneContext_ = {};
 };

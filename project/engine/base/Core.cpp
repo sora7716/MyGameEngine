@@ -15,6 +15,7 @@
 #include "LightingManager.h"
 #include "RenderSystem.h"
 #include "SceneFactory.h"
+#include "CollisionSystem.h"
 
 //コンストラクタ
 Core::Core(){
@@ -55,12 +56,13 @@ void Core::Initialize(){
 	lightingManager_ = LightingManager::Create(LightingManager::ConstructorKey{}, directXBase_.get(), srvManager_.get());
 	//描画システム
 	renderSystem_ = RenderSystem::Create(RenderSystem::ConstructorKey{}, directXBase_.get(), srvManager_.get(), textureManager_.get(), pipelineManager_.get(), lightingManager_.get());
-	
+	//衝突判定システム
+	collisionSystem_ = std::make_unique<CollisionSystem>(CollisionSystem::ConstructorKey{});
 	//シーンでの必要なものを取得
 	sceneContext_ = this;
 
 	//シーンマネージャー
-	sceneManager_ = SceneManager::Create(SceneManager::ConstructorKey{},sceneContext_);
+	sceneManager_ = SceneManager::Create(SceneManager::ConstructorKey{}, sceneContext_, renderSystem_.get(), collisionSystem_.get());
 	sceneManager_->SetSceneFactory(sceneFactory_.get());
 }
 
@@ -137,4 +139,9 @@ LightingManager* Core::GetLightingManager() const{
 //描画システム
 RenderSystem* Core::GetRenderSystem() const{
 	return renderSystem_.get();
+}
+
+//衝突判定システムの取得
+CollisionSystem* Core::GetCollisionSystem() const{
+	return collisionSystem_.get();
 }

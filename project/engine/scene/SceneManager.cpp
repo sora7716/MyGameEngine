@@ -3,14 +3,15 @@
 #include "DebugEditor.h"
 #include "TagManager.h"
 #include "RenderSystem.h"
+#include "CollisionSystem.h"
 #include <cassert>
 
 //生成
-std::unique_ptr<SceneManager> SceneManager::Create(ConstructorKey key, const SceneContext& sceneContext){
+std::unique_ptr<SceneManager> SceneManager::Create(ConstructorKey key, const SceneContext& sceneContext, RenderSystem* renderSystem, CollisionSystem* collisionSystem){
 	//生成
 	std::unique_ptr<SceneManager>instance = std::make_unique<SceneManager>(key);
 	//初期化
-	instance->Initialize(sceneContext);
+	instance->Initialize(sceneContext, renderSystem, collisionSystem);
 
 	return instance;
 }
@@ -25,8 +26,15 @@ SceneManager::~SceneManager(){
 }
 
 //初期化
-void SceneManager::Initialize(const SceneContext& sceneContext){
+void SceneManager::Initialize(const SceneContext& sceneContext, RenderSystem* renderSystem, CollisionSystem* collisionSystem){
+	//必要な物を記録
 	sceneContext_ = sceneContext;
+	//描画システムを記録
+	assert(renderSystem);
+	renderSystem_ = renderSystem;
+	//衝突判定システムを記録
+	assert(collisionSystem);
+	collisionSystem_ = collisionSystem;
 	//シーンマネージャだけ自分から渡す
 	sceneContext_.sceneManager = this;
 	//デバッグエディターの生成と初期化
@@ -58,6 +66,8 @@ void SceneManager::Update(){
 	}
 	//更新
 	scene_->Update();
+	//衝突判定システムの更新
+	collisionSystem_->Update(scene_->GetGameObjects());
 	//デバッグエディタの更新
 	debugEditor_->Update();
 }
@@ -120,20 +130,20 @@ void SceneManager::Debug(){
 void SceneManager::Draw(CameraMode cameraMode){
 	const std::vector<std::unique_ptr<GameObject>>& gameObjects = scene_->GetGameObjects();
 	//カメラの追加
-	sceneContext_.renderSystem->CollectActiveCameras(gameObjects);
+	renderSystem_->CollectActiveCameras(gameObjects);
 	//カメラのモードを設定
-	sceneContext_.renderSystem->SetCameraMode(cameraMode);
+	renderSystem_->SetCameraMode(cameraMode);
 
 	//Object3dの追加
-	sceneContext_.renderSystem->CollectActiveObject3ds(gameObjects);
+	renderSystem_->CollectActiveObject3ds(gameObjects);
 	//SkyBoxの追加
-	sceneContext_.renderSystem->CollectActiveSkyBox(gameObjects);
+	renderSystem_->CollectActiveSkyBox(gameObjects);
 	//Spriteの描画
-	sceneContext_.renderSystem->CollectActiveSprites(gameObjects);
+	renderSystem_->CollectActiveSprites(gameObjects);
 	//DebugDrawの描画
-	sceneContext_.renderSystem->CollectActiveDebugDraw(gameObjects);
+	renderSystem_->CollectActiveDebugDraw(gameObjects);
 	//ParticleSystemの描画
-	sceneContext_.renderSystem->CollectActiveParticleSystems(gameObjects);
+	renderSystem_->CollectActiveParticleSystems(gameObjects);
 }
 
 //ゲーム画面の描画

@@ -207,7 +207,7 @@ private://メンバ関数
 	//コピーコンストラクタ禁止
 	DirectXBase(const DirectXBase&) = delete;
 	//代入演算子を禁止
-	const DirectXBase operator=(const DirectXBase&) = delete;
+	const DirectXBase& operator=(const DirectXBase&) = delete;
 
 	/// <summary>
 	/// 深度バッファリソースの設定

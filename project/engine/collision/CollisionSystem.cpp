@@ -5,7 +5,7 @@
 #include "Collision.h"
 
 //コンストラクタ
-CollisionSystem::CollisionSystem(){
+CollisionSystem::CollisionSystem(ConstructorKey){
 }
 
 //デストラクタ
@@ -122,15 +122,22 @@ void CollisionSystem::CheckCollisionAABB(AABBCollider* collider1, AABBCollider* 
 	collisionInfo1.other = collider2;
 	collisionInfo2.other = collider1;
 
+	//ゲームオブジェクトを取得
+	GameObject* gameObject1 = collider1->GetOwner();
+	GameObject* gameObject2 = collider2->GetOwner();
+
 	//衝突していた場合
 	if (collider1->IsTrigger() || collider2->IsTrigger()){
 		//どちらか片方がIsTriggerがtrueだった場合
-		collider1->OnTrigger(collider2);
-		collider2->OnTrigger(collider1);
+		gameObject1->NotifyOnTrigger(collider2);
+		gameObject2->NotifyOnTrigger(collider1);
 	} else{
+		//オブジェクトを押し出す
+		ResolveCollision(collider1, collider2, collisionInfo1, collisionInfo2);
+
 		//どちらか片方がIsTriggerがfalseだった場合
-		collider1->OnCollision(collisionInfo1);
-		collider2->OnCollision(collisionInfo2);
+		gameObject1->NotifyOnCollision(collisionInfo1);
+		gameObject2->NotifyOnCollision(collisionInfo2);
 	}
 }
 
@@ -157,4 +164,43 @@ Vector3 CollisionSystem::CalculatePushOutNormal(const Vector3& diff, const Vecto
 	}
 
 	return normal;
+}
+
+//オブジェクトの押し出し
+void CollisionSystem::ResolveCollision(BaseCollider* collider1, BaseCollider* collider2, const CollisionInfo& info1, const CollisionInfo& info2){
+	//ボディタイプ
+	BodyType bodyType1 = collider1->GetBodyType();
+	BodyType bodyType2 = collider2->GetBodyType();
+
+	//1の移動係数
+	float moveFactor1 = 0.0f;
+	if (bodyType1 == BodyType::kDynamic){
+		moveFactor1 = 1.0f;
+	}
+
+	//2の移動係数
+	float moveFactor2 = 0.0f;
+	if (bodyType2 == BodyType::kDynamic){
+		moveFactor2 = 1.0f;
+	}
+
+	//移動係数の合計
+	float moveFactorSum = moveFactor1 + moveFactor2;
+
+	//static同士だった場合
+	if (moveFactorSum <= 0.0f){
+		return;
+	}
+
+	//Transformを取得
+	Transform& transform1 = collider1->GetOwner()->GetTransform();
+	Transform& transform2 = collider2->GetOwner()->GetTransform();
+
+	//移動係数の割合を取得
+	float rate1 = moveFactor1 / moveFactorSum;
+	float rate2 = moveFactor2 / moveFactorSum;
+
+	//押し戻しをする
+	transform1.translate += info1.normal * info1.penetrationDepth * rate1;
+	transform2.translate += info2.normal * info2.penetrationDepth * rate2;
 }

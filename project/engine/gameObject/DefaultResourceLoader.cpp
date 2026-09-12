@@ -66,6 +66,8 @@ void DefaultResourceLoader::LoadModel(){
 	//core_->GetModelManager()->AddModel("camera", "camera/camera.obj");
 	//プレイヤー
 	modelManager_->AddModel("player", "player/player.gltf");
+	//敵
+	modelManager_->AddModel("enemy", "enemy/enemy.gltf");
 	//デカヌ
 	//core_->GetModelManager()->AddModel("dekanu", "dekanu/dekanu.gltf");
 	//人

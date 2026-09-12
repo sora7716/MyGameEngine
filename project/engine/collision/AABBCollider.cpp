@@ -13,7 +13,7 @@ AABBCollider::~AABBCollider(){
 void AABBCollider::Initialize(){
 	//基底クラスの更新
 	BaseCollider::Initialize();
-	halfSize_ = Vector3::MakeAllOne();
+	halfSize_ = Vector3::GetAllOne();
 }
 
 //更新

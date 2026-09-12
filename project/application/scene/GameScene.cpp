@@ -8,6 +8,7 @@
 #include "AABBCollider.h"
 #include "Cube.h"
 #include "ImGuiManager.h"
+#include "Enemy.h"
 
 //コンストラクタ
 GameScene::GameScene(){
@@ -73,6 +74,7 @@ GameObject* GameScene::CreateSkyBox(){
 	GameObject* gameObject = CreateGameObject();
 	gameObject->GetTransform().scale = { 100.0f,100.0f,100.0f };
 	gameObject->SetName("SkyBox");
+	gameObject->SetTag("SkyBox");
 
 	//SkyBox
 	gameObject->AddComponent<SkyBox>();
@@ -103,13 +105,14 @@ GameObject* GameScene::CreateGameCamera(GameObject* playerObject){
 //プレイヤーの生成
 GameObject* GameScene::CreatePlayerObject(){
 	GameObject* gameObject = CreateGameObject();
-	gameObject->SetName("player");
+	gameObject->SetName("プレイヤー");
+	gameObject->SetTag("Player");
 
 	//プレイヤー
 	gameObject->AddComponent<Player>(*sceneContext_.input);
 
 	//AABBコンポーネント
-	Vector3 playerHitBoxSize = Vector3::MakeAllOne();
+	Vector3 playerHitBoxSize = Vector3::GetAllOne();
 	AABBCollider* playerAABB = gameObject->AddComponent<AABBCollider>();
 	playerAABB->SetHalfSize(playerHitBoxSize / 2.0f);
 	playerAABB->SetBodyType(BodyType::kDynamic);
@@ -132,6 +135,7 @@ GameObject* GameScene::CreateGround(){
 	GameObject* gameObject = CreateGameObject();
 	gameObject->GetTransform().scale = { 20.0f,1.0f,20.0f };
 	gameObject->SetName("地面");
+	gameObject->SetTag("Ground");
 
 	//3Dオブジェクト1
 	Object3d* groundModel = gameObject->AddComponent<Object3d>();
@@ -145,21 +149,26 @@ GameObject* GameScene::CreateGround(){
 GameObject* GameScene::CreateEnemy(){
 	//ゲームオブジェクト
 	GameObject* gameObject = CreateGameObject();
-	gameObject->SetName("cube");
+	gameObject->SetName("敵");
+	gameObject->SetTag("Enemy");
 	gameObject->GetTransform().translate = { 0.0f,1.0f,2.0f };
 
-	//3Dオブジェクト
-	Object3d* cubeModel = gameObject->AddComponent<Object3d>();
-	cubeModel->SetModel(sceneContext_.modelManager->FindModel("cube"));
+	//Enemy
+	gameObject->AddComponent<Enemy>();
 
 	//AABBコンポーネント
-	Vector3 cubeHitBoxSize = Vector3::MakeAllOne();
-	AABBCollider* cubeAABB = gameObject->AddComponent<AABBCollider>();
+	Vector3 enemyHitBoxSize = Vector3::GetAllOne();
+	AABBCollider* enemyAABB = gameObject->AddComponent<AABBCollider>();
+	enemyAABB->SetIsTrigger(true);
 
 	//ワイヤーフレーム
-	debugDraw::Cube* cubeHitBox = gameObject->AddComponent<debugDraw::Cube>();
-	cubeAABB->SetHalfSize(cubeHitBoxSize / 2.0f);
-	cubeHitBox->SetLocalScale(cubeHitBoxSize);
+	debugDraw::Cube* enemyHitBox = gameObject->AddComponent<debugDraw::Cube>();
+	enemyAABB->SetHalfSize(enemyHitBoxSize / 2.0f);
+	enemyHitBox->SetLocalScale(enemyHitBoxSize);
+
+	//3Dオブジェクト
+	Object3d* enemyModel = gameObject->AddComponent<Object3d>();
+	enemyModel->SetModel(sceneContext_.modelManager->FindModel("enemy"));
 
 	return gameObject;
 }

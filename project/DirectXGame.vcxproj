@@ -11,6 +11,7 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="application\actor\Enemy.cpp" />
     <ClCompile Include="application\actor\OrbitCameraController.cpp" />
     <ClCompile Include="application\actor\Player.cpp" />
     <ClCompile Include="application\scene\GameScene.cpp" />
@@ -57,7 +58,6 @@
     <ClCompile Include="engine\debug\wireframes\Sphere.cpp" />
     <ClCompile Include="engine\framework\Framework.cpp" />
     <ClCompile Include="engine\framework\GameSystem.cpp" />
-    <ClCompile Include="engine\gameObject\ColliderData.cpp" />
     <ClCompile Include="engine\gameObject\component\Component.cpp" />
     <ClCompile Include="engine\gameObject\GameObject.cpp" />
     <ClCompile Include="engine\gameObject\DefaultResourceLoader.cpp" />
@@ -99,6 +99,7 @@
     <ClCompile Include="engine\utility\StringUtility.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="application\actor\Enemy.h" />
     <ClInclude Include="application\actor\OrbitCameraController.h" />
     <ClInclude Include="application\actor\Player.h" />
     <ClInclude Include="application\scene\GameScene.h" />
@@ -146,7 +147,6 @@
     <ClInclude Include="engine\debug\wireframes\Sphere.h" />
     <ClInclude Include="engine\framework\Framework.h" />
     <ClInclude Include="engine\framework\GameSystem.h" />
-    <ClInclude Include="engine\gameObject\ColliderData.h" />
     <ClInclude Include="engine\gameObject\component\Component.h" />
     <ClInclude Include="engine\gameObject\GameObject.h" />
     <ClInclude Include="engine\gameObject\DefaultResourceLoader.h" />

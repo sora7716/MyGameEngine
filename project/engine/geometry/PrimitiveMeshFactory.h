@@ -8,7 +8,7 @@
 namespace primitiveMeshFactory {
 	//設定データ
 	struct Desc{
-		Vector3 size = Vector3::MakeAllOne();
+		Vector3 size = Vector3::GetAllOne();
 		uint32_t radialSubdivision = 16;
 		uint32_t verticalSubdivision = 16;
 		float radius = 1.0f;

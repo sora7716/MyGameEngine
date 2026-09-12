@@ -222,9 +222,6 @@
     <ClCompile Include="engine\framework\GameSystem.cpp">
       <Filter>engine\framework</Filter>
     </ClCompile>
-    <ClCompile Include="engine\gameObject\ColliderData.cpp">
-      <Filter>engine\gameObject</Filter>
-    </ClCompile>
     <ClCompile Include="engine\gameObject\GameObject.cpp">
       <Filter>engine\gameObject</Filter>
     </ClCompile>
@@ -375,6 +372,9 @@
     <ClCompile Include="engine\collision\BaseCollider.cpp">
       <Filter>engine\collision</Filter>
     </ClCompile>
+    <ClCompile Include="application\actor\Enemy.cpp">
+      <Filter>application\actor</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="application\scene\TestPlayScene.h">
@@ -472,9 +472,6 @@
     </ClInclude>
     <ClInclude Include="engine\framework\GameSystem.h">
       <Filter>engine\framework</Filter>
-    </ClInclude>
-    <ClInclude Include="engine\gameObject\ColliderData.h">
-      <Filter>engine\gameObject</Filter>
     </ClInclude>
     <ClInclude Include="engine\gameObject\GameObject.h">
       <Filter>engine\gameObject</Filter>
@@ -664,6 +661,9 @@
     </ClInclude>
     <ClInclude Include="engine\collision\BaseCollider.h">
       <Filter>engine\collision</Filter>
+    </ClInclude>
+    <ClInclude Include="application\actor\Enemy.h">
+      <Filter>application\actor</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

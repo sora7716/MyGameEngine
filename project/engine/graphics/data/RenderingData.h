@@ -7,7 +7,7 @@
 #include <vector>
 //Transform情報
 struct Transform{
-	Vector3 scale = Vector3::MakeAllOne();
+	Vector3 scale = Vector3::GetAllOne();
 	Quaternion quaternion = Quaternion::IdentityQuaternion();
 	Vector3 translate = {};
 

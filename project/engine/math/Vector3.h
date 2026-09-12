@@ -10,10 +10,52 @@ struct Vector3 final {
 	float z = 0.0f;
 
 	/// <summary>
-	/// Vector3のメンバ変数すべてに1.0fを代入したVector3を作成
+	/// すべて1.0fのベクトルを取得
 	/// </summary>
 	/// <returns>Vector3</returns>
-	static Vector3 MakeAllOne();
+	static Vector3 GetAllOne();
+
+	/// <summary>
+	/// すべて0.0fのベクトルを取得
+	/// </summary>
+	/// <returns>Vector3</returns>
+	static Vector3 GetAllZero();
+
+	/// <summary>
+	/// Y軸だけに1.0fのベクトルを取得
+	/// </summary>
+	/// <returns>Vector3</returns>
+	static Vector3 GetUp();
+
+	/// <summary>
+	/// Y軸だけに-1.0fのベクトルを取得
+	/// </summary>
+	/// <returns>Vector3</returns>
+	static Vector3 GetDown();
+
+	/// <summary>
+	/// X軸だけに-1.0fのベクトルを取得
+	/// </summary>
+	/// <returns>Vector3</returns>
+	static Vector3 GetLeft();
+
+	/// <summary>
+	/// X軸だけに1.0fのベクトルを取得
+	/// </summary>
+	/// <returns>Vector3</returns>
+	static Vector3 GetRight();
+
+	/// <summary>
+	/// Z軸だけに1.0fのベクトルを取得
+	/// </summary>
+	/// <returns>Vector3</returns>
+	static Vector3 GetForward();
+
+	/// <summary>
+	/// Z軸だけに-1.0fのベクトルを取得
+	/// </summary>
+	/// <returns>Vector3</returns>
+	static Vector3 GetBack();
 
 	/// <summary>
 	/// クランプ

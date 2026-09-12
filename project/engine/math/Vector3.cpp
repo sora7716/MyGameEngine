@@ -4,9 +4,44 @@
 #include <algorithm>
 #include <cassert>
 
-//Vector3のメンバ変数すべてに1.0fを代入したVector3を作成
-Vector3 Vector3::MakeAllOne(){
+//すべて1.0fのベクトルを取得
+Vector3 Vector3::GetAllOne(){
 	return Vector3(1.0f, 1.0f, 1.0f);
+}
+
+//すべて0.0fのベクトルを取得
+Vector3 Vector3::GetAllZero(){
+	return Vector3(0.0f, 0.0f, 0.0f);
+}
+
+//Y軸だけに1.0fのベクトルを取得
+Vector3 Vector3::GetUp(){
+	return Vector3(0.0f, 1.0f, 0.0f);
+}
+
+//Y軸だけに-1.0fのベクトルを取得
+Vector3 Vector3::GetDown(){
+	return Vector3(0.0f, -1.0f, 0.0f);
+}
+
+//X軸だけに-1.0fのベクトルを取得
+Vector3 Vector3::GetLeft(){
+	return Vector3(-1.0f, 0.0f, 0.0f);
+}
+
+//X軸だけに1.0fのベクトルを取得
+Vector3 Vector3::GetRight(){
+	return Vector3(1.0f, 0.0f, 0.0f);
+}
+
+//Z軸だけに1.0fのベクトルを取得
+Vector3 Vector3::GetForward(){
+	return Vector3(0.0f, 0.0f, 1.0f);
+}
+
+//Z軸だけに-1.0fのベクトルを取得
+Vector3 Vector3::GetBack(){
+	return Vector3(0.0f, 0.0f, -1.0f);
 }
 
 //クランプ

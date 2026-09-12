@@ -41,11 +41,41 @@ public://メンバ関数
 	/// 解放処理
 	/// </summary>
 	void Finalize()override;
+private://メンバ関数
+	/// <summary>
+	/// SkyBoxの生成
+	/// </summary>
+	/// <returns>ゲームオブジェクト</returns>
+	GameObject* CreateSkyBox();
+
+	/// <summary>
+	/// ゲームカメラの生成
+	/// </summary>
+	/// <param name="playerObject">プレイヤー</param>
+	/// <returns>ゲームオブジェクト</returns>
+	GameObject* CreateGameCamera(GameObject* playerObject);
+
+	/// <summary>
+	/// プレイヤーの生成
+	/// </summary>
+	/// <returns>ゲームオブジェクト</returns>
+	GameObject* CreatePlayerObject();
+
+	/// <summary>
+	/// 地面の生成
+	/// </summary>
+	/// <returns>ゲームオブジェクト</returns>
+	GameObject* CreateGround();
+
+	/// <summary>
+	/// 敵の生成
+	/// </summary>
+	/// <returns>ゲームオブジェクト</returns>
+	GameObject* CreateEnemy();
 private://メンバ変数
-	//AABBのコライダー
-	AABBCollider* playerAABB_ = nullptr;
-	//ヒットボックス用のキューブ
-	debugDraw::Cube* playerHitBox_ = nullptr;
-	//プレイヤーのヒットボックスのサイズ
-	Vector3 playerHitBoxSize_ = {};
+	//プレイヤー
+	GameObject* playerObject_ = nullptr;
+
+	//ゲームカメラ
+	GameObject* gameCameraObject_ = nullptr;
 };

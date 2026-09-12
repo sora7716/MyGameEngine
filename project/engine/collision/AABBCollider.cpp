@@ -34,6 +34,11 @@ void AABBCollider::SetHalfSize(const Vector3& halfSize){
 	halfSize_ = halfSize;
 }
 
+//ハーフサイズの取得
+const Vector3& AABBCollider::GetHalfSize() const{
+	return halfSize_;
+}
+
 //AABBの取得
 const primitiveData::AABB& AABBCollider::GetAABB(){
 	return aabb_;

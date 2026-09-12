@@ -35,6 +35,12 @@ public://メンバ関数
 	void SetHalfSize(const Vector3& halfSize);
 
 	/// <summary>
+	/// ハーフサイズの取得
+	/// </summary>
+	/// <returns>ハーフサイズ</returns>
+	const Vector3& GetHalfSize()const;
+
+	/// <summary>
 	/// AABBの取得
 	/// </summary>
 	/// <returns>AABB</returns>

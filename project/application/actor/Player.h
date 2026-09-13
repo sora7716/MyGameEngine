@@ -4,6 +4,7 @@
 
 //前方宣言
 class Input;
+class RigidBody;
 
 /// <summary>
 /// プレイヤー
@@ -39,6 +40,12 @@ public://メンバ関数
 	std::unique_ptr<Component>Clone(GameObject* gameObject)const override;
 
 	/// <summary>
+	/// 衝突したら
+	/// </summary>
+	/// <param name="info">衝突情報</param>
+	void OnCollision(const CollisionInfo& info);
+
+	/// <summary>
 	/// カメラのオブジェクトの設定
 	/// </summary>
 	/// <param name="cameraObject">カメラのオブジェクト</param>
@@ -53,21 +60,6 @@ private://メンバ関数
 	/// ジャンプの操作
 	/// </summary>
 	void JumpControl();
-
-	/// <summary>
-	/// 重力を適応
-	/// </summary>
-	void ApplyGravity();
-
-	/// <summary>
-	/// 速度を位置へ反映する
-	/// </summary>
-	void Movement();
-
-	/// <summary>
-	/// 地面との接触
-	/// </summary>
-	void ResolveGround();
 
 	/// <summary>
 	/// 移動方向に向かせる
@@ -91,11 +83,9 @@ private://メンバ変数
 	GameObject* cameraObject_ = nullptr;
 	//ゲームオブジェクト
 	GameObject* gameObject_ = nullptr;
-
-	//加速度
-	Vector3 acceleration_ = {};
-	//速度
-	Vector3 velocity_ = {};
+	
+	//リジットボディ
+	RigidBody* rigidBody_ = nullptr;
 
 	//入力されて移動方向ベクトル
 	Vector3 inputDirection_ = {};

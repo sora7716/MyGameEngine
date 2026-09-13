@@ -2,22 +2,14 @@
 #include "MathUtility.h"
 #include <cmath>
 
-//コンストラクタ
-Physics::Physics() {
-}
-
-//デストラクタ
-Physics::~Physics() {
-}
-
 //フックの法則(ばね力)
-Vector3 Physics::ApplySpringForce(const Spring& spring, const Ball& ball) {
+Vector3 ApplySpringForce(const Spring& spring, const Ball& ball){
 	//加速度
 	Vector3 result = ball.physicsData.acceleration;
 	//ばねのアンカーとボールの位置の差
 	Vector3 diff = ball.position - spring.anchor;
 	float length = diff.Length();
-	if (length != 0.0f) {
+	if (length != 0.0f){
 		Vector3 direction = diff.Normalize();
 		Vector3 restPosition = spring.anchor + direction * spring.naturalLength;
 		Vector3 displacement = (ball.position - restPosition) * length;
@@ -32,9 +24,9 @@ Vector3 Physics::ApplySpringForce(const Spring& spring, const Ball& ball) {
 }
 
 //振り子
-Vector3 Physics::ApplyPendulumForce(Pendulum& pendulum, const Vector3& ballPos) {
+Vector3 ApplyPendulumForce(Pendulum& pendulum, const Vector3& ballPos){
 	Vector3 result = ballPos;
-	pendulum.angularAcceleration = -(std::fabs(kGravity.y) / pendulum.length) * std::sin(pendulum.angle);
+	pendulum.angularAcceleration = -(std::fabs(physics::kGravity.y) / pendulum.length) * std::sin(pendulum.angle);
 	pendulum.angularVelocity += pendulum.angularAcceleration * mathUtility::kDeltaTime;
 	pendulum.angle += pendulum.angularVelocity * mathUtility::kDeltaTime;
 	// 振り子の先端

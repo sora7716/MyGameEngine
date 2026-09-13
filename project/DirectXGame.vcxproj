@@ -91,6 +91,7 @@
     <ClCompile Include="engine\particle\ParticleSystem.cpp" />
     <ClCompile Include="engine\physics\Physics.cpp" />
     <ClCompile Include="engine\physics\PhysicsData.cpp" />
+    <ClCompile Include="engine\physics\RigidBody.cpp" />
     <ClCompile Include="engine\scene\AbstractSceneFactory.cpp" />
     <ClCompile Include="engine\scene\BaseScene.cpp" />
     <ClCompile Include="engine\scene\SceneFactory.cpp" />
@@ -191,6 +192,7 @@
     <ClInclude Include="engine\particle\ParticleSystem.h" />
     <ClInclude Include="engine\physics\Physics.h" />
     <ClInclude Include="engine\physics\PhysicsData.h" />
+    <ClInclude Include="engine\physics\RigidBody.h" />
     <ClInclude Include="engine\scene\AbstractSceneFactory.h" />
     <ClInclude Include="engine\scene\BaseScene.h" />
     <ClInclude Include="engine\scene\SceneFactory.h" />

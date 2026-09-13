@@ -95,6 +95,11 @@ private://メンバ関数
 	/// 浮き上がるときの更新
 	/// </summary>
 	void RecoverUpdate();
+
+	/// <summary>
+	/// 地面との接触
+	/// </summary>
+	void ResolveGround();
 private://定数
 	//のけぞりの最大時間
 	static inline const float kReactionDuration = 0.5f;

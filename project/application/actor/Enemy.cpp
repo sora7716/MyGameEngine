@@ -126,7 +126,6 @@ void Enemy::HitReactionUpdate(){
 void Enemy::KnockbackInitialize(){
 	//タイマーのリセット
 	knockbackTimer_ = 0.0f;
-	//吹き飛ばす
 }
 
 //ノックバックの更新
@@ -139,4 +138,9 @@ void Enemy::RecoverInitialize(){
 
 //浮き上がるときの更新
 void Enemy::RecoverUpdate(){
+}
+
+//地面との接触
+void Enemy::ResolveGround(){
+
 }

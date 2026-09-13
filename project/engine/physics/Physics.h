@@ -3,18 +3,7 @@
 /// <summary>
 /// 物理演算
 /// </summary>
-class Physics {
-public://メンバ関数
-	/// <summary>
-	/// コンストラクタ
-	/// </summary>
-	Physics();
-
-	/// <summary>
-	/// デストラクタ
-	/// </summary>
-	~Physics();
-
+namespace physics {
 	/// <summary>
 	/// フックの法則(ばね力)
 	/// </summary>
@@ -30,8 +19,8 @@ public://メンバ関数
 	/// <param name="ballPos">ボールの位置</param>
 	/// <returns>位置</returns>
 	static Vector3 ApplyPendulumForce(Pendulum& pendulum, const Vector3& ballPos);
-public://定数
+	
 	//重力加速度
-	static inline const Vector3 kGravity = { 0.0f,-20.0f,0.0f };
+	const Vector3 kGravity = { 0.0f,-20.0f,0.0f };
 };
 

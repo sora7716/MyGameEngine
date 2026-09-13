@@ -1,7 +1,6 @@
 #include "GameScene.h"
 #include "GameObject.h"
 #include "Object3d.h"
-#include "ModelManager.h"
 #include "Player.h"
 #include "SkyBox.h"
 #include "OrbitCameraController.h"
@@ -9,6 +8,7 @@
 #include "Cube.h"
 #include "ImGuiManager.h"
 #include "Enemy.h"
+#include "RigidBody.h"
 
 //コンストラクタ
 GameScene::GameScene(){
@@ -108,6 +108,9 @@ GameObject* GameScene::CreatePlayerObject(){
 	gameObject->SetName("プレイヤー");
 	gameObject->SetTag("Player");
 
+	//リジットボディ
+	gameObject->AddComponent<RigidBody>();
+
 	//プレイヤー
 	gameObject->AddComponent<Player>();
 
@@ -131,13 +134,20 @@ GameObject* GameScene::CreatePlayerObject(){
 
 //地面の生成
 GameObject* GameScene::CreateGround(){
-	//ゲームオブジェくtp
+	//ゲームオブジェく
 	GameObject* gameObject = CreateGameObject();
 	gameObject->GetTransform().scale = { 20.0f,1.0f,20.0f };
 	gameObject->SetName("地面");
 	gameObject->SetTag("Ground");
 
-	//3Dオブジェクト1
+	//AABBコライダー
+	AABBCollider* aabbCollider = gameObject->AddComponent<AABBCollider>();
+	aabbCollider->SetHalfSize(gameObject->GetTransform().scale / 2.0f);
+	aabbCollider->SetBodyType(BodyType::kStatic);
+	debugDraw::Cube* hitBox = gameObject->AddComponent<debugDraw::Cube>();
+	hitBox->SetLocalScale(gameObject->GetTransform().scale);
+
+	//3Dオブジェクト
 	Object3d* groundModel = gameObject->AddComponent<Object3d>();
 	groundModel->SetModel("cube");
 	groundModel->SetTexture(0, "uvChecker.png");

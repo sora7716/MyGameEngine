@@ -375,6 +375,9 @@
     <ClCompile Include="application\actor\Enemy.cpp">
       <Filter>application\actor</Filter>
     </ClCompile>
+    <ClCompile Include="engine\physics\RigidBody.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="application\scene\TestPlayScene.h">
@@ -664,6 +667,9 @@
     </ClInclude>
     <ClInclude Include="application\actor\Enemy.h">
       <Filter>application\actor</Filter>
+    </ClInclude>
+    <ClInclude Include="engine\physics\RigidBody.h">
+      <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

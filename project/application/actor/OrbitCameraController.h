@@ -15,8 +15,7 @@ public://メンバ関数
 	/// コンストラクタ
 	/// </summary>
 	/// <param name="gameObject">ゲームオブジェクト</param>
-	/// <param name="input">入力</param>
-	explicit OrbitCameraController(GameObject* gameObject, Input& input);
+	explicit OrbitCameraController(GameObject* gameObject);
 
 	/// <summary>
 	/// デストラクタ
@@ -52,7 +51,7 @@ private://メンバ関数
 	void ViewRotationControl();
 private://メンバ変数
 	//入力
-	Input& input_;
+	Input* input_ = nullptr;;
 	//ゲームオブジェクト
 	GameObject* gameObject_ = nullptr;
 	//対象

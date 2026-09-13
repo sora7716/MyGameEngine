@@ -11,6 +11,5 @@ void SceneContext::operator=(Core* core){
 	audioManager = core->GetAudioManager();
 	imGuiManager = core->GetImGuiManager();
 	tagManager = core->GetTagManager();
-	pipelineManager = core->GetPipelineManager();
 	lightingManager = core->GetLightingManager();
 }

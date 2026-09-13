@@ -2,11 +2,12 @@
 #include "OrbitCameraController.h"
 #include "GameObject.h"
 #include "MathUtility.h"
+#include "BaseScene.h"
 #include "Input.h"
 #include <algorithm>
 
 //コンストラクタ
-OrbitCameraController::OrbitCameraController(GameObject* gameObject, Input& input) :Component(gameObject), input_(input){
+OrbitCameraController::OrbitCameraController(GameObject* gameObject) :Component(gameObject){
 }
 
 //デストラクタ
@@ -15,7 +16,12 @@ OrbitCameraController::~OrbitCameraController(){
 
 //初期化
 void OrbitCameraController::Initialize(){
+	//ゲームオブジェクトの取得
 	gameObject_ = GetOwner();
+	//現在リンクされているシーンを取得
+	BaseScene* currentScene = gameObject_->GetCurrentScene();
+	//入力の取得
+	input_ = currentScene->GetSceneContext().input;
 }
 
 //更新
@@ -47,7 +53,7 @@ void OrbitCameraController::Update(){
 
 //複製
 std::unique_ptr<Component> OrbitCameraController::Clone(GameObject* gameObject) const{
-	std::unique_ptr<OrbitCameraController>cloneInstance = std::make_unique<OrbitCameraController>(gameObject, this->input_);
+	std::unique_ptr<OrbitCameraController>cloneInstance = std::make_unique<OrbitCameraController>(gameObject);
 
 	//初期化
 	cloneInstance->Initialize();
@@ -66,7 +72,7 @@ void OrbitCameraController::SetTarget(GameObject* target){
 //カメラの回転に関する操作
 void OrbitCameraController::ViewRotationControl(){
 	//マウスの移動量の取得
-	Vector2 mouseDelta = input_.GetMouseMoveAmount();
+	Vector2 mouseDelta = input_->GetMouseMoveAmount();
 
 	//デッドゾーンを考慮する
 	if (deadZone_.x > std::fabs(mouseDelta.x) && deadZone_.y > std::fabs(mouseDelta.y)){

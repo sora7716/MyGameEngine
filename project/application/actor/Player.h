@@ -14,8 +14,7 @@ public://メンバ関数
 	/// コンストラクタ
 	/// </summary>
 	/// <param name="gameObject">ゲームオブジェクト</param>
-	/// <param name="input">入力</param>
-	explicit Player(GameObject* gameObject, Input& input);
+	explicit Player(GameObject* gameObject);
 
 	/// <summary>
 	/// デストラクタ
@@ -87,7 +86,7 @@ private://定数
 	static inline const float kLookAtSpeed = 8.0f;
 private://メンバ変数
 	//入力
-	Input& input_;
+	Input* input_ = nullptr;
 	//カメラオブジェクト
 	GameObject* cameraObject_ = nullptr;
 	//ゲームオブジェクト

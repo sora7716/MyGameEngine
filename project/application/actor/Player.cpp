@@ -5,10 +5,11 @@
 #include "MathUtility.h"
 #include "matrixUtility.h"
 #include "Camera.h"
+#include "BaseScene.h"
 
 //コンストラクタ
-Player::Player(GameObject* gameObject, Input& input)
-	:Component(gameObject), input_(input){
+Player::Player(GameObject* gameObject)
+	:Component(gameObject){
 }
 
 //デストラクタ
@@ -19,6 +20,10 @@ Player::~Player(){
 void Player::Initialize(){
 	//ゲームオブジェクトを取得
 	gameObject_ = GetOwner();
+	//現在接続しているシーンを取得
+	BaseScene* currentScene = gameObject_->GetCurrentScene();
+	//入力の取得
+	input_ = currentScene->GetSceneContext().input;
 
 	//SRTの調整
 	gameObject_->GetTransform().translate = { 0.0f,1.0f,0.0f };
@@ -48,7 +53,7 @@ void Player::Update(){
 
 //複製
 std::unique_ptr<Component> Player::Clone(GameObject* gameObject) const{
-	std::unique_ptr<Player>cloneInstance = std::make_unique<Player>(gameObject, this->input_);
+	std::unique_ptr<Player>cloneInstance = std::make_unique<Player>(gameObject);
 
 	//初期化
 	cloneInstance->Initialize();
@@ -66,18 +71,18 @@ void Player::SetCameraObject(GameObject* cameraObject){
 //移動の操作
 void Player::MoveControl(){
 	//横移動
-	if (input_.PressKey(DIK_A)){
+	if (input_->PressKey(DIK_A)){
 		inputDirection_.x = -1.0f;
-	} else if (input_.PressKey(DIK_D)){
+	} else if (input_->PressKey(DIK_D)){
 		inputDirection_.x = 1.0f;
 	} else{
 		inputDirection_.x = 0.0f;
 	}
 
 	//縦移動
-	if (input_.PressKey(DIK_W)){
+	if (input_->PressKey(DIK_W)){
 		inputDirection_.z = 1.0f;
-	} else if (input_.PressKey(DIK_S)){
+	} else if (input_->PressKey(DIK_S)){
 		inputDirection_.z = -1.0f;
 	} else{
 		inputDirection_.z = 0.0f;
@@ -110,7 +115,7 @@ void Player::MoveControl(){
 
 //ジャンプの操作
 void Player::JumpControl(){
-	if (input_.TriggerKey(DIK_SPACE)){
+	if (input_->TriggerKey(DIK_SPACE)){
 		if (isOnGround_){
 			velocity_.y = kJumpSpeed;
 			isOnGround_ = false;

@@ -70,6 +70,11 @@ void GameObject::SetName(const std::string& name){
 	name_ = name;
 }
 
+//現在の接続シーンの設定
+void GameObject::SetCurrentScene(BaseScene* currentScene){
+	currentScene_ = currentScene;
+}
+
 //名前を取得
 const std::string& GameObject::GetName() const{
 	return name_;
@@ -83,6 +88,11 @@ void GameObject::SetTag(const std::string& tag){
 //タグの取得
 const std::string& GameObject::GetTag() const{
 	return tag_;
+}
+
+//現在の接続シーンの取得
+BaseScene* GameObject::GetCurrentScene(){
+	return currentScene_;
 }
 
 //コンポーネントの更新

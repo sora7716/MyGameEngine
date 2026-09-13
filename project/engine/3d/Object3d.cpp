@@ -4,6 +4,8 @@
 #include "Model.h"
 #include "LODController.h"
 #include "MaterialInstance.h"
+#include "BaseScene.h"
+#include "ModelManager.h"
 #include <cassert>
 
 //コンストラクタ
@@ -109,9 +111,30 @@ Matrix4x4 Object3d::MakeRenderWorldMatrix(const Matrix4x4& cameraWorldMatrix) co
 }
 
 //モデルの設定
-void Object3d::SetModel(Model* model){
+void Object3d::SetModel(const std::string& modelName){
+	//ゲームオブジェクトを取得
+	GameObject* gameObject = GetOwner();
+	//ゲームオブジェクトが無ければ
+	if (!gameObject){
+		return;
+	}
+
+	//現在接続されているシーンを取得
+	BaseScene* currentScene_ = gameObject->GetCurrentScene();
+	//現在接続されているシーンがなければ
+	if (!currentScene_){
+		return;
+	}
+
+	//モデルマネージャを取得
+	ModelManager* modelManager = currentScene_->GetSceneContext().modelManager;
+	//モデルマネージャーがなければ
+	if (!modelManager){
+		return;
+	}
+
 	//元になるモデルを取得
-	baseModel_ = model;
+	baseModel_ = modelManager->FindModel(modelName);
 
 	//currentLODを0に戻す
 	currentLOD_ = 0;
@@ -194,6 +217,7 @@ void Object3d::SetTexture(uint32_t index, const std::string& imageFileName){
 	}
 	//マテリアルを個別化する
 	EnsureUniqueMaterialInstance();
+	//テクスチャを設定
 	materialInstance_->SetTexture(index, "engine/resources/textures/" + imageFileName);
 }
 

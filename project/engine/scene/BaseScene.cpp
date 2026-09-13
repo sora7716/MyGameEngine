@@ -6,7 +6,6 @@
 #include "StringUtility.h"
 #include "TagManager.h"
 #include <algorithm>
-//#include "algorithms/ColliderManager.h"
 
 //コンストラクタ
 BaseScene::BaseScene(){
@@ -33,9 +32,6 @@ void BaseScene::Initialize(){
 		}
 	}
 
-	//コライダーマネージャー
-	//colliderManager_ = std::make_unique<ColliderManager>();
-
 	//デバッグカメラ
 	GameObject* debugCameraObject = CreateGameObject();
 	debugCameraObject->AddComponent<Camera>();
@@ -55,9 +51,6 @@ void BaseScene::Update(){
 			gameObject->UpdateComponents(UpdatePhase::kMain);
 		}
 	}
-
-	//コライダーマネージャー
-	//colliderManager_->ProcessCollision();
 }
 
 //更新のステート
@@ -158,6 +151,9 @@ GameObject* BaseScene::CreateGameObject(){
 	//GameObjectの生成
 	std::unique_ptr<GameObject>gameObject = GameObject::Create(name);
 
+	//現在のシーンを設定
+	gameObject->SetCurrentScene(this);
+
 	//ポインタを保存
 	GameObject* gameObjectPtr = gameObject.get();
 
@@ -169,13 +165,17 @@ GameObject* BaseScene::CreateGameObject(){
 
 //ゲームオブジェクトの取得
 const std::vector<std::unique_ptr<GameObject>>& BaseScene::GetGameObjects()const{
-	// TODO: return ステートメントをここに挿入します
 	return gameObjects_;
 }
 
 //シーンで必要な情報の設定
 void BaseScene::SetSceneContext(const SceneContext& sceneContext){
 	sceneContext_ = sceneContext;
+}
+
+//シーンで必要な情報の取得
+const SceneContext& BaseScene::GetSceneContext(){
+	return sceneContext_;
 }
 
 //名前を重複しないようにする

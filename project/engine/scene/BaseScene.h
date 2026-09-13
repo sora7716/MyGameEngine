@@ -7,7 +7,6 @@
 // 前方宣言
 class DirectXBase;
 class AbstractSceneFactory;
-class ColliderManager;
 class GameObject;
 
 /// <summary>
@@ -93,6 +92,12 @@ public://メンバ関数
 	/// </summary>
 	/// <param name="sceneContext">シーンに必要な情報</param>
 	void SetSceneContext(const SceneContext& sceneContext);
+
+	/// <summary>
+	/// シーンで必要な情報の取得
+	/// </summary>
+	/// <returns>シーンに必要な情報</returns>
+	const SceneContext& GetSceneContext();
 private://メンバ関数
 	/// <summary>
 	/// 名前を重複しないようにする
@@ -101,19 +106,16 @@ private://メンバ関数
 	/// <param name="remove">省きたい部分</param>
 	std::string CreateUniqueGameObjectName(const std::string& baseName, std::string_view remove)const;
 private://定数
-	//オブジェクトの大きさ
+	//オブジェクトのメモリ確保数
 	static inline const uint32_t kGameObjectSize = 65536;
 protected://メンバ変数
 	//Xboxの番号
 	DWORD xBoxPadNumber_ = 0;
-	//シーンで必要なもの
-	SceneContext sceneContext_ = {};
-	//コライダーマネージャー
-	//std::unique_ptr<ColliderManager>colliderManager_ = nullptr;
 private://メンバ変数
 	//シーンファクトリー
 	std::unique_ptr<AbstractSceneFactory> sceneFactory_ = nullptr;
 	//ゲームオブジェクトの一覧
 	std::vector<std::unique_ptr<GameObject>> gameObjects_;
+	//シーンで必要なもの
+	SceneContext sceneContext_ = {};
 };
-

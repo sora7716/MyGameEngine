@@ -124,6 +124,9 @@ void Enemy::HitReactionUpdate(){
 
 //ノックバックの初期化
 void Enemy::KnockbackInitialize(){
+	//タイマーのリセット
+	knockbackTimer_ = 0.0f;
+	//吹き飛ばす
 }
 
 //ノックバックの更新

@@ -8,7 +8,6 @@ class SceneManager;
 class AudioManager;
 class ImGuiManager;
 class TagManager;
-class PipelineManager;
 class LightingManager;
 class Core;
 
@@ -22,7 +21,6 @@ struct SceneContext {
 	AudioManager* audioManager;
 	ImGuiManager* imGuiManager;
 	TagManager* tagManager;
-	PipelineManager* pipelineManager;
 	LightingManager* lightingManager;
 
 	/// <summary>

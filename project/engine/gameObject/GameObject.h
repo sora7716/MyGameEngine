@@ -7,6 +7,9 @@
 #include <type_traits>
 #include <utility>
 
+//前方宣言
+class BaseScene;
+
 //ゲームオブジェクト
 class GameObject{
 public://静的メンバ関数
@@ -76,6 +79,12 @@ public://メンバ関数
 	void SetName(const std::string& name);
 
 	/// <summary>
+	/// 現在の接続シーンの設定
+	/// </summary>
+	/// <param name="currentScene">現在の接続シーン</param>
+	void SetCurrentScene(BaseScene* currentScene);
+
+	/// <summary>
 	/// 名前を取得
 	/// </summary>
 	/// <returns></returns>
@@ -92,6 +101,12 @@ public://メンバ関数
 	/// </summary>
 	/// <returns>タグ</returns>
 	const std::string& GetTag()const;
+
+	/// <summary>
+	/// 現在の接続シーンの取得
+	/// </summary>
+	/// <returns>現在の接続シーン</returns>
+	BaseScene* GetCurrentScene();
 
 	/// <summary>
 	/// コンポーネントの追加
@@ -199,4 +214,6 @@ private://メンバ変数
 	std::string tag_;
 	//コンポーネント
 	std::vector<std::unique_ptr<Component>>components_;
+	//現在取得しているシーン
+	BaseScene* currentScene_ = nullptr;
 };

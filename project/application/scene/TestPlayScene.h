@@ -31,5 +31,4 @@ public://メンバ関数
 	/// </summary>
 	void Debug()override;
 private://メンバ変数
-	DirectionalLight directionalLight_ = {};
 };

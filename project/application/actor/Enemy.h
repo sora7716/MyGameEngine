@@ -100,6 +100,9 @@ private://定数
 	static inline const float kReactionDuration = 0.5f;
 	//のけぞるときの角度<度>
 	static inline const float kReactionAngle = 45.0f;
+
+	//ノックバックの最大時間
+	static inline const float kKnockbackDuration = 0.5f;
 private://メンバ変数
 	//ゲームオブジェクト
 	GameObject* gameObject_ = nullptr;
@@ -112,11 +115,15 @@ private://メンバ変数
 	//攻撃を受けた時のフェーズ
 	DamagePhase damagePhase_ = DamagePhase::kReaction;
 
-	//のけぞりタイマー
-	float reactionTimer_ = 0.0f;
 	//衝突した方向
 	Vector3 hitDirection_ = {};
+
+	//のけぞりタイマー
+	float reactionTimer_ = 0.0f;
 	//のけぞった時のクォータニオン
 	Quaternion reactionQuaternion_ = {};
+
+	//ノックバックタイマー
+	float knockbackTimer_ = 0.0f;
 };
 

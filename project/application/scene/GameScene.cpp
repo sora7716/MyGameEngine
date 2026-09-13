@@ -93,10 +93,10 @@ GameObject* GameScene::CreateGameCamera(GameObject* playerObject){
 
 	//3Dオブジェクト
 	Object3d* gameCameraModel = gameObject->AddComponent<Object3d>();
-	gameCameraModel->SetModel(sceneContext_.modelManager->FindModel("camera"));
+	gameCameraModel->SetModel("camera");
 
 	//オービットカメラ
-	OrbitCameraController* orbitCamera = gameObject->AddComponent<OrbitCameraController>(*sceneContext_.input);
+	OrbitCameraController* orbitCamera = gameObject->AddComponent<OrbitCameraController>();
 	orbitCamera->SetTarget(playerObject);
 
 	return gameObject;
@@ -109,7 +109,7 @@ GameObject* GameScene::CreatePlayerObject(){
 	gameObject->SetTag("Player");
 
 	//プレイヤー
-	gameObject->AddComponent<Player>(*sceneContext_.input);
+	gameObject->AddComponent<Player>();
 
 	//AABBコンポーネント
 	Vector3 playerHitBoxSize = Vector3::GetAllOne();
@@ -124,7 +124,7 @@ GameObject* GameScene::CreatePlayerObject(){
 
 	//3Dオブジェクト
 	Object3d* playerModel = gameObject->AddComponent<Object3d>();
-	playerModel->SetModel(sceneContext_.modelManager->FindModel("player"));
+	playerModel->SetModel("player");
 
 	return gameObject;
 }
@@ -139,7 +139,7 @@ GameObject* GameScene::CreateGround(){
 
 	//3Dオブジェクト1
 	Object3d* groundModel = gameObject->AddComponent<Object3d>();
-	groundModel->SetModel(sceneContext_.modelManager->FindModel("cube"));
+	groundModel->SetModel("cube");
 	groundModel->SetTexture(0, "uvChecker.png");
 
 	return gameObject;
@@ -168,7 +168,7 @@ GameObject* GameScene::CreateEnemy(){
 
 	//3Dオブジェクト
 	Object3d* enemyModel = gameObject->AddComponent<Object3d>();
-	enemyModel->SetModel(sceneContext_.modelManager->FindModel("enemy"));
+	enemyModel->SetModel("enemy");
 
 	return gameObject;
 }

@@ -10,6 +10,16 @@ class AABBCollider;
 struct CollisionInfo;
 
 /// <summary>
+/// 衝突状況
+/// </summary>
+enum class CollisionState :uint32_t{
+	kEnter,
+	kStay,
+	kExit,
+	kCount
+};
+
+/// <summary>
 /// 衝突判定のシステム
 /// </summary>
 class CollisionSystem{
@@ -77,8 +87,29 @@ private://メンバ関数
 	/// <param name="info1">衝突したときの情報1</param>
 	/// <param name="info2">衝突したときの情報2</param>
 	void ResolveCollision(BaseCollider* collider1, BaseCollider* collider2, const CollisionInfo& info1, const CollisionInfo& info2);
+
+	/// <summary>
+	/// コライダーのペアを登録
+	/// </summary>
+	/// <param name="collider1">コライダー1</param>
+	/// <param name="collider2">コライダー2</param>
+	/// <returns>ペア</returns>
+	std::pair<BaseCollider*, BaseCollider*> RegisterColliderPair(BaseCollider* collider1, BaseCollider* collider2);
+
+	/// <summary>
+	/// コライダーのペアを見て衝突状況を判断
+	/// </summary>
+	/// <param name="pair">コライダーのペア</param>
+	/// <returns>衝突状況</returns>
+	CollisionState JudgeCollisionState(const std::pair<BaseCollider*, BaseCollider*>& pair);
 private://メンバ変数
 	//コライダー
 	std::vector<BaseCollider*>colliders_;
+	//コライダーのペア
+	std::vector<std::pair<BaseCollider*, BaseCollider*>>currentColliderPairs_;
+	//前フレームのペア
+	std::vector<std::pair<BaseCollider*, BaseCollider*>>previousColliderPairs_;
+	//衝突状況
+	CollisionState collisionState_ = CollisionState::kCount;
 };
 

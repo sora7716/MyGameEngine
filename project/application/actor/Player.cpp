@@ -57,7 +57,7 @@ std::unique_ptr<Component> Player::Clone(GameObject* gameObject) const{
 }
 
 //衝突したら
-void Player::OnCollision(const CollisionInfo& info){
+void Player::OnCollisionStay(const CollisionInfo& info){
 	//リジッドボディと衝突対象のコライダーのどちらかが沿うん材していない場合
 	if (!rigidBody_ || !info.other){
 		return;

@@ -50,7 +50,7 @@ public://メンバ関数
 	/// 衝突したら
 	/// </summary>
 	/// <param name="other">衝突対象</param>
-	void OnTrigger(BaseCollider* other)override;
+	void OnTriggerStay(BaseCollider* other)override;
 
 	/// <summary>
 	/// コピー

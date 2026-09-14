@@ -43,7 +43,7 @@ std::unique_ptr<Component> RigidBody::Clone(GameObject* gameObject) const{
 }
 
 //衝突したら
-void RigidBody::OnCollision(const CollisionInfo& info){
+void RigidBody::OnCollisionStay(const CollisionInfo& info){
 	//衝突対象が無ければ
 	if (!info.other){
 		return;

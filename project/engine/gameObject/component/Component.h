@@ -35,16 +35,40 @@ public://メンバ関数
 	virtual void Update();
 
 	/// <summary>
-	/// 衝突したときの処理
+	/// 接触した瞬間
 	/// </summary>
 	/// <param name="info">衝突情報</param>
-	virtual void OnCollision(const CollisionInfo& info);
+	virtual void OnCollisionEnter(const CollisionInfo& info);
 
 	/// <summary>
-	/// 衝突したときの処理
+	/// 接触中
+	/// </summary>
+	/// <param name="info">衝突情報</param>
+	virtual void OnCollisionStay(const CollisionInfo& info);
+
+	/// <summary>
+	/// 離れた瞬間
+	/// </summary>
+	/// <param name="info">衝突情報</param>
+	virtual void OnCollisionExit(const CollisionInfo& info);
+
+	/// <summary>
+	/// 接触した瞬間
 	/// </summary>
 	/// <param name="other">コライダー</param>
-	virtual void OnTrigger(BaseCollider* other);
+	virtual void OnTriggerEnter(BaseCollider* other);
+
+	/// <summary>
+	/// 接触中
+	/// </summary>
+	/// <param name="other">コライダー</param>
+	virtual void OnTriggerStay(BaseCollider* other);
+
+	/// <summary>
+	/// 離れた瞬間
+	/// </summary>
+	/// <param name="other">コライダー</param>
+	virtual void OnTriggerExit(BaseCollider* other);
 
 	/// <summary>
 	/// 更新のフェーズの取得

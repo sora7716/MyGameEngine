@@ -193,16 +193,43 @@ public://メンバ関数
 	void UpdateComponents(UpdatePhase phase);
 
 	/// <summary>
-	/// 衝突したことを各コンポーネントに通知する
+	/// 接触した瞬間ということを各コンポーネントに通知する
 	/// </summary>
 	/// <param name="info">衝突したときの情報</param>
-	void NotifyOnCollision(const CollisionInfo& info);
+	void NotifyOnCollisionEnter(const CollisionInfo& info);
 
 	/// <summary>
-	/// 衝突したことを各コンポーネントに通知する
+	/// 接触中ということを各コンポーネントに通知する
+	/// </summary>
+	/// <param name="info">衝突したときの情報</param>
+	void NotifyOnCollisionStay(const CollisionInfo& info);
+
+	/// <summary>
+	/// 離れた瞬間ということを各コンポーネントに通知する
+	/// </summary>
+	/// <param name="info">衝突したときの情報</param>
+	void NotifyOnCollisionExit(const CollisionInfo& info);
+
+	/// <summary>
+	/// 接触した瞬間ということを各コンポーネントに通知する
 	/// </summary>
 	/// <param name="other">ほかのコライダー</param>
-	void NotifyOnTrigger(BaseCollider* other);
+	void NotifyOnTriggerEnter(BaseCollider* other);
+
+	/// <summary>
+	/// 接触中ということを各コンポーネントに通知する
+	/// </summary>
+	/// <param name="other">ほかのコライダー</param>
+	void NotifyOnTriggerStay(BaseCollider* other);
+
+	/// <summary>
+	/// 離れた瞬間ということを各コンポーネントに通知する
+	/// </summary>
+	/// <param name="other">ほかのコライダー</param>
+	void NotifyOnTriggerExit(BaseCollider* other);
+private://メンバ関数ポインタの配列
+	//衝突判定のテーブル
+	static void (GameObject::* OnCollisionTable[])();
 private://メンバ変数
 	//名前
 	std::string name_ = "\0";

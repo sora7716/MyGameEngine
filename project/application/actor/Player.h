@@ -43,7 +43,7 @@ public://メンバ関数
 	/// 衝突したら
 	/// </summary>
 	/// <param name="info">衝突情報</param>
-	void OnCollision(const CollisionInfo& info);
+	void OnCollisionStay(const CollisionInfo& info);
 
 	/// <summary>
 	/// カメラのオブジェクトの設定

@@ -12,13 +12,33 @@ void Component::Initialize(){
 void Component::Update(){
 }
 
-//衝突したときの処理
-void Component::OnCollision(const CollisionInfo& info){
+//接触した瞬間
+void Component::OnCollisionEnter(const CollisionInfo& info){
 	(void)info;
 }
 
-//衝突したときの処理
-void Component::OnTrigger(BaseCollider* other){
+//接触中
+void Component::OnCollisionStay(const CollisionInfo& info){
+	(void)info;
+}
+
+//離れた瞬間
+void Component::OnCollisionExit(const CollisionInfo& info){
+	(void)info;
+}
+
+//接触した瞬間
+void Component::OnTriggerEnter(BaseCollider* other){
+	(void)other;
+}
+
+//接触中
+void Component::OnTriggerStay(BaseCollider* other){
+	(void)other;
+}
+
+//離れた瞬間
+void Component::OnTriggerExit(BaseCollider* other){
 	(void)other;
 }
 

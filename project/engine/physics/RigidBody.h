@@ -39,7 +39,7 @@ public://メンバ関数
 	/// 衝突したら
 	/// </summary>
 	/// <param name="info">衝突情報</param>
-	void OnCollision(const CollisionInfo& info)override;
+	void OnCollisionStay(const CollisionInfo& info)override;
 
 	/// <summary>
 	/// 衝突判定が開始する瞬間

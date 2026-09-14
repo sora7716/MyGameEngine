@@ -2,6 +2,12 @@
 #include "TagManager.h"
 #include "StringUtility.h"
 #include "Component.h"
+//衝突判定のテーブルの初期化
+void(GameObject::* GameObject::OnCollisionTable[])(){
+	&GameObject::NotifyOnCollisionEnter,
+	&GameObject::NotifyOnCollisionStay,
+	&GameObject::NotifyOnCollisionExit
+};
 
 //ゲームオブジェトの生成
 std::unique_ptr<GameObject> GameObject::Create(const std::string& name){
@@ -121,8 +127,8 @@ void GameObject::UpdateComponents(UpdatePhase phase){
 	}
 }
 
-//衝突したことを各コンポーネントに通知する
-void GameObject::NotifyOnCollision(const CollisionInfo& info){
+//接触した瞬間ということを各コンポーネントに通知する
+void GameObject::NotifyOnCollisionEnter(const CollisionInfo& info){
 	//各コンポーネントごとに
 	for (const std::unique_ptr<Component>& component : components_){
 		if (!component){
@@ -134,12 +140,12 @@ void GameObject::NotifyOnCollision(const CollisionInfo& info){
 		}
 
 		//コンポーネントに衝突を通知
-		component->OnCollision(info);
+		component->OnCollisionEnter(info);
 	}
 }
 
 //衝突したことを各コンポーネントに通知する
-void GameObject::NotifyOnTrigger(BaseCollider* other){
+void GameObject::NotifyOnCollisionStay(const CollisionInfo& info){
 	//各コンポーネントごとに
 	for (const std::unique_ptr<Component>& component : components_){
 		if (!component){
@@ -151,6 +157,74 @@ void GameObject::NotifyOnTrigger(BaseCollider* other){
 		}
 
 		//コンポーネントに衝突を通知
-		component->OnTrigger(other);
+		component->OnCollisionStay(info);
+	}
+}
+
+//離れた瞬間ということを各コンポーネントに通知する
+void GameObject::NotifyOnCollisionExit(const CollisionInfo& info){
+	//各コンポーネントごとに
+	for (const std::unique_ptr<Component>& component : components_){
+		if (!component){
+			//コンポーネントが存在しているか	
+			continue;
+		} else if (!component->IsEnabled()){
+			//コンポーネントが有効か
+			continue;
+		}
+
+		//コンポーネントに衝突を通知
+		component->OnCollisionExit(info);
+	}
+}
+
+//接触した瞬間ということを各コンポーネントに通知する
+void GameObject::NotifyOnTriggerEnter(BaseCollider* other){
+	//各コンポーネントごとに
+	for (const std::unique_ptr<Component>& component : components_){
+		if (!component){
+			//コンポーネントが存在しているか	
+			continue;
+		} else if (!component->IsEnabled()){
+			//コンポーネントが有効か
+			continue;
+		}
+
+		//コンポーネントに衝突を通知
+		component->OnTriggerEnter(other);
+	}
+}
+
+//衝突したことを各コンポーネントに通知する
+void GameObject::NotifyOnTriggerStay(BaseCollider* other){
+	//各コンポーネントごとに
+	for (const std::unique_ptr<Component>& component : components_){
+		if (!component){
+			//コンポーネントが存在しているか	
+			continue;
+		} else if (!component->IsEnabled()){
+			//コンポーネントが有効か
+			continue;
+		}
+
+		//コンポーネントに衝突を通知
+		component->OnTriggerStay(other);
+	}
+}
+
+//離れた瞬間ということを各コンポーネントに通知する
+void GameObject::NotifyOnTriggerExit(BaseCollider* other){
+	//各コンポーネントごとに
+	for (const std::unique_ptr<Component>& component : components_){
+		if (!component){
+			//コンポーネントが存在しているか	
+			continue;
+		} else if (!component->IsEnabled()){
+			//コンポーネントが有効か
+			continue;
+		}
+
+		//コンポーネントに衝突を通知
+		component->OnTriggerExit(other);
 	}
 }

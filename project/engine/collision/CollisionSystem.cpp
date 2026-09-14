@@ -27,6 +27,11 @@ void CollisionSystem::Update(const std::vector<std::unique_ptr<GameObject>>& gam
 		}
 	}
 
+	//過去のペアに保存
+	previousColliderPairs_ = currentColliderPairs_;
+	//現在のペアをクリア
+	currentColliderPairs_.clear();
+
 	//コライダーの数分衝突判定を確認
 	for (uint32_t i = 0; i < static_cast<uint32_t>(colliders_.size()); i++){
 		BaseCollider* collider1 = colliders_[i];
@@ -105,6 +110,12 @@ void CollisionSystem::CheckCollisionAABB(AABBCollider* collider1, AABBCollider* 
 		return;
 	}
 
+	//コライダーのペアを登録
+	std::pair<BaseCollider*, BaseCollider*> pair = RegisterColliderPair(collider1, collider2);
+
+	//衝突状況の判断
+	collisionState_ = JudgeCollisionState(pair);
+
 	//衝突したときの情報
 	CollisionInfo collisionInfo1 = {};
 	CollisionInfo collisionInfo2 = {};
@@ -140,15 +151,15 @@ void CollisionSystem::CheckCollisionAABB(AABBCollider* collider1, AABBCollider* 
 	//衝突していた場合
 	if (collider1->IsTrigger() || collider2->IsTrigger()){
 		//どちらか片方がIsTriggerがtrueだった場合
-		gameObject1->NotifyOnTrigger(collider2);
-		gameObject2->NotifyOnTrigger(collider1);
+		gameObject1->NotifyOnTriggerStay(collider2);
+		gameObject2->NotifyOnTriggerStay(collider1);
 	} else{
 		//オブジェクトを押し出す
 		ResolveCollision(collider1, collider2, collisionInfo1, collisionInfo2);
 
 		//どちらか片方がIsTriggerがfalseだった場合
-		gameObject1->NotifyOnCollision(collisionInfo1);
-		gameObject2->NotifyOnCollision(collisionInfo2);
+		gameObject1->NotifyOnCollisionStay(collisionInfo1);
+		gameObject2->NotifyOnCollisionStay(collisionInfo2);
 	}
 }
 
@@ -214,4 +225,38 @@ void CollisionSystem::ResolveCollision(BaseCollider* collider1, BaseCollider* co
 	//押し戻しをする
 	transform1.translate += info1.normal * info1.penetrationDepth * rate1;
 	transform2.translate += info2.normal * info2.penetrationDepth * rate2;
+}
+
+//コライダーのペアをと登録
+std::pair<BaseCollider*, BaseCollider*> CollisionSystem::RegisterColliderPair(BaseCollider* collider1, BaseCollider* collider2){
+	//ペアを保存
+	std::less<BaseCollider*>compere;
+	std::pair<BaseCollider*, BaseCollider*>pair;
+	if (compere(collider1, collider2)){
+		pair = { collider1,collider2 };
+	} else{
+		pair = { collider2,collider1 };
+	}
+
+	//ペアの保存
+	currentColliderPairs_.push_back(pair);
+
+	return pair;
+}
+
+//コライダーのペアを見て衝突状況を判断
+CollisionState CollisionSystem::JudgeCollisionState(const std::pair<BaseCollider*, BaseCollider*>& pair){
+	//現在のペアに存在しているか
+	bool isCurrentPair = std::find(currentColliderPairs_.begin(), currentColliderPairs_.end(), pair) != currentColliderPairs_.end();
+
+	//過去のペアに存在しているか
+	bool isPreviousPair = std::find(previousColliderPairs_.begin(), previousColliderPairs_.end(), pair) != previousColliderPairs_.end();
+
+	//衝突状況を判断
+	if (isCurrentPair && isPreviousPair){
+		return CollisionState::kStay;
+	} else if (isCurrentPair && !isPreviousPair){
+		return CollisionState::kEnter;
+	}
+	return CollisionState::kExit;
 }

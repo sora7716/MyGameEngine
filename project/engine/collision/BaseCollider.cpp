@@ -14,12 +14,12 @@ void BaseCollider::Initialize(){
 }
 
 //衝突したときの判定(押し戻しあり)
-void BaseCollider::OnCollision(const CollisionInfo& info){
+void BaseCollider::OnCollisionStay(const CollisionInfo& info){
 	(void)info;
 }
 
 //衝突したときの判定(押し戻しなし)
-void BaseCollider::OnTrigger(BaseCollider* other){
+void BaseCollider::OnTriggerStay(BaseCollider* other){
 	(void)other;
 }
 

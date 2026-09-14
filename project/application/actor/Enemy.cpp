@@ -81,7 +81,7 @@ void Enemy::Update(){
 }
 
 //衝突したら
-void Enemy::OnTrigger(BaseCollider* other){
+void Enemy::OnTriggerStay(BaseCollider* other){
 	//衝突したのがプレイヤーだったら
 	if (other->GetOwner()->GetTag() != "Player"){
 		return;

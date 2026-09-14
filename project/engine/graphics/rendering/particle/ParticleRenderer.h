@@ -21,7 +21,7 @@ private://構造体
 	//パーティクルの情報をGPUに送るための構造体
 	struct ParticleForGPU{
 		Matrix4x4 world = Matrix4x4::Identity4x4();
-		Vector4 color = Vector4::MakeWhiteColor();
+		Vector4 color = Vector4::GetWhiteColor();
 	};
 
 	//パーティクルのGPUリソース

@@ -333,20 +333,22 @@ void RenderSystem::CollectActiveDebugDraw(const std::vector<std::unique_ptr<Game
 		}
 
 		//DebugDrawを取得
-		debugDraw::BaseShape* debugDraw = gameObject->GetComponent<debugDraw::BaseShape>();
+		std::vector<debugDraw::BaseShape*> debugDraws = gameObject->GetComponents<debugDraw::BaseShape>();
 
-		//オブジェクト3dがNullか
-		if (!debugDraw){
-			continue;
+		for (debugDraw::BaseShape* debugDraw : debugDraws){
+			//オブジェクト3dがNullか
+			if (!debugDraw){
+				continue;
+			}
+
+			//オブジェクト3dが有効状態か
+			if (!debugDraw->IsEnabled()){
+				continue;
+			}
+
+			//activeDebugDrawを追加
+			activeDebugDraws_.push_back(debugDraw);
 		}
-
-		//オブジェクト3dが有効状態か
-		if (!debugDraw->IsEnabled()){
-			continue;
-		}
-
-		//activeDebugDrawを追加
-		activeDebugDraws_.push_back(debugDraw);
 	}
 
 	//レンダラーに追加

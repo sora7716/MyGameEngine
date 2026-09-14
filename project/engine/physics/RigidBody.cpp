@@ -3,6 +3,7 @@
 #include "MathUtility.h"
 #include "GameObject.h"
 #include "RenderingData.h"
+#include "BaseCollider.h"
 
 //コンストラクタ
 RigidBody::RigidBody(GameObject* gameObject) :Component(gameObject){
@@ -41,6 +42,44 @@ std::unique_ptr<Component> RigidBody::Clone(GameObject* gameObject) const{
 	return cloneInstance;
 }
 
+//衝突したら
+void RigidBody::OnCollision(const CollisionInfo& info){
+	//衝突対象が無ければ
+	if (!info.other){
+		return;
+	}
+
+	//法線ベクトルの速度
+	float normalVelocity = velocity_.Dot(info.normal);
+
+	//速度と逆方向へ
+	if (normalVelocity < 0.0f){
+		velocity_ -= info.normal * normalVelocity;
+	}
+
+	//地面に接しているか
+	const bool isGroundSurface = info.normal.y > groundThreshold_;
+
+	//上方向へ動いているか
+	const bool isMovingUp = velocity_.y > 0.0f;
+
+	//地面に接しているか判定
+	if (isGroundSurface && !isMovingUp){
+		isOnGround_ = true;
+	}
+}
+
+//衝突判定が開始する瞬間
+void RigidBody::BeginCollisionFrame(){
+	//地面への接地状態をリセット
+	isOnGround_ = false;
+}
+
+//地面に接している閾値の設定
+void RigidBody::SetGroundThreshold(float groundThreshold){
+	groundThreshold_ = groundThreshold;
+}
+
 //速度を取得
 Vector3& RigidBody::GetVelocity(){
 	return velocity_;
@@ -59,6 +98,16 @@ Vector3& RigidBody::GetAcceleration(){
 //加速度を取得
 const Vector3& RigidBody::GetAcceleration() const{
 	return acceleration_;
+}
+
+//地面に接している閾値の取得
+float RigidBody::GetGroundThreshold() const{
+	return groundThreshold_;
+}
+
+//地面に接しているか
+bool RigidBody::IsOnGround() const{
+	return isOnGround_;
 }
 
 //速度と加速度を適応

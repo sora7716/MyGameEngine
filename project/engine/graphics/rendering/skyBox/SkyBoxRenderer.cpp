@@ -265,7 +265,7 @@ void SkyBoxRenderer::CreateMaterialResource(){
 	//書き込むためのアドレスを取得
 	materialResource_->Map(0, nullptr, reinterpret_cast<void**>(&materialData_));
 	//色を書き込む
-	*materialData_ = Vector4::MakeWhiteColor();
+	*materialData_ = Vector4::GetWhiteColor();
 }
 
 //座標変換行列リソースの生成

@@ -181,7 +181,7 @@ void ParticleRenderer::CreateMaterialResources(GpuResource& gpuResource, uint32_
 		//書き込むためのアドレスを取得
 		gpuResource.materialResources[i]->Map(0, nullptr, reinterpret_cast<void**>(&gpuResource.materialDatas[i]));
 		//色を書き込む
-		gpuResource.materialDatas[i]->color = Vector4::MakeWhiteColor();
+		gpuResource.materialDatas[i]->color = Vector4::GetWhiteColor();
 		gpuResource.materialDatas[i]->enableLighting = true;
 		gpuResource.materialDatas[i]->uvMatrix = Matrix4x4::Identity4x4();
 		gpuResource.materialDatas[i]->shininess = 10.0f;

@@ -142,7 +142,7 @@ Particle ParticleEmitter::MakeNormalParticle(){
 	particle.transform.SetEulerAngle({ 0.0f,0.0f,distRotate(randomEngine_) });
 	particle.transform.translate = emitter_.translate;
 	particle.velocity = { 0.0f,0.0f,0.0f };
-	particle.color = Vector4::MakeWhiteColor();
+	particle.color = Vector4::GetWhiteColor();
 	particle.lifeTime = 1.0f;//1秒で消える
 	particle.currentTime = 0;
 

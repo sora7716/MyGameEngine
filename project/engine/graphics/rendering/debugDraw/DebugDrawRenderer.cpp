@@ -164,7 +164,7 @@ void DebugDrawRenderer::CreateMaterialResource(GpuResource& gpuResource){
 	assert(gpuResource.materialData);
 
 	//マテリアルデータの初期値を書き込む
-	*gpuResource.materialData = Vector4::MakeWhiteColor();
+	*gpuResource.materialData = Vector4::GetWhiteColor();
 }
 
 //ワールド行列リソースの生成

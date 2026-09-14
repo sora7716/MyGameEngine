@@ -3,6 +3,7 @@
 #include "GameObject.h"
 #include "AABBCollider.h"
 #include "Collision.h"
+#include "RigidBody.h"
 
 //コンストラクタ
 CollisionSystem::CollisionSystem(ConstructorKey){
@@ -17,9 +18,19 @@ void CollisionSystem::Update(const std::vector<std::unique_ptr<GameObject>>& gam
 	//コライダーを集める
 	CollectCollider(gameObjects);
 
+	//衝突判定をする前準備
+	for (const std::unique_ptr<GameObject>& gameObject : gameObjects){
+		RigidBody* rigidBody = gameObject->GetComponent<RigidBody>();
+
+		if (rigidBody){
+			rigidBody->BeginCollisionFrame();
+		}
+	}
+
 	//コライダーの数分衝突判定を確認
 	for (uint32_t i = 0; i < static_cast<uint32_t>(colliders_.size()); i++){
 		BaseCollider* collider1 = colliders_[i];
+
 		for (uint32_t j = i + 1; j < static_cast<uint32_t>(colliders_.size()); j++){
 			BaseCollider* collider2 = colliders_[j];
 

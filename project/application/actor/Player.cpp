@@ -58,17 +58,9 @@ std::unique_ptr<Component> Player::Clone(GameObject* gameObject) const{
 
 //衝突したら
 void Player::OnCollision(const CollisionInfo& info){
-	//タグを取得
-	const std::string& tag = info.other->GetOwner()->GetTag();
-
-	//速度
-	Vector3& velocity = rigidBody_->GetVelocity();
-	//地面の上に乗ったら
-	if (tag == "Ground"){
-		isOnGround_ = true;
-		if (velocity.y > 0.0f){
-			velocity.y = 0.0f;
-		}
+	//リジッドボディと衝突対象のコライダーのどちらかが沿うん材していない場合
+	if (!rigidBody_ || !info.other){
+		return;
 	}
 }
 
@@ -126,13 +118,15 @@ void Player::MoveControl(){
 
 //ジャンプの操作
 void Player::JumpControl(){
-	Vector3& velocity = rigidBody_->GetVelocity();
-	if (input_->TriggerKey(DIK_SPACE)){
-		if (isOnGround_){
-			velocity.y = kJumpSpeed;
-			isOnGround_ = false;
-		}
+	if (!input_->TriggerKey(DIK_SPACE)){
+		return;
 	}
+
+	if (!rigidBody_->IsOnGround()){
+		return;
+	}
+
+	rigidBody_->GetVelocity().y = kJumpSpeed;
 }
 
 //移動方向に向かせる

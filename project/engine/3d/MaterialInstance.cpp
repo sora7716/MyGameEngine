@@ -18,7 +18,7 @@ void MaterialInstance::Initialize(const std::vector<MaterialTexturePaths>& textu
 	for (uint32_t i = 0; i < static_cast<uint32_t>(slots_.size()); i++){
 		MaterialInstanceSlot& slot = slots_[i];
 		//マテリアルの初期化
-		slot.material.color = Vector4::MakeWhiteColor();
+		slot.material.color = Vector4::GetWhiteColor();
 		slot.material.enableLighting = true;
 		slot.material.environmentCoefficient = 0.0f;
 		slot.material.shininess = 100.0f;
@@ -34,7 +34,7 @@ void MaterialInstance::Initialize(const std::vector<MaterialTexturePaths>& textu
 	}
 
 	//リムライトの初期化
-	rimLight_.color = Vector4::MakeWhiteColor();
+	rimLight_.color = Vector4::GetWhiteColor();
 	rimLight_.power = 0.1f;
 	rimLight_.outLinePower = 0.1f;
 	rimLight_.softness = 5.0f;

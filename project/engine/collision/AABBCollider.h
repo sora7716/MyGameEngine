@@ -35,6 +35,12 @@ public://メンバ関数
 	void SetHalfSize(const Vector3& halfSize);
 
 	/// <summary>
+	/// オフセットを設定
+	/// </summary>
+	/// <param name="offset"></param>
+	void SetOffset(const Vector3& offset);
+
+	/// <summary>
 	/// ハーフサイズの取得
 	/// </summary>
 	/// <returns>ハーフサイズ</returns>
@@ -45,6 +51,12 @@ public://メンバ関数
 	/// </summary>
 	/// <returns>AABB</returns>
 	const primitiveData::AABB& GetAABB();
+
+	/// <summary>
+	/// オフセットの取得
+	/// </summary>
+	/// <returns>オフセット</returns>
+	const Vector3& GetOffset()const;
 
 	/// <summary>
 	/// コピー
@@ -65,5 +77,7 @@ private://メンバ変数
 	Vector3 halfSize_ = {};
 	//ワールドのハーフサイズ
 	Vector3 worldHalfSize_ = {};
+	//オフセット
+	Vector3 offset_ = {};
 };
 

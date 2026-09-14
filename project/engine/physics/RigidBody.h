@@ -36,6 +36,23 @@ public://メンバ関数
 	std::unique_ptr<Component> Clone(GameObject* gameObject)const override;
 
 	/// <summary>
+	/// 衝突したら
+	/// </summary>
+	/// <param name="info">衝突情報</param>
+	void OnCollision(const CollisionInfo& info)override;
+
+	/// <summary>
+	/// 衝突判定が開始する瞬間
+	/// </summary>
+	void BeginCollisionFrame();
+
+	/// <summary>
+	/// 地面に接している閾値の設定
+	/// </summary>
+	/// <param name="groundThreshold">地面に接している閾値</param>
+	void SetGroundThreshold(float groundThreshold);
+
+	/// <summary>
 	/// 速度の取得
 	/// </summary>
 	/// <returns>速度</returns>
@@ -58,6 +75,18 @@ public://メンバ関数
 	/// </summary>
 	/// <returns>加速度</returns>
 	const Vector3& GetAcceleration()const;
+
+	/// <summary>
+	/// 地面に接している閾値の取得
+	/// </summary>
+	/// <returns>地面に接している閾値</returns>
+	float GetGroundThreshold()const;
+
+	/// <summary>
+	/// 地面に接しているか
+	/// </summary>
+	/// <returns>地面に接しているか</returns>
+	bool IsOnGround()const;
 private://メンバ関数
 	/// <summary>
 	/// 速度と加速度を適応
@@ -77,4 +106,8 @@ private://メンバ変数
 	Vector3 acceleration_ = {};
 	//重さ
 	float mass = 1.0f;
+	//地面に接している閾値
+	float groundThreshold_ = 0.0f;
+	//地面に接している
+	bool isOnGround_ = true;
 };

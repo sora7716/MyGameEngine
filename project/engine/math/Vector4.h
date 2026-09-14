@@ -18,46 +18,46 @@ struct Vector4 final {
 	float w = 0.0f;
 
 	/// <summary>
-	/// RGB値のゲッター
+	/// RGB値の取得
 	/// </summary>
 	/// <returns>rgb</returns>
 	const RGB GetRGB()const;
 
 	/// <summary>
-	/// RGBのセッター
+	/// RGBの設定
 	/// </summary>
 	/// <param name="rgb"></param>
 	void SetRGB(const RGB& rgb);
 
 	/// <summary>
-	/// 白のゲッター
+	/// 白の取得
 	/// </summary>
 	/// <returns>白</returns>
-	static Vector4 MakeWhiteColor();
+	static Vector4 GetWhiteColor();
 
 	/// <summary>
-	/// 赤のゲッター
+	/// 赤の取得
 	/// </summary>
 	/// <returns>赤</returns>
-	static Vector4 MakeRedColor();
+	static Vector4 GetRedColor();
 
 	/// <summary>
-	/// 緑のゲッター
+	/// 緑の取得
 	/// </summary>
 	/// <returns>緑</returns>
-	static Vector4 MakeGreenColor();
+	static Vector4 GetGreenColor();
 
 	/// <summary>
-	/// 青のゲッター
+	/// 青の取得
 	/// </summary>
 	/// <returns>青</returns>
-	static Vector4 MakeBlueColor();
+	static Vector4 GetBlueColor();
 
 	/// <summary>
-	/// 黒のゲッター
+	/// 黒の取得
 	/// </summary>
 	/// <returns>黒</returns>
-	static Vector4 MakeBlackColor();
+	static Vector4 GetBlackColor();
 
 	/// <summary>
 	/// カラーコードをVector4に変換

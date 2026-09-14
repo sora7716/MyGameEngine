@@ -53,11 +53,7 @@ void GameScene::Debug(){
 
 #ifdef USE_IMGUI
 	ImGui::Begin("デバッグ");
-	Vector3 playerHitBoxSize = playerObject_->GetComponent<AABBCollider>()->GetHalfSize() * 2.0f;
-	if (ImGui::DragFloat3("aabb.size", &playerHitBoxSize.x, 0.1f)){
-		playerObject_->GetComponent<AABBCollider>()->SetHalfSize(playerHitBoxSize / 2.0f);
-		playerObject_->GetComponent<debugDraw::Cube>()->SetLocalScale(playerHitBoxSize);
-	}
+
 	ImGui::End();
 #endif // USE_IMGUI
 }
@@ -123,7 +119,7 @@ GameObject* GameScene::CreatePlayerObject(){
 	//ワイヤーフレーム
 	debugDraw::Cube* playerHitBox = gameObject->AddComponent<debugDraw::Cube>();
 	playerHitBox->SetLocalScale(playerHitBoxSize);
-	playerHitBox->SetColor(Vector4::MakeRedColor());
+	playerHitBox->SetColor(Vector4::GetRedColor());
 
 	//3Dオブジェクト
 	Object3d* playerModel = gameObject->AddComponent<Object3d>();
@@ -141,11 +137,12 @@ GameObject* GameScene::CreateGround(){
 	gameObject->SetTag("Ground");
 
 	//AABBコライダー
-	AABBCollider* aabbCollider = gameObject->AddComponent<AABBCollider>();
-	aabbCollider->SetHalfSize(gameObject->GetTransform().scale / 2.0f);
-	aabbCollider->SetBodyType(BodyType::kStatic);
-	debugDraw::Cube* hitBox = gameObject->AddComponent<debugDraw::Cube>();
-	hitBox->SetLocalScale(gameObject->GetTransform().scale);
+	Vector3 blockerSize = Vector3::GetAllOne();
+	AABBCollider* blocker = gameObject->AddComponent<AABBCollider>();
+	blocker->SetHalfSize(blockerSize / 2.0f);
+	blocker->SetBodyType(BodyType::kStatic);
+	debugDraw::Cube* blockerDebug = gameObject->AddComponent<debugDraw::Cube>();
+	blockerDebug->SetLocalScale(blockerSize);
 
 	//3Dオブジェクト
 	Object3d* groundModel = gameObject->AddComponent<Object3d>();
@@ -163,18 +160,37 @@ GameObject* GameScene::CreateEnemy(){
 	gameObject->SetTag("Enemy");
 	gameObject->GetTransform().translate = { 0.0f,1.0f,2.0f };
 
+	//リジッドボディ
+	gameObject->AddComponent<RigidBody>();
+
 	//Enemy
 	gameObject->AddComponent<Enemy>();
 
 	//AABBコンポーネント
-	Vector3 enemyHitBoxSize = Vector3::GetAllOne();
-	AABBCollider* enemyAABB = gameObject->AddComponent<AABBCollider>();
-	enemyAABB->SetIsTrigger(true);
+	Vector3 hitBoxSize = Vector3::GetAllOne();
+	AABBCollider* hitBox = gameObject->AddComponent<AABBCollider>();
+	hitBox->SetIsTrigger(true);
+	hitBox->SetBodyType(BodyType::kDynamic);
 
 	//ワイヤーフレーム
-	debugDraw::Cube* enemyHitBox = gameObject->AddComponent<debugDraw::Cube>();
-	enemyAABB->SetHalfSize(enemyHitBoxSize / 2.0f);
-	enemyHitBox->SetLocalScale(enemyHitBoxSize);
+	debugDraw::Cube* hitBoxDebug = gameObject->AddComponent<debugDraw::Cube>();
+	hitBox->SetHalfSize(hitBoxSize / 2.0f);
+	hitBoxDebug->SetLocalScale(hitBoxSize);
+
+	//すり抜け防止用のコライダー
+	Vector3 blockerSize = { 0.3f,0.3f,0.3f };
+	Vector3 blockerOffset = { 0.0f,-0.4f,0.0f };
+	AABBCollider* blocker = gameObject->AddComponent<AABBCollider>();
+	blocker->SetHalfSize(blockerSize / 2.0f);
+	blocker->SetOffset(blockerOffset);
+	blocker->SetIsTrigger(false);
+	blocker->SetBodyType(BodyType::kDynamic);
+
+	//ワイヤーフレーム
+	debugDraw::Cube* blockerDebug = gameObject->AddComponent<debugDraw::Cube>();
+	blockerDebug->SetLocalScale(blockerSize);
+	blockerDebug->SetLocalTranslate(blockerOffset);
+	blockerDebug->SetColor(Vector4::GetRedColor());
 
 	//3Dオブジェクト
 	Object3d* enemyModel = gameObject->AddComponent<Object3d>();

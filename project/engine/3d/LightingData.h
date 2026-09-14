@@ -4,7 +4,7 @@
 
 //平行光源
 struct DirectionalLight{
-	Vector4 color = Vector4::MakeWhiteColor();//ライトの色
+	Vector4 color = Vector4::GetWhiteColor();//ライトの色
 	Vector3 direction = {};//ライトの向き
 	float intensity = 1.0f;//輝度
 	int32_t isLambert = 0;//lambertにするかどうか
@@ -14,7 +14,7 @@ struct DirectionalLight{
 
 //点光源
 struct PointLight{
-	Vector4 color = Vector4::MakeWhiteColor();//ライトの色
+	Vector4 color = Vector4::GetWhiteColor();//ライトの色
 	Vector3 position = {};//ライトの位置
 	float intensity = 1.0f;//輝度
 	float distance = 0.0f;//ライトの届く最大距離
@@ -25,7 +25,7 @@ struct PointLight{
 
 //スポットライト
 struct SpotLight{
-	Vector4 color = Vector4::MakeWhiteColor();//ライト色
+	Vector4 color = Vector4::GetWhiteColor();//ライト色
 	Vector3 position = {};//ライトの位置
 	float intensity = 1.0f;//輝度
 	Vector3 direction = {};//スポットライトの方向

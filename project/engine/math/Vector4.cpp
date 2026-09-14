@@ -1,40 +1,40 @@
 #include "Vector4.h"
 #include <cassert>
 
-//RGBのゲッター
+//RGBの取得
 const RGB Vector4::GetRGB()const {
 	return { x,y,z };
 }
 
-//RGBのセッター
+//RGBの設定
 void Vector4::SetRGB(const RGB& rgb) {
 	x = rgb.r;
 	y = rgb.g;
 	z = rgb.b;
 }
 
-//白のゲッター
-Vector4 Vector4::MakeWhiteColor() {
+//白の取得
+Vector4 Vector4::GetWhiteColor() {
 	return Vector4(1.0f, 1.0f, 1.0f, 1.0f);
 }
 
-//赤のゲッター
-Vector4 Vector4::MakeRedColor() {
+//赤の取得
+Vector4 Vector4::GetRedColor() {
 	return Vector4(1.0f, 0.0f, 0.0f, 1.0f);
 }
 
-//緑のゲッター
-Vector4 Vector4::MakeGreenColor() {
+//緑の取得
+Vector4 Vector4::GetGreenColor() {
 	return Vector4(0.0f, 1.0f, 0.0f, 1.0f);
 }
 
-//青のゲッター
-Vector4 Vector4::MakeBlueColor() {
+//青の取得
+Vector4 Vector4::GetBlueColor() {
 	return Vector4(0.0f, 0.0f, 1.0f, 1.0f);
 }
 
-//黒のゲッター
-Vector4 Vector4::MakeBlackColor() {
+//黒の取得
+Vector4 Vector4::GetBlackColor() {
 	return Vector4(0.0f, 0.0f, 0.0f, 1.0f);
 }
 

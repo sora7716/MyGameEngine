@@ -91,7 +91,4 @@ private://メンバ変数
 	Vector3 inputDirection_ = {};
 	//World座標系での移動方向ベクトル
 	Vector3 worldDirection_ = {};
-
-	//地面の上にいるか
-	bool isOnGround_ = true;
 };

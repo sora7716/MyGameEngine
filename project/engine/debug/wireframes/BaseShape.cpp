@@ -25,7 +25,7 @@ void debugDraw::BaseShape::Initialize(){
 	indices_.resize(indexCount_);
 
 	//白色に初期化
-	color_ = Vector4::MakeWhiteColor();
+	color_ = Vector4::GetWhiteColor();
 	//単位行列で初期化
 	worldMatrix_ = Matrix4x4::Identity4x4();
 

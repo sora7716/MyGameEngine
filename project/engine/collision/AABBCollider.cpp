@@ -19,7 +19,7 @@ void AABBCollider::Initialize(){
 //更新
 void AABBCollider::Update(){
 	//中心座標
-	const Vector3& center = gameObject_->GetTransform().translate;
+	const Vector3& center = gameObject_->GetTransform().translate + offset_;
 
 	//ワールドのハーフサイズを取得
 	worldHalfSize_ = halfSize_ * gameObject_->GetTransform().scale.Abs();
@@ -34,6 +34,11 @@ void AABBCollider::SetHalfSize(const Vector3& halfSize){
 	halfSize_ = halfSize;
 }
 
+//オフセットの設定
+void AABBCollider::SetOffset(const Vector3& offset){
+	offset_ = offset;
+}
+
 //ハーフサイズの取得
 const Vector3& AABBCollider::GetHalfSize() const{
 	return halfSize_;
@@ -42,6 +47,11 @@ const Vector3& AABBCollider::GetHalfSize() const{
 //AABBの取得
 const primitiveData::AABB& AABBCollider::GetAABB(){
 	return aabb_;
+}
+
+//オフセットの取得
+const Vector3& AABBCollider::GetOffset() const{
+	return offset_;
 }
 
 //複製

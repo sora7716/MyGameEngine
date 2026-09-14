@@ -7,7 +7,7 @@
 struct Particle{
 	Transform transform = {};//SRVの情報
 	Vector3 velocity = {};//方向
-	Vector4 color = Vector4::MakeWhiteColor();//色
+	Vector4 color = Vector4::GetWhiteColor();//色
 	float lifeTime = 0.0f;//生存時間
 	float currentTime = 0.0f;//発生してからの
 	bool isEnabled = true;//表示するか

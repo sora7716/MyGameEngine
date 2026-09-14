@@ -3,10 +3,17 @@
 #include "StringUtility.h"
 #include "Component.h"
 //衝突判定のテーブルの初期化
-void(GameObject::* GameObject::OnCollisionTable[])(){
-	&GameObject::NotifyOnCollisionEnter,
-	&GameObject::NotifyOnCollisionStay,
-	&GameObject::NotifyOnCollisionExit
+std::vector<GameObject::NotifyOnCollision> GameObject::onCollisionTable = {
+	&NotifyOnCollisionEnter,
+	&NotifyOnCollisionStay,
+	&NotifyOnCollisionExit
+};
+
+//衝突判定のテーブルの初期化
+std::vector<GameObject::NotifyOnTrigger> GameObject::onTriggerTable = {
+	&NotifyOnTriggerEnter,
+	&NotifyOnTriggerStay,
+	&NotifyOnTriggerExit,
 };
 
 //ゲームオブジェトの生成
@@ -125,6 +132,16 @@ void GameObject::UpdateComponents(UpdatePhase phase){
 		//コンポーネントの更新
 		component->Update();
 	}
+}
+
+//衝突判定のイベントを呼び出す
+void GameObject::InvokeCollisionEvent(uint32_t index, const CollisionInfo& info){
+	(this->*onCollisionTable[index])(info);
+}
+
+//衝突判定のイベントを呼び出す
+void GameObject::InvokeTriggerEvent(uint32_t index, BaseCollider* other){
+	(this->*onTriggerTable[index])(other);
 }
 
 //接触した瞬間ということを各コンポーネントに通知する

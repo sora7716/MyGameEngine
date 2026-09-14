@@ -2,12 +2,11 @@
 #include <vector>
 #include <memory>
 #include "Vector3.h"
+#include "BaseCollider.h"
 
 //前方宣言
 class GameObject;
-class BaseCollider;
 class AABBCollider;
-struct CollisionInfo;
 
 /// <summary>
 /// 衝突状況
@@ -17,6 +16,21 @@ enum class CollisionState :uint32_t{
 	kStay,
 	kExit,
 	kCount
+};
+
+//衝突の情報を記録しておくため
+struct CollisionRecord{
+	//コライダー
+	BaseCollider* collider1 = nullptr;
+	BaseCollider* collider2 = nullptr;
+	//衝突情報
+	CollisionInfo info1 = {};
+	CollisionInfo info2 = {};
+	//押し戻すか
+	bool isTrigger = false;
+
+	//一致した場合
+	bool operator==(const CollisionRecord& other)const;
 };
 
 /// <summary>
@@ -93,22 +107,24 @@ private://メンバ関数
 	/// </summary>
 	/// <param name="collider1">コライダー1</param>
 	/// <param name="collider2">コライダー2</param>
-	/// <returns>ペア</returns>
-	std::pair<BaseCollider*, BaseCollider*> RegisterColliderPair(BaseCollider* collider1, BaseCollider* collider2);
+	/// <param name="info1">衝突したときの情報1</param>
+	/// <param name="info2">衝突したときの情報2</param>
+	/// <returns>衝突判定の記録</returns>
+	CollisionRecord RegisterColliderPair(BaseCollider* collider1, BaseCollider* collider2, const CollisionInfo& info1, const CollisionInfo& info2);
 
 	/// <summary>
-	/// コライダーのペアを見て衝突状況を判断
+	/// 衝突判定の記録を見て衝突状況を判断
 	/// </summary>
-	/// <param name="pair">コライダーのペア</param>
+	/// <param name="collisionRecord">衝突判定の記録</param>
 	/// <returns>衝突状況</returns>
-	CollisionState JudgeCollisionState(const std::pair<BaseCollider*, BaseCollider*>& pair);
+	CollisionState JudgeCollisionState(const CollisionRecord& collisionRecord);
 private://メンバ変数
 	//コライダー
 	std::vector<BaseCollider*>colliders_;
-	//コライダーのペア
-	std::vector<std::pair<BaseCollider*, BaseCollider*>>currentColliderPairs_;
-	//前フレームのペア
-	std::vector<std::pair<BaseCollider*, BaseCollider*>>previousColliderPairs_;
+	//現在のコライダー
+	std::vector<CollisionRecord>currentCollisions_;
+	//前フレームのコライダー
+	std::vector<CollisionRecord>previousCollisions_;
 	//衝突状況
 	CollisionState collisionState_ = CollisionState::kCount;
 };

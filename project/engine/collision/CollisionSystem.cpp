@@ -49,7 +49,7 @@ void CollisionSystem::Update(const std::vector<std::unique_ptr<GameObject>>& gam
 		}
 	}
 
-	//何も衝突しなかった場合
+	////前フレームから離れたペアを探す
 	for (const CollisionRecord& previous : previousCollisions_){
 		//探す
 		auto found = std::find(currentCollisions_.begin(), currentCollisions_.end(), previous);
@@ -65,7 +65,7 @@ void CollisionSystem::Update(const std::vector<std::unique_ptr<GameObject>>& gam
 			previous.collider2->GetOwner()->InvokeTriggerEvent(static_cast<uint32_t>(CollisionState::kExit), previous.collider1);
 		} else{
 			previous.collider1->GetOwner()->InvokeCollisionEvent(static_cast<uint32_t>(CollisionState::kExit), previous.info1);
-			previous.collider2->GetOwner()->InvokeCollisionEvent(static_cast<uint32_t>(CollisionState::kExit), previous.info1);
+			previous.collider2->GetOwner()->InvokeCollisionEvent(static_cast<uint32_t>(CollisionState::kExit), previous.info2);
 		}
 	}
 }

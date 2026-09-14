@@ -8,7 +8,7 @@ void primitiveData::OBB::Initialize() {
 	orientations[0] = { 1.0f,0.0f,0.0f };
 	orientations[1] = { 0.0f,1.0f,0.0f };
 	orientations[2] = { 0.0f,0.0f,1.0f };
-	size = Vector3::GetAllOne();
+	size = Vector3::One();
 }
 
 //行列との掛け算

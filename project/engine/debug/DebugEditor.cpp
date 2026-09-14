@@ -325,7 +325,7 @@ void DebugEditor::DrawInspector(){
 		ImGui::SameLine();
 		//スケールのリセット
 		if (ImGui::SmallButton("Reset##scale")){
-			transform.scale = Vector3::GetAllOne();
+			transform.scale = Vector3::One();
 		}
 
 		//回転の切り替え(オイラー角からクォータニオンを求めてる)

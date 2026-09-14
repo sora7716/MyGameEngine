@@ -111,7 +111,7 @@ GameObject* GameScene::CreatePlayerObject(){
 	gameObject->AddComponent<Player>();
 
 	//AABBコンポーネント
-	Vector3 playerHitBoxSize = Vector3::GetAllOne();
+	Vector3 playerHitBoxSize = Vector3::One();
 	AABBCollider* playerAABB = gameObject->AddComponent<AABBCollider>();
 	playerAABB->SetHalfSize(playerHitBoxSize / 2.0f);
 	playerAABB->SetBodyType(BodyType::kDynamic);
@@ -137,7 +137,7 @@ GameObject* GameScene::CreateGround(){
 	gameObject->SetTag("Ground");
 
 	//AABBコライダー
-	Vector3 blockerSize = Vector3::GetAllOne();
+	Vector3 blockerSize = Vector3::One();
 	AABBCollider* blocker = gameObject->AddComponent<AABBCollider>();
 	blocker->SetHalfSize(blockerSize / 2.0f);
 	blocker->SetBodyType(BodyType::kStatic);
@@ -167,7 +167,7 @@ GameObject* GameScene::CreateEnemy(){
 	gameObject->AddComponent<Enemy>();
 
 	//AABBコンポーネント
-	Vector3 hitBoxSize = Vector3::GetAllOne();
+	Vector3 hitBoxSize = Vector3::One();
 	AABBCollider* hitBox = gameObject->AddComponent<AABBCollider>();
 	hitBox->SetIsTrigger(true);
 	hitBox->SetBodyType(BodyType::kDynamic);

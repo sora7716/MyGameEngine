@@ -13,13 +13,13 @@ struct Vector3 final {
 	/// すべて1.0fのベクトルを取得
 	/// </summary>
 	/// <returns>Vector3</returns>
-	static Vector3 GetAllOne();
+	static Vector3 One();
 
 	/// <summary>
 	/// すべて0.0fのベクトルを取得
 	/// </summary>
 	/// <returns>Vector3</returns>
-	static Vector3 GetAllZero();
+	static Vector3 Zero();
 
 	/// <summary>
 	/// Y軸だけに1.0fのベクトルを取得

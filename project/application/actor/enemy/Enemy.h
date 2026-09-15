@@ -106,6 +106,7 @@ private://メンバ変数
 	//衝突した方向
 	Vector3 hitDirection_ = {};
 
+	//通常状態の回転
 	Quaternion normalRotate_ = {};
 };
 

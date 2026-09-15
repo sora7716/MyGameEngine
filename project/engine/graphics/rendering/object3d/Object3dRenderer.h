@@ -26,6 +26,7 @@ private://構造体など
 		Model* model = nullptr;
 		MaterialInstance* materialInstance = nullptr;
 		BlendMode blendMode = BlendMode::kNone;
+		uint32_t meshIndex = 0;
 		Object3dRenderHandle handle = kInvalidObject3dRenderHandle;
 		std::vector<ComPtr<ID3D12Resource>>materialResources;
 		std::vector<Material*>materialPtrs;
@@ -106,10 +107,11 @@ public://メンバ関数
 	/// バッチを受け取る関数
 	/// </summary>
 	/// <param name="model">モデル</param>
+	/// <param name="meshIndex">メッシュの検索キー</param>
 	/// <param name="materialInstance">マテリアルインスタンス</param>
 	/// <param name="blendMode">ブレンドモード</param>
 	/// <param name="transformations">トランスフォーメーションデータ</param>
-	void SubmitBatch(Model* model, MaterialInstance* materialInstance, BlendMode blendMode, const std::vector<TransformationMatrix>& transformations);
+	void SubmitBatch(Model* model, uint32_t meshIndex, MaterialInstance* materialInstance, BlendMode blendMode, const std::vector<TransformationMatrix>& transformations);
 
 	/// <summary>
 	/// 描画データの追加

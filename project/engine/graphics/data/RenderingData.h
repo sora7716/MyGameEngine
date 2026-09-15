@@ -39,7 +39,6 @@ struct RectTransform{
 
 //TransformationMatrix
 struct TransformationMatrix{
-	Matrix4x4 wvp = {};
 	Matrix4x4 world = {};
 	Matrix4x4 worldInverseTranspose = {};
 };
@@ -49,7 +48,6 @@ struct TransformationMatrixForSprite{
 	Matrix4x4 wvp = {};
 	Matrix4x4 world = {};
 };
-
 
 //ノード構造体
 struct Node{

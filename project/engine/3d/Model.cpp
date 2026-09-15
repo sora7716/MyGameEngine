@@ -229,7 +229,7 @@ void Model::BuildMesh(){
 	}
 }
 
-//プリミティブモデルの初期化
+//モデルの作成(メッシュデータから)
 void Model::CreateModel(const std::vector<MeshData>& meshDatas, const std::string& nodeName){
 	//モデルの読み込み
 	modelData_.meshDatas = { meshDatas };
@@ -243,6 +243,12 @@ void Model::CreateModel(const std::vector<MeshData>& meshDatas, const std::strin
 	Node& node = modelData_.rootNode;
 	node.name = nodeName;
 	node.localMatrix = Matrix4x4::Identity4x4();
+	node.meshIndices.clear();
+	node.meshIndices.reserve(modelData_.meshDatas.size());
+	for (uint32_t meshIndex = 0; meshIndex < static_cast<uint32_t>(modelData_.meshDatas.size()); meshIndex++){
+		node.meshIndices.push_back(meshIndex);
+	}
+
 	//マテリアルインスタンスの生成と初期化
 	defaultMaterialInstance_ = std::make_shared<MaterialInstance>();
 	defaultMaterialInstance_->Initialize(modelData_.materialTexturePaths);
@@ -250,7 +256,7 @@ void Model::CreateModel(const std::vector<MeshData>& meshDatas, const std::strin
 	SetupRenderData();
 }
 
-//モデルの生成
+//モデルの生成(モデルのファイルから)
 void Model::CreateModel(const std::string& objectFileName){
 	//モデルの読み込み
 	modelData_ = modelLoader::LoadModelFile("engine/resources/models", objectFileName);

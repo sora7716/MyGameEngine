@@ -19,6 +19,12 @@ class Culling;
 /// 3Dオブジェクト
 /// </summary>
 class Object3d :public Component{
+public://構造体
+	//メッシュのインスタンス
+	struct NodeMeshInstance{
+		uint32_t meshIndex = 0;
+		Matrix4x4 nodeMatrix = Matrix4x4::Identity4x4();
+	};
 public://メンバ関数
 	/// <summary>
 	/// コンストラクタ
@@ -233,6 +239,12 @@ public://メンバ関数
 	/// </summary>
 	/// <returns>現在のLOD番号</returns>
 	uint32_t GetCurrentLOD()const;
+
+	/// <summary>
+	/// ノードのメッシュインスタンスの取得
+	/// </summary>
+	/// <returns>ノードのメッシュインスタンス</returns>
+	const std::vector<NodeMeshInstance>& GetNodeMeshInstance()const;
 private://メンバ関数
 	/// <summary>
 	/// ワールド行列を作成
@@ -243,6 +255,13 @@ private://メンバ関数
 	/// マテリアルを個別化する
 	/// </summary>
 	void EnsureUniqueMaterialInstance();
+
+	/// <summary>
+	/// Nodeの行列を更新
+	/// </summary>
+	/// <param name="node">ノード</param>
+	/// <param name="parentMatrix">親行列</param>
+	void UpdateNodeMatrices(const Node& node, const Matrix4x4& parentMatrix);
 private://定数
 	//インスタンスの最大数
 	static const inline uint32_t kMaxInstanceCount_ = 1024;
@@ -267,4 +286,6 @@ private://メンバ変数
 	Matrix4x4 worldMatrix_ = {};
 	//ノード
 	Node node_ = {};
+	//メッシュのワールド行列
+	std::vector<NodeMeshInstance>nodeMeshInstance_;
 };

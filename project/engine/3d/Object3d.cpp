@@ -103,9 +103,6 @@ Matrix4x4 Object3d::MakeRenderWorldMatrix(const Matrix4x4& cameraWorldMatrix) co
 	//ビルボードの作成
 	Matrix4x4 renderWorldMatrix = matrixUtility::MakeBillboardAffineMatrix(cameraWorldMatrix, gameObject->GetTransform());
 
-	//ノード分を乗算
-	renderWorldMatrix = node_.localMatrix * renderWorldMatrix;
-
 	//一時的に作成したワールド行列を返す
 	return renderWorldMatrix;
 }
@@ -141,6 +138,9 @@ void Object3d::SetModel(const std::string& modelName){
 
 	//モデルが存在する場合
 	if (baseModel_){
+		//メッシュのワールド行列のサイズ決定(要素数は確保しない)
+		nodeMeshInstance_.reserve(baseModel_->GetMeshes().size());
+
 		//nodeにrootNodeを保存
 		node_ = baseModel_->GetModelData().rootNode;
 
@@ -357,21 +357,30 @@ uint32_t Object3d::GetCurrentLOD() const{
 	return currentLOD_;
 }
 
+//ノードのメッシュインスタンスの取得
+const std::vector<Object3d::NodeMeshInstance>& Object3d::GetNodeMeshInstance() const{
+	return nodeMeshInstance_;
+}
+
 //ワールド行列を作成
 void Object3d::MakeWorldMatrix(){
 	GameObject* gameObject = GetOwner();
 	//ゲームオブジェクトがNullじゃないか
 	assert(gameObject);
-	Matrix4x4 worldMatrix = Matrix4x4::Identity4x4();
 
 	//このオブジェクト本来のワールド行列を求める
-	worldMatrix = matrixUtility::MakeAffineMatrix(gameObject->GetTransform());
+	worldMatrix_ = matrixUtility::MakeAffineMatrix(gameObject->GetTransform());
 
-	//ノードから、ワールド行列を作成
-	worldMatrix = node_.localMatrix * worldMatrix;
+	//ノードのメッシュインスタンスをクリア
+	nodeMeshInstance_.clear();
 
-	//ワールド行列の配列を上書き
-	worldMatrix_ = worldMatrix;
+	//モデルがなければ
+	if (!baseModel_){
+		return;
+	}
+
+	//Nodeを含めてワールド行列を更新
+	UpdateNodeMatrices(node_, Matrix4x4::Identity4x4());
 }
 
 //マテリアルを個別化する
@@ -384,5 +393,23 @@ void Object3d::EnsureUniqueMaterialInstance(){
 	//ModelやほかのObject3dと共有中なら個別コピー
 	if (materialInstance_.use_count() > 1){
 		materialInstance_ = std::make_shared<MaterialInstance>(*materialInstance_);
+	}
+}
+
+//Nodeの行列を更新
+void Object3d::UpdateNodeMatrices(const Node& node, const Matrix4x4& parentMatrix){
+	//ノードの行列
+	Matrix4x4 nodeMatrix = node.localMatrix * parentMatrix;
+
+	//メッシュのインデックス分行列を計算
+	for (uint32_t meshIndex : node.meshIndices){
+		assert(baseModel_);
+		assert(meshIndex < static_cast<uint32_t>(baseModel_->GetMeshes().size()));
+		nodeMeshInstance_.push_back({ meshIndex, nodeMatrix });
+	}
+
+	//子の数分回す
+	for (const Node& child : node.children){
+		UpdateNodeMatrices(child, nodeMatrix);
 	}
 }

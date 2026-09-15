@@ -30,13 +30,21 @@ class ParticleRenderer;
 class Camera;
 class CameraRenderer;
 
+//メッシュの描画データインスタンス
+struct MeshDrawInstance{
+	Object3d* object3d = nullptr;
+	Matrix4x4 nodeMatrix = Matrix4x4::Identity4x4();
+};
+
 //描画グループごとにObject3dを分ける
 struct Object3dBatch{
 	Model* model = nullptr;
 	MaterialInstance* materialInstance = nullptr;
 	BlendMode blendMode = BlendMode::kNone;
+	uint32_t meshIndex = 0;
 
-	std::vector<Object3d*>instances;
+	//ワールド行列の配列
+	std::vector<MeshDrawInstance>meshDrawInstance;
 	//GPUへ送るインスタンスごとの行列
 	std::vector<TransformationMatrix>transformations;
 };

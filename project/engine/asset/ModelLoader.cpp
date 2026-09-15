@@ -54,32 +54,6 @@ static Node ReadNode(aiNode* node){
 	return result;
 }
 
-//Nodeを巡回して、対応するメッシュへ変換を反映する
-static void ApplyNodeTransform(Node& node, const Matrix4x4& parentMatrix, std::vector<MeshData>& meshDatas){
-	//親までの変換を含んだ、このNodeの行列
-	Matrix4x4 nodeMatrix = node.localMatrix * parentMatrix;
-
-	for (uint32_t meshIndex : node.meshIndices){
-		//nodeに入っているメッシュのインデックスに入っている各メッシュにアクセス
-		assert(meshIndex < static_cast<uint32_t>(meshDatas.size()));
-		MeshData & mesh = meshDatas[meshIndex];
-
-		//メッシュの各頂点にnodeMatrixを適応
-		for (VertexData& vertex : mesh.vertices){
-			vertex.position = vertex.position * nodeMatrix;
-
-			//法線の位置を正しくする
-			Matrix4x4 normalMatrix = nodeMatrix.InverseTranspose();
-			vertex.normal = mathUtility::TransformNormal(vertex.normal, normalMatrix).Normalize();
-		}
-	}
-
-	//子Nodeには、現在のnodeMatrixを親行列として渡す
-	for (Node& child : node.children){
-		ApplyNodeTransform(child, nodeMatrix, meshDatas);
-	}
-}
-
 //.mtlファイルの読み取り	
 MaterialTexturePaths modelLoader::LoadMaterialTemplateFile(const std::string& directoryPath, const std::string& filename){
 	//1.中で必要となる変数の宣言
@@ -161,12 +135,6 @@ ModelData modelLoader::LoadModelFile(const std::string& directoryPath, const std
 
 	//RootNodeの解析
 	modelData.rootNode = ReadNode(scene->mRootNode);
-
-	//RootNodeを各メッシュに適応
-	ApplyNodeTransform(modelData.rootNode, Matrix4x4::Identity4x4(), modelData.meshDatas);
-
-	//Node変換は頂点で焼きこみ済み
-	modelData.rootNode.localMatrix = Matrix4x4::Identity4x4();
 
 	//materialを解析
 	//ディレクトリパスを作成

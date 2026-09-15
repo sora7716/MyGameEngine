@@ -237,15 +237,6 @@
     <ClCompile Include="engine\graphics\descriptor\SRVManager.cpp">
       <Filter>engine\graphics\descriptor</Filter>
     </ClCompile>
-    <ClCompile Include="engine\graphics\pipeline\Blend.cpp">
-      <Filter>engine\graphics\texture</Filter>
-    </ClCompile>
-    <ClCompile Include="engine\graphics\pipeline\GraphicsPipeline.cpp">
-      <Filter>engine\graphics\texture</Filter>
-    </ClCompile>
-    <ClCompile Include="engine\graphics\texture\TextureManager.cpp">
-      <Filter>engine\graphics\pipeline</Filter>
-    </ClCompile>
     <ClCompile Include="engine\input\Input.cpp">
       <Filter>engine\input</Filter>
     </ClCompile>
@@ -393,6 +384,15 @@
     <ClCompile Include="application\actor\enemy\EnemyRecoverState.cpp">
       <Filter>application\actor\enemy</Filter>
     </ClCompile>
+    <ClCompile Include="engine\graphics\pipeline\Blend.cpp">
+      <Filter>engine\graphics\pipeline</Filter>
+    </ClCompile>
+    <ClCompile Include="engine\graphics\pipeline\GraphicsPipeline.cpp">
+      <Filter>engine\graphics\pipeline</Filter>
+    </ClCompile>
+    <ClCompile Include="engine\graphics\texture\TextureManager.cpp">
+      <Filter>engine\graphics\texture</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="application\scene\TestPlayScene.h">
@@ -508,21 +508,6 @@
     </ClInclude>
     <ClInclude Include="engine\graphics\descriptor\SRVManager.h">
       <Filter>engine\graphics\descriptor</Filter>
-    </ClInclude>
-    <ClInclude Include="engine\graphics\pipeline\Blend.h">
-      <Filter>engine\graphics\texture</Filter>
-    </ClInclude>
-    <ClInclude Include="engine\graphics\pipeline\BlendMode.h">
-      <Filter>engine\graphics\texture</Filter>
-    </ClInclude>
-    <ClInclude Include="engine\graphics\pipeline\GraphicsPipeline.h">
-      <Filter>engine\graphics\texture</Filter>
-    </ClInclude>
-    <ClInclude Include="engine\graphics\pipeline\GraphicsPipelineData.h">
-      <Filter>engine\graphics\texture</Filter>
-    </ClInclude>
-    <ClInclude Include="engine\graphics\texture\TextureManager.h">
-      <Filter>engine\graphics\pipeline</Filter>
     </ClInclude>
     <ClInclude Include="engine\input\Input.h">
       <Filter>engine\input</Filter>
@@ -697,6 +682,21 @@
     </ClInclude>
     <ClInclude Include="application\actor\enemy\EnemyRecoverState.h">
       <Filter>application\actor\enemy</Filter>
+    </ClInclude>
+    <ClInclude Include="engine\graphics\pipeline\Blend.h">
+      <Filter>engine\graphics\pipeline</Filter>
+    </ClInclude>
+    <ClInclude Include="engine\graphics\pipeline\BlendMode.h">
+      <Filter>engine\graphics\pipeline</Filter>
+    </ClInclude>
+    <ClInclude Include="engine\graphics\pipeline\GraphicsPipeline.h">
+      <Filter>engine\graphics\pipeline</Filter>
+    </ClInclude>
+    <ClInclude Include="engine\graphics\pipeline\GraphicsPipelineData.h">
+      <Filter>engine\graphics\pipeline</Filter>
+    </ClInclude>
+    <ClInclude Include="engine\graphics\texture\TextureManager.h">
+      <Filter>engine\graphics\texture</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

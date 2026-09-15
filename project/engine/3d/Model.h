@@ -121,7 +121,7 @@ private://メンバ関数
 	void BuildMesh();
 
 	/// <summary>
-	/// モデルの作成(メッシュデータから1)
+	/// モデルの作成(メッシュデータから)
 	/// </summary>
 	/// <param name="meshDatas">メッシュデータ</param>
 	void CreateModel(const std::vector<MeshData>& meshDatas, const std::string& nodeName = "primitive");

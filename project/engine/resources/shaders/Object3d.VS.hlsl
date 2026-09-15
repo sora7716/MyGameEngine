@@ -1,7 +1,6 @@
 #include "Object3d.hlsli"
 
 struct TransformationMatrix{
-    float32_t4x4 wvp;
     float32_t4x4 world;
     float32_t4x4 worldInverseTranspose;
 };

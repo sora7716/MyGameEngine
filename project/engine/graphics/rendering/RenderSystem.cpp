@@ -520,31 +520,36 @@ void RenderSystem::BuildObject3dBatches(){
 			continue;
 		}
 
-		//同じModel*とBlendModeのバッチを探す
-		auto batchIt = std::find_if(
-			object3dBatches_.begin(),
-			object3dBatches_.end(),
-			[model, materialInstance, blendMode](const Object3dBatch& batch){
-				return batch.model == model &&
-					batch.materialInstance == materialInstance &&
-					batch.blendMode == blendMode;
+		for (const Object3d::NodeMeshInstance& nodeMesh : object3d->GetNodeMeshInstance()){
+			const uint32_t meshIndex = nodeMesh.meshIndex;
+			//同じModel*とBlendModeのバッチを探す
+			auto batchIt = std::find_if(
+				object3dBatches_.begin(),
+				object3dBatches_.end(),
+				[model, materialInstance, blendMode, meshIndex](const Object3dBatch& batch){
+					return batch.model == model &&
+						batch.materialInstance == materialInstance &&
+						batch.blendMode == blendMode &&
+						meshIndex == batch.meshIndex;
+				}
+			);
+
+			if (batchIt != object3dBatches_.end()){
+				//見つかった場合instancesに追加
+				batchIt->meshDrawInstance.push_back({ object3d,nodeMesh.nodeMatrix });
+			} else{
+				//見つからなかった場合新しくバッチを作成
+				Object3dBatch newBatch = {
+					.model = model,
+					.materialInstance = materialInstance,
+					.blendMode = blendMode,
+					.meshIndex = meshIndex
+				};
+				newBatch.meshDrawInstance.push_back({ object3d,nodeMesh.nodeMatrix });
+
+				//オブジェクト3dのバッチに追加
+				object3dBatches_.push_back(std::move(newBatch));
 			}
-		);
-
-		if (batchIt != object3dBatches_.end()){
-			//見つかった場合instancesに追加
-			batchIt->instances.push_back(object3d);
-		} else{
-			//見つからなかった場合新しくバッチを作成
-			Object3dBatch newBatch = {
-				.model = model,
-				.materialInstance = materialInstance,
-				.blendMode = blendMode,
-			};
-			newBatch.instances.push_back(object3d);
-
-			//オブジェクト3dのバッチに追加
-			object3dBatches_.push_back(std::move(newBatch));
 		}
 	}
 }
@@ -560,15 +565,17 @@ void RenderSystem::BuildTransformationData(){
 		//配列クリア
 		batch.transformations.clear();
 		//サイズを確保
-		batch.transformations.reserve(batch.instances.size());
-		for (Object3d* object3d : batch.instances){
-			//今回の描画カメラに対応したワールド行列を作成
-			Matrix4x4 world = object3d->MakeRenderWorldMatrix(selectCamera_.camera->GetWorldMatrix());
+		batch.transformations.reserve(batch.meshDrawInstance.size());
+		for (const MeshDrawInstance& meshDraw : batch.meshDrawInstance){
+			//Objectのワールド行列を作成
+			Matrix4x4 objectWorldMatrix = meshDraw.object3d->MakeRenderWorldMatrix(selectCamera_.camera->GetWorldMatrix());
+
+			//ワールド行列を求める
+			Matrix4x4 world = meshDraw.nodeMatrix * objectWorldMatrix;
 
 			//トランスフォーメーション行列
 			TransformationMatrix transformation = {};
 			transformation.world = world;
-			transformation.wvp = world * selectCamera_.camera->GetViewProjectionMatrix();
 			transformation.worldInverseTranspose = world.InverseTranspose();
 
 			//バッチに追加
@@ -585,7 +592,7 @@ void RenderSystem::SubmitObject3dBatches(){
 
 	//レンダラーにバッチを送信
 	for (const Object3dBatch& batch : object3dBatches_){
-		object3dRenderer_->SubmitBatch(batch.model, batch.materialInstance, batch.blendMode, batch.transformations);
+		object3dRenderer_->SubmitBatch(batch.model, batch.meshIndex, batch.materialInstance, batch.blendMode, batch.transformations);
 	}
 }
 

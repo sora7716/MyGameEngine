@@ -247,6 +247,14 @@ public://メンバ関数
 	const std::vector<NodeMeshInstance>& GetNodeMeshInstance()const;
 private://メンバ関数
 	/// <summary>
+	/// ノードを探す
+	/// </summary>
+	/// <param name="node">ノード</param>
+	/// <param name="name">ノードの名前</param>
+	/// <returns>ノード</returns>
+	Node* FindNode(const Node& node, const std::string& name);
+
+	/// <summary>
 	/// ワールド行列を作成
 	/// </summary>
 	void MakeWorldMatrix();
@@ -261,7 +269,7 @@ private://メンバ関数
 	/// </summary>
 	/// <param name="node">ノード</param>
 	/// <param name="parentMatrix">親行列</param>
-	void UpdateNodeMatrices(const Node& node, const Matrix4x4& parentMatrix);
+	void UpdateNodeMatrices(Node& node, const Matrix4x4& parentMatrix);
 private://定数
 	//インスタンスの最大数
 	static const inline uint32_t kMaxInstanceCount_ = 1024;
@@ -284,6 +292,7 @@ private://メンバ変数
 	RenderTransformMode renderTransformMode_ = RenderTransformMode::kNormal;
 	//ワールド行列
 	Matrix4x4 worldMatrix_ = {};
+
 	//ノード
 	Node node_ = {};
 	//メッシュのワールド行列

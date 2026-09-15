@@ -23,7 +23,7 @@ static Node ReadNode(aiNode* node){
 	//aiMatrix4x4からMatrix4x4へ変換
 	for (int32_t i = 0; i < 4; i++){
 		for (int32_t j = 0; j < 4; j++){
-			result.localMatrix.m[i][j] = aiLocalMatrix[i][j];
+			result.baseMatrix.m[i][j] = aiLocalMatrix[i][j];
 		}
 	}
 
@@ -32,7 +32,7 @@ static Node ReadNode(aiNode* node){
 	flipZ.m[2][2] = -1.0f;
 
 	//頂点と同じ座標系へ変換
-	result.localMatrix = flipZ * result.localMatrix * flipZ;
+	result.baseMatrix = flipZ * result.baseMatrix * flipZ;
 
 	//Nodeの名前を取得
 	result.name = node->mName.C_Str();

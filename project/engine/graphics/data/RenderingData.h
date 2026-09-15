@@ -39,19 +39,21 @@ struct RectTransform{
 
 //TransformationMatrix
 struct TransformationMatrix{
-	Matrix4x4 world = {};
-	Matrix4x4 worldInverseTranspose = {};
+	Matrix4x4 world = Matrix4x4::Identity4x4();
+	Matrix4x4 worldInverseTranspose = Matrix4x4::Identity4x4();
 };
 
 //TransformationMatrix
 struct TransformationMatrixForSprite{
-	Matrix4x4 wvp = {};
-	Matrix4x4 world = {};
+	Matrix4x4 wvp = Matrix4x4::Identity4x4();
+	Matrix4x4 world = Matrix4x4::Identity4x4();
 };
 
 //ノード構造体
 struct Node{
-	Matrix4x4 localMatrix = {};
+	Matrix4x4 baseMatrix = Matrix4x4::Identity4x4();
+	Matrix4x4 localMatrix = Matrix4x4::Identity4x4();
+	Transform localTransform = {};
 	std::string name = "";
 	std::vector<Node> children;
 	std::vector<uint32_t> meshIndices;

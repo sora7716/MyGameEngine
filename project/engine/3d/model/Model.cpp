@@ -243,6 +243,7 @@ void Model::CreateModel(const std::vector<MeshData>& meshDatas, const std::strin
 	Node& node = modelData_.rootNode;
 	node.name = nodeName;
 	node.localMatrix = Matrix4x4::Identity4x4();
+	node.baseMatrix = Matrix4x4::Identity4x4();
 	node.meshIndices.clear();
 	node.meshIndices.reserve(modelData_.meshDatas.size());
 	for (uint32_t meshIndex = 0; meshIndex < static_cast<uint32_t>(modelData_.meshDatas.size()); meshIndex++){

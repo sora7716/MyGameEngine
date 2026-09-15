@@ -362,6 +362,26 @@ const std::vector<Object3d::NodeMeshInstance>& Object3d::GetNodeMeshInstance() c
 	return nodeMeshInstance_;
 }
 
+//ノードを探す
+Node* Object3d::FindNode(const Node& node, const std::string& name){
+	//名前がない場合
+	if (name.empty()){
+		return nullptr;
+	}
+
+	//名前が一致しているか
+	if (node_.name == name){
+		return &node_;
+	}
+
+	//一致しなかった場合
+	for (const Node& node : node_.children){
+		return FindNode(name);
+	}
+
+	return nullptr;
+}
+
 //ワールド行列を作成
 void Object3d::MakeWorldMatrix(){
 	GameObject* gameObject = GetOwner();
@@ -397,7 +417,13 @@ void Object3d::EnsureUniqueMaterialInstance(){
 }
 
 //Nodeの行列を更新
-void Object3d::UpdateNodeMatrices(const Node& node, const Matrix4x4& parentMatrix){
+void Object3d::UpdateNodeMatrices(Node& node, const Matrix4x4& parentMatrix){
+	//アニメーション用の行列
+	Matrix4x4 animationMatrix = matrixUtility::MakeAffineMatrix(node.localTransform);
+
+	//ローカル行列を求める
+	node.localMatrix = animationMatrix * node.baseMatrix;
+
 	//ノードの行列
 	Matrix4x4 nodeMatrix = node.localMatrix * parentMatrix;
 
@@ -409,7 +435,7 @@ void Object3d::UpdateNodeMatrices(const Node& node, const Matrix4x4& parentMatri
 	}
 
 	//子の数分回す
-	for (const Node& child : node.children){
+	for (Node& child : node.children){
 		UpdateNodeMatrices(child, nodeMatrix);
 	}
 }

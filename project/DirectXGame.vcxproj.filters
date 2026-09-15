@@ -121,6 +121,9 @@
     <Filter Include="engine\graphics\rendering\camera">
       <UniqueIdentifier>{930f3d62-3908-4ac4-844f-3ae9047af2dc}</UniqueIdentifier>
     </Filter>
+    <Filter Include="application\actor\enemy">
+      <UniqueIdentifier>{466f737e-58a4-4262-8236-23f7f5263efa}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="engine\main.cpp">
@@ -372,11 +375,23 @@
     <ClCompile Include="engine\collision\BaseCollider.cpp">
       <Filter>engine\collision</Filter>
     </ClCompile>
-    <ClCompile Include="application\actor\Enemy.cpp">
-      <Filter>application\actor</Filter>
+    <ClCompile Include="application\actor\enemy\Enemy.cpp">
+      <Filter>application\actor\enemy</Filter>
+    </ClCompile>
+    <ClCompile Include="application\actor\enemy\EnemyDamageState.cpp">
+      <Filter>application\actor\enemy</Filter>
+    </ClCompile>
+    <ClCompile Include="application\actor\enemy\IEnemyState.cpp">
+      <Filter>application\actor\enemy</Filter>
     </ClCompile>
     <ClCompile Include="engine\physics\RigidBody.cpp">
-      <Filter>ソース ファイル</Filter>
+      <Filter>engine\physics</Filter>
+    </ClCompile>
+    <ClCompile Include="application\actor\enemy\EnemyRootState.cpp">
+      <Filter>application\actor\enemy</Filter>
+    </ClCompile>
+    <ClCompile Include="application\actor\enemy\EnemyRecoverState.cpp">
+      <Filter>application\actor\enemy</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -665,11 +680,23 @@
     <ClInclude Include="engine\collision\BaseCollider.h">
       <Filter>engine\collision</Filter>
     </ClInclude>
-    <ClInclude Include="application\actor\Enemy.h">
-      <Filter>application\actor</Filter>
+    <ClInclude Include="application\actor\enemy\Enemy.h">
+      <Filter>application\actor\enemy</Filter>
+    </ClInclude>
+    <ClInclude Include="application\actor\enemy\EnemyDamageState.h">
+      <Filter>application\actor\enemy</Filter>
+    </ClInclude>
+    <ClInclude Include="application\actor\enemy\IEnemyState.h">
+      <Filter>application\actor\enemy</Filter>
     </ClInclude>
     <ClInclude Include="engine\physics\RigidBody.h">
-      <Filter>ヘッダー ファイル</Filter>
+      <Filter>engine\physics</Filter>
+    </ClInclude>
+    <ClInclude Include="application\actor\enemy\EnemyRootState.h">
+      <Filter>application\actor\enemy</Filter>
+    </ClInclude>
+    <ClInclude Include="application\actor\enemy\EnemyRecoverState.h">
+      <Filter>application\actor\enemy</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

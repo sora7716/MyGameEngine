@@ -124,6 +124,18 @@
     <Filter Include="application\actor\enemy">
       <UniqueIdentifier>{466f737e-58a4-4262-8236-23f7f5263efa}</UniqueIdentifier>
     </Filter>
+    <Filter Include="engine\3d\model">
+      <UniqueIdentifier>{e7ec3b30-7cbd-4ffd-b84d-f3eb0f4988a9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="engine\3d\lod">
+      <UniqueIdentifier>{12404aa0-8d34-4c26-9568-0a3b3bcb1a85}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="engine\3d\material">
+      <UniqueIdentifier>{e08c6654-79c3-4008-a050-c7f24bb4a6de}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="engine\3d\lighting">
+      <UniqueIdentifier>{953cf84e-62b6-49a8-954d-9284494f166b}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="engine\main.cpp">
@@ -137,21 +149,6 @@
     </ClCompile>
     <ClCompile Include="engine\2d\Sprite.cpp">
       <Filter>engine\2d</Filter>
-    </ClCompile>
-    <ClCompile Include="engine\3d\LODBuilder.cpp">
-      <Filter>engine\3d</Filter>
-    </ClCompile>
-    <ClCompile Include="engine\3d\LODController.cpp">
-      <Filter>engine\3d</Filter>
-    </ClCompile>
-    <ClCompile Include="engine\3d\Mesh.cpp">
-      <Filter>engine\3d</Filter>
-    </ClCompile>
-    <ClCompile Include="engine\3d\Model.cpp">
-      <Filter>engine\3d</Filter>
-    </ClCompile>
-    <ClCompile Include="engine\3d\ModelManager.cpp">
-      <Filter>engine\3d</Filter>
     </ClCompile>
     <ClCompile Include="engine\3d\Object3d.cpp">
       <Filter>engine\3d</Filter>
@@ -309,14 +306,8 @@
     <ClCompile Include="engine\gameObject\TagManager.cpp">
       <Filter>engine\gameObject</Filter>
     </ClCompile>
-    <ClCompile Include="engine\3d\LightingManager.cpp">
-      <Filter>engine\3d</Filter>
-    </ClCompile>
     <ClCompile Include="engine\gameObject\component\Component.cpp">
       <Filter>engine\gameObject\component</Filter>
-    </ClCompile>
-    <ClCompile Include="engine\geometry\PrimitiveMeshFactory.cpp">
-      <Filter>engine\3d</Filter>
     </ClCompile>
     <ClCompile Include="engine\geometry\Culling.cpp">
       <Filter>engine\geometry</Filter>
@@ -335,9 +326,6 @@
     </ClCompile>
     <ClCompile Include="application\scene\GameScene.cpp">
       <Filter>application\scene</Filter>
-    </ClCompile>
-    <ClCompile Include="engine\3d\MaterialInstance.cpp">
-      <Filter>engine\3d</Filter>
     </ClCompile>
     <ClCompile Include="engine\graphics\rendering\particle\ParticleRenderer.cpp">
       <Filter>engine\graphics\rendering\particle</Filter>
@@ -393,6 +381,30 @@
     <ClCompile Include="engine\graphics\texture\TextureManager.cpp">
       <Filter>engine\graphics\texture</Filter>
     </ClCompile>
+    <ClCompile Include="engine\3d\model\Mesh.cpp">
+      <Filter>engine\3d\model</Filter>
+    </ClCompile>
+    <ClCompile Include="engine\3d\model\Model.cpp">
+      <Filter>engine\3d\model</Filter>
+    </ClCompile>
+    <ClCompile Include="engine\3d\model\ModelManager.cpp">
+      <Filter>engine\3d\model</Filter>
+    </ClCompile>
+    <ClCompile Include="engine\3d\lod\LODBuilder.cpp">
+      <Filter>engine\3d\lod</Filter>
+    </ClCompile>
+    <ClCompile Include="engine\3d\lod\LODController.cpp">
+      <Filter>engine\3d\lod</Filter>
+    </ClCompile>
+    <ClCompile Include="engine\3d\material\MaterialInstance.cpp">
+      <Filter>engine\3d\material</Filter>
+    </ClCompile>
+    <ClCompile Include="engine\3d\lighting\LightingManager.cpp">
+      <Filter>engine\3d\lighting</Filter>
+    </ClCompile>
+    <ClCompile Include="engine\geometry\PrimitiveMeshFactory.cpp">
+      <Filter>engine\geometry</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="application\scene\TestPlayScene.h">
@@ -403,21 +415,6 @@
     </ClInclude>
     <ClInclude Include="engine\2d\Sprite.h">
       <Filter>engine\2d</Filter>
-    </ClInclude>
-    <ClInclude Include="engine\3d\LODBuilder.h">
-      <Filter>engine\3d</Filter>
-    </ClInclude>
-    <ClInclude Include="engine\3d\LODController.h">
-      <Filter>engine\3d</Filter>
-    </ClInclude>
-    <ClInclude Include="engine\3d\Mesh.h">
-      <Filter>engine\3d</Filter>
-    </ClInclude>
-    <ClInclude Include="engine\3d\Model.h">
-      <Filter>engine\3d</Filter>
-    </ClInclude>
-    <ClInclude Include="engine\3d\ModelManager.h">
-      <Filter>engine\3d</Filter>
     </ClInclude>
     <ClInclude Include="engine\3d\Object3d.h">
       <Filter>engine\3d</Filter>
@@ -581,14 +578,8 @@
     <ClInclude Include="engine\gameObject\TagManager.h">
       <Filter>engine\gameObject</Filter>
     </ClInclude>
-    <ClInclude Include="engine\3d\LightingManager.h">
-      <Filter>engine\3d</Filter>
-    </ClInclude>
     <ClInclude Include="engine\gameObject\component\Component.h">
       <Filter>engine\gameObject\component</Filter>
-    </ClInclude>
-    <ClInclude Include="engine\geometry\PrimitiveMeshFactory.h">
-      <Filter>engine\3d</Filter>
     </ClInclude>
     <ClInclude Include="engine\asset\TextureLoader.h">
       <Filter>engine\asset</Filter>
@@ -601,9 +592,6 @@
     </ClInclude>
     <ClInclude Include="engine\graphics\rendering\RenderSystem.h">
       <Filter>engine\graphics\rendering</Filter>
-    </ClInclude>
-    <ClInclude Include="engine\3d\LightingData.h">
-      <Filter>engine\3d</Filter>
     </ClInclude>
     <ClInclude Include="engine\graphics\rendering\object3d\Object3dRenderer.h">
       <Filter>engine\graphics\rendering\object3d</Filter>
@@ -628,9 +616,6 @@
     </ClInclude>
     <ClInclude Include="application\scene\GameScene.h">
       <Filter>application\scene</Filter>
-    </ClInclude>
-    <ClInclude Include="engine\3d\MaterialInstance.h">
-      <Filter>engine\3d</Filter>
     </ClInclude>
     <ClInclude Include="engine\graphics\rendering\particle\ParticleRenderData.h">
       <Filter>engine\graphics\rendering\particle</Filter>
@@ -697,6 +682,33 @@
     </ClInclude>
     <ClInclude Include="engine\graphics\texture\TextureManager.h">
       <Filter>engine\graphics\texture</Filter>
+    </ClInclude>
+    <ClInclude Include="engine\3d\model\Mesh.h">
+      <Filter>engine\3d\model</Filter>
+    </ClInclude>
+    <ClInclude Include="engine\3d\model\Model.h">
+      <Filter>engine\3d\model</Filter>
+    </ClInclude>
+    <ClInclude Include="engine\3d\model\ModelManager.h">
+      <Filter>engine\3d\model</Filter>
+    </ClInclude>
+    <ClInclude Include="engine\3d\lod\LODBuilder.h">
+      <Filter>engine\3d\lod</Filter>
+    </ClInclude>
+    <ClInclude Include="engine\3d\lod\LODController.h">
+      <Filter>engine\3d\lod</Filter>
+    </ClInclude>
+    <ClInclude Include="engine\3d\material\MaterialInstance.h">
+      <Filter>engine\3d\material</Filter>
+    </ClInclude>
+    <ClInclude Include="engine\3d\lighting\LightingData.h">
+      <Filter>engine\3d\lighting</Filter>
+    </ClInclude>
+    <ClInclude Include="engine\3d\lighting\LightingManager.h">
+      <Filter>engine\3d\lighting</Filter>
+    </ClInclude>
+    <ClInclude Include="engine\geometry\PrimitiveMeshFactory.h">
+      <Filter>engine\geometry</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

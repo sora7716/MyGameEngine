@@ -80,17 +80,8 @@ void Enemy::Update(){
 	}
 }
 
-//衝突したら
+//衝突瞬間
 void Enemy::OnTriggerStay(BaseCollider* other){
-	//衝突したのがプレイヤーだったら
-	if (other->GetOwner()->GetTag() != "Player"){
-		return;
-	}
-
-	//ダメージを受ける状態だった場合
-	if (behavior_ == Behavior::kDamage || behaviorRequest_ == Behavior::kDamage){
-		return;
-	}
 	//振る舞いを変更
 	behaviorRequest_ = Behavior::kDamage;
 

@@ -4,16 +4,16 @@
 #include "Component.h"
 //衝突判定のテーブルの初期化
 std::vector<GameObject::NotifyOnCollision> GameObject::onCollisionTable = {
-	&NotifyOnCollisionEnter,
-	&NotifyOnCollisionStay,
-	&NotifyOnCollisionExit
+	&GameObject::NotifyOnCollisionEnter,
+	&GameObject::NotifyOnCollisionStay,
+	&GameObject::NotifyOnCollisionExit
 };
 
 //衝突判定のテーブルの初期化
 std::vector<GameObject::NotifyOnTrigger> GameObject::onTriggerTable = {
-	&NotifyOnTriggerEnter,
-	&NotifyOnTriggerStay,
-	&NotifyOnTriggerExit,
+	&GameObject::NotifyOnTriggerEnter,
+	&GameObject::NotifyOnTriggerStay,
+	&GameObject::NotifyOnTriggerExit
 };
 
 //ゲームオブジェトの生成

@@ -47,7 +47,7 @@ public://メンバ関数
 	void Update()override;
 
 	/// <summary>
-	/// 衝突したら
+	/// 衝突した瞬間
 	/// </summary>
 	/// <param name="other">衝突対象</param>
 	void OnTriggerStay(BaseCollider* other)override;

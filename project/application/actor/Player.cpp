@@ -147,3 +147,27 @@ void Player::LookAt(){
 	//目標のクォータニオンの方向に向かせる
 	transform.quaternion = Quaternion::Slerp(transform.quaternion, targetQuaternion, kLookAtSpeed * mathUtility::kDeltaTime);
 }
+
+//通常状態の初期化
+void Player::RootInitialize(){
+}
+
+//通常状態の更新
+void Player::RootUpdate(){
+}
+
+//移動状態の初期化
+void Player::MoveInitialize(){
+}
+
+//移動状態の更新
+void Player::MoveUpdate(){
+}
+
+//攻撃状態の初期化
+void Player::AttackInitialize(){
+}
+
+//攻撃状態の更新
+void Player::AttackUpdate(){
+}

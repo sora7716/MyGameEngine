@@ -26,7 +26,7 @@ void Enemy::Initialize(){
 	normalRotate_ = gameObject_->GetTransform().quaternion;
 
 	//ステートを取得
-	states_[static_cast<uint32_t>(Behavior::kNormal)] = std::make_unique<EnemyRootState>();
+	states_[static_cast<uint32_t>(Behavior::kRoot)] = std::make_unique<EnemyRootState>();
 	states_[static_cast<uint32_t>(Behavior::kDamage)] = std::make_unique<EnemyDamageState>();
 	states_[static_cast<uint32_t>(Behavior::kRecover)] = std::make_unique <EnemyRecoverState>();
 }

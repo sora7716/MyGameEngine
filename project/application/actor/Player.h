@@ -10,6 +10,14 @@ class RigidBody;
 /// プレイヤー
 /// </summary>
 class Player :public Component{
+public://列挙型
+	//状態
+	enum class Behavior :uint32_t{
+		kRoot,
+		kMove,
+		kAttack,
+		kCount
+	};
 public://メンバ関数
 	/// <summary>
 	/// コンストラクタ
@@ -65,6 +73,36 @@ private://メンバ関数
 	/// 移動方向に向かせる
 	/// </summary>
 	void LookAt();
+
+	/// <summary>
+	/// 通常状態の初期化
+	/// </summary>
+	void RootInitialize();
+
+	/// <summary>
+	/// 通常状態の更新
+	/// </summary>
+	void RootUpdate();
+
+	/// <summary>
+	/// 移動状態の初期化
+	/// </summary>
+	void MoveInitialize();
+
+	/// <summary>
+	/// 移動状態の更新
+	/// </summary>
+	void MoveUpdate();
+
+	/// <summary>
+	/// 攻撃状態の初期化
+	/// </summary>
+	void AttackInitialize();
+
+	/// <summary>
+	/// 攻撃状態の更新
+	/// </summary>
+	void AttackUpdate();
 private://定数
 	//移動速度
 	static inline const float kMoveSpeed = 10.0f;
@@ -83,7 +121,7 @@ private://メンバ変数
 	GameObject* cameraObject_ = nullptr;
 	//ゲームオブジェクト
 	GameObject* gameObject_ = nullptr;
-	
+
 	//リジットボディ
 	RigidBody* rigidBody_ = nullptr;
 
@@ -91,4 +129,9 @@ private://メンバ変数
 	Vector3 inputDirection_ = {};
 	//World座標系での移動方向ベクトル
 	Vector3 worldDirection_ = {};
+
+	//振る舞い
+	Behavior behavior_ = Behavior::kCount;
+	//振る舞いのリクエスト
+	Behavior behaviorRequest_ = Behavior::kRoot;
 };

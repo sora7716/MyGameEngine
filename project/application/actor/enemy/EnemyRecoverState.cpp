@@ -66,7 +66,7 @@ void EnemyRecoverState::RecoverUpdate(){
 	//時間が過ぎたら
 	if (recoverTimer_ >= kRecoverDuration){
 		//振る舞いのリクエストを送信
-		enemy_->SetBehaviorRequest(Enemy::Behavior::kNormal);
+		enemy_->SetBehaviorRequest(Enemy::Behavior::kRoot);
 	}
 }
 

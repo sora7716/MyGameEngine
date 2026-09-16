@@ -193,6 +193,11 @@ public://メンバ関数
 	void UpdateComponents(UpdatePhase phase);
 
 	/// <summary>
+	/// デバッグでImGuiを使用できるようにする
+	/// </summary>
+	void DebugImGui();
+
+	/// <summary>
 	/// 衝突判定のイベントを呼び出す
 	/// </summary>
 	/// <param name="index">検索キー</param>

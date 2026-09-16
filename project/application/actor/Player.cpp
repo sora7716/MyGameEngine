@@ -7,6 +7,8 @@
 #include "BaseScene.h"
 #include "RigidBody.h"
 #include "BaseCollider.h"
+#include "Object3d.h"
+#include "ImGuiManager.h"
 
 //コンストラクタ
 Player::Player(GameObject* gameObject)
@@ -29,8 +31,11 @@ void Player::Initialize(){
 	//SRTの調整
 	gameObject_->GetTransform().translate = { 0.0f,1.0f,0.0f };
 
-	//リジッドボディから速度を受け取る
+	//リジッドボディを受け取る
 	rigidBody_ = gameObject_->GetComponent<RigidBody>();
+
+	//オブジェクト3dを受け取る
+	object3d_ = gameObject_->GetComponent<Object3d>();
 }
 
 //更新
@@ -42,6 +47,14 @@ void Player::Update(){
 
 	//移動方向に向かせる
 	LookAt();
+
+	RootUpdate();
+}
+
+//デバッグでImGuiを使用できるようにする
+void Player::DebugImGui(){
+	ImGui::Begin("player");
+	ImGui::End();
 }
 
 //複製
@@ -150,10 +163,17 @@ void Player::LookAt(){
 
 //通常状態の初期化
 void Player::RootInitialize(){
+
 }
 
 //通常状態の更新
 void Player::RootUpdate(){
+	Transform playerRoot = object3d_->GetNodeLocalTransform("Player_Root");
+	float amplitude = 1.0f;
+	static float t = 0.0f;
+	t += mathUtility::kDeltaTime;
+	playerRoot.translate.y = std::sin(t * 2.0f) * amplitude;
+	object3d_->SetNodeLocalTransform("Player_Root", playerRoot);
 }
 
 //移動状態の初期化

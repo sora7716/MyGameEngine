@@ -64,6 +64,7 @@ void BaseScene::Debug(){
 		//gameObjectがNullじゃなければ
 		if (gameObject){
 			gameObject->UpdateComponents(UpdatePhase::kDebug);
+			gameObject->DebugImGui();
 		}
 	}
 }

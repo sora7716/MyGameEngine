@@ -5,6 +5,7 @@
 //前方宣言
 class Input;
 class RigidBody;
+class Object3d;
 
 /// <summary>
 /// プレイヤー
@@ -39,6 +40,11 @@ public://メンバ関数
 	/// 更新
 	/// </summary>
 	void Update()override;
+
+	/// <summary>
+	/// デバッグでImGuiを使用できるようにする
+	/// </summary>
+	void DebugImGui()override;
 
 	/// <summary>
 	/// 複製
@@ -121,6 +127,8 @@ private://メンバ変数
 	GameObject* cameraObject_ = nullptr;
 	//ゲームオブジェクト
 	GameObject* gameObject_ = nullptr;
+	//オブジェクト3d
+	Object3d* object3d_ = nullptr;
 
 	//リジットボディ
 	RigidBody* rigidBody_ = nullptr;

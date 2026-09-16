@@ -134,6 +134,29 @@ void GameObject::UpdateComponents(UpdatePhase phase){
 	}
 }
 
+//デバッグでImGuiを使用できるようにする
+void GameObject::DebugImGui(){
+	//ゲームオブジェクトが有効か
+	if (!isActive_){
+		return;
+	}
+
+	//各コンポーネントごとに
+	for (const std::unique_ptr<Component>& component : components_){
+		if (!component){
+			//コンポーネントが存在しているか	
+			continue;
+
+		} else if (!component->IsEnabled()){
+			//コンポーネントが有効か
+			continue;
+		} 
+
+		//コンポーネントでImGuiを使用する
+		component->DebugImGui();
+	}
+}
+
 //衝突判定のイベントを呼び出す
 void GameObject::InvokeCollisionEvent(uint32_t index, const CollisionInfo& info){
 	(this->*onCollisionTable[index])(info);

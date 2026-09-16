@@ -12,6 +12,10 @@ void Component::Initialize(){
 void Component::Update(){
 }
 
+//デバッグでImGuiを使用できるようにする
+void Component::DebugImGui(){
+}
+
 //接触した瞬間
 void Component::OnCollisionEnter(const CollisionInfo& info){
 	(void)info;

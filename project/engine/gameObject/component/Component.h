@@ -35,6 +35,11 @@ public://メンバ関数
 	virtual void Update();
 
 	/// <summary>
+	/// デバッグでImGuiを使えるようにする
+	/// </summary>
+	virtual void DebugImGui();
+
+	/// <summary>
 	/// 接触した瞬間
 	/// </summary>
 	/// <param name="info">衝突情報</param>

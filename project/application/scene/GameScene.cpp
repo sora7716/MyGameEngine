@@ -107,6 +107,10 @@ GameObject* GameScene::CreatePlayerObject(){
 	gameObject->SetName("プレイヤー");
 	gameObject->SetTag("Player");
 
+	//3Dオブジェクト
+	Object3d* playerModel = gameObject->AddComponent<Object3d>();
+	playerModel->SetModel("player");
+
 	//リジットボディ
 	gameObject->AddComponent<RigidBody>();
 
@@ -123,10 +127,6 @@ GameObject* GameScene::CreatePlayerObject(){
 	debugDraw::Cube* playerHitBox = gameObject->AddComponent<debugDraw::Cube>();
 	playerHitBox->SetLocalScale(playerHitBoxSize);
 	playerHitBox->SetColor(Vector4::GetRedColor());
-
-	//3Dオブジェクト
-	Object3d* playerModel = gameObject->AddComponent<Object3d>();
-	playerModel->SetModel("player");
 
 	return gameObject;
 }

@@ -53,7 +53,19 @@ void GameScene::Debug(){
 
 #ifdef USE_IMGUI
 	ImGui::Begin("デバッグ");
-
+	Object3d* playerObject3d = playerObject_->GetComponent<Object3d>();
+	for (const Object3d::NodeInfo& nodeInfo : playerObject3d->GetNodeNames()){
+		ImGui::PushID(nodeInfo.path.c_str());
+		ImGui::SeparatorText(nodeInfo.path.c_str());
+		Transform transform = playerObject3d->GetNodeLocalTransform(nodeInfo.path);
+		Vector3 eulerAngle = transform.GetEulerAngle();
+		ImGui::DragFloat3("scale", &transform.scale.x, 0.1f);
+		ImGui::DragFloat3("rotate", &eulerAngle.x, 0.1f);
+		ImGui::DragFloat3("translate", &transform.translate.x, 0.1f);
+		transform.SetEulerAngle(eulerAngle);
+		playerObject3d->SetNodeLocalTransform(nodeInfo.path, transform);
+		ImGui::PopID();
+	}
 	ImGui::End();
 #endif // USE_IMGUI
 }

@@ -25,6 +25,12 @@ public://構造体
 		uint32_t meshIndex = 0;
 		Matrix4x4 nodeMatrix = Matrix4x4::Identity4x4();
 	};
+
+	//ノードの情報
+	struct NodeInfo{
+		std::string name;
+		std::string path;
+	};
 public://メンバ関数
 	/// <summary>
 	/// コンストラクタ
@@ -168,6 +174,14 @@ public://メンバ関数
 	void SetRenderTransformMode(RenderTransformMode transformMode);
 
 	/// <summary>
+	/// ノードのローカルトランスフォームの設定
+	/// </summary>
+	/// <param name="path">ノードのパス名</param>
+	/// <param name="localTransform">ローカルトランスフォーム</param>
+	/// <returns>Nodeの取得に成功したか</returns>
+	bool SetNodeLocalTransform(const std::string& path, const Transform& localTransform);
+
+	/// <summary>
 	/// ワールド行列の取得
 	/// </summary>
 	/// <returns>ワールド行列</returns>
@@ -245,14 +259,43 @@ public://メンバ関数
 	/// </summary>
 	/// <returns>ノードのメッシュインスタンス</returns>
 	const std::vector<NodeMeshInstance>& GetNodeMeshInstance()const;
+
+	/// <summary>
+	/// ノードのローカルトランスフォームの取得
+	/// </summary>
+	/// <param name="path">ノードのパス</param>
+	/// <returns>ノードのローカルトランスフォーム</returns>
+	const Transform GetNodeLocalTransform(const std::string& path);
+
+	/// <summary>
+	/// ノードの名前一覧を取得
+	/// </summary>
+	/// <returns>ノードの情報の配列</returns>
+	std::vector<Object3d::NodeInfo>GetNodeNames()const;
 private://メンバ関数
+	/// <summary>
+	/// ノードの名前を集める
+	/// </summary>
+	/// <param name="node">ノード</param>
+	/// <param name="parentPath">親のパス</param>
+	/// <param name="nodeInfos">ノードの情報を集める配列</param>
+	void CollectNodeNames(const Node& node, const std::string& parentPath, std::vector<NodeInfo>& nodeInfos)const;
+
 	/// <summary>
 	/// ノードを探す
 	/// </summary>
-	/// <param name="node">ノード</param>
-	/// <param name="name">ノードの名前</param>
+	/// <param name="name">ノードのパス</param>
 	/// <returns>ノード</returns>
-	Node* FindNode(const Node& node, const std::string& name);
+	Node* FindNode(const std::string& path);
+
+	/// <summary>
+	/// ノードを再起関数で探す
+	/// </summary>
+	/// <param name="node">ノード</param>
+	/// <param name="parentPath">親のパス</param>
+	/// <param name="targetPath">対象のパス</param>
+	/// <returns>ノード</returns>
+	Node* FindNodeRecursive(Node& node, const std::string& parentPath, const std::string& targetPath);
 
 	/// <summary>
 	/// ワールド行列を作成

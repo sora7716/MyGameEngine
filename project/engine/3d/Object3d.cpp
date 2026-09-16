@@ -286,6 +286,21 @@ void Object3d::SetRenderTransformMode(RenderTransformMode transformMode){
 	renderTransformMode_ = transformMode;
 }
 
+//ノードのローカルトランスフォームの設定
+bool Object3d::SetNodeLocalTransform(const std::string& path, const Transform& localTransform){
+	//ノードがあるか探索
+	Node* found = FindNode(path);
+
+	//ノードが見つからなかった場合
+	if (!found){
+		return false;
+	}
+
+	//ローカルトランスフォームを設定
+	found->localTransform = localTransform;
+	return true;
+}
+
 //ワールド行列の取得
 const Matrix4x4& Object3d::GetWorldMatrix()const{
 	return worldMatrix_;
@@ -362,21 +377,98 @@ const std::vector<Object3d::NodeMeshInstance>& Object3d::GetNodeMeshInstance() c
 	return nodeMeshInstance_;
 }
 
+//ノードのローカルトランスフォームの取得
+const Transform Object3d::GetNodeLocalTransform(const std::string& path){
+	Node* found = FindNode(path);
+
+	//無かった場合
+	if (!found){
+		return {};
+	}
+
+	return found->localTransform;
+}
+
+//ノードの名前位一覧を取得
+std::vector<Object3d::NodeInfo> Object3d::GetNodeNames()const{
+	std::vector<NodeInfo>nodeInfos;
+
+	//モデルがなければ
+	if (!baseModel_){
+		return nodeInfos;
+	}
+
+	//ノードの名前を集める
+	CollectNodeNames(node_, "", nodeInfos);
+
+	return nodeInfos;
+}
+
+//ノードの名前を集める
+void Object3d::CollectNodeNames(const Node& node, const std::string& parentPath, std::vector<NodeInfo>& nodeInfos)const{
+	//現在のパス
+	std::string currentPath = parentPath;
+
+	//ノードの名前が空じゃなければ
+	if (!node.name.empty()){
+		//現在のパスが空じゃなければ
+		if (!currentPath.empty()){
+			currentPath += "/";
+		}
+
+		//現在のパスにノードの名前を追加
+		currentPath += node.name;
+
+		//ノードの情報に追加
+		nodeInfos.push_back({
+			.name = node.name,
+			.path = currentPath,
+		});
+	}
+
+	for (const Node& child : node.children){
+		CollectNodeNames(child, currentPath, nodeInfos);
+	}
+}
+
 //ノードを探す
-Node* Object3d::FindNode(const Node& node, const std::string& name){
-	//名前がない場合
-	if (name.empty()){
+Node* Object3d::FindNode(const std::string& path){
+	//名前が空だったら
+	if (path.empty()){
 		return nullptr;
 	}
 
-	//名前が一致しているか
-	if (node_.name == name){
-		return &node_;
+	return FindNodeRecursive(node_, "", path);
+}
+
+//ノードを再起関数で探す
+Node* Object3d::FindNodeRecursive(Node& node, const std::string& parentPath, const std::string& targetPath){
+	//現在のパスを取得
+	std::string currentPath = parentPath;
+
+	//ノードの名前が空じゃなければ
+	if (!node.name.empty()){
+		//現在のパスが空じゃなければ
+		if (!currentPath.empty()){
+			currentPath += "/";
+		}
+
+		//現在のパスにノードの名前を追加
+		currentPath += node.name;
 	}
 
-	//一致しなかった場合
-	for (const Node& node : node_.children){
-		return FindNode(name);
+	//path全体が一致した
+	if (currentPath == targetPath){
+		return &node;
+	}
+
+	//子の方も探索
+	for (Node& child : node.children){
+		Node* found = FindNodeRecursive(child, currentPath, targetPath);
+
+		if (found){
+			return found;
+		}
 	}
 
 	return nullptr;

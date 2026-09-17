@@ -29,13 +29,13 @@ void EnemyRecoverState::Initialize(Enemy* enemy){
 	normalRotate_ = enemy_->GetNormalRotate();
 
 	//起き上がるの初期化
-	RecoverInitialize();
+	InitializeRecover();
 }
 
 //更新
 void EnemyRecoverState::Update(){
 	//起き上がるの更新
-	RecoverUpdate();
+	UpdateRecover();
 }
 
 //終了
@@ -43,7 +43,7 @@ void EnemyRecoverState::Finalize(){
 }
 
 //浮き上がるときの初期化
-void EnemyRecoverState::RecoverInitialize(){
+void EnemyRecoverState::InitializeRecover(){
 	//タイマーのリセット
 	recoverTimer_ = 0.0f;
 	//元に戻す瞬間の回転
@@ -51,7 +51,7 @@ void EnemyRecoverState::RecoverInitialize(){
 }
 
 //浮き上がるときの更新
-void EnemyRecoverState::RecoverUpdate(){
+void EnemyRecoverState::UpdateRecover(){
 	//タイマーの加算
 	recoverTimer_ += mathUtility::kDeltaTime;
 
@@ -66,7 +66,7 @@ void EnemyRecoverState::RecoverUpdate(){
 	//時間が過ぎたら
 	if (recoverTimer_ >= kRecoverDuration){
 		//振る舞いのリクエストを送信
-		enemy_->SetBehaviorRequest(Enemy::Behavior::kRoot);
+		enemy_->SetBehaviorRequest(Enemy::Behavior::kNormal);
 	}
 }
 

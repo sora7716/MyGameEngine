@@ -15,7 +15,7 @@ class Enemy :public Component{
 public://構造体やenum
 	//状態
 	enum class Behavior :uint32_t{
-		kRoot,
+		kNormal,
 		kDamage,
 		kRecover,
 		kCount
@@ -96,7 +96,7 @@ private://メンバ変数
 	//敵の状態
 	Behavior behavior_ = Behavior::kCount;
 	//敵の状態のリクエスト
-	Behavior behaviorRequest_ = Behavior::kRoot;
+	Behavior behaviorRequest_ = Behavior::kNormal;
 
 	//ステート
 	std::array < std::unique_ptr<IEnemyState>, static_cast<uint32_t>(Behavior::kCount)> states_;

@@ -41,12 +41,12 @@ private://メンバ関数
 	/// <summary>
 	/// 浮き上がるときの初期化
 	/// </summary>
-	void RecoverInitialize();
+	void InitializeRecover();
 
 	/// <summary>
 	/// 浮き上がるときの更新
 	/// </summary>
-	void RecoverUpdate();
+	void UpdateRecover();
 private://定数
 	//元に戻す
 	static inline const float kRecoverDuration = 0.2f;

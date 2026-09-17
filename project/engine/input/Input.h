@@ -125,6 +125,13 @@ public://メンバ関数
 	bool ReleaseTriggerKey(BYTE keyNumber);
 
 	/// <summary>
+	/// キーを離した事をチェック
+	/// </summary>
+	/// <param name="keyNumber">キー番号</param>
+	/// <returns>離した</returns>
+	bool ReleaseKey(BYTE keyNumber);
+
+	/// <summary>
 	/// マウスのボタンの押下をチェック
 	/// </summary>
 	/// <param name="mouseClickPos">マウスのボタン</param>

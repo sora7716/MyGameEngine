@@ -7,7 +7,7 @@
 #include <vector>
 //Transform情報
 struct Transform{
-	Vector3 scale = Vector3::One();
+	Vector3 scale = Vector3::GetOne();
 	Quaternion quaternion = Quaternion::IdentityQuaternion();
 	Vector3 translate = {};
 
@@ -28,6 +28,15 @@ struct Transform{
 	/// </summary>
 	/// <returns>オイラー角</returns>
 	Vector3 GetEulerAngle();
+
+	/// <summary>
+	/// 補間
+	/// </summary>
+	/// <param name="transform1">トランスフォーム1</param>
+	/// <param name="transform2">トランスフォーム2</param>
+	/// <param name="t">係数</param>
+	/// <returns>補間後のトランスフォーム</returns>
+	static Transform Lerp(const Transform& transform1, const Transform& transform2, float t);
 };
 
 //Transform2D情報

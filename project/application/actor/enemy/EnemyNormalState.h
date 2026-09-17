@@ -1,16 +1,16 @@
 #pragma once
 #include "IEnemyState.h"
-class EnemyRootState :public IEnemyState{
+class EnemyNormalState :public IEnemyState{
 public://メンバ関数
 	/// <summary>
 	/// コンストラクタ
 	/// </summary>
-	EnemyRootState();
+	EnemyNormalState();
 
 	/// <summary>
 	/// デストラクタ
 	/// </summary>
-	~EnemyRootState()override;
+	~EnemyNormalState()override;
 
 	/// <summary>
 	/// 初期化

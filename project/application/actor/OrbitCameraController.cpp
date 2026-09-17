@@ -26,6 +26,16 @@ void OrbitCameraController::Initialize(){
 
 //更新
 void OrbitCameraController::Update(){
+	//エスケープキーが押されたら
+	if (input_->TriggerKey(DIK_ESCAPE)){
+		isMovingCamera_ = !isMovingCamera_;
+	}
+
+	//カメラを動か差ない場合
+	if (!isMovingCamera_){
+		return;
+	}
+
 	//回転前のカメラの相対位置	
 	Vector3 targetPos = target_->GetTransform().translate + targetOffset_;
 

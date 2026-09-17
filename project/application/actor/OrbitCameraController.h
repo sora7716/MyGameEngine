@@ -56,6 +56,8 @@ private://メンバ変数
 	GameObject* gameObject_ = nullptr;
 	//対象
 	GameObject* target_ = nullptr;
+	//動かすか
+	bool isMovingCamera_ = true;
 	//回転軸
 	float yaw_ = 0.0f;
 	float pitch_ = 0.3f;

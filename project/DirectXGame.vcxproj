@@ -14,7 +14,7 @@
     <ClCompile Include="application\actor\enemy\Enemy.cpp" />
     <ClCompile Include="application\actor\enemy\EnemyDamageState.cpp" />
     <ClCompile Include="application\actor\enemy\EnemyRecoverState.cpp" />
-    <ClCompile Include="application\actor\enemy\EnemyRootState.cpp" />
+    <ClCompile Include="application\actor\enemy\EnemyNormalState.cpp" />
     <ClCompile Include="application\actor\enemy\IEnemyState.cpp" />
     <ClCompile Include="application\actor\OrbitCameraController.cpp" />
     <ClCompile Include="application\actor\Player.cpp" />
@@ -107,7 +107,7 @@
     <ClInclude Include="application\actor\enemy\Enemy.h" />
     <ClInclude Include="application\actor\enemy\EnemyDamageState.h" />
     <ClInclude Include="application\actor\enemy\EnemyRecoverState.h" />
-    <ClInclude Include="application\actor\enemy\EnemyRootState.h" />
+    <ClInclude Include="application\actor\enemy\EnemyNormalState.h" />
     <ClInclude Include="application\actor\enemy\IEnemyState.h" />
     <ClInclude Include="application\actor\OrbitCameraController.h" />
     <ClInclude Include="application\actor\Player.h" />

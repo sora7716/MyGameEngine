@@ -9,6 +9,17 @@
 #include "BaseCollider.h"
 #include "Object3d.h"
 #include "ImGuiManager.h"
+#include <algorithm>
+
+Player::PlayerPose Player::PlayerPose::Lerp(const PlayerPose& playerPose1, const PlayerPose& playerPose2, float t){
+	PlayerPose result = {};
+	result.root = Transform::Lerp(playerPose1.root, playerPose2.root, t);
+	result.head = Transform::Lerp(playerPose1.head, playerPose2.head, t);
+	result.body = Transform::Lerp(playerPose1.body, playerPose2.body, t);
+	result.leftArm = Transform::Lerp(playerPose1.leftArm, playerPose2.leftArm, t);
+	result.rightArm = Transform::Lerp(playerPose1.rightArm, playerPose2.rightArm, t);
+	return result;
+}
 
 //コンストラクタ
 Player::Player(GameObject* gameObject)
@@ -40,7 +51,7 @@ void Player::Initialize(){
 
 //更新
 void Player::Update(){
-	//移動の操作
+	//動かす
 	MoveControl();
 	//ジャンプの操作
 	JumpControl();
@@ -48,13 +59,86 @@ void Player::Update(){
 	//移動方向に向かせる
 	LookAt();
 
-	RootUpdate();
+	//移動キーのどれかが押されてるか確認
+	bool isMoveInputActive = input_->PressKey(DIK_A) ||
+		input_->PressKey(DIK_D) ||
+		input_->PressKey(DIK_W) ||
+		input_->PressKey(DIK_S);
+
+	//移動キーが押されているか確認
+	if (isMoveInputActive){
+		//現在の振る舞いを確認
+		if (behavior_ != Behavior::kMove){
+			behaviorRequest_ = Behavior::kMove;
+		}
+	} else {
+		//現在の振る舞いを確認
+		if (behavior_ != Behavior::kNormal){
+			behaviorRequest_ = Behavior::kNormal;
+		}
+	}
+
+	//振る舞いのリクエストがあったら
+	if (behaviorRequest_ != Behavior::kCount){
+		//振る舞いを変更
+		behavior_ = behaviorRequest_;
+		//リクエストをリセット
+		behaviorRequest_ = Behavior::kCount;
+
+		//振る舞いを初期化
+		switch (behavior_){
+		case Behavior::kNormal:
+			//通常
+			InitializeNormal();
+			break;
+		case Behavior::kMove:
+			//移動
+			InitializeMoving();
+			break;
+		case Behavior::kAttack:
+			break;
+		}
+	}
+
+	//振る舞いを更新
+	switch (behavior_){
+	case Behavior::kNormal:
+		//通常
+		UpdateNormal();
+		break;
+	case Behavior::kMove:
+		//移動
+		UpdateMoving();
+		break;
+	case Behavior::kAttack:
+		break;
+	}
+
+	//ポーズを適応
+	object3d_->SetNodeLocalTransform("Player_Root", currentPose_.root);
+	object3d_->SetNodeLocalTransform("Player_Root/Body", currentPose_.body);
+	object3d_->SetNodeLocalTransform("Player_Root/Arm_L", currentPose_.leftArm);
+	object3d_->SetNodeLocalTransform("Player_Root/Arm_R", currentPose_.rightArm);
 }
 
 //デバッグでImGuiを使用できるようにする
 void Player::DebugImGui(){
+#ifdef USE_IMGUI
 	ImGui::Begin("player");
+	ImGui::SeparatorText("Root");
+	ImGui::DragFloat("root.amplitude,", &movingRootAmplitude_, 0.01f);
+	ImGui::DragFloat("root.speed,", &movingRootSpeed_, 0.01f);
+	ImGui::SeparatorText("Arm");
+	ImGui::DragFloat("arm.amplitude,", &movingArmAmplitude_, 0.01f);
+	ImGui::DragFloat("arm.speed,", &movingArmSpeed_, 0.01f);
+
+	if (behavior_ == Behavior::kNormal){
+		ImGui::Text("normal");
+	} else{
+		ImGui::Text("move");
+	}
 	ImGui::End();
+#endif // USE_IMGUI
 }
 
 //複製
@@ -161,33 +245,111 @@ void Player::LookAt(){
 	transform.quaternion = Quaternion::Slerp(transform.quaternion, targetQuaternion, kLookAtSpeed * mathUtility::kDeltaTime);
 }
 
-//通常状態の初期化
-void Player::RootInitialize(){
+//モーション遷移の初期化
+void Player::InitializeTransition(){
+	//切り替え用のタイマーをリセット
+	transitionTimer_ = 0.0f;
 
+	//モーションを行う前のモデルのNodeのLocalTransformを保存
+	prePose_.root = object3d_->GetNodeLocalTransform("Player_Root");
+	prePose_.head = object3d_->GetNodeLocalTransform("Player_Root/Head");
+	prePose_.body = object3d_->GetNodeLocalTransform("Player_Root/Body");
+	prePose_.rightArm = object3d_->GetNodeLocalTransform("Player_Root/Arm_R");
+	prePose_.leftArm = object3d_->GetNodeLocalTransform("Player_Root/Arm_L");
+}
+
+//モーション遷移の更新
+void Player::UpdateTransition(PlayerPose targetPose){
+	//切り替え用のタイマー
+	transitionTimer_ += mathUtility::kDeltaTime;
+	//ブレンドする割合
+	float blendRate = std::clamp(transitionTimer_ / kTransitionDuration, 0.0f, 1.0f);
+	//目標の位置まで補間
+	currentPose_ = PlayerPose::Lerp(prePose_, targetPose, blendRate);
+}
+
+//通常状態の初期化
+void Player::InitializeNormal(){
+	//小刻みに揺れるタイマーをリセット
+	bobTimer_ = 0.0f;
+
+	//モーション遷移の初期化
+	InitializeTransition();
 }
 
 //通常状態の更新
-void Player::RootUpdate(){
-	Transform playerRoot = object3d_->GetNodeLocalTransform("Player_Root");
-	float amplitude = 1.0f;
-	static float t = 0.0f;
-	t += mathUtility::kDeltaTime;
-	playerRoot.translate.y = std::sin(t * 2.0f) * amplitude;
-	object3d_->SetNodeLocalTransform("Player_Root", playerRoot);
+void Player::UpdateNormal(){
+	//時間を計測
+	bobTimer_ += mathUtility::kDeltaTime;
+
+	//プレイヤーの目標ポーズ
+	PlayerPose targetPose = currentPose_;
+
+	//上下に小刻みに動く
+	targetPose.root.SetEulerAngle(Vector3::GetZero());
+	targetPose.root.translate.y = std::sin(bobTimer_ * bobRootSpeed_) * bobRootAmplitude_;
+
+	//体は左右に小刻みに動く
+	Vector3 bodyEulerAngle = Vector3::GetZero();
+	bodyEulerAngle.z = std::sin(bobTimer_ * bobBodySpeed_) * bobBodyAmplitude_;
+	targetPose.body.SetEulerAngle(bodyEulerAngle);
+
+	//両腕を動かす
+	Vector3 armEulerAngle = Vector3::GetZero();
+	armEulerAngle.x = std::sin(bobTimer_ * bobArmSpeed_) * bobArmAmplitude_;
+	targetPose.leftArm.SetEulerAngle(armEulerAngle);
+	targetPose.rightArm.SetEulerAngle(armEulerAngle);
+
+	//モーション遷移の更新
+	UpdateTransition(targetPose);
 }
 
 //移動状態の初期化
-void Player::MoveInitialize(){
+void Player::InitializeMoving(){
+	//移動タイマーのリセット
+	movingTimer_ = 0.0f;
+
+	//モーション遷移の初期化
+	InitializeTransition();
 }
 
 //移動状態の更新
-void Player::MoveUpdate(){
+void Player::UpdateMoving(){
+	//時間を計測
+	movingTimer_ += mathUtility::kDeltaTime;
+
+	//プレイヤーの目標ポーズ
+	PlayerPose targetPose = currentPose_;
+
+	//上下に小刻みに動く
+	targetPose.root.translate.y = std::sin(movingTimer_ * movingRootSpeed_) * movingRootAmplitude_;
+
+	//全体的に少し前傾姿勢
+	Vector3 rootEulerAngle = Vector3::GetZero();
+	rootEulerAngle.x = 0.3f;
+	targetPose.root.SetEulerAngle(rootEulerAngle);
+
+	//両腕を動かす
+	Vector3 armEulerAngle = Vector3::GetZero();
+	armEulerAngle.x = std::sin(movingTimer_ * movingArmSpeed_) * movingArmAmplitude_;
+	targetPose.leftArm.SetEulerAngle(armEulerAngle);
+	targetPose.rightArm.SetEulerAngle(-armEulerAngle);
+
+	//モーション遷移の更新
+	UpdateTransition(targetPose);
 }
 
 //攻撃状態の初期化
-void Player::AttackInitialize(){
+void Player::InitializeAttack(){
+	//モーション遷移の初期化
+	InitializeTransition();
 }
 
 //攻撃状態の更新
-void Player::AttackUpdate(){
+void Player::UpdateAttack(){
+	//プレイヤーの目標ポーズ
+	PlayerPose targetPose = currentPose_;
+
+	//モーション遷移の更新
+	UpdateTransition(targetPose);
 }

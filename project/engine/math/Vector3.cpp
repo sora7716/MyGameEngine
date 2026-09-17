@@ -5,12 +5,12 @@
 #include <cassert>
 
 //すべて1.0fのベクトルを取得
-Vector3 Vector3::One(){
+Vector3 Vector3::GetOne(){
 	return Vector3(1.0f, 1.0f, 1.0f);
 }
 
 //すべて0.0fのベクトルを取得
-Vector3 Vector3::Zero(){
+Vector3 Vector3::GetZero(){
 	return Vector3(0.0f, 0.0f, 0.0f);
 }
 

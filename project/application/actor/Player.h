@@ -1,6 +1,7 @@
 #pragma once
 #include "Component.h"
 #include "Vector3.h"
+#include "RenderingData.h"
 
 //前方宣言
 class Input;
@@ -14,10 +15,28 @@ class Player :public Component{
 public://列挙型
 	//状態
 	enum class Behavior :uint32_t{
-		kRoot,
+		kNormal,
 		kMove,
 		kAttack,
 		kCount
+	};
+
+	//プレイヤーのTransform
+	struct PlayerPose{
+		Transform root = {};
+		Transform head = {};
+		Transform body = {};
+		Transform leftArm = {};
+		Transform rightArm = {};
+
+		/// <summary>
+		/// 補間
+		/// </summary>
+		/// <param name="playerPose1">プレイヤーポーズ</param>
+		/// <param name="playerPose2">プレイヤーポーズ</param>
+		/// <param name="t">係数</param>
+		/// <returns>補間したプレイヤーポーズ</returns>
+		static PlayerPose Lerp(const PlayerPose& playerPose1, const PlayerPose& playerPose2, float t);
 	};
 public://メンバ関数
 	/// <summary>
@@ -81,34 +100,45 @@ private://メンバ関数
 	void LookAt();
 
 	/// <summary>
+	/// モーション遷移の初期化
+	/// </summary>
+	void InitializeTransition();
+
+	/// <summary>
+	/// モーション遷移の更新
+	/// </summary>
+	/// <param name="targetPose">目的のポーズ</param>
+	void UpdateTransition(PlayerPose targetPose);
+
+	/// <summary>
 	/// 通常状態の初期化
 	/// </summary>
-	void RootInitialize();
+	void InitializeNormal();
 
 	/// <summary>
 	/// 通常状態の更新
 	/// </summary>
-	void RootUpdate();
+	void UpdateNormal();
 
 	/// <summary>
 	/// 移動状態の初期化
 	/// </summary>
-	void MoveInitialize();
+	void InitializeMoving();
 
 	/// <summary>
 	/// 移動状態の更新
 	/// </summary>
-	void MoveUpdate();
+	void UpdateMoving();
 
 	/// <summary>
 	/// 攻撃状態の初期化
 	/// </summary>
-	void AttackInitialize();
+	void InitializeAttack();
 
 	/// <summary>
 	/// 攻撃状態の更新
 	/// </summary>
-	void AttackUpdate();
+	void UpdateAttack();
 private://定数
 	//移動速度
 	static inline const float kMoveSpeed = 10.0f;
@@ -120,6 +150,8 @@ private://定数
 	static inline const float kGravity = -30.0f;
 	//向くスピード
 	static inline const float kLookAtSpeed = 8.0f;
+	//モーションの切り替え時間
+	static inline const float kTransitionDuration = 1.0f;
 private://メンバ変数
 	//入力
 	Input* input_ = nullptr;
@@ -141,5 +173,36 @@ private://メンバ変数
 	//振る舞い
 	Behavior behavior_ = Behavior::kCount;
 	//振る舞いのリクエスト
-	Behavior behaviorRequest_ = Behavior::kRoot;
+	Behavior behaviorRequest_ = Behavior::kNormal;
+
+	//今のNodeのLocalTransform情報
+	PlayerPose currentPose_ = {};
+	//前のNodeのLocalTransform情報
+	PlayerPose prePose_ = {};
+
+	//モーション切り替え用のタイマー
+	float transitionTimer_ = 0.0f;
+
+	//通常状態
+	float bobTimer_ = 0.0f;
+	//全体
+	float bobRootAmplitude_ = 0.15f;
+	float bobRootSpeed_ = 5.0f;
+	//体
+	float bobBodyAmplitude_ = 0.1f;
+	float bobBodySpeed_ = 5.0f;
+	//両腕
+	float bobArmAmplitude_ = 0.3f;
+	float bobArmSpeed_ = 5.0f;
+
+	//移動状態
+	float movingTimer_ = 0.0f;
+	//全体
+	float movingRootAmplitude_ = 0.4f;
+	float movingRootSpeed_ = 5.0f;
+	//両腕
+	float movingArmAmplitude_ = 0.8f;
+	float movingArmSpeed_ = 5.0f;
+
+	//攻撃状態
 };

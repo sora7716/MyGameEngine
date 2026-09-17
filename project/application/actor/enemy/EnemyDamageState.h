@@ -41,22 +41,22 @@ private://メンバ関数
 	/// <summary>
 	/// のけぞりアクションの初期化
 	/// </summary>
-	void FlinchInitialize();
+	void InitializeFlinch();
 
 	/// <summary>
 	/// のけぞりアクションの更新
 	/// </summary>
-	void FlinchUpdate();
+	void UpdateFlinch();
 
 	/// <summary>
 	/// ノックバックの初期化
 	/// </summary>
-	void KnockbackInitialize();
+	void InitializeKnockback();
 
 	/// <summary>
 	/// ノックバックの更新
 	/// </summary>
-	void KnockbackUpdate();
+	void UpdateKnockback();
 private://定数
 	//のけぞりの最大時間
 	static inline const float kFlinchDuration = 0.12f;

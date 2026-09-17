@@ -81,6 +81,16 @@ bool Input::ReleaseTriggerKey(BYTE keyNumber){
 	return false;
 }
 
+//キーを離した事をチェック
+bool Input::ReleaseKey(BYTE keyNumber){
+	//キーを離した瞬間ならばtrueを返す
+	if (!keys_[keyNumber] && !preKeys_[keyNumber]){
+		return true;
+	}
+	//そうでなければfalseを返す
+	return false;
+}
+
 //マウスのボタンの押下をチェック
 bool Input::PressMouseButton(Click mouseClickPos){
 	//マウスの押していればtrueを返す

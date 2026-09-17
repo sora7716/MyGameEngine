@@ -55,7 +55,7 @@ void GameScene::Debug(){
 	ImGui::Begin("デバッグ");
 	Object3d* playerObject3d = playerObject_->GetComponent<Object3d>();
 	for (const Object3d::NodeInfo& nodeInfo : playerObject3d->GetNodeNames()){
-		ImGui::SeparatorText(nodeInfo.path.c_str());
+		ImGui::Text("・%s", nodeInfo.path.c_str());
 	}
 	ImGui::End();
 #endif // USE_IMGUI
@@ -118,7 +118,7 @@ GameObject* GameScene::CreatePlayerObject(){
 	gameObject->AddComponent<Player>();
 
 	//AABBコンポーネント
-	Vector3 playerHitBoxSize = Vector3::One();
+	Vector3 playerHitBoxSize = Vector3::GetOne();
 	AABBCollider* playerAABB = gameObject->AddComponent<AABBCollider>();
 	playerAABB->SetHalfSize(playerHitBoxSize / 2.0f);
 	playerAABB->SetBodyType(BodyType::kDynamic);
@@ -140,7 +140,7 @@ GameObject* GameScene::CreateGround(){
 	gameObject->SetTag("Ground");
 
 	//AABBコライダー
-	Vector3 blockerSize = Vector3::One();
+	Vector3 blockerSize = Vector3::GetOne();
 	AABBCollider* blocker = gameObject->AddComponent<AABBCollider>();
 	blocker->SetHalfSize(blockerSize / 2.0f);
 	blocker->SetBodyType(BodyType::kStatic);
@@ -170,7 +170,7 @@ GameObject* GameScene::CreateEnemy(){
 	gameObject->AddComponent<Enemy>();
 
 	//AABBコンポーネント
-	Vector3 hitBoxSize = Vector3::One();
+	Vector3 hitBoxSize = Vector3::GetOne();
 	AABBCollider* hitBox = gameObject->AddComponent<AABBCollider>();
 	hitBox->SetIsTrigger(true);
 	hitBox->SetBodyType(BodyType::kDynamic);

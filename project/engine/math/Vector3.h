@@ -4,7 +4,7 @@
 /// <summary>
 /// 3次元ベクトル
 /// </summary>
-struct Vector3 final {
+struct Vector3 final{
 	float x = 0.0f;
 	float y = 0.0f;
 	float z = 0.0f;
@@ -13,13 +13,13 @@ struct Vector3 final {
 	/// すべて1.0fのベクトルを取得
 	/// </summary>
 	/// <returns>Vector3</returns>
-	static Vector3 One();
+	static Vector3 GetOne();
 
 	/// <summary>
 	/// すべて0.0fのベクトルを取得
 	/// </summary>
 	/// <returns>Vector3</returns>
-	static Vector3 Zero();
+	static Vector3 GetZero();
 
 	/// <summary>
 	/// Y軸だけに1.0fのベクトルを取得
@@ -78,7 +78,7 @@ struct Vector3 final {
 	/// <param name="v1">ベクトル1</param>
 	/// <param name="v2">ベクトル2</param>
 	/// <returns>最小値</returns>
-	Vector3 Min(const Vector3& v1,const Vector3& v2)const;
+	Vector3 Min(const Vector3& v1, const Vector3& v2)const;
 
 	/// <summary>
 	/// 最大値
@@ -204,7 +204,7 @@ const Vector3 operator*(float n, const Vector3& v);
 /// <summary>
 /// 3次元ベクトルの整数型
 /// </summary>
-struct Vector3Int {
+struct Vector3Int{
 	int32_t x = 0;
 	int32_t y = 0;
 	int32_t z = 0;

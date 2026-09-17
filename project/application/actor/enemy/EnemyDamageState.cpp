@@ -29,17 +29,17 @@ void EnemyDamageState::Initialize(Enemy* enemy){
 	normalRotate_ = enemy_->GetNormalRotate();
 
 	//のけぞりの初期化
-	FlinchInitialize();
+	InitializeFlinch();
 	//ノックバックの初期化
-	KnockbackInitialize();
+	InitializeKnockback();
 }
 
 //更新
 void EnemyDamageState::Update(){
 	//のけぞりの更新
-	FlinchUpdate();
+	UpdateFlinch();
 	//ノックバックの更新
-	KnockbackUpdate();
+	UpdateKnockback();
 
 	//のけぞりとノックバックが終了したら
 	if (isFinishedFlinch_ && isFinishedKnockback_){
@@ -52,7 +52,7 @@ void EnemyDamageState::Finalize(){
 }
 
 //のけぞりアクションの初期化
-void EnemyDamageState::FlinchInitialize(){
+void EnemyDamageState::InitializeFlinch(){
 	//のけぞりタイマーの初期化
 	flinchTimer_ = 0.0f;
 	//終了フラグをリセット
@@ -71,7 +71,7 @@ void EnemyDamageState::FlinchInitialize(){
 }
 
 //のけぞりアクションの更新
-void EnemyDamageState::FlinchUpdate(){
+void EnemyDamageState::UpdateFlinch(){
 	//終了フラグがtrueなら
 	if (isFinishedFlinch_){
 		return;
@@ -96,7 +96,7 @@ void EnemyDamageState::FlinchUpdate(){
 }
 
 //ノックバックの初期化
-void EnemyDamageState::KnockbackInitialize(){
+void EnemyDamageState::InitializeKnockback(){
 	//タイマーのリセット
 	knockbackTimer_ = 0.0f;
 	//終了フラグをリセット
@@ -112,7 +112,7 @@ void EnemyDamageState::KnockbackInitialize(){
 }
 
 //ノックバックの更新
-void EnemyDamageState::KnockbackUpdate(){
+void EnemyDamageState::UpdateKnockback(){
 	//終了フラグがtrueなら
 	if (isFinishedKnockback_){
 		return;
@@ -127,8 +127,8 @@ void EnemyDamageState::KnockbackUpdate(){
 	//タイマーが過ぎたら
 	if (knockbackTimer_ >= kKnockbackDuration){
 		//速度と加速度をリセット
-		rigidBody_->GetVelocity() = Vector3::Zero();
-		rigidBody_->GetAcceleration() = Vector3::Zero();
+		rigidBody_->GetVelocity() = Vector3::GetZero();
+		rigidBody_->GetAcceleration() = Vector3::GetZero();
 
 		//終了を通知
 		isFinishedKnockback_ = true;

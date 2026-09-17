@@ -62,6 +62,7 @@ struct TransformationMatrixForSprite{
 struct Node{
 	Matrix4x4 baseMatrix = Matrix4x4::Identity4x4();
 	Matrix4x4 localMatrix = Matrix4x4::Identity4x4();
+	Matrix4x4 modelMatrix = Matrix4x4::Identity4x4();
 	Transform localTransform = {};
 	std::string name = "";
 	std::vector<Node> children;

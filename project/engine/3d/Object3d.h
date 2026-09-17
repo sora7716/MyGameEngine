@@ -67,6 +67,19 @@ public://メンバ関数
 	void UpdateLOD(float distance);
 
 	/// <summary>
+	/// 親子付けを外す
+	/// </summary>
+	void DetachParent();
+
+	/// <summary>
+	/// 親子付け
+	/// </summary>
+	/// <param name="parent">親</param>
+	/// <param name="parentNodePath">親となるノードのパス</param>
+	/// <returns>成功したか</returns>
+	bool AttachTo(Object3d* parent, const std::string& parentNodePath);
+
+	/// <summary>
 	/// ワールド行列を作成
 	/// </summary>
 	/// <param name="cameraWorldMatrix">カメラのワールド行列</param>
@@ -333,6 +346,15 @@ private://メンバ変数
 
 	//オブジェクトの見た目
 	RenderTransformMode renderTransformMode_ = RenderTransformMode::kNormal;
+
+	//親
+	Object3d* parentObject_ = nullptr;
+	std::string  parentNodePath_ = "";
+
+	//親行列
+	Matrix4x4 parentMatrix_ = {};
+	//ローカル行列
+	Matrix4x4 localMatrix_ = {};
 	//ワールド行列
 	Matrix4x4 worldMatrix_ = {};
 

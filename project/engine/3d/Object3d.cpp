@@ -6,6 +6,7 @@
 #include "MaterialInstance.h"
 #include "BaseScene.h"
 #include "ModelManager.h"
+#include "Logger.h"
 #include <cassert>
 
 //コンストラクタ
@@ -28,6 +29,10 @@ void Object3d::Initialize(){
 	//トランスフォームモード
 	renderTransformMode_ = RenderTransformMode::kNormal;
 
+	//親行列の初期化
+	parentMatrix_ = Matrix4x4::Identity4x4();
+	//ローカル行列の初期化
+	localMatrix_ = Matrix4x4::Identity4x4();
 	//ワールド行列の初期化
 	worldMatrix_ = Matrix4x4::Identity4x4();
 	//Nodeのローカル行列の初期化
@@ -84,6 +89,39 @@ void Object3d::UpdateLOD(float distance){
 
 	//距離からLODを選択
 	currentLOD_ = lodController_->SelectLOD(distance, currentLOD_, baseModel_->GetLODCount());
+}
+
+//親子付けを外す
+void Object3d::DetachParent(){
+	//親を外す前に見た目の位置をLocalへ移す
+	localMatrix_ = worldMatrix_;
+
+	//親なし
+	parentMatrix_ = Matrix4x4::Identity4x4();
+}
+
+//親子付け
+bool Object3d::AttachTo(Object3d* parent, const std::string& parentNodePath){
+	if (!parent){
+		Logger::OutputLog("親子付けを行う際の親がnull参照しました");
+		return false;
+	}
+
+	if (parent == this){
+		Logger::OutputLog("親子付けを行う際に自分のポインタを参照しました");
+		return false;
+	}
+
+	Node* found = parent->FindNode(parentNodePath);
+	if (!found){
+		Logger::OutputLog("存在しないNodeのPathにアクセスしようとしました");
+		return false;
+	}
+
+	//メンバ変数に記録
+	parentObject_ = parent;
+	parentNodePath_ = parentNodePath;
+	return true;
 }
 
 //ワールド行列を作成
@@ -480,8 +518,19 @@ void Object3d::MakeWorldMatrix(){
 	//ゲームオブジェクトがNullじゃないか
 	assert(gameObject);
 
+	//親オブジェクトがある場合
+	if (parentObject_){
+		Node* node = parentObject_->FindNode(parentNodePath_);
+		if (node){
+			parentMatrix_ = node->modelMatrix * parentObject_->GetWorldMatrix();
+		}
+	}
+
 	//このオブジェクト本来のワールド行列を求める
-	worldMatrix_ = matrixUtility::MakeAffineMatrix(gameObject->GetTransform());
+	localMatrix_ = matrixUtility::MakeAffineMatrix(gameObject->GetTransform());
+
+	//ワールド行列を求める
+	worldMatrix_ = localMatrix_ * parentMatrix_;
 
 	//ノードのメッシュインスタンスをクリア
 	nodeMeshInstance_.clear();
@@ -516,18 +565,18 @@ void Object3d::UpdateNodeMatrices(Node& node, const Matrix4x4& parentMatrix){
 	//ローカル行列を求める
 	node.localMatrix = animationMatrix * node.baseMatrix;
 
-	//ノードの行列
-	Matrix4x4 nodeMatrix = node.localMatrix * parentMatrix;
+	//階層を累積した行列
+	node.modelMatrix = node.localMatrix * parentMatrix;
 
 	//メッシュのインデックス分行列を計算
 	for (uint32_t meshIndex : node.meshIndices){
 		assert(baseModel_);
 		assert(meshIndex < static_cast<uint32_t>(baseModel_->GetMeshes().size()));
-		nodeMeshInstance_.push_back({ meshIndex, nodeMatrix });
+		nodeMeshInstance_.push_back({ meshIndex, node.modelMatrix });
 	}
 
 	//子の数分回す
 	for (Node& child : node.children){
-		UpdateNodeMatrices(child, nodeMatrix);
+		UpdateNodeMatrices(child, node.modelMatrix);
 	}
 }

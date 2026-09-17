@@ -72,6 +72,12 @@ private://メンバ関数
 	/// </summary>
 	/// <returns>ゲームオブジェクト</returns>
 	GameObject* CreateEnemy();
+
+	/// <summary>
+	/// 剣の生成
+	/// </summary>
+	/// <returns>ゲームオブジェクト</returns>
+	GameObject* CreateSword();
 private://メンバ変数
 	//プレイヤー
 	GameObject* playerObject_ = nullptr;

@@ -68,6 +68,10 @@ void DefaultResourceLoader::LoadModel(){
 	modelManager_->AddModel("player", "player/player.gltf");
 	//敵
 	modelManager_->AddModel("enemy", "enemy/enemy.gltf");
+	//剣
+	modelManager_->AddModel("sword", "sword/sword.gltf");
+	//盾
+	modelManager_->AddModel("shield", "shield/shield.gltf");
 	//デカヌ
 	//core_->GetModelManager()->AddModel("dekanu", "dekanu/dekanu.gltf");
 	//人

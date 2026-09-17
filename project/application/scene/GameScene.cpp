@@ -40,6 +40,9 @@ void GameScene::Initialize(){
 
 	//敵の生成
 	CreateEnemy();
+
+	//剣の生成
+	CreateSword();
 }
 
 //更新のステート
@@ -198,6 +201,18 @@ GameObject* GameScene::CreateEnemy(){
 	//3Dオブジェクト
 	Object3d* enemyModel = gameObject->AddComponent<Object3d>();
 	enemyModel->SetModel("enemy");
+
+	return gameObject;
+}
+
+//剣の生成
+GameObject* GameScene::CreateSword(){
+	GameObject* gameObject = CreateGameObject();
+
+	//オブジェクト3d
+	Object3d* object3d = gameObject->AddComponent<Object3d>();
+	object3d->SetModel("sword");
+	object3d->AttachTo(playerObject_->GetComponent<Object3d>(), "Player_Root/Arm_L");
 
 	return gameObject;
 }

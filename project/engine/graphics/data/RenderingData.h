@@ -8,7 +8,7 @@
 //Transform情報
 struct Transform{
 	Vector3 scale = Vector3::GetOne();
-	Quaternion quaternion = Quaternion::IdentityQuaternion();
+	Quaternion rotate = Quaternion::IdentityQuaternion();
 	Vector3 translate = {};
 
 	/// <summary>

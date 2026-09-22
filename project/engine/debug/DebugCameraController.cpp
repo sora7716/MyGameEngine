@@ -176,7 +176,7 @@ void DebugCameraController::TranslateUpdate(){
 	DollyControl();
 
 	//カメラの角度をもとに回転行列を求める
-	Matrix4x4 rotMat = matrixUtility::MakeRotateMatrix(gameObject_->GetTransform().quaternion);
+	Matrix4x4 rotMat = matrixUtility::MakeRotateMatrix(gameObject_->GetTransform().rotate);
 
 	//カメラの向いてる方向を正にする(XとZ軸限定)
 	Vector3 moveDirXZ = mathUtility::TransformNormal(Vector3(moveDir_.x, 0.0f, moveDir_.z), rotMat);

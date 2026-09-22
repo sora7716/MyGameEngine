@@ -72,7 +72,7 @@ void Camera::SetEulerAngle(const Vector3& eulerAngle){
 
 //クォータニオンの設定
 void Camera::SetQuaternion(const Quaternion& quaternion){
-	gameObject_->GetTransform().quaternion = quaternion;
+	gameObject_->GetTransform().rotate = quaternion;
 }
 
 // 平行移動の設定
@@ -122,7 +122,7 @@ const Matrix4x4& Camera::GetViewProjectionMatrix() const{
 
 // 回転の取得
 const Quaternion& Camera::GetQuaternion() const{
-	return gameObject_->GetTransform().quaternion;
+	return gameObject_->GetTransform().rotate;
 }
 
 // 平行移動の取得

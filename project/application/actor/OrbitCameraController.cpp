@@ -48,7 +48,7 @@ void OrbitCameraController::Update(){
 	pitch_ = std::clamp(pitch_, minPitch, maxPitch);
 
 	//カメラの向いている方向を取得
-	Quaternion rotation = Quaternion::MakeQuaternionForEulerAngle({ pitch_,yaw_,0.0f });
+	Quaternion rotation = Quaternion::EulerAngleToQuaternion({ pitch_,yaw_,0.0f });
 
 	//回転後のカメラの相対位置
 	Vector3 rotatedCameraPos = rotation.RotateVector({ 0.0f,0.0f,-distance_ });

@@ -78,7 +78,7 @@ void EnemyDamageState::UpdateFlinch(){
 	}
 
 	//のけぞる姿勢を適応(Slerp)
-	Quaternion& rotate = gameObject_->GetTransform().quaternion;
+	Quaternion& rotate = gameObject_->GetTransform().rotate;
 	//リアクションタイマーを加算
 	flinchTimer_ += mathUtility::kDeltaTime;
 	//係数を取得

@@ -93,10 +93,24 @@ void Object3d::UpdateLOD(float distance){
 
 //親子付けを外す
 void Object3d::DetachParent(){
-	//親を外す前に見た目の位置をLocalへ移す
-	localMatrix_ = worldMatrix_;
+	//そもそも親がなければ
+	if (!parentObject_){
+		return;
+	}
+	//ゲームオブジェクト取得
+	GameObject* gameObject = GetOwner();
+	//ゲームオブジェクトがなければ
+	if (!gameObject){
+		return;
+	}
 
-	//親なし
+	//Transformを抽出
+	Transform& transform = gameObject->GetTransform();
+	transform = matrixUtility::DecomposeMatrix(worldMatrix_);
+
+	//親を解除
+	parentObject_ = nullptr;
+	parentNodePath_.clear();
 	parentMatrix_ = Matrix4x4::Identity4x4();
 }
 

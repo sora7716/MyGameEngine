@@ -173,7 +173,7 @@ Matrix4x4 matrixUtility::MakeOBBWorldMatrix(const Vector3* orientations, const V
 //アフィン関数
 Matrix4x4 matrixUtility::MakeAffineMatrix(const Transform& transform){
 
-	return (MakeScaleMatrix(transform.scale) * MakeRotateMatrix(transform.quaternion)) * MakeTranslateMatrix(transform.translate);
+	return (MakeScaleMatrix(transform.scale) * MakeRotateMatrix(transform.rotate)) * MakeTranslateMatrix(transform.translate);
 }
 
 //アフィン行列
@@ -252,5 +252,53 @@ Matrix4x4 matrixUtility::MakeBillboardMatrix(const Matrix4x4& cameraWorldMatrix,
 
 //ビルボード行列を含んだアフィン行列の作成
 Matrix4x4 matrixUtility::MakeBillboardAffineMatrix(const Matrix4x4& cameraWorldMatrix, const Transform& transform){
-	return (MakeScaleMatrix(transform.scale) * MakeBillboardMatrix(cameraWorldMatrix, transform.quaternion)) * MakeTranslateMatrix(transform.translate);
+	return (MakeScaleMatrix(transform.scale) * MakeBillboardMatrix(cameraWorldMatrix, transform.rotate)) * MakeTranslateMatrix(transform.translate);
+}
+
+//行列をTransformに分解
+Transform matrixUtility::DecomposeMatrix(const Matrix4x4& m){
+	//平行移動行列を抽出
+	Vector3 translate = { m.m[3][0],m.m[3][1],m.m[3][2] };
+
+	//拡縮を抽出
+	Vector3 scale = Vector3::GetZero();
+	scale.x = std::sqrt((m.m[0][0] * m.m[0][0]) + (m.m[0][1] * m.m[0][1]) + (m.m[0][2] * m.m[0][2]));
+	scale.y = std::sqrt((m.m[1][0] * m.m[1][0]) + (m.m[1][1] * m.m[1][1]) + (m.m[1][2] * m.m[1][2]));
+	scale.z = std::sqrt((m.m[2][0] * m.m[2][0]) + (m.m[2][1] * m.m[2][1]) + (m.m[2][2] * m.m[2][2]));
+
+	//拡縮がゼロに限りなく近いが確認
+	constexpr float epsilon = 0.00001f;
+	if (scale.x < epsilon ||
+		scale.y < epsilon ||
+		scale.z < epsilon){
+		//Transformに入れる
+		Transform result = {};
+		result.scale = scale;
+		result.rotate = Quaternion::IdentityQuaternion();
+		result.translate = translate;
+		return result;
+	}
+
+	//回転行列を抽出
+	Matrix4x4 rotateMatrix = Matrix4x4::Identity4x4();
+	rotateMatrix.m[0][0] = m.m[0][0] / scale.x;
+	rotateMatrix.m[0][1] = m.m[0][1] / scale.x;
+	rotateMatrix.m[0][2] = m.m[0][2] / scale.x;
+	rotateMatrix.m[1][0] = m.m[1][0] / scale.y;
+	rotateMatrix.m[1][1] = m.m[1][1] / scale.y;
+	rotateMatrix.m[1][2] = m.m[1][2] / scale.y;
+	rotateMatrix.m[2][0] = m.m[2][0] / scale.z;
+	rotateMatrix.m[2][1] = m.m[2][1] / scale.z;
+	rotateMatrix.m[2][2] = m.m[2][2] / scale.z;
+
+	//回転行列をクォータニオンに変換
+	Quaternion rotate = Quaternion::RotationMatrixToQuaternion(rotateMatrix);
+
+	//Transformに入れる
+	Transform result = {};
+	result.scale = scale;
+	result.rotate = rotate;
+	result.translate = translate;
+
+	return result;
 }

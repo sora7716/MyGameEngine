@@ -175,5 +175,12 @@ namespace matrixUtility {
 	/// <param name="transform">トランスフォーム</param>
 	/// <returns>ビルボード行列を含んだアフィン行列</returns>
 	Matrix4x4 MakeBillboardAffineMatrix(const Matrix4x4& cameraWorldMatrix, const Transform& transform);
+
+	/// <summary>
+	/// 行列をTransformに分解
+	/// </summary>
+	/// <param name="m">行列</param>
+	/// <returns>Transform</returns>
+	Transform DecomposeMatrix(const Matrix4x4& m);
 };
 

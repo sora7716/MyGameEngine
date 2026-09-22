@@ -332,12 +332,12 @@ void DebugEditor::DrawInspector(){
 		//オイラー角
 		Vector3 eulerAngle = transform.GetEulerAngle();
 		if (ImGui::DragFloat3("rotate", &eulerAngle.x, 0.1f)){
-			transform.quaternion = Quaternion::MakeQuaternionForEulerAngle(eulerAngle);
+			transform.rotate = Quaternion::EulerAngleToQuaternion(eulerAngle);
 		}
 		ImGui::SameLine();
 		//回転のリセット
 		if (ImGui::SmallButton("Reset##rotate")){
-			transform.quaternion = Quaternion::IdentityQuaternion();
+			transform.rotate = Quaternion::IdentityQuaternion();
 		}
 
 

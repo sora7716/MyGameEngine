@@ -23,7 +23,7 @@ void Enemy::Initialize(){
 	rigidBody_ = gameObject_->GetComponent<RigidBody>();
 
 	//通常の回転を保存
-	normalRotate_ = gameObject_->GetTransform().quaternion;
+	normalRotate_ = gameObject_->GetTransform().rotate;
 
 	//ステートを取得
 	states_[static_cast<uint32_t>(Behavior::kNormal)] = std::make_unique<EnemyNormalState>();

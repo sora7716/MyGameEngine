@@ -65,7 +65,7 @@ void debugDraw::BaseShape::SetLocalScale(const Vector3& scale){
 
 //ローカルの回転を設定
 void debugDraw::BaseShape::SetLocalRotate(const Quaternion& rotate){
-	localTransform_.quaternion = rotate;
+	localTransform_.rotate = rotate;
 }
 
 //ローカルの平行移動を設定

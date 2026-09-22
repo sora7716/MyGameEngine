@@ -1,4 +1,6 @@
 #include "Quaternion.h"
+#include "Vector3.h"
+#include "Matrix4x4.h"
 #include <cmath>
 #include <algorithm>
 
@@ -84,7 +86,7 @@ Quaternion Quaternion::Slerp(const Quaternion& q1, const Quaternion& q2, float t
 }
 
 //オイラー角からクォータニオンを生成
-Quaternion Quaternion::MakeQuaternionForEulerAngle(const Vector3& rotate){
+Quaternion Quaternion::EulerAngleToQuaternion(const Vector3& rotate){
 	float rx = rotate.x;
 	float ry = rotate.y;
 	float rz = rotate.z;
@@ -120,6 +122,55 @@ Quaternion Quaternion::MakeRotateAxisAngleQuaternion(const Vector3& axis, float 
 	Vector3 n = axis.Normalize();
 
 	return { n.x * sin,n.y * sin,n.z * sin,cos };
+}
+
+//行列をクォータニオンに変換
+Quaternion Quaternion::RotationMatrixToQuaternion(const Matrix4x4& m){
+	//トレースを作成
+	float trace = m.m[0][0] + m.m[1][1] + m.m[2][2];
+
+	Quaternion result = Quaternion::IdentityQuaternion();
+	//トレースを見る
+	if (trace > 0.0f){
+		//トレースを基準
+		float s = std::sqrt(trace + 1.0f) * 2.0f;
+
+		//クォータニオンに変換
+		result.x = (m.m[1][2] - m.m[2][1]) / s;
+		result.y = (m.m[2][0] - m.m[0][2]) / s;
+		result.z = (m.m[0][1] - m.m[1][0]) / s;
+		result.w = s / 4.0f;
+	} else if (m.m[0][0] > m.m[1][1] && m.m[0][0] > m.m[2][2]){
+		//xを基準
+		float s = std::sqrt(1.0f + m.m[0][0] - m.m[1][1] - m.m[2][2]) * 2.0f;
+
+		//クォータニオンに変換
+		result.x = s / 4.0f;
+		result.y = (m.m[0][1] + m.m[1][0]) / s;
+		result.z = (m.m[0][2] + m.m[2][0]) / s;
+		result.w = (m.m[1][2] - m.m[2][1]) / s;
+	} else if (m.m[1][1] > m.m[2][2]){
+		//yを基準
+		float s = std::sqrt(1.0f + m.m[1][1] - m.m[0][0] - m.m[2][2]) * 2.0f;
+
+
+		//クォータニオンに変換
+		result.x = (m.m[0][1] + m.m[1][0]) / s;
+		result.y = s / 4.0f;
+		result.z = (m.m[1][2] + m.m[2][1]) / s;
+		result.w = (m.m[2][0] - m.m[0][2]) / s;
+	} else{
+		//zを基準
+		float s = std::sqrt(1.0f + m.m[2][2] - m.m[0][0] - m.m[1][1]) * 2.0f;
+
+		//クォータニオンに変換
+		result.x = (m.m[0][2] + m.m[2][0]) / s;
+		result.y = (m.m[1][2] + m.m[2][1]) / s;
+		result.z = s / 4.0f;
+		result.w = (m.m[0][1] - m.m[1][0]) / s;
+	}
+
+	return result.Normalize();
 }
 
 //加算

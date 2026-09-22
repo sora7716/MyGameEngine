@@ -191,7 +191,7 @@ void Player::MoveControl(){
 	}
 
 	//カメラの角度をもとに回転行列を求める
-	Matrix4x4 rotMat = matrixUtility::MakeRotateMatrix(cameraObject_->GetTransform().quaternion);
+	Matrix4x4 rotMat = matrixUtility::MakeRotateMatrix(cameraObject_->GetTransform().rotate);
 
 	//カメラの向いてる方向を正にする(XとZ軸限定)
 	worldDirection_ = mathUtility::TransformNormal(inputDirection_, rotMat);
@@ -239,10 +239,10 @@ void Player::LookAt(){
 	float yaw = std::atan2(worldDirection_.x, worldDirection_.z);
 
 	//目標のクォータニオンを作成
-	Quaternion targetQuaternion = Quaternion::MakeQuaternionForEulerAngle({ 0.0f,yaw,0.0f });
+	Quaternion targetQuaternion = Quaternion::EulerAngleToQuaternion({ 0.0f,yaw,0.0f });
 
 	//目標のクォータニオンの方向に向かせる
-	transform.quaternion = Quaternion::Slerp(transform.quaternion, targetQuaternion, kLookAtSpeed * mathUtility::kDeltaTime);
+	transform.rotate = Quaternion::Slerp(transform.rotate, targetQuaternion, kLookAtSpeed * mathUtility::kDeltaTime);
 }
 
 //モーション遷移の初期化

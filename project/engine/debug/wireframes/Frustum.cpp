@@ -20,7 +20,7 @@ void debugDraw::Frustum::InitializeShape(){
 void debugDraw::Frustum::UpdateShape(){
 	GameObject* gameObject = GetOwner();
 	//トランスフォームに送信
-	gameObject->GetTransform().quaternion = targetCamera_->GetQuaternion();
+	gameObject->GetTransform().rotate = targetCamera_->GetQuaternion();
 	gameObject->GetTransform().translate = targetCamera_->GetTranslate();
 }
 

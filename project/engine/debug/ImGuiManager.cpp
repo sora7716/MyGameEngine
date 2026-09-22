@@ -98,7 +98,7 @@ void ImGuiManager::DragOBB([[maybe_unused]] primitiveData::OBB& obb){
 	ImGui::DragFloat3("size", &obb.size.x, 0.1f);
 	static Vector3 obbRadian = {};
 	ImGui::DragFloat3("rotate", &obbRadian.x, 0.1f);
-	obb.quaternion = Quaternion::MakeQuaternionForEulerAngle(obbRadian);
+	obb.quaternion = Quaternion::EulerAngleToQuaternion(obbRadian);
 	ImGui::DragFloat3("center", &obb.center.x, 0.1f);
 #endif // USE_IMGUI
 }

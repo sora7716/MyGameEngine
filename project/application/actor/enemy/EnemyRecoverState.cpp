@@ -47,7 +47,7 @@ void EnemyRecoverState::InitializeRecover(){
 	//タイマーのリセット
 	recoverTimer_ = 0.0f;
 	//元に戻す瞬間の回転
-	recoverStartRotate_ = gameObject_->GetTransform().quaternion;
+	recoverStartRotate_ = gameObject_->GetTransform().rotate;
 }
 
 //浮き上がるときの更新
@@ -59,7 +59,7 @@ void EnemyRecoverState::UpdateRecover(){
 	float t = recoverTimer_ / kRecoverDuration;
 
 	//元に戻す
-	Quaternion& rotate = gameObject_->GetTransform().quaternion;
+	Quaternion& rotate = gameObject_->GetTransform().rotate;
 	//補間する
 	rotate = rotate.Slerp(recoverStartRotate_, normalRotate_, t);
 

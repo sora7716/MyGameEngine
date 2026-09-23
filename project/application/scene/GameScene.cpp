@@ -9,6 +9,7 @@
 #include "ImGuiManager.h"
 #include "Enemy.h"
 #include "RigidBody.h"
+#include "MathUtility.h"
 
 //コンストラクタ
 GameScene::GameScene(){
@@ -208,6 +209,10 @@ GameObject* GameScene::CreateEnemy(){
 //剣の生成
 GameObject* GameScene::CreateSword(){
 	GameObject* gameObject = CreateGameObject();
+	gameObject->GetTransform().scale = { 2.0f,3.0f,2.0f };
+	gameObject->GetTransform().SetEulerAngle({ mathUtility::kPi / 2.0f,0.0f,1.90f });
+	gameObject->GetTransform().translate = { 0.2f,-0.6f,0.9f };
+	gameObject->SetName("sword");
 
 	//オブジェクト3d
 	Object3d* object3d = gameObject->AddComponent<Object3d>();

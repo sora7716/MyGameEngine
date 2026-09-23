@@ -20,6 +20,13 @@ public://列挙型
 		kAttack,
 		kCount
 	};
+	
+	//攻撃フェーズ
+	enum class AttackPhase :uint32_t{
+		kWindup,
+		kSwing,
+		kCount
+	};
 
 	//プレイヤーのTransform
 	struct PlayerPose{
@@ -100,6 +107,11 @@ private://メンバ関数
 	void LookAt();
 
 	/// <summary>
+	/// 過去のポーズを設定
+	/// </summary>
+	void SettingPreviousPose();
+
+	/// <summary>
 	/// モーション遷移の初期化
 	/// </summary>
 	void InitializeTransition();
@@ -131,14 +143,24 @@ private://メンバ関数
 	void UpdateMoving();
 
 	/// <summary>
-	/// 攻撃状態の初期化
+	/// 振りかぶり状態の初期化
 	/// </summary>
-	void InitializeAttack();
+	void InitializeWindup();
 
 	/// <summary>
-	/// 攻撃状態の更新
+	/// 振りかぶり状態の更新
 	/// </summary>
-	void UpdateAttack();
+	void UpdateWindup();
+
+	/// <summary>
+	/// 振り下ろし状態の初期化
+	/// </summary>
+	void InitializeSwing();
+
+	/// <summary>
+	/// 振り下ろし状態の更新
+	/// </summary>
+	void UpdateSwing();
 private://定数
 	//移動速度
 	static inline const float kMoveSpeed = 10.0f;
@@ -151,7 +173,11 @@ private://定数
 	//向くスピード
 	static inline const float kLookAtSpeed = 8.0f;
 	//モーションの切り替え時間
-	static inline const float kTransitionDuration = 1.0f;
+	static inline const float kTransitionDuration = 0.4f;
+	//振りかぶり状態の時間
+	static inline const float kWindupDuration = 0.3f;
+	//振り下げ状態の時間
+	static inline const float kSwingDuration = 0.15f;
 private://メンバ変数
 	//入力
 	Input* input_ = nullptr;
@@ -204,5 +230,13 @@ private://メンバ変数
 	float movingArmAmplitude_ = 0.8f;
 	float movingArmSpeed_ = 5.0f;
 
-	//攻撃状態
+	//攻撃フェーズ
+	AttackPhase attackPhase_ = AttackPhase::kCount;
+	//攻撃フェーズのリクエスト
+	AttackPhase attackPhaseRequest_ = AttackPhase::kWindup;
+
+	//振りかぶり状態
+	float windupTimer_ = 0.0f;
+	//振り下げ状態
+	float swingTimer_ = 0.0f;
 };

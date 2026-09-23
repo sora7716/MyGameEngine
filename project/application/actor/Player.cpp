@@ -66,15 +66,25 @@ void Player::Update(){
 		input_->PressKey(DIK_S);
 
 	//移動キーが押されているか確認
-	if (isMoveInputActive){
-		//現在の振る舞いを確認
-		if (behavior_ != Behavior::kMove){
-			behaviorRequest_ = Behavior::kMove;
+	if (behavior_ != Behavior::kAttack){
+		if (isMoveInputActive){
+			//現在の振る舞いを確認
+			if (behavior_ != Behavior::kMove){
+				behaviorRequest_ = Behavior::kMove;
+			}
+		} else{
+			//現在の振る舞いを確認
+			if (behavior_ != Behavior::kNormal){
+				behaviorRequest_ = Behavior::kNormal;
+			}
 		}
-	} else {
-		//現在の振る舞いを確認
-		if (behavior_ != Behavior::kNormal){
-			behaviorRequest_ = Behavior::kNormal;
+	}
+
+	//攻撃キーが押されているか
+	bool isAttackInputActive = input_->TriggerMouseButton(Click::kLeft);
+	if (isAttackInputActive){
+		if (behavior_ != Behavior::kAttack){
+			behaviorRequest_ = Behavior::kAttack;
 		}
 	}
 
@@ -95,8 +105,6 @@ void Player::Update(){
 			//移動
 			InitializeMoving();
 			break;
-		case Behavior::kAttack:
-			break;
 		}
 	}
 
@@ -111,11 +119,43 @@ void Player::Update(){
 		UpdateMoving();
 		break;
 	case Behavior::kAttack:
+		//攻撃フェーズのリクエストがあったら
+		if (attackPhaseRequest_ != AttackPhase::kCount){
+			//攻撃フェーズを変更
+			attackPhase_ = attackPhaseRequest_;
+			//リクエストをリセット
+			attackPhaseRequest_ = AttackPhase::kCount;
+
+			//初期化
+			switch (attackPhase_){
+			case Player::AttackPhase::kWindup:
+				//振りかぶり
+				InitializeWindup();
+				break;
+			case Player::AttackPhase::kSwing:
+				//振り下げ
+				InitializeSwing();
+				break;
+			}
+		}
+
+		//更新
+		switch (attackPhase_){
+		case Player::AttackPhase::kWindup:
+			//振りかぶり
+			UpdateWindup();
+			break;
+		case Player::AttackPhase::kSwing:
+			//振り下げ
+			UpdateSwing();
+			break;
+		}
 		break;
 	}
 
 	//ポーズを適応
 	object3d_->SetNodeLocalTransform("Player_Root", currentPose_.root);
+	object3d_->SetNodeLocalTransform("Player_Root/Head", currentPose_.head);
 	object3d_->SetNodeLocalTransform("Player_Root/Body", currentPose_.body);
 	object3d_->SetNodeLocalTransform("Player_Root/Arm_L", currentPose_.leftArm);
 	object3d_->SetNodeLocalTransform("Player_Root/Arm_R", currentPose_.rightArm);
@@ -134,8 +174,10 @@ void Player::DebugImGui(){
 
 	if (behavior_ == Behavior::kNormal){
 		ImGui::Text("normal");
-	} else{
+	} else if(behavior_ == Behavior::kMove){
 		ImGui::Text("move");
+	} else{
+		ImGui::Text("attack");
 	}
 	ImGui::End();
 #endif // USE_IMGUI
@@ -245,17 +287,22 @@ void Player::LookAt(){
 	transform.rotate = Quaternion::Slerp(transform.rotate, targetQuaternion, kLookAtSpeed * mathUtility::kDeltaTime);
 }
 
-//モーション遷移の初期化
-void Player::InitializeTransition(){
-	//切り替え用のタイマーをリセット
-	transitionTimer_ = 0.0f;
-
-	//モーションを行う前のモデルのNodeのLocalTransformを保存
+//過去のポーズを設定
+void Player::SettingPreviousPose(){
 	prePose_.root = object3d_->GetNodeLocalTransform("Player_Root");
 	prePose_.head = object3d_->GetNodeLocalTransform("Player_Root/Head");
 	prePose_.body = object3d_->GetNodeLocalTransform("Player_Root/Body");
 	prePose_.rightArm = object3d_->GetNodeLocalTransform("Player_Root/Arm_R");
 	prePose_.leftArm = object3d_->GetNodeLocalTransform("Player_Root/Arm_L");
+}
+
+//モーション遷移の初期化
+void Player::InitializeTransition(){
+	//切り替え用のタイマーをリセット
+	transitionTimer_ = 0.0f;
+
+	//過去のポーズを設定
+	SettingPreviousPose();
 }
 
 //モーション遷移の更新
@@ -339,17 +386,70 @@ void Player::UpdateMoving(){
 	UpdateTransition(targetPose);
 }
 
-//攻撃状態の初期化
-void Player::InitializeAttack(){
-	//モーション遷移の初期化
-	InitializeTransition();
+//振りかぶり状態の初期化
+void Player::InitializeWindup(){
+	//振り上げモーションのタイマーの初期化
+	windupTimer_ = 0.0f;
+
+	//過去のポーズを設定
+	SettingPreviousPose();
 }
 
-//攻撃状態の更新
-void Player::UpdateAttack(){
+//振りかぶり状態の更新
+void Player::UpdateWindup(){
 	//プレイヤーの目標ポーズ
 	PlayerPose targetPose = currentPose_;
 
-	//モーション遷移の更新
-	UpdateTransition(targetPose);
+	//左手を振り上げる
+	targetPose.leftArm.SetEulerAngleDegrees({ 0.0f, 135.0f, 135.0f });
+
+	//体全体をねじる
+	targetPose.root.SetEulerAngleDegrees({ 0.0f,60.0f,0.0f });
+
+	//切り替え用のタイマー
+	windupTimer_ += mathUtility::kDeltaTime;
+	//係数
+	float t = std::clamp(windupTimer_ / kWindupDuration, 0.0f, 1.0f);
+	//目標の位置まで補間
+	currentPose_ = PlayerPose::Lerp(prePose_, targetPose, t);
+
+	//フェーズを切り替える
+	if (windupTimer_ > kWindupDuration){
+		attackPhaseRequest_ = AttackPhase::kSwing;
+	}
+}
+
+//振り下ろし状態の初期化
+void Player::InitializeSwing(){
+	//タイマーリセット
+	swingTimer_ = 0.0f;
+	//ポーズを保存
+	SettingPreviousPose();
+}
+
+//振り下ろし状態の更新
+void Player::UpdateSwing(){
+	//プレイヤーの目標ポーズ
+	PlayerPose targetPose = currentPose_;
+	//切り替え用のタイマー
+	swingTimer_ += mathUtility::kDeltaTime;
+
+	//左手を振り上げる
+	targetPose.leftArm.SetEulerAngleDegrees({ 220.0f, -60.0f, 0.0f });
+
+	//体全体をねじる
+	targetPose.root.SetEulerAngleDegrees({ 0.0f,-60.0f,0.0f });
+
+	//係数
+	float t = std::clamp(swingTimer_ / kSwingDuration, 0.0f, 1.0f);
+	//目標の位置まで補間
+	currentPose_ = PlayerPose::Lerp(prePose_, targetPose, t);
+
+	//フェーズを切り替える
+	if (swingTimer_ > kSwingDuration){
+		//振る舞いを変更
+		behaviorRequest_ = Behavior::kNormal;
+		//攻撃フェーズをリセット
+		attackPhaseRequest_ = AttackPhase::kWindup;
+	}
 }

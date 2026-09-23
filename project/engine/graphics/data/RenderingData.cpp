@@ -1,14 +1,21 @@
 #include "RenderingData.h"
 #include "MathUtility.h"
+#include "Quaternion.h"
 
 //オイラー角の設定
-void Transform::SetEulerAngle(const Vector3& rotate){
-	rotate = Quaternion::EulerAngleToQuaternion(rotate);
+void Transform::SetEulerAngle(const Vector3& eulerAngle){
+	rotate = Quaternion::EulerAngleToQuaternion(eulerAngle);
+}
+
+//オイラー角(度数法)の設定
+void Transform::SetEulerAngleDegrees(const Vector3& degreeAngle){
+	Vector3 radianAngle = degreeAngle * mathUtility::kRad;
+	rotate = Quaternion::EulerAngleToQuaternion(radianAngle);
 }
 
 //クォータニオンの設定
-void Transform::SetRotate(const Quaternion& rotate){
-	rotate = rotate.Normalize();
+void Transform::SetRotate(const Quaternion& quaternion){
+	rotate = quaternion.Normalize();
 }
 
 //オイラー角の取得

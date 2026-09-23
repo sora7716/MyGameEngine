@@ -14,14 +14,20 @@ struct Transform{
 	/// <summary>
 	/// オイラー角の設定
 	/// </summary>
-	/// <param name="rotate">オイラー角</param>
-	void SetEulerAngle(const Vector3& rotate);
+	/// <param name="eulerAngle">オイラー角</param>
+	void SetEulerAngle(const Vector3& eulerAngle);
+
+	/// <summary>
+	/// オイラー角(度数法)の設定
+	/// </summary>
+	/// <param name="degreeAngle">度数法</param>
+	void SetEulerAngleDegrees(const Vector3& degreeAngle);
 
 	/// <summary>
 	/// クォータニオンの設定
 	/// </summary>
-	/// <param name="rotate">クォータニオン</param>
-	void SetRotate(const Quaternion& rotate);
+	/// <param name="quaternion">クォータニオン</param>
+	void SetRotate(const Quaternion& quaternion);
 
 	/// <summary>
 	/// オイラー角の取得

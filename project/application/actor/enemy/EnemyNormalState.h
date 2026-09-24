@@ -1,5 +1,9 @@
 #pragma once
 #include "IEnemyState.h"
+
+/// <summary>
+/// 敵の通常状態
+/// </summary>
 class EnemyNormalState :public IEnemyState{
 public://メンバ関数
 	/// <summary>

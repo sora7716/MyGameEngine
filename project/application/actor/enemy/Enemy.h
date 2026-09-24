@@ -84,8 +84,6 @@ private://メンバ関数
 	/// </summary>
 	/// <param name="behavior">振る舞い</param>
 	void ChangeState(Behavior behavior);
-private://定数
-
 private://メンバ変数
 	//ゲームオブジェクト
 	GameObject* gameObject_ = nullptr;

@@ -90,6 +90,18 @@ public://メンバ関数
 	/// </summary>
 	/// <param name="cameraObject">カメラのオブジェクト</param>
 	void SetCameraObject(GameObject* cameraObject);
+
+	/// <summary>
+	/// 振る舞いのリクエストの設定
+	/// </summary>
+	/// <param name="request">リクエスト</param>
+	void SetBehaviorRequest(Behavior request);
+
+	/// <summary>
+	/// オブジェクト3dの設定
+	/// </summary>
+	/// <param name="object3d">オブジェクト3d</param>
+	void SetObject3d(Object3d* object3d);
 private://メンバ関数
 	/// <summary>
 	/// 移動の操作

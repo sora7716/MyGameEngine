@@ -208,6 +208,16 @@ void Player::SetCameraObject(GameObject* cameraObject){
 	cameraObject_ = cameraObject;
 }
 
+//振る舞いのリクエストの設定
+void Player::SetBehaviorRequest(Behavior request){
+	behaviorRequest_ = request;
+}
+
+//オブジェクト3dの設定
+void Player::SetObject3d(Object3d* object3d){
+	object3d_ = object3d;
+}
+
 //移動の操作
 void Player::MoveControl(){
 	//横移動

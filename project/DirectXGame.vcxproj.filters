@@ -136,6 +136,9 @@
     <Filter Include="engine\3d\lighting">
       <UniqueIdentifier>{953cf84e-62b6-49a8-954d-9284494f166b}</UniqueIdentifier>
     </Filter>
+    <Filter Include="application\actor\player">
+      <UniqueIdentifier>{e2610b81-93de-4acd-8f7e-1de1bfb10646}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="engine\main.cpp">
@@ -339,9 +342,6 @@
     <ClCompile Include="engine\graphics\rendering\camera\CameraRenderer.cpp">
       <Filter>engine\graphics\rendering\camera</Filter>
     </ClCompile>
-    <ClCompile Include="application\actor\Player.cpp">
-      <Filter>application\actor</Filter>
-    </ClCompile>
     <ClCompile Include="application\actor\OrbitCameraController.cpp">
       <Filter>application\actor</Filter>
     </ClCompile>
@@ -404,6 +404,15 @@
     </ClCompile>
     <ClCompile Include="engine\geometry\PrimitiveMeshFactory.cpp">
       <Filter>engine\geometry</Filter>
+    </ClCompile>
+    <ClCompile Include="application\actor\player\Player.cpp">
+      <Filter>application\actor\player</Filter>
+    </ClCompile>
+    <ClCompile Include="application\actor\player\IPlayerState.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="application\actor\player\PlayerNormalState.cpp">
+      <Filter>ソース ファイル</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -635,9 +644,6 @@
     <ClInclude Include="engine\graphics\rendering\camera\CameraRenderData.h">
       <Filter>engine\graphics\rendering\camera</Filter>
     </ClInclude>
-    <ClInclude Include="application\actor\Player.h">
-      <Filter>application\actor</Filter>
-    </ClInclude>
     <ClInclude Include="application\actor\OrbitCameraController.h">
       <Filter>application\actor</Filter>
     </ClInclude>
@@ -709,6 +715,15 @@
     </ClInclude>
     <ClInclude Include="engine\geometry\PrimitiveMeshFactory.h">
       <Filter>engine\geometry</Filter>
+    </ClInclude>
+    <ClInclude Include="application\actor\player\Player.h">
+      <Filter>application\actor\player</Filter>
+    </ClInclude>
+    <ClInclude Include="application\actor\player\IPlayerState.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="application\actor\player\PlayerNormalState.h">
+      <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

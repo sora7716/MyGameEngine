@@ -8,18 +8,9 @@
 #include "RigidBody.h"
 #include "BaseCollider.h"
 #include "Object3d.h"
-#include "ImGuiManager.h"
-#include <algorithm>
-
-Player::PlayerPose Player::PlayerPose::Lerp(const PlayerPose& playerPose1, const PlayerPose& playerPose2, float t){
-	PlayerPose result = {};
-	result.root = Transform::Lerp(playerPose1.root, playerPose2.root, t);
-	result.head = Transform::Lerp(playerPose1.head, playerPose2.head, t);
-	result.body = Transform::Lerp(playerPose1.body, playerPose2.body, t);
-	result.leftArm = Transform::Lerp(playerPose1.leftArm, playerPose2.leftArm, t);
-	result.rightArm = Transform::Lerp(playerPose1.rightArm, playerPose2.rightArm, t);
-	return result;
-}
+#include "PlayerNormalState.h"
+#include "PlayerMovementState.h"
+#include "PlayerAttackState.h"
 
 //コンストラクタ
 Player::Player(GameObject* gameObject)
@@ -47,6 +38,11 @@ void Player::Initialize(){
 
 	//オブジェクト3dを受け取る
 	object3d_ = gameObject_->GetComponent<Object3d>();
+
+	//ステートの初期化
+	states_[static_cast<uint32_t>(Behavior::kNormal)] = std::make_unique<PlayerNormalState>();
+	states_[static_cast<uint32_t>(Behavior::kMove)] = std::make_unique<PlayerMovementState>();
+	states_[static_cast<uint32_t>(Behavior::kAttack)] = std::make_unique<PlayerAttackState>();
 }
 
 //更新
@@ -95,91 +91,19 @@ void Player::Update(){
 		//リクエストをリセット
 		behaviorRequest_ = Behavior::kCount;
 
-		//振る舞いを初期化
-		switch (behavior_){
-		case Behavior::kNormal:
-			//通常
-			InitializeNormal();
-			break;
-		case Behavior::kMove:
-			//移動
-			InitializeMoving();
-			break;
-		}
+		//現在のステート初期化
+		currentState_ = states_[static_cast<uint32_t>(behavior_)].get();
+		currentState_->SetObject3d(object3d_);
+		currentState_->Enter(this);
 	}
 
-	//振る舞いを更新
-	switch (behavior_){
-	case Behavior::kNormal:
-		//通常
-		UpdateNormal();
-		break;
-	case Behavior::kMove:
-		//移動
-		UpdateMoving();
-		break;
-	case Behavior::kAttack:
-		//攻撃フェーズのリクエストがあったら
-		if (attackPhaseRequest_ != AttackPhase::kCount){
-			//攻撃フェーズを変更
-			attackPhase_ = attackPhaseRequest_;
-			//リクエストをリセット
-			attackPhaseRequest_ = AttackPhase::kCount;
-
-			//初期化
-			switch (attackPhase_){
-			case Player::AttackPhase::kWindup:
-				//振りかぶり
-				InitializeWindup();
-				break;
-			case Player::AttackPhase::kSwing:
-				//振り下げ
-				InitializeSwing();
-				break;
-			}
-		}
-
-		//更新
-		switch (attackPhase_){
-		case Player::AttackPhase::kWindup:
-			//振りかぶり
-			UpdateWindup();
-			break;
-		case Player::AttackPhase::kSwing:
-			//振り下げ
-			UpdateSwing();
-			break;
-		}
-		break;
-	}
-
-	//ポーズを適応
-	object3d_->SetNodeLocalTransform("Player_Root", currentPose_.root);
-	object3d_->SetNodeLocalTransform("Player_Root/Head", currentPose_.head);
-	object3d_->SetNodeLocalTransform("Player_Root/Body", currentPose_.body);
-	object3d_->SetNodeLocalTransform("Player_Root/Arm_L", currentPose_.leftArm);
-	object3d_->SetNodeLocalTransform("Player_Root/Arm_R", currentPose_.rightArm);
+	//現在のステートの更新
+	currentState_->Update();
 }
 
 //デバッグでImGuiを使用できるようにする
 void Player::DebugImGui(){
 #ifdef USE_IMGUI
-	ImGui::Begin("player");
-	ImGui::SeparatorText("Root");
-	ImGui::DragFloat("root.amplitude,", &movingRootAmplitude_, 0.01f);
-	ImGui::DragFloat("root.speed,", &movingRootSpeed_, 0.01f);
-	ImGui::SeparatorText("Arm");
-	ImGui::DragFloat("arm.amplitude,", &movingArmAmplitude_, 0.01f);
-	ImGui::DragFloat("arm.speed,", &movingArmSpeed_, 0.01f);
-
-	if (behavior_ == Behavior::kNormal){
-		ImGui::Text("normal");
-	} else if(behavior_ == Behavior::kMove){
-		ImGui::Text("move");
-	} else{
-		ImGui::Text("attack");
-	}
-	ImGui::End();
 #endif // USE_IMGUI
 }
 
@@ -295,171 +219,4 @@ void Player::LookAt(){
 
 	//目標のクォータニオンの方向に向かせる
 	transform.rotate = Quaternion::Slerp(transform.rotate, targetQuaternion, kLookAtSpeed * mathUtility::kDeltaTime);
-}
-
-//過去のポーズを設定
-void Player::SettingPreviousPose(){
-	prePose_.root = object3d_->GetNodeLocalTransform("Player_Root");
-	prePose_.head = object3d_->GetNodeLocalTransform("Player_Root/Head");
-	prePose_.body = object3d_->GetNodeLocalTransform("Player_Root/Body");
-	prePose_.rightArm = object3d_->GetNodeLocalTransform("Player_Root/Arm_R");
-	prePose_.leftArm = object3d_->GetNodeLocalTransform("Player_Root/Arm_L");
-}
-
-//モーション遷移の初期化
-void Player::InitializeTransition(){
-	//切り替え用のタイマーをリセット
-	transitionTimer_ = 0.0f;
-
-	//過去のポーズを設定
-	SettingPreviousPose();
-}
-
-//モーション遷移の更新
-void Player::UpdateTransition(PlayerPose targetPose){
-	//切り替え用のタイマー
-	transitionTimer_ += mathUtility::kDeltaTime;
-	//ブレンドする割合
-	float blendRate = std::clamp(transitionTimer_ / kTransitionDuration, 0.0f, 1.0f);
-	//目標の位置まで補間
-	currentPose_ = PlayerPose::Lerp(prePose_, targetPose, blendRate);
-}
-
-//通常状態の初期化
-void Player::InitializeNormal(){
-	//小刻みに揺れるタイマーをリセット
-	bobTimer_ = 0.0f;
-
-	//モーション遷移の初期化
-	InitializeTransition();
-}
-
-//通常状態の更新
-void Player::UpdateNormal(){
-	//時間を計測
-	bobTimer_ += mathUtility::kDeltaTime;
-
-	//プレイヤーの目標ポーズ
-	PlayerPose targetPose = currentPose_;
-
-	//上下に小刻みに動く
-	targetPose.root.SetEulerAngle(Vector3::GetZero());
-	targetPose.root.translate.y = std::sin(bobTimer_ * bobRootSpeed_) * bobRootAmplitude_;
-
-	//体は左右に小刻みに動く
-	Vector3 bodyEulerAngle = Vector3::GetZero();
-	bodyEulerAngle.z = std::sin(bobTimer_ * bobBodySpeed_) * bobBodyAmplitude_;
-	targetPose.body.SetEulerAngle(bodyEulerAngle);
-
-	//両腕を動かす
-	Vector3 armEulerAngle = Vector3::GetZero();
-	armEulerAngle.x = std::sin(bobTimer_ * bobArmSpeed_) * bobArmAmplitude_;
-	targetPose.leftArm.SetEulerAngle(armEulerAngle);
-	targetPose.rightArm.SetEulerAngle(armEulerAngle);
-
-	//モーション遷移の更新
-	UpdateTransition(targetPose);
-}
-
-//移動状態の初期化
-void Player::InitializeMoving(){
-	//移動タイマーのリセット
-	movingTimer_ = 0.0f;
-
-	//モーション遷移の初期化
-	InitializeTransition();
-}
-
-//移動状態の更新
-void Player::UpdateMoving(){
-	//時間を計測
-	movingTimer_ += mathUtility::kDeltaTime;
-
-	//プレイヤーの目標ポーズ
-	PlayerPose targetPose = currentPose_;
-
-	//上下に小刻みに動く
-	targetPose.root.translate.y = std::sin(movingTimer_ * movingRootSpeed_) * movingRootAmplitude_;
-
-	//全体的に少し前傾姿勢
-	Vector3 rootEulerAngle = Vector3::GetZero();
-	rootEulerAngle.x = 0.3f;
-	targetPose.root.SetEulerAngle(rootEulerAngle);
-
-	//両腕を動かす
-	Vector3 armEulerAngle = Vector3::GetZero();
-	armEulerAngle.x = std::sin(movingTimer_ * movingArmSpeed_) * movingArmAmplitude_;
-	targetPose.leftArm.SetEulerAngle(armEulerAngle);
-	targetPose.rightArm.SetEulerAngle(-armEulerAngle);
-
-	//モーション遷移の更新
-	UpdateTransition(targetPose);
-}
-
-//振りかぶり状態の初期化
-void Player::InitializeWindup(){
-	//振り上げモーションのタイマーの初期化
-	windupTimer_ = 0.0f;
-
-	//過去のポーズを設定
-	SettingPreviousPose();
-}
-
-//振りかぶり状態の更新
-void Player::UpdateWindup(){
-	//プレイヤーの目標ポーズ
-	PlayerPose targetPose = currentPose_;
-
-	//左手を振り上げる
-	targetPose.leftArm.SetEulerAngleDegrees({ 0.0f, 135.0f, 135.0f });
-
-	//体全体をねじる
-	targetPose.root.SetEulerAngleDegrees({ 0.0f,60.0f,0.0f });
-
-	//切り替え用のタイマー
-	windupTimer_ += mathUtility::kDeltaTime;
-	//係数
-	float t = std::clamp(windupTimer_ / kWindupDuration, 0.0f, 1.0f);
-	//目標の位置まで補間
-	currentPose_ = PlayerPose::Lerp(prePose_, targetPose, t);
-
-	//フェーズを切り替える
-	if (windupTimer_ > kWindupDuration){
-		attackPhaseRequest_ = AttackPhase::kSwing;
-	}
-}
-
-//振り下ろし状態の初期化
-void Player::InitializeSwing(){
-	//タイマーリセット
-	swingTimer_ = 0.0f;
-	//ポーズを保存
-	SettingPreviousPose();
-}
-
-//振り下ろし状態の更新
-void Player::UpdateSwing(){
-	//プレイヤーの目標ポーズ
-	PlayerPose targetPose = currentPose_;
-	//切り替え用のタイマー
-	swingTimer_ += mathUtility::kDeltaTime;
-
-	//左手を振り上げる
-	targetPose.leftArm.SetEulerAngleDegrees({ 220.0f, -60.0f, 0.0f });
-
-	//体全体をねじる
-	targetPose.root.SetEulerAngleDegrees({ 0.0f,-60.0f,0.0f });
-
-	//係数
-	float t = std::clamp(swingTimer_ / kSwingDuration, 0.0f, 1.0f);
-	//目標の位置まで補間
-	currentPose_ = PlayerPose::Lerp(prePose_, targetPose, t);
-
-	//フェーズを切り替える
-	if (swingTimer_ > kSwingDuration){
-		//振る舞いを変更
-		behaviorRequest_ = Behavior::kNormal;
-		//攻撃フェーズをリセット
-		attackPhaseRequest_ = AttackPhase::kWindup;
-	}
 }

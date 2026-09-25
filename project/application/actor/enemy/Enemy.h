@@ -97,7 +97,7 @@ private://メンバ変数
 	Behavior behaviorRequest_ = Behavior::kNormal;
 
 	//ステート
-	std::array < std::unique_ptr<IEnemyState>, static_cast<uint32_t>(Behavior::kCount)> states_;
+	std::array <std::unique_ptr<IEnemyState>, static_cast<uint32_t>(Behavior::kCount)> states_;
 	//現在のステート
 	IEnemyState* currentState_ = nullptr;
 

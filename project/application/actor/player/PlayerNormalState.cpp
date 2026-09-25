@@ -12,10 +12,7 @@ PlayerNormalState::~PlayerNormalState(){
 }
 
 //初期化
-void PlayerNormalState::Initialize(Player* player){
-	//プレイヤーを記録
-	assert(player);
-	player_ = player;
+void PlayerNormalState::Enter(){
 	//通常状態の初期化
 	InitializeNormal();
 }
@@ -33,7 +30,7 @@ void PlayerNormalState::Update(){
 }
 
 //終了
-void PlayerNormalState::Finalize(){
+void PlayerNormalState::Exit(){
 }
 
 //通常状態の初期化

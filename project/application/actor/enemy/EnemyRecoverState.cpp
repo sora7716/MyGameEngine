@@ -14,7 +14,7 @@ EnemyRecoverState::~EnemyRecoverState(){
 }
 
 //初期化
-void EnemyRecoverState::Initialize(Enemy* enemy){
+void EnemyRecoverState::Enter(Enemy* enemy){
 	//敵を記録
 	assert(enemy);
 	enemy_ = enemy;
@@ -39,7 +39,7 @@ void EnemyRecoverState::Update(){
 }
 
 //終了
-void EnemyRecoverState::Finalize(){
+void EnemyRecoverState::Exit(){
 }
 
 //浮き上がるときの初期化

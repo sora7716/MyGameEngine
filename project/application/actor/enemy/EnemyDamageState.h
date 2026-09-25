@@ -26,7 +26,7 @@ public://メンバ関数
 	/// 初期化
 	/// </summary>
 	/// <param name="enemy">敵</param>
-	void Initialize(Enemy* enemy)override;
+	void Enter(Enemy* enemy)override;
 
 	/// <summary>
 	/// 更新
@@ -36,7 +36,7 @@ public://メンバ関数
 	/// <summary>
 	/// 終了
 	/// </summary>
-	void Finalize()override;
+	void Exit()override;
 private://メンバ関数
 	/// <summary>
 	/// のけぞりアクションの初期化

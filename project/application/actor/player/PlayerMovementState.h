@@ -19,7 +19,7 @@ public://メンバ関数
 	/// <summary>
 	/// 初期化
 	/// </summary>
-	void Initialize(Player* player)override;
+	void Enter()override;
 
 	/// <summary>
 	/// 更新
@@ -29,7 +29,7 @@ public://メンバ関数
 	/// <summary>
 	/// 終了
 	/// </summary>
-	void Finalize()override;
+	void Exit()override;
 private://メンバ関数
 	/// <summary>
 	/// 移動状態の初期化
@@ -41,5 +41,13 @@ private://メンバ関数
 	/// </summary>
 	void UpdateMoving();
 private://メンバ変数
+	//移動状態
+	float movingTimer_ = 0.0f;
+	//全体
+	float movingRootAmplitude_ = 0.4f;
+	float movingRootSpeed_ = 5.0f;
+	//両腕
+	float movingArmAmplitude_ = 0.8f;
+	float movingArmSpeed_ = 5.0f;
 };
 

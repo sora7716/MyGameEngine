@@ -19,7 +19,7 @@ public://メンバ関数
 	/// <summary>
 	/// 初期化
 	/// </summary>
-	void Initialize(Player* player)override;
+	void Enter()override;
 
 	/// <summary>
 	/// 更新
@@ -29,7 +29,7 @@ public://メンバ関数
 	/// <summary>
 	/// 終了
 	/// </summary>
-	void Finalize()override;
+	void Exit()override;
 private://メンバ関数
 	/// <summary>
 	/// 通常状態の初期化

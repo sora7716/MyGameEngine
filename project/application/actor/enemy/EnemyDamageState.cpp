@@ -14,7 +14,7 @@ EnemyDamageState::~EnemyDamageState(){
 }
 
 //初期化
-void EnemyDamageState::Initialize(Enemy* enemy){
+void EnemyDamageState::Enter(Enemy* enemy){
 	//敵を記録
 	assert(enemy);
 	enemy_ = enemy;
@@ -48,7 +48,7 @@ void EnemyDamageState::Update(){
 }
 
 //終了
-void EnemyDamageState::Finalize(){
+void EnemyDamageState::Exit(){
 }
 
 //のけぞりアクションの初期化

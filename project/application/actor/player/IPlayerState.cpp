@@ -21,8 +21,11 @@ IPlayerState::IPlayerState(){
 IPlayerState::~IPlayerState(){
 }
 
-//オブジェクト3dの設定
-void IPlayerState::SetObject3d(Object3d* object3d){
+//セットアップ
+void IPlayerState::Setup(Player* player, Object3d* object3d){
+	assert(player);
+	player_ = player;
+	assert(object3d);
 	object3d_ = object3d;
 }
 

@@ -19,6 +19,7 @@
     <ClCompile Include="application\actor\OrbitCameraController.cpp" />
     <ClCompile Include="application\actor\player\IPlayerState.cpp" />
     <ClCompile Include="application\actor\player\Player.cpp" />
+    <ClCompile Include="application\actor\player\PlayerAttackState.cpp" />
     <ClCompile Include="application\actor\player\PlayerMovementState.cpp" />
     <ClCompile Include="application\actor\player\PlayerNormalState.cpp" />
     <ClCompile Include="application\scene\GameScene.cpp" />
@@ -115,6 +116,7 @@
     <ClInclude Include="application\actor\OrbitCameraController.h" />
     <ClInclude Include="application\actor\player\IPlayerState.h" />
     <ClInclude Include="application\actor\player\Player.h" />
+    <ClInclude Include="application\actor\player\PlayerAttackState.h" />
     <ClInclude Include="application\actor\player\PlayerMovementState.h" />
     <ClInclude Include="application\actor\player\PlayerNormalState.h" />
     <ClInclude Include="application\scene\GameScene.h" />

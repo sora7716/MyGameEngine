@@ -10,7 +10,7 @@ EnemyNormalState::~EnemyNormalState(){
 }
 
 //初期化
-void EnemyNormalState::Initialize(Enemy* enemy){
+void EnemyNormalState::Enter(Enemy* enemy){
 	assert(enemy);
 	enemy_ = enemy;
 }
@@ -20,5 +20,5 @@ void EnemyNormalState::Update(){
 }
 
 //終了
-void EnemyNormalState::Finalize(){
+void EnemyNormalState::Exit(){
 }

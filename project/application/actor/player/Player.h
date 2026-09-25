@@ -2,11 +2,14 @@
 #include "Component.h"
 #include "Vector3.h"
 #include "RenderingData.h"
+#include <memory>
+#include <array>
 
 //前方宣言
 class Input;
 class RigidBody;
 class Object3d;
+class IPlayerState;
 
 /// <summary>
 /// プレイヤー
@@ -19,31 +22,6 @@ public://列挙型
 		kMove,
 		kAttack,
 		kCount
-	};
-	
-	//攻撃フェーズ
-	enum class AttackPhase :uint32_t{
-		kWindup,
-		kSwing,
-		kCount
-	};
-
-	//プレイヤーのTransform
-	struct PlayerPose{
-		Transform root = {};
-		Transform head = {};
-		Transform body = {};
-		Transform leftArm = {};
-		Transform rightArm = {};
-
-		/// <summary>
-		/// 補間
-		/// </summary>
-		/// <param name="playerPose1">プレイヤーポーズ</param>
-		/// <param name="playerPose2">プレイヤーポーズ</param>
-		/// <param name="t">係数</param>
-		/// <returns>補間したプレイヤーポーズ</returns>
-		static PlayerPose Lerp(const PlayerPose& playerPose1, const PlayerPose& playerPose2, float t);
 	};
 public://メンバ関数
 	/// <summary>
@@ -117,62 +95,6 @@ private://メンバ関数
 	/// 移動方向に向かせる
 	/// </summary>
 	void LookAt();
-
-	/// <summary>
-	/// 過去のポーズを設定
-	/// </summary>
-	void SettingPreviousPose();
-
-	/// <summary>
-	/// モーション遷移の初期化
-	/// </summary>
-	void InitializeTransition();
-
-	/// <summary>
-	/// モーション遷移の更新
-	/// </summary>
-	/// <param name="targetPose">目的のポーズ</param>
-	void UpdateTransition(PlayerPose targetPose);
-
-	/// <summary>
-	/// 通常状態の初期化
-	/// </summary>
-	void InitializeNormal();
-
-	/// <summary>
-	/// 通常状態の更新
-	/// </summary>
-	void UpdateNormal();
-
-	/// <summary>
-	/// 移動状態の初期化
-	/// </summary>
-	void InitializeMoving();
-
-	/// <summary>
-	/// 移動状態の更新
-	/// </summary>
-	void UpdateMoving();
-
-	/// <summary>
-	/// 振りかぶり状態の初期化
-	/// </summary>
-	void InitializeWindup();
-
-	/// <summary>
-	/// 振りかぶり状態の更新
-	/// </summary>
-	void UpdateWindup();
-
-	/// <summary>
-	/// 振り下ろし状態の初期化
-	/// </summary>
-	void InitializeSwing();
-
-	/// <summary>
-	/// 振り下ろし状態の更新
-	/// </summary>
-	void UpdateSwing();
 private://定数
 	//移動速度
 	static inline const float kMoveSpeed = 10.0f;
@@ -184,12 +106,6 @@ private://定数
 	static inline const float kGravity = -30.0f;
 	//向くスピード
 	static inline const float kLookAtSpeed = 8.0f;
-	//モーションの切り替え時間
-	static inline const float kTransitionDuration = 0.4f;
-	//振りかぶり状態の時間
-	static inline const float kWindupDuration = 0.3f;
-	//振り下げ状態の時間
-	static inline const float kSwingDuration = 0.15f;
 private://メンバ変数
 	//入力
 	Input* input_ = nullptr;
@@ -213,42 +129,8 @@ private://メンバ変数
 	//振る舞いのリクエスト
 	Behavior behaviorRequest_ = Behavior::kNormal;
 
-	//今のNodeのLocalTransform情報
-	PlayerPose currentPose_ = {};
-	//前のNodeのLocalTransform情報
-	PlayerPose prePose_ = {};
-
-	//モーション切り替え用のタイマー
-	float transitionTimer_ = 0.0f;
-
-	//通常状態
-	float bobTimer_ = 0.0f;
-	//全体
-	float bobRootAmplitude_ = 0.15f;
-	float bobRootSpeed_ = 5.0f;
-	//体
-	float bobBodyAmplitude_ = 0.1f;
-	float bobBodySpeed_ = 5.0f;
-	//両腕
-	float bobArmAmplitude_ = 0.3f;
-	float bobArmSpeed_ = 5.0f;
-
-	//移動状態
-	float movingTimer_ = 0.0f;
-	//全体
-	float movingRootAmplitude_ = 0.4f;
-	float movingRootSpeed_ = 5.0f;
-	//両腕
-	float movingArmAmplitude_ = 0.8f;
-	float movingArmSpeed_ = 5.0f;
-
-	//攻撃フェーズ
-	AttackPhase attackPhase_ = AttackPhase::kCount;
-	//攻撃フェーズのリクエスト
-	AttackPhase attackPhaseRequest_ = AttackPhase::kWindup;
-
-	//振りかぶり状態
-	float windupTimer_ = 0.0f;
-	//振り下げ状態
-	float swingTimer_ = 0.0f;
+	//プレイヤーのステート
+	std::array<std::unique_ptr<IPlayerState>, static_cast<uint32_t>(Behavior::kCount)>states_;
+	//現在のステート
+	IPlayerState* currentState_ = nullptr;
 };

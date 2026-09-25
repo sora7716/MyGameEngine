@@ -101,10 +101,10 @@ void Enemy::ChangeState(Behavior behavior){
 
 	//今のステートを終了
 	if (currentState_){
-		currentState_->Finalize();
+		currentState_->Exit();
 	}
 
 	//今のステートを次にステートへ変更
 	currentState_ = nextState;
-	currentState_->Initialize(this);
+	currentState_->Enter(this);
 }

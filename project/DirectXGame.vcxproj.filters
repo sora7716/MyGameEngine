@@ -409,13 +409,16 @@
       <Filter>application\actor\player</Filter>
     </ClCompile>
     <ClCompile Include="application\actor\player\IPlayerState.cpp">
-      <Filter>ソース ファイル</Filter>
+      <Filter>application\actor\player</Filter>
     </ClCompile>
-    <ClCompile Include="application\actor\player\PlayerNormalState.cpp">
-      <Filter>ソース ファイル</Filter>
+    <ClCompile Include="application\actor\player\PlayerAttackState.cpp">
+      <Filter>application\actor\player</Filter>
     </ClCompile>
     <ClCompile Include="application\actor\player\PlayerMovementState.cpp">
-      <Filter>ソース ファイル</Filter>
+      <Filter>application\actor\player</Filter>
+    </ClCompile>
+    <ClCompile Include="application\actor\player\PlayerNormalState.cpp">
+      <Filter>application\actor\player</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -723,13 +726,16 @@
       <Filter>application\actor\player</Filter>
     </ClInclude>
     <ClInclude Include="application\actor\player\IPlayerState.h">
-      <Filter>ヘッダー ファイル</Filter>
+      <Filter>application\actor\player</Filter>
     </ClInclude>
-    <ClInclude Include="application\actor\player\PlayerNormalState.h">
-      <Filter>ヘッダー ファイル</Filter>
+    <ClInclude Include="application\actor\player\PlayerAttackState.h">
+      <Filter>application\actor\player</Filter>
     </ClInclude>
     <ClInclude Include="application\actor\player\PlayerMovementState.h">
-      <Filter>ヘッダー ファイル</Filter>
+      <Filter>application\actor\player</Filter>
+    </ClInclude>
+    <ClInclude Include="application\actor\player\PlayerNormalState.h">
+      <Filter>application\actor\player</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

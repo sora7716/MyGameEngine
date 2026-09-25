@@ -37,11 +37,18 @@ public://メンバ関数
 	/// デストラクタ
 	/// </summary>
 	virtual ~IPlayerState();
+
+	/// <summary>
+	/// セットアップ
+	/// </summary>
+	/// <param name="player">プレイヤー</param>
+	/// <param name="object3d">オブジェクト3d</param>
+	virtual void Setup(Player* player, Object3d* object3d);
+
 	/// <summary>
 	/// 初期化
 	/// </summary>
-	/// <param name="player">プレイヤー</param>
-	virtual void Initialize(Player* player) = 0;
+	virtual void Enter() = 0;
 
 	/// <summary>
 	/// 更新
@@ -51,13 +58,7 @@ public://メンバ関数
 	/// <summary>
 	/// 終了
 	/// </summary>
-	virtual void Finalize() = 0;
-
-	/// <summary>
-	/// オブジェクト3dの設定
-	/// </summary>
-	/// <param name="object3d">オブジェクト3d</param>
-	void SetObject3d(Object3d*object3d);
+	virtual void Exit() = 0;
 protected://メンバ関数
 	/// <summary>
 	/// 過去のポーズを設定

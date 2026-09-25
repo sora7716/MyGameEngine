@@ -21,7 +21,7 @@ public://メンバ関数
 	/// 初期化
 	/// </summary>
 	/// <param name="enemy">敵</param>
-	virtual void Initialize(Enemy* enemy) = 0;
+	virtual void Enter(Enemy* enemy) = 0;
 
 	/// <summary>
 	/// 更新
@@ -31,7 +31,7 @@ public://メンバ関数
 	/// <summary>
 	/// 終了
 	/// </summary>
-	virtual void Finalize() = 0;
+	virtual void Exit() = 0;
 protected://メンバ変数
 	//敵
 	Enemy* enemy_ = nullptr;

@@ -93,8 +93,8 @@ void Player::Update(){
 
 		//現在のステート初期化
 		currentState_ = states_[static_cast<uint32_t>(behavior_)].get();
-		currentState_->SetObject3d(object3d_);
-		currentState_->Enter(this);
+		currentState_->Setup(this, object3d_);
+		currentState_->Enter();
 	}
 
 	//現在のステートの更新

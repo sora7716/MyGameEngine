@@ -46,7 +46,7 @@ uint32_t SRVManager::Allocate() {
 //解放
 void SRVManager::Free(uint32_t index) {
 	//範囲内のインデックスのみ解放
-	if (index >= 0 && index < useIndex_) {
+	if (index < useIndex_) {
 		freeList_.push(index);
 	}
 }
@@ -92,7 +92,7 @@ void SRVManager::PreDraw() {
 	directXBase_->GetCommandList()->SetDescriptorHeaps(1, descriptorHeaps->GetAddressOf());
 }
 
-// rootDescriptorTableのセッター
+// rootDescriptorTableの設定
 void SRVManager::SetGraphicsRootDescriptorTable(UINT rootParameterIndex, uint32_t srvIndex) {
 	directXBase_->GetCommandList()->SetGraphicsRootDescriptorTable(rootParameterIndex, GetGPUDescriptorHandle(srvIndex));
 }
@@ -102,17 +102,17 @@ bool SRVManager::TextureLimitCheck(uint32_t kSRVTop) {
 	return useIndex_ + kSRVTop < kMaxSRVCount;
 }
 
-// CPUデスクリプタハンドルのゲッター
+// CPUデスクリプタハンドルの取得
 D3D12_CPU_DESCRIPTOR_HANDLE SRVManager::GetCPUDescriptorHandle(uint32_t index) {
 	return directXBase_->GetCPUDescriptorHandle(descriptorHeap_, descriptorSize_, index);
 }
 
-// GPUデスクリプタハンドルのゲッター
+// GPUデスクリプタハンドルの取得
 D3D12_GPU_DESCRIPTOR_HANDLE SRVManager::GetGPUDescriptorHandle(uint32_t index) {
 	return directXBase_->GetGPUDescriptorHandle(descriptorHeap_, descriptorSize_, index);
 }
 
-// デスクリプタヒープのゲッター
+// デスクリプタヒープの取得
 ID3D12DescriptorHeap* SRVManager::GetDescriptorHeap() const {
 	return descriptorHeap_.Get();
 }

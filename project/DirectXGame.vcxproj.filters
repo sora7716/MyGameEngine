@@ -420,6 +420,12 @@
     <ClCompile Include="application\actor\player\PlayerNormalState.cpp">
       <Filter>application\actor\player</Filter>
     </ClCompile>
+    <ClCompile Include="engine\graphics\descriptor\RTVManager.cpp">
+      <Filter>engine\graphics\descriptor</Filter>
+    </ClCompile>
+    <ClCompile Include="engine\graphics\descriptor\DSVManager.cpp">
+      <Filter>engine\graphics\descriptor</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="application\scene\TestPlayScene.h">
@@ -736,6 +742,12 @@
     </ClInclude>
     <ClInclude Include="application\actor\player\PlayerNormalState.h">
       <Filter>application\actor\player</Filter>
+    </ClInclude>
+    <ClInclude Include="engine\graphics\descriptor\RTVManager.h">
+      <Filter>engine\graphics\descriptor</Filter>
+    </ClInclude>
+    <ClInclude Include="engine\graphics\descriptor\DSVManager.h">
+      <Filter>engine\graphics\descriptor</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

@@ -112,6 +112,11 @@ private://メンバ関数
 	void DrawHierarchy();
 
 	/// <summary>
+	/// シーンの描画
+	/// </summary>
+	void DrawScene();
+
+	/// <summary>
 	/// インスペクターの描画
 	/// </summary>
 	void DrawInspector();

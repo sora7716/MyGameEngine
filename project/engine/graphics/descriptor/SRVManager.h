@@ -85,7 +85,7 @@ public://メンバ関数
 	void PreDraw();
 
 	/// <summary>
-	/// rootDescriptorTableのセッター
+	/// rootDescriptorTableの設定
 	/// </summary>
 	/// <param name="rootParameterIndex">rootParameterのインデックス</param>
 	/// <param name="srvIndex">srvインデックス</param>
@@ -99,21 +99,21 @@ public://メンバ関数
 	bool TextureLimitCheck(uint32_t kSRVTop);
 
 	/// <summary>
-	/// CPUデスクリプタハンドルのゲッター
+	/// CPUデスクリプタハンドルの取得
 	/// </summary>
 	/// <param name="index">インデックス</param>
 	/// <returns>CPUデスクリプタハンドル</returns>
 	D3D12_CPU_DESCRIPTOR_HANDLE GetCPUDescriptorHandle(uint32_t index);
 
 	/// <summary>
-	/// GPUデスクリプタハンドルのゲッター
+	/// GPUデスクリプタハンドルの取得
 	/// </summary>
 	/// <param name="index">インデックス</param>
 	/// <returns>GPUデスクリプタハンドル</returns>
 	D3D12_GPU_DESCRIPTOR_HANDLE GetGPUDescriptorHandle(uint32_t index);
 
 	/// <summary>
-	/// デスクリプタヒープのゲッター
+	/// デスクリプタヒープの取得
 	/// </summary>
 	/// <returns>デスクリプタヒープ</returns>
 	ID3D12DescriptorHeap* GetDescriptorHeap()const;

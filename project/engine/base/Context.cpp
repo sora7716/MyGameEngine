@@ -13,3 +13,11 @@ void SceneContext::operator=(Core* core){
 	tagManager = core->GetTagManager();
 	lightingManager = core->GetLightingManager();
 }
+
+//ゲームエンジンの核から必要な物を抽出する
+void RenderTextureContext::SetUp(Core* core){
+	directXBase = core->GetDirectXBase();
+	srvManager = core->GetSRVManager();
+	dsvManager = core->GetDSVManager();
+	rtvManager = core->GetRTVManager();
+}

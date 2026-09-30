@@ -339,7 +339,7 @@ private://メンバ変数
 	//FenceValue
 	uint64_t fenceValue_ = 0;
 	//ビューポート
-	std::vector<D3D12_VIEWPORT> viewports_{};
+	D3D12_VIEWPORT viewport_{};
 	//シーザー矩形
-	std::vector<D3D12_RECT> scissorRects_{};
+	D3D12_RECT scissorRect_{};
 };

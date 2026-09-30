@@ -135,42 +135,22 @@ void DirectXBase::CreateRenderTargetView(){
 
 //ビューポート矩形の初期化
 void DirectXBase::InitializeViewport(){
-	//ビューポートのサイズ設定
-	viewports_.resize(static_cast<uint32_t>(WindowType::kWindowTypeCount));
-	//ゲームウィンドウ
-	D3D12_VIEWPORT& gameViewport = viewports_[static_cast<uint32_t>(WindowType::kGame)];
 	//クライアント領域のサイズと一緒にして画面全体に表示
-	gameViewport.Width = static_cast<float>(WinApi::kClientWidth);
-	gameViewport.Height = static_cast<float>(WinApi::kClientHeight);
-	gameViewport.TopLeftX = 0.0f;
-	gameViewport.TopLeftY = 0.0f;
-	gameViewport.MinDepth = 0.0f;
-	gameViewport.MaxDepth = 1.0f;
-
-	//デバッグウィンドウ
-	D3D12_VIEWPORT& debugViewport = viewports_[static_cast<uint32_t>(WindowType::kDebug)];
-
-	debugViewport.Width = 448.0f;
-	debugViewport.Height = 252.0f;
-	debugViewport.TopLeftX = static_cast<float>(WinApi::kClientWidth - 448.0f) * 0.5f;
-	debugViewport.TopLeftY = 0.0f;
-	debugViewport.MinDepth = 0.0f;
-	debugViewport.MaxDepth = 1.0f;
+	viewport_.Width = static_cast<float>(WinApi::kClientWidth);
+	viewport_.Height = static_cast<float>(WinApi::kClientHeight);
+	viewport_.TopLeftX = 0.0f;
+	viewport_.TopLeftY = 0.0f;
+	viewport_.MinDepth = 0.0f;
+	viewport_.MaxDepth = 1.0f;
 }
 
 //シザリング矩形の初期化
 void DirectXBase::InitializeScissorRect(){
-	//シザーの設定
-	scissorRects_.resize(static_cast<uint32_t>(WindowType::kWindowTypeCount));
-
-	for (uint32_t i = 0; i < static_cast<uint32_t>(WindowType::kWindowTypeCount); i++){
-		//基本的にビューポートと同じ矩形が構成されるようにする
-		scissorRects_[i].left = static_cast<LONG>(viewports_[i].TopLeftX);
-		scissorRects_[i].right = static_cast<LONG>(viewports_[i].TopLeftX + viewports_[i].Width);
-		scissorRects_[i].top = static_cast<LONG>(viewports_[i].TopLeftY);
-		scissorRects_[i].bottom = static_cast<LONG>(viewports_[i].TopLeftY + viewports_[i].Height);
-	}
-
+	//基本的にビューポートと同じ矩形が構成されるようにする
+	scissorRect_.left = static_cast<LONG>(viewport_.TopLeftX);
+	scissorRect_.right = static_cast<LONG>(viewport_.TopLeftX + viewport_.Width);
+	scissorRect_.top = static_cast<LONG>(viewport_.TopLeftY);
+	scissorRect_.bottom = static_cast<LONG>(viewport_.TopLeftY + viewport_.Height);
 }
 
 //DXCコンパイラの生成
@@ -216,9 +196,9 @@ void DirectXBase::PreDraw(uint32_t swapChainIndex){
 	//指定した深度で画面全体をクリアする
 	commandList_->ClearDepthStencilView(dsvHandle, D3D12_CLEAR_FLAG_DEPTH, 1.0f, 0, 0, nullptr);
 	//ビューポート領域を設定する
-	commandList_->RSSetViewports(1, &viewports_[swapChainIndex]);
+	commandList_->RSSetViewports(1, &viewport_);
 	//シザ－矩形の設定
-	commandList_->RSSetScissorRects(1, &scissorRects_[swapChainIndex]);
+	commandList_->RSSetScissorRects(1, &scissorRect_);
 }
 
 // 描画終了位置

@@ -109,17 +109,11 @@ private://メンバ関数
 	//代入演算子禁止
 	const WinApi& operator=(const WinApi&) = delete;
 public://定数
-#ifdef _DEBUG
-	//画面の横幅
-	static inline const int32_t kClientWidth = 960;
-	//画面の縦幅
-	static inline const int32_t kClientHeight = 540;
-#else
 	//画面の横幅
 	static inline const int32_t kClientWidth = 1280;
 	//画面の縦幅
 	static inline const int32_t kClientHeight = 720;
-#endif // _DEBUG
+
 	//ウィンドウの数
 	static inline const uint32_t kWindowCount = static_cast<uint32_t>(WindowType::kWindowTypeCount);
 	//タイトル名

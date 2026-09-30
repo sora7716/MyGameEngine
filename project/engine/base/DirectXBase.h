@@ -52,6 +52,11 @@ public://静的メンバ関数
 	/// <param name="index">インデックス</param>
 	/// <returns>デスクリプターGPUハンドル</returns>
 	static D3D12_GPU_DESCRIPTOR_HANDLE GetGPUDescriptorHandle(Microsoft::WRL::ComPtr<ID3D12DescriptorHeap> descriptorHeap, uint32_t descriptorSize, uint32_t index);
+private://定数
+	//スワップチェインの数
+	static inline const uint32_t kSwapChainCount = 2;
+	//スワップチェインのバッファサイズ
+	static inline const uint32_t kSwapChainBufferCount = 2;
 public://メンバ関数
 	/// <summary>
 	/// コンストラクタ
@@ -76,16 +81,6 @@ public://メンバ関数
 	void CreateCommands();
 
 	/// <summary>
-	/// 各種デスクリプターヒープの生成
-	/// </summary>
-	void CreateDescriptorHeap();
-
-	/// <summary>
-	/// RTVの生成
-	/// </summary>
-	void CreateRenderTargetView();
-
-	/// <summary>
 	/// ビューポート矩形の初期化
 	/// </summary>
 	void InitializeViewport();
@@ -104,7 +99,9 @@ public://メンバ関数
 	/// 描画開始位置
 	/// </summary>
 	/// <param name="swapChainIndex">スワップチェインの検索キー</param>
-	void PreDraw(uint32_t swapChainIndex);
+	/// <param name="rtvHandle">rtvのハンドル</param>
+	/// <param name="dsvHandle">dsvのハンドル</param>
+	void PreDraw(uint32_t swapChainIndex, D3D12_CPU_DESCRIPTOR_HANDLE rtvHandle, D3D12_CPU_DESCRIPTOR_HANDLE dsvHandle);
 
 	/// <summary>
 	/// 描画終了位置
@@ -153,34 +150,6 @@ public://メンバ関数
 	ComPtr<ID3D12Resource> UploadTextureData(ID3D12Resource* texture, D3D12_RESOURCE_STATES& inOutState, const DirectX::ScratchImage& mipImages);
 
 	/// <summary>
-	/// RTVの指定番号のCPUデスクリプタハンドルを取得する
-	/// </summary>
-	/// <param name="index">検索番号</param>
-	/// <returns></returns>
-	D3D12_CPU_DESCRIPTOR_HANDLE GetRTVCPUDescriptorHandle(uint32_t index);
-
-	/// <summary>
-	/// RTVの指定番号のGPUデスクリプタハンドルを取得する
-	/// </summary>
-	/// <param name="index">検索番号</param>
-	/// <returns></returns>
-	D3D12_GPU_DESCRIPTOR_HANDLE GetRTVGPUDescriptorHandle(uint32_t index);
-
-	/// <summary>
-	/// DSVの指定番号のCPUデスクリプタハンドルを取得する
-	/// </summary>
-	/// <param name="index">検索番号</param>
-	/// <returns></returns>
-	D3D12_CPU_DESCRIPTOR_HANDLE GetDSVCPUDescriptorHandle(uint32_t index);
-
-	/// <summary>
-	/// DSVの指定番号のGPUデスクリプタハンドルを取得する
-	/// </summary>
-	/// <param name="index">検索番号</param>
-	/// <returns></returns>
-	D3D12_GPU_DESCRIPTOR_HANDLE GetDSVGPUDescriptorHandle(uint32_t index);
-
-	/// <summary>
 	/// デバイスのゲッター
 	/// </summary>
 	/// <returns>デバイス</returns>
@@ -193,16 +162,29 @@ public://メンバ関数
 	ID3D12GraphicsCommandList* GetCommandList()const;
 
 	/// <summary>
-	/// スワップチェーンのリソース数のゲッター
-	/// </summary>
-	/// <returns>スワップチェーンのリソース数</returns>
-	size_t GetSwapChainResourceNum()const;
-
-	/// <summary>
 	/// デプスステンシルテクスチャの取得
 	/// </summary>
 	/// <returns>デプスステンシルテクスチャ</returns>
 	ID3D12Resource* GetDepthStencilTexture()const;
+
+	/// <summary>
+	/// スワップチェーンのリソースのサイズの取得
+	/// </summary>
+	/// <returns>スワップチェーンのリソースのサイズ</returns>
+	uint32_t GetSwapChainResourceSize()const;
+
+	/// <summary>
+	/// バックバッファ検索キーの取得
+	/// </summary>
+	/// <param name="index">検索キー</param>
+	/// <returns>バックバッファ検索キー</returns>
+	uint32_t GetBackBufferIndex(uint32_t index)const;
+
+	/// <summary>
+	/// スワップチェーンのリソースの取得
+	/// </summary>
+	/// <returns>スワップチェーンのリソース</returns>
+	const std::array<ComPtr<ID3D12Resource>, kSwapChainCount* kSwapChainBufferCount>& GetSwapChainResources()const;
 private://メンバ関数
 	//コピーコンストラクタ禁止
 	DirectXBase(const DirectXBase&) = delete;
@@ -287,11 +269,6 @@ private://メンバ関数
 	/// 実行を停止する(エラー・警告の場合)
 	/// </summary>
 	void StopExecution();
-private://定数
-	//スワップチェインの数
-	static inline const uint32_t kSwapChainCount = 2;
-	//スワップチェインのバッファサイズ
-	static inline const uint32_t kSwapChainBufferCount = 2;
 private://メンバ変数
 	//WindowAPI
 	WinApi* winApi_ = nullptr;
@@ -315,15 +292,6 @@ private://メンバ変数
 	uint32_t createSwapChainCount_ = 1;
 	//スワップチェーンからリソースを引っ張ってくる
 	std::array<ComPtr<ID3D12Resource>, kSwapChainCount* kSwapChainBufferCount> swapChainResources_ = { nullptr };
-	//RTVを2つ作るのでディスクリプタを2つ用意
-	std::vector<D3D12_CPU_DESCRIPTOR_HANDLE> rtvHandles_ = {};
-	//RTV(描画情報の使い方)
-	ComPtr<ID3D12DescriptorHeap> rtvDescriptorHeap_ = nullptr;
-	//DSV(深度情報の使い方)
-	ComPtr<ID3D12DescriptorHeap> dsvDescriptorHeap_ = nullptr;
-	//DescriptorSize
-	uint32_t descriptorSizeRTV_ = 0;//RTV
-	uint32_t descriptorSizeDSV_ = 0;//DSV
 	//深度バッファ
 	ComPtr<ID3D12Resource> depthStencilResource_ = nullptr;
 	//Fence
@@ -339,7 +307,7 @@ private://メンバ変数
 	//FenceValue
 	uint64_t fenceValue_ = 0;
 	//ビューポート
-	std::vector<D3D12_VIEWPORT> viewports_{};
+	D3D12_VIEWPORT viewport_{};
 	//シーザー矩形
-	std::vector<D3D12_RECT> scissorRects_{};
+	D3D12_RECT scissorRect_{};
 };

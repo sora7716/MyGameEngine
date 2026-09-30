@@ -6,6 +6,8 @@
 class WinApi;
 class DirectXBase;
 class SRVManager;
+class RTVManager;
+class DSVManager;
 class Input;
 class TextureManager;
 class ModelManager;
@@ -53,10 +55,22 @@ public://メンバ関数
 	DirectXBase* GetDirectXBase()const;
 
 	/// <summary>
-	/// SRVマネージャーの取得
+	/// SRVの管理の取得
 	/// </summary>
-	/// <returns>SRVマネージャー</returns>
+	/// <returns>SRVの管理</returns>
 	SRVManager* GetSRVManager()const;
+
+	/// <summary>
+	/// RTVの管理の取得
+	/// </summary>
+	/// <returns>RTVの管理</returns>
+	RTVManager* GetRTVManager()const;
+
+	/// <summary>
+	/// DSVの管理の取得
+	/// </summary>
+	/// <returns>DSVの管理</returns>
+	DSVManager* GetDSVManager()const;
 
 	/// <summary>
 	/// 入力の取得
@@ -145,8 +159,12 @@ private://メンバ変数
 	std::unique_ptr<WinApi>winApi_ = nullptr;
 	//DirectXの基盤部分
 	std::unique_ptr<DirectXBase>directXBase_ = nullptr;
-	//SRVマネージャー
+	//SRVの管理
 	std::unique_ptr<SRVManager>srvManager_ = nullptr;
+	//RTVの管理
+	std::unique_ptr<RTVManager>rtvManager_ = nullptr;
+	//DSVの管理
+	std::unique_ptr<DSVManager>dsvManager_ = nullptr;
 	//入力
 	std::unique_ptr<Input>input_ = nullptr;
 	//テクスチャマネージャー

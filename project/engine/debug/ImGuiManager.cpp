@@ -55,7 +55,7 @@ void ImGuiManager::Initialize([[maybe_unused]] WinApi* winApi, [[maybe_unused]] 
 	srvManager_->Allocate();
 	ImGui_ImplDX12_Init(
 		directXBase_->GetDevice(),
-		static_cast<int>(directXBase_->GetSwapChainResourceNum()),
+		static_cast<int>(directXBase_->GetSwapChainResourceSize()),
 		DXGI_FORMAT_R8G8B8A8_UNORM_SRGB,
 		srvManager_->GetDescriptorHeap(),
 		srvManager_->GetCPUDescriptorHandle(0),

@@ -2,6 +2,8 @@
 #include "WinApi.h"
 #include "DirectXBase.h"
 #include "SRVManager.h"
+#include "DSVManager.h"
+#include "RTVManager.h"
 #include "ImGuiManager.h"
 #include "SceneManager.h"
 #include "SceneFactory.h"
@@ -42,8 +44,18 @@ void GameSystem::Draw(){
 #else
 	windowIndex_ = 0;
 #endif // _DEBUG
+	//バックバッファの検索キーを取得
+	const uint32_t backBufferIndex = core_->GetDirectXBase()->GetBackBufferIndex(windowIndex_);
+
+	//RTVハンドルの取得
+	const uint32_t rtvIndex = rtvIndices_[backBufferIndex];
+	const D3D12_CPU_DESCRIPTOR_HANDLE rtvHandle = core_->GetRTVManager()->GetCPUDescriptorHandle(rtvIndex);
+
+	//DSVハンドルの取得
+	const D3D12_CPU_DESCRIPTOR_HANDLE dsvHandle = core_->GetDSVManager()->GetCPUDescriptorHandle(dsvIndex_);
+	
 	//描画開始位置
-	core_->GetDirectXBase()->PreDraw(windowIndex_);
+	core_->GetDirectXBase()->PreDraw(windowIndex_, rtvHandle, dsvHandle);
 	//SRVの管理
 	core_->GetSRVManager()->PreDraw();
 

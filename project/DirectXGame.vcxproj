@@ -74,6 +74,8 @@
     <ClCompile Include="engine\geometry\PrimitiveData.cpp" />
     <ClCompile Include="engine\geometry\PrimitiveMeshFactory.cpp" />
     <ClCompile Include="engine\graphics\data\RenderingData.cpp" />
+    <ClCompile Include="engine\graphics\descriptor\DSVManager.cpp" />
+    <ClCompile Include="engine\graphics\descriptor\RTVManager.cpp" />
     <ClCompile Include="engine\graphics\descriptor\SRVManager.cpp" />
     <ClCompile Include="engine\graphics\pipeline\Blend.cpp" />
     <ClCompile Include="engine\graphics\pipeline\GraphicsPipeline.cpp" />
@@ -173,6 +175,8 @@
     <ClInclude Include="engine\geometry\PrimitiveMeshFactory.h" />
     <ClInclude Include="engine\graphics\data\RenderData.h" />
     <ClInclude Include="engine\graphics\data\RenderingData.h" />
+    <ClInclude Include="engine\graphics\descriptor\DSVManager.h" />
+    <ClInclude Include="engine\graphics\descriptor\RTVManager.h" />
     <ClInclude Include="engine\graphics\descriptor\SRVManager.h" />
     <ClInclude Include="engine\graphics\pipeline\Blend.h" />
     <ClInclude Include="engine\graphics\pipeline\BlendMode.h" />

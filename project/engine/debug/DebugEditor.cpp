@@ -43,6 +43,8 @@ void DebugEditor::Draw(){
 	DrawDockSpace();
 	//ヒエラルキーの描画
 	DrawHierarchy();
+	//シーンの描画
+	DrawScene();
 	//インスペクターの描画
 	DrawInspector();
 	//タグの管理の描画
@@ -264,6 +266,16 @@ void DebugEditor::DrawHierarchy(){
 		}
 
 	}
+	ImGui::End();
+#endif // USE_IMGUI
+}
+
+//シーンの描画
+void DebugEditor::DrawScene(){
+#ifdef USE_IMGUI
+	ImGui::Begin("Scene");
+	ImVec2 windowSize = ImGui::GetContentRegionAvail();
+	ImGui::Text("size.x = %f,size.y = %f", windowSize.x, windowSize.y);
 	ImGui::End();
 #endif // USE_IMGUI
 }

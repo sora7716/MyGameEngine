@@ -71,12 +71,15 @@ void DirectXBase::Initialize(WinApi* winApi){
 	for (uint32_t i = 0; i < createSwapChainCount_; i++){
 		swapChain_[i] = CreateSwapChain(WinApi::kClientWidth, WinApi::kClientHeight, kSwapChainBufferCount, i);
 	}
+	//各スワップチェーンからバッグバッファを取得
+	for (uint32_t i = 0; i < createSwapChainCount_ * kSwapChainBufferCount; ++i){
+		swapChainResources_[i] = BringResourcesFromSwapChain(
+			swapChain_[i / kSwapChainBufferCount].Get(),
+			i % kSwapChainBufferCount
+		);
+	}
 	//深度バッファの生成
 	depthStencilResource_ = CreateDepthStencilTextureResource(WinApi::kClientWidth, WinApi::kClientHeight);
-	//各種デスクリプタヒープの生成
-	CreateDescriptorHeap();
-	//レンダーターゲットビューの初期化
-	CreateRenderTargetView();
 	//フェンスの初期化
 	fence_ = CreateFence();
 	//ビューポート矩形の初期化
@@ -97,80 +100,24 @@ void DirectXBase::CreateCommands(){
 	commandQueue_ = CreateCommandQueue();
 }
 
-//各種デスクリプターヒープの生成
-void DirectXBase::CreateDescriptorHeap(){
-	//DescriptorSize
-	descriptorSizeRTV_ = device_->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_RTV);//RTV
-	descriptorSizeDSV_ = device_->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_DSV);//DSV
-	//DescriptorHeapの作成
-	//RTV
-	rtvDescriptorHeap_ = CreateDescriptorHeap(D3D12_DESCRIPTOR_HEAP_TYPE_RTV, 4, false);
-	//DSV用のヒープでディスクリプタの数は1。DSVはShader内で触れるものではないので、ShaderVisibleはfalse
-	dsvDescriptorHeap_ = CreateDescriptorHeap(D3D12_DESCRIPTOR_HEAP_TYPE_DSV, 1, false);
-}
-
-//RTVの生成
-void DirectXBase::CreateRenderTargetView(){
-	for (uint32_t i = 0; i < createSwapChainCount_ * kSwapChainBufferCount; i++){
-		//SwapChainからResourceを引っ張ってくる
-		swapChainResources_[i] = BringResourcesFromSwapChain(swapChain_[i / kSwapChainBufferCount].Get(), i % kSwapChainBufferCount);
-	}
-
-	//rtvDesc	
-	D3D12_RENDER_TARGET_VIEW_DESC rtvDesc{};
-	//RTV用の設定
-	rtvDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM_SRGB;//出力結果をSRGBに変換して書き込む
-	rtvDesc.ViewDimension = D3D12_RTV_DIMENSION_TEXTURE2D;//2dテクスチャとして書き込む
-
-	//RTVハンドルの要素数を設定
-	rtvHandles_.resize(4);
-	for (uint32_t i = 0; i < rtvHandles_.size(); i++){
-		//rtvHandleを取得
-		rtvHandles_[i] = GetCPUDescriptorHandle(rtvDescriptorHeap_, descriptorSizeRTV_, i);
-		//レンダーターゲットビューの生成
-		device_->CreateRenderTargetView(swapChainResources_[i].Get(), &rtvDesc, rtvHandles_[i]);
-	}
-
-}
-
 //ビューポート矩形の初期化
 void DirectXBase::InitializeViewport(){
-	//ビューポートのサイズ設定
-	viewports_.resize(static_cast<uint32_t>(WindowType::kWindowTypeCount));
-	//ゲームウィンドウ
-	D3D12_VIEWPORT& gameViewport = viewports_[static_cast<uint32_t>(WindowType::kGame)];
 	//クライアント領域のサイズと一緒にして画面全体に表示
-	gameViewport.Width = static_cast<float>(WinApi::kClientWidth);
-	gameViewport.Height = static_cast<float>(WinApi::kClientHeight);
-	gameViewport.TopLeftX = 0.0f;
-	gameViewport.TopLeftY = 0.0f;
-	gameViewport.MinDepth = 0.0f;
-	gameViewport.MaxDepth = 1.0f;
-
-	//デバッグウィンドウ
-	D3D12_VIEWPORT& debugViewport = viewports_[static_cast<uint32_t>(WindowType::kDebug)];
-
-	debugViewport.Width = 448.0f;
-	debugViewport.Height = 252.0f;
-	debugViewport.TopLeftX = static_cast<float>(WinApi::kClientWidth - 448.0f) * 0.5f;
-	debugViewport.TopLeftY = 0.0f;
-	debugViewport.MinDepth = 0.0f;
-	debugViewport.MaxDepth = 1.0f;
+	viewport_.Width = static_cast<float>(WinApi::kClientWidth);
+	viewport_.Height = static_cast<float>(WinApi::kClientHeight);
+	viewport_.TopLeftX = 0.0f;
+	viewport_.TopLeftY = 0.0f;
+	viewport_.MinDepth = 0.0f;
+	viewport_.MaxDepth = 1.0f;
 }
 
 //シザリング矩形の初期化
 void DirectXBase::InitializeScissorRect(){
-	//シザーの設定
-	scissorRects_.resize(static_cast<uint32_t>(WindowType::kWindowTypeCount));
-
-	for (uint32_t i = 0; i < static_cast<uint32_t>(WindowType::kWindowTypeCount); i++){
-		//基本的にビューポートと同じ矩形が構成されるようにする
-		scissorRects_[i].left = static_cast<LONG>(viewports_[i].TopLeftX);
-		scissorRects_[i].right = static_cast<LONG>(viewports_[i].TopLeftX + viewports_[i].Width);
-		scissorRects_[i].top = static_cast<LONG>(viewports_[i].TopLeftY);
-		scissorRects_[i].bottom = static_cast<LONG>(viewports_[i].TopLeftY + viewports_[i].Height);
-	}
-
+	//基本的にビューポートと同じ矩形が構成されるようにする
+	scissorRect_.left = static_cast<LONG>(viewport_.TopLeftX);
+	scissorRect_.right = static_cast<LONG>(viewport_.TopLeftX + viewport_.Width);
+	scissorRect_.top = static_cast<LONG>(viewport_.TopLeftY);
+	scissorRect_.bottom = static_cast<LONG>(viewport_.TopLeftY + viewport_.Height);
 }
 
 //DXCコンパイラの生成
@@ -188,11 +135,10 @@ void DirectXBase::CreateDXCCompiler(){
 }
 
 // 描画開始位置
-void DirectXBase::PreDraw(uint32_t swapChainIndex){
+void DirectXBase::PreDraw(uint32_t swapChainIndex, D3D12_CPU_DESCRIPTOR_HANDLE rtvHandle, D3D12_CPU_DESCRIPTOR_HANDLE dsvHandle){
 	/*コマンドを積む*/
 	//これから書き込むバックバッファのインデックスを取得
-	UINT backBufferIndex = swapChain_[swapChainIndex]->GetCurrentBackBufferIndex();
-	backBufferIndex = backBufferIndex + kSwapChainCount * swapChainIndex;
+	UINT backBufferIndex = GetBackBufferIndex(swapChainIndex);
 	//今回のバリアはTransition
 	D3D12_RESOURCE_BARRIER barrier{};
 	barrier.Type = D3D12_RESOURCE_BARRIER_TYPE_TRANSITION;
@@ -206,27 +152,24 @@ void DirectXBase::PreDraw(uint32_t swapChainIndex){
 	barrier.Transition.StateAfter = D3D12_RESOURCE_STATE_RENDER_TARGET;
 	//TransitionBarrierを張る
 	commandList_->ResourceBarrier(1, &barrier);
-	//描画先のRTVとDSVを設定する
-	D3D12_CPU_DESCRIPTOR_HANDLE dsvHandle = DirectXBase::GetCPUDescriptorHandle(dsvDescriptorHeap_.Get(), descriptorSizeDSV_, 0);
 	//描画先のRTVを設定する
-	commandList_->OMSetRenderTargets(1, &rtvHandles_[backBufferIndex], false, &dsvHandle);
+	commandList_->OMSetRenderTargets(1, &rtvHandle, false, &dsvHandle);
 	//指定した色で画面をクリアする
 	float clearColor[] = { 0.1f,0.25f,0.5f,1.0f };//青っぽい色。RGBAの順
-	commandList_->ClearRenderTargetView(rtvHandles_[backBufferIndex], clearColor, 0, nullptr);
+	commandList_->ClearRenderTargetView(rtvHandle, clearColor, 0, nullptr);
 	//指定した深度で画面全体をクリアする
 	commandList_->ClearDepthStencilView(dsvHandle, D3D12_CLEAR_FLAG_DEPTH, 1.0f, 0, 0, nullptr);
 	//ビューポート領域を設定する
-	commandList_->RSSetViewports(1, &viewports_[swapChainIndex]);
+	commandList_->RSSetViewports(1, &viewport_);
 	//シザ－矩形の設定
-	commandList_->RSSetScissorRects(1, &scissorRects_[swapChainIndex]);
+	commandList_->RSSetScissorRects(1, &scissorRect_);
 }
 
 // 描画終了位置
 void DirectXBase::PostDraw(uint32_t swapChainIndex){
 	HRESULT result = S_FALSE;
 	//これから書き込むバックバッファのインデックスを取得
-	UINT backBufferIndex = swapChain_[swapChainIndex]->GetCurrentBackBufferIndex();
-	backBufferIndex = backBufferIndex + kSwapChainCount * swapChainIndex;
+	UINT backBufferIndex = GetBackBufferIndex(swapChainIndex);
 	//画面に描く処理は全て終わり、画面に移すので、状態を遷移
 	D3D12_RESOURCE_BARRIER barrier{};
 	barrier.Type = D3D12_RESOURCE_BARRIER_TYPE_TRANSITION;
@@ -423,26 +366,6 @@ ComPtr<ID3D12Resource> DirectXBase::UploadTextureData(ID3D12Resource* texture, D
 	return intermediate;
 }
 
-// RTVの指定番号のCPUデスクリプタハンドルを取得する
-D3D12_CPU_DESCRIPTOR_HANDLE DirectXBase::GetRTVCPUDescriptorHandle(uint32_t index){
-	return  GetCPUDescriptorHandle(rtvDescriptorHeap_, descriptorSizeRTV_, index);
-}
-
-// RTVの指定番号のGPUデスクリプタハンドルを取得する
-D3D12_GPU_DESCRIPTOR_HANDLE DirectXBase::GetRTVGPUDescriptorHandle(uint32_t index){
-	return  GetGPUDescriptorHandle(rtvDescriptorHeap_, descriptorSizeRTV_, index);
-}
-
-// DSVの指定番号のCPUデスクリプタハンドルを取得する
-D3D12_CPU_DESCRIPTOR_HANDLE DirectXBase::GetDSVCPUDescriptorHandle(uint32_t index){
-	return  GetCPUDescriptorHandle(dsvDescriptorHeap_, descriptorSizeDSV_, index);
-}
-
-// DSVの指定番号のGPUデスクリプタハンドルを取得する
-D3D12_GPU_DESCRIPTOR_HANDLE DirectXBase::GetDSVGPUDescriptorHandle(uint32_t index){
-	return  GetGPUDescriptorHandle(dsvDescriptorHeap_, descriptorSizeDSV_, index);
-}
-
 //デバイスのゲッター
 ID3D12Device* DirectXBase::GetDevice() const{
 	return device_.Get();
@@ -453,14 +376,26 @@ ID3D12GraphicsCommandList* DirectXBase::GetCommandList() const{
 	return commandList_.Get();
 }
 
-// スワップチェーンのリソース数のゲッター
-size_t DirectXBase::GetSwapChainResourceNum() const{
-	return swapChainResources_.size();
-}
-
 //デプスステンシルテクスチャの取得
 ID3D12Resource* DirectXBase::GetDepthStencilTexture() const{
 	return depthStencilResource_.Get();
+}
+
+//スワップチェーンのリソースのサイズの取得
+uint32_t DirectXBase::GetSwapChainResourceSize() const{
+	return static_cast<uint32_t>(swapChainResources_.size());
+}
+
+//バックバッファ検索キーの取得
+uint32_t DirectXBase::GetBackBufferIndex(uint32_t index) const{
+	uint32_t backBufferIndex = swapChain_[index]->GetCurrentBackBufferIndex();
+	backBufferIndex = backBufferIndex + kSwapChainCount * index;
+	return backBufferIndex;
+}
+
+//スワップチェーンのリソースの取得
+const std::array<ComPtr<ID3D12Resource>, DirectXBase::kSwapChainCount* DirectXBase::kSwapChainBufferCount>& DirectXBase::GetSwapChainResources() const{
+	return swapChainResources_;
 }
 
 //深度バッファリソースの生成

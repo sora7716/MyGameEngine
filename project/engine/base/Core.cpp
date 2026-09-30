@@ -2,6 +2,8 @@
 #include "WinApi.h"
 #include "DirectXBase.h"
 #include "SRVManager.h"
+#include "RTVManager.h"
+#include "DSVManager.h"
 #include "Input.h"
 #include "TextureManager.h"
 #include "ModelManager.h"
@@ -31,8 +33,12 @@ void Core::Initialize(){
 	winApi_ = WinApi::Create(WinApi::ConstructorKey{});
 	//DirectXの基盤部分
 	directXBase_ = DirectXBase::Create(DirectXBase::ConstructorKey{}, winApi_.get());
-	//SRVマネージャー
+	//SRVの管理
 	srvManager_ = SRVManager::Create(SRVManager::ConstructorKey{}, directXBase_.get());
+	//RTVの管理
+	rtvManager_ = RTVManager::Create(RTVManager::ConstructorKey{}, directXBase_.get());
+	//DSVの管理
+	dsvManager_ = DSVManager::Create(DSVManager::ConstructorKey{}, directXBase_.get());
 	//入力
 	input_ = Input::Create(Input::ConstructorKey{}, winApi_.get());
 	//テクスチャマネージャー
@@ -76,9 +82,19 @@ DirectXBase* Core::GetDirectXBase()const{
 	return directXBase_.get();
 }
 
-//SRVマネージャーの取得
+//SRVの管理の取得
 SRVManager* Core::GetSRVManager()const{
 	return srvManager_.get();
+}
+
+//RTVの管理の取得
+RTVManager* Core::GetRTVManager() const{
+	return rtvManager_.get();
+}
+
+//DSVの管理の取得
+DSVManager* Core::GetDSVManager() const{
+	return dsvManager_.get();
 }
 
 //入力の取得

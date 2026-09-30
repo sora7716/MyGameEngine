@@ -104,11 +104,7 @@ void WinApi::Initialize(){
 	uint32_t windowCount = 1;
 #endif // _DEBUG
 
-#ifdef _DEBUG
-	Vector2Int windowPos = { 0,kClientHeight / 2 };
-#else
 	Vector2Int windowPos = { CW_USEDEFAULT,CW_USEDEFAULT };
-#endif // _DEBUG
 
 	//ウィンドウの作成
 	for (uint32_t i = 0; i < windowCount; i++){
@@ -117,7 +113,7 @@ void WinApi::Initialize(){
 		wndClass_.lpszClassName,//利用するクラス
 		(labels_[i]).c_str(),
 		WS_OVERLAPPEDWINDOW,//よく見るウィンドウのスタイル
-		windowPos.x + kClientWidth * i,//ウィンドウの表示位置(X座標)
+		windowPos.x,//ウィンドウの表示位置(X座標)
 		windowPos.y,//ウィンドウの表示位置(Y座標)
 		windowRect_.right - windowRect_.left,//ウィンドウの横幅
 		windowRect_.bottom - windowRect_.top,//ウィンドウの縦幅

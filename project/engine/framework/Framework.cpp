@@ -6,6 +6,9 @@
 #include "LightingManager.h"
 #include "Logger.h"
 #include "Input.h"
+#include "DirectXBase.h"
+#include "RTVManager.h"
+#include "DSVManager.h"
 
 //初期化
 void Framework::Initialize(){
@@ -14,6 +17,29 @@ void Framework::Initialize(){
 	//エンジンの核
 	core_ = std::make_unique<Core>();
 	core_->Initialize();
+
+	//DirectXの基盤部分
+	DirectXBase* directXBase = core_->GetDirectXBase();
+	//RTVの管理
+	RTVManager* rtvManager = core_->GetRTVManager();
+	//DSVの管理
+	DSVManager* dsvManager = core_->GetDSVManager();
+
+	//RTVの生成
+	const uint32_t swapChainCount = directXBase->GetSwapChainResourceSize();
+	//サイズを設定
+	rtvIndices_.resize(swapChainCount);
+
+	for (uint32_t i = 0; i < swapChainCount; i++){
+		const uint32_t rtvIndex = rtvManager->Allocate();
+		rtvManager->CreateRTV(directXBase->GetSwapChainResources()[i].Get(), rtvIndex, DXGI_FORMAT_R8G8B8A8_UNORM_SRGB);
+		//検索キーを保存
+		rtvIndices_[i] = rtvIndex;
+	}
+
+	//DSVの生成
+	dsvIndex_ = dsvManager->Allocate();
+	dsvManager->CreateDSV(directXBase->GetDepthStencilTexture(), dsvIndex_, DXGI_FORMAT_D24_UNORM_S8_UINT);
 }
 
 //更新

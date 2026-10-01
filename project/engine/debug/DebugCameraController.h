@@ -50,7 +50,7 @@ public://メンバ関数
 	/// デバッグが有効かの設定
 	/// </summary>
 	/// <param name="isControlEnabled">デバッグが有効か</param>
-	void SetIsControlEnabled(bool isControlEnabled);
+	void SetIsDebugControlEnabled(bool isControlEnabled);
 private://メンバ関数
 	/// <summary>
 	/// 左右移動の操作

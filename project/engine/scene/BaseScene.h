@@ -89,10 +89,10 @@ public://メンバ関数
 	const std::vector<std::unique_ptr<GameObject>>& GetGameObjects()const;
 
 	/// <summary>
-	/// シーンで必要な情報の設定
+	/// セットアップ
 	/// </summary>
 	/// <param name="sceneContext">シーンに必要な情報</param>
-	void SetSceneContext(const SceneContext& sceneContext);
+	void SetUp(const SceneContext& sceneContext);
 
 	/// <summary>
 	/// シーンで必要な情報の取得
@@ -104,7 +104,13 @@ public://メンバ関数
 	/// デバッグが有効かの設定
 	/// </summary>
 	/// <param name="isControlEnabled">デバッグが有効か</param>
-	void SetIsControlEnabled(bool isControlEnabled);
+	void SetIsDebugControlEnabled(bool isControlEnabled);
+
+	/// <summary>
+	/// アプリケーションが有効かの設定
+	/// </summary>
+	/// <param name="isAppInputEnabled">アプリケーションが有効か</param>
+	void SetIsAppInputEnabled(bool isAppInputEnabled);
 private://メンバ関数
 	/// <summary>
 	/// 名前を重複しないようにする

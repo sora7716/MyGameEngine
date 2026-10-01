@@ -25,7 +25,7 @@ void MaterialInstance::Initialize(const std::vector<MaterialTexturePaths>& textu
 		slot.material.uvMatrix = Matrix4x4::Identity4x4();
 
 		//UVトランスフォームの初期化
-		slot.uvTransform.scale = Vector2::MakeAllOne();
+		slot.uvTransform.scale = Vector2::GetOne();
 		slot.uvTransform.rotate = 0.0f;
 		slot.uvTransform.translate = { 0.0f,0.0f };
 

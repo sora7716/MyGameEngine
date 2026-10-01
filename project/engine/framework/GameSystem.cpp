@@ -36,10 +36,6 @@ void GameSystem::Initialize(){
 //更新
 void GameSystem::Update(){
 	Framework::Update();
-	//ウィンドウの検索キーがウィンドウの数を超えてしまった場合
-	if (windowIndex_ >= static_cast<uint32_t>(WindowType::kWindowTypeCount)){
-		windowIndex_ = 0;
-	}
 }
 
 //デバッグ
@@ -51,13 +47,8 @@ void GameSystem::Debug(){
 
 //描画
 void GameSystem::Draw(){
-#ifdef _DEBUG
-#else
-	windowIndex_ = 0;
-#endif // _DEBUG
-
 	//バックバッファの検索キーを取得
-	const uint32_t backBufferIndex = core_->GetDirectXBase()->GetBackBufferIndex(windowIndex_);
+	const uint32_t backBufferIndex = core_->GetDirectXBase()->GetBackBufferIndex();
 
 	//RTVハンドルの取得
 	const uint32_t rtvIndex = rtvIndices_[backBufferIndex];
@@ -66,58 +57,48 @@ void GameSystem::Draw(){
 	//DSVハンドルの取得
 	const D3D12_CPU_DESCRIPTOR_HANDLE dsvHandle = core_->GetDSVManager()->GetCPUDescriptorHandle(dsvIndex_);
 
-	//デバッグ画面かどうか
-	const bool isDebugWindow = core_->GetWinApi()->GetHwnd(windowIndex_) == core_->GetWinApi()->GetHwnd(WindowType::kDebug);
-
 	//デバッグ画面のときにしか表示しない
-	if (isDebugWindow){
-		//シーンのレンダーテクスチャの描画開始位置
-		sceneRenderTexture_->PreDraw();
-		//SRVの管理
-		core_->GetSRVManager()->PreDraw();
-		//シーン
-		core_->GetSceneManager()->SceneDraw();
-		//レンダーテクスチャの描画終了位置
-		sceneRenderTexture_->PostDraw();
+#ifdef _DEBUG
+	//シーンのレンダーテクスチャの描画開始位置
+	sceneRenderTexture_->PreDraw();
+	//SRVの管理
+	core_->GetSRVManager()->PreDraw();
+	//シーン
+	core_->GetSceneManager()->SceneDraw();
+	//描画
+	core_->GetRenderSystem()->Draw();
+	//レンダーテクスチャの描画終了位置
+	sceneRenderTexture_->PostDraw();
 
-		//プレビューのレンダーテクスチャの描画開始位置
-		previewRenderTexture_->PreDraw();
-		//SRVの管理
-		core_->GetSRVManager()->PreDraw();
-		//プレビュー
-		core_->GetSceneManager()->PreviewDraw();
-		//プレビューのレンダーテクスチャの描画終了位置
-		previewRenderTexture_->PostDraw();
+	//プレビューのレンダーテクスチャの描画開始位置
+	previewRenderTexture_->PreDraw();
+	//SRVの管理
+	core_->GetSRVManager()->PreDraw();
+	//プレビュー
+	core_->GetSceneManager()->PreviewDraw();
+	//描画
+	core_->GetRenderSystem()->Draw();
+	//プレビューのレンダーテクスチャの描画終了位置
+	previewRenderTexture_->PostDraw();
 
-		//描画
-		core_->GetRenderSystem()->Draw();
-
-		//描画開始位置
-		core_->GetDirectXBase()->PreDraw(windowIndex_, rtvHandle, dsvHandle);
-
-		//ImGuiの管理
-		core_->GetImGuiManager()->Draw();
-
-		//描画終了位置
-		core_->GetDirectXBase()->PostDraw(windowIndex_);
-	} else{
-		//描画開始位置
-		core_->GetDirectXBase()->PreDraw(windowIndex_, rtvHandle, dsvHandle);
-
-		//SRVの管理
-		core_->GetSRVManager()->PreDraw();
-
-		//シーン
-		core_->GetSceneManager()->PreviewDraw();
-		//描画
-		core_->GetRenderSystem()->Draw();
-
-		//描画終了位置
-		core_->GetDirectXBase()->PostDraw(windowIndex_);
-	}
-
-	//ウィンドウの検索キーを加算
-	windowIndex_++;
+	//描画開始位置
+	core_->GetDirectXBase()->PreDraw(rtvHandle, dsvHandle);
+	//ImGuiの管理
+	core_->GetImGuiManager()->Draw();
+	//描画終了位置
+	core_->GetDirectXBase()->PostDraw();
+#else
+	//描画開始位置
+	core_->GetDirectXBase()->PreDraw(rtvHandle, dsvHandle);
+	//SRVの管理
+	core_->GetSRVManager()->PreDraw();
+	//シーン
+	core_->GetSceneManager()->PreviewDraw();
+	//描画
+	core_->GetRenderSystem()->Draw();
+	//描画終了位置
+	core_->GetDirectXBase()->PostDraw();	
+#endif // _DEBUG
 }
 
 //終了

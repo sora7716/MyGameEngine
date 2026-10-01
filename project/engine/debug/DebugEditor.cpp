@@ -38,6 +38,8 @@ void DebugEditor::Update(){
 
 //描画
 void DebugEditor::Draw(D3D12_GPU_DESCRIPTOR_HANDLE sceneHandle, D3D12_GPU_DESCRIPTOR_HANDLE previewHandle){
+	(void)sceneHandle;
+	(void)previewHandle;
 #ifdef USE_IMGUI
 	//ドッキングスペースの描画
 	DrawDockSpace();
@@ -145,6 +147,11 @@ void DebugEditor::SelectGameObject(GameObject* gameObject){
 //シーンのImGuiウィンドウを選択しているかの取得
 bool DebugEditor::IsSceneViewHovered() const{
 	return isSceneViewHovered_;
+}
+
+//プレビューのImGuiウィンドウを選択しているかの取得
+bool DebugEditor::IsPreviewHovered() const{
+	return isPreviewHovered_;
 }
 
 //ドッキングスペースの描画
@@ -279,6 +286,7 @@ void DebugEditor::DrawHierarchy(){
 
 //シーンの描画
 void DebugEditor::DrawScene(D3D12_GPU_DESCRIPTOR_HANDLE handle){
+	(void)handle;
 #ifdef USE_IMGUI
 	ImGui::Begin("Scene");
 	//テクスチャのIDを取得(GPUのハンドルから取得)
@@ -293,12 +301,15 @@ void DebugEditor::DrawScene(D3D12_GPU_DESCRIPTOR_HANDLE handle){
 
 //プレビューシーンの描画
 void DebugEditor::DrawPreview(D3D12_GPU_DESCRIPTOR_HANDLE handle){
+	(void)handle;
 #ifdef USE_IMGUI
 	ImGui::Begin("Preview");
 	//テクスチャのIDを取得(GPUのハンドルから取得)
 	ImTextureID textureId = reinterpret_cast<ImTextureID>(handle.ptr);
 	//ImGuiにテクスチャを描画
 	ImGui::Image(textureId, ImGui::GetContentRegionAvail());
+	//今選択されているImGuiを判定
+	isPreviewHovered_ = ImGui::IsItemHovered();
 	ImGui::End();
 #endif // USE_IMGUI
 }

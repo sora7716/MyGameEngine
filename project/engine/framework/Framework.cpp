@@ -69,7 +69,6 @@ void Framework::Update(){
 
 //デバッグ
 void Framework::Debug(){
-
 }
 
 //終了
@@ -92,7 +91,7 @@ void Framework::Run(){
 		Draw();
 #ifdef _DEBUG
 		//エスケイプを押したらループを抜ける
-		if (core_->GetInput()->TriggerKey(DIK_ESCAPE) && core_->GetInput()->PressKey(DIK_LSHIFT)){
+		if (core_->GetInput()->TriggerRawKey(DIK_ESCAPE)){
 			break;
 		}
 #endif // _DEBUG

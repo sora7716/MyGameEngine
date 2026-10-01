@@ -55,8 +55,6 @@ public://メンバ関数
 protected://メンバ変数
 	//エンジンの核
 	std::unique_ptr<Core>core_ = nullptr;
-	//ウィンドウの検索キー
-	uint32_t windowIndex_ = 0;
 	//RTVの検索キーの配列
 	std::vector<uint32_t>rtvIndices_;
 	//DSVの検索キー

@@ -8,17 +8,10 @@
 //前方宣言
 class Core;
 
-//ウィンドウタイプ
-enum class WindowType :uint32_t {
-	kGame,
-	kDebug,
-	kWindowTypeCount
-};
-
 /// <summary>
 /// ウィンドウズAPI
 /// </summary>
-class WinApi {
+class WinApi{
 public://PassKey
 	class ConstructorKey{
 	private:
@@ -68,29 +61,8 @@ public://メンバ関数
 	/// <summary>
 	/// HWNDの取得
 	/// </summary>
-	/// <param name="windowIndex">ウィンドウの検索キー</param>
 	/// <returns>HWND</returns>
-	HWND GetHwnd(uint32_t windowIndex)const;
-
-	/// <summary>
-	/// HWNDの取得
-	/// </summary>
-	/// <param name="windowType">ウィンドウタイプ</param>
-	/// <returns>HWND</returns>
-	HWND GetHwnd(WindowType windowType)const;
-
-	/// <summary>
-	/// 現在使用しているウィンドウのハンドルを取得
-	/// </summary>
-	/// <returns>ウィンドウハンドル</returns>
-	HWND GetActiveHwnd()const;
-
-	/// <summary>
-	/// 指定したウィンドウと今選択しているウィンドウが一致しているか
-	/// </summary>
-	/// <param name="windowType">ウィンドウのタイプ</param>
-	/// <returns>一致しているか</returns>
-	bool IsActiveHwnd(WindowType windowType)const;
+	HWND GetHwnd()const;
 
 	/// <summary>
 	/// WNDクラスのゲッター
@@ -114,16 +86,11 @@ public://定数
 	//画面の縦幅
 	static inline const int32_t kClientHeight = 720;
 
-	//ウィンドウの数
-	static inline const uint32_t kWindowCount = static_cast<uint32_t>(WindowType::kWindowTypeCount);
 	//タイトル名
-	static inline const std::array<std::wstring, kWindowCount> labels_ = {
-		L"Game",
-		L"Debug",
-	};
+	static inline const std::wstring label_ = { L"Game" };
 private://メンバ変数
-	WNDCLASS wndClass_{};	//ウィンドウクラス
-	std::array<HWND, kWindowCount> hwnds_;	//ウィンドウハンドル
+	WNDCLASS wndClass_ = {};	//ウィンドウクラス
+	HWND hwnd_ = {};	//ウィンドウハンドル
 	//今アクティブなウィンドウハンドル
 	static inline HWND activeHwnd_ = nullptr;
 	RECT windowRect_{};

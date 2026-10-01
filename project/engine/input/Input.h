@@ -104,14 +104,73 @@ public://メンバ関数
 	void Update();
 
 	/// <summary>
-	/// キーの押下をチェック
+	/// アプリケーションが有効かの設定
+	/// </summary>
+	/// <param name="isAppInputEnabled">アプリケーションが動いているか</param>
+	void SetIsAppInputEnabled(bool isAppInputEnabled);
+
+	/// <summary>
+	/// キーの押下をチェック(エンジン用)
+	/// </summary>
+	/// <param name="keyNumber">キー番号</param>
+	/// <returns>押されてるか</returns>
+	bool PressRawKey(BYTE keyNumber);
+
+	/// <summary>
+	/// キーを押下した瞬間をチェック(エンジン用)
+	/// </summary>
+	/// <param name="keyNumber">キー番号</param>
+	/// <returns>押した瞬間</returns>
+	bool TriggerRawKey(BYTE keyNumber);
+
+	/// <summary>
+	/// マウスのボタンの押下をチェック(エンジン用)
+	/// </summary>
+	/// <param name="mouseClick">マウスのボタン</param>
+	/// <returns>押されてるか</returns>
+	bool PressRawMouseButton(Click mouseClick);
+
+	/// <summary>
+	/// マウスのボタンの押下した瞬間をチェック(エンジン用)
+	/// </summary>
+	/// <param name="mouseClick">マウスのボタン</param>
+	/// <returns>押した瞬間</returns>
+	bool TriggerRawMouseButton(Click mouseClick);
+
+	/// <summary>
+	/// マウスの移動量の取得(エンジン用)
+	/// </summary>
+	/// <returns>マウスの移動量</returns>
+	Vector2 GetRawMouseMoveAmount()const;
+
+	/// <summary>
+	/// マウスホイールの回転量の取得(エンジン用)
+	/// </summary>
+	/// <returns>マウスホイールの回転量</returns>
+	float GetRawWheelRotate()const;
+
+	/// <summary>
+	/// ワールド座標系のマウスの位置の取得(エンジン用)
+	/// </summary>
+	/// <param name="camera">カメラ</param>
+	/// <returns>ワールド座標系のマウスの位置</returns>
+	Vector3 GetRawWorldMousePosition(Camera* camera)const;
+
+	/// <summary>
+	/// スクリーン座標系のマウスの位置の取得(エンジン用)
+	/// </summary>
+	/// <returns>スクリーン座標系のマウスの位置</returns>
+	Vector2 GetRawMousePosition()const;
+
+	/// <summary>
+	/// キーの押下をチェック(アプリ用)
 	/// </summary>
 	/// <param name="keyNumber">キー番号</param>
 	/// <returns>押されてるか</returns>
 	bool PressKey(BYTE keyNumber);
 
 	/// <summary>
-	/// キーを押下した瞬間をチェック
+	/// キーを押下した瞬間をチェック(アプリ用)
 	/// </summary>
 	/// <param name="keyNumber">キー番号</param>
 	/// <returns>押した瞬間</returns>
@@ -132,47 +191,47 @@ public://メンバ関数
 	bool ReleaseKey(BYTE keyNumber);
 
 	/// <summary>
-	/// マウスのボタンの押下をチェック
+	/// マウスのボタンの押下をチェック(アプリ用)
 	/// </summary>
-	/// <param name="mouseClickPos">マウスのボタン</param>
+	/// <param name="mouseClick">マウスのボタン</param>
 	/// <returns>押されてるか</returns>
-	bool PressMouseButton(Click mouseClickPos);
+	bool PressMouseButton(Click mouseClick);
 
 	/// <summary>
-	/// マウスのボタンの押下した瞬間をチェック
+	/// マウスのボタンの押下した瞬間をチェック(アプリ用)
 	/// </summary>
-	/// <param name="mouseClickPos">マウスのボタン</param>
+	/// <param name="mouseClick">マウスのボタン</param>
 	/// <returns>押した瞬間</returns>
-	bool TriggerMouseButton(Click mouseClickPos);
+	bool TriggerMouseButton(Click mousmouseClickeClickPos);
 
 	/// <summary>
 	/// マウスのボタンを離した瞬間をチェック
 	/// </summary>
-	/// <param name="mouseClickPos">マウスのボタン</param>
+	/// <param name="mouseClick">マウスのボタン</param>
 	/// <returns>離した瞬間</returns>
-	bool ReleaseTriggerMouseButton(Click mouseClickPos);
+	bool ReleaseTriggerMouseButton(Click mouseClick);
 
 	/// <summary>
-	/// マウスの移動量のゲッター
+	/// マウスの移動量の取得(アプリ用)
 	/// </summary>
 	/// <returns>マウスの移動量</returns>
 	Vector2 GetMouseMoveAmount()const;
 
 	/// <summary>
-	/// マウスホイールの回転量のゲッター
+	/// マウスホイールの回転量の取得(アプリ用)
 	/// </summary>
 	/// <returns>マウスホイールの回転量</returns>
 	float GetWheelRotate()const;
 
 	/// <summary>
-	/// ワールド座標系のマウスの位置のゲッター
+	/// ワールド座標系のマウスの位置の取得(アプリ用)
 	/// </summary>
 	/// <param name="camera">カメラ</param>
 	/// <returns>ワールド座標系のマウスの位置</returns>
 	Vector3 GetWorldMousePosition(Camera* camera)const;
 
 	/// <summary>
-	/// スクリーン座標系のマウスの位置のゲッター
+	/// スクリーン座標系のマウスの位置の取得(アプリ用)
 	/// </summary>
 	/// <returns>スクリーン座標系のマウスの位置</returns>
 	Vector2 GetMousePosition()const;
@@ -274,5 +333,8 @@ private://メンバ変数
 
 	//XboxPad
 	XboxPadData xboxPadDatas_[4] = {};
+
+	//アプリケーションが動いているか
+	bool isAppInputEnabled_ = false;
 };
 

@@ -67,7 +67,7 @@ std::unique_ptr<Component> DebugCameraController::Clone(GameObject* gameObject) 
 }
 
 //デバッグが有効かの設定
-void DebugCameraController::SetIsControlEnabled(bool isControlEnabled){
+void DebugCameraController::SetIsDebugControlEnabled(bool isControlEnabled){
 	isControlEnabled_ = isControlEnabled;
 }
 

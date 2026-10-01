@@ -5,6 +5,7 @@
 #include "GameObject.h"
 #include "StringUtility.h"
 #include "TagManager.h"
+#include "Input.h"
 #include <algorithm>
 
 //コンストラクタ
@@ -169,8 +170,8 @@ const std::vector<std::unique_ptr<GameObject>>& BaseScene::GetGameObjects()const
 	return gameObjects_;
 }
 
-//シーンで必要な情報の設定
-void BaseScene::SetSceneContext(const SceneContext& sceneContext){
+//セットアップ
+void BaseScene::SetUp(const SceneContext& sceneContext){
 	sceneContext_ = sceneContext;
 }
 
@@ -180,8 +181,13 @@ const SceneContext& BaseScene::GetSceneContext(){
 }
 
 //デバッグが有効かの設定
-void BaseScene::SetIsControlEnabled(bool isControlEnabled){
-	debugCameraController_->SetIsControlEnabled(isControlEnabled);
+void BaseScene::SetIsDebugControlEnabled(bool isControlEnabled){
+	debugCameraController_->SetIsDebugControlEnabled(isControlEnabled);
+}
+
+//アプリケーションが有効かの設定
+void BaseScene::SetIsAppInputEnabled(bool isAppInputEnabled){
+	sceneContext_.input->SetIsAppInputEnabled(isAppInputEnabled);
 }
 
 //名前を重複しないようにする

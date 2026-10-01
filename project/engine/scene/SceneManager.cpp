@@ -58,7 +58,7 @@ void SceneManager::Update(){
 		scene_ = nextScene_;
 		nextScene_ = nullptr;
 		//シーンに必要な情報の設定
-		scene_->SetSceneContext(sceneContext_);
+		scene_->SetUp(sceneContext_);
 		//次のシーン
 		scene_->Initialize();
 		//ゲームオブジェクト一覧をDebugEditorに登録
@@ -70,11 +70,16 @@ void SceneManager::Update(){
 	debugEditor_->Update();
 	//更新
 	scene_->Update();
-	scene_->SetIsControlEnabled(debugEditor_->IsSceneViewHovered());
+	//デバッグ操作が有効かを設定
+	scene_->SetIsDebugControlEnabled(debugEditor_->IsSceneViewHovered());
+	//アプリケーションが有効かを設定
+	scene_->SetIsAppInputEnabled(debugEditor_->IsPreviewHovered());
 }
 
 //デバッグ
 void SceneManager::Debug(D3D12_GPU_DESCRIPTOR_HANDLE sceneHandle, D3D12_GPU_DESCRIPTOR_HANDLE previewHandle){
+	(void)sceneHandle;
+	(void)previewHandle;
 #ifdef USE_IMGUI
 	sceneContext_.imGuiManager->Begin();
 	//デバッグエディタの描画

@@ -110,6 +110,12 @@ public://メンバ関数
 	/// </summary>
 	/// <returns>シーンのImGuiウィンドウを選択しているか</returns>
 	bool IsSceneViewHovered()const;
+
+	/// <summary>
+	/// プレビューのImGuiウィンドウを選択しているかの取得
+	/// </summary>
+	/// <returns>プレビューのImGuiウィンドウを選択しているか</returns>
+	bool IsPreviewHovered()const;
 private://メンバ関数
 	/// <summary>
 	/// ドッキングスペースの描画
@@ -191,5 +197,7 @@ private://メンバ変数
 	bool requestMoveGameObject_ = false;
 	//シーンビューを選択しているか
 	bool isSceneViewHovered_ = false;
+	//プレビューを選択しているか
+	bool isPreviewHovered_ = false;
 };
 

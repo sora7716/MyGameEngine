@@ -44,6 +44,7 @@ void ImGuiManager::Initialize([[maybe_unused]] WinApi* winApi, [[maybe_unused]] 
 	ImGui::CreateContext();
 	ImGuiIO& io = ImGui::GetIO();
 	io.ConfigFlags |= ImGuiConfigFlags_DockingEnable;
+	io.ConfigFlags |= ImGuiConfigFlags_ViewportsEnable;
 	ImFont* JapaneseFont = io.Fonts->AddFontFromFileTTF("engine/resources/fonts/BIZ-UDMinchoM.ttc", 18.0f, nullptr,
 		io.Fonts->GetGlyphRangesJapanese());
 	assert(JapaneseFont);
@@ -89,6 +90,16 @@ void ImGuiManager::Draw(){
 	commandList->SetDescriptorHeaps(_countof(ppHeaps), ppHeaps);
 	//描画コマンドを発行
 	ImGui_ImplDX12_RenderDrawData(ImGui::GetDrawData(), directXBase_->GetCommandList());
+#endif // USE_IMGUI
+}
+
+//プラットフォームウィンドウの更新
+void ImGuiManager::UpdatePlatformWindow(){
+#ifdef USE_IMGUI
+	//外へ出したImGuiウィンドウの作成・移動・リサイズ・破棄を行う
+	ImGui::UpdatePlatformWindows();
+	//追加ウィンドウへImGuiを描画して、それぞれPresentする
+	ImGui::RenderPlatformWindowsDefault();
 #endif // USE_IMGUI
 }
 

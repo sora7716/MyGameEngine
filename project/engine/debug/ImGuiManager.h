@@ -70,6 +70,11 @@ public://メンバ関数
 	void Draw();
 
 	/// <summary>
+	/// プラットフォームウィンドウの更新
+	/// </summary>
+	void UpdatePlatformWindow();
+
+	/// <summary>
 	/// OBBデータ用のImGui
 	/// </summary>
 	/// <param name="obb">obb</param>

@@ -1,8 +1,11 @@
 #include "WinApi.h"
 #pragma comment(lib,"winmm.lib")
-#include "imgui/imgui_impl_win32.h"
 #include "Vector2.h"
+#include <cassert>
+#ifdef USE_IMGUI
+#include "imgui/imgui_impl_win32.h"
 extern IMGUI_IMPL_API LRESULT ImGui_ImplWin32_WndProcHandler(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam);
+#endif // USE_IMGUI
 
 //生成
 std::unique_ptr<WinApi> WinApi::Create(ConstructorKey key){
@@ -28,24 +31,24 @@ LRESULT WinApi::WindowProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam){
 	if (msg == WM_SETCURSOR){
 		if (winApi){
 			if (LOWORD(lParam) == HTCLIENT){
-				//ゲーム画面ではカーソルを非表示
-				if (hwnd == winApi->GetHwnd(WindowType::kGame)){
-					SetCursor(nullptr);
-					return TRUE;
-				}
+				////ゲーム画面ではカーソルを非表示
+				//if (hwnd == winApi->GetHwnd(WindowType::kGame)){
+				//	SetCursor(nullptr);
+				//	return TRUE;
+				//}
 
-				//デバッグ画面ではカーソルを表示
-				if (hwnd == winApi->GetHwnd(WindowType::kDebug)){
-					SetCursor(LoadCursor(nullptr, IDC_ARROW));
-					return TRUE;
-				}
+				SetCursor(LoadCursor(nullptr, IDC_ARROW));
+				return TRUE;
 			}
 		}
 	}
 
+#ifdef USE_IMGUI
 	if (ImGui_ImplWin32_WndProcHandler(hwnd, msg, wParam, lParam)){
 		return true;
 	}
+#endif // USE_IMGUI
+
 	//メッセージに応じてゲーム固有の処理を行う
 	switch (msg){
 		//ウィンドウが破棄された
@@ -66,9 +69,7 @@ WinApi::WinApi(ConstructorKey){}
 
 //デストラクタ
 WinApi::~WinApi(){
-	for (HWND& hwnd : hwnds_){
-		CloseWindow(hwnd);
-	}
+	CloseWindow(hwnd_);
 	CoUninitialize();
 }
 
@@ -98,34 +99,26 @@ void WinApi::Initialize(){
 	//クライアント領域を元に実際のサイズをwrcを変更してもらう
 	AdjustWindowRect(&windowRect_, WS_OVERLAPPEDWINDOW, false);
 
-#ifdef _DEBUG
-	uint32_t windowCount = kWindowCount;
-#else 
-	uint32_t windowCount = 1;
-#endif // _DEBUG
-
 	Vector2Int windowPos = { CW_USEDEFAULT,CW_USEDEFAULT };
 
 	//ウィンドウの作成
-	for (uint32_t i = 0; i < windowCount; i++){
 		//ウィンドウを作成
-		hwnds_[i] = CreateWindow(
-		wndClass_.lpszClassName,//利用するクラス
-		(labels_[i]).c_str(),
-		WS_OVERLAPPEDWINDOW,//よく見るウィンドウのスタイル
-		windowPos.x,//ウィンドウの表示位置(X座標)
-		windowPos.y,//ウィンドウの表示位置(Y座標)
-		windowRect_.right - windowRect_.left,//ウィンドウの横幅
-		windowRect_.bottom - windowRect_.top,//ウィンドウの縦幅
-		nullptr,
-		nullptr,
-		wndClass_.hInstance,//インスタンスハンドル
-		this
-		);
+	hwnd_ = CreateWindow(
+	wndClass_.lpszClassName,//利用するクラス
+	label_.c_str(),
+	WS_OVERLAPPEDWINDOW,//よく見るウィンドウのスタイル
+	windowPos.x,//ウィンドウの表示位置(X座標)
+	windowPos.y,//ウィンドウの表示位置(Y座標)
+	windowRect_.right - windowRect_.left,//ウィンドウの横幅
+	windowRect_.bottom - windowRect_.top,//ウィンドウの縦幅
+	nullptr,
+	nullptr,
+	wndClass_.hInstance,//インスタンスハンドル
+	this
+	);
 
-		//ウィンドウを表示する
-		ShowWindow(hwnds_[i], SW_SHOW);
-	}
+	//ウィンドウを表示する
+	ShowWindow(hwnd_, SW_SHOW);
 }
 
 // プロセスメッセージ
@@ -143,23 +136,8 @@ bool WinApi::ProcessMessage(){
 }
 
 //HWNDの取得
-HWND WinApi::GetHwnd(uint32_t windowIndex) const{
-	return  hwnds_[windowIndex];
-}
-
-//HWNDの取得
-HWND WinApi::GetHwnd(WindowType windowType)const{
-	return hwnds_[static_cast<uint32_t>(windowType)];
-}
-
-//現在使用しているウィンドウのハンドルを取得
-HWND WinApi::GetActiveHwnd() const{
-	return activeHwnd_;
-}
-
-//指定したウィンドウと今選択しているウィンドウが一致しているか
-bool WinApi::IsActiveHwnd(WindowType windowType) const{
-	return GetActiveHwnd() == GetHwnd(windowType);
+HWND WinApi::GetHwnd() const{
+	return  hwnd_;
 }
 
 //WNDクラスのゲッター

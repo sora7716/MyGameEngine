@@ -57,7 +57,9 @@ public://メンバ関数
 	/// <summary>
 	/// デバッグ
 	/// </summary>
-	void Debug();
+	/// <param name="sceneHandle">SceneのGPUハンドル</param>
+	/// <param name="previewHandle">PreviewのGPUハンドル</param>
+	void Debug(D3D12_GPU_DESCRIPTOR_HANDLE sceneHandle, D3D12_GPU_DESCRIPTOR_HANDLE previewHandle);
 
 	/// <summary>
 	/// 描画
@@ -68,12 +70,12 @@ public://メンバ関数
 	/// <summary>
 	/// ゲーム画面の描画
 	/// </summary>
-	void GameDraw();
+	void PreviewDraw();
 
 	/// <summary>
 	/// デバッグ画面の描画
 	/// </summary>
-	void DebugDraw();
+	void SceneDraw();
 
 	/// <summary>
 	/// シーンファクトリーのセッター

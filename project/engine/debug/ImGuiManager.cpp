@@ -50,7 +50,7 @@ void ImGuiManager::Initialize([[maybe_unused]] WinApi* winApi, [[maybe_unused]] 
 	io.Fonts->Build();
 	//ImGuiのスタイルを設定
 	ImGui::StyleColorsDark();
-	ImGui_ImplWin32_Init(winApi->GetHwnd(WindowType::kDebug));
+	ImGui_ImplWin32_Init(winApi->GetHwnd());
 	//srvの確保
 	srvManager_->Allocate();
 	ImGui_ImplDX12_Init(

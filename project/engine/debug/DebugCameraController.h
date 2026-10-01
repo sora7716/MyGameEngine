@@ -45,6 +45,12 @@ public://メンバ関数
 	/// <param name="gameObject">ゲームオブジェクト</param>
 	/// <returns>コンポーネント</returns>
 	std::unique_ptr<Component>Clone(GameObject* gameObject)const override;
+
+	/// <summary>
+	/// デバッグが有効かの設定
+	/// </summary>
+	/// <param name="isControlEnabled">デバッグが有効か</param>
+	void SetIsDebugControlEnabled(bool isControlEnabled);
 private://メンバ関数
 	/// <summary>
 	/// 左右移動の操作

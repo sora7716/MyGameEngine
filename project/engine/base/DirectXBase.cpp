@@ -62,21 +62,11 @@ void DirectXBase::Initialize(WinApi* winApi){
 	StopExecution();
 	//コマンド関連の生成
 	CreateCommands();
-#ifdef _DEBUG
-	createSwapChainCount_ = kSwapChainCount;
-#else
-	createSwapChainCount_ = 1;
-#endif // _DEBUG
 	//スワップチェーンの生成
-	for (uint32_t i = 0; i < createSwapChainCount_; i++){
-		swapChain_[i] = CreateSwapChain(WinApi::kClientWidth, WinApi::kClientHeight, kSwapChainBufferCount, i);
-	}
+	swapChain_ = CreateSwapChain(WinApi::kClientWidth, WinApi::kClientHeight, kBackBufferCount);
 	//各スワップチェーンからバッグバッファを取得
-	for (uint32_t i = 0; i < createSwapChainCount_ * kSwapChainBufferCount; ++i){
-		swapChainResources_[i] = BringResourcesFromSwapChain(
-			swapChain_[i / kSwapChainBufferCount].Get(),
-			i % kSwapChainBufferCount
-		);
+	for (uint32_t i = 0; i < kBackBufferCount; ++i){
+		swapChainResources_[i] = BringResourcesFromSwapChain(swapChain_.Get(), i);
 	}
 	//深度バッファの生成
 	depthStencilResource_ = CreateDepthStencilTextureResource(WinApi::kClientWidth, WinApi::kClientHeight);
@@ -135,10 +125,10 @@ void DirectXBase::CreateDXCCompiler(){
 }
 
 // 描画開始位置
-void DirectXBase::PreDraw(uint32_t swapChainIndex, D3D12_CPU_DESCRIPTOR_HANDLE rtvHandle, D3D12_CPU_DESCRIPTOR_HANDLE dsvHandle){
+void DirectXBase::PreDraw(D3D12_CPU_DESCRIPTOR_HANDLE rtvHandle, D3D12_CPU_DESCRIPTOR_HANDLE dsvHandle){
 	/*コマンドを積む*/
 	//これから書き込むバックバッファのインデックスを取得
-	UINT backBufferIndex = GetBackBufferIndex(swapChainIndex);
+	UINT backBufferIndex = swapChain_->GetCurrentBackBufferIndex();
 	//今回のバリアはTransition
 	D3D12_RESOURCE_BARRIER barrier{};
 	barrier.Type = D3D12_RESOURCE_BARRIER_TYPE_TRANSITION;
@@ -155,7 +145,7 @@ void DirectXBase::PreDraw(uint32_t swapChainIndex, D3D12_CPU_DESCRIPTOR_HANDLE r
 	//描画先のRTVを設定する
 	commandList_->OMSetRenderTargets(1, &rtvHandle, false, &dsvHandle);
 	//指定した色で画面をクリアする
-	float clearColor[] = { 0.1f,0.25f,0.5f,1.0f };//青っぽい色。RGBAの順
+	float clearColor[] = { 0.2f, 0.2f, 0.2f, 1.0f };//RGBAの順
 	commandList_->ClearRenderTargetView(rtvHandle, clearColor, 0, nullptr);
 	//指定した深度で画面全体をクリアする
 	commandList_->ClearDepthStencilView(dsvHandle, D3D12_CLEAR_FLAG_DEPTH, 1.0f, 0, 0, nullptr);
@@ -166,10 +156,10 @@ void DirectXBase::PreDraw(uint32_t swapChainIndex, D3D12_CPU_DESCRIPTOR_HANDLE r
 }
 
 // 描画終了位置
-void DirectXBase::PostDraw(uint32_t swapChainIndex){
+void DirectXBase::PostDraw(){
 	HRESULT result = S_FALSE;
 	//これから書き込むバックバッファのインデックスを取得
-	UINT backBufferIndex = GetBackBufferIndex(swapChainIndex);
+	UINT backBufferIndex = swapChain_->GetCurrentBackBufferIndex();
 	//画面に描く処理は全て終わり、画面に移すので、状態を遷移
 	D3D12_RESOURCE_BARRIER barrier{};
 	barrier.Type = D3D12_RESOURCE_BARRIER_TYPE_TRANSITION;
@@ -193,7 +183,7 @@ void DirectXBase::PostDraw(uint32_t swapChainIndex){
 	ComPtr<ID3D12CommandList> commandLists[] = { commandList_.Get() };
 	commandQueue_->ExecuteCommandLists(1, commandLists->GetAddressOf());
 	//GPUとOSに画面の交換を行うように通知
-	swapChain_[swapChainIndex]->Present(1, 0);
+	swapChain_->Present(1, 0);
 	//GPUがここまでたどり着いた時に、Fenceの値を指定した値に代入するようにSignalを送る
 	commandQueue_->Signal(fence_.Get(), ++fenceValue_);
 	if (fence_->GetCompletedValue() < fenceValue_){
@@ -366,38 +356,6 @@ ComPtr<ID3D12Resource> DirectXBase::UploadTextureData(ID3D12Resource* texture, D
 	return intermediate;
 }
 
-//デバイスのゲッター
-ID3D12Device* DirectXBase::GetDevice() const{
-	return device_.Get();
-}
-
-//コマンドリストのゲッター
-ID3D12GraphicsCommandList* DirectXBase::GetCommandList() const{
-	return commandList_.Get();
-}
-
-//デプスステンシルテクスチャの取得
-ID3D12Resource* DirectXBase::GetDepthStencilTexture() const{
-	return depthStencilResource_.Get();
-}
-
-//スワップチェーンのリソースのサイズの取得
-uint32_t DirectXBase::GetSwapChainResourceSize() const{
-	return static_cast<uint32_t>(swapChainResources_.size());
-}
-
-//バックバッファ検索キーの取得
-uint32_t DirectXBase::GetBackBufferIndex(uint32_t index) const{
-	uint32_t backBufferIndex = swapChain_[index]->GetCurrentBackBufferIndex();
-	backBufferIndex = backBufferIndex + kSwapChainCount * index;
-	return backBufferIndex;
-}
-
-//スワップチェーンのリソースの取得
-const std::array<ComPtr<ID3D12Resource>, DirectXBase::kSwapChainCount* DirectXBase::kSwapChainBufferCount>& DirectXBase::GetSwapChainResources() const{
-	return swapChainResources_;
-}
-
 //深度バッファリソースの生成
 ComPtr<ID3D12Resource> DirectXBase::CreateDepthStencilTextureResource(int32_t width, int32_t height){
 	HRESULT hr = S_FALSE;
@@ -433,6 +391,36 @@ ComPtr<ID3D12Resource> DirectXBase::CreateDepthStencilTextureResource(int32_t wi
 		IID_PPV_ARGS(&resource));//作成するResourceポインタのポインタ
 	assert(SUCCEEDED(hr));
 	return resource;
+}
+
+//デバイスのゲッター
+ID3D12Device* DirectXBase::GetDevice() const{
+	return device_.Get();
+}
+
+//コマンドリストのゲッター
+ID3D12GraphicsCommandList* DirectXBase::GetCommandList() const{
+	return commandList_.Get();
+}
+
+//デプスステンシルテクスチャの取得
+ID3D12Resource* DirectXBase::GetDepthStencilTexture() const{
+	return depthStencilResource_.Get();
+}
+
+//スワップチェーンのリソースのサイズの取得
+uint32_t DirectXBase::GetSwapChainResourceSize() const{
+	return static_cast<uint32_t>(swapChainResources_.size());
+}
+
+//スワップチェーンのリソースの取得
+const std::array<ComPtr<ID3D12Resource>, DirectXBase::kBackBufferCount>& DirectXBase::GetSwapChainResources() const{
+	return swapChainResources_;
+}
+
+//バックバッファの検索キーの取得
+uint32_t DirectXBase::GetBackBufferIndex() const{
+	return swapChain_->GetCurrentBackBufferIndex();
 }
 
 // IDXIファクトリーの生成
@@ -524,7 +512,7 @@ ComPtr<ID3D12GraphicsCommandList> DirectXBase::CreateCommandList(){
 }
 
 //スワップチェーンの生成
-ComPtr<IDXGISwapChain4> DirectXBase::CreateSwapChain(int32_t windowWidth, int32_t windowHeight, uint32_t bufferSize, uint32_t hwndIndex){
+ComPtr<IDXGISwapChain4> DirectXBase::CreateSwapChain(int32_t windowWidth, int32_t windowHeight, uint32_t bufferSize){
 	HRESULT result = S_FALSE;
 	DXGI_SWAP_CHAIN_DESC1 swapChainDesc{};
 	swapChainDesc.Width = windowWidth;//画面の横幅
@@ -536,7 +524,7 @@ ComPtr<IDXGISwapChain4> DirectXBase::CreateSwapChain(int32_t windowWidth, int32_
 	swapChainDesc.SwapEffect = DXGI_SWAP_EFFECT_FLIP_DISCARD;//モニタにうつしたら、中身を破棄
 	ComPtr<IDXGISwapChain4> swapChain = nullptr;
 	//コマンドキュー、ウィンドウハンドル、設定を渡して生成する
-	result = dxgiFactory_->CreateSwapChainForHwnd(commandQueue_.Get(), winApi_->GetHwnd(hwndIndex), &swapChainDesc, nullptr, nullptr, reinterpret_cast<IDXGISwapChain1**>(swapChain.GetAddressOf()));
+	result = dxgiFactory_->CreateSwapChainForHwnd(commandQueue_.Get(), winApi_->GetHwnd(), &swapChainDesc, nullptr, nullptr, reinterpret_cast<IDXGISwapChain1**>(swapChain.GetAddressOf()));
 	assert(SUCCEEDED(result));
 	return swapChain;
 }

@@ -58,26 +58,32 @@ void SceneManager::Update(){
 		scene_ = nextScene_;
 		nextScene_ = nullptr;
 		//シーンに必要な情報の設定
-		scene_->SetSceneContext(sceneContext_);
+		scene_->SetUp(sceneContext_);
 		//次のシーン
 		scene_->Initialize();
 		//ゲームオブジェクト一覧をDebugEditorに登録
 		debugEditor_->SetGameObjects(scene_->GetGameObjects());
 	}
-	//更新
-	scene_->Update();
 	//衝突判定システムの更新
 	collisionSystem_->Update(scene_->GetGameObjects());
 	//デバッグエディタの更新
 	debugEditor_->Update();
+	//更新
+	scene_->Update();
+	//デバッグ操作が有効かを設定
+	scene_->SetIsDebugControlEnabled(debugEditor_->IsSceneViewHovered());
+	//アプリケーションが有効かを設定
+	scene_->SetIsAppInputEnabled(debugEditor_->IsPreviewHovered());
 }
 
 //デバッグ
-void SceneManager::Debug(){
+void SceneManager::Debug(D3D12_GPU_DESCRIPTOR_HANDLE sceneHandle, D3D12_GPU_DESCRIPTOR_HANDLE previewHandle){
+	(void)sceneHandle;
+	(void)previewHandle;
 #ifdef USE_IMGUI
 	sceneContext_.imGuiManager->Begin();
 	//デバッグエディタの描画
-	debugEditor_->Draw();
+	debugEditor_->Draw(sceneHandle, previewHandle);
 
 	//生成要求
 	if (debugEditor_->ConsumeCreateRequest()){
@@ -147,13 +153,13 @@ void SceneManager::Draw(CameraMode cameraMode){
 }
 
 //ゲーム画面の描画
-void SceneManager::GameDraw(){
+void SceneManager::PreviewDraw(){
 	//描画
 	Draw(CameraMode::kMain);
 }
 
 //デバッグ画面の描画
-void SceneManager::DebugDraw(){
+void SceneManager::SceneDraw(){
 	//描画
 	Draw(CameraMode::kDebug);
 }

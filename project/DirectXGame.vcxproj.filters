@@ -139,6 +139,9 @@
     <Filter Include="application\actor\player">
       <UniqueIdentifier>{e2610b81-93de-4acd-8f7e-1de1bfb10646}</UniqueIdentifier>
     </Filter>
+    <Filter Include="engine\graphics\resource">
+      <UniqueIdentifier>{53ca5917-aab6-47ef-bd84-43dd8f43122e}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="engine\main.cpp">
@@ -427,7 +430,7 @@
       <Filter>engine\graphics\descriptor</Filter>
     </ClCompile>
     <ClCompile Include="engine\graphics\resource\RenderTexture.cpp">
-      <Filter>ソース ファイル</Filter>
+      <Filter>engine\graphics\resource</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -753,7 +756,7 @@
       <Filter>engine\graphics\descriptor</Filter>
     </ClInclude>
     <ClInclude Include="engine\graphics\resource\RenderTexture.h">
-      <Filter>ヘッダー ファイル</Filter>
+      <Filter>engine\graphics\resource</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

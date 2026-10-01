@@ -47,7 +47,7 @@ struct Transform{
 
 //Transform2D情報
 struct RectTransform{
-	Vector2 scale = Vector2::MakeAllOne();
+	Vector2 scale = Vector2::GetOne();
 	float rotate = 0.0f;
 	Vector2 translate = {};
 };

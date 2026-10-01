@@ -37,14 +37,18 @@ void DebugEditor::Update(){
 }
 
 //描画
-void DebugEditor::Draw(){
+void DebugEditor::Draw(D3D12_GPU_DESCRIPTOR_HANDLE sceneHandle, D3D12_GPU_DESCRIPTOR_HANDLE previewHandle){
+	(void)sceneHandle;
+	(void)previewHandle;
 #ifdef USE_IMGUI
 	//ドッキングスペースの描画
 	DrawDockSpace();
 	//ヒエラルキーの描画
 	DrawHierarchy();
 	//シーンの描画
-	DrawScene();
+	DrawScene(sceneHandle);
+	//プレビューの描画
+	DrawPreview(previewHandle);
 	//インスペクターの描画
 	DrawInspector();
 	//タグの管理の描画
@@ -138,6 +142,16 @@ bool DebugEditor::ConsumeDeleteTagRequest(std::string& tag){
 //GameObjectを選択
 void DebugEditor::SelectGameObject(GameObject* gameObject){
 	selectedGameObject_ = gameObject;
+}
+
+//シーンのImGuiウィンドウを選択しているかの取得
+bool DebugEditor::IsSceneViewHovered() const{
+	return isSceneViewHovered_;
+}
+
+//プレビューのImGuiウィンドウを選択しているかの取得
+bool DebugEditor::IsPreviewHovered() const{
+	return isPreviewHovered_;
 }
 
 //ドッキングスペースの描画
@@ -271,11 +285,31 @@ void DebugEditor::DrawHierarchy(){
 }
 
 //シーンの描画
-void DebugEditor::DrawScene(){
+void DebugEditor::DrawScene(D3D12_GPU_DESCRIPTOR_HANDLE handle){
+	(void)handle;
 #ifdef USE_IMGUI
 	ImGui::Begin("Scene");
-	ImVec2 windowSize = ImGui::GetContentRegionAvail();
-	ImGui::Text("size.x = %f,size.y = %f", windowSize.x, windowSize.y);
+	//テクスチャのIDを取得(GPUのハンドルから取得)
+	ImTextureID textureId = reinterpret_cast<ImTextureID>(handle.ptr);
+	//ImGuiにテクスチャを描画
+	ImGui::Image(textureId, ImGui::GetContentRegionAvail());
+	//今選択されているImGuiを判定
+	isSceneViewHovered_ = ImGui::IsItemHovered();
+	ImGui::End();
+#endif // USE_IMGUI
+}
+
+//プレビューシーンの描画
+void DebugEditor::DrawPreview(D3D12_GPU_DESCRIPTOR_HANDLE handle){
+	(void)handle;
+#ifdef USE_IMGUI
+	ImGui::Begin("Preview");
+	//テクスチャのIDを取得(GPUのハンドルから取得)
+	ImTextureID textureId = reinterpret_cast<ImTextureID>(handle.ptr);
+	//ImGuiにテクスチャを描画
+	ImGui::Image(textureId, ImGui::GetContentRegionAvail());
+	//今選択されているImGuiを判定
+	isPreviewHovered_ = ImGui::IsItemHovered();
 	ImGui::End();
 #endif // USE_IMGUI
 }

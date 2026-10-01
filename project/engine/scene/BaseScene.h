@@ -8,6 +8,7 @@
 class DirectXBase;
 class AbstractSceneFactory;
 class GameObject;
+class DebugCameraController;
 
 /// <summary>
 /// シーンの基底クラス
@@ -88,16 +89,28 @@ public://メンバ関数
 	const std::vector<std::unique_ptr<GameObject>>& GetGameObjects()const;
 
 	/// <summary>
-	/// シーンで必要な情報の設定
+	/// セットアップ
 	/// </summary>
 	/// <param name="sceneContext">シーンに必要な情報</param>
-	void SetSceneContext(const SceneContext& sceneContext);
+	void SetUp(const SceneContext& sceneContext);
 
 	/// <summary>
 	/// シーンで必要な情報の取得
 	/// </summary>
 	/// <returns>シーンに必要な情報</returns>
 	const SceneContext& GetSceneContext();
+	
+	/// <summary>
+	/// デバッグが有効かの設定
+	/// </summary>
+	/// <param name="isControlEnabled">デバッグが有効か</param>
+	void SetIsDebugControlEnabled(bool isControlEnabled);
+
+	/// <summary>
+	/// アプリケーションが有効かの設定
+	/// </summary>
+	/// <param name="isAppInputEnabled">アプリケーションが有効か</param>
+	void SetIsAppInputEnabled(bool isAppInputEnabled);
 private://メンバ関数
 	/// <summary>
 	/// 名前を重複しないようにする
@@ -118,4 +131,6 @@ private://メンバ変数
 	std::vector<std::unique_ptr<GameObject>> gameObjects_;
 	//シーンで必要なもの
 	SceneContext sceneContext_ = {};
+	//デバッグカメラの操作
+	DebugCameraController* debugCameraController_ = nullptr;
 };

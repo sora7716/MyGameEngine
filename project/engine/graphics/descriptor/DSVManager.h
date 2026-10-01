@@ -79,7 +79,7 @@ private://メンバ関数
 	//代入演算子の禁止
 	DSVManager& operator=(const DSVManager&) = delete;
 public://定数
-	static inline const uint32_t kMaxDSVCount = 2;
+	static inline const uint32_t kMaxDSVCount = 3;
 private://メンバ変数
 	//DirectXの基盤部分
 	DirectXBase* directXBase_ = nullptr;

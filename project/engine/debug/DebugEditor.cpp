@@ -37,14 +37,16 @@ void DebugEditor::Update(){
 }
 
 //描画
-void DebugEditor::Draw(D3D12_GPU_DESCRIPTOR_HANDLE handle){
+void DebugEditor::Draw(D3D12_GPU_DESCRIPTOR_HANDLE sceneHandle, D3D12_GPU_DESCRIPTOR_HANDLE previewHandle){
 #ifdef USE_IMGUI
 	//ドッキングスペースの描画
 	DrawDockSpace();
 	//ヒエラルキーの描画
 	DrawHierarchy();
 	//シーンの描画
-	DrawScene(handle);
+	DrawScene(sceneHandle);
+	//プレビューの描画
+	DrawPreview(previewHandle);
 	//インスペクターの描画
 	DrawInspector();
 	//タグの管理の描画
@@ -285,6 +287,18 @@ void DebugEditor::DrawScene(D3D12_GPU_DESCRIPTOR_HANDLE handle){
 	ImGui::Image(textureId, ImGui::GetContentRegionAvail());
 	//今選択されているImGuiを判定
 	isSceneViewHovered_ = ImGui::IsItemHovered();
+	ImGui::End();
+#endif // USE_IMGUI
+}
+
+//プレビューシーンの描画
+void DebugEditor::DrawPreview(D3D12_GPU_DESCRIPTOR_HANDLE handle){
+#ifdef USE_IMGUI
+	ImGui::Begin("Preview");
+	//テクスチャのIDを取得(GPUのハンドルから取得)
+	ImTextureID textureId = reinterpret_cast<ImTextureID>(handle.ptr);
+	//ImGuiにテクスチャを描画
+	ImGui::Image(textureId, ImGui::GetContentRegionAvail());
 	ImGui::End();
 #endif // USE_IMGUI
 }

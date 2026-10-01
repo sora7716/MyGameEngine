@@ -47,7 +47,9 @@ public://メンバ関数
 private://メンバ変数
 	//レンダーテクスチャで必要なもの
 	RenderTextureContext renderTextureContext_ = {};
-	//レンダーテクスチャ
-	std::unique_ptr<RenderTexture>renderTexture_ = nullptr;
+	//シーンのレンダーテクスチャ
+	std::unique_ptr<RenderTexture>sceneRenderTexture_ = nullptr;
+	//プレビューのレンダーテクスチャ
+	std::unique_ptr<RenderTexture>previewRenderTexture_ = nullptr;
 };
 

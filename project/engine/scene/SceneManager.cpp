@@ -74,11 +74,11 @@ void SceneManager::Update(){
 }
 
 //デバッグ
-void SceneManager::Debug(D3D12_GPU_DESCRIPTOR_HANDLE handle){
+void SceneManager::Debug(D3D12_GPU_DESCRIPTOR_HANDLE sceneHandle, D3D12_GPU_DESCRIPTOR_HANDLE previewHandle){
 #ifdef USE_IMGUI
 	sceneContext_.imGuiManager->Begin();
 	//デバッグエディタの描画
-	debugEditor_->Draw(handle);
+	debugEditor_->Draw(sceneHandle, previewHandle);
 
 	//生成要求
 	if (debugEditor_->ConsumeCreateRequest()){
@@ -148,13 +148,13 @@ void SceneManager::Draw(CameraMode cameraMode){
 }
 
 //ゲーム画面の描画
-void SceneManager::GameDraw(){
+void SceneManager::PreviewDraw(){
 	//描画
 	Draw(CameraMode::kMain);
 }
 
 //デバッグ画面の描画
-void SceneManager::DebugDraw(){
+void SceneManager::SceneDraw(){
 	//描画
 	Draw(CameraMode::kDebug);
 }

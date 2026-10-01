@@ -48,8 +48,9 @@ public://メンバ関数
 	/// <summary>
 	/// 描画
 	/// </summary>
-	/// <param name="handle">SceneのGPUハンドル</param>
-	void Draw(D3D12_GPU_DESCRIPTOR_HANDLE handle);
+	/// <param name="sceneHandle">SceneのGPUハンドル</param>
+	/// <param name="previewHandle">PreviewのGPUハンドル</param>
+	void Draw(D3D12_GPU_DESCRIPTOR_HANDLE sceneHandle, D3D12_GPU_DESCRIPTOR_HANDLE previewHandle);
 
 	/// <summary>
 	/// ゲームオブジェクト一覧の設定
@@ -125,6 +126,12 @@ private://メンバ関数
 	/// </summary>
 	/// <param name="handle">SceneのGPUハンドル</param>
 	void DrawScene(D3D12_GPU_DESCRIPTOR_HANDLE handle);
+
+	/// <summary>
+	/// プレビューシーンの描画
+	/// </summary>
+	/// <param name="handle">PreviewSceneのGPUハンドル</param>
+	void DrawPreview(D3D12_GPU_DESCRIPTOR_HANDLE handle);
 
 	/// <summary>
 	/// インスペクターの描画

@@ -25,8 +25,11 @@ void GameSystem::Initialize(){
 	core_->GetSceneManager()->ChangeScene("Game");
 	//レンダーテクスチャで必要なものを設定
 	renderTextureContext_.SetUp(core_.get());
-	//レンダーテクスチャの生成
-	renderTexture_ = RenderTexture::Create(renderTextureContext_, WinApi::kClientWidth, WinApi::kClientHeight);
+	//シーンのレンダーテクスチャの生成
+	sceneRenderTexture_ = RenderTexture::Create(renderTextureContext_, WinApi::kClientWidth, WinApi::kClientHeight);
+
+	//プレビューのレンダーテクスチャの生成
+	previewRenderTexture_ = RenderTexture::Create(renderTextureContext_, WinApi::kClientWidth, WinApi::kClientHeight);
 
 }
 
@@ -43,7 +46,7 @@ void GameSystem::Update(){
 void GameSystem::Debug(){
 	Framework::Debug();
 	//シーンの管理
-	core_->GetSceneManager()->Debug(renderTexture_->GetGPUDescriptorHandle());
+	core_->GetSceneManager()->Debug(sceneRenderTexture_->GetGPUDescriptorHandle(), previewRenderTexture_->GetGPUDescriptorHandle());
 }
 
 //描画
@@ -68,19 +71,26 @@ void GameSystem::Draw(){
 
 	//デバッグ画面のときにしか表示しない
 	if (isDebugWindow){
-		//レンダーテクスチャの描画開始位置
-		renderTexture_->PreDraw();
-
+		//シーンのレンダーテクスチャの描画開始位置
+		sceneRenderTexture_->PreDraw();
 		//SRVの管理
 		core_->GetSRVManager()->PreDraw();
-
 		//シーン
-		core_->GetSceneManager()->DebugDraw();
+		core_->GetSceneManager()->SceneDraw();
+		//レンダーテクスチャの描画終了位置
+		sceneRenderTexture_->PostDraw();
+
+		//プレビューのレンダーテクスチャの描画開始位置
+		previewRenderTexture_->PreDraw();
+		//SRVの管理
+		core_->GetSRVManager()->PreDraw();
+		//プレビュー
+		core_->GetSceneManager()->PreviewDraw();
+		//プレビューのレンダーテクスチャの描画終了位置
+		previewRenderTexture_->PostDraw();
+
 		//描画
 		core_->GetRenderSystem()->Draw();
-
-		//レンダーテクスチャの描画終了位置
-		renderTexture_->PostDraw();
 
 		//描画開始位置
 		core_->GetDirectXBase()->PreDraw(windowIndex_, rtvHandle, dsvHandle);
@@ -98,7 +108,7 @@ void GameSystem::Draw(){
 		core_->GetSRVManager()->PreDraw();
 
 		//シーン
-		core_->GetSceneManager()->GameDraw();
+		core_->GetSceneManager()->PreviewDraw();
 		//描画
 		core_->GetRenderSystem()->Draw();
 

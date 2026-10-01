@@ -79,7 +79,7 @@ private://メンバ関数
 	//代入演算子の禁止
 	RTVManager& operator=(const RTVManager&) = delete;
 public://定数
-	static inline const uint32_t kMaxRTVCount = 6;
+	static inline const uint32_t kMaxRTVCount = 8;
 private://メンバ変数
 	//DirectXの基盤部分
 	DirectXBase* directXBase_ = nullptr;

@@ -10,13 +10,9 @@ class ImGuiManager;
 class TagManager;
 class LightingManager;
 class Core;
-class DirectXBase;
-class SRVManager;
-class DSVManager;
-class RTVManager;
 
 //シーンで必要なクラス
-struct SceneContext{
+struct SceneContext {
 	WinApi* winApi;
 	Input* input;
 	TextureManager* textureManager;
@@ -32,20 +28,4 @@ struct SceneContext{
 	/// </summary>
 	/// <param name="core">ゲームエンジンの核</param>
 	void operator=(Core* core);
-};
-
-/// <summary>
-/// レンダーテクスチャで必要なもの
-/// </summary>
-struct RenderTextureContext{
-	DirectXBase* directXBase = nullptr;
-	SRVManager* srvManager = nullptr;
-	DSVManager* dsvManager = nullptr;
-	RTVManager* rtvManager = nullptr;
-
-	/// <summary>
-	/// ゲームエンジンの核から必要な物を抽出する
-	/// </summary>
-	/// <param name="core">ゲームエンジンの核</param>
-	void SetUp(Core* core);
 };

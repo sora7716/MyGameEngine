@@ -1,6 +1,7 @@
 #include "RenderTexture.h"
 #include "DirectXBase.h"
 #include "RTVManager.h"
+#include "DSVManager.h"
 #include "SRVManager.h"
 #include "TextureManager.h"
 #include "DirectXTex/DirectXTex.h"
@@ -20,6 +21,12 @@ RenderTexture::RenderTexture(){
 
 //デストラクタ
 RenderTexture::~RenderTexture(){
+	//RTVの解放
+	context_.rtvManager->Free(rtvIndex_);
+	//DSVの解放
+	context_.dsvManager->Free(dsvIndex_);
+	//SRVの解放
+	context_.srvManager->Free(srvIndex_ - TextureManager::kSRVIndexTop);
 }
 
 //初期化
@@ -38,6 +45,13 @@ void RenderTexture::Initialize(const RenderTextureContext& context, uint32_t wid
 	//RTVの生成
 	context_.rtvManager->CreateRTV(resource_.Get(), rtvIndex_, DXGI_FORMAT_R8G8B8A8_UNORM_SRGB);
 
+	//DSVの確保
+	dsvIndex_ = context_.dsvManager->Allocate();
+	//深度バッファを生成
+	depthStencilResource_ = context_.directXBase->CreateDepthStencilTextureResource(width_, height_);
+	//DSVの生成
+	context_.dsvManager->CreateDSV(depthStencilResource_.Get(), dsvIndex_, DXGI_FORMAT_D24_UNORM_S8_UINT);
+
 	//SRVの確保
 	srvIndex_ = context_.srvManager->Allocate() + TextureManager::kSRVIndexTop;
 	//メタデータ
@@ -47,9 +61,9 @@ void RenderTexture::Initialize(const RenderTextureContext& context, uint32_t wid
 	metadata.arraySize = 1;
 	metadata.mipLevels = 1;
 	metadata.format = DXGI_FORMAT_R8G8B8A8_UNORM_SRGB;
-	metadata.dimension = DXGI_FORMAT_R8G8B8A8_UNORM_SRGB;
+	metadata.dimension = DirectX::TEX_DIMENSION_TEXTURE2D;
 	//SRVの生成
-	context_.srvManager->CreateSRVForTexture2D(metadata, srvIndex_, resource_.Get(), 1);
+	context_.srvManager->CreateSRVForTexture2D(metadata, srvIndex_, resource_.Get(), UINT(metadata.mipLevels));
 }
 
 //更新

@@ -23,6 +23,9 @@ LightingManager::LightingManager(ConstructorKey){
 
 //デストラクタ
 LightingManager::~LightingManager(){
+	//SRVの解放
+	srvManager_->Free(srvIndexPoint_);
+	srvManager_->Free(srvIndexSpot_);
 }
 
 //初期化

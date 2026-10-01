@@ -36,7 +36,7 @@ public://静的メンバ関数
 	static std::unique_ptr<DirectXBase>Create(ConstructorKey key, WinApi* winApi);
 
 	/// <summary>
-	/// デスクリプターCPUハンドルのゲッター
+	/// デスクリプターCPUハンドルの取得
 	/// </summary>
 	/// <param name="descriptorHeap">デスクリプターヒープ</param>
 	/// <param name="descriptorSize">デスクリプターサイズ</param>
@@ -45,7 +45,7 @@ public://静的メンバ関数
 	static D3D12_CPU_DESCRIPTOR_HANDLE GetCPUDescriptorHandle(Microsoft::WRL::ComPtr<ID3D12DescriptorHeap> descriptorHeap, uint32_t descriptorSize, uint32_t index);
 
 	/// <summary>
-	/// デスクリプターGPUハンドルのゲッター
+	/// デスクリプターGPUハンドルの取得
 	/// </summary>
 	/// <param name="descriptorHeap">デスクリプターヒープ</param>
 	/// <param name="descriptorSize">デスクリプターサイズ</param>
@@ -150,13 +150,21 @@ public://メンバ関数
 	ComPtr<ID3D12Resource> UploadTextureData(ID3D12Resource* texture, D3D12_RESOURCE_STATES& inOutState, const DirectX::ScratchImage& mipImages);
 
 	/// <summary>
-	/// デバイスのゲッター
+	/// 深度バッファリソースの設定
+	/// </summary>
+	/// <param name="width">横幅</param>
+	/// <param name="height">縦幅</param>
+	/// <returns></returns>
+	ComPtr<ID3D12Resource> CreateDepthStencilTextureResource(int32_t width, int32_t height);
+
+	/// <summary>
+	/// デバイスの取得
 	/// </summary>
 	/// <returns>デバイス</returns>
 	ID3D12Device* GetDevice()const;
 
 	/// <summary>
-	/// コマンドリストのゲッター
+	/// コマンドリストの取得
 	/// </summary>
 	/// <returns></returns>
 	ID3D12GraphicsCommandList* GetCommandList()const;
@@ -190,14 +198,6 @@ private://メンバ関数
 	DirectXBase(const DirectXBase&) = delete;
 	//代入演算子を禁止
 	const DirectXBase& operator=(const DirectXBase&) = delete;
-
-	/// <summary>
-	/// 深度バッファリソースの設定
-	/// </summary>
-	/// <param name="width">横幅</param>
-	/// <param name="height">縦幅</param>
-	/// <returns></returns>
-	ComPtr<ID3D12Resource> CreateDepthStencilTextureResource(int32_t width, int32_t height);
 
 	/// <summary>
 	/// IDXIファクトリーの生成

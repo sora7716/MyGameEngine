@@ -23,6 +23,10 @@ ParticleRenderer::ParticleRenderer(ConstructorKey){
 
 //デストラクタ
 ParticleRenderer::~ParticleRenderer(){
+	//SRVの解放
+	for (const GpuResource& gpuResource : gpuResources_){
+		srvManager_->Free(gpuResource.srvIndex);
+	}
 }
 
 //初期化

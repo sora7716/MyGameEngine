@@ -20,14 +20,14 @@ std::unique_ptr<DirectXBase> DirectXBase::Create(ConstructorKey key, WinApi* win
 	return instance;
 }
 
-// デスクリプターCPUハンドルのゲッター
+// デスクリプターCPUハンドルの取得
 D3D12_CPU_DESCRIPTOR_HANDLE  DirectXBase::GetCPUDescriptorHandle(ComPtr<ID3D12DescriptorHeap> descriptorHeap, uint32_t descriptorSize, uint32_t index){
 	D3D12_CPU_DESCRIPTOR_HANDLE handleCPU = descriptorHeap->GetCPUDescriptorHandleForHeapStart();
 	handleCPU.ptr += (descriptorSize * index);
 	return handleCPU;
 }
 
-// デスクリプターGPUハンドルのゲッター
+// デスクリプターGPUハンドルの取得
 D3D12_GPU_DESCRIPTOR_HANDLE DirectXBase::GetGPUDescriptorHandle(ComPtr<ID3D12DescriptorHeap> descriptorHeap, uint32_t descriptorSize, uint32_t index){
 	D3D12_GPU_DESCRIPTOR_HANDLE handleGPU = descriptorHeap->GetGPUDescriptorHandleForHeapStart();
 	handleGPU.ptr += (descriptorSize * index);
@@ -366,38 +366,6 @@ ComPtr<ID3D12Resource> DirectXBase::UploadTextureData(ID3D12Resource* texture, D
 	return intermediate;
 }
 
-//デバイスのゲッター
-ID3D12Device* DirectXBase::GetDevice() const{
-	return device_.Get();
-}
-
-//コマンドリストのゲッター
-ID3D12GraphicsCommandList* DirectXBase::GetCommandList() const{
-	return commandList_.Get();
-}
-
-//デプスステンシルテクスチャの取得
-ID3D12Resource* DirectXBase::GetDepthStencilTexture() const{
-	return depthStencilResource_.Get();
-}
-
-//スワップチェーンのリソースのサイズの取得
-uint32_t DirectXBase::GetSwapChainResourceSize() const{
-	return static_cast<uint32_t>(swapChainResources_.size());
-}
-
-//バックバッファ検索キーの取得
-uint32_t DirectXBase::GetBackBufferIndex(uint32_t index) const{
-	uint32_t backBufferIndex = swapChain_[index]->GetCurrentBackBufferIndex();
-	backBufferIndex = backBufferIndex + kSwapChainCount * index;
-	return backBufferIndex;
-}
-
-//スワップチェーンのリソースの取得
-const std::array<ComPtr<ID3D12Resource>, DirectXBase::kSwapChainCount* DirectXBase::kSwapChainBufferCount>& DirectXBase::GetSwapChainResources() const{
-	return swapChainResources_;
-}
-
 //深度バッファリソースの生成
 ComPtr<ID3D12Resource> DirectXBase::CreateDepthStencilTextureResource(int32_t width, int32_t height){
 	HRESULT hr = S_FALSE;
@@ -433,6 +401,38 @@ ComPtr<ID3D12Resource> DirectXBase::CreateDepthStencilTextureResource(int32_t wi
 		IID_PPV_ARGS(&resource));//作成するResourceポインタのポインタ
 	assert(SUCCEEDED(hr));
 	return resource;
+}
+
+//デバイスの取得
+ID3D12Device* DirectXBase::GetDevice() const{
+	return device_.Get();
+}
+
+//コマンドリストの取得
+ID3D12GraphicsCommandList* DirectXBase::GetCommandList() const{
+	return commandList_.Get();
+}
+
+//デプスステンシルテクスチャの取得
+ID3D12Resource* DirectXBase::GetDepthStencilTexture() const{
+	return depthStencilResource_.Get();
+}
+
+//スワップチェーンのリソースのサイズの取得
+uint32_t DirectXBase::GetSwapChainResourceSize() const{
+	return static_cast<uint32_t>(swapChainResources_.size());
+}
+
+//バックバッファ検索キーの取得
+uint32_t DirectXBase::GetBackBufferIndex(uint32_t index) const{
+	uint32_t backBufferIndex = swapChain_[index]->GetCurrentBackBufferIndex();
+	backBufferIndex = backBufferIndex + kSwapChainCount * index;
+	return backBufferIndex;
+}
+
+//スワップチェーンのリソースの取得
+const std::array<ComPtr<ID3D12Resource>, DirectXBase::kSwapChainCount* DirectXBase::kSwapChainBufferCount>& DirectXBase::GetSwapChainResources() const{
+	return swapChainResources_;
 }
 
 // IDXIファクトリーの生成

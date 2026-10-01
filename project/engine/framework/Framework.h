@@ -10,12 +10,12 @@ public://メンバ関数
 	/// <summary>
 	/// コンストラクタ
 	/// </summary>
-	Framework() = default;
+	Framework();
 
 	/// <summary>
 	/// デストラクタ
 	/// </summary>
-	virtual ~Framework() = default;
+	virtual ~Framework();
 
 	/// <summary>
 	/// 初期化

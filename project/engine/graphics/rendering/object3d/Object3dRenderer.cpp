@@ -23,6 +23,13 @@ Object3dRenderer::Object3dRenderer(ConstructorKey){
 
 //デストラクタ
 Object3dRenderer::~Object3dRenderer(){
+	//SRVの解放
+	for (const Object3dGpuResource& objectResource : objectResources_){
+		for (const LODGpuResource& lodResource : objectResource.lodResources){
+			srvManager_->Free(lodResource.srvIndex);
+		}
+
+	}
 }
 
 //初期化

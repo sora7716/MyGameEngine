@@ -54,6 +54,8 @@ private://メンバ変数
 	uint32_t height_ = 0;
 	//リソース
 	ComPtr<ID3D12Resource>resource_ = nullptr;
+	//深度バッファ
+	ComPtr<ID3D12Resource> depthStencilResource_ = nullptr;
 	//SRV検索キー
 	uint32_t srvIndex_ = 0;
 	//RTVの検索キー

@@ -10,6 +10,21 @@
 #include "RTVManager.h"
 #include "DSVManager.h"
 
+//コンストラクタ
+Framework::Framework(){
+
+}
+
+//デストラクタ
+Framework::~Framework(){
+	//RTVの解放
+	for (uint32_t rtvIndex : rtvIndices_){
+		core_->GetRTVManager()->Free(rtvIndex);
+	}
+	//DSVの解放
+	core_->GetDSVManager()->Free(dsvIndex_);
+}
+
 //初期化
 void Framework::Initialize(){
 	//ログの初期化

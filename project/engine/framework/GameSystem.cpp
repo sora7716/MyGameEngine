@@ -8,6 +8,7 @@
 #include "SceneManager.h"
 #include "SceneFactory.h"
 #include "RenderSystem.h"
+#include "RenderTexture.h"
 
 //コンストラクタ
 GameSystem::GameSystem(){
@@ -22,6 +23,11 @@ void GameSystem::Initialize(){
 	Framework::Initialize();
 	//シーンを呼び出す
 	core_->GetSceneManager()->ChangeScene("Game");
+	//レンダーテクスチャで必要なものを設定
+	renderTextureContext_.SetUp(core_.get());
+	//レンダーテクスチャの生成
+	renderTexture_ = RenderTexture::Create(renderTextureContext_, WinApi::kClientWidth, WinApi::kClientHeight);
+
 }
 
 //更新
@@ -53,7 +59,7 @@ void GameSystem::Draw(){
 
 	//DSVハンドルの取得
 	const D3D12_CPU_DESCRIPTOR_HANDLE dsvHandle = core_->GetDSVManager()->GetCPUDescriptorHandle(dsvIndex_);
-	
+
 	//描画開始位置
 	core_->GetDirectXBase()->PreDraw(windowIndex_, rtvHandle, dsvHandle);
 	//SRVの管理

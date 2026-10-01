@@ -1,5 +1,9 @@
 #pragma once
 #include "Framework.h"
+#include "Context.h"
+
+//前方宣言
+class RenderTexture;
 
 /// <summary>
 /// ゲームシステム
@@ -41,5 +45,9 @@ public://メンバ関数
 	/// </summary>
 	void Finalize()override;
 private://メンバ変数
+	//レンダーテクスチャで必要なもの
+	RenderTextureContext renderTextureContext_ = {};
+	//レンダーテクスチャ
+	std::unique_ptr<RenderTexture>renderTexture_ = nullptr;
 };
 

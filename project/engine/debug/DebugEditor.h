@@ -5,6 +5,8 @@
 #include <string>
 #include <memory>
 #include <optional>
+#include <d3d12.h>
+
 //前方宣言
 class GameObject;
 class TagManager;
@@ -46,7 +48,8 @@ public://メンバ関数
 	/// <summary>
 	/// 描画
 	/// </summary>
-	void Draw();
+	/// <param name="handle">SceneのGPUハンドル</param>
+	void Draw(D3D12_GPU_DESCRIPTOR_HANDLE handle);
 
 	/// <summary>
 	/// ゲームオブジェクト一覧の設定
@@ -100,6 +103,12 @@ public://メンバ関数
 	/// </summary>
 	/// <param name="gameObject">ゲームオブジェクト</param>
 	void SelectGameObject(GameObject* gameObject);
+
+	/// <summary>
+	/// シーンのImGuiウィンドウを選択しているかの取得
+	/// </summary>
+	/// <returns>シーンのImGuiウィンドウを選択しているか</returns>
+	bool IsSceneViewHovered()const;
 private://メンバ関数
 	/// <summary>
 	/// ドッキングスペースの描画
@@ -114,7 +123,8 @@ private://メンバ関数
 	/// <summary>
 	/// シーンの描画
 	/// </summary>
-	void DrawScene();
+	/// <param name="handle">SceneのGPUハンドル</param>
+	void DrawScene(D3D12_GPU_DESCRIPTOR_HANDLE handle);
 
 	/// <summary>
 	/// インスペクターの描画
@@ -172,5 +182,7 @@ private://メンバ変数
 	uint32_t dropTargetIndex_ = 0;
 	//ゲームオブジェクトの移動要求
 	bool requestMoveGameObject_ = false;
+	//シーンビューを選択しているか
+	bool isSceneViewHovered_ = false;
 };
 

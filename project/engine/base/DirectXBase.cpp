@@ -20,14 +20,14 @@ std::unique_ptr<DirectXBase> DirectXBase::Create(ConstructorKey key, WinApi* win
 	return instance;
 }
 
-// デスクリプターCPUハンドルの取得
+// デスクリプターCPUハンドルのゲッター
 D3D12_CPU_DESCRIPTOR_HANDLE  DirectXBase::GetCPUDescriptorHandle(ComPtr<ID3D12DescriptorHeap> descriptorHeap, uint32_t descriptorSize, uint32_t index){
 	D3D12_CPU_DESCRIPTOR_HANDLE handleCPU = descriptorHeap->GetCPUDescriptorHandleForHeapStart();
 	handleCPU.ptr += (descriptorSize * index);
 	return handleCPU;
 }
 
-// デスクリプターGPUハンドルの取得
+// デスクリプターGPUハンドルのゲッター
 D3D12_GPU_DESCRIPTOR_HANDLE DirectXBase::GetGPUDescriptorHandle(ComPtr<ID3D12DescriptorHeap> descriptorHeap, uint32_t descriptorSize, uint32_t index){
 	D3D12_GPU_DESCRIPTOR_HANDLE handleGPU = descriptorHeap->GetGPUDescriptorHandleForHeapStart();
 	handleGPU.ptr += (descriptorSize * index);
@@ -155,7 +155,7 @@ void DirectXBase::PreDraw(uint32_t swapChainIndex, D3D12_CPU_DESCRIPTOR_HANDLE r
 	//描画先のRTVを設定する
 	commandList_->OMSetRenderTargets(1, &rtvHandle, false, &dsvHandle);
 	//指定した色で画面をクリアする
-	float clearColor[] = { 0.1f,0.25f,0.5f,1.0f };//青っぽい色。RGBAの順
+	float clearColor[] = { 0.2f, 0.2f, 0.2f, 1.0f };//RGBAの順
 	commandList_->ClearRenderTargetView(rtvHandle, clearColor, 0, nullptr);
 	//指定した深度で画面全体をクリアする
 	commandList_->ClearDepthStencilView(dsvHandle, D3D12_CLEAR_FLAG_DEPTH, 1.0f, 0, 0, nullptr);
@@ -403,12 +403,12 @@ ComPtr<ID3D12Resource> DirectXBase::CreateDepthStencilTextureResource(int32_t wi
 	return resource;
 }
 
-//デバイスの取得
+//デバイスのゲッター
 ID3D12Device* DirectXBase::GetDevice() const{
 	return device_.Get();
 }
 
-//コマンドリストの取得
+//コマンドリストのゲッター
 ID3D12GraphicsCommandList* DirectXBase::GetCommandList() const{
 	return commandList_.Get();
 }

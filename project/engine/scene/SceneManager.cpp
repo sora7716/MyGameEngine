@@ -64,20 +64,21 @@ void SceneManager::Update(){
 		//ゲームオブジェクト一覧をDebugEditorに登録
 		debugEditor_->SetGameObjects(scene_->GetGameObjects());
 	}
-	//更新
-	scene_->Update();
 	//衝突判定システムの更新
 	collisionSystem_->Update(scene_->GetGameObjects());
 	//デバッグエディタの更新
 	debugEditor_->Update();
+	//更新
+	scene_->Update();
+	scene_->SetIsControlEnabled(debugEditor_->IsSceneViewHovered());
 }
 
 //デバッグ
-void SceneManager::Debug(){
+void SceneManager::Debug(D3D12_GPU_DESCRIPTOR_HANDLE handle){
 #ifdef USE_IMGUI
 	sceneContext_.imGuiManager->Begin();
 	//デバッグエディタの描画
-	debugEditor_->Draw();
+	debugEditor_->Draw(handle);
 
 	//生成要求
 	if (debugEditor_->ConsumeCreateRequest()){

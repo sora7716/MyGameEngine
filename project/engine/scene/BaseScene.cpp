@@ -35,7 +35,7 @@ void BaseScene::Initialize(){
 	//デバッグカメラ
 	GameObject* debugCameraObject = CreateGameObject();
 	debugCameraObject->AddComponent<Camera>();
-	debugCameraObject->AddComponent<DebugCameraController>();
+	debugCameraController_ = debugCameraObject->AddComponent<DebugCameraController>();
 	debugCameraObject->SetName("debugCamera");
 }
 
@@ -177,6 +177,11 @@ void BaseScene::SetSceneContext(const SceneContext& sceneContext){
 //シーンで必要な情報の取得
 const SceneContext& BaseScene::GetSceneContext(){
 	return sceneContext_;
+}
+
+//デバッグが有効かの設定
+void BaseScene::SetIsControlEnabled(bool isControlEnabled){
+	debugCameraController_->SetIsControlEnabled(isControlEnabled);
 }
 
 //名前を重複しないようにする

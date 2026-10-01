@@ -32,12 +32,6 @@ void DebugCameraController::Initialize(){
 void DebugCameraController::Update(){
 	//基底クラスの更新
 	Component::Update();
-#ifdef USE_IMGUI
-	//エスケープキーを入力したら
-	if (ImGui::IsKeyPressed(ImGuiKey_Escape)){
-		isControlEnabled_ = !isControlEnabled_;
-	}
-#endif // USE_IMGUI
 
 	//デバッグモードがfalseだった場合
 	if (!isControlEnabled_){
@@ -70,6 +64,11 @@ std::unique_ptr<Component> DebugCameraController::Clone(GameObject* gameObject) 
 	cloneInstance->SetEnabled(this->IsEnabled());
 	cloneInstance->fovY_ = this->fovY_;
 	return cloneInstance;
+}
+
+//デバッグが有効かの設定
+void DebugCameraController::SetIsControlEnabled(bool isControlEnabled){
+	isControlEnabled_ = isControlEnabled;
 }
 
 //左右移動の操作
@@ -115,11 +114,6 @@ void DebugCameraController::DollyControl(){
 //ズーム操作
 void DebugCameraController::ZoomControl(){
 #ifdef USE_IMGUI
-	//ImGuiを使用していた場合
-	if (ImGui::GetIO().WantCaptureMouse){
-		return;
-	}
-
 	//マウスホイールの回転量でズームイン、ズームアウト
 	fovY_ -= ImGui::GetIO().MouseWheel * kZoomSpeedMagnification;
 	//ズーム操作のリセット
@@ -137,11 +131,6 @@ void DebugCameraController::ZoomControl(){
 //回転の操作
 void DebugCameraController::RotateControl(){
 #ifdef USE_IMGUI
-	//ImGuiを使用していた場合
-	if (ImGui::GetIO().WantCaptureMouse){
-		return;
-	}
-
 	//マウスのフリックを取得
 	if (ImGui::IsMouseDown(ImGuiMouseButton_Right)){
 		ImVec2 mouseFlick = ImGui::GetIO().MouseDelta;
@@ -161,10 +150,6 @@ void DebugCameraController::RotateControl(){
 //平行移動の更新
 void DebugCameraController::TranslateUpdate(){
 #ifdef USE_IMGUI
-	//ImGuiを使用していた場合
-	if (ImGui::GetIO().WantCaptureKeyboard){
-		return;
-	}
 #endif // USE_IMGUI
 	//X軸方向の移動
 	StrafeControl();

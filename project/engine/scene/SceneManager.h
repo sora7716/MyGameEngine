@@ -57,7 +57,8 @@ public://メンバ関数
 	/// <summary>
 	/// デバッグ
 	/// </summary>
-	void Debug();
+	/// <param name="handle">SceneのGPUハンドル</param>
+	void Debug(D3D12_GPU_DESCRIPTOR_HANDLE handle);
 
 	/// <summary>
 	/// 描画

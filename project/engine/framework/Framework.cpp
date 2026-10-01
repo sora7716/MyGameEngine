@@ -69,8 +69,7 @@ void Framework::Update(){
 
 //デバッグ
 void Framework::Debug(){
-	//シーンの管理
-	core_->GetSceneManager()->Debug();
+
 }
 
 //終了

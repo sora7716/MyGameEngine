@@ -61,8 +61,10 @@ void SceneManager::Update(){
 		scene_->SetUp(sceneContext_);
 		//次のシーン
 		scene_->Initialize();
-		//ゲームオブジェクト一覧をDebugEditorに登録
+		//ゲームオブジェクト一覧をDebugEditorに設定
 		debugEditor_->SetGameObjects(scene_->GetGameObjects());
+		//デバッグカメラをDebugEditorに設定
+		debugEditor_->SetDebugCamera(scene_->GetDebugCamera());
 	}
 	//衝突判定システムの更新
 	collisionSystem_->Update(scene_->GetGameObjects());

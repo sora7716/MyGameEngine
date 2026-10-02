@@ -3,6 +3,12 @@
 #include "GameObject.h"
 #include "ImGuiManager.h"
 #include "TagManager.h"
+#ifdef USE_IMGUI
+#include "ImGuizmo.h"
+#endif // USE_IMGUI
+#include "Matrix4x4.h"
+#include "Camera.h"
+#include "MatrixUtility.h"
 #include <cassert>
 
 //コンストラクタ
@@ -61,6 +67,11 @@ void DebugEditor::Draw(D3D12_GPU_DESCRIPTOR_HANDLE sceneHandle, D3D12_GPU_DESCRI
 //ゲームオブジェクト一覧の設定
 void DebugEditor::SetGameObjects(const std::vector<std::unique_ptr<GameObject>>& gameObjects){
 	gameObjects_ = &gameObjects;
+}
+
+//デバッグカメラの設定
+void DebugEditor::SetDebugCamera(Camera* debugCamera){
+	debugCamera_ = debugCamera;
 }
 
 //削除要求を取得
@@ -295,11 +306,54 @@ void DebugEditor::DrawScene(D3D12_GPU_DESCRIPTOR_HANDLE handle){
 	ImGui::Begin("Scene");
 	//テクスチャのIDを取得(GPUのハンドルから取得)
 	ImTextureID textureId = reinterpret_cast<ImTextureID>(handle.ptr);
+	//矩形情報を取得
+	ImVec2 position = ImGui::GetCursorScreenPos();
+	ImVec2 size = ImGui::GetContentRegionAvail();
+	//メンバ変数に保存
+	sceneViewRectInfo_.position = { position.x,position.y };
+	sceneViewRectInfo_.size = { size.x,size.y };
 	//ImGuiにテクスチャを描画
-	ImGui::Image(textureId, ImGui::GetContentRegionAvail());
+	ImGui::Image(textureId, size);
 	//今選択されているImGuiを判定
 	isSceneViewHovered_ = ImGui::IsItemHovered();
+	//キズモの描画
+	DrawGizmo();
 	ImGui::End();
+#endif // USE_IMGUI
+}
+
+//キズモの描画
+void DebugEditor::DrawGizmo(){
+#ifdef USE_IMGUI
+	//操作対象が存在するか
+	if (!selectedGameObject_){
+		return;
+	}
+
+	//デバッグカメラがあるか
+	if (!debugCamera_){
+		return;
+	}
+
+	ImGuizmo::SetDrawlist();
+
+	ImGuizmo::SetRect(
+		sceneViewRectInfo_.position.x,
+		sceneViewRectInfo_.position.y,
+		sceneViewRectInfo_.size.x,
+		sceneViewRectInfo_.size.y
+	);
+
+	//ビュー行列を取得
+	Matrix4x4 viewMatrix = debugCamera_->GetViewMatrix();
+	//透視投影行列を取得
+	Matrix4x4 projectionMatrix = debugCamera_->GetProjectionMatrix();
+
+	//選択しているGameObjectのワールド行列を取得
+	Matrix4x4 worldMatrix = matrixUtility::MakeAffineMatrix(selectedGameObject_->GetTransform());
+
+	//実際に動かす
+	ImGuizmo::Manipulate(&viewMatrix.m[0][0], &projectionMatrix.m[0][0], ImGuizmo::TRANSLATE, ImGuizmo::WORLD, &worldMatrix.m[0][0]);
 #endif // USE_IMGUI
 }
 

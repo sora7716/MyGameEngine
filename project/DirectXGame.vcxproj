@@ -109,6 +109,12 @@
     <ClCompile Include="engine\scene\SceneManager.cpp" />
     <ClCompile Include="engine\utility\HashUtility.cpp" />
     <ClCompile Include="engine\utility\StringUtility.cpp" />
+    <ClCompile Include="externals\imguizmo\ImGuizmo.cpp">
+      <AdditionalOptions Condition="'$(Configuration)|$(Platform)'=='Release|x64'">/analyze- %(AdditionalOptions)</AdditionalOptions>
+      <TreatWarningAsError Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</TreatWarningAsError>
+      <TreatWarningAsError Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</TreatWarningAsError>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="application\actor\enemy\Enemy.h" />
@@ -221,6 +227,9 @@
     <ClInclude Include="engine\scene\SceneManager.h" />
     <ClInclude Include="engine\utility\HashUtility.h" />
     <ClInclude Include="engine\utility\StringUtility.h" />
+    <ClInclude Include="externals\imguizmo\ImGuizmo.h">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+    </ClInclude>
     <ClInclude Include="resources\resource.h" />
   </ItemGroup>
   <ItemGroup>
@@ -366,7 +375,7 @@
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
       <TreatWarningAsError>true</TreatWarningAsError>
-      <AdditionalIncludeDirectories>$(ProjectDir);$(ProjectDir)engine\2d;$(ProjectDir)engine\3d;$(ProjectDir)engine\audio;$(ProjectDir)engine\base;$(ProjectDir)engine\camera;$(ProjectDir)engine\collision;$(ProjectDir)engine\debug;$(ProjectDir)engine\debug\wireframes;$(ProjectDir)engine\framework;$(ProjectDir)engine\gameObject;$(ProjectDir)engine\geometry;$(ProjectDir)engine\graphics;$(ProjectDir)engine\graphics\data;$(ProjectDir)engine\graphics\descriptor;$(ProjectDir)engine\graphics\pipeline;$(ProjectDir)engine\graphics\texture;$(ProjectDir)engine\input;$(ProjectDir)engine\math;$(ProjectDir)engine\particle;$(ProjectDir)engine\physics;$(ProjectDir)engine\resources;$(ProjectDir)engine\scene;$(ProjectDir)engine\utility;$(ProjectDir)engine\worldTransform;$(SolutionDir)DirectXTex;$(SolutionDir)imgui;$(ProjectDir)externals;$(ProjectDir)externals\assimp\include;%(AdditionalIncludeDirectories);$(ProjectDir)application\actor;$(ProjectDir)application\scene;$(ProjectDir)engine\gameObject\component;$(ProjectDir)engine\asset;$(ProjectDir)engine\graphics\rendering;$(ProjectDir)engine\graphics\rendering\object3d;$(ProjectDir)engine\graphics\rendering\skyBox;$(ProjectDir)engine\graphics\rendering\particle;$(ProjectDir)engine\graphics\rendering\debugDraw;$(ProjectDir)engine\graphics\rendering\sprite;$(ProjectDir)engine\graphics\rendering\camera;$(ProjectDir)application\actor\enemy;$(ProjectDir)engine\3d\model;$(ProjectDir)engine\3d\lod;$(ProjectDir)engine\3d\lighting;$(ProjectDir)engine\3d\material;$(ProjectDir)application\actor\player;$(ProjectDir)engine\graphics\resource</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir);$(ProjectDir)engine\2d;$(ProjectDir)engine\3d;$(ProjectDir)engine\audio;$(ProjectDir)engine\base;$(ProjectDir)engine\camera;$(ProjectDir)engine\collision;$(ProjectDir)engine\debug;$(ProjectDir)engine\debug\wireframes;$(ProjectDir)engine\framework;$(ProjectDir)engine\gameObject;$(ProjectDir)engine\geometry;$(ProjectDir)engine\graphics;$(ProjectDir)engine\graphics\data;$(ProjectDir)engine\graphics\descriptor;$(ProjectDir)engine\graphics\pipeline;$(ProjectDir)engine\graphics\texture;$(ProjectDir)engine\input;$(ProjectDir)engine\math;$(ProjectDir)engine\particle;$(ProjectDir)engine\physics;$(ProjectDir)engine\resources;$(ProjectDir)engine\scene;$(ProjectDir)engine\utility;$(ProjectDir)engine\worldTransform;$(SolutionDir)DirectXTex;$(SolutionDir)imgui;$(ProjectDir)externals;$(ProjectDir)externals\assimp\include;%(AdditionalIncludeDirectories);$(ProjectDir)application\actor;$(ProjectDir)application\scene;$(ProjectDir)engine\gameObject\component;$(ProjectDir)engine\asset;$(ProjectDir)engine\graphics\rendering;$(ProjectDir)engine\graphics\rendering\object3d;$(ProjectDir)engine\graphics\rendering\skyBox;$(ProjectDir)engine\graphics\rendering\particle;$(ProjectDir)engine\graphics\rendering\debugDraw;$(ProjectDir)engine\graphics\rendering\sprite;$(ProjectDir)engine\graphics\rendering\camera;$(ProjectDir)application\actor\enemy;$(ProjectDir)engine\3d\model;$(ProjectDir)engine\3d\lod;$(ProjectDir)engine\3d\lighting;$(ProjectDir)engine\3d\material;$(ProjectDir)application\actor\player;$(ProjectDir)engine\graphics\resource;$(ProjectDir)externals\imguizmo</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>

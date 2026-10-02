@@ -758,6 +758,9 @@
     <ClInclude Include="engine\graphics\resource\RenderTexture.h">
       <Filter>engine\graphics\resource</Filter>
     </ClInclude>
+    <ClInclude Include="resources\resource.h">
+      <Filter>リソース ファイル</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="engine\resources\shaders\Object3d.PS.hlsl">
@@ -810,5 +813,18 @@
     <None Include="engine\resources\shaders\SkyBox.hlsli">
       <Filter>shaders</Filter>
     </None>
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="engine\resources\textures\SproutEngine_Transparent.ico">
+      <Filter>リソース ファイル</Filter>
+    </Image>
+    <Image Include="engine\resources\textures\SproutEngine.ico">
+      <Filter>リソース ファイル</Filter>
+    </Image>
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="resources\GameEngine.rc">
+      <Filter>リソース ファイル</Filter>
+    </ResourceCompile>
   </ItemGroup>
 </Project>

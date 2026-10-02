@@ -2,6 +2,7 @@
 #pragma comment(lib,"winmm.lib")
 #include "Vector2.h"
 #include <cassert>
+#include "resources/resource.h"
 #ifdef USE_IMGUI
 #include "imgui/imgui_impl_win32.h"
 extern IMGUI_IMPL_API LRESULT ImGui_ImplWin32_WndProcHandler(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam);
@@ -81,17 +82,23 @@ void WinApi::Initialize(){
 	//メインスレッドではMTAでCOMを利用
 	hr = CoInitializeEx(0, COINIT_MULTITHREADED);
 	assert(SUCCEEDED(hr));
+	//WNDCLASSEXのサイズを設定
+	wndClass_.cbSize = sizeof(WNDCLASSEX);
 	//ウィンドウプロシージャ
 	wndClass_.lpfnWndProc = WindowProc;
 	//ウィンドウのクラス名
-	wndClass_.lpszClassName = L"CG2WindowClass";
+	wndClass_.lpszClassName = L"WindowClass";
 	//インスタンスハンドル
 	wndClass_.hInstance = GetModuleHandle(nullptr);
 	//カーソル
 	wndClass_.hCursor = LoadCursor(nullptr, IDC_ARROW);
+	//タスクバーのアイコンを設定
+	wndClass_.hIcon = LoadIcon(wndClass_.hInstance, MAKEINTRESOURCE(IDI_ICON1));
+	//タイトルバーのアイコンを設定
+	wndClass_.hIconSm = LoadIcon(wndClass_.hInstance, MAKEINTRESOURCE(IDI_ICON2));
 
 	//ウィンドウクラスを登録する
-	RegisterClass(&wndClass_);
+	RegisterClassEx(&wndClass_);
 
 	//ウィンドウサイズを表す構造体にクライアント領域を入れる
 	windowRect_ = { 0,0,kClientWidth,kClientHeight };
@@ -141,7 +148,7 @@ HWND WinApi::GetHwnd() const{
 }
 
 //WNDクラスのゲッター
-WNDCLASS WinApi::GetWndClass()const{
+WNDCLASSEX WinApi::GetWndClass()const{
 	return wndClass_;
 }
 

@@ -221,6 +221,7 @@
     <ClInclude Include="engine\scene\SceneManager.h" />
     <ClInclude Include="engine\utility\HashUtility.h" />
     <ClInclude Include="engine\utility\StringUtility.h" />
+    <ClInclude Include="resources\resource.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="engine\resources\shaders\CommonTypes.hlsli">
@@ -302,6 +303,13 @@
     <ProjectReference Include="externals\DirectXTex\DirectXTex_Desktop_2022_Win10.vcxproj">
       <Project>{371b9fa9-4c90-4ac6-a123-aced756d6c77}</Project>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="engine\resources\textures\SproutEngine.ico" />
+    <Image Include="engine\resources\textures\SproutEngine_Transparent.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="resources\GameEngine.rc" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>17.0</VCProjectVersion>

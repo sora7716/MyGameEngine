@@ -43,17 +43,25 @@ void ImGuiManager::Initialize([[maybe_unused]] WinApi* winApi, [[maybe_unused]] 
 	//ImGuiのコンテキストを生成
 	ImGui::CreateContext();
 	ImGuiIO& io = ImGui::GetIO();
+	//ドッキング機能の有効化
 	io.ConfigFlags |= ImGuiConfigFlags_DockingEnable;
+	//マルチビューポートの有効化
 	io.ConfigFlags |= ImGuiConfigFlags_ViewportsEnable;
-	ImFont* JapaneseFont = io.Fonts->AddFontFromFileTTF("engine/resources/fonts/BIZ-UDMinchoM.ttc", 18.0f, nullptr,
+	//フォントの設定
+	ImFont* JapaneseFont = io.Fonts->AddFontFromFileTTF("engine/resources/fonts/SoraGameUI-Bold.ttf", 18.0f, nullptr,
 		io.Fonts->GetGlyphRangesJapanese());
 	assert(JapaneseFont);
 	io.Fonts->Build();
-	//ImGuiのスタイルを設定
-	ImGui::StyleColorsDark();
+
+	//スタイルのセットアップ
+	SetupStyle();
+
+	//win32の初期化
 	ImGui_ImplWin32_Init(winApi->GetHwnd());
 	//srvの確保
 	srvManager_->Allocate();
+
+	//DX12の初期化
 	ImGui_ImplDX12_Init(
 		directXBase_->GetDevice(),
 		static_cast<int>(directXBase_->GetSwapChainResourceSize()),
@@ -189,4 +197,138 @@ void ImGuiManager::AABBText([[maybe_unused]] const primitiveData::AABB& aabb, [[
 	ImGuiManager::Vector3Text(aabb.max, (static_cast<std::string>(label) + ".max").c_str());
 #endif // _DEBUG
 
+}
+
+//ウィンドウのスタイルのセットアップ
+void ImGuiManager::SetupStyle(){
+#ifdef USE_IMGUI
+	ImGuiStyle& style = ImGui::GetStyle();
+
+	// サイズ・余白
+	style.WindowPadding = ImVec2(8.0f, 8.0f);
+	style.FramePadding = ImVec2(7.0f, 5.0f);
+	style.CellPadding = ImVec2(6.0f, 4.0f);
+
+	style.ItemSpacing = ImVec2(8.0f, 6.0f);
+	style.ItemInnerSpacing = ImVec2(6.0f, 4.0f);
+
+	style.IndentSpacing = 20.0f;
+	style.ScrollbarSize = 13.0f;
+	style.GrabMinSize = 10.0f;
+
+	// 角丸
+	style.WindowRounding = 2.0f;
+	style.ChildRounding = 2.0f;
+	style.FrameRounding = 3.0f;
+	style.PopupRounding = 3.0f;
+	style.ScrollbarRounding = 3.0f;
+	style.GrabRounding = 3.0f;
+	style.TabRounding = 3.0f;
+
+	// Border
+	style.WindowBorderSize = 1.0f;
+	style.ChildBorderSize = 1.0f;
+	style.PopupBorderSize = 1.0f;
+	style.FrameBorderSize = 0.0f;
+	style.TabBorderSize = 0.0f;
+
+	ImVec4* colors = style.Colors;
+
+	// Text
+	colors[ImGuiCol_Text] =
+		ImVec4(0.84f, 0.85f, 0.87f, 1.00f);
+
+	colors[ImGuiCol_TextDisabled] =
+		ImVec4(0.45f, 0.47f, 0.50f, 1.00f);
+
+	// Window
+	colors[ImGuiCol_WindowBg] =
+		ImVec4(0.071f, 0.082f, 0.098f, 1.00f);
+
+	colors[ImGuiCol_ChildBg] =
+		ImVec4(0.071f, 0.082f, 0.098f, 1.00f);
+
+	colors[ImGuiCol_PopupBg] =
+		ImVec4(0.090f, 0.102f, 0.122f, 1.00f);
+
+	// Border
+	colors[ImGuiCol_Border] =
+		ImVec4(0.161f, 0.180f, 0.208f, 1.00f);
+
+	colors[ImGuiCol_BorderShadow] =
+		ImVec4(0.0f, 0.0f, 0.0f, 0.0f);
+
+	// Frame / Input
+	colors[ImGuiCol_FrameBg] =
+		ImVec4(0.055f, 0.067f, 0.082f, 1.00f);
+
+	colors[ImGuiCol_FrameBgHovered] =
+		ImVec4(0.120f, 0.140f, 0.165f, 1.00f);
+
+	colors[ImGuiCol_FrameBgActive] =
+		ImVec4(0.150f, 0.175f, 0.205f, 1.00f);
+
+	// Title
+	colors[ImGuiCol_TitleBg] =
+		ImVec4(0.055f, 0.063f, 0.075f, 1.00f);
+
+	colors[ImGuiCol_TitleBgActive] =
+		ImVec4(0.075f, 0.086f, 0.102f, 1.00f);
+
+	colors[ImGuiCol_TitleBgCollapsed] =
+		ImVec4(0.055f, 0.063f, 0.075f, 1.00f);
+
+	// Button
+	colors[ImGuiCol_Button] =
+		ImVec4(0.106f, 0.122f, 0.145f, 1.00f);
+
+	colors[ImGuiCol_ButtonHovered] =
+		ImVec4(0.145f, 0.169f, 0.200f, 1.00f);
+
+	colors[ImGuiCol_ButtonActive] =
+		ImVec4(0.173f, 0.200f, 0.239f, 1.00f);
+
+	// Header
+	colors[ImGuiCol_Header] =
+		ImVec4(0.105f, 0.125f, 0.150f, 1.00f);
+
+	colors[ImGuiCol_HeaderHovered] =
+		ImVec4(0.145f, 0.175f, 0.210f, 1.00f);
+
+	colors[ImGuiCol_HeaderActive] =
+		ImVec4(0.180f, 0.215f, 0.260f, 1.00f);
+
+	// Tab
+	colors[ImGuiCol_Tab] =
+		ImVec4(0.063f, 0.075f, 0.094f, 1.00f);
+
+	colors[ImGuiCol_TabHovered] =
+		ImVec4(0.135f, 0.160f, 0.190f, 1.00f);
+
+	colors[ImGuiCol_TabActive] =
+		ImVec4(0.106f, 0.125f, 0.153f, 1.00f);
+
+	colors[ImGuiCol_TabUnfocused] =
+		ImVec4(0.047f, 0.055f, 0.067f, 1.00f);
+
+	colors[ImGuiCol_TabUnfocusedActive] =
+		ImVec4(0.080f, 0.094f, 0.114f, 1.00f);
+
+	// Separator
+	colors[ImGuiCol_Separator] =
+		ImVec4(0.160f, 0.180f, 0.205f, 1.00f);
+
+	// Scrollbar
+	colors[ImGuiCol_ScrollbarBg] =
+		ImVec4(0.045f, 0.052f, 0.063f, 1.00f);
+
+	colors[ImGuiCol_ScrollbarGrab] =
+		ImVec4(0.160f, 0.180f, 0.205f, 1.00f);
+
+	colors[ImGuiCol_ScrollbarGrabHovered] =
+		ImVec4(0.230f, 0.255f, 0.290f, 1.00f);
+
+	colors[ImGuiCol_ScrollbarGrabActive] =
+		ImVec4(0.290f, 0.320f, 0.360f, 1.00f);
+#endif
 }

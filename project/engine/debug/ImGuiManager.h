@@ -140,6 +140,11 @@ private://メンバ関数
 	ImGuiManager(const ImGuiManager&) = delete;
 	//代入演算子の禁止
 	ImGuiManager& operator=(const ImGuiManager&) = delete;
+
+	/// <summary>
+	/// ウィンドウのスタイルのセットアップ
+	/// </summary>
+	void SetupStyle();
 private://メンバ変数
 	//WindowApi
 	WinApi* winApi_ = nullptr;

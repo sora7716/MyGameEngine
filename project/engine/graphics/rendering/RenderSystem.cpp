@@ -92,6 +92,7 @@ void RenderSystem::Draw(){
 	//描画オブジェクトのリセット
 	particleRenderer_->Reset();
 
+#ifdef _DEBUG
 	//DebugDraw
 	for (uint32_t i = 0; i < debugDrawRenderer_->GetRenderDataSize(); i++){
 		//描画開始
@@ -103,6 +104,7 @@ void RenderSystem::Draw(){
 	}
 	//描画オブジェクトのリセット
 	debugDrawRenderer_->Reset();
+#endif // _DEBUG
 
 	//スカイボックス
 	for (uint32_t i = 0; i < skyBoxRenderer_->GetRenderDataSize(); i++){
@@ -128,7 +130,6 @@ void RenderSystem::Draw(){
 
 	//カメラのリセット
 	cameraRenderer_->Reset();
-
 }
 
 //描画に有効なObject3dを集める

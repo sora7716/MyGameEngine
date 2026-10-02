@@ -87,6 +87,8 @@ void GameSystem::Draw(){
 	core_->GetImGuiManager()->Draw();
 	//描画終了位置
 	core_->GetDirectXBase()->PostDraw();
+	//ImGuiのプラットフォームウィンドウの更新
+	core_->GetImGuiManager()->UpdatePlatformWindow();
 #else
 	//描画開始位置
 	core_->GetDirectXBase()->PreDraw(rtvHandle, dsvHandle);

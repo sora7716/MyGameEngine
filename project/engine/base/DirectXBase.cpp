@@ -145,7 +145,7 @@ void DirectXBase::PreDraw(D3D12_CPU_DESCRIPTOR_HANDLE rtvHandle, D3D12_CPU_DESCR
 	//描画先のRTVを設定する
 	commandList_->OMSetRenderTargets(1, &rtvHandle, false, &dsvHandle);
 	//指定した色で画面をクリアする
-	float clearColor[] = { 0.2f, 0.2f, 0.2f, 1.0f };//RGBAの順
+	float clearColor[] = { 0.118f, 0.133f, 0.153f, 1.0f };//RGBAの順
 	commandList_->ClearRenderTargetView(rtvHandle, clearColor, 0, nullptr);
 	//指定した深度で画面全体をクリアする
 	commandList_->ClearDepthStencilView(dsvHandle, D3D12_CLEAR_FLAG_DEPTH, 1.0f, 0, 0, nullptr);

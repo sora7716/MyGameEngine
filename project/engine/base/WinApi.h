@@ -68,7 +68,7 @@ public://メンバ関数
 	/// WNDクラスのゲッター
 	/// </summary>
 	/// <returns>wndClass</returns>
-	WNDCLASS GetWndClass()const;
+	WNDCLASSEX GetWndClass()const;
 
 	/// <summary>
 	/// マウスカーソルの表示非表示の設定
@@ -86,10 +86,16 @@ public://定数
 	//画面の縦幅
 	static inline const int32_t kClientHeight = 720;
 
+#ifdef _DEBUG
+	//タイトル名
+	static inline const std::wstring label_ = { L"Sprout Engine" };
+#else
 	//タイトル名
 	static inline const std::wstring label_ = { L"Game" };
+#endif // _DEBUG
+
 private://メンバ変数
-	WNDCLASS wndClass_ = {};	//ウィンドウクラス
+	WNDCLASSEX wndClass_ = {};	//ウィンドウクラス
 	HWND hwnd_ = {};	//ウィンドウハンドル
 	//今アクティブなウィンドウハンドル
 	static inline HWND activeHwnd_ = nullptr;

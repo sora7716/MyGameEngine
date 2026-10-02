@@ -151,7 +151,11 @@ bool DebugEditor::IsSceneViewHovered() const{
 
 //プレビューのImGuiウィンドウを選択しているかの取得
 bool DebugEditor::IsPreviewHovered() const{
+#ifdef _DEBUG
 	return isPreviewHovered_;
+#else
+	return true;
+#endif // _DEBUG
 }
 
 //ドッキングスペースの描画

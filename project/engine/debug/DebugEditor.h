@@ -1,4 +1,8 @@
 #pragma once
+#include "ImGuiManager.h"
+#ifdef USE_IMGUI
+#include "ImGuizmo.h"
+#endif // USE_IMGUI
 #include "Vector2.h"
 #include "Vector3.h"
 #include <vector>
@@ -10,6 +14,7 @@
 
 //前方宣言
 class GameObject;
+class TextureManager;
 class TagManager;
 class Camera;
 
@@ -20,6 +25,15 @@ struct RenameTagRequest{
 	std::string oldTag = "\0";
 	std::string newTag = "\0";
 };
+
+#ifdef USE_IMGUI
+//Gizmoのツール
+enum class GizmoTool{
+	kScale = ImGuizmo::SCALE,
+	kRotate = ImGuizmo::ROTATE,
+	kTranslate = ImGuizmo::TRANSLATE
+};
+#endif // USE_IMGUI
 
 /// <summary>
 /// デバッグエディター
@@ -47,8 +61,9 @@ public://メンバ関数
 	/// <summary>
 	/// 初期化
 	/// </summary>
+	/// <param name="textureManager">テクスチャの管理</param>
 	/// <param name="tagManager">タグの管理</param>
-	void Initialize(TagManager* tagManager);
+	void Initialize(TextureManager* textureManager,TagManager* tagManager);
 
 	/// <summary>
 	/// 更新
@@ -150,7 +165,12 @@ private://メンバ関数
 	void DrawScene(D3D12_GPU_DESCRIPTOR_HANDLE handle);
 
 	/// <summary>
-	/// キズモの描画
+	/// Gizmo切り替え用ツールバーの描画
+	/// </summary>
+	void DrawGizmoToolbar();
+
+	/// <summary>
+	/// Gizmoの描画
 	/// </summary>
 	void DrawGizmo();
 
@@ -179,8 +199,18 @@ private://定数
 	//ゲームオブジェクトのpayloadType
 	static inline const std::string kGameObjectPayloadType = "GameObjectPayload";
 private://メンバ変数
+	//テクスチャの管理
+	TextureManager* textureManager_ = nullptr;
+	//タグの管理
+	TagManager* tagManager_ = nullptr;
+
+	//テクスチャを読み込む際のディレクトリパス
+	std::string directoryPath = "engine/resources/editorIcons/";
+
 	//選択するゲームオブジェクト
 	GameObject* selectedGameObject_ = nullptr;
+	//オブジェクトの詳細で編集するオイラー角
+	Vector3 inspectorEulerAngle_ = Vector3::GetZero();
 
 	//ゲームオブジェクトの一覧へのポインタ
 	const std::vector<std::unique_ptr<GameObject>>* gameObjects_;
@@ -191,16 +221,14 @@ private://メンバ変数
 	GameObject* requestDuplicateGameObject_ = nullptr;
 	//削除要求
 	GameObject* requestDeleteGameObject_ = nullptr;
-	
+
 	//名前変更
 	GameObject* renamingGameObject_ = nullptr;
 	//名前変更用の文字列バッファ
 	std::array<char, 256>renameObjectBuffer_ = {};
 	//InputTextへフォーカスする要求
 	bool requestRenameFocus_ = false;
-	
-	//タグの管理
-	TagManager* tagManager_ = nullptr;
+
 	//タグの管理を開くかのフラグ
 	bool isTegManagerOpen_ = false;
 	//新規タグ入力用
@@ -232,5 +260,12 @@ private://メンバ変数
 
 	//デバッグカメラ
 	Camera* debugCamera_ = nullptr;
+
+#ifdef USE_IMGUI
+	//Gizmoツール
+	GizmoTool gizmoTool_ = GizmoTool::kTranslate;
+#endif // USE_IMGUI
+	//Gizmoツールバーを表示するか
+	bool isGizmoToolbarVisible_ = true;
 };
 

@@ -49,13 +49,18 @@ void DefaultResourceLoader::LoadAudio(){
 
 //テクスチャの読み込み
 void DefaultResourceLoader::LoadTexture(){
-	std::string directoryPath = "engine/resources/textures/";
-	textureManager_->AddTexture(directoryPath + "magenta1x1.png");
-	textureManager_->AddTexture(directoryPath + "white1x1.png");
-	textureManager_->AddTexture(directoryPath + "skybox_cube.dds");
-	textureManager_->AddTexture(directoryPath + "circle2.png");
-	textureManager_->AddTexture(directoryPath + "monsterBall.png");
-	textureManager_->AddTexture(directoryPath + "uvChecker.png");
+	std::string directoryPath = "engine/resources/";
+	textureManager_->AddTexture(directoryPath + "textures/magenta1x1.png");
+	textureManager_->AddTexture(directoryPath + "textures/white1x1.png");
+	textureManager_->AddTexture(directoryPath + "textures/skybox_cube.dds");
+	textureManager_->AddTexture(directoryPath + "textures/circle2.png");
+	textureManager_->AddTexture(directoryPath + "textures/monsterBall.png");
+	textureManager_->AddTexture(directoryPath + "textures/uvChecker.png");
+
+	//デバッグエディタのアイコン
+	textureManager_->AddTexture(directoryPath + "editorIcons/scale.png");
+	textureManager_->AddTexture(directoryPath + "editorIcons/rotate.png");
+	textureManager_->AddTexture(directoryPath + "editorIcons/translate.png");
 }
 
 //OBJファイルの読み込み

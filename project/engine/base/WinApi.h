@@ -82,9 +82,9 @@ private://メンバ関数
 	const WinApi& operator=(const WinApi&) = delete;
 public://定数
 	//画面の横幅
-	static inline const int32_t kClientWidth = 1280;
+	static inline const int32_t kClientWidth = 1920;
 	//画面の縦幅
-	static inline const int32_t kClientHeight = 720;
+	static inline const int32_t kClientHeight = 1080;
 
 #ifdef _DEBUG
 	//タイトル名

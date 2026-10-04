@@ -180,7 +180,8 @@ namespace matrixUtility {
 	/// 行列をTransformに分解
 	/// </summary>
 	/// <param name="m">行列</param>
+	/// <param name="referenceScale">基準となる拡縮</param>
 	/// <returns>Transform</returns>
-	Transform DecomposeMatrix(const Matrix4x4& m);
+	Transform DecomposeMatrix(const Matrix4x4& m,const Vector3& referenceScale);
 };
 

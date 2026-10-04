@@ -39,7 +39,7 @@ void SceneManager::Initialize(const SceneContext& sceneContext, RenderSystem* re
 	sceneContext_.sceneManager = this;
 	//デバッグエディターの生成と初期化
 	debugEditor_ = std::make_unique<DebugEditor>();
-	debugEditor_->Initialize(sceneContext_.tagManager);
+	debugEditor_->Initialize(sceneContext_.textureManager, sceneContext_.tagManager);
 }
 
 //更新
@@ -49,7 +49,7 @@ void SceneManager::Update(){
 		//旧シーンの終了
 		if (scene_){
 			//デバッグエディタの初期化
-			debugEditor_->Initialize(sceneContext_.tagManager);
+			debugEditor_->Initialize(sceneContext_.textureManager, sceneContext_.tagManager);
 			//旧シーンの解放
 			scene_->Finalize();
 			delete scene_;
@@ -61,8 +61,10 @@ void SceneManager::Update(){
 		scene_->SetUp(sceneContext_);
 		//次のシーン
 		scene_->Initialize();
-		//ゲームオブジェクト一覧をDebugEditorに登録
+		//ゲームオブジェクト一覧をDebugEditorに設定
 		debugEditor_->SetGameObjects(scene_->GetGameObjects());
+		//デバッグカメラをDebugEditorに設定
+		debugEditor_->SetDebugCamera(scene_->GetDebugCamera());
 	}
 	//衝突判定システムの更新
 	collisionSystem_->Update(scene_->GetGameObjects());

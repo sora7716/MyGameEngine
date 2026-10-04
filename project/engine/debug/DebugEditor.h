@@ -1,4 +1,9 @@
 #pragma once
+#include "ImGuiManager.h"
+#ifdef USE_IMGUI
+#include "ImGuizmo.h"
+#endif // USE_IMGUI
+#include "Vector2.h"
 #include "Vector3.h"
 #include <vector>
 #include <array>
@@ -9,7 +14,9 @@
 
 //前方宣言
 class GameObject;
+class TextureManager;
 class TagManager;
+class Camera;
 
 /// <summary>
 /// タグの名前変更リクエスト用
@@ -19,10 +26,27 @@ struct RenameTagRequest{
 	std::string newTag = "\0";
 };
 
+#ifdef USE_IMGUI
+//Gizmoのツール
+enum class GizmoTool{
+	kScale = ImGuizmo::SCALE,
+	kRotate = ImGuizmo::ROTATE,
+	kTranslate = ImGuizmo::TRANSLATE
+};
+#endif // USE_IMGUI
+
 /// <summary>
 /// デバッグエディター
 /// </summary>
 class DebugEditor{
+private://構造体
+	/// <summary>
+	/// シーンビューの矩形情報
+	/// </summary>
+	struct SceneViewRectInfo{
+		Vector2 position = Vector2::GetZero();
+		Vector2 size = Vector2::GetZero();
+	};
 public://メンバ関数
 	/// <summary>
 	/// コンストラクタ
@@ -37,8 +61,9 @@ public://メンバ関数
 	/// <summary>
 	/// 初期化
 	/// </summary>
+	/// <param name="textureManager">テクスチャの管理</param>
 	/// <param name="tagManager">タグの管理</param>
-	void Initialize(TagManager* tagManager);
+	void Initialize(TextureManager* textureManager,TagManager* tagManager);
 
 	/// <summary>
 	/// 更新
@@ -57,6 +82,12 @@ public://メンバ関数
 	/// </summary>
 	/// <param name="gameObjects">ゲームオブジェクト一覧</param>
 	void SetGameObjects(const std::vector<std::unique_ptr<GameObject>>& gameObjects);
+
+	/// <summary>
+	/// デバッグカメラの設定
+	/// </summary>
+	/// <param name="debugCamera">デバッグカメラ</param>
+	void SetDebugCamera(Camera* debugCamera);
 
 	/// <summary>
 	/// 削除要求を取得
@@ -134,6 +165,16 @@ private://メンバ関数
 	void DrawScene(D3D12_GPU_DESCRIPTOR_HANDLE handle);
 
 	/// <summary>
+	/// Gizmo切り替え用ツールバーの描画
+	/// </summary>
+	void DrawGizmoToolbar();
+
+	/// <summary>
+	/// Gizmoの描画
+	/// </summary>
+	void DrawGizmo();
+
+	/// <summary>
 	/// プレビューシーンの描画
 	/// </summary>
 	/// <param name="handle">PreviewSceneのGPUハンドル</param>
@@ -158,24 +199,36 @@ private://定数
 	//ゲームオブジェクトのpayloadType
 	static inline const std::string kGameObjectPayloadType = "GameObjectPayload";
 private://メンバ変数
+	//テクスチャの管理
+	TextureManager* textureManager_ = nullptr;
+	//タグの管理
+	TagManager* tagManager_ = nullptr;
+
+	//テクスチャを読み込む際のディレクトリパス
+	std::string directoryPath = "engine/resources/editorIcons/";
+
 	//選択するゲームオブジェクト
 	GameObject* selectedGameObject_ = nullptr;
+	//オブジェクトの詳細で編集するオイラー角
+	Vector3 inspectorEulerAngle_ = Vector3::GetZero();
+
 	//ゲームオブジェクトの一覧へのポインタ
 	const std::vector<std::unique_ptr<GameObject>>* gameObjects_;
+
 	//作成要求
 	bool requestCreateGameObject_ = false;
 	//複製要求
 	GameObject* requestDuplicateGameObject_ = nullptr;
 	//削除要求
 	GameObject* requestDeleteGameObject_ = nullptr;
+
 	//名前変更
 	GameObject* renamingGameObject_ = nullptr;
 	//名前変更用の文字列バッファ
 	std::array<char, 256>renameObjectBuffer_ = {};
 	//InputTextへフォーカスする要求
 	bool requestRenameFocus_ = false;
-	//タグの管理
-	TagManager* tagManager_ = nullptr;
+
 	//タグの管理を開くかのフラグ
 	bool isTegManagerOpen_ = false;
 	//新規タグ入力用
@@ -189,15 +242,30 @@ private://メンバ変数
 	std::optional<std::string>requestDeleteTag_ = "\0";
 	//削除用
 	std::string deleteTargetTag_ = "\0";
+
 	//移動前のインデックス
 	uint32_t draggedIndex_ = 0;
 	//移動後のインデックス
 	uint32_t dropTargetIndex_ = 0;
 	//ゲームオブジェクトの移動要求
 	bool requestMoveGameObject_ = false;
+
 	//シーンビューを選択しているか
 	bool isSceneViewHovered_ = false;
 	//プレビューを選択しているか
 	bool isPreviewHovered_ = false;
+
+	//シーンビューの矩形情報
+	SceneViewRectInfo sceneViewRectInfo_ = {};
+
+	//デバッグカメラ
+	Camera* debugCamera_ = nullptr;
+
+#ifdef USE_IMGUI
+	//Gizmoツール
+	GizmoTool gizmoTool_ = GizmoTool::kTranslate;
+#endif // USE_IMGUI
+	//Gizmoツールバーを表示するか
+	bool isGizmoToolbarVisible_ = true;
 };
 

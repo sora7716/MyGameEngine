@@ -9,6 +9,7 @@ class DirectXBase;
 class AbstractSceneFactory;
 class GameObject;
 class DebugCameraController;
+class Camera;
 
 /// <summary>
 /// シーンの基底クラス
@@ -99,7 +100,7 @@ public://メンバ関数
 	/// </summary>
 	/// <returns>シーンに必要な情報</returns>
 	const SceneContext& GetSceneContext();
-	
+
 	/// <summary>
 	/// デバッグが有効かの設定
 	/// </summary>
@@ -111,6 +112,12 @@ public://メンバ関数
 	/// </summary>
 	/// <param name="isAppInputEnabled">アプリケーションが有効か</param>
 	void SetIsAppInputEnabled(bool isAppInputEnabled);
+
+	/// <summary>
+	/// デバッグカメラの取得
+	/// </summary>
+	/// <returns>デバッグカメラ</returns>
+	Camera* GetDebugCamera()const;
 private://メンバ関数
 	/// <summary>
 	/// 名前を重複しないようにする
@@ -133,4 +140,6 @@ private://メンバ変数
 	SceneContext sceneContext_ = {};
 	//デバッグカメラの操作
 	DebugCameraController* debugCameraController_ = nullptr;
+	//デバッグカメラのポインタ
+	Camera* debugCamera_ = nullptr;
 };

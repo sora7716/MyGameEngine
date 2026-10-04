@@ -106,7 +106,7 @@ void Object3d::DetachParent(){
 
 	//Transformを抽出
 	Transform& transform = gameObject->GetTransform();
-	transform = matrixUtility::DecomposeMatrix(worldMatrix_);
+	transform = matrixUtility::DecomposeMatrix(worldMatrix_, transform.scale);
 
 	//親を解除
 	parentObject_ = nullptr;

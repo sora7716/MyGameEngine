@@ -19,13 +19,16 @@ void DebugCameraController::Initialize(){
 	//基底クラスの初期化
 	Component::Initialize();
 	gameObject_ = GetOwner();
-	gameObject_->GetTransform().SetEulerAngle({ 0.35f,0.04f,0.0f });
+	pitch_ = 0.35f;
+	yaw_ = 0.04f;
+	gameObject_->GetTransform().SetEulerAngle({ pitch_,yaw_,0.0f });
 	gameObject_->GetTransform().translate = { -2.9f,11.0f,-29.0f };
 	camera_ = gameObject_->GetComponent<Camera>();
 
 	assert(camera_);
 
 	fovY_ = camera_->GetFovY();
+
 }
 
 //更新

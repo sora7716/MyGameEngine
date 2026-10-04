@@ -6,6 +6,7 @@
 #include "Camera.h"
 #include "MatrixUtility.h"
 #include "TextureManager.h"
+#include "DebugCameraController.h"
 #include <cassert>
 
 //コンストラクタ
@@ -52,10 +53,10 @@ void DebugEditor::Draw(D3D12_GPU_DESCRIPTOR_HANDLE sceneHandle, D3D12_GPU_DESCRI
 	DrawDockSpace();
 	//ヒエラルキーの描画
 	DrawHierarchy();
-	//シーンの描画
-	DrawScene(sceneHandle);
 	//プレビューの描画
 	DrawPreview(previewHandle);
+	//シーンの描画
+	DrawScene(sceneHandle);
 	//インスペクターの描画
 	DrawInspector();
 	//タグの管理の描画
@@ -198,6 +199,11 @@ void DebugEditor::DrawHierarchy(){
 			const std::unique_ptr<GameObject>& gameObject = gameObjects_->at(i);
 			//ゲームオブジェクトがなかった場合
 			if (!gameObject){
+				continue;
+			}
+
+			//ゲームオブジェクトにデバッグカメラの操作がコンポーネントであった場合
+			if (gameObject->GetComponent<DebugCameraController>()){
 				continue;
 			}
 
@@ -427,7 +433,7 @@ void DebugEditor::DrawGizmo(){
 	//行列が変更されたか
 	if (isChangedMatrix){
 		//ワールド行列からトランスフォームに分解
-		Transform transform = matrixUtility::DecomposeMatrix(worldMatrix);
+		Transform transform = matrixUtility::DecomposeMatrix(worldMatrix, selectedGameObject_->GetTransform().scale);
 		//Transformを設定
 		selectedGameObject_->GetTransform() = transform;
 	}

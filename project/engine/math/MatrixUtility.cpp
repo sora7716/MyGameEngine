@@ -256,7 +256,7 @@ Matrix4x4 matrixUtility::MakeBillboardAffineMatrix(const Matrix4x4& cameraWorldM
 }
 
 //行列をTransformに分解
-Transform matrixUtility::DecomposeMatrix(const Matrix4x4& m){
+Transform matrixUtility::DecomposeMatrix(const Matrix4x4& m, const Vector3& referenceScale){
 	//平行移動行列を抽出
 	Vector3 translate = { m.m[3][0],m.m[3][1],m.m[3][2] };
 
@@ -293,6 +293,17 @@ Transform matrixUtility::DecomposeMatrix(const Matrix4x4& m){
 
 	//回転行列をクォータニオンに変換
 	Quaternion rotate = Quaternion::RotationMatrixToQuaternion(rotateMatrix);
+
+	//基準となる拡縮を確認し負だった場合
+	if (referenceScale.x < 0.0f){
+		scale.x = -scale.x;
+	}
+	if (referenceScale.y < 0.0f){
+		scale.y = -scale.y;
+	}
+	if (referenceScale.z < 0.0f){
+		scale.z = -scale.z;
+	}
 
 	//Transformに入れる
 	Transform result = {};

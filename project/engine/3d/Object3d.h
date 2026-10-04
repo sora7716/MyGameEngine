@@ -284,6 +284,12 @@ public://メンバ関数
 	/// </summary>
 	/// <returns>ノードの情報の配列</returns>
 	std::vector<Object3d::NodeInfo>GetNodeNames()const;
+
+	/// <summary>
+	/// ノードを取得
+	/// </summary>
+	/// <returns>ノード</returns>
+	const Node& GetNode()const;
 private://メンバ関数
 	/// <summary>
 	/// ノードの名前を集める

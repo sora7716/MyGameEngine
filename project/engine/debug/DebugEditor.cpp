@@ -7,6 +7,7 @@
 #include "MatrixUtility.h"
 #include "TextureManager.h"
 #include "DebugCameraController.h"
+#include "Object3d.h"
 #include <cassert>
 
 //コンストラクタ
@@ -243,8 +244,16 @@ void DebugEditor::DrawHierarchy(){
 					renamingGameObject_ = nullptr;
 				}
 			} else{
-				if (ImGui::Selectable(gameObjectPtr->GetName().c_str(), isSelected)){
+				if (ImGui::TreeNodeEx(gameObjectPtr->GetName().c_str(), isSelected)){
 					selectedGameObject_ = gameObjectPtr;
+
+					//ノードの描画
+					Object3d* object3d = gameObjectPtr->GetComponent<Object3d>();
+					if (object3d){
+						DrawNodeTree(object3d->GetNode(), object3d->GetNode().name);
+					}
+
+					ImGui::TreePop();
 				}
 
 				//ドラッグ元
@@ -500,38 +509,72 @@ void DebugEditor::DrawInspector(){
 
 		ImGui::SeparatorText("トランスフォーム");
 
-		Transform& transform = selectedGameObject_->GetTransform();
+		//変更されたかを判定
+		bool isChange = false;
+
+		//選択しているゲームオブジェクトのTransformをコピー
+		Transform transform = selectedGameObject_->GetTransform();
+
+		//選択中のノードのパスがある場合
+		if (!selectedNodePath_.empty()){
+			Object3d* object3d = selectedGameObject_->GetComponent<Object3d>();
+			if (object3d){
+				transform = object3d->GetNodeLocalTransform(selectedNodePath_);
+			}
+		}
 
 		//トランスフォームのリセットボタン
 		if (ImGui::Button("トランスフォームをリセット")){
 			transform = {};
+			isChange = true;
 		}
 
 		//スケールの切り替え
-		ImGui::DragFloat3("拡縮", &transform.scale.x, 0.1f);
+		if (ImGui::DragFloat3("拡縮", &transform.scale.x, 0.1f)){
+			isChange = true;
+		}
 		ImGui::SameLine();
 		//スケールのリセット
 		if (ImGui::SmallButton("リセット##scale")){
 			transform.scale = Vector3::GetOne();
+			isChange = true;
 		}
 
 		//回転の切り替え(オイラー角からクォータニオンを求めてる)
 		if (ImGui::DragFloat3("回転", &inspectorEulerAngle_.x, 0.1f)){
 			transform.rotate = Quaternion::EulerAngleToQuaternion(inspectorEulerAngle_);
+			isChange = true;
 		}
 		ImGui::SameLine();
 		//回転のリセット
 		if (ImGui::SmallButton("リセット##rotate")){
 			transform.rotate = Quaternion::IdentityQuaternion();
+			isChange = true;
 		}
 
 
 		//平行移動成分の切り替え
-		ImGui::DragFloat3("平行移動", &transform.translate.x, 0.1f);
+		if (ImGui::DragFloat3("平行移動", &transform.translate.x, 0.1f)){
+			isChange = true;
+		}
 		ImGui::SameLine();
 		//平行成分のリセット
 		if (ImGui::SmallButton("リセット##translate")){
 			transform.translate = { 0.0f,0.0f,0.0f };
+			isChange = true;
+		}
+
+		//変更されている場合
+		if (isChange){
+			//最終的な結果を元のTransformに反映
+			if (!selectedNodePath_.empty()){
+				Object3d* object3d = selectedGameObject_->GetComponent<Object3d>();
+				if (object3d){
+					object3d->SetNodeLocalTransform(selectedNodePath_, transform);
+				}
+			} else{
+				selectedGameObject_->GetTransform() = transform;
+			}
 		}
 
 	} else{
@@ -721,4 +764,43 @@ void DebugEditor::BeginRename(GameObject* gameObject){
 		copyLength,
 		renameObjectBuffer_.data()
 	);
+}
+
+//ノードのツリーを描画
+void DebugEditor::DrawNodeTree(const Node& node, const std::string& parentPath){
+#ifdef USE_IMGUI
+	//現在のパス
+	std::string currentPath = parentPath;
+
+	//矢印で開く(選択ハイライトの幅を行の右端まで伸ばす)
+	ImGuiTreeNodeFlags nodeFlags = ImGuiTreeNodeFlags_OpenOnArrow | ImGuiTreeNodeFlags_SpanAvailWidth;
+	//子ノードがなければ
+	if (node.children.empty()){
+		//末端ノードにする
+		nodeFlags |= ImGuiTreeNodeFlags_Leaf;
+	}
+
+	//選択されていたらハイライトをつける
+	if (selectedNodePath_ == currentPath){
+		nodeFlags |= ImGuiTreeNodeFlags_Selected;
+	}
+
+	//ツリーを開く
+	bool open = ImGui::TreeNodeEx(static_cast<const void*>(&node), nodeFlags, "%s", node.name.c_str());
+
+	//子ノードを開く前に確認する(矢印をクリックしてない場合)
+	if (ImGui::IsItemClicked() && !ImGui::IsItemToggledOpen()){
+		//このNodeのパスを選択中のパスとして取得
+		selectedNodePath_ = currentPath;
+	}
+
+	//ツリーが開いていたら
+	if (open){
+		//子ノードを描画
+		for (const Node& child : node.children){
+			DrawNodeTree(child, currentPath + "/" + child.name);
+		}
+		ImGui::TreePop();
+	}
+#endif // USE_IMGUI
 }

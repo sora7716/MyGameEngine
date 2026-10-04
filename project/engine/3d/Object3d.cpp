@@ -456,6 +456,11 @@ std::vector<Object3d::NodeInfo> Object3d::GetNodeNames()const{
 	return nodeInfos;
 }
 
+//ノードを取得
+const Node& Object3d::GetNode()const{
+	return node_;
+}
+
 //ノードの名前を集める
 void Object3d::CollectNodeNames(const Node& node, const std::string& parentPath, std::vector<NodeInfo>& nodeInfos)const{
 	//現在のパス

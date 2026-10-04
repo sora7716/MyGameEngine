@@ -54,15 +54,6 @@ void GameScene::UpdateState(){
 void GameScene::Debug(){
 	//基底クラスのデバッグ
 	BaseScene::Debug();
-
-#ifdef USE_IMGUI
-	ImGui::Begin("デバッグ");
-	Object3d* playerObject3d = playerObject_->GetComponent<Object3d>();
-	for (const Object3d::NodeInfo& nodeInfo : playerObject3d->GetNodeNames()){
-		ImGui::Text("・%s", nodeInfo.path.c_str());
-	}
-	ImGui::End();
-#endif // USE_IMGUI
 }
 
 //解放処理

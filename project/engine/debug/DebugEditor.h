@@ -1,4 +1,5 @@
 #pragma once
+#include "RenderingData.h"
 #include "ImGuiManager.h"
 #ifdef USE_IMGUI
 #include "ImGuizmo.h"
@@ -195,6 +196,13 @@ private://メンバ関数
 	/// </summary>
 	/// <param name="gameObject">ゲームオブジェクト</param>
 	void BeginRename(GameObject* gameObject);
+
+	/// <summary>
+	/// ノードのツリーを描画
+	/// </summary>
+	/// <param name="node">ノード</param>
+	/// <param name="parentPath">親のパス</param>
+	void DrawNodeTree(const Node& node,const std::string& parentPath);
 private://定数
 	//ゲームオブジェクトのpayloadType
 	static inline const std::string kGameObjectPayloadType = "GameObjectPayload";
@@ -267,5 +275,8 @@ private://メンバ変数
 #endif // USE_IMGUI
 	//Gizmoツールバーを表示するか
 	bool isGizmoToolbarVisible_ = true;
+
+	//選択中のNodeパス
+	std::string selectedNodePath_ = "";
 };
 

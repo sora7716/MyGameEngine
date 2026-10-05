@@ -520,6 +520,7 @@ void DebugEditor::DrawInspector(){
 			Object3d* object3d = selectedGameObject_->GetComponent<Object3d>();
 			if (object3d){
 				transform = object3d->GetNodeLocalTransform(selectedNodePath_);
+				inspectorEulerAngle_ = transform.GetEulerAngle();
 			}
 		}
 

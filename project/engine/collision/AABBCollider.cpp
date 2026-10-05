@@ -2,22 +2,22 @@
 #include "GameObject.h"
 
 //コンストラクタ
-AABBCollider::AABBCollider(GameObject* gameObject) :BaseCollider(gameObject){
+BoxCollider::BoxCollider(GameObject* gameObject) :BaseCollider(gameObject){
 }
 
 //デストラクタ
-AABBCollider::~AABBCollider(){
+BoxCollider::~BoxCollider(){
 }
 
 //初期化
-void AABBCollider::Initialize(){
+void BoxCollider::Initialize(){
 	//基底クラスの更新
 	BaseCollider::Initialize();
 	halfSize_ = Vector3::GetOne();
 }
 
 //更新
-void AABBCollider::Update(){
+void BoxCollider::Update(){
 	//中心座標
 	const Vector3& center = gameObject_->GetTransform().translate + offset_;
 
@@ -30,33 +30,33 @@ void AABBCollider::Update(){
 }
 
 //ハーフサイズの設定
-void AABBCollider::SetHalfSize(const Vector3& halfSize){
+void BoxCollider::SetHalfSize(const Vector3& halfSize){
 	halfSize_ = halfSize;
 }
 
 //オフセットの設定
-void AABBCollider::SetOffset(const Vector3& offset){
+void BoxCollider::SetOffset(const Vector3& offset){
 	offset_ = offset;
 }
 
 //ハーフサイズの取得
-const Vector3& AABBCollider::GetHalfSize() const{
+const Vector3& BoxCollider::GetHalfSize() const{
 	return halfSize_;
 }
 
 //AABBの取得
-const primitiveData::AABB& AABBCollider::GetAABB(){
+const primitiveData::AABB& BoxCollider::GetAABB(){
 	return aabb_;
 }
 
 //オフセットの取得
-const Vector3& AABBCollider::GetOffset() const{
+const Vector3& BoxCollider::GetOffset() const{
 	return offset_;
 }
 
 //複製
-std::unique_ptr<Component> AABBCollider::Clone(GameObject* gameObject) const{
-	std::unique_ptr<AABBCollider>cloneInstance = std::make_unique<AABBCollider>(gameObject);
+std::unique_ptr<Component> BoxCollider::Clone(GameObject* gameObject) const{
+	std::unique_ptr<BoxCollider>cloneInstance = std::make_unique<BoxCollider>(gameObject);
 
 	//初期化
 	cloneInstance->Initialize();
@@ -70,6 +70,6 @@ std::unique_ptr<Component> AABBCollider::Clone(GameObject* gameObject) const{
 }
 
 //コライダータイプの取得
-ColliderType AABBCollider::GetColliderType() const{
+ColliderType BoxCollider::GetColliderType() const{
 	return ColliderType::kBox;
 }

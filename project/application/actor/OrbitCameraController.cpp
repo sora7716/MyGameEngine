@@ -36,6 +36,11 @@ void OrbitCameraController::Update(){
 		return;
 	}
 
+	//ターゲットがいなければ
+	if (!target_){
+		return;
+	}
+
 	//回転前のカメラの相対位置	
 	Vector3 targetPos = target_->GetTransform().translate + targetOffset_;
 
@@ -72,6 +77,13 @@ std::unique_ptr<Component> OrbitCameraController::Clone(GameObject* gameObject) 
 	cloneInstance->SetEnabled(this->IsEnabled());
 
 	return cloneInstance;
+}
+
+//ゲームオブジェクトから解除する
+void OrbitCameraController::OnGameObjectRemoving(GameObject* target){
+	if (target_ == target){
+		target_ = nullptr;
+	}
 }
 
 //対象の設定

@@ -84,7 +84,7 @@ void CollisionSystem::RemoveReflectionTo(GameObject* target){
 			colliders_.begin(),
 			colliders_.end(),
 			[target](BaseCollider* collider){
-				return collider->GetOwner() == target;
+				return collider && collider->GetOwner() == target;
 			}
 		),
 		colliders_.end()
@@ -133,12 +133,12 @@ void CollisionSystem::CheckCollisionPair(BaseCollider* collider1, BaseCollider* 
 	//両方AABBかどうかを確認
 	if (type1 == ColliderType::kBox && type2 == ColliderType::kBox){
 		//AABBの衝突判定
-		CheckCollisionAABB(static_cast<AABBCollider*>(collider1), static_cast<AABBCollider*>(collider2));
+		CheckCollisionAABB(static_cast<BoxCollider*>(collider1), static_cast<BoxCollider*>(collider2));
 	}
 }
 
-//AABBの衝突判定を確認
-void CollisionSystem::CheckCollisionAABB(AABBCollider* collider1, AABBCollider* collider2){
+//Boxの衝突判定を確認
+void CollisionSystem::CheckCollisionAABB(BoxCollider* collider1, BoxCollider* collider2){
 	//AABBを取得
 	primitiveData::AABB aabb1 = collider1->GetAABB();
 	primitiveData::AABB aabb2 = collider2->GetAABB();

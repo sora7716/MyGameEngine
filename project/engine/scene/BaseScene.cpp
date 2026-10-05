@@ -7,6 +7,7 @@
 #include "TagManager.h"
 #include "Input.h"
 #include "Object3d.h"
+#include "CollisionSystem.h"
 #include <algorithm>
 
 //コンストラクタ
@@ -78,24 +79,34 @@ void BaseScene::Finalize(){
 }
 
 //ゲームオブジェクトの削除
-void BaseScene::DeleteGameObject(GameObject* target){
+void BaseScene::DeleteGameObject(GameObject* target, CollisionSystem* collisionSystem){
 	//Object3dが存在したら
 	Object3d* targetObject3d = target->GetComponent<Object3d>();
 	if (targetObject3d){
-		//親オブジェクトが存在したら
-		const Object3d* parentObject3d = targetObject3d->GetParentObject3d();
-		if (parentObject3d){
-			//親子関係の解消
-			for (std::unique_ptr<GameObject>& gameObject : gameObjects_){
-				Object3d* object3d = gameObject->GetComponent<Object3d>();
-				if (!object3d){
-					continue;
-				}
+		//親子関係の解消
+		for (std::unique_ptr<GameObject>& gameObject : gameObjects_){
+			Object3d* object3d = gameObject->GetComponent<Object3d>();
+			if (!object3d){
+				continue;
+			}
 
-				//親オブジェクトと一致していたら
-				if (object3d->GetParentObject3d() == targetObject3d){
-					object3d->DetachParent();
-				}
+			//親オブジェクトと一致していたら
+			if (object3d->GetParentObject3d() == targetObject3d){
+				object3d->DetachParent();
+			}
+		}
+	}
+
+	//衝突判定システムから削除
+	collisionSystem->RemoveReflectionTo(target);
+
+	//GameObjectからコンポーネントを外すのを通知
+	for (const std::unique_ptr<GameObject>& gameObject : gameObjects_){
+		//ゲームオブジェクトが存在するか
+		if (gameObject){
+			//ゲームオブジェクトが対象と一致しているか
+			if (gameObject.get() == target){
+				gameObject->NotifyGameObjectRemoving(target);
 			}
 		}
 	}

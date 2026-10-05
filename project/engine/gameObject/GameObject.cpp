@@ -150,7 +150,7 @@ void GameObject::DebugImGui(){
 		} else if (!component->IsEnabled()){
 			//コンポーネントが有効か
 			continue;
-		} 
+		}
 
 		//コンポーネントでImGuiを使用する
 		component->DebugImGui();
@@ -165,6 +165,15 @@ void GameObject::InvokeCollisionEvent(uint32_t index, const CollisionInfo& info)
 //衝突判定のイベントを呼び出す
 void GameObject::InvokeTriggerEvent(uint32_t index, BaseCollider* other){
 	(this->*onTriggerTable[index])(other);
+}
+
+//ゲームオブジェクトから解除すると通知
+void GameObject::NotifyGameObjectRemoving(GameObject* target){
+	for (const std::unique_ptr<Component>& component : components_){
+		if (component){
+			component->OnGameObjectRemoving(target);
+		}
+	}
 }
 
 //接触した瞬間ということを各コンポーネントに通知する

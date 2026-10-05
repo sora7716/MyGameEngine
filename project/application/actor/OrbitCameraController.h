@@ -40,6 +40,12 @@ public://メンバ関数
 	std::unique_ptr<Component> Clone(GameObject* gameObject)const override;
 
 	/// <summary>
+	/// ゲームオブジェクトから解除する
+	/// </summary>
+	/// <param name="target">対象</param>
+	void OnGameObjectRemoving(GameObject* target)override;
+
+	/// <summary>
 	/// 対象の設定
 	/// </summary>
 	/// <param name="target">対象</param>

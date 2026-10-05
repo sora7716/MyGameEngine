@@ -210,6 +210,12 @@ public://メンバ関数
 	/// <param name="index">検索キー</param>
 	/// <param name="other">衝突対象のコライダー</param>
 	void InvokeTriggerEvent(uint32_t index, BaseCollider* other);
+
+	/// <summary>
+	/// ゲームオブジェクトから解除すると通知
+	/// </summary>
+	/// <param name="target">対象</param>
+	void NotifyGameObjectRemoving(GameObject* target);
 private://メンバ関数
 	/// <summary>
 	/// 接触した瞬間ということを各コンポーネントに通知する

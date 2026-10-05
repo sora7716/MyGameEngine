@@ -10,6 +10,7 @@ class AbstractSceneFactory;
 class GameObject;
 class DebugCameraController;
 class Camera;
+class CollisionSystem;
 
 /// <summary>
 /// シーンの基底クラス
@@ -55,7 +56,8 @@ public://メンバ関数
 	/// ゲームオブジェクトの削除
 	/// </summary>
 	/// <param name="target">対象となるゲームオブジェクト</param>
-	void DeleteGameObject(GameObject* target);
+	/// <param name="collisionSystem">衝突判定のシステム</param>
+	void DeleteGameObject(GameObject* target,CollisionSystem*collisionSystem);
 
 	/// <summary>
 	/// ゲームオブジェトの複製

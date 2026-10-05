@@ -101,7 +101,7 @@ void SceneManager::Debug(D3D12_GPU_DESCRIPTOR_HANDLE sceneHandle, D3D12_GPU_DESC
 
 	//削除要求
 	if (GameObject* target = debugEditor_->ConsumeDeleteRequest()){
-		scene_->DeleteGameObject(target);
+		scene_->DeleteGameObject(target, collisionSystem_);
 	}
 
 	//ゲームオブジェクトの移動要求

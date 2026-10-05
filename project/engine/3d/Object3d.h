@@ -290,6 +290,18 @@ public://メンバ関数
 	/// </summary>
 	/// <returns>ノード</returns>
 	const Node& GetNode()const;
+
+	/// <summary>
+	/// 親ノードのパスを取得
+	/// </summary>
+	/// <returns>親ノードのパスを取得</returns>
+	const std::string& GetParentNodePath()const;
+
+	/// <summary>
+	/// 親オブジェクトを取得
+	/// </summary>
+	/// <returns>親オブジェクト</returns>
+	const Object3d* GetParentObject()const;
 private://メンバ関数
 	/// <summary>
 	/// ノードの名前を集める

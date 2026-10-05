@@ -1,4 +1,5 @@
 #pragma once
+#include "Vector3.h"
 #include "PhysicsData.h"
 /// <summary>
 /// 物理演算
@@ -10,7 +11,7 @@ namespace physics {
 	/// <param name="spring">ばね</param>
 	/// <param name="ball">ボール</param>
 	/// <returns>加速度</returns>
-	static Vector3 ApplySpringForce(const Spring& spring, const Ball& ball);
+	Vector3 ApplySpringForce(const Spring& spring, const Ball& ball);
 
 	/// <summary>
 	/// 振り子
@@ -18,8 +19,8 @@ namespace physics {
 	/// <param name="pendulum">振り子</param>
 	/// <param name="ballPos">ボールの位置</param>
 	/// <returns>位置</returns>
-	static Vector3 ApplyPendulumForce(Pendulum& pendulum, const Vector3& ballPos);
-	
+	Vector3 ApplyPendulumForce(Pendulum& pendulum, const Vector3& ballPos);
+
 	//重力加速度
 	const Vector3 kGravity = { 0.0f,-20.0f,0.0f };
 };

@@ -18,6 +18,7 @@ class GameObject;
 class TextureManager;
 class TagManager;
 class Camera;
+class Object3d;
 
 /// <summary>
 /// タグの名前変更リクエスト用
@@ -64,7 +65,7 @@ public://メンバ関数
 	/// </summary>
 	/// <param name="textureManager">テクスチャの管理</param>
 	/// <param name="tagManager">タグの管理</param>
-	void Initialize(TextureManager* textureManager,TagManager* tagManager);
+	void Initialize(TextureManager* textureManager, TagManager* tagManager);
 
 	/// <summary>
 	/// 更新
@@ -202,7 +203,8 @@ private://メンバ関数
 	/// </summary>
 	/// <param name="node">ノード</param>
 	/// <param name="parentPath">親のパス</param>
-	void DrawNodeTree(const Node& node,const std::string& parentPath);
+	/// <param name="targetObject">対象となるObject3d</param>
+	void DrawNodeTree(const Node& node, const std::string& parentPath, Object3d* targetObject);
 private://定数
 	//ゲームオブジェクトのpayloadType
 	static inline const std::string kGameObjectPayloadType = "GameObjectPayload";
@@ -221,7 +223,7 @@ private://メンバ変数
 	Vector3 inspectorEulerAngle_ = Vector3::GetZero();
 
 	//ゲームオブジェクトの一覧へのポインタ
-	const std::vector<std::unique_ptr<GameObject>>* gameObjects_;
+	const std::vector<std::unique_ptr<GameObject>>* gameObjects_ = nullptr;
 
 	//作成要求
 	bool requestCreateGameObject_ = false;

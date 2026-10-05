@@ -203,13 +203,19 @@ void DebugEditor::DrawHierarchy(){
 				continue;
 			}
 
+			//ゲームオブジェクトの生ポインタを保存
+			GameObject* gameObjectPtr = gameObject.get();
+
 			//ゲームオブジェクトにデバッグカメラの操作がコンポーネントであった場合
-			if (gameObject->GetComponent<DebugCameraController>()){
+			if (gameObjectPtr->GetComponent<DebugCameraController>()){
 				continue;
 			}
 
-			//ゲームオブジェクトの生ポインタを保存
-			GameObject* gameObjectPtr = gameObject.get();
+			//親オブジェクトが存在した場合はスキップ
+			Object3d* object3d = gameObjectPtr->GetComponent<Object3d>();
+			if (object3d && object3d->GetParentObject()){
+				continue;
+			}
 
 			//IDを追加し、同じ名前のObjectでも衝突しないようにする
 			ImGui::PushID(gameObjectPtr);
@@ -248,9 +254,8 @@ void DebugEditor::DrawHierarchy(){
 					selectedGameObject_ = gameObjectPtr;
 
 					//ノードの描画
-					Object3d* object3d = gameObjectPtr->GetComponent<Object3d>();
 					if (object3d){
-						DrawNodeTree(object3d->GetNode(), object3d->GetNode().name);
+						DrawNodeTree(object3d->GetNode(), object3d->GetNode().name, object3d);
 					}
 
 					ImGui::TreePop();
@@ -768,7 +773,7 @@ void DebugEditor::BeginRename(GameObject* gameObject){
 }
 
 //ノードのツリーを描画
-void DebugEditor::DrawNodeTree(const Node& node, const std::string& parentPath){
+void DebugEditor::DrawNodeTree(const Node& node, const std::string& parentPath, Object3d* targetObject){
 #ifdef USE_IMGUI
 	//現在のパス
 	std::string currentPath = parentPath;
@@ -795,12 +800,64 @@ void DebugEditor::DrawNodeTree(const Node& node, const std::string& parentPath){
 		selectedNodePath_ = currentPath;
 	}
 
+	//接続されているゲームオブジェクト一覧
+	std::vector<GameObject*>attachedGameObjects;
+
+	//このノードに接続されたGameObjectがないか探索
+	for (const std::unique_ptr<GameObject>& gameObject : *gameObjects_){
+		//Object3dが存在するか
+		Object3d* object3d = gameObject->GetComponent<Object3d>();
+		if (!object3d){
+			continue;
+		}
+
+		//親オブジェクトが存在するか
+		const Object3d* parentObject = object3d->GetParentObject();
+		if (!parentObject){
+			continue;
+		}
+		//対象のObject3dと親のObject3dが一致しているか
+		if (targetObject == parentObject){
+			//現在のパスが親のパスと一致しているか
+			std::string parentNodePath = object3d->GetParentNodePath();
+			if (currentPath == parentNodePath){
+				//接続されているゲームオブジェクト一覧に追加
+				attachedGameObjects.push_back(gameObject.get());
+			}
+		}
+	}
+
 	//ツリーが開いていたら
 	if (open){
 		//子ノードを描画
 		for (const Node& child : node.children){
-			DrawNodeTree(child, currentPath + "/" + child.name);
+			DrawNodeTree(child, currentPath + "/" + child.name, targetObject);
 		}
+
+		//接続されているゲームオブジェクトを描画
+		for (GameObject* attachedGameObject : attachedGameObjects){
+			//Object3dを取得
+			Object3d* attachedObject3d = attachedGameObject->GetComponent<Object3d>();
+			if (!attachedObject3d){
+				continue;
+			}
+
+			//接続されているGameObjectのツリーを開く
+			bool attachedOpen = ImGui::TreeNodeEx(
+				static_cast<const void*>(attachedGameObject), ImGuiTreeNodeFlags_OpenOnArrow | ImGuiTreeNodeFlags_SpanAvailWidth,
+				"%s",
+				attachedGameObject->GetName().c_str());
+
+			//ノードを取得
+			const Node& attachedNode = attachedObject3d->GetNode();
+
+			if (attachedOpen){
+				//ツリーに描画
+				DrawNodeTree(attachedNode, attachedNode.name, attachedObject3d);
+				ImGui::TreePop();
+			}
+		}
+
 		ImGui::TreePop();
 	}
 #endif // USE_IMGUI

@@ -461,6 +461,16 @@ const Node& Object3d::GetNode()const{
 	return node_;
 }
 
+//親ノードのパスを取得
+const std::string& Object3d::GetParentNodePath() const{
+	return parentNodePath_;
+}
+
+//親オブジェクトを取得
+const Object3d* Object3d::GetParentObject() const{
+	return parentObject_;
+}
+
 //ノードの名前を集める
 void Object3d::CollectNodeNames(const Node& node, const std::string& parentPath, std::vector<NodeInfo>& nodeInfos)const{
 	//現在のパス

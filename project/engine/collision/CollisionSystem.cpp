@@ -70,6 +70,27 @@ void CollisionSystem::Update(const std::vector<std::unique_ptr<GameObject>>& gam
 	}
 }
 
+//参照を解除
+void CollisionSystem::RemoveReflectionTo(GameObject* target){
+	//コライダーが存在しているか
+	BaseCollider* targetCollider = target->GetComponent<BaseCollider>();
+	if (!targetCollider){
+		return;
+	}
+
+	//ゲームオブジェクトから削除
+	colliders_.erase(
+		std::remove_if(
+			colliders_.begin(),
+			colliders_.end(),
+			[target](BaseCollider* collider){
+				return collider->GetOwner() == target;
+			}
+		),
+		colliders_.end()
+	);
+}
+
 //コライダーを集める
 void CollisionSystem::CollectCollider(const std::vector<std::unique_ptr<GameObject>>& gameObjects){
 	//描画に有効なコライダーをリセット
@@ -110,7 +131,7 @@ void CollisionSystem::CheckCollisionPair(BaseCollider* collider1, BaseCollider* 
 	ColliderType type2 = collider2->GetColliderType();
 
 	//両方AABBかどうかを確認
-	if (type1 == ColliderType::kAABB && type2 == ColliderType::kAABB){
+	if (type1 == ColliderType::kBox && type2 == ColliderType::kBox){
 		//AABBの衝突判定
 		CheckCollisionAABB(static_cast<AABBCollider*>(collider1), static_cast<AABBCollider*>(collider2));
 	}

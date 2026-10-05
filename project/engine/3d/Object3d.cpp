@@ -94,7 +94,7 @@ void Object3d::UpdateLOD(float distance){
 //親子付けを外す
 void Object3d::DetachParent(){
 	//そもそも親がなければ
-	if (!parentObject_){
+	if (!parentObject3d_){
 		return;
 	}
 	//ゲームオブジェクト取得
@@ -109,7 +109,7 @@ void Object3d::DetachParent(){
 	transform = matrixUtility::DecomposeMatrix(worldMatrix_, transform.scale);
 
 	//親を解除
-	parentObject_ = nullptr;
+	parentObject3d_ = nullptr;
 	parentNodePath_.clear();
 	parentMatrix_ = Matrix4x4::Identity4x4();
 }
@@ -133,7 +133,7 @@ bool Object3d::AttachTo(Object3d* parent, const std::string& parentNodePath){
 	}
 
 	//メンバ変数に記録
-	parentObject_ = parent;
+	parentObject3d_ = parent;
 	parentNodePath_ = parentNodePath;
 	return true;
 }
@@ -467,8 +467,8 @@ const std::string& Object3d::GetParentNodePath() const{
 }
 
 //親オブジェクトを取得
-const Object3d* Object3d::GetParentObject() const{
-	return parentObject_;
+const Object3d* Object3d::GetParentObject3d() const{
+	return parentObject3d_;
 }
 
 //ノードの名前を集める
@@ -548,10 +548,10 @@ void Object3d::MakeWorldMatrix(){
 	assert(gameObject);
 
 	//親オブジェクトがある場合
-	if (parentObject_){
-		Node* node = parentObject_->FindNode(parentNodePath_);
+	if (parentObject3d_){
+		Node* node = parentObject3d_->FindNode(parentNodePath_);
 		if (node){
-			parentMatrix_ = node->modelMatrix * parentObject_->GetWorldMatrix();
+			parentMatrix_ = node->modelMatrix * parentObject3d_->GetWorldMatrix();
 		}
 	}
 

@@ -59,6 +59,12 @@ public://メンバ関数
 	/// 更新
 	/// </summary>
 	void Update(const std::vector<std::unique_ptr<GameObject>>& gameObjects);
+
+	/// <summary>
+	/// 参照を解除
+	/// </summary>
+	/// <param name="target">対象</param>
+	void RemoveReflectionTo(GameObject* target);
 private://メンバ関数
 	//コピーコンストラクタ禁止
 	CollisionSystem(const CollisionSystem&) = delete;

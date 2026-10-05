@@ -301,7 +301,7 @@ public://メンバ関数
 	/// 親オブジェクトを取得
 	/// </summary>
 	/// <returns>親オブジェクト</returns>
-	const Object3d* GetParentObject()const;
+	const Object3d* GetParentObject3d()const;
 private://メンバ関数
 	/// <summary>
 	/// ノードの名前を集める
@@ -365,7 +365,7 @@ private://メンバ変数
 	RenderTransformMode renderTransformMode_ = RenderTransformMode::kNormal;
 
 	//親
-	Object3d* parentObject_ = nullptr;
+	Object3d* parentObject3d_ = nullptr;
 	std::string  parentNodePath_ = "";
 
 	//親行列

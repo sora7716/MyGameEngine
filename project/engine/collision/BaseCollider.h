@@ -17,9 +17,8 @@ struct CollisionInfo{
 
 //コライダータイプ
 enum class ColliderType :uint32_t{
-	kAABB,
+	kBox,
 	kSphere,
-	kOBB
 };
 
 //ボディタイプ

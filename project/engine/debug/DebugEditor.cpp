@@ -213,7 +213,7 @@ void DebugEditor::DrawHierarchy(){
 
 			//親オブジェクトが存在した場合はスキップ
 			Object3d* object3d = gameObjectPtr->GetComponent<Object3d>();
-			if (object3d && object3d->GetParentObject()){
+			if (object3d && object3d->GetParentObject3d()){
 				continue;
 			}
 
@@ -812,7 +812,7 @@ void DebugEditor::DrawNodeTree(const Node& node, const std::string& parentPath, 
 		}
 
 		//親オブジェクトが存在するか
-		const Object3d* parentObject = object3d->GetParentObject();
+		const Object3d* parentObject = object3d->GetParentObject3d();
 		if (!parentObject){
 			continue;
 		}

@@ -200,6 +200,12 @@ public://メンバ関数
 	const Matrix4x4& GetWorldMatrix()const;
 
 	/// <summary>
+	/// 親のローカル行列の取得
+	/// </summary>
+	/// <returns>親のローカル行列</returns>
+	const Matrix4x4& GetParentMatrix()const;
+
+	/// <summary>
 	/// ワールド座標の取得
 	/// </summary>
 	/// <param name="instanceIndex">インスタンスのマテリアルスロット番号の検索キー</param>

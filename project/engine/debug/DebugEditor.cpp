@@ -456,13 +456,21 @@ void DebugEditor::DrawGizmo(){
 	//選択しているGameObjectのワールド行列を取得
 	Matrix4x4 worldMatrix = matrixUtility::MakeAffineMatrix(selectedGameObject_->GetTransform());
 
+	//親子付けも許容する
+	Object3d* object3d = selectedGameObject_->GetComponent<Object3d>();
+	Matrix4x4 parentMatrix = Matrix4x4::Identity4x4();
+	if (object3d){
+		parentMatrix = object3d->GetParentMatrix();
+		worldMatrix *= parentMatrix;
+	}
+
 	//実際に動かす
 	bool isChangedMatrix = ImGuizmo::Manipulate(&viewMatrix.m[0][0], &projectionMatrix.m[0][0], static_cast<ImGuizmo::OPERATION>(gizmoTool_), ImGuizmo::WORLD, &worldMatrix.m[0][0]);
 
 	//行列が変更されたか
 	if (isChangedMatrix){
 		//ワールド行列からトランスフォームに分解
-		Transform transform = matrixUtility::DecomposeMatrix(worldMatrix, selectedGameObject_->GetTransform().scale);
+		Transform transform = matrixUtility::DecomposeMatrix(worldMatrix * parentMatrix.Inverse(), selectedGameObject_->GetTransform().scale);
 		//Transformを設定
 		selectedGameObject_->GetTransform() = transform;
 	}

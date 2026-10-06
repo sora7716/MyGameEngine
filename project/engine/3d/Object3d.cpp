@@ -358,6 +358,11 @@ const Matrix4x4& Object3d::GetWorldMatrix()const{
 	return worldMatrix_;
 }
 
+//親のローカル行列の取得
+const Matrix4x4& Object3d::GetParentMatrix() const{
+	return parentMatrix_;
+}
+
 //ワールド座標の取得
 Vector3 Object3d::GetWorldPos(){
 	return { worldMatrix_.m[3][0],worldMatrix_.m[3][1],worldMatrix_.m[3][2] };

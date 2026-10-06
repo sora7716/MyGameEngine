@@ -11,6 +11,8 @@ struct Matrix4x4 final{
 	Matrix4x4 operator-(const Matrix4x4& mat)const;
 	//乗法
 	Matrix4x4 operator*(const Matrix4x4& mat)const;
+	//乗法(複合)
+	Matrix4x4& operator*=(const Matrix4x4& mat);
 	//加法(複合)
 	Matrix4x4& operator+=(const Matrix4x4& mat);
 	//減法(複合)

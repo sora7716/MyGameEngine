@@ -36,6 +36,12 @@ Matrix4x4 Matrix4x4::operator*(const Matrix4x4& mat) const{
 	return result;
 }
 
+//乗法(複合)
+Matrix4x4& Matrix4x4::operator*=(const Matrix4x4& mat){
+	*this = *this * mat;
+	return *this;
+}
+
 //加法(複合)
 Matrix4x4& Matrix4x4::operator+=(const Matrix4x4& mat){
 	for (int i = 0; i < 4; i++){

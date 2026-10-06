@@ -286,6 +286,14 @@ public://メンバ関数
 	const Transform GetNodeLocalTransform(const std::string& path);
 
 	/// <summary>
+	/// ノードの行列を取得できるか試す
+	/// </summary>
+	/// <param name="path">ノードのパス</param>
+	/// <param name="outMatrix">取得できた行列</param>
+	/// <returns>成功したか</returns>
+	bool TryGetNodeModelMatrix(const std::string& path, Matrix4x4& outMatrix);
+
+	/// <summary>
 	/// ノードの名前一覧を取得
 	/// </summary>
 	/// <returns>ノードの情報の配列</returns>

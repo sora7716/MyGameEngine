@@ -456,12 +456,29 @@ void DebugEditor::DrawGizmo(){
 	//選択しているGameObjectのワールド行列を取得
 	Matrix4x4 worldMatrix = matrixUtility::MakeAffineMatrix(selectedGameObject_->GetTransform());
 
-	//親子付けも許容する
+	//Object3dが持っているかどうか
 	Object3d* object3d = selectedGameObject_->GetComponent<Object3d>();
+	//親行列
 	Matrix4x4 parentMatrix = Matrix4x4::Identity4x4();
+	//ノード行列
+	Matrix4x4 nodeMatrix = Matrix4x4::Identity4x4();
+	//オブジェクトのワールド行列
+	Matrix4x4 objectWorldMatrix = Matrix4x4::Identity4x4();
 	if (object3d){
-		parentMatrix = object3d->GetParentMatrix();
-		worldMatrix *= parentMatrix;
+		//オブジェクトのワールド行列を設定
+		objectWorldMatrix = object3d->GetWorldMatrix();
+		//Nodeを選択した場合
+		if (!selectedNodePath_.empty()){
+			if (object3d->TryGetNodeModelMatrix(selectedNodePath_, nodeMatrix)){
+				worldMatrix = nodeMatrix * worldMatrix;
+			}
+		}
+
+		//親子付けも許容する
+		if (object3d->GetParentObject3d()){
+			parentMatrix = object3d->GetParentMatrix();
+			worldMatrix *= parentMatrix;
+		}
 	}
 
 	//実際に動かす
@@ -469,10 +486,25 @@ void DebugEditor::DrawGizmo(){
 
 	//行列が変更されたか
 	if (isChangedMatrix){
+		//ローカル行列
+		Matrix4x4 localMatrix = worldMatrix * parentMatrix.Inverse();
+
 		//ワールド行列からトランスフォームに分解
-		Transform transform = matrixUtility::DecomposeMatrix(worldMatrix * parentMatrix.Inverse(), selectedGameObject_->GetTransform().scale);
-		//Transformを設定
-		selectedGameObject_->GetTransform() = transform;
+		Transform transform = matrixUtility::DecomposeMatrix(localMatrix, selectedGameObject_->GetTransform().scale);
+
+		if (!selectedNodePath_.empty()){
+			//接続行列
+			Matrix4x4 incidenceMatrix = nodeMatrix * objectWorldMatrix;
+			//ローカル行列
+			Matrix4x4 nodeLocalMatrix = worldMatrix * incidenceMatrix.Inverse();
+			//Transformを求める
+			Transform localNodeTransform = matrixUtility::DecomposeMatrix(nodeLocalMatrix, selectedGameObject_->GetTransform().scale);
+			//NodeのLocalTransformに設定
+			object3d->SetNodeLocalTransform(selectedNodePath_, localNodeTransform);
+		} else{
+			//Transformを設定
+			selectedGameObject_->GetTransform() = transform;
+		}
 	}
 #endif // USE_IMGUI
 }
@@ -797,6 +829,9 @@ void DebugEditor::BeginRename(GameObject* gameObject){
 
 //ノードのツリーを描画
 void DebugEditor::DrawNodeTree(const Node& node, const std::string& parentPath, Object3d* targetObject){
+	(void)node;
+	(void)parentPath;
+	(void)targetObject;
 #ifdef USE_IMGUI
 	//現在のパス
 	std::string currentPath = parentPath;

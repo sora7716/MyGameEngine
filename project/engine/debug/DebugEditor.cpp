@@ -155,6 +155,9 @@ bool DebugEditor::ConsumeDeleteTagRequest(std::string& tag){
 
 //GameObjectを選択
 void DebugEditor::SelectGameObject(GameObject* gameObject){
+	//選択したノードのパスをクリア
+	selectedNodePath_.clear();
+
 	//選択したゲームオブジェクトが一致していたら
 	if (selectedGameObject_ == gameObject){
 		return;
@@ -221,7 +224,13 @@ void DebugEditor::DrawHierarchy(){
 			ImGui::PushID(gameObjectPtr);
 
 			//選んだオブジェクトと同じかどうか
-			const bool isSelected = selectedGameObject_ == gameObjectPtr;
+			ImGuiTreeNodeFlags isSelected = ImGuiTreeNodeFlags_OpenOnArrow | ImGuiTreeNodeFlags_SpanAvailWidth;
+
+			if (selectedGameObject_ == gameObjectPtr){
+				if (selectedNodePath_.empty()){
+					isSelected |= ImGuiTreeNodeFlags_Selected;
+				}
+			}
 
 			//存在しているかどうか
 			const bool isActive = gameObjectPtr->IsActive();
@@ -250,9 +259,15 @@ void DebugEditor::DrawHierarchy(){
 					renamingGameObject_ = nullptr;
 				}
 			} else{
-				if (ImGui::TreeNodeEx(gameObjectPtr->GetName().c_str(), isSelected)){
-					selectedGameObject_ = gameObjectPtr;
+				//ツリーを開く
+				bool isOpen = ImGui::TreeNodeEx(gameObjectPtr->GetName().c_str(), isSelected);
 
+				//クリックを確認
+				if (ImGui::IsItemClicked() && !ImGui::IsItemToggledOpen()){
+					SelectGameObject(gameObjectPtr);
+				}
+
+				if (isOpen){
 					//ノードの描画
 					if (object3d){
 						DrawNodeTree(object3d->GetNode(), object3d->GetNode().name, object3d);
@@ -787,15 +802,18 @@ void DebugEditor::DrawNodeTree(const Node& node, const std::string& parentPath, 
 	}
 
 	//選択されていたらハイライトをつける
-	if (selectedNodePath_ == currentPath){
-		nodeFlags |= ImGuiTreeNodeFlags_Selected;
+	if (selectedGameObject_ == targetObject->GetOwner()){
+		if (selectedNodePath_ == currentPath){
+			nodeFlags |= ImGuiTreeNodeFlags_Selected;
+		}
 	}
 
 	//ツリーを開く
-	bool open = ImGui::TreeNodeEx(static_cast<const void*>(&node), nodeFlags, "%s", node.name.c_str());
+	bool isOpen = ImGui::TreeNodeEx(static_cast<const void*>(&node), nodeFlags, "%s", node.name.c_str());
 
 	//子ノードを開く前に確認する(矢印をクリックしてない場合)
 	if (ImGui::IsItemClicked() && !ImGui::IsItemToggledOpen()){
+		SelectGameObject(targetObject->GetOwner());
 		//このNodeのパスを選択中のパスとして取得
 		selectedNodePath_ = currentPath;
 	}
@@ -828,7 +846,7 @@ void DebugEditor::DrawNodeTree(const Node& node, const std::string& parentPath, 
 	}
 
 	//ツリーが開いていたら
-	if (open){
+	if (isOpen){
 		//子ノードを描画
 		for (const Node& child : node.children){
 			DrawNodeTree(child, currentPath + "/" + child.name, targetObject);
@@ -842,16 +860,31 @@ void DebugEditor::DrawNodeTree(const Node& node, const std::string& parentPath, 
 				continue;
 			}
 
+			//アタッチしているオブジェクトのフラグ
+			ImGuiTreeNodeFlags attachedFlags = ImGuiTreeNodeFlags_OpenOnArrow | ImGuiTreeNodeFlags_SpanAvailWidth;
+
+			//選択されたらハイライトを出す
+			if (selectedGameObject_ == attachedGameObject){
+				if (selectedNodePath_.empty()){
+					attachedFlags |= ImGuiTreeNodeFlags_Selected;
+				}
+			}
+
 			//接続されているGameObjectのツリーを開く
-			bool attachedOpen = ImGui::TreeNodeEx(
-				static_cast<const void*>(attachedGameObject), ImGuiTreeNodeFlags_OpenOnArrow | ImGuiTreeNodeFlags_SpanAvailWidth,
+			bool isAttachedOpen = ImGui::TreeNodeEx(
+				static_cast<const void*>(attachedGameObject), attachedFlags,
 				"%s",
 				attachedGameObject->GetName().c_str());
+
+			//表示した子オブジェクトの行のクリックを確認
+			if (ImGui::IsItemClicked() && !ImGui::IsItemToggledOpen()){
+				SelectGameObject(attachedGameObject);
+			}
 
 			//ノードを取得
 			const Node& attachedNode = attachedObject3d->GetNode();
 
-			if (attachedOpen){
+			if (isAttachedOpen){
 				//ツリーに描画
 				DrawNodeTree(attachedNode, attachedNode.name, attachedObject3d);
 				ImGui::TreePop();

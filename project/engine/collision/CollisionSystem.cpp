@@ -89,6 +89,30 @@ void CollisionSystem::RemoveReflectionTo(GameObject* target){
 		),
 		colliders_.end()
 	);
+
+	auto isTarget = [target](const CollisionRecord record){
+		return record.collider1->GetOwner() == target || record.collider2->GetOwner() == target;
+		};
+
+	//現在のコライダーから削除
+	currentCollisions_.erase(
+		std::remove_if(
+			currentCollisions_.begin(),
+			currentCollisions_.end(),
+			isTarget
+		),
+		currentCollisions_.end()
+	);
+
+	//過去のコライダーから削除
+	previousCollisions_.erase(
+		std::remove_if(
+			previousCollisions_.begin(),
+			previousCollisions_.end(),
+			isTarget
+		),
+		previousCollisions_.end()
+	);
 }
 
 //コライダーを集める

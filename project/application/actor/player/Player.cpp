@@ -119,6 +119,13 @@ std::unique_ptr<Component> Player::Clone(GameObject* gameObject) const{
 	return cloneInstance;
 }
 
+//ゲームオブジェクトから解除する
+void Player::OnGameObjectRemoving(GameObject* target){
+	if (cameraObject_ == target){
+		cameraObject_ = nullptr;
+	}
+}
+
 //衝突したら
 void Player::OnCollisionStay(const CollisionInfo& info){
 	//リジッドボディと衝突対象のコライダーのどちらかが沿うん材していない場合
@@ -167,7 +174,10 @@ void Player::MoveControl(){
 	}
 
 	//カメラの角度をもとに回転行列を求める
-	Matrix4x4 rotMat = matrixUtility::MakeRotateMatrix(cameraObject_->GetTransform().rotate);
+	Matrix4x4 rotMat = Matrix4x4::Identity4x4();
+	if (cameraObject_){
+		rotMat = matrixUtility::MakeRotateMatrix(cameraObject_->GetTransform().rotate);
+	}
 
 	//カメラの向いてる方向を正にする(XとZ軸限定)
 	worldDirection_ = mathUtility::TransformNormal(inputDirection_, rotMat);

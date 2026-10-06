@@ -56,6 +56,12 @@ public://メンバ関数
 	/// <param name="gameObject">ゲームオブジェクト</param>
 	/// <returns>コンポーネント</returns>
 	std::unique_ptr<Component>Clone(GameObject* gameObject)const override;
+	
+	/// <summary>
+	/// ゲームオブジェクトから解除する
+	/// </summary>
+	/// <param name="target">対象</param>
+	void OnGameObjectRemoving(GameObject* target);
 
 	/// <summary>
 	/// 衝突したら

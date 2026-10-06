@@ -85,6 +85,12 @@ void BaseScene::DeleteGameObject(GameObject* target, CollisionSystem* collisionS
 	if (targetObject3d){
 		//親子関係の解消
 		for (std::unique_ptr<GameObject>& gameObject : gameObjects_){
+			//ゲームオブジェクトがNullなら
+			if (!gameObject){
+				continue;
+			}
+
+			//Object3dがNullなら
 			Object3d* object3d = gameObject->GetComponent<Object3d>();
 			if (!object3d){
 				continue;
@@ -105,7 +111,7 @@ void BaseScene::DeleteGameObject(GameObject* target, CollisionSystem* collisionS
 		//ゲームオブジェクトが存在するか
 		if (gameObject){
 			//ゲームオブジェクトが対象と一致しているか
-			if (gameObject.get() == target){
+			if (gameObject.get() != target){
 				gameObject->NotifyGameObjectRemoving(target);
 			}
 		}

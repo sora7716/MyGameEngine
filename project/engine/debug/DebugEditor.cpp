@@ -493,10 +493,17 @@ void DebugEditor::DrawGizmo(){
 		Transform transform = matrixUtility::DecomposeMatrix(localMatrix, selectedGameObject_->GetTransform().scale);
 
 		if (!selectedNodePath_.empty()){
-			//接続行列
-			Matrix4x4 incidenceMatrix = nodeMatrix * objectWorldMatrix;
+			Node node = {};
+			//ノードを取得
+			object3d->TryGetNodeForPath(selectedNodePath_, node);
+			//操作後のモデル行列
+			Matrix4x4 newModelMatrix = worldMatrix * objectWorldMatrix.Inverse();
+			//親ノードのモデル行列
+			Matrix4x4 parentNodeMatrix = node.localMatrix.Inverse() * nodeMatrix;
+			//操作後のローカル行列
+			Matrix4x4 newModelLocal = newModelMatrix * parentNodeMatrix.Inverse();
 			//ローカル行列
-			Matrix4x4 nodeLocalMatrix = worldMatrix * incidenceMatrix.Inverse();
+			Matrix4x4 nodeLocalMatrix = newModelLocal * node.baseMatrix.Inverse();
 			//Transformを求める
 			Transform localNodeTransform = matrixUtility::DecomposeMatrix(nodeLocalMatrix, selectedGameObject_->GetTransform().scale);
 			//NodeのLocalTransformに設定

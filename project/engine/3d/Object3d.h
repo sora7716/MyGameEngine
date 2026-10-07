@@ -294,6 +294,14 @@ public://メンバ関数
 	bool TryGetNodeModelMatrix(const std::string& path, Matrix4x4& outMatrix);
 
 	/// <summary>
+	/// ノードを取得できるか試す
+	/// </summary>
+	/// <param name="path">ノードパス</param>
+	/// <param name="node">取得できたノード</param>
+	/// <returns>成功したか</returns>
+	bool TryGetNodeForPath(const std::string& path, Node& node);
+
+	/// <summary>
 	/// ノードの名前一覧を取得
 	/// </summary>
 	/// <returns>ノードの情報の配列</returns>

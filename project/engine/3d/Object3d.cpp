@@ -460,6 +460,20 @@ bool Object3d::TryGetNodeModelMatrix(const std::string& path, Matrix4x4& outMatr
 	return true;
 }
 
+//ノードを取得できるか試す
+bool Object3d::TryGetNodeForPath(const std::string& path, Node& node){
+	Node* found = FindNode(path);
+
+	//無かった場合
+	if (!found){
+		return false;
+	}
+
+	//モデル行列を代入
+	node = *found;
+	return true;
+}
+
 //ノードの名前位一覧を取得
 std::vector<Object3d::NodeInfo> Object3d::GetNodeNames()const{
 	std::vector<NodeInfo>nodeInfos;

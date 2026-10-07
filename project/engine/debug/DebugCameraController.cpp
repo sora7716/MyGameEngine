@@ -41,12 +41,14 @@ void DebugCameraController::Update(){
 		return;
 	}
 
-	//平行移動の更新
-	TranslateUpdate();
+	//マウスの右クリックを押している最中
+	if (ImGui::IsMouseDown(ImGuiMouseButton_Right)){
+		//回転の操作
+		RotateControl();
 
-	//回転の操作
-	RotateControl();
-
+		//平行移動の更新
+		TranslateUpdate();
+	}
 	//ズーム操作
 	ZoomControl();
 }
@@ -135,18 +137,16 @@ void DebugCameraController::ZoomControl(){
 void DebugCameraController::RotateControl(){
 #ifdef USE_IMGUI
 	//マウスのフリックを取得
-	if (ImGui::IsMouseDown(ImGuiMouseButton_Right)){
-		ImVec2 mouseFlick = ImGui::GetIO().MouseDelta;
+	ImVec2 mouseFlick = ImGui::GetIO().MouseDelta;
 
-		//フリックの値をカメラの回転に反映
-		pitch_ += mouseFlick.y * kLookRadPerCount;
-		yaw_ += mouseFlick.x * kLookRadPerCount;
+	//フリックの値をカメラの回転に反映
+	pitch_ += mouseFlick.y * kLookRadPerCount;
+	yaw_ += mouseFlick.x * kLookRadPerCount;
 
-		constexpr float kPitchLimit = mathUtility::kPi / 2.0f - 0.01f;
+	constexpr float kPitchLimit = mathUtility::kPi / 2.0f - 0.01f;
 
-		pitch_ = std::clamp(pitch_, -kPitchLimit, kPitchLimit);
-		gameObject_->GetTransform().SetEulerAngle({ pitch_,yaw_,0.0f });
-	}
+	pitch_ = std::clamp(pitch_, -kPitchLimit, kPitchLimit);
+	gameObject_->GetTransform().SetEulerAngle({ pitch_,yaw_,0.0f });
 #endif // USE_IMGUI
 }
 

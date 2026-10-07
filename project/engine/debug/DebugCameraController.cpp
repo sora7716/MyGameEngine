@@ -41,14 +41,12 @@ void DebugCameraController::Update(){
 		return;
 	}
 
-	//マウスの右クリックを押している最中
-	if (ImGui::IsMouseDown(ImGuiMouseButton_Right)){
-		//回転の操作
-		RotateControl();
+	//回転の操作
+	RotateControl();
 
-		//平行移動の更新
-		TranslateUpdate();
-	}
+	//平行移動の更新
+	TranslateUpdate();
+
 	//ズーム操作
 	ZoomControl();
 }
@@ -84,8 +82,6 @@ void DebugCameraController::StrafeControl(){
 		moveDir_.x = -1.0f;
 	} else if (ImGui::IsKeyDown(ImGuiKey_D)){
 		moveDir_.x = 1.0f;
-	} else{
-		moveDir_.x = 0.0f;
 	}
 #endif // USE_IMGUI
 }
@@ -97,8 +93,6 @@ void DebugCameraController::ElevateControl(){
 		moveDir_.y = -1.0f;
 	} else if (ImGui::IsKeyDown(ImGuiKey_E)){
 		moveDir_.y = 1.0f;
-	} else{
-		moveDir_.y = 0.0f;
 	}
 #endif // USE_IMGUI
 }
@@ -110,8 +104,6 @@ void DebugCameraController::DollyControl(){
 		moveDir_.z = 1.0f;
 	} else if (ImGui::IsKeyDown(ImGuiKey_S)){
 		moveDir_.z = -1.0f;
-	} else{
-		moveDir_.z = 0.0f;
 	}
 #endif // USE_IMGUI
 }
@@ -122,7 +114,7 @@ void DebugCameraController::ZoomControl(){
 	//マウスホイールの回転量でズームイン、ズームアウト
 	fovY_ -= ImGui::GetIO().MouseWheel * kZoomSpeedMagnification;
 	//ズーム操作のリセット
-	if (ImGui::IsMouseClicked(ImGuiMouseButton_Middle)){
+	if (ImGui::IsKeyPressed(ImGuiKey_R)){
 		fovY_ = 0.45f;
 	}
 	//fovYを範囲内で止める
@@ -136,6 +128,10 @@ void DebugCameraController::ZoomControl(){
 //回転の操作
 void DebugCameraController::RotateControl(){
 #ifdef USE_IMGUI
+	//マウスの右クリックを押して無い場合
+	if (!ImGui::IsMouseDown(ImGuiMouseButton_Right)){
+		return;
+	}
 	//マウスのフリックを取得
 	ImVec2 mouseFlick = ImGui::GetIO().MouseDelta;
 
@@ -153,15 +149,33 @@ void DebugCameraController::RotateControl(){
 //平行移動の更新
 void DebugCameraController::TranslateUpdate(){
 #ifdef USE_IMGUI
-#endif // USE_IMGUI
-	//X軸方向の移動
-	StrafeControl();
+	//移動の向きベクトルをリセット
+	moveDir_ = {};
 
-	//Y軸方向の移動
-	ElevateControl();
+	//マウスの右クリックを押している最中
+	if (ImGui::IsMouseDown(ImGuiMouseButton_Right)){
+		//X軸方向の移動
+		StrafeControl();
 
-	//Z軸方向の移動
-	DollyControl();
+		//Y軸方向の移動
+		ElevateControl();
+
+		//Z軸方向の移動
+		DollyControl();
+	}
+
+	//マウスの真ん中を教えている最中
+	if (ImGui::IsMouseDown(ImGuiMouseButton_Middle)){
+		//マウスのフリックを取得
+		ImVec2 mouseFlick = ImGui::GetIO().MouseDelta;
+
+		//フリックの値をカメラの回転に反映
+		Vector2 normalMouseFlick = { mouseFlick.x,mouseFlick.y };
+		//正規化
+		normalMouseFlick = normalMouseFlick.Normalize();
+		moveDir_.x -= normalMouseFlick.x;
+		moveDir_.y += normalMouseFlick.y;
+	}
 
 	//カメラの角度をもとに回転行列を求める
 	Matrix4x4 rotMat = matrixUtility::MakeRotateMatrix(gameObject_->GetTransform().rotate);
@@ -174,4 +188,5 @@ void DebugCameraController::TranslateUpdate(){
 
 	//カメラを移動させる
 	gameObject_->GetTransform().translate += moveDir_.Normalize() * kMoveSpeed;
+#endif // USE_IMGUI
 }

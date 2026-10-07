@@ -153,6 +153,20 @@ bool DebugEditor::ConsumeDeleteTagRequest(std::string& tag){
 	return true;
 }
 
+//親子付けの要求の取得
+bool DebugEditor::ConsumeParentRequest(ParentRequest& parentRequest){
+	//親子付けのリクエストがNullじゃなければ
+	if (!requestAttachTo){
+		return false;
+	}
+
+	//リクエストに代入
+	parentRequest = *requestAttachTo;
+	//リクエストのリセット
+	requestAttachTo.reset();
+	return true;
+}
+
 //GameObjectを選択
 void DebugEditor::SelectGameObject(GameObject* gameObject){
 	//選択したノードのパスをクリア
@@ -298,6 +312,24 @@ void DebugEditor::DrawHierarchy(){
 						}
 					}
 
+					ImGui::EndDragDropTarget();
+				}
+
+				//親子付け用のドラッグ元
+				if (ImGui::BeginDragDropSource()){
+					GameObject* dragged = gameObjectPtr;
+					ImGui::SetDragDropPayload(kParentPayloadType.c_str(), &dragged, sizeof(dragged));
+					ImGui::TextUnformatted(gameObjectPtr->GetName().c_str());//ドラッグ中の表示
+					ImGui::EndDragDropSource();
+				}
+
+				//親子付け用のドロップ先
+				if (ImGui::BeginDragDropTarget()){
+					const ImGuiPayload* payload = ImGui::AcceptDragDropPayload(kParentPayloadType.c_str());
+					if (payload){
+						GameObject* child = *static_cast<GameObject**>(payload->Data);
+						requestAttachTo=ParentRequest{child}
+					}
 					ImGui::EndDragDropTarget();
 				}
 			}

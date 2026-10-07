@@ -37,6 +37,13 @@ enum class GizmoTool{
 };
 #endif // USE_IMGUI
 
+//親子付けのリクエスト
+struct ParentRequest{
+	GameObject* child = nullptr;
+	GameObject* parent = nullptr;
+	std::string nodePath = "";
+};
+
 /// <summary>
 /// デバッグエディター
 /// </summary>
@@ -133,6 +140,13 @@ public://メンバ関数
 	bool ConsumeDeleteTagRequest(std::string& tag);
 
 	/// <summary>
+	/// 親子付けの要求の取得
+	/// </summary>
+	/// <param name="parentRequest">親子付けの要求</param>
+	/// <returns>親子付けされたか</returns>
+	bool ConsumeParentRequest(ParentRequest& parentRequest);
+
+	/// <summary>
 	/// GameObjectを選択
 	/// </summary>
 	/// <param name="gameObject">ゲームオブジェクト</param>
@@ -208,6 +222,8 @@ private://メンバ関数
 private://定数
 	//ゲームオブジェクトのpayloadType
 	static inline const std::string kGameObjectPayloadType = "GameObjectPayload";
+	//親子付け用のpayloadType
+	static inline const std::string kParentPayloadType = "ParentPayload";
 private://メンバ変数
 	//テクスチャの管理
 	TextureManager* textureManager_ = nullptr;
@@ -280,5 +296,8 @@ private://メンバ変数
 
 	//選択中のNodeパス
 	std::string selectedNodePath_ = "";
+
+	//親子付けの要求
+	std::optional<ParentRequest>requestAttachTo = {};
 };
 

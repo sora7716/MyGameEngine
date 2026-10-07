@@ -4,6 +4,8 @@
 #include "TagManager.h"
 #include "RenderSystem.h"
 #include "CollisionSystem.h"
+#include "Object3d.h"
+#include "Logger.h"
 #include <cassert>
 
 //生成
@@ -86,6 +88,32 @@ void SceneManager::Debug(D3D12_GPU_DESCRIPTOR_HANDLE sceneHandle, D3D12_GPU_DESC
 	sceneContext_.imGuiManager->Begin();
 	//デバッグエディタの描画
 	debugEditor_->Draw(sceneHandle, previewHandle);
+
+	//親子付けを要求
+	ParentRequest parentRequest = {};
+	if (debugEditor_->ConsumeParentRequest(parentRequest)){
+		GameObject* parent = parentRequest.parent;
+		GameObject* child = parentRequest.child;
+
+		//親と子が存在するか
+		if (parent && child){
+			Object3d* parentObject3d = parentRequest.parent->GetComponent<Object3d>();
+			Object3d* childObject3d = parentRequest.child->GetComponent<Object3d>();
+
+			//親と子でObject3dを取得できた場合
+			if (parentObject3d && childObject3d){
+				//親子付けを行う
+				bool isAttached = childObject3d->AttachTo(parentObject3d, parentRequest.nodePath);
+				if (!isAttached){
+					Logger::OutputLog("親子付けが失敗しました");
+				}
+			} else{
+				Logger::OutputLog("親または子でObject3dが取得できませんでした");
+			}
+		} else{
+			Logger::OutputLog("親または子でGameObjectがNullでした");
+		}
+	}
 
 	//生成要求
 	if (debugEditor_->ConsumeCreateRequest()){

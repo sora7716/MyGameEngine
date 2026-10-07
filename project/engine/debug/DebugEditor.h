@@ -147,6 +147,13 @@ public://メンバ関数
 	bool ConsumeParentRequest(ParentRequest& parentRequest);
 
 	/// <summary>
+	/// 親子付け解除の要求を取得
+	/// </summary>
+	/// <param name="target">対象</param>
+	/// <returns>親子付け解除されたか</returns>
+	bool ConsumeDetachRequest(GameObject* target);
+
+	/// <summary>
 	/// GameObjectを選択
 	/// </summary>
 	/// <param name="gameObject">ゲームオブジェクト</param>
@@ -298,6 +305,9 @@ private://メンバ変数
 	std::string selectedNodePath_ = "";
 
 	//親子付けの要求
-	std::optional<ParentRequest>requestAttachTo = {};
+	std::optional<ParentRequest>requestAttachTo_ = {};
+
+	//親子付け解除の要求
+	std::optional<GameObject*>requestDetach_ = {};
 };
 

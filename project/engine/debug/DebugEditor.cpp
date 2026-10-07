@@ -156,14 +156,28 @@ bool DebugEditor::ConsumeDeleteTagRequest(std::string& tag){
 //親子付けの要求の取得
 bool DebugEditor::ConsumeParentRequest(ParentRequest& parentRequest){
 	//親子付けのリクエストがNullじゃなければ
-	if (!requestAttachTo){
+	if (!requestAttachTo_){
 		return false;
 	}
 
 	//リクエストに代入
-	parentRequest = *requestAttachTo;
+	parentRequest = *requestAttachTo_;
 	//リクエストのリセット
-	requestAttachTo.reset();
+	requestAttachTo_.reset();
+	return true;
+}
+
+//親子付け解除の要求を取得
+bool DebugEditor::ConsumeDetachRequest(GameObject* target){
+	//親子付けのリクエストがNullじゃなければ
+	if (!requestDetach_){
+		return false;
+	}
+
+	//リクエストに代入
+	target = *requestDetach_;
+	//リクエストのリセット
+	requestDetach_.reset();
 	return true;
 }
 
@@ -276,6 +290,14 @@ void DebugEditor::DrawHierarchy(){
 				//ツリーを開く
 				bool isOpen = ImGui::TreeNodeEx(gameObjectPtr->GetName().c_str(), isSelected);
 
+				//親子付け用のドラッグ元
+				if (ImGui::BeginDragDropSource()){
+					GameObject* dragged = gameObjectPtr;
+					ImGui::SetDragDropPayload(kParentPayloadType.c_str(), &dragged, sizeof(dragged));
+					ImGui::TextUnformatted(gameObjectPtr->GetName().c_str());//ドラッグ中の表示
+					ImGui::EndDragDropSource();
+				}
+
 				//クリックを確認
 				if (ImGui::IsItemClicked() && !ImGui::IsItemToggledOpen()){
 					SelectGameObject(gameObjectPtr);
@@ -290,48 +312,30 @@ void DebugEditor::DrawHierarchy(){
 					ImGui::TreePop();
 				}
 
-				//ドラッグ元
-				if (ImGui::BeginDragDropSource()){
-					ImGui::SetDragDropPayload(kGameObjectPayloadType.c_str(), &i, sizeof(i));
-					ImGui::EndDragDropSource();
-				}
+				////ドラッグ元
+				//if (ImGui::BeginDragDropSource()){
+				//	ImGui::SetDragDropPayload(kGameObjectPayloadType.c_str(), &i, sizeof(i));
+				//	ImGui::EndDragDropSource();
+				//}
 
-				//ドラッグ先
-				if (ImGui::BeginDragDropTarget()){
-					const ImGuiPayload* payload = ImGui::AcceptDragDropPayload(kGameObjectPayloadType.c_str());
+				////ドラッグ先
+				//if (ImGui::BeginDragDropTarget()){
+				//	const ImGuiPayload* payload = ImGui::AcceptDragDropPayload(kGameObjectPayloadType.c_str());
 
-					//payloadがnullじゃなければ
-					if (payload){
-						draggedIndex_ = *static_cast<uint32_t*>(payload->Data);
-						dropTargetIndex_ = i;
+				//	//payloadがnullじゃなければ
+				//	if (payload){
+				//		draggedIndex_ = *static_cast<uint32_t*>(payload->Data);
+				//		dropTargetIndex_ = i;
 
-						//移動前と移動後のインデックスが違かったら
-						if (draggedIndex_ != dropTargetIndex_){
-							//ゲームオブジェクトの移動リクエストを要求
-							requestMoveGameObject_ = true;
-						}
-					}
+				//		//移動前と移動後のインデックスが違かったら
+				//		if (draggedIndex_ != dropTargetIndex_){
+				//			//ゲームオブジェクトの移動リクエストを要求
+				//			requestMoveGameObject_ = true;
+				//		}
+				//	}
 
-					ImGui::EndDragDropTarget();
-				}
-
-				//親子付け用のドラッグ元
-				if (ImGui::BeginDragDropSource()){
-					GameObject* dragged = gameObjectPtr;
-					ImGui::SetDragDropPayload(kParentPayloadType.c_str(), &dragged, sizeof(dragged));
-					ImGui::TextUnformatted(gameObjectPtr->GetName().c_str());//ドラッグ中の表示
-					ImGui::EndDragDropSource();
-				}
-
-				//親子付け用のドロップ先
-				if (ImGui::BeginDragDropTarget()){
-					const ImGuiPayload* payload = ImGui::AcceptDragDropPayload(kParentPayloadType.c_str());
-					if (payload){
-						GameObject* child = *static_cast<GameObject**>(payload->Data);
-						requestAttachTo=ParentRequest{child}
-					}
-					ImGui::EndDragDropTarget();
-				}
+				//	ImGui::EndDragDropTarget();
+				//}
 			}
 
 			//SelectTableを描画した直後に元に戻す
@@ -898,6 +902,16 @@ void DebugEditor::DrawNodeTree(const Node& node, const std::string& parentPath, 
 		SelectGameObject(targetObject->GetOwner());
 		//このNodeのパスを選択中のパスとして取得
 		selectedNodePath_ = currentPath;
+	}
+
+	//親子付け用のドロップ先
+	if (ImGui::BeginDragDropTarget()){
+		const ImGuiPayload* payload = ImGui::AcceptDragDropPayload(kParentPayloadType.c_str());
+		if (payload){
+			GameObject* child = *static_cast<GameObject**>(payload->Data);
+			requestAttachTo_ = ParentRequest{ child,targetObject->GetOwner(),currentPath };
+		}
+		ImGui::EndDragDropTarget();
 	}
 
 	//接続されているゲームオブジェクト一覧

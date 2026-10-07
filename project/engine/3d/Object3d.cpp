@@ -126,6 +126,18 @@ bool Object3d::AttachTo(Object3d* parent, const std::string& parentNodePath){
 		return false;
 	}
 
+	//自分に親子付けしないようにする
+	const Object3d* ancestor = parent;
+	while (ancestor){
+		if (ancestor == this){
+			Logger::OutputLog("循環する親子付けはできません");
+			return false;
+		}
+		
+		//次の親へ
+		ancestor = ancestor->GetParentObject3d();
+	}
+
 	Node* found = parent->FindNode(parentNodePath);
 	if (!found){
 		Logger::OutputLog("存在しないNodeのPathにアクセスしようとしました");

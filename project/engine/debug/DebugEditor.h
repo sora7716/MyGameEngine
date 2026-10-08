@@ -101,14 +101,16 @@ public://メンバ関数
 	/// <summary>
 	/// 削除要求を取得
 	/// </summary>
+	/// <param name="target">対象</param>
 	/// <returns>削除要求</returns>
-	GameObject* ConsumeDeleteRequest();
+	bool ConsumeDeleteRequest(GameObject*& target);
 
 	/// <summary>
 	/// 複製要求を取得
 	/// </summary>
+	/// <param name="target">対象</param>
 	/// <returns>複製要求</returns>
-	GameObject* ConsumeDuplicateRequest();
+	bool ConsumeDuplicateRequest(GameObject*& target);
 
 	/// <summary>
 	/// 生成要求を取得
@@ -151,7 +153,7 @@ public://メンバ関数
 	/// </summary>
 	/// <param name="target">対象</param>
 	/// <returns>親子付け解除されたか</returns>
-	bool ConsumeDetachRequest(GameObject* target);
+	bool ConsumeDetachRequest(GameObject*& target);
 
 	/// <summary>
 	/// GameObjectを選択

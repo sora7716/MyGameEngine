@@ -78,9 +78,13 @@ void DebugEditor::SetDebugCamera(Camera* debugCamera){
 }
 
 //削除要求を取得
-GameObject* DebugEditor::ConsumeDeleteRequest(){
-	GameObject* target = requestDeleteGameObject_;
+bool DebugEditor::ConsumeDeleteRequest(GameObject*& target){
+	//削除のリクエストがNullじゃなければ
+	if (!requestDeleteGameObject_){
+		return false;
+	}
 
+	target = requestDeleteGameObject_;
 	requestDeleteGameObject_ = nullptr;
 
 	//選択中のオブジェクトを削除する場合
@@ -88,16 +92,20 @@ GameObject* DebugEditor::ConsumeDeleteRequest(){
 		selectedGameObject_ = nullptr;
 	}
 
-	return target;
+	return true;
 }
 
 //複製要求を取得
-GameObject* DebugEditor::ConsumeDuplicateRequest(){
-	GameObject* target = requestDuplicateGameObject_;
+bool DebugEditor::ConsumeDuplicateRequest(GameObject*& target){
+	//複製の要求がNullじゃなければ
+	if (!requestDuplicateGameObject_){
+		return false;
+	}
 
+	target = requestDuplicateGameObject_;
 	requestDuplicateGameObject_ = nullptr;
 
-	return target;
+	return true;
 }
 
 //生成要求を取得
@@ -168,7 +176,7 @@ bool DebugEditor::ConsumeParentRequest(ParentRequest& parentRequest){
 }
 
 //親子付け解除の要求を取得
-bool DebugEditor::ConsumeDetachRequest(GameObject* target){
+bool DebugEditor::ConsumeDetachRequest(GameObject*& target){
 	//親子付けのリクエストがNullじゃなければ
 	if (!requestDetach_){
 		return false;
@@ -376,7 +384,24 @@ void DebugEditor::DrawHierarchy(){
 			}
 			ImGui::EndPopup();
 		}
+	}
 
+	//親子付けの解除
+	//空白の大きさを取得
+	ImVec2 remaining = ImGui::GetContentRegionAvail();
+	if (remaining.x > 0.0f && remaining.y > 0.0f){
+		//空白部分を透明のボタンで埋める
+		ImGui::InvisibleButton("##HierarchyEmptyDrop", remaining);
+
+		//親子付け用のドロップ先
+		if (ImGui::BeginDragDropTarget()){
+			const ImGuiPayload* payload = ImGui::AcceptDragDropPayload(kParentPayloadType.c_str());
+			if (payload){
+				GameObject* child = *static_cast<GameObject**>(payload->Data);
+				requestDetach_ = child;
+			}
+			ImGui::EndDragDropTarget();
+		}
 	}
 	ImGui::End();
 #endif // USE_IMGUI
@@ -965,7 +990,7 @@ void DebugEditor::DrawNodeTree(const Node& node, const std::string& parentPath, 
 					attachedFlags |= ImGuiTreeNodeFlags_Selected;
 				}
 			}
-
+			
 			//接続されているGameObjectのツリーを開く
 			bool isAttachedOpen = ImGui::TreeNodeEx(
 				static_cast<const void*>(attachedGameObject), attachedFlags,
@@ -975,6 +1000,14 @@ void DebugEditor::DrawNodeTree(const Node& node, const std::string& parentPath, 
 			//表示した子オブジェクトの行のクリックを確認
 			if (ImGui::IsItemClicked() && !ImGui::IsItemToggledOpen()){
 				SelectGameObject(attachedGameObject);
+			}
+
+			//親子付け解除用のドラッグ元
+			if (ImGui::BeginDragDropSource()){
+				GameObject* dragged = attachedGameObject;
+				ImGui::SetDragDropPayload(kParentPayloadType.c_str(), &dragged, sizeof(dragged));
+				ImGui::TextUnformatted(attachedGameObject->GetName().c_str());//ドラッグ中の表示
+				ImGui::EndDragDropSource();
 			}
 
 			//ノードを取得

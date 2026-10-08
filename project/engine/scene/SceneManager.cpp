@@ -108,10 +108,28 @@ void SceneManager::Debug(D3D12_GPU_DESCRIPTOR_HANDLE sceneHandle, D3D12_GPU_DESC
 					Logger::OutputLog("親子付けが失敗しました");
 				}
 			} else{
-				Logger::OutputLog("親または子でObject3dが取得できませんでした");
+				Logger::OutputLog("親または子でObject3d取得に失敗しました");
 			}
 		} else{
 			Logger::OutputLog("親または子でGameObjectがNullでした");
+		}
+	}
+
+	//親子付けを解除
+	GameObject* detachObject = nullptr;
+	if (debugEditor_->ConsumeDetachRequest(detachObject)){
+		//ターゲットがなければ
+		if (!detachObject){
+			return;
+		}
+
+		//Object3dが取得できたか
+		Object3d* object3d = detachObject->GetComponent<Object3d>();
+		if (object3d){
+			//親子付けを解除
+			object3d->DetachParent();
+		} else{
+			Logger::OutputLog("親子付け解除する対象のObject3d取得に失敗しました");
 		}
 	}
 
@@ -123,13 +141,15 @@ void SceneManager::Debug(D3D12_GPU_DESCRIPTOR_HANDLE sceneHandle, D3D12_GPU_DESC
 	}
 
 	//複製要求
-	if (GameObject* target = debugEditor_->ConsumeDuplicateRequest()){
-		scene_->DuplicateGameObject(target);
+	GameObject* duplicateObject = nullptr;
+	if (debugEditor_->ConsumeDuplicateRequest(duplicateObject)){
+		scene_->DuplicateGameObject(duplicateObject);
 	}
 
 	//削除要求
-	if (GameObject* target = debugEditor_->ConsumeDeleteRequest()){
-		scene_->DeleteGameObject(target, collisionSystem_);
+	GameObject* deleteObject = nullptr;
+	if (debugEditor_->ConsumeDeleteRequest(deleteObject)){
+		scene_->DeleteGameObject(deleteObject, collisionSystem_);
 	}
 
 	//ゲームオブジェクトの移動要求

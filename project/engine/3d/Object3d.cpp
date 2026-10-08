@@ -133,7 +133,7 @@ bool Object3d::AttachTo(Object3d* parent, const std::string& parentNodePath){
 			Logger::OutputLog("循環する親子付けはできません");
 			return false;
 		}
-		
+
 		//次の親へ
 		ancestor = ancestor->GetParentObject3d();
 	}
@@ -147,6 +147,15 @@ bool Object3d::AttachTo(Object3d* parent, const std::string& parentNodePath){
 	//メンバ変数に記録
 	parentObject3d_ = parent;
 	parentNodePath_ = parentNodePath;
+
+	//今のTransformを取得
+	Transform& transform = GetOwner()->GetTransform();
+
+	//接続行列
+	Matrix4x4 incidenceMatrix = found->modelMatrix * parentObject3d_->GetWorldMatrix();
+	Matrix4x4 newLocalMatrix = worldMatrix_ * incidenceMatrix.Inverse();
+	Transform newLocalTransform = matrixUtility::DecomposeMatrix(newLocalMatrix, transform.scale);
+	transform = newLocalTransform;
 	return true;
 }
 

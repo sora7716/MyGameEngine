@@ -302,7 +302,7 @@ void DebugEditor::DrawHierarchy(){
 				//親子付け用のドラッグ元
 				if (ImGui::BeginDragDropSource()){
 					GameObject* dragged = gameObjectPtr;
-					ImGui::SetDragDropPayload(kParentPayloadType.c_str(), &dragged, sizeof(dragged));
+					ImGui::SetDragDropPayload(kGameObjectPayloadType.c_str(), &dragged, sizeof(dragged));
 					ImGui::TextUnformatted(gameObjectPtr->GetName().c_str());//ドラッグ中の表示
 					ImGui::EndDragDropSource();
 				}
@@ -321,19 +321,19 @@ void DebugEditor::DrawHierarchy(){
 					ImGui::TreePop();
 				}
 
-				//ドラッグ元
-				if (ImGui::BeginDragDropSource()){
-					ImGui::SetDragDropPayload(kGameObjectPayloadType.c_str(), &i, sizeof(i));
-					ImGui::EndDragDropSource();
-				}
-
 				//ドラッグ先
 				if (ImGui::BeginDragDropTarget()){
 					const ImGuiPayload* payload = ImGui::AcceptDragDropPayload(kGameObjectPayloadType.c_str());
-
 					//payloadがnullじゃなければ
 					if (payload){
-						draggedIndex_ = *static_cast<uint32_t*>(payload->Data);
+						GameObject* dropObject = *static_cast<GameObject**>(payload->Data);
+						//ドラッグしたインデックスを取得
+						for (uint32_t draggedIndex = 0; draggedIndex < gameObjects_->size(); draggedIndex++){
+							if (gameObjects_->at(draggedIndex).get() == dropObject){
+								draggedIndex_ = draggedIndex;
+								break;
+							}
+						}
 						dropTargetIndex_ = i;
 
 						//移動前と移動後のインデックスが違かったら
@@ -384,11 +384,11 @@ void DebugEditor::DrawHierarchy(){
 	ImVec2 remaining = ImGui::GetContentRegionAvail();
 	if (remaining.x > 0.0f && remaining.y > 0.0f){
 		//空白部分を透明のボタンで埋める
-		ImGui::InvisibleButton("##HierarchyEmptyDrop", remaining);	
+		ImGui::InvisibleButton("##HierarchyEmptyDrop", remaining);
 
 		//親子付け用のドロップ先
 		if (ImGui::BeginDragDropTarget()){
-			const ImGuiPayload* payload = ImGui::AcceptDragDropPayload(kParentPayloadType.c_str());
+			const ImGuiPayload* payload = ImGui::AcceptDragDropPayload(kGameObjectPayloadType.c_str());
 			if (payload){
 				GameObject* child = *static_cast<GameObject**>(payload->Data);
 				requestDetach_ = child;
@@ -932,7 +932,7 @@ void DebugEditor::DrawNodeTree(const Node& node, const std::string& parentPath, 
 
 	//親子付け用のドロップ先
 	if (ImGui::BeginDragDropTarget()){
-		const ImGuiPayload* payload = ImGui::AcceptDragDropPayload(kParentPayloadType.c_str());
+		const ImGuiPayload* payload = ImGui::AcceptDragDropPayload(kGameObjectPayloadType.c_str());
 		if (payload){
 			GameObject* child = *static_cast<GameObject**>(payload->Data);
 			requestAttachTo_ = ParentRequest{ child,targetObject->GetOwner(),currentPath };
@@ -1006,7 +1006,7 @@ void DebugEditor::DrawNodeTree(const Node& node, const std::string& parentPath, 
 			//親子付け解除用のドラッグ元
 			if (ImGui::BeginDragDropSource()){
 				GameObject* dragged = attachedGameObject;
-				ImGui::SetDragDropPayload(kParentPayloadType.c_str(), &dragged, sizeof(dragged));
+				ImGui::SetDragDropPayload(kGameObjectPayloadType.c_str(), &dragged, sizeof(dragged));
 				ImGui::TextUnformatted(attachedGameObject->GetName().c_str());//ドラッグ中の表示
 				ImGui::EndDragDropSource();
 			}

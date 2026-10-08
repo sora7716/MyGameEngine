@@ -25,19 +25,9 @@ Player::~Player(){
 void Player::Initialize(){
 	//ゲームオブジェクトを取得
 	gameObject_ = GetOwner();
-	//現在接続しているシーンを取得
-	BaseScene* currentScene = gameObject_->GetCurrentScene();
-	//入力の取得
-	input_ = currentScene->GetSceneContext().input;
 
 	//SRTの調整
 	gameObject_->GetTransform().translate = { 0.0f,1.0f,0.0f };
-
-	//リジッドボディを受け取る
-	rigidBody_ = gameObject_->GetComponent<RigidBody>();
-
-	//オブジェクト3dを受け取る
-	object3d_ = gameObject_->GetComponent<Object3d>();
 
 	//ステートの初期化
 	states_[static_cast<uint32_t>(Behavior::kNormal)] = std::make_unique<PlayerNormalState>();
@@ -113,6 +103,8 @@ std::unique_ptr<Component> Player::Clone(GameObject* gameObject) const{
 
 	//初期化
 	cloneInstance->Initialize();
+	cloneInstance->SetInput(input_);
+	cloneInstance->SetRigidBody(rigidBody_);
 
 	//Playerが持つ設定だけ複製
 	cloneInstance->SetEnabled(this->IsEnabled());
@@ -146,7 +138,20 @@ void Player::SetBehaviorRequest(Behavior request){
 
 //オブジェクト3dの設定
 void Player::SetObject3d(Object3d* object3d){
+	assert(object3d);
 	object3d_ = object3d;
+}
+
+//入寮区の設定
+void Player::SetInput(Input* input){
+	assert(input);
+	input_ = input;
+}
+
+//リジッドボディの設定
+void Player::SetRigidBody(RigidBody* rigidBody){
+	assert(rigidBody);
+	rigidBody_ = rigidBody;
 }
 
 //移動の操作

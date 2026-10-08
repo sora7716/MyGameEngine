@@ -262,6 +262,7 @@ void DebugEditor::DrawHierarchy(){
 			//選んだオブジェクトと同じかどうか
 			ImGuiTreeNodeFlags isSelected = ImGuiTreeNodeFlags_OpenOnArrow | ImGuiTreeNodeFlags_SpanAvailWidth;
 
+			//選択されたか
 			if (selectedGameObject_ == gameObjectPtr){
 				if (selectedNodePath_.empty()){
 					isSelected |= ImGuiTreeNodeFlags_Selected;

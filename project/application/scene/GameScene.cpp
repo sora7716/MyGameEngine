@@ -92,6 +92,7 @@ GameObject* GameScene::CreateGameCamera(GameObject* playerObject){
 	//オービットカメラ
 	OrbitCameraController* orbitCamera = gameObject->AddComponent<OrbitCameraController>();
 	orbitCamera->SetTarget(playerObject);
+	orbitCamera->SetInput(GetSceneContext().input);
 
 	return gameObject;
 }
@@ -103,14 +104,17 @@ GameObject* GameScene::CreatePlayerObject(){
 	gameObject->SetTag("Player");
 
 	//3Dオブジェクト
-	Object3d* playerModel = gameObject->AddComponent<Object3d>();
-	playerModel->SetModel("player");
+	Object3d* object3d = gameObject->AddComponent<Object3d>();
+	object3d->SetModel("player");
 
 	//リジットボディ
-	gameObject->AddComponent<RigidBody>();
+	RigidBody* rigidBody = gameObject->AddComponent<RigidBody>();
 
 	//プレイヤー
-	gameObject->AddComponent<Player>();
+	Player* player = gameObject->AddComponent<Player>();
+	player->SetInput(GetSceneContext().input);
+	player->SetObject3d(object3d);
+	player->SetRigidBody(rigidBody);
 
 	//AABBコンポーネント
 	Vector3 playerHitBoxSize = Vector3::GetOne();

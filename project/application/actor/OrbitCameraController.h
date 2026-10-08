@@ -50,6 +50,12 @@ public://メンバ関数
 	/// </summary>
 	/// <param name="target">対象</param>
 	void SetTarget(GameObject* target);
+
+	/// <summary>
+	/// 入力の設定
+	/// </summary>
+	/// <param name="input">入力</param>
+	void SetInput(Input*input);
 private://メンバ関数
 	/// <summary>
 	/// カメラの回転に関する操作

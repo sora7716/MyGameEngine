@@ -86,6 +86,18 @@ public://メンバ関数
 	/// </summary>
 	/// <param name="object3d">オブジェクト3d</param>
 	void SetObject3d(Object3d* object3d);
+
+	/// <summary>
+	/// 入力の設定
+	/// </summary>
+	/// <param name="input">入力</param>
+	void SetInput(Input*input);
+
+	/// <summary>
+	/// リジッドボディの設定
+	/// </summary>
+	/// <param name="rigidBody">リジッドボディ</param>
+	void SetRigidBody(RigidBody* rigidBody);
 private://メンバ関数
 	/// <summary>
 	/// 移動の操作

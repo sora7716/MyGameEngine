@@ -18,10 +18,6 @@ OrbitCameraController::~OrbitCameraController(){
 void OrbitCameraController::Initialize(){
 	//ゲームオブジェクトの取得
 	gameObject_ = GetOwner();
-	//現在リンクされているシーンを取得
-	BaseScene* currentScene = gameObject_->GetCurrentScene();
-	//入力の取得
-	input_ = currentScene->GetSceneContext().input;
 }
 
 //更新
@@ -75,6 +71,8 @@ std::unique_ptr<Component> OrbitCameraController::Clone(GameObject* gameObject) 
 
 	//Cameraが持つ設定だけ複製
 	cloneInstance->SetEnabled(this->IsEnabled());
+	//入力
+	cloneInstance->SetInput(input_);
 
 	return cloneInstance;
 }
@@ -88,7 +86,14 @@ void OrbitCameraController::OnGameObjectRemoving(GameObject* target){
 
 //対象の設定
 void OrbitCameraController::SetTarget(GameObject* target){
+	assert(target);
 	target_ = target;
+}
+
+//入力の設定
+void OrbitCameraController::SetInput(Input* input){
+	assert(input);
+	input_ = input;
 }
 
 //カメラの回転に関する操作

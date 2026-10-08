@@ -320,30 +320,30 @@ void DebugEditor::DrawHierarchy(){
 					ImGui::TreePop();
 				}
 
-				////ドラッグ元
-				//if (ImGui::BeginDragDropSource()){
-				//	ImGui::SetDragDropPayload(kGameObjectPayloadType.c_str(), &i, sizeof(i));
-				//	ImGui::EndDragDropSource();
-				//}
+				//ドラッグ元
+				if (ImGui::BeginDragDropSource()){
+					ImGui::SetDragDropPayload(kGameObjectPayloadType.c_str(), &i, sizeof(i));
+					ImGui::EndDragDropSource();
+				}
 
-				////ドラッグ先
-				//if (ImGui::BeginDragDropTarget()){
-				//	const ImGuiPayload* payload = ImGui::AcceptDragDropPayload(kGameObjectPayloadType.c_str());
+				//ドラッグ先
+				if (ImGui::BeginDragDropTarget()){
+					const ImGuiPayload* payload = ImGui::AcceptDragDropPayload(kGameObjectPayloadType.c_str());
 
-				//	//payloadがnullじゃなければ
-				//	if (payload){
-				//		draggedIndex_ = *static_cast<uint32_t*>(payload->Data);
-				//		dropTargetIndex_ = i;
+					//payloadがnullじゃなければ
+					if (payload){
+						draggedIndex_ = *static_cast<uint32_t*>(payload->Data);
+						dropTargetIndex_ = i;
 
-				//		//移動前と移動後のインデックスが違かったら
-				//		if (draggedIndex_ != dropTargetIndex_){
-				//			//ゲームオブジェクトの移動リクエストを要求
-				//			requestMoveGameObject_ = true;
-				//		}
-				//	}
+						//移動前と移動後のインデックスが違かったら
+						if (draggedIndex_ != dropTargetIndex_){
+							//ゲームオブジェクトの移動リクエストを要求
+							requestMoveGameObject_ = true;
+						}
+					}
 
-				//	ImGui::EndDragDropTarget();
-				//}
+					ImGui::EndDragDropTarget();
+				}
 			}
 
 			//SelectTableを描画した直後に元に戻す
@@ -376,14 +376,6 @@ void DebugEditor::DrawHierarchy(){
 
 			ImGui::PopID();
 		}
-
-		//Hierarchyの空いている場所を右クリック
-		if (ImGui::BeginPopupContextWindow("HierarchyContext", ImGuiPopupFlags_MouseButtonRight | ImGuiPopupFlags_NoOpenOverItems)){
-			if (ImGui::MenuItem("空のオブジェクトを作成")){
-				requestCreateGameObject_ = true;
-			}
-			ImGui::EndPopup();
-		}
 	}
 
 	//親子付けの解除
@@ -391,7 +383,7 @@ void DebugEditor::DrawHierarchy(){
 	ImVec2 remaining = ImGui::GetContentRegionAvail();
 	if (remaining.x > 0.0f && remaining.y > 0.0f){
 		//空白部分を透明のボタンで埋める
-		ImGui::InvisibleButton("##HierarchyEmptyDrop", remaining);
+		ImGui::InvisibleButton("##HierarchyEmptyDrop", remaining);	
 
 		//親子付け用のドロップ先
 		if (ImGui::BeginDragDropTarget()){
@@ -401,6 +393,14 @@ void DebugEditor::DrawHierarchy(){
 				requestDetach_ = child;
 			}
 			ImGui::EndDragDropTarget();
+		}
+
+		//Hierarchyの空いている場所
+		if (ImGui::BeginPopupContextItem("HierarchyContext", ImGuiPopupFlags_MouseButtonRight)){
+			if (ImGui::MenuItem("空のオブジェクトを作成")){
+				requestCreateGameObject_ = true;
+			}
+			ImGui::EndPopup();
 		}
 	}
 	ImGui::End();
@@ -990,7 +990,7 @@ void DebugEditor::DrawNodeTree(const Node& node, const std::string& parentPath, 
 					attachedFlags |= ImGuiTreeNodeFlags_Selected;
 				}
 			}
-			
+
 			//接続されているGameObjectのツリーを開く
 			bool isAttachedOpen = ImGui::TreeNodeEx(
 				static_cast<const void*>(attachedGameObject), attachedFlags,

@@ -2,7 +2,7 @@
 #include "BaseScene.h"
 
 //前方宣言
-class AABBCollider;
+class BoxCollider;
 namespace debugDraw{
 	class Cube;
 }

@@ -54,15 +54,6 @@ void GameScene::UpdateState(){
 void GameScene::Debug(){
 	//基底クラスのデバッグ
 	BaseScene::Debug();
-
-#ifdef USE_IMGUI
-	ImGui::Begin("デバッグ");
-	Object3d* playerObject3d = playerObject_->GetComponent<Object3d>();
-	for (const Object3d::NodeInfo& nodeInfo : playerObject3d->GetNodeNames()){
-		ImGui::Text("・%s", nodeInfo.path.c_str());
-	}
-	ImGui::End();
-#endif // USE_IMGUI
 }
 
 //解放処理
@@ -101,6 +92,7 @@ GameObject* GameScene::CreateGameCamera(GameObject* playerObject){
 	//オービットカメラ
 	OrbitCameraController* orbitCamera = gameObject->AddComponent<OrbitCameraController>();
 	orbitCamera->SetTarget(playerObject);
+	orbitCamera->SetInput(GetSceneContext().input);
 
 	return gameObject;
 }
@@ -112,18 +104,21 @@ GameObject* GameScene::CreatePlayerObject(){
 	gameObject->SetTag("Player");
 
 	//3Dオブジェクト
-	Object3d* playerModel = gameObject->AddComponent<Object3d>();
-	playerModel->SetModel("player");
+	Object3d* object3d = gameObject->AddComponent<Object3d>();
+	object3d->SetModel("player");
 
 	//リジットボディ
-	gameObject->AddComponent<RigidBody>();
+	RigidBody* rigidBody = gameObject->AddComponent<RigidBody>();
 
 	//プレイヤー
-	gameObject->AddComponent<Player>();
+	Player* player = gameObject->AddComponent<Player>();
+	player->SetInput(GetSceneContext().input);
+	player->SetObject3d(object3d);
+	player->SetRigidBody(rigidBody);
 
 	//AABBコンポーネント
 	Vector3 playerHitBoxSize = Vector3::GetOne();
-	AABBCollider* playerAABB = gameObject->AddComponent<AABBCollider>();
+	BoxCollider* playerAABB = gameObject->AddComponent<BoxCollider>();
 	playerAABB->SetHalfSize(playerHitBoxSize / 2.0f);
 	playerAABB->SetBodyType(BodyType::kDynamic);
 
@@ -145,7 +140,7 @@ GameObject* GameScene::CreateGround(){
 
 	//AABBコライダー
 	Vector3 blockerSize = Vector3::GetOne();
-	AABBCollider* blocker = gameObject->AddComponent<AABBCollider>();
+	BoxCollider* blocker = gameObject->AddComponent<BoxCollider>();
 	blocker->SetHalfSize(blockerSize / 2.0f);
 	blocker->SetBodyType(BodyType::kStatic);
 	debugDraw::Cube* blockerDebug = gameObject->AddComponent<debugDraw::Cube>();
@@ -175,7 +170,7 @@ GameObject* GameScene::CreateEnemy(){
 
 	//AABBコンポーネント
 	Vector3 hitBoxSize = Vector3::GetOne();
-	AABBCollider* hitBox = gameObject->AddComponent<AABBCollider>();
+	BoxCollider* hitBox = gameObject->AddComponent<BoxCollider>();
 	hitBox->SetIsTrigger(true);
 	hitBox->SetBodyType(BodyType::kDynamic);
 
@@ -187,7 +182,7 @@ GameObject* GameScene::CreateEnemy(){
 	//すり抜け防止用のコライダー
 	Vector3 blockerSize = { 0.3f,0.3f,0.3f };
 	Vector3 blockerOffset = { 0.0f,-0.4f,0.0f };
-	AABBCollider* blocker = gameObject->AddComponent<AABBCollider>();
+	BoxCollider* blocker = gameObject->AddComponent<BoxCollider>();
 	blocker->SetHalfSize(blockerSize / 2.0f);
 	blocker->SetOffset(blockerOffset);
 	blocker->SetIsTrigger(false);

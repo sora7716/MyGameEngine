@@ -76,6 +76,12 @@ public://メンバ関数
 	virtual void OnTriggerExit(BaseCollider* other);
 
 	/// <summary>
+	/// ゲームオブジェクトから解除する
+	/// </summary>
+	/// <param name="target">対象</param>
+	virtual void OnGameObjectRemoving(GameObject* target);
+
+	/// <summary>
 	/// 更新のフェーズの取得
 	/// </summary>
 	/// <returns>更新のフェーズ</returns>

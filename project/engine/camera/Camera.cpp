@@ -80,7 +80,7 @@ void Camera::SetTranslate(const Vector3& translate){
 	gameObject_->GetTransform().translate = translate;
 }
 
-// 水平方向視野角の設定
+// 垂直方向視野角の設定
 void Camera::SetFovY(const float fovY){
 	fovY_ = fovY;
 }

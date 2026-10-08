@@ -56,9 +56,9 @@ public://メンバ関数
 	void SetTranslate(const Vector3& translate);
 
 	/// <summary>
-	/// 水平方向視野角の設定
+	/// 垂直方向視野角の設定
 	/// </summary>
-	/// <param name="fovY">水平方向視野角</param>
+	/// <param name="fovY">垂直方向視野角</param>
 	void SetFovY(const float fovY);
 
 	/// <summary>

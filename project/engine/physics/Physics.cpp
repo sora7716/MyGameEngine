@@ -3,7 +3,7 @@
 #include <cmath>
 
 //フックの法則(ばね力)
-Vector3 ApplySpringForce(const Spring& spring, const Ball& ball){
+Vector3 physics::ApplySpringForce(const Spring& spring, const Ball& ball){
 	//加速度
 	Vector3 result = ball.physicsData.acceleration;
 	//ばねのアンカーとボールの位置の差
@@ -24,7 +24,7 @@ Vector3 ApplySpringForce(const Spring& spring, const Ball& ball){
 }
 
 //振り子
-Vector3 ApplyPendulumForce(Pendulum& pendulum, const Vector3& ballPos){
+Vector3 physics::ApplyPendulumForce(Pendulum& pendulum, const Vector3& ballPos){
 	Vector3 result = ballPos;
 	pendulum.angularAcceleration = -(std::fabs(physics::kGravity.y) / pendulum.length) * std::sin(pendulum.angle);
 	pendulum.angularVelocity += pendulum.angularAcceleration * mathUtility::kDeltaTime;

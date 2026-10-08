@@ -3,20 +3,20 @@
 #include "BaseCollider.h"
 
 /// <summary>
-/// AABBのコライダー
+/// Boxコライダー
 /// </summary>
-class AABBCollider :public BaseCollider{
+class BoxCollider :public BaseCollider{
 public://メンバ関数
 	/// <summary>
 	/// コンストラクタ
 	/// </summary>
 	/// <param name="gameObject">ゲームオブジェクト</param>
-	explicit AABBCollider(GameObject* gameObject);
+	explicit BoxCollider(GameObject* gameObject);
 
 	/// <summary>
 	/// デストラクタ
 	/// </summary>
-	~AABBCollider()override;
+	~BoxCollider()override;
 
 	/// <summary>
 	/// 初期化

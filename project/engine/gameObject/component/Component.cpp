@@ -46,6 +46,11 @@ void Component::OnTriggerExit(BaseCollider* other){
 	(void)other;
 }
 
+//ゲームオブジェクトから解除する
+void Component::OnGameObjectRemoving(GameObject* target){
+	(void)target;
+}
+
 //更新のフェーズの取得
 UpdatePhase Component::GetUpdatePhase(){
 	return UpdatePhase::kMain;

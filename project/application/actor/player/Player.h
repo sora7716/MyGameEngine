@@ -56,6 +56,12 @@ public://メンバ関数
 	/// <param name="gameObject">ゲームオブジェクト</param>
 	/// <returns>コンポーネント</returns>
 	std::unique_ptr<Component>Clone(GameObject* gameObject)const override;
+	
+	/// <summary>
+	/// ゲームオブジェクトから解除する
+	/// </summary>
+	/// <param name="target">対象</param>
+	void OnGameObjectRemoving(GameObject* target);
 
 	/// <summary>
 	/// 衝突したら
@@ -80,6 +86,18 @@ public://メンバ関数
 	/// </summary>
 	/// <param name="object3d">オブジェクト3d</param>
 	void SetObject3d(Object3d* object3d);
+
+	/// <summary>
+	/// 入力の設定
+	/// </summary>
+	/// <param name="input">入力</param>
+	void SetInput(Input*input);
+
+	/// <summary>
+	/// リジッドボディの設定
+	/// </summary>
+	/// <param name="rigidBody">リジッドボディ</param>
+	void SetRigidBody(RigidBody* rigidBody);
 private://メンバ関数
 	/// <summary>
 	/// 移動の操作

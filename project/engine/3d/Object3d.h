@@ -200,6 +200,12 @@ public://メンバ関数
 	const Matrix4x4& GetWorldMatrix()const;
 
 	/// <summary>
+	/// 親のローカル行列の取得
+	/// </summary>
+	/// <returns>親のローカル行列</returns>
+	const Matrix4x4& GetParentMatrix()const;
+
+	/// <summary>
 	/// ワールド座標の取得
 	/// </summary>
 	/// <param name="instanceIndex">インスタンスのマテリアルスロット番号の検索キー</param>
@@ -280,10 +286,44 @@ public://メンバ関数
 	const Transform GetNodeLocalTransform(const std::string& path);
 
 	/// <summary>
+	/// ノードの行列を取得できるか試す
+	/// </summary>
+	/// <param name="path">ノードのパス</param>
+	/// <param name="outMatrix">取得できた行列</param>
+	/// <returns>成功したか</returns>
+	bool TryGetNodeModelMatrix(const std::string& path, Matrix4x4& outMatrix);
+
+	/// <summary>
+	/// ノードを取得できるか試す
+	/// </summary>
+	/// <param name="path">ノードパス</param>
+	/// <param name="node">取得できたノード</param>
+	/// <returns>成功したか</returns>
+	bool TryGetNodeForPath(const std::string& path, Node& node);
+
+	/// <summary>
 	/// ノードの名前一覧を取得
 	/// </summary>
 	/// <returns>ノードの情報の配列</returns>
 	std::vector<Object3d::NodeInfo>GetNodeNames()const;
+
+	/// <summary>
+	/// ノードを取得
+	/// </summary>
+	/// <returns>ノード</returns>
+	const Node& GetNode()const;
+
+	/// <summary>
+	/// 親ノードのパスを取得
+	/// </summary>
+	/// <returns>親ノードのパスを取得</returns>
+	const std::string& GetParentNodePath()const;
+
+	/// <summary>
+	/// 親オブジェクトを取得
+	/// </summary>
+	/// <returns>親オブジェクト</returns>
+	const Object3d* GetParentObject3d()const;
 private://メンバ関数
 	/// <summary>
 	/// ノードの名前を集める
@@ -347,7 +387,7 @@ private://メンバ変数
 	RenderTransformMode renderTransformMode_ = RenderTransformMode::kNormal;
 
 	//親
-	Object3d* parentObject_ = nullptr;
+	Object3d* parentObject3d_ = nullptr;
 	std::string  parentNodePath_ = "";
 
 	//親行列

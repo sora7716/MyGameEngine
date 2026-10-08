@@ -1,4 +1,5 @@
 #pragma once
+#include "RenderingData.h"
 #include "ImGuiManager.h"
 #ifdef USE_IMGUI
 #include "ImGuizmo.h"
@@ -17,6 +18,7 @@ class GameObject;
 class TextureManager;
 class TagManager;
 class Camera;
+class Object3d;
 
 /// <summary>
 /// タグの名前変更リクエスト用
@@ -34,6 +36,13 @@ enum class GizmoTool{
 	kTranslate = ImGuizmo::TRANSLATE
 };
 #endif // USE_IMGUI
+
+//親子付けのリクエスト
+struct ParentRequest{
+	GameObject* child = nullptr;
+	GameObject* parent = nullptr;
+	std::string nodePath = "";
+};
 
 /// <summary>
 /// デバッグエディター
@@ -63,7 +72,7 @@ public://メンバ関数
 	/// </summary>
 	/// <param name="textureManager">テクスチャの管理</param>
 	/// <param name="tagManager">タグの管理</param>
-	void Initialize(TextureManager* textureManager,TagManager* tagManager);
+	void Initialize(TextureManager* textureManager, TagManager* tagManager);
 
 	/// <summary>
 	/// 更新
@@ -92,14 +101,16 @@ public://メンバ関数
 	/// <summary>
 	/// 削除要求を取得
 	/// </summary>
+	/// <param name="target">対象</param>
 	/// <returns>削除要求</returns>
-	GameObject* ConsumeDeleteRequest();
+	bool ConsumeDeleteRequest(GameObject*& target);
 
 	/// <summary>
 	/// 複製要求を取得
 	/// </summary>
+	/// <param name="target">対象</param>
 	/// <returns>複製要求</returns>
-	GameObject* ConsumeDuplicateRequest();
+	bool ConsumeDuplicateRequest(GameObject*& target);
 
 	/// <summary>
 	/// 生成要求を取得
@@ -129,6 +140,20 @@ public://メンバ関数
 	/// <param name="tag">タグ</param>
 	/// <returns>削除されたか</returns>
 	bool ConsumeDeleteTagRequest(std::string& tag);
+
+	/// <summary>
+	/// 親子付けの要求の取得
+	/// </summary>
+	/// <param name="parentRequest">親子付けの要求</param>
+	/// <returns>親子付けされたか</returns>
+	bool ConsumeParentRequest(ParentRequest& parentRequest);
+
+	/// <summary>
+	/// 親子付け解除の要求を取得
+	/// </summary>
+	/// <param name="target">対象</param>
+	/// <returns>親子付け解除されたか</returns>
+	bool ConsumeDetachRequest(GameObject*& target);
 
 	/// <summary>
 	/// GameObjectを選択
@@ -195,9 +220,19 @@ private://メンバ関数
 	/// </summary>
 	/// <param name="gameObject">ゲームオブジェクト</param>
 	void BeginRename(GameObject* gameObject);
+
+	/// <summary>
+	/// ノードのツリーを描画
+	/// </summary>
+	/// <param name="node">ノード</param>
+	/// <param name="parentPath">親のパス</param>
+	/// <param name="targetObject">対象となるObject3d</param>
+	void DrawNodeTree(const Node& node, const std::string& parentPath, Object3d* targetObject);
 private://定数
 	//ゲームオブジェクトのpayloadType
 	static inline const std::string kGameObjectPayloadType = "GameObjectPayload";
+	//親子付け用のpayloadType
+	static inline const std::string kParentPayloadType = "ParentPayload";
 private://メンバ変数
 	//テクスチャの管理
 	TextureManager* textureManager_ = nullptr;
@@ -213,7 +248,7 @@ private://メンバ変数
 	Vector3 inspectorEulerAngle_ = Vector3::GetZero();
 
 	//ゲームオブジェクトの一覧へのポインタ
-	const std::vector<std::unique_ptr<GameObject>>* gameObjects_;
+	const std::vector<std::unique_ptr<GameObject>>* gameObjects_ = nullptr;
 
 	//作成要求
 	bool requestCreateGameObject_ = false;
@@ -267,5 +302,14 @@ private://メンバ変数
 #endif // USE_IMGUI
 	//Gizmoツールバーを表示するか
 	bool isGizmoToolbarVisible_ = true;
+
+	//選択中のNodeパス
+	std::string selectedNodePath_ = "";
+
+	//親子付けの要求
+	std::optional<ParentRequest>requestAttachTo_ = {};
+
+	//親子付け解除の要求
+	std::optional<GameObject*>requestDetach_ = {};
 };
 

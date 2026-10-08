@@ -6,7 +6,7 @@
 
 //前方宣言
 class GameObject;
-class AABBCollider;
+class BoxCollider;
 
 /// <summary>
 /// 衝突状況
@@ -59,6 +59,12 @@ public://メンバ関数
 	/// 更新
 	/// </summary>
 	void Update(const std::vector<std::unique_ptr<GameObject>>& gameObjects);
+
+	/// <summary>
+	/// 参照を解除
+	/// </summary>
+	/// <param name="target">対象</param>
+	void RemoveReflectionTo(GameObject* target);
 private://メンバ関数
 	//コピーコンストラクタ禁止
 	CollisionSystem(const CollisionSystem&) = delete;
@@ -79,11 +85,11 @@ private://メンバ関数
 	void CheckCollisionPair(BaseCollider* collider1, BaseCollider* collider2);
 
 	/// <summary>
-	/// AABBの衝突判定を確認
+	/// Boxの衝突判定を確認
 	/// </summary>
 	/// <param name="collider1">コライダー1</param>
 	/// <param name="collider2">コライダー2</param>
-	void CheckCollisionAABB(AABBCollider* collider1, AABBCollider* collider2);
+	void CheckCollisionAABB(BoxCollider* collider1, BoxCollider* collider2);
 
 	/// <summary>
 	/// 押し出す方向を取得

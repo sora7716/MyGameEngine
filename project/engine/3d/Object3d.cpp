@@ -94,7 +94,7 @@ void Object3d::UpdateLOD(float distance){
 //親子付けを外す
 void Object3d::DetachParent(){
 	//そもそも親がなければ
-	if (!parentObject_){
+	if (!parentObject3d_){
 		return;
 	}
 	//ゲームオブジェクト取得
@@ -109,7 +109,7 @@ void Object3d::DetachParent(){
 	transform = matrixUtility::DecomposeMatrix(worldMatrix_, transform.scale);
 
 	//親を解除
-	parentObject_ = nullptr;
+	parentObject3d_ = nullptr;
 	parentNodePath_.clear();
 	parentMatrix_ = Matrix4x4::Identity4x4();
 }
@@ -126,6 +126,18 @@ bool Object3d::AttachTo(Object3d* parent, const std::string& parentNodePath){
 		return false;
 	}
 
+	//自分に親子付けしないようにする
+	const Object3d* ancestor = parent;
+	while (ancestor){
+		if (ancestor == this){
+			Logger::OutputLog("循環する親子付けはできません");
+			return false;
+		}
+		
+		//次の親へ
+		ancestor = ancestor->GetParentObject3d();
+	}
+
 	Node* found = parent->FindNode(parentNodePath);
 	if (!found){
 		Logger::OutputLog("存在しないNodeのPathにアクセスしようとしました");
@@ -133,7 +145,7 @@ bool Object3d::AttachTo(Object3d* parent, const std::string& parentNodePath){
 	}
 
 	//メンバ変数に記録
-	parentObject_ = parent;
+	parentObject3d_ = parent;
 	parentNodePath_ = parentNodePath;
 	return true;
 }
@@ -358,6 +370,11 @@ const Matrix4x4& Object3d::GetWorldMatrix()const{
 	return worldMatrix_;
 }
 
+//親のローカル行列の取得
+const Matrix4x4& Object3d::GetParentMatrix() const{
+	return parentMatrix_;
+}
+
 //ワールド座標の取得
 Vector3 Object3d::GetWorldPos(){
 	return { worldMatrix_.m[3][0],worldMatrix_.m[3][1],worldMatrix_.m[3][2] };
@@ -441,6 +458,34 @@ const Transform Object3d::GetNodeLocalTransform(const std::string& path){
 	return found->localTransform;
 }
 
+//ノードの行列を取得できるか試す
+bool Object3d::TryGetNodeModelMatrix(const std::string& path, Matrix4x4& outMatrix){
+	Node* found = FindNode(path);
+
+	//無かった場合
+	if (!found){
+		return false;
+	}
+
+	//モデル行列を代入
+	outMatrix = found->modelMatrix;
+	return true;
+}
+
+//ノードを取得できるか試す
+bool Object3d::TryGetNodeForPath(const std::string& path, Node& node){
+	Node* found = FindNode(path);
+
+	//無かった場合
+	if (!found){
+		return false;
+	}
+
+	//モデル行列を代入
+	node = *found;
+	return true;
+}
+
 //ノードの名前位一覧を取得
 std::vector<Object3d::NodeInfo> Object3d::GetNodeNames()const{
 	std::vector<NodeInfo>nodeInfos;
@@ -454,6 +499,21 @@ std::vector<Object3d::NodeInfo> Object3d::GetNodeNames()const{
 	CollectNodeNames(node_, "", nodeInfos);
 
 	return nodeInfos;
+}
+
+//ノードを取得
+const Node& Object3d::GetNode()const{
+	return node_;
+}
+
+//親ノードのパスを取得
+const std::string& Object3d::GetParentNodePath() const{
+	return parentNodePath_;
+}
+
+//親オブジェクトを取得
+const Object3d* Object3d::GetParentObject3d() const{
+	return parentObject3d_;
 }
 
 //ノードの名前を集める
@@ -533,10 +593,10 @@ void Object3d::MakeWorldMatrix(){
 	assert(gameObject);
 
 	//親オブジェクトがある場合
-	if (parentObject_){
-		Node* node = parentObject_->FindNode(parentNodePath_);
+	if (parentObject3d_){
+		Node* node = parentObject3d_->FindNode(parentNodePath_);
 		if (node){
-			parentMatrix_ = node->modelMatrix * parentObject_->GetWorldMatrix();
+			parentMatrix_ = node->modelMatrix * parentObject3d_->GetWorldMatrix();
 		}
 	}
 

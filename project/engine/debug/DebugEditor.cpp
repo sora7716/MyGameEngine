@@ -7,6 +7,7 @@
 #include "MatrixUtility.h"
 #include "TextureManager.h"
 #include "DebugCameraController.h"
+#include "Object3d.h"
 #include <cassert>
 
 //コンストラクタ
@@ -77,9 +78,13 @@ void DebugEditor::SetDebugCamera(Camera* debugCamera){
 }
 
 //削除要求を取得
-GameObject* DebugEditor::ConsumeDeleteRequest(){
-	GameObject* target = requestDeleteGameObject_;
+bool DebugEditor::ConsumeDeleteRequest(GameObject*& target){
+	//削除のリクエストがNullじゃなければ
+	if (!requestDeleteGameObject_){
+		return false;
+	}
 
+	target = requestDeleteGameObject_;
 	requestDeleteGameObject_ = nullptr;
 
 	//選択中のオブジェクトを削除する場合
@@ -87,16 +92,20 @@ GameObject* DebugEditor::ConsumeDeleteRequest(){
 		selectedGameObject_ = nullptr;
 	}
 
-	return target;
+	return true;
 }
 
 //複製要求を取得
-GameObject* DebugEditor::ConsumeDuplicateRequest(){
-	GameObject* target = requestDuplicateGameObject_;
+bool DebugEditor::ConsumeDuplicateRequest(GameObject*& target){
+	//複製の要求がNullじゃなければ
+	if (!requestDuplicateGameObject_){
+		return false;
+	}
 
+	target = requestDuplicateGameObject_;
 	requestDuplicateGameObject_ = nullptr;
 
-	return target;
+	return true;
 }
 
 //生成要求を取得
@@ -152,8 +161,39 @@ bool DebugEditor::ConsumeDeleteTagRequest(std::string& tag){
 	return true;
 }
 
+//親子付けの要求の取得
+bool DebugEditor::ConsumeParentRequest(ParentRequest& parentRequest){
+	//親子付けのリクエストがNullじゃなければ
+	if (!requestAttachTo_){
+		return false;
+	}
+
+	//リクエストに代入
+	parentRequest = *requestAttachTo_;
+	//リクエストのリセット
+	requestAttachTo_.reset();
+	return true;
+}
+
+//親子付け解除の要求を取得
+bool DebugEditor::ConsumeDetachRequest(GameObject*& target){
+	//親子付けのリクエストがNullじゃなければ
+	if (!requestDetach_){
+		return false;
+	}
+
+	//リクエストに代入
+	target = *requestDetach_;
+	//リクエストのリセット
+	requestDetach_.reset();
+	return true;
+}
+
 //GameObjectを選択
 void DebugEditor::SelectGameObject(GameObject* gameObject){
+	//選択したノードのパスをクリア
+	selectedNodePath_.clear();
+
 	//選択したゲームオブジェクトが一致していたら
 	if (selectedGameObject_ == gameObject){
 		return;
@@ -202,19 +242,32 @@ void DebugEditor::DrawHierarchy(){
 				continue;
 			}
 
+			//ゲームオブジェクトの生ポインタを保存
+			GameObject* gameObjectPtr = gameObject.get();
+
 			//ゲームオブジェクトにデバッグカメラの操作がコンポーネントであった場合
-			if (gameObject->GetComponent<DebugCameraController>()){
+			if (gameObjectPtr->GetComponent<DebugCameraController>()){
 				continue;
 			}
 
-			//ゲームオブジェクトの生ポインタを保存
-			GameObject* gameObjectPtr = gameObject.get();
+			//親オブジェクトが存在した場合はスキップ
+			Object3d* object3d = gameObjectPtr->GetComponent<Object3d>();
+			if (object3d && object3d->GetParentObject3d()){
+				continue;
+			}
 
 			//IDを追加し、同じ名前のObjectでも衝突しないようにする
 			ImGui::PushID(gameObjectPtr);
 
 			//選んだオブジェクトと同じかどうか
-			const bool isSelected = selectedGameObject_ == gameObjectPtr;
+			ImGuiTreeNodeFlags isSelected = ImGuiTreeNodeFlags_OpenOnArrow | ImGuiTreeNodeFlags_SpanAvailWidth;
+
+			//選択されたか
+			if (selectedGameObject_ == gameObjectPtr){
+				if (selectedNodePath_.empty()){
+					isSelected |= ImGuiTreeNodeFlags_Selected;
+				}
+			}
 
 			//存在しているかどうか
 			const bool isActive = gameObjectPtr->IsActive();
@@ -243,8 +296,29 @@ void DebugEditor::DrawHierarchy(){
 					renamingGameObject_ = nullptr;
 				}
 			} else{
-				if (ImGui::Selectable(gameObjectPtr->GetName().c_str(), isSelected)){
-					selectedGameObject_ = gameObjectPtr;
+				//ツリーを開く
+				bool isOpen = ImGui::TreeNodeEx(gameObjectPtr->GetName().c_str(), isSelected);
+
+				//親子付け用のドラッグ元
+				if (ImGui::BeginDragDropSource()){
+					GameObject* dragged = gameObjectPtr;
+					ImGui::SetDragDropPayload(kParentPayloadType.c_str(), &dragged, sizeof(dragged));
+					ImGui::TextUnformatted(gameObjectPtr->GetName().c_str());//ドラッグ中の表示
+					ImGui::EndDragDropSource();
+				}
+
+				//クリックを確認
+				if (ImGui::IsItemClicked() && !ImGui::IsItemToggledOpen()){
+					SelectGameObject(gameObjectPtr);
+				}
+
+				if (isOpen){
+					//ノードの描画
+					if (object3d){
+						DrawNodeTree(object3d->GetNode(), object3d->GetNode().name, object3d);
+					}
+
+					ImGui::TreePop();
 				}
 
 				//ドラッグ元
@@ -303,15 +377,32 @@ void DebugEditor::DrawHierarchy(){
 
 			ImGui::PopID();
 		}
+	}
 
-		//Hierarchyの空いている場所を右クリック
-		if (ImGui::BeginPopupContextWindow("HierarchyContext", ImGuiPopupFlags_MouseButtonRight | ImGuiPopupFlags_NoOpenOverItems)){
+	//親子付けの解除
+	//空白の大きさを取得
+	ImVec2 remaining = ImGui::GetContentRegionAvail();
+	if (remaining.x > 0.0f && remaining.y > 0.0f){
+		//空白部分を透明のボタンで埋める
+		ImGui::InvisibleButton("##HierarchyEmptyDrop", remaining);	
+
+		//親子付け用のドロップ先
+		if (ImGui::BeginDragDropTarget()){
+			const ImGuiPayload* payload = ImGui::AcceptDragDropPayload(kParentPayloadType.c_str());
+			if (payload){
+				GameObject* child = *static_cast<GameObject**>(payload->Data);
+				requestDetach_ = child;
+			}
+			ImGui::EndDragDropTarget();
+		}
+
+		//Hierarchyの空いている場所
+		if (ImGui::BeginPopupContextItem("HierarchyContext", ImGuiPopupFlags_MouseButtonRight)){
 			if (ImGui::MenuItem("空のオブジェクトを作成")){
 				requestCreateGameObject_ = true;
 			}
 			ImGui::EndPopup();
 		}
-
 	}
 	ImGui::End();
 #endif // USE_IMGUI
@@ -427,15 +518,62 @@ void DebugEditor::DrawGizmo(){
 	//選択しているGameObjectのワールド行列を取得
 	Matrix4x4 worldMatrix = matrixUtility::MakeAffineMatrix(selectedGameObject_->GetTransform());
 
+	//Object3dが持っているかどうか
+	Object3d* object3d = selectedGameObject_->GetComponent<Object3d>();
+	//親行列
+	Matrix4x4 parentMatrix = Matrix4x4::Identity4x4();
+	//ノード行列
+	Matrix4x4 nodeMatrix = Matrix4x4::Identity4x4();
+	//オブジェクトのワールド行列
+	Matrix4x4 objectWorldMatrix = Matrix4x4::Identity4x4();
+	if (object3d){
+		//オブジェクトのワールド行列を設定
+		objectWorldMatrix = object3d->GetWorldMatrix();
+		//Nodeを選択した場合
+		if (!selectedNodePath_.empty()){
+			if (object3d->TryGetNodeModelMatrix(selectedNodePath_, nodeMatrix)){
+				worldMatrix = nodeMatrix * worldMatrix;
+			}
+		}
+
+		//親子付けも許容する
+		if (object3d->GetParentObject3d()){
+			parentMatrix = object3d->GetParentMatrix();
+			worldMatrix *= parentMatrix;
+		}
+	}
+
 	//実際に動かす
 	bool isChangedMatrix = ImGuizmo::Manipulate(&viewMatrix.m[0][0], &projectionMatrix.m[0][0], static_cast<ImGuizmo::OPERATION>(gizmoTool_), ImGuizmo::WORLD, &worldMatrix.m[0][0]);
 
 	//行列が変更されたか
 	if (isChangedMatrix){
+		//ローカル行列
+		Matrix4x4 localMatrix = worldMatrix * parentMatrix.Inverse();
+
 		//ワールド行列からトランスフォームに分解
-		Transform transform = matrixUtility::DecomposeMatrix(worldMatrix, selectedGameObject_->GetTransform().scale);
-		//Transformを設定
-		selectedGameObject_->GetTransform() = transform;
+		Transform transform = matrixUtility::DecomposeMatrix(localMatrix, selectedGameObject_->GetTransform().scale);
+
+		if (!selectedNodePath_.empty()){
+			Node node = {};
+			//ノードを取得
+			object3d->TryGetNodeForPath(selectedNodePath_, node);
+			//操作後のモデル行列
+			Matrix4x4 newModelMatrix = worldMatrix * objectWorldMatrix.Inverse();
+			//親ノードのモデル行列
+			Matrix4x4 parentNodeMatrix = node.localMatrix.Inverse() * nodeMatrix;
+			//操作後のローカル行列
+			Matrix4x4 newModelLocal = newModelMatrix * parentNodeMatrix.Inverse();
+			//ローカル行列
+			Matrix4x4 nodeLocalMatrix = newModelLocal * node.baseMatrix.Inverse();
+			//Transformを求める
+			Transform localNodeTransform = matrixUtility::DecomposeMatrix(nodeLocalMatrix, selectedGameObject_->GetTransform().scale);
+			//NodeのLocalTransformに設定
+			object3d->SetNodeLocalTransform(selectedNodePath_, localNodeTransform);
+		} else{
+			//Transformを設定
+			selectedGameObject_->GetTransform() = transform;
+		}
 	}
 #endif // USE_IMGUI
 }
@@ -500,38 +638,73 @@ void DebugEditor::DrawInspector(){
 
 		ImGui::SeparatorText("トランスフォーム");
 
-		Transform& transform = selectedGameObject_->GetTransform();
+		//変更されたかを判定
+		bool isChange = false;
+
+		//選択しているゲームオブジェクトのTransformをコピー
+		Transform transform = selectedGameObject_->GetTransform();
+
+		//選択中のノードのパスがある場合
+		if (!selectedNodePath_.empty()){
+			Object3d* object3d = selectedGameObject_->GetComponent<Object3d>();
+			if (object3d){
+				transform = object3d->GetNodeLocalTransform(selectedNodePath_);
+				inspectorEulerAngle_ = transform.GetEulerAngle();
+			}
+		}
 
 		//トランスフォームのリセットボタン
 		if (ImGui::Button("トランスフォームをリセット")){
 			transform = {};
+			isChange = true;
 		}
 
 		//スケールの切り替え
-		ImGui::DragFloat3("拡縮", &transform.scale.x, 0.1f);
+		if (ImGui::DragFloat3("拡縮", &transform.scale.x, 0.1f)){
+			isChange = true;
+		}
 		ImGui::SameLine();
 		//スケールのリセット
 		if (ImGui::SmallButton("リセット##scale")){
 			transform.scale = Vector3::GetOne();
+			isChange = true;
 		}
 
 		//回転の切り替え(オイラー角からクォータニオンを求めてる)
 		if (ImGui::DragFloat3("回転", &inspectorEulerAngle_.x, 0.1f)){
 			transform.rotate = Quaternion::EulerAngleToQuaternion(inspectorEulerAngle_);
+			isChange = true;
 		}
 		ImGui::SameLine();
 		//回転のリセット
 		if (ImGui::SmallButton("リセット##rotate")){
 			transform.rotate = Quaternion::IdentityQuaternion();
+			isChange = true;
 		}
 
 
 		//平行移動成分の切り替え
-		ImGui::DragFloat3("平行移動", &transform.translate.x, 0.1f);
+		if (ImGui::DragFloat3("平行移動", &transform.translate.x, 0.1f)){
+			isChange = true;
+		}
 		ImGui::SameLine();
 		//平行成分のリセット
 		if (ImGui::SmallButton("リセット##translate")){
 			transform.translate = { 0.0f,0.0f,0.0f };
+			isChange = true;
+		}
+
+		//変更されている場合
+		if (isChange){
+			//最終的な結果を元のTransformに反映
+			if (!selectedNodePath_.empty()){
+				Object3d* object3d = selectedGameObject_->GetComponent<Object3d>();
+				if (object3d){
+					object3d->SetNodeLocalTransform(selectedNodePath_, transform);
+				}
+			} else{
+				selectedGameObject_->GetTransform() = transform;
+			}
 		}
 
 	} else{
@@ -721,4 +894,134 @@ void DebugEditor::BeginRename(GameObject* gameObject){
 		copyLength,
 		renameObjectBuffer_.data()
 	);
+}
+
+//ノードのツリーを描画
+void DebugEditor::DrawNodeTree(const Node& node, const std::string& parentPath, Object3d* targetObject){
+	(void)node;
+	(void)parentPath;
+	(void)targetObject;
+#ifdef USE_IMGUI
+	//現在のパス
+	std::string currentPath = parentPath;
+
+	//矢印で開く(選択ハイライトの幅を行の右端まで伸ばす)
+	ImGuiTreeNodeFlags nodeFlags = ImGuiTreeNodeFlags_OpenOnArrow | ImGuiTreeNodeFlags_SpanAvailWidth;
+	//子ノードがなければ
+	if (node.children.empty()){
+		//末端ノードにする
+		nodeFlags |= ImGuiTreeNodeFlags_Leaf;
+	}
+
+	//選択されていたらハイライトをつける
+	if (selectedGameObject_ == targetObject->GetOwner()){
+		if (selectedNodePath_ == currentPath){
+			nodeFlags |= ImGuiTreeNodeFlags_Selected;
+		}
+	}
+
+	//ツリーを開く
+	bool isOpen = ImGui::TreeNodeEx(static_cast<const void*>(&node), nodeFlags, "%s", node.name.c_str());
+
+	//子ノードを開く前に確認する(矢印をクリックしてない場合)
+	if (ImGui::IsItemClicked() && !ImGui::IsItemToggledOpen()){
+		SelectGameObject(targetObject->GetOwner());
+		//このNodeのパスを選択中のパスとして取得
+		selectedNodePath_ = currentPath;
+	}
+
+	//親子付け用のドロップ先
+	if (ImGui::BeginDragDropTarget()){
+		const ImGuiPayload* payload = ImGui::AcceptDragDropPayload(kParentPayloadType.c_str());
+		if (payload){
+			GameObject* child = *static_cast<GameObject**>(payload->Data);
+			requestAttachTo_ = ParentRequest{ child,targetObject->GetOwner(),currentPath };
+		}
+		ImGui::EndDragDropTarget();
+	}
+
+	//接続されているゲームオブジェクト一覧
+	std::vector<GameObject*>attachedGameObjects;
+
+	//このノードに接続されたGameObjectがないか探索
+	for (const std::unique_ptr<GameObject>& gameObject : *gameObjects_){
+		//Object3dが存在するか
+		Object3d* object3d = gameObject->GetComponent<Object3d>();
+		if (!object3d){
+			continue;
+		}
+
+		//親オブジェクトが存在するか
+		const Object3d* parentObject = object3d->GetParentObject3d();
+		if (!parentObject){
+			continue;
+		}
+		//対象のObject3dと親のObject3dが一致しているか
+		if (targetObject == parentObject){
+			//現在のパスが親のパスと一致しているか
+			std::string parentNodePath = object3d->GetParentNodePath();
+			if (currentPath == parentNodePath){
+				//接続されているゲームオブジェクト一覧に追加
+				attachedGameObjects.push_back(gameObject.get());
+			}
+		}
+	}
+
+	//ツリーが開いていたら
+	if (isOpen){
+		//子ノードを描画
+		for (const Node& child : node.children){
+			DrawNodeTree(child, currentPath + "/" + child.name, targetObject);
+		}
+
+		//接続されているゲームオブジェクトを描画
+		for (GameObject* attachedGameObject : attachedGameObjects){
+			//Object3dを取得
+			Object3d* attachedObject3d = attachedGameObject->GetComponent<Object3d>();
+			if (!attachedObject3d){
+				continue;
+			}
+
+			//アタッチしているオブジェクトのフラグ
+			ImGuiTreeNodeFlags attachedFlags = ImGuiTreeNodeFlags_OpenOnArrow | ImGuiTreeNodeFlags_SpanAvailWidth;
+
+			//選択されたらハイライトを出す
+			if (selectedGameObject_ == attachedGameObject){
+				if (selectedNodePath_.empty()){
+					attachedFlags |= ImGuiTreeNodeFlags_Selected;
+				}
+			}
+
+			//接続されているGameObjectのツリーを開く
+			bool isAttachedOpen = ImGui::TreeNodeEx(
+				static_cast<const void*>(attachedGameObject), attachedFlags,
+				"%s",
+				attachedGameObject->GetName().c_str());
+
+			//表示した子オブジェクトの行のクリックを確認
+			if (ImGui::IsItemClicked() && !ImGui::IsItemToggledOpen()){
+				SelectGameObject(attachedGameObject);
+			}
+
+			//親子付け解除用のドラッグ元
+			if (ImGui::BeginDragDropSource()){
+				GameObject* dragged = attachedGameObject;
+				ImGui::SetDragDropPayload(kParentPayloadType.c_str(), &dragged, sizeof(dragged));
+				ImGui::TextUnformatted(attachedGameObject->GetName().c_str());//ドラッグ中の表示
+				ImGui::EndDragDropSource();
+			}
+
+			//ノードを取得
+			const Node& attachedNode = attachedObject3d->GetNode();
+
+			if (isAttachedOpen){
+				//ツリーに描画
+				DrawNodeTree(attachedNode, attachedNode.name, attachedObject3d);
+				ImGui::TreePop();
+			}
+		}
+
+		ImGui::TreePop();
+	}
+#endif // USE_IMGUI
 }

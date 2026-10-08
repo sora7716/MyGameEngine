@@ -88,7 +88,7 @@ public://定数
 
 #ifdef _DEBUG
 	//タイトル名
-	static inline const std::wstring label_ = { L"Sprout Engine" };
+	static inline const std::wstring label_ = { L"俺のゲームエンジン" };
 #else
 	//タイトル名
 	static inline const std::wstring label_ = { L"Game" };

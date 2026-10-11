@@ -8,6 +8,7 @@
 #include "TextureManager.h"
 #include "DebugCameraController.h"
 #include "Object3d.h"
+#include "Component.h"
 #include <cassert>
 
 //コンストラクタ
@@ -707,10 +708,56 @@ void DebugEditor::DrawInspector(){
 			}
 		}
 
+		//各コンポーネントを操作
+		DrawProperties(selectedGameObject_);
+
 	} else{
 		ImGui::TextDisabled("オブジェクトを選択していない");
 	}
 	ImGui::End();
+#endif // USE_IMGUI
+}
+
+//各コンポーネントをいじれるように
+void DebugEditor::DrawProperties(GameObject* selectGameObject){
+#ifdef USE_IMGUI
+	//各コンポーネントを取得
+	const std::vector<std::unique_ptr<Component>>& components = selectGameObject->GetAllComponents();
+	//コンポーネントがなければ
+	if (components.empty()){
+		return;
+	}
+
+	//各コンポーネントにアクセス
+	for (uint32_t i = 0; i < components.size(); i++){
+		ImGui::PushID(i);
+
+		//コンポーネントを取得
+		Component* component = components[i].get();
+		//Nullかどうか確認
+		if (!component){
+			ImGui::PopID();
+			continue;
+		}
+
+		//headerを作成
+		if (ImGui::CollapsingHeader(component->GetTypeName().c_str())){
+			//有効状態を取得
+			bool isEnabled = component->IsEnabled();
+			ImGui::Checkbox("有効状態", &isEnabled);
+			//有効所帯が変更されたら
+			if (isEnabled != component->IsEnabled()){
+				component->SetEnabled(isEnabled);
+			}
+
+			//もし有効じゃなければ
+			if (!isEnabled){
+				ImGui::PopID();
+				continue;
+			}
+		}
+		ImGui::PopID();
+	}
 #endif // USE_IMGUI
 }
 

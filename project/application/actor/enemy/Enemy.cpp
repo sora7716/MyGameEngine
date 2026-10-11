@@ -81,6 +81,11 @@ void Enemy::SetBehaviorRequest(Behavior request){
 	behaviorRequest_ = request;
 }
 
+//コンポーネントのタイプ名を取得
+std::string Enemy::GetTypeName() const{
+	return "Enemy";
+}
+
 //リジットボディの取得
 RigidBody* Enemy::GetRigidBody(){
 	return rigidBody_;

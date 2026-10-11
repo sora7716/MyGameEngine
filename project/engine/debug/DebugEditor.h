@@ -211,6 +211,12 @@ private://メンバ関数
 	void DrawInspector();
 
 	/// <summary>
+	/// 各コンポーネントをいじれるように
+	/// </summary>
+	/// <param name="selectGameObject">選択したゲームオブジェクト</param>
+	void DrawProperties(GameObject* selectGameObject);
+
+	/// <summary>
 	/// タグの管理の描画
 	/// </summary>
 	void DrawTagManager();

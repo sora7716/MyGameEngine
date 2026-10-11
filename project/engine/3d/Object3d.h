@@ -194,6 +194,12 @@ public://メンバ関数
 	bool SetNodeLocalTransform(const std::string& path, const Transform& localTransform);
 
 	/// <summary>
+	/// コンポーネントのタイプ名を返す
+	/// </summary>
+	/// <returns>コンポーネントのタイプ名</returns>
+	std::string GetTypeName()const override;
+
+	/// <summary>
 	/// ワールド行列の取得
 	/// </summary>
 	/// <returns>ワールド行列</returns>

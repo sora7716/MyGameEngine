@@ -100,6 +100,11 @@ void Camera::SetFarClip(const float farClip){
 	farClip_ = farClip;
 }
 
+//コンポーネントのタイプ名を取得
+std::string Camera::GetTypeName() const{
+	return "Camera";
+}
+
 // ワールド行列の取得
 const Matrix4x4& Camera::GetWorldMatrix() const{
 	return worldMatrix_;

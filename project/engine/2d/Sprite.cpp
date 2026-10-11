@@ -85,6 +85,11 @@ void Sprite::SetUVRectTransform(const RectTransform& rectTransform){
 	uvTransform_ = rectTransform;
 }
 
+//コンポーネントのタイプ名を取得
+std::string Sprite::GetTypeName() const{
+	return "Sprite";
+}
+
 //UVスケールの取得
 const Vector2& Sprite::GetUVScale(){
 	return uvTransform_.scale;

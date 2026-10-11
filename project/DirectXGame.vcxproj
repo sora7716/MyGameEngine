@@ -230,7 +230,7 @@
     <ClInclude Include="externals\imguizmo\ImGuizmo.h">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
     </ClInclude>
-    <ClInclude Include="resources\resource.h" />
+    <ClInclude Include="resource.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="engine\resources\shaders\CommonTypes.hlsli">
@@ -314,11 +314,11 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <Image Include="engine\resources\textures\SproutEngine.ico" />
-    <Image Include="engine\resources\textures\SproutEngine_Transparent.ico" />
+    <ResourceCompile Include="GameEngine.rc" />
   </ItemGroup>
   <ItemGroup>
-    <ResourceCompile Include="resources\GameEngine.rc" />
+    <Image Include="engine\resources\icons\hakoniwa.ico" />
+    <Image Include="engine\resources\icons\hakoniwaTransparent.ico" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>17.0</VCProjectVersion>

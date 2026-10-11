@@ -69,6 +69,11 @@ std::unique_ptr<Component> BoxCollider::Clone(GameObject* gameObject) const{
 	return cloneInstance;
 }
 
+//コンポーネントのタイプ名を取得
+std::string BoxCollider::GetTypeName() const{
+	return "BoxCollider";
+}
+
 //コライダータイプの取得
 ColliderType BoxCollider::GetColliderType() const{
 	return ColliderType::kBox;

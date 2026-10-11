@@ -43,6 +43,12 @@ namespace debugDraw {
 		/// </summary>
 		/// <returns>線分</returns>
 		primitiveData::Segment GetSegment();
+
+		/// <summary>
+		/// コンポーネントのタイプ名を取得
+		/// </summary>
+		/// <returns>コンポーネントのタイプ名</returns>
+		std::string GetTypeName()const override;
 	private://メンバ変数
 		/// <summary>
 		/// 頂点データの設定

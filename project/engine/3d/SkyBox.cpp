@@ -66,6 +66,11 @@ const SkyBoxRenderData& SkyBox::GetRenderData(){
 	return renderData_;
 }
 
+//コンポーネントのタイプ名を取得
+std::string SkyBox::GetTypeName() const{
+	return "SkyBox";
+}
+
 //ワールド座標の更新
 void SkyBox::UpdateTransform(){
 	GameObject* gameObject = GetOwner();

@@ -130,6 +130,12 @@ public://メンバ関数
 	void SetUVTransform(uint32_t index, const RectTransform& uvTransform);
 
 	/// <summary>
+	/// コンポーネントのタイプ名を取得
+	/// </summary>
+	/// <returns>コンポーネントのタイプ名</returns>
+	std::string GetTypeName()const override;
+
+	/// <summary>
 	/// モデルの取得
 	/// </summary>
 	/// <returns>モデル</returns>

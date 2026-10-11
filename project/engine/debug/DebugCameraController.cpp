@@ -74,6 +74,11 @@ void DebugCameraController::SetIsDebugControlEnabled(bool isControlEnabled){
 	isControlEnabled_ = isControlEnabled;
 }
 
+//コンポーネントのタイプ名を取得
+std::string DebugCameraController::GetTypeName() const{
+	return "DebugCameraController";
+}
+
 //左右移動の操作
 void DebugCameraController::StrafeControl(){
 #ifdef USE_IMGUI

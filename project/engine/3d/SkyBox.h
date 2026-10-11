@@ -58,6 +58,12 @@ public://メンバ関数
 	/// </summary>
 	/// <returns>描画データ</returns>
 	const SkyBoxRenderData& GetRenderData();
+
+	/// <summary>
+	/// コンポーネントのタイプ名を取得
+	/// </summary>
+	/// <returns>コンポーネントのタイプ名</returns>
+	std::string GetTypeName()const override;
 private://メンバ関数
 	/// <summary>
 	/// ワールド座標の更新

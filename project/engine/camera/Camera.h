@@ -80,6 +80,12 @@ public://メンバ関数
 	void SetFarClip(const float farClip);
 
 	/// <summary>
+	/// コンポーネントのタイプ名を取得
+	/// </summary>
+	/// <returns>コンポーネントのタイプ名</returns>
+	std::string GetTypeName()const override;
+
+	/// <summary>
 	/// ワールド行列の取得
 	/// </summary>
 	/// <returns>ワールド行列</returns>

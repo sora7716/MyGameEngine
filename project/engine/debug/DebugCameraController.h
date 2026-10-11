@@ -51,6 +51,12 @@ public://メンバ関数
 	/// </summary>
 	/// <param name="isControlEnabled">デバッグが有効か</param>
 	void SetIsDebugControlEnabled(bool isControlEnabled);
+
+	/// <summary>
+	/// コンポーネントのタイプ名を取得
+	/// </summary>
+	/// <returns>コンポーネントのタイプ名</returns>
+	std::string GetTypeName()const override;
 private://メンバ関数
 	/// <summary>
 	/// 左右移動の操作

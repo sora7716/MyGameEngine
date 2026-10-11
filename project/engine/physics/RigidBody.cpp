@@ -80,6 +80,11 @@ void RigidBody::SetGroundThreshold(float groundThreshold){
 	groundThreshold_ = groundThreshold;
 }
 
+//コンポーネントのタイプ名を取得
+std::string RigidBody::GetTypeName() const{
+	return "RigidBody";
+}
+
 //速度を取得
 Vector3& RigidBody::GetVelocity(){
 	return velocity_;

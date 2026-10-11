@@ -1,5 +1,6 @@
 #pragma once
 #include <memory>
+#include <string>
 
 //前方宣言
 class GameObject;
@@ -99,6 +100,12 @@ public://メンバ関数
 	/// </summary>
 	/// <returns>取り付け先</returns>
 	GameObject* GetOwner()const;
+
+	/// <summary>
+	/// コンポーネントのタイプ名を返す
+	/// </summary>
+	/// <returns>コンポーネントのタイプ名</returns>
+	virtual std::string GetTypeName()const = 0;
 
 	/// <summary>
 	/// 有効状態の設定

@@ -46,6 +46,11 @@ const primitiveData::Plane& debugDraw::Plane::GetPlane() const{
 	return plane_;
 }
 
+//コンポーネントのタイプ名を取得
+std::string debugDraw::Plane::GetTypeName() const{
+	return "Plane";
+}
+
 //頂点データの設定
 void debugDraw::Plane::SettingVertexData(){
 	Vector3 normal = plane_.normal.Normalize();

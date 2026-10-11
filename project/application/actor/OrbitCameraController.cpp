@@ -96,6 +96,11 @@ void OrbitCameraController::SetInput(Input* input){
 	input_ = input;
 }
 
+//コンポーネントのタイプ名を取得
+std::string OrbitCameraController::GetTypeName() const{
+	return "OrbitCameraController";
+}
+
 //カメラの回転に関する操作
 void OrbitCameraController::ViewRotationControl(){
 	//マウスの移動量の取得

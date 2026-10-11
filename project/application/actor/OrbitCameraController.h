@@ -56,6 +56,12 @@ public://メンバ関数
 	/// </summary>
 	/// <param name="input">入力</param>
 	void SetInput(Input*input);
+
+	/// <summary>
+	/// コンポーネントのタイプ名を取得
+	/// </summary>
+	/// <returns>コンポーネントのタイプ名</returns>
+	std::string GetTypeName()const override;
 private://メンバ関数
 	/// <summary>
 	/// カメラの回転に関する操作

@@ -186,6 +186,11 @@ void ParticleSystem::SetUVTransform(uint32_t index, const RectTransform& uvTrans
 	materialInstance_->SetUVTransform(index, uvTransform);
 }
 
+//コンポーネントのタイプ名を取得
+std::string ParticleSystem::GetTypeName() const{
+	return "ParticleSystem";
+}
+
 //モデルの取得
 Model* ParticleSystem::GetModel(){
 	return model_;

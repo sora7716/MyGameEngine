@@ -62,6 +62,12 @@ public://メンバ関数
 	void SetBehaviorRequest(Behavior request);
 
 	/// <summary>
+	/// コンポーネントのタイプ名を取得
+	/// </summary>
+	/// <returns>コンポーネントのタイプ名</returns>
+	std::string GetTypeName()const override;
+
+	/// <summary>
 	/// リジットボディの取得
 	/// </summary>
 	/// <returns>リジットボディ</returns>

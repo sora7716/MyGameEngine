@@ -53,6 +53,12 @@ public://メンバ関数
 	void SetGroundThreshold(float groundThreshold);
 
 	/// <summary>
+	/// コンポーネントのタイプ名を取得
+	/// </summary>
+	/// <returns>コンポーネントのタイプ名</returns>
+	std::string GetTypeName()const override;
+
+	/// <summary>
 	/// 速度の取得
 	/// </summary>
 	/// <returns>速度</returns>

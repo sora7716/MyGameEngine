@@ -374,6 +374,11 @@ bool Object3d::SetNodeLocalTransform(const std::string& path, const Transform& l
 	return true;
 }
 
+//コンポーネントのタイプ名を返す
+std::string Object3d::GetTypeName() const{
+	return "Object3d";
+}
+
 //ワールド行列の取得
 const Matrix4x4& Object3d::GetWorldMatrix()const{
 	return worldMatrix_;

@@ -108,6 +108,11 @@ BaseScene* GameObject::GetCurrentScene(){
 	return currentScene_;
 }
 
+//すべてのコンポーネントを取得
+const std::vector<std::unique_ptr<Component>>& GameObject::GetAllComponents()const{
+	return components_;
+}
+
 //コンポーネントの更新
 void GameObject::UpdateComponents(UpdatePhase phase){
 	//ゲームオブジェクトが有効か

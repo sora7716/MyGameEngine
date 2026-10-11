@@ -80,6 +80,12 @@ public://メンバ関数
 	void SetUVRectTransform(const RectTransform& rectTransform);
 
 	/// <summary>
+	/// コンポーネントのタイプ名を取得
+	/// </summary>
+	/// <returns>コンポーネントのタイプ名</returns>
+	std::string GetTypeName()const override;
+
+	/// <summary>
 	/// UVスケールの取得
 	/// </summary>
 	/// <returns>スケール</returns>

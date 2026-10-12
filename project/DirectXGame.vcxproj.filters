@@ -441,6 +441,9 @@
     <ClCompile Include="externals\imguizmo\ImGuizmo.cpp">
       <Filter>externals\imguizmo</Filter>
     </ClCompile>
+    <ClCompile Include="engine\debug\PropertyRegistry.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="application\scene\TestPlayScene.h">
@@ -772,6 +775,9 @@
     </ClInclude>
     <ClInclude Include="resource.h">
       <Filter>リソース ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="engine\debug\PropertyRegistry.h">
+      <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

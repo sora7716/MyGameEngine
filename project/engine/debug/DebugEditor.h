@@ -19,6 +19,7 @@ class TextureManager;
 class TagManager;
 class Camera;
 class Object3d;
+class Component;
 
 /// <summary>
 /// タグの名前変更リクエスト用
@@ -215,6 +216,12 @@ private://メンバ関数
 	/// </summary>
 	/// <param name="selectGameObject">選択したゲームオブジェクト</param>
 	void DrawProperties(GameObject* selectGameObject);
+
+	/// <summary>
+	/// コンポーネントをいじれるように
+	/// </summary>
+	/// <param name="component">コンポーネント</param>
+	void DrawProperties(Component* component);
 
 	/// <summary>
 	/// タグの管理の描画

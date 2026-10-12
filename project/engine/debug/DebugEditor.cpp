@@ -740,25 +740,31 @@ void DebugEditor::DrawProperties(GameObject* selectGameObject){
 			continue;
 		}
 
-		//headerを作成
-		if (ImGui::CollapsingHeader(component->GetTypeName().c_str())){
-			//有効状態を取得
-			bool isEnabled = component->IsEnabled();
-			ImGui::Checkbox("有効状態", &isEnabled);
-			//有効所帯が変更されたら
-			if (isEnabled != component->IsEnabled()){
-				component->SetEnabled(isEnabled);
-			}
+		//コンポーネントを操作できる
+		DrawProperties(component);
 
-			//もし有効じゃなければ
-			if (!isEnabled){
-				ImGui::PopID();
-				continue;
-			}
-		}
 		ImGui::PopID();
 	}
 #endif // USE_IMGUI
+}
+
+//コンポーネントをいじれるように
+void DebugEditor::DrawProperties(Component* component){
+	//headerを作成
+	if (ImGui::CollapsingHeader(component->GetTypeName().c_str())){
+		//有効状態を取得
+		bool isEnabled = component->IsEnabled();
+		ImGui::Checkbox("有効状態", &isEnabled);
+		//有効所帯が変更されたら
+		if (isEnabled != component->IsEnabled()){
+			component->SetEnabled(isEnabled);
+		}
+
+		//もし有効じゃなければ
+		if (!isEnabled){
+			return;
+		}
+	}
 }
 
 //タグの管理の描画

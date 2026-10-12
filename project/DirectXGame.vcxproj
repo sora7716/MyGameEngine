@@ -57,6 +57,7 @@
       </ExcludedFromBuild>
     </ClCompile>
     <ClCompile Include="engine\debug\Logger.cpp" />
+    <ClCompile Include="engine\debug\PropertyRegistry.cpp" />
     <ClCompile Include="engine\debug\wireframes\BaseShape.cpp" />
     <ClCompile Include="engine\debug\wireframes\Circle.cpp" />
     <ClCompile Include="engine\debug\wireframes\Cube.cpp" />
@@ -164,6 +165,7 @@
       </ExcludedFromBuild>
     </ClInclude>
     <ClInclude Include="engine\debug\Logger.h" />
+    <ClInclude Include="engine\debug\PropertyRegistry.h" />
     <ClInclude Include="engine\debug\wireframes\BaseShape.h" />
     <ClInclude Include="engine\debug\wireframes\Circle.h" />
     <ClInclude Include="engine\debug\wireframes\Cube.h" />

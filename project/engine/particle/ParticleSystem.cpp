@@ -154,7 +154,7 @@ void ParticleSystem::SetUVTranslate(uint32_t index, const Vector2& uvTranslate){
 }
 
 //色の設定
-void ParticleSystem::SetColor(uint32_t index, const Vector4& color){
+void ParticleSystem::SetColor(uint32_t index, const Color& color){
 	//マテリアルインスタンスがなければ
 	if (!materialInstance_){
 		return;

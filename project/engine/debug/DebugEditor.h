@@ -212,13 +212,13 @@ private://メンバ関数
 	void DrawInspector();
 
 	/// <summary>
-	/// 各コンポーネントをいじれるように
+	/// 各コンポーネントのプロパティ一覧
 	/// </summary>
 	/// <param name="selectGameObject">選択したゲームオブジェクト</param>
-	void DrawProperties(GameObject* selectGameObject);
+	void DrawPropertyTable(GameObject* selectGameObject);
 
 	/// <summary>
-	/// コンポーネントをいじれるように
+	/// 1つのコンポーネントのプロパティ一覧
 	/// </summary>
 	/// <param name="component">コンポーネント</param>
 	void DrawProperties(Component* component);

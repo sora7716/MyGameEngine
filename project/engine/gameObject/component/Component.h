@@ -1,4 +1,5 @@
 #pragma once
+#include "PropertyRegistry.h"
 #include <memory>
 #include <string>
 
@@ -94,6 +95,12 @@ public://メンバ関数
 	/// <param name="gameObject">ゲームオブジェクト</param>
 	/// <returns>コピーしたインスタンス</returns>
 	virtual std::unique_ptr<Component> Clone(GameObject* gameObject)const = 0;
+
+	/// <summary>
+	/// プロパティ一覧を登録
+	/// </summary>
+	/// <param name="registry">レジストリ</param>
+	virtual void RegisterProperties(PropertyRegistry* registry);
 
 	/// <summary>
 	/// 取り付け先を取得

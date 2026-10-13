@@ -2,11 +2,6 @@
 #include "Vector3.h"
 #include "Matrix4x4.h"
 #include <string>
-struct RGB final {
-	float r = 0.0f;
-	float g = 0.0f;
-	float b = 0.0f;
-};
 
 /// <summary>
 /// 4次元ベクトル
@@ -18,53 +13,16 @@ struct Vector4 final {
 	float w = 0.0f;
 
 	/// <summary>
-	/// RGB値の取得
+	/// 単位ベクトルを取得
 	/// </summary>
-	/// <returns>rgb</returns>
-	const RGB GetRGB()const;
+	/// <returns>単位ベクトル</returns>
+	Vector4 GetOne();
 
 	/// <summary>
-	/// RGBの設定
+	/// ゼロベクトルを取得
 	/// </summary>
-	/// <param name="rgb"></param>
-	void SetRGB(const RGB& rgb);
-
-	/// <summary>
-	/// 白の取得
-	/// </summary>
-	/// <returns>白</returns>
-	static Vector4 GetWhiteColor();
-
-	/// <summary>
-	/// 赤の取得
-	/// </summary>
-	/// <returns>赤</returns>
-	static Vector4 GetRedColor();
-
-	/// <summary>
-	/// 緑の取得
-	/// </summary>
-	/// <returns>緑</returns>
-	static Vector4 GetGreenColor();
-
-	/// <summary>
-	/// 青の取得
-	/// </summary>
-	/// <returns>青</returns>
-	static Vector4 GetBlueColor();
-
-	/// <summary>
-	/// 黒の取得
-	/// </summary>
-	/// <returns>黒</returns>
-	static Vector4 GetBlackColor();
-
-	/// <summary>
-	/// カラーコードをVector4に変換
-	/// </summary>
-	/// <param name="colorCode">カラーコード</param>
-	/// <returns>Vector4</returns>
-	static Vector4 ColorCodeTransform(const std::string& colorCode);
+	/// <returns>ゼロベクトル</returns>
+	Vector4 GetZero();
 
 	/// <summary>
 	/// Vector3に設定

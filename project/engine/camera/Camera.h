@@ -7,13 +7,13 @@
 /// <summary>
 /// カメラ
 /// </summary>
-class Camera:public Component {
+class Camera :public Component{
 public://メンバ関数
 	/// <summary>
 	/// コンストラクタ
 	/// </summary>
 	/// <param name="gameObject">ゲームオブジェクト</param>
-	explicit Camera(GameObject*gameObject);
+	explicit Camera(GameObject* gameObject);
 
 	/// <summary>
 	/// デストラクタ
@@ -31,11 +31,17 @@ public://メンバ関数
 	void Update()override;
 
 	/// <summary>
-    /// 複製
-    /// </summary>
-    /// <param name="gameObject">ゲームオブジェクト</param>
-    /// <returns>コンポーネント</returns>
+	/// 複製
+	/// </summary>
+	/// <param name="gameObject">ゲームオブジェクト</param>
+	/// <returns>コンポーネント</returns>
 	std::unique_ptr<Component>Clone(GameObject* gameObject)const override;
+
+	/// <summary>
+	/// プロパティ一覧の登録
+	/// </summary>
+	/// <param name="registry">レジストリ</param>
+	void RegisterProperties(PropertyRegistry* registry)override;
 
 	/// <summary>
 	/// オイラー角の設定
@@ -171,7 +177,7 @@ private://メンバ変数
 	Matrix4x4 viewMatrix_ = {};
 	//透視投影行列
 	Matrix4x4 projectionMatrix_ = {};
-	//水平方向視野角
+	//垂直方向視野角
 	float fovY_ = 0.45f;
 	//アスペクト比
 	float aspectRation_ = 0.0f;

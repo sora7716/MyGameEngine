@@ -156,7 +156,7 @@ void DebugDrawRenderer::CreateIndexResource(GpuResource& gpuResource, uint32_t i
 void DebugDrawRenderer::CreateMaterialResource(GpuResource& gpuResource){
 	HRESULT hr = S_FALSE;
 	//マテリアルリソースを作る
-	gpuResource.materialResource = directXBase_->CreateBufferResource(sizeof(Vector4));
+	gpuResource.materialResource = directXBase_->CreateBufferResource(sizeof(Color));
 	//マテリアルリソースにデータを書き込むためのアドレスを取得してmaterialDataに割り当てる
 	//書き込むためのアドレスを取得
 	hr = gpuResource.materialResource->Map(0, nullptr, reinterpret_cast<void**>(&gpuResource.materialData));
@@ -164,7 +164,7 @@ void DebugDrawRenderer::CreateMaterialResource(GpuResource& gpuResource){
 	assert(gpuResource.materialData);
 
 	//マテリアルデータの初期値を書き込む
-	*gpuResource.materialData = Vector4::GetWhiteColor();
+	*gpuResource.materialData = Color::GetWhite();
 }
 
 //ワールド行列リソースの生成

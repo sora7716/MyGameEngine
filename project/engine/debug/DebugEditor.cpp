@@ -9,6 +9,7 @@
 #include "DebugCameraController.h"
 #include "Object3d.h"
 #include "Component.h"
+#include "PropertyRegistry.h"
 #include <cassert>
 
 //コンストラクタ
@@ -47,9 +48,7 @@ void DebugEditor::Update(){
 }
 
 //描画
-void DebugEditor::Draw(D3D12_GPU_DESCRIPTOR_HANDLE sceneHandle, D3D12_GPU_DESCRIPTOR_HANDLE previewHandle){
-	(void)sceneHandle;
-	(void)previewHandle;
+void DebugEditor::Draw([[maybe_unused]] D3D12_GPU_DESCRIPTOR_HANDLE sceneHandle, [[maybe_unused]] D3D12_GPU_DESCRIPTOR_HANDLE previewHandle){
 #ifdef USE_IMGUI
 	//ドッキングスペースの描画
 	DrawDockSpace();
@@ -410,8 +409,7 @@ void DebugEditor::DrawHierarchy(){
 }
 
 //シーンの描画
-void DebugEditor::DrawScene(D3D12_GPU_DESCRIPTOR_HANDLE handle){
-	(void)handle;
+void DebugEditor::DrawScene([[maybe_unused]] D3D12_GPU_DESCRIPTOR_HANDLE handle){
 #ifdef USE_IMGUI
 	ImGui::Begin("シーン");
 	//ツールバーの表示用チェックボックス
@@ -580,8 +578,7 @@ void DebugEditor::DrawGizmo(){
 }
 
 //プレビューシーンの描画
-void DebugEditor::DrawPreview(D3D12_GPU_DESCRIPTOR_HANDLE handle){
-	(void)handle;
+void DebugEditor::DrawPreview([[maybe_unused]] D3D12_GPU_DESCRIPTOR_HANDLE handle){
 #ifdef USE_IMGUI
 	ImGui::Begin("プレビュー");
 	//テクスチャのIDを取得(GPUのハンドルから取得)
@@ -709,7 +706,7 @@ void DebugEditor::DrawInspector(){
 		}
 
 		//各コンポーネントを操作
-		DrawProperties(selectedGameObject_);
+		DrawPropertyTable(selectedGameObject_);
 
 	} else{
 		ImGui::TextDisabled("オブジェクトを選択していない");
@@ -718,8 +715,8 @@ void DebugEditor::DrawInspector(){
 #endif // USE_IMGUI
 }
 
-//各コンポーネントをいじれるように
-void DebugEditor::DrawProperties(GameObject* selectGameObject){
+//各コンポーネントのプロパティ一覧
+void DebugEditor::DrawPropertyTable([[maybe_unused]] GameObject* selectGameObject){
 #ifdef USE_IMGUI
 	//各コンポーネントを取得
 	const std::vector<std::unique_ptr<Component>>& components = selectGameObject->GetAllComponents();
@@ -748,23 +745,61 @@ void DebugEditor::DrawProperties(GameObject* selectGameObject){
 #endif // USE_IMGUI
 }
 
-//コンポーネントをいじれるように
-void DebugEditor::DrawProperties(Component* component){
+//1つのコンポーネントのプロパティ一覧
+void DebugEditor::DrawProperties([[maybe_unused]] Component* component){
+#ifdef USE_IMGUI
 	//headerを作成
 	if (ImGui::CollapsingHeader(component->GetTypeName().c_str())){
-		//有効状態を取得
-		bool isEnabled = component->IsEnabled();
-		ImGui::Checkbox("有効状態", &isEnabled);
-		//有効所帯が変更されたら
-		if (isEnabled != component->IsEnabled()){
-			component->SetEnabled(isEnabled);
+		//登録されているプロパティ一覧を取得
+		PropertyRegistry registry;
+		component->RegisterProperties(&registry);
+		std::vector<Property> properties = registry.GetProperties();
+
+		//レジストリを使ってIｍGuiを描画
+		for (Property property : properties){
+			//浮動小数のプロパティを取得
+			inspector::FloatProperty* floatProperty = std::get_if<inspector::FloatProperty>(&property);
+			//フラグのプロパティを取得
+			inspector::BoolProperty* boolProperty = std::get_if<inspector::BoolProperty>(&property);
+			//整数のプロパティを取得
+			inspector::IntProperty* intProperty = std::get_if<inspector::IntProperty>(&property);
+			//Vector2のプロパティを取得
+			inspector::Vector2Property* vector2Property = std::get_if<inspector::Vector2Property>(&property);
+			//Vector3のプロパティを取得
+			inspector::Vector3Property* vector3Property = std::get_if<inspector::Vector3Property>(&property);
+			//Vector4のプロパティを取得
+			inspector::Vector4Property* vector4Property = std::get_if<inspector::Vector4Property>(&property);
+			//Colorのプロパティを取得
+			inspector::ColorProperty* colorProperty = std::get_if<inspector::ColorProperty>(&property);
+			//Stringのプロパティを取得
+			inspector::StringProperty* stringProperty = std::get_if<inspector::StringProperty>(&property);
+
+			//各項目のIｍGuiを表示
+			if (floatProperty){
+				ImGui::DragFloat(floatProperty->displayName.c_str(), floatProperty->value, floatProperty->dragSpeed);
+			} else if (boolProperty){
+				ImGui::Checkbox(boolProperty->displayName.c_str(), boolProperty->value);
+			} else if (intProperty){
+				ImGui::DragInt(intProperty->displayName.c_str(), intProperty->value, intProperty->dragSpeed);
+			} else if (vector2Property){
+				ImGui::DragFloat2(vector2Property->displayName.c_str(), &vector2Property->value->x, vector2Property->dragSpeed);
+			} else if (vector3Property){
+				ImGui::DragFloat3(vector3Property->displayName.c_str(), &vector3Property->value->x, vector3Property->dragSpeed);
+			} else if (vector4Property){
+				ImGui::DragFloat4(vector4Property->displayName.c_str(), &vector4Property->value->x, vector4Property->dragSpeed);
+			} else if (colorProperty){
+				ImGui::ColorEdit4(colorProperty->displayName.c_str(), &colorProperty->value->r);
+			} else if (stringProperty){
+				ImGui::InputText(stringProperty->displayName.c_str(), stringProperty->value->data(), stringProperty->value->size());
+			}
 		}
 
 		//もし有効じゃなければ
-		if (!isEnabled){
+		if (!component->IsEnabled()){
 			return;
 		}
 	}
+#endif // USE_IMGUI
 }
 
 //タグの管理の描画
@@ -950,10 +985,7 @@ void DebugEditor::BeginRename(GameObject* gameObject){
 }
 
 //ノードのツリーを描画
-void DebugEditor::DrawNodeTree(const Node& node, const std::string& parentPath, Object3d* targetObject){
-	(void)node;
-	(void)parentPath;
-	(void)targetObject;
+void DebugEditor::DrawNodeTree([[maybe_unused]] const Node& node, [[maybe_unused]] const std::string& parentPath, [[maybe_unused]] Object3d* targetObject){
 #ifdef USE_IMGUI
 	//現在のパス
 	std::string currentPath = parentPath;

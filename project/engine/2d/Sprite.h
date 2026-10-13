@@ -48,7 +48,7 @@ public://メンバ関数
 	/// 色のセッター
 	/// </summary>
 	/// <param name="color">色</param>
-	void SetColor(const Vector4& color);
+	void SetColor(const Color& color);
 
 	/// <summary>
 	/// ブレンドモードのセッター

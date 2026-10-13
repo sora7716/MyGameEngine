@@ -92,6 +92,7 @@
     <ClCompile Include="engine\graphics\texture\TextureManager.cpp" />
     <ClCompile Include="engine\input\Input.cpp" />
     <ClCompile Include="engine\main.cpp" />
+    <ClCompile Include="engine\math\Color.cpp" />
     <ClCompile Include="engine\math\MathUtility.cpp" />
     <ClCompile Include="engine\math\Matrix4x4.cpp" />
     <ClCompile Include="engine\math\MatrixUtility.cpp" />
@@ -209,6 +210,7 @@
     <ClInclude Include="engine\graphics\resource\RenderTexture.h" />
     <ClInclude Include="engine\graphics\texture\TextureManager.h" />
     <ClInclude Include="engine\input\Input.h" />
+    <ClInclude Include="engine\math\Color.h" />
     <ClInclude Include="engine\math\MathUtility.h" />
     <ClInclude Include="engine\math\Matrix3x3.h" />
     <ClInclude Include="engine\math\Matrix4x4.h" />

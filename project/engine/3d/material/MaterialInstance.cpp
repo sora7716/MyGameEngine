@@ -18,7 +18,7 @@ void MaterialInstance::Initialize(const std::vector<MaterialTexturePaths>& textu
 	for (uint32_t i = 0; i < static_cast<uint32_t>(slots_.size()); i++){
 		MaterialInstanceSlot& slot = slots_[i];
 		//マテリアルの初期化
-		slot.material.color = Vector4::GetWhiteColor();
+		slot.material.color = Color::GetWhite();
 		slot.material.enableLighting = true;
 		slot.material.environmentCoefficient = 0.0f;
 		slot.material.shininess = 100.0f;
@@ -34,7 +34,7 @@ void MaterialInstance::Initialize(const std::vector<MaterialTexturePaths>& textu
 	}
 
 	//リムライトの初期化
-	rimLight_.color = Vector4::GetWhiteColor();
+	rimLight_.color = Color::GetWhite();
 	rimLight_.power = 0.1f;
 	rimLight_.outLinePower = 0.1f;
 	rimLight_.softness = 5.0f;
@@ -45,7 +45,7 @@ void MaterialInstance::Initialize(const std::vector<MaterialTexturePaths>& textu
 }
 
 //色の設定
-void MaterialInstance::SetColor(uint32_t index, const Vector4& color){
+void MaterialInstance::SetColor(uint32_t index, const Color& color){
 	//検索キーとスロットのサイズを比較して
 	if (index >= slots_.size()){
 		return;
@@ -183,7 +183,7 @@ void MaterialInstance::SetEnvironmentCoefficient(uint32_t index, float coefficie
 }
 
 //リムライトの色の設定
-void MaterialInstance::SetRimColor(const Vector4& color){
+void MaterialInstance::SetRimColor(const Color& color){
 	rimLight_.color = color;
 
 	//変更があったので加算

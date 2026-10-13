@@ -2,6 +2,7 @@
 #include "BlendMode.h"
 #include "Matrix4x4.h"
 #include "Vector4.h"
+#include "Color.h"
 #include <vector>
 
 //デバッグ描画で必要な描画データ
@@ -9,6 +10,6 @@ struct DebugDrawRenderData{
 	BlendMode blendMode = BlendMode::kNone;
 	std::vector<Vector4>vertices = {};
 	std::vector<uint32_t>indices = {};
-	Vector4 material = {};
+	Color material = Color::GetWhite();
 	Matrix4x4 worldMatrix = {};
 };

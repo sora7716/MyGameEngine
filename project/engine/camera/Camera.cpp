@@ -65,6 +65,15 @@ std::unique_ptr<Component> Camera::Clone(GameObject* gameObject) const{
 	return cloneInstance;
 }
 
+//プロパティ一覧の登録
+void Camera::RegisterProperties(PropertyRegistry* registry){
+	Component::RegisterProperties(registry);
+	registry->Add("fovY", fovY_, 0.01f);
+	registry->Add("aspect比", aspectRation_);
+	registry->Add("nearClip", nearClip_, 0.1f);
+	registry->Add("farClip", farClip_, 0.1f);
+}
+
 //オイラー角の設定
 void Camera::SetEulerAngle(const Vector3& eulerAngle){
 	gameObject_->GetTransform().SetEulerAngle(eulerAngle);

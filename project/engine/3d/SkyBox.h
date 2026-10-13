@@ -4,6 +4,7 @@
 #include "RenderingData.h"
 #include "SkyBoxRenderData.h"
 #include "Component.h"
+#include "Color.h"
 #include <array>
 #include <string>
 #include <memory>
@@ -82,7 +83,7 @@ private://メンバ変数
 	std::string imageFileName_ = "";
 
 	//マテリアル
-	Vector4 material_ = Vector4::GetWhiteColor();
+	Color material_ = Color::GetWhite();
 
 	//ワールド行列
 	Matrix4x4 worldMatrix_ = {};

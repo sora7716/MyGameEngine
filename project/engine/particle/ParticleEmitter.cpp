@@ -1,5 +1,6 @@
 #define NOMINMAX
 #include "ParticleEmitter.h"
+#include "Color.h"
 #include "MathUtility.h"
 using namespace primitiveData;
 
@@ -35,7 +36,7 @@ void ParticleEmitter::Update(){
 			//経過時間を足す
 			(*it).currentTime += mathUtility::kDeltaTime;
 			float alpha = 1.0f - ((*it).currentTime / (*it).lifeTime);
-			(*it).color.w = alpha;
+			(*it).color.a = alpha;
 
 			//表示するかチェック
 			if (it->isEnabled){
@@ -142,7 +143,7 @@ Particle ParticleEmitter::MakeNormalParticle(){
 	particle.transform.SetEulerAngle({ 0.0f,0.0f,distRotate(randomEngine_) });
 	particle.transform.translate = emitter_.translate;
 	particle.velocity = { 0.0f,0.0f,0.0f };
-	particle.color = Vector4::GetWhiteColor();
+	particle.color = Color::GetWhite();
 	particle.lifeTime = 1.0f;//1秒で消える
 	particle.currentTime = 0;
 

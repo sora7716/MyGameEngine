@@ -91,6 +91,24 @@ void Object3d::UpdateLOD(float distance){
 	currentLOD_ = lodController_->SelectLOD(distance, currentLOD_, baseModel_->GetLODCount());
 }
 
+//プロパティ一覧を登録
+void Object3d::RegisterProperties(PropertyRegistry* registry){
+	Component::RegisterProperties(registry);
+	//マテリアルインスタンスがNullなら
+	if (!materialInstance_){
+		return;
+	}
+
+	//スロットを取得
+	std::vector<MaterialInstanceSlot> slots = materialInstance_->GetSlots();
+	for (uint32_t i = 0; i < slots.size(); i++){
+		MaterialInstanceSlot& slot = slots[i];
+		Color color = slot.material.color;
+		registry->Add("color" + std::to_string(i), color);
+		SetColor(i, color);
+	}
+}
+
 //親子付けを外す
 void Object3d::DetachParent(){
 	//そもそも親がなければ
@@ -272,7 +290,7 @@ void Object3d::SetUVTranslate(uint32_t index, const Vector2& uvTranslate){
 }
 
 //色の設定
-void Object3d::SetColor(uint32_t index, const Vector4& color){
+void Object3d::SetColor(uint32_t index, const Color& color){
 	//マテリアルインスタンスがなければ
 	if (!materialInstance_){
 		return;

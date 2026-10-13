@@ -1,6 +1,6 @@
 #pragma once
 #include "BlendMode.h"
-#include "Vector4.h"
+#include "Color.h"
 #include "Matrix4x4.h"
 #include <string>
 
@@ -9,7 +9,7 @@
 /// </summary>
 struct SkyBoxRenderData{
 	bool isActive = true;
-	Vector4 material = {};
+	Color material = {};
 	Matrix4x4 worldMatrix;
 	std::string imageFileName = "";
 	BlendMode blendMode = BlendMode::kNone;

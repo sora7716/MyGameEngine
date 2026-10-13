@@ -261,11 +261,11 @@ void SkyBoxRenderer::CreateIndexResource(){
 //マテリアルリソースの生成
 void SkyBoxRenderer::CreateMaterialResource(){
 	//マテリアルリソースを作る
-	materialResource_ = directXBase_->CreateBufferResource(sizeof(Vector4));
+	materialResource_ = directXBase_->CreateBufferResource(sizeof(Color));
 	//書き込むためのアドレスを取得
 	materialResource_->Map(0, nullptr, reinterpret_cast<void**>(&materialData_));
 	//色を書き込む
-	*materialData_ = Vector4::GetWhiteColor();
+	*materialData_ = Color::GetWhite();
 }
 
 //座標変換行列リソースの生成

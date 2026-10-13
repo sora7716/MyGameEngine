@@ -157,7 +157,7 @@ void ParticleRenderer::CreateTransformationMatrixResource(GpuResource& gpuResour
 	for (uint32_t i = 0; i < gpuResource.capacity; i++){
 		//単位行列を書き込んでおく
 		gpuResource.instanceData[i].world = Matrix4x4::Identity4x4();
-		gpuResource.instanceData[i].color = Vector4(1.0f, 1.0f, 1.0f, 1.0f); // 初期色を白に設定
+		gpuResource.instanceData[i].color = Color(1.0f, 1.0f, 1.0f, 1.0f); // 初期色を白に設定
 	}
 }
 
@@ -185,7 +185,7 @@ void ParticleRenderer::CreateMaterialResources(GpuResource& gpuResource, uint32_
 		//書き込むためのアドレスを取得
 		gpuResource.materialResources[i]->Map(0, nullptr, reinterpret_cast<void**>(&gpuResource.materialDatas[i]));
 		//色を書き込む
-		gpuResource.materialDatas[i]->color = Vector4::GetWhiteColor();
+		gpuResource.materialDatas[i]->color = Color::GetWhite();
 		gpuResource.materialDatas[i]->enableLighting = true;
 		gpuResource.materialDatas[i]->uvMatrix = Matrix4x4::Identity4x4();
 		gpuResource.materialDatas[i]->shininess = 10.0f;

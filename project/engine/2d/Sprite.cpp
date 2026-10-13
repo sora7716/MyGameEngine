@@ -56,7 +56,7 @@ void Sprite::ChangeTexture(const std::string& spriteName){
 }
 
 //色のセッター
-void Sprite::SetColor(const Vector4& color){
+void Sprite::SetColor(const Color& color){
 	material_.color = color;
 }
 

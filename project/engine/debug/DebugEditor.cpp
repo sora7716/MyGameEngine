@@ -776,21 +776,45 @@ void DebugEditor::DrawProperties([[maybe_unused]] Component* component){
 
 			//各項目のIｍGuiを表示
 			if (floatProperty){
-				ImGui::DragFloat(floatProperty->displayName.c_str(), floatProperty->value, floatProperty->dragSpeed);
+				float decimal = floatProperty->getter();
+				if (ImGui::DragFloat(floatProperty->displayName.c_str(), &decimal, floatProperty->dragSpeed)){
+					floatProperty->setter(decimal);
+				}
 			} else if (boolProperty){
-				ImGui::Checkbox(boolProperty->displayName.c_str(), boolProperty->value);
+				bool frag = boolProperty->getter();
+				if (ImGui::Checkbox(boolProperty->displayName.c_str(), &frag)){
+					boolProperty->setter(frag);
+				}
 			} else if (intProperty){
-				ImGui::DragInt(intProperty->displayName.c_str(), intProperty->value, intProperty->dragSpeed);
+				int32_t digit = intProperty->getter();
+				if (ImGui::DragInt(intProperty->displayName.c_str(), &digit, intProperty->dragSpeed)){
+					intProperty->setter(digit);
+				}				
 			} else if (vector2Property){
-				ImGui::DragFloat2(vector2Property->displayName.c_str(), &vector2Property->value->x, vector2Property->dragSpeed);
+				Vector2 vector2 = vector2Property->getter();
+				if (ImGui::DragFloat2(vector2Property->displayName.c_str(), &vector2.x, vector2Property->dragSpeed)){
+					vector2Property->setter(vector2);
+				}
 			} else if (vector3Property){
-				ImGui::DragFloat3(vector3Property->displayName.c_str(), &vector3Property->value->x, vector3Property->dragSpeed);
+				Vector3 vector3 = vector3Property->getter();
+				if (ImGui::DragFloat3(vector3Property->displayName.c_str(), &vector3.x, vector3Property->dragSpeed)){
+					vector3Property->setter(vector3);
+				}
 			} else if (vector4Property){
-				ImGui::DragFloat4(vector4Property->displayName.c_str(), &vector4Property->value->x, vector4Property->dragSpeed);
+				Vector4 vector4 = vector4Property->getter();
+				if (ImGui::DragFloat4(vector4Property->displayName.c_str(), &vector4.x, vector4Property->dragSpeed)){
+					vector4Property->setter(vector4);
+				}
 			} else if (colorProperty){
-				ImGui::ColorEdit4(colorProperty->displayName.c_str(), &colorProperty->value->r);
+				Color color = colorProperty->getter();
+				if (ImGui::ColorEdit4(colorProperty->displayName.c_str(), &color.r)){
+					colorProperty->setter(color);
+				}
 			} else if (stringProperty){
-				ImGui::InputText(stringProperty->displayName.c_str(), stringProperty->value->data(), stringProperty->value->size());
+				std::string text = stringProperty->getter();
+				if (ImGui::InputText(colorProperty->displayName.c_str(), text.data(), text.size())){
+					stringProperty->setter(text);
+				}
 			}
 		}
 

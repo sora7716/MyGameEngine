@@ -99,13 +99,18 @@ void Object3d::RegisterProperties(PropertyRegistry* registry){
 		return;
 	}
 
-	//スロットを取得
-	std::vector<MaterialInstanceSlot> slots = materialInstance_->GetSlots();
-	for (uint32_t i = 0; i < slots.size(); i++){
-		MaterialInstanceSlot& slot = slots[i];
-		Color color = slot.material.color;
-		registry->Add("color" + std::to_string(i), color);
-		SetColor(i, color);
+	//マテリアルを取得
+	MaterialInstance* material = materialInstance_.get();
+
+	//登録
+	for (uint32_t i = 0; i < material->GetSlots().size(); i++){
+		registry->Add("color" + std::to_string(i),
+			[i, material](){
+				return material->GetSlots()[i].material.color;
+			},
+			[i, this](const Color& color){
+				this->SetColor(i, color);
+			});
 	}
 }
 

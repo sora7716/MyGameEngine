@@ -279,21 +279,6 @@ Transform matrixUtility::DecomposeMatrix(const Matrix4x4& m, const Vector3& refe
 		return result;
 	}
 
-	//回転行列を抽出
-	Matrix4x4 rotateMatrix = Matrix4x4::Identity4x4();
-	rotateMatrix.m[0][0] = m.m[0][0] / scale.x;
-	rotateMatrix.m[0][1] = m.m[0][1] / scale.x;
-	rotateMatrix.m[0][2] = m.m[0][2] / scale.x;
-	rotateMatrix.m[1][0] = m.m[1][0] / scale.y;
-	rotateMatrix.m[1][1] = m.m[1][1] / scale.y;
-	rotateMatrix.m[1][2] = m.m[1][2] / scale.y;
-	rotateMatrix.m[2][0] = m.m[2][0] / scale.z;
-	rotateMatrix.m[2][1] = m.m[2][1] / scale.z;
-	rotateMatrix.m[2][2] = m.m[2][2] / scale.z;
-
-	//回転行列をクォータニオンに変換
-	Quaternion rotate = Quaternion::RotationMatrixToQuaternion(rotateMatrix);
-
 	//基準となる拡縮を確認し負だった場合
 	if (referenceScale.x < 0.0f){
 		scale.x = -scale.x;
@@ -304,6 +289,17 @@ Transform matrixUtility::DecomposeMatrix(const Matrix4x4& m, const Vector3& refe
 	if (referenceScale.z < 0.0f){
 		scale.z = -scale.z;
 	}
+
+	//回転行列を抽出
+	Matrix4x4 rotateMatrix = Matrix4x4::Identity4x4();
+	for (uint32_t i = 0; i < 3; i++){
+		rotateMatrix.m[0][i] = m.m[0][i] / scale.x;
+		rotateMatrix.m[1][i] = m.m[1][i] / scale.y;
+		rotateMatrix.m[2][i] = m.m[2][i] / scale.z;
+	}
+
+	//回転行列をクォータニオンに変換
+	Quaternion rotate = Quaternion::RotationMatrixToQuaternion(rotateMatrix);
 
 	//Transformに入れる
 	Transform result = {};

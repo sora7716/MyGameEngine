@@ -11,6 +11,15 @@
 
 //プロパティ
 namespace inspector{
+	//グループの開始
+	struct GroupBegin{
+		std::string displayName = "";
+	};
+	//グループの終了
+	struct GroupEnd{
+
+	};
+
 	//浮動小数
 	struct FloatProperty{
 		std::string displayName = "";
@@ -67,6 +76,8 @@ namespace inspector{
 }
 
 using Property = std::variant<
+	inspector::GroupBegin,
+	inspector::GroupEnd,
 	inspector::FloatProperty,
 	inspector::BoolProperty,
 	inspector::IntProperty,
@@ -91,6 +102,17 @@ public://メンバ関数
 	~PropertyRegistry();
 
 	/// <summary>
+	/// グループの開始
+	/// </summary>
+	/// <param name="displayName">表示名</param>
+	void BeginGroup(const std::string& displayName);
+
+	/// <summary>
+	/// グループの終了
+	/// </summary>
+	void EndGroup();
+
+	/// <summary>
 	/// 浮動小数の追加
 	/// </summary>
 	/// <param name="displayName">表示名</param>
@@ -104,7 +126,7 @@ public://メンバ関数
 	/// <param name="displayName">表示名</param>
 	/// <param name="getter">Getter</param>
 	/// <param name="setter">Setter</param>
-	void Add(const std::string& displayName, std::function<float()> getter, std::function<void(float)>setter);
+	void Add(const std::string& displayName, std::function<float()> getter, std::function<void(float)>setter, float dragSpeed = 0.1f);
 
 	/// <summary>
 	/// フラグの追加

@@ -9,6 +9,18 @@ PropertyRegistry::PropertyRegistry(){
 PropertyRegistry::~PropertyRegistry(){
 }
 
+//グループの開始
+void PropertyRegistry::BeginGroup(const std::string& displayName){
+	GroupBegin groupBegin = { displayName };
+	properties_.push_back(groupBegin);
+}
+
+//グループの終了
+void PropertyRegistry::EndGroup(){
+	GroupEnd groupEnd = {};
+	properties_.push_back(groupEnd);
+}
+
 //浮動小数の追加
 void PropertyRegistry::Add(const std::string& displayName, float& value, float dragSpeed){
 	FloatProperty property = {
@@ -25,8 +37,8 @@ void PropertyRegistry::Add(const std::string& displayName, float& value, float d
 }
 
 //浮動小数の追加
-void PropertyRegistry::Add(const std::string& displayName, std::function<float()> getter, std::function<void(float)>setter){
-	FloatProperty property = { displayName,getter,setter };
+void PropertyRegistry::Add(const std::string& displayName, std::function<float()> getter, std::function<void(float)>setter, float dragSpeed){
+	FloatProperty property = { displayName,getter,setter,dragSpeed };
 	properties_.push_back(property);
 }
 

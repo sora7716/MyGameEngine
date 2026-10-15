@@ -157,7 +157,7 @@ public://メンバ関数
 	/// </summary>
 	/// <param name="index">マテリアルスロット番号の検索キー</param>
 	/// <param name="isLighting">ライティングフラグ</param>
-	void SetIsLighting(uint32_t index, bool isLighting);
+	void SetEnabledLighting(uint32_t index, bool isLighting);
 
 	/// <summary>
 	/// 輝度の設定

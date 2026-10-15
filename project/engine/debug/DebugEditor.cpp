@@ -11,6 +11,7 @@
 #include "Component.h"
 #include "PropertyRegistry.h"
 #include <cassert>
+#include <array>
 
 //コンストラクタ
 DebugEditor::DebugEditor(){
@@ -750,13 +751,22 @@ void DebugEditor::DrawProperties([[maybe_unused]] Component* component){
 #ifdef USE_IMGUI
 	//headerを作成
 	if (ImGui::CollapsingHeader(component->GetTypeName().c_str())){
+		//インデントをつける
+		ImGui::Indent();
 		//登録されているプロパティ一覧を取得
 		PropertyRegistry registry;
 		component->RegisterProperties(&registry);
 		std::vector<Property> properties = registry.GetProperties();
 
+		//グループのテーブルを表示するか
+		bool isGroupTableVisible = false;
+
 		//レジストリを使ってIｍGuiを描画
 		for (Property property : properties){
+			//Groupの開始を取得
+			inspector::GroupBegin* groupBegin = std::get_if<inspector::GroupBegin>(&property);
+			//Groupの終了を取得
+			inspector::GroupEnd* groupEnd = std::get_if<inspector::GroupEnd>(&property);
 			//浮動小数のプロパティを取得
 			inspector::FloatProperty* floatProperty = std::get_if<inspector::FloatProperty>(&property);
 			//フラグのプロパティを取得
@@ -773,6 +783,22 @@ void DebugEditor::DrawProperties([[maybe_unused]] Component* component){
 			inspector::ColorProperty* colorProperty = std::get_if<inspector::ColorProperty>(&property);
 			//Stringのプロパティを取得
 			inspector::StringProperty* stringProperty = std::get_if<inspector::StringProperty>(&property);
+			//グループの開始だった場合
+			if (groupBegin){
+				isGroupTableVisible = ImGui::CollapsingHeader(groupBegin->displayName.c_str());
+				continue;
+			}
+
+			//グループの終了だった場合
+			if (groupEnd){
+				isGroupTableVisible = true;
+				continue;
+			}
+
+			//表示するフラグがfalseだった場合
+			if (!isGroupTableVisible){
+				continue;
+			}
 
 			//各項目のIｍGuiを表示
 			if (floatProperty){
@@ -789,7 +815,7 @@ void DebugEditor::DrawProperties([[maybe_unused]] Component* component){
 				int32_t digit = intProperty->getter();
 				if (ImGui::DragInt(intProperty->displayName.c_str(), &digit, intProperty->dragSpeed)){
 					intProperty->setter(digit);
-				}				
+				}
 			} else if (vector2Property){
 				Vector2 vector2 = vector2Property->getter();
 				if (ImGui::DragFloat2(vector2Property->displayName.c_str(), &vector2.x, vector2Property->dragSpeed)){
@@ -812,8 +838,17 @@ void DebugEditor::DrawProperties([[maybe_unused]] Component* component){
 				}
 			} else if (stringProperty){
 				std::string text = stringProperty->getter();
-				if (ImGui::InputText(colorProperty->displayName.c_str(), text.data(), text.size())){
-					stringProperty->setter(text);
+				std::array<char, 256> buffer = {};
+
+				//終端文字用に一つ残す
+				const size_t copyLength = std::min(text.size(), buffer.size() - 1);
+
+				//テキストの内容をBufferにコピー
+				std::copy_n(text.data(), copyLength, buffer.data());
+
+				//テキストを操作
+				if (ImGui::InputText(stringProperty->displayName.c_str(), buffer.data(), buffer.size())){
+					stringProperty->setter(static_cast<std::string>(buffer.data()));
 				}
 			}
 		}
@@ -822,6 +857,9 @@ void DebugEditor::DrawProperties([[maybe_unused]] Component* component){
 		if (!component->IsEnabled()){
 			return;
 		}
+
+		//インデントを解除
+		ImGui::Unindent();
 	}
 #endif // USE_IMGUI
 }

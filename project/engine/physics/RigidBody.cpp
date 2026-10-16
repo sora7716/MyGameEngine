@@ -42,10 +42,6 @@ std::unique_ptr<Component> RigidBody::Clone(GameObject* gameObject) const{
 	return cloneInstance;
 }
 
-//プロパティ一覧を登録
-void RigidBody::RegisterProperties(PropertyRegistry* registry){
-}
-
 //衝突したら
 void RigidBody::OnCollisionStay(const CollisionInfo& info){
 	//衝突対象が無ければ

@@ -6,6 +6,7 @@
 #include <memory>
 #include <type_traits>
 #include <utility>
+#include <Matrix4x4.h>
 
 //前方宣言
 class BaseScene;
@@ -49,10 +50,34 @@ public://メンバ関数
 	void Initialize(const std::string& name);
 
 	/// <summary>
+	/// 更新
+	/// </summary>
+	/// <param name="phase">更新フェーズ</param>
+	void Update(UpdatePhase phase);
+
+	/// <summary>
+	/// 親子付け
+	/// </summary>
+	/// <param name="parentObject">親のオブジェクト</param>
+	/// <returns>成功したか</returns>
+	bool AttachTo(GameObject* parentObject);
+
+	/// <summary>
+	/// 親子付けを外す
+	/// </summary>
+	void Detach();
+
+	/// <summary>
 	/// トランスフォームの取得
 	/// </summary>
 	/// <returns>トランスフォーム</returns>
 	Transform& GetTransform();
+
+	/// <summary>
+	/// ワールドの位置の取得
+	/// </summary>
+	/// <returns>ワールドの位置</returns>
+	Vector3 GetWorldPos();
 
 	/// <summary>
 	/// トランスフォームの取得
@@ -65,6 +90,12 @@ public://メンバ関数
 	/// </summary>
 	/// <param name="isActive"></param>
 	void SetIsActive(bool isActive);
+
+	/// <summary>
+	/// 接続する行列の設定
+	/// </summary>
+	/// <param name="attachedMatrix">接続する行列</param>
+	void SetAttachedMatrix(const Matrix4x4& attachedMatrix);
 
 	/// <summary>
 	/// アクティブかどうかを取得
@@ -107,6 +138,36 @@ public://メンバ関数
 	/// </summary>
 	/// <returns>現在の接続シーン</returns>
 	BaseScene* GetCurrentScene();
+
+	/// <summary>
+	/// ワールド行列の取得
+	/// </summary>
+	/// <returns>ワールド行列</returns>
+	const Matrix4x4& GetWorldMatrix()const;
+
+	/// <summary>
+	/// ローカル行列の取得
+	/// </summary>
+	/// <returns>ローカル行列</returns>
+	const Matrix4x4& GetLocalMatrix()const;
+
+	/// <summary>
+	/// 親オブジェクトの取得
+	/// </summary>
+	/// <returns>親オブジェクト</returns>
+	const GameObject* GetParentObject()const;
+
+	/// <summary>
+	/// 接続行列の取得
+	/// </summary>
+	/// <returns>接続行列</returns>
+	const Matrix4x4& GetAttachedMatrix()const;
+
+	/// <summary>
+	/// 親のワールド行列の取得
+	/// </summary>
+	/// <returns>親のワールド行列</returns>
+	const Matrix4x4& GetParentMatrix()const;
 
 	/// <summary>
 	/// コンポーネントの追加
@@ -193,12 +254,6 @@ public://メンバ関数
 	const std::vector<std::unique_ptr<Component>>& GetAllComponents()const;
 
 	/// <summary>
-	/// コンポーネントの更新
-	/// </summary>
-	/// <param name="phase">更新のフェーズ</param>
-	void UpdateComponents(UpdatePhase phase);
-
-	/// <summary>
 	/// デバッグでImGuiを使用できるようにする
 	/// </summary>
 	void DebugImGui();
@@ -258,6 +313,17 @@ private://メンバ関数
 	/// </summary>
 	/// <param name="other">衝突対象のコライダー</param>
 	void NotifyOnTriggerExit(BaseCollider* other);
+
+	/// <summary>
+	/// コンポーネントの更新
+	/// </summary>
+	/// <param name="phase">更新のフェーズ</param>
+	void UpdateComponents(UpdatePhase phase);
+
+	/// <summary>
+	/// 行列の更新
+	/// </summary>
+	void UpdateMatrices();
 private://メンバ関数ポインタの配列
 	//OnCollisionを通知する関数をまとめる用の型
 	using NotifyOnCollision = void (GameObject::*)(const CollisionInfo& info);
@@ -281,4 +347,16 @@ private://メンバ変数
 	std::vector<std::unique_ptr<Component>>components_;
 	//現在取得しているシーン
 	BaseScene* currentScene_ = nullptr;
+
+	//親オブジェクト
+	GameObject* parentObject_ = nullptr;
+
+	//ローカル行列
+	Matrix4x4 localMatrix_ = Matrix4x4::Identity4x4();
+	//ワールド行列
+	Matrix4x4 worldMatrix_ = Matrix4x4::Identity4x4();
+	//親子付けした行列
+	Matrix4x4 attachedMatrix_ = Matrix4x4::Identity4x4();
+	//親のワールド行列
+	Matrix4x4 parentMatrix_ = Matrix4x4::Identity4x4();
 };

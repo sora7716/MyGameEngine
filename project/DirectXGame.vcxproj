@@ -25,6 +25,7 @@
     <ClCompile Include="application\scene\GameScene.cpp" />
     <ClCompile Include="application\scene\TestPlayScene.cpp" />
     <ClCompile Include="engine\2d\Sprite.cpp" />
+    <ClCompile Include="engine\3d\lighting\DirectionalLight.cpp" />
     <ClCompile Include="engine\3d\lighting\LightingManager.cpp" />
     <ClCompile Include="engine\3d\lod\LODBuilder.cpp" />
     <ClCompile Include="engine\3d\lod\LODController.cpp" />
@@ -93,9 +94,7 @@
     <ClCompile Include="engine\input\Input.cpp" />
     <ClCompile Include="engine\main.cpp" />
     <ClCompile Include="engine\math\Color.cpp" />
-    <ClCompile Include="engine\math\MathUtility.cpp" />
     <ClCompile Include="engine\math\Matrix4x4.cpp" />
-    <ClCompile Include="engine\math\MatrixUtility.cpp" />
     <ClCompile Include="engine\math\Quaternion.cpp" />
     <ClCompile Include="engine\math\Vector2.cpp" />
     <ClCompile Include="engine\math\Vector3.cpp" />
@@ -110,6 +109,8 @@
     <ClCompile Include="engine\scene\SceneFactory.cpp" />
     <ClCompile Include="engine\scene\SceneManager.cpp" />
     <ClCompile Include="engine\utility\HashUtility.cpp" />
+    <ClCompile Include="engine\utility\MathUtility.cpp" />
+    <ClCompile Include="engine\utility\MatrixUtility.cpp" />
     <ClCompile Include="engine\utility\StringUtility.cpp" />
     <ClCompile Include="externals\imguizmo\ImGuizmo.cpp">
       <AdditionalOptions Condition="'$(Configuration)|$(Platform)'=='Release|x64'">/analyze- %(AdditionalOptions)</AdditionalOptions>
@@ -133,6 +134,7 @@
     <ClInclude Include="application\scene\GameScene.h" />
     <ClInclude Include="application\scene\TestPlayScene.h" />
     <ClInclude Include="engine\2d\Sprite.h" />
+    <ClInclude Include="engine\3d\lighting\DirectionalLight.h" />
     <ClInclude Include="engine\3d\lighting\LightingData.h" />
     <ClInclude Include="engine\3d\lighting\LightingManager.h" />
     <ClInclude Include="engine\3d\lod\LODBuilder.h" />
@@ -211,10 +213,8 @@
     <ClInclude Include="engine\graphics\texture\TextureManager.h" />
     <ClInclude Include="engine\input\Input.h" />
     <ClInclude Include="engine\math\Color.h" />
-    <ClInclude Include="engine\math\MathUtility.h" />
     <ClInclude Include="engine\math\Matrix3x3.h" />
     <ClInclude Include="engine\math\Matrix4x4.h" />
-    <ClInclude Include="engine\math\MatrixUtility.h" />
     <ClInclude Include="engine\math\Quaternion.h" />
     <ClInclude Include="engine\math\Vector2.h" />
     <ClInclude Include="engine\math\Vector3.h" />
@@ -230,6 +230,8 @@
     <ClInclude Include="engine\scene\SceneFactory.h" />
     <ClInclude Include="engine\scene\SceneManager.h" />
     <ClInclude Include="engine\utility\HashUtility.h" />
+    <ClInclude Include="engine\utility\MathUtility.h" />
+    <ClInclude Include="engine\utility\MatrixUtility.h" />
     <ClInclude Include="engine\utility\StringUtility.h" />
     <ClInclude Include="externals\imguizmo\ImGuizmo.h">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>

@@ -184,8 +184,8 @@ void RenderSystem::CollectActiveObject3ds(const std::vector<std::unique_ptr<Game
 
 		//LODを更新
 		//object3dのワールド座標を取得
-		Vector3 object3dWorldPos = object3d->GetWorldPos();
-		object3d->UpdateLOD((object3dWorldPos - cameraWorldPos).Length());
+		Vector3 worldPos = gameObject->GetWorldPos();
+		object3d->UpdateLOD((worldPos - cameraWorldPos).Length());
 
 		//モデルを取得
 		Model* model = object3d->GetRenderModel();

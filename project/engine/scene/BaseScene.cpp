@@ -47,11 +47,11 @@ void BaseScene::Update(){
 	//更新のステート
 	UpdateState();
 
-	//ゲームオブジェクトのコンポーネントの更新
+	//ゲームオブジェクトの更新
 	for (const std::unique_ptr<GameObject>& gameObject : gameObjects_){
 		//gameObjectがNullじゃなければ
 		if (gameObject){
-			gameObject->UpdateComponents(UpdatePhase::kMain);
+			gameObject->Update(UpdatePhase::kMain);
 		}
 	}
 }
@@ -62,11 +62,11 @@ void BaseScene::UpdateState(){
 
 //デバッグ
 void BaseScene::Debug(){
-	//ゲームオブジェクトのコンポーネントの更新
+	//ゲームオブジェクト更新
 	for (const std::unique_ptr<GameObject>& gameObject : gameObjects_){
 		//gameObjectがNullじゃなければ
 		if (gameObject){
-			gameObject->UpdateComponents(UpdatePhase::kDebug);
+			gameObject->Update(UpdatePhase::kDebug);
 			gameObject->DebugImGui();
 		}
 	}
@@ -80,9 +80,7 @@ void BaseScene::Finalize(){
 
 //ゲームオブジェクトの削除
 void BaseScene::DeleteGameObject(GameObject* target, CollisionSystem* collisionSystem){
-	//Object3dが存在したら
-	Object3d* targetObject3d = target->GetComponent<Object3d>();
-	if (targetObject3d){
+	if (target){
 		//親子関係の解消
 		for (std::unique_ptr<GameObject>& gameObject : gameObjects_){
 			//ゲームオブジェクトがNullなら
@@ -90,15 +88,14 @@ void BaseScene::DeleteGameObject(GameObject* target, CollisionSystem* collisionS
 				continue;
 			}
 
-			//Object3dがNullなら
-			Object3d* object3d = gameObject->GetComponent<Object3d>();
-			if (!object3d){
-				continue;
-			}
-
 			//親オブジェクトと一致していたら
-			if (object3d->GetParentObject3d() == targetObject3d){
-				object3d->DetachParent();
+			if (gameObject->GetParentObject() == target){
+				gameObject->Detach();
+				//Object3dがあった場合
+				Object3d* object3d = gameObject->GetComponent<Object3d>();
+				if (!object3d){
+					object3d->Detach();
+				}
 			}
 		}
 	}

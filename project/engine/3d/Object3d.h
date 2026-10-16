@@ -75,7 +75,7 @@ public://メンバ関数
 	/// <summary>
 	/// 親子付けを外す
 	/// </summary>
-	void DetachParent();
+	void Detach();
 
 	/// <summary>
 	/// 親子付け
@@ -207,25 +207,6 @@ public://メンバ関数
 	std::string GetTypeName()const override;
 
 	/// <summary>
-	/// ワールド行列の取得
-	/// </summary>
-	/// <returns>ワールド行列</returns>
-	const Matrix4x4& GetWorldMatrix()const;
-
-	/// <summary>
-	/// 親のローカル行列の取得
-	/// </summary>
-	/// <returns>親のローカル行列</returns>
-	const Matrix4x4& GetParentMatrix()const;
-
-	/// <summary>
-	/// ワールド座標の取得
-	/// </summary>
-	/// <param name="instanceIndex">インスタンスのマテリアルスロット番号の検索キー</param>
-	/// <returns>ワールド座標</returns>
-	Vector3 GetWorldPos();
-
-	/// <summary>
 	/// メッシュのサイズの取得
 	/// </summary>
 	/// <returns>メッシュのサイズ</returns>
@@ -327,16 +308,10 @@ public://メンバ関数
 	const Node& GetNode()const;
 
 	/// <summary>
-	/// 親ノードのパスを取得
+	/// 接続されたノードのパスを取得
 	/// </summary>
-	/// <returns>親ノードのパスを取得</returns>
-	const std::string& GetParentNodePath()const;
-
-	/// <summary>
-	/// 親オブジェクトを取得
-	/// </summary>
-	/// <returns>親オブジェクト</returns>
-	const Object3d* GetParentObject3d()const;
+	/// <returns>接続されたノードのパス</returns>
+	const std::string& GetAttachedNodePath()const;
 private://メンバ関数
 	/// <summary>
 	/// ノードの名前を集める
@@ -399,19 +374,14 @@ private://メンバ変数
 	//オブジェクトの見た目
 	RenderTransformMode renderTransformMode_ = RenderTransformMode::kNormal;
 
-	//親
-	Object3d* parentObject3d_ = nullptr;
-	std::string  parentNodePath_ = "";
-
-	//親行列
-	Matrix4x4 parentMatrix_ = {};
-	//ローカル行列
-	Matrix4x4 localMatrix_ = {};
-	//ワールド行列
-	Matrix4x4 worldMatrix_ = {};
+	//親のノード
+	Node* parentNode_ = nullptr;
+	Matrix4x4 parentWorldMatrix_ = Matrix4x4::Identity4x4();
 
 	//ノード
 	Node node_ = {};
+	//接続されたノードのパス
+	std::string attachedNodePath_ = "";
 	//メッシュのワールド行列
 	std::vector<NodeMeshInstance>nodeMeshInstance_;
 };

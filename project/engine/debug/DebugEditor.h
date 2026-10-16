@@ -238,9 +238,8 @@ private://メンバ関数
 	/// ノードのツリーを描画
 	/// </summary>
 	/// <param name="node">ノード</param>
-	/// <param name="parentPath">親のパス</param>
 	/// <param name="targetObject">対象となるObject3d</param>
-	void DrawNodeTree(const Node& node, const std::string& parentPath, Object3d* targetObject);
+	void DrawNodeTree(const Node& node, const std::string& parentPath, GameObject* targetObject);
 private://定数
 	//ゲームオブジェクトをDragAndDropで動かす用のpayloadType
 	static inline const std::string kGameObjectPayloadType = "GameObjectPayload";

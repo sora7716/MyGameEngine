@@ -249,13 +249,7 @@
     <ClCompile Include="engine\input\Input.cpp">
       <Filter>engine\input</Filter>
     </ClCompile>
-    <ClCompile Include="engine\math\MathUtility.cpp">
-      <Filter>engine\math</Filter>
-    </ClCompile>
     <ClCompile Include="engine\math\Matrix4x4.cpp">
-      <Filter>engine\math</Filter>
-    </ClCompile>
-    <ClCompile Include="engine\math\MatrixUtility.cpp">
       <Filter>engine\math</Filter>
     </ClCompile>
     <ClCompile Include="engine\math\Quaternion.cpp">
@@ -447,6 +441,15 @@
     <ClCompile Include="engine\debug\PropertyRegistry.cpp">
       <Filter>engine\debug</Filter>
     </ClCompile>
+    <ClCompile Include="engine\3d\lighting\DirectionalLight.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="engine\utility\MathUtility.cpp">
+      <Filter>engine\utility</Filter>
+    </ClCompile>
+    <ClCompile Include="engine\utility\MatrixUtility.cpp">
+      <Filter>engine\utility</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="application\scene\TestPlayScene.h">
@@ -551,16 +554,10 @@
     <ClInclude Include="engine\input\Input.h">
       <Filter>engine\input</Filter>
     </ClInclude>
-    <ClInclude Include="engine\math\MathUtility.h">
-      <Filter>engine\math</Filter>
-    </ClInclude>
     <ClInclude Include="engine\math\Matrix3x3.h">
       <Filter>engine\math</Filter>
     </ClInclude>
     <ClInclude Include="engine\math\Matrix4x4.h">
-      <Filter>engine\math</Filter>
-    </ClInclude>
-    <ClInclude Include="engine\math\MatrixUtility.h">
       <Filter>engine\math</Filter>
     </ClInclude>
     <ClInclude Include="engine\math\Quaternion.h">
@@ -784,6 +781,15 @@
     </ClInclude>
     <ClInclude Include="engine\debug\PropertyRegistry.h">
       <Filter>engine\debug</Filter>
+    </ClInclude>
+    <ClInclude Include="engine\3d\lighting\DirectionalLight.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="engine\utility\MathUtility.h">
+      <Filter>engine\utility</Filter>
+    </ClInclude>
+    <ClInclude Include="engine\utility\MatrixUtility.h">
+      <Filter>engine\utility</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

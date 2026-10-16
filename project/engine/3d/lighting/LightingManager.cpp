@@ -6,6 +6,7 @@
 #include "MathUtility.h"
 #include <algorithm>
 #include <cassert>
+using namespace lightData;
 
 //生成
 std::unique_ptr<LightingManager> LightingManager::Create(ConstructorKey key, DirectXBase* directXBase, SRVManager* srvManager){

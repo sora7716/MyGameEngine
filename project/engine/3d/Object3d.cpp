@@ -29,12 +29,6 @@ void Object3d::Initialize(){
 	//トランスフォームモード
 	renderTransformMode_ = RenderTransformMode::kNormal;
 
-	//親行列の初期化
-	parentMatrix_ = Matrix4x4::Identity4x4();
-	//ローカル行列の初期化
-	localMatrix_ = Matrix4x4::Identity4x4();
-	//ワールド行列の初期化
-	worldMatrix_ = Matrix4x4::Identity4x4();
 	//Nodeのローカル行列の初期化
 	node_.localMatrix = Matrix4x4::Identity4x4();
 
@@ -182,26 +176,18 @@ void Object3d::RegisterProperties(PropertyRegistry* registry){
 }
 
 //親子付けを外す
-void Object3d::DetachParent(){
-	//そもそも親がなければ
-	if (!parentObject3d_){
-		return;
-	}
-	//ゲームオブジェクト取得
-	GameObject* gameObject = GetOwner();
-	//ゲームオブジェクトがなければ
-	if (!gameObject){
+void Object3d::Detach(){
+	//親子付けのパスがなければ
+	if (!parentNode_){
 		return;
 	}
 
-	//Transformを抽出
-	Transform& transform = gameObject->GetTransform();
-	transform = matrixUtility::DecomposeMatrix(worldMatrix_, transform.scale);
+	//パスをクリア
+	parentNode_ = nullptr;
+	parentWorldMatrix_ = Matrix4x4::Identity4x4();
 
-	//親を解除
-	parentObject3d_ = nullptr;
-	parentNodePath_.clear();
-	parentMatrix_ = Matrix4x4::Identity4x4();
+	//接続されたノードパスをクリア
+	attachedNodePath_.clear();
 }
 
 //親子付け
@@ -211,23 +197,6 @@ bool Object3d::AttachTo(Object3d* parent, const std::string& parentNodePath){
 		return false;
 	}
 
-	if (parent == this){
-		Logger::OutputLog("親子付けを行う際に自分のポインタを参照しました");
-		return false;
-	}
-
-	//自分に親子付けしないようにする
-	const Object3d* ancestor = parent;
-	while (ancestor){
-		if (ancestor == this){
-			Logger::OutputLog("循環する親子付けはできません");
-			return false;
-		}
-
-		//次の親へ
-		ancestor = ancestor->GetParentObject3d();
-	}
-
 	Node* found = parent->FindNode(parentNodePath);
 	if (!found){
 		Logger::OutputLog("存在しないNodeのPathにアクセスしようとしました");
@@ -235,17 +204,12 @@ bool Object3d::AttachTo(Object3d* parent, const std::string& parentNodePath){
 	}
 
 	//メンバ変数に記録
-	parentObject3d_ = parent;
-	parentNodePath_ = parentNodePath;
+	parentNode_ = found;
+	parentWorldMatrix_ = parent->GetOwner()->GetWorldMatrix();
 
-	//今のTransformを取得
-	Transform& transform = GetOwner()->GetTransform();
+	//ノードパスを保存
+	attachedNodePath_ = parentNodePath;
 
-	//接続行列
-	Matrix4x4 incidenceMatrix = found->modelMatrix * parentObject3d_->GetWorldMatrix();
-	Matrix4x4 newLocalMatrix = worldMatrix_ * incidenceMatrix.Inverse();
-	Transform newLocalTransform = matrixUtility::DecomposeMatrix(newLocalMatrix, transform.scale);
-	transform = newLocalTransform;
 	return true;
 }
 
@@ -253,14 +217,14 @@ bool Object3d::AttachTo(Object3d* parent, const std::string& parentNodePath){
 Matrix4x4 Object3d::MakeRenderWorldMatrix(const Matrix4x4& cameraWorldMatrix) const{
 	//Normalだった場合
 	if (renderTransformMode_ == RenderTransformMode::kNormal){
-		return worldMatrix_;
+		return GetOwner()->GetWorldMatrix();
 	}
 
 	//もしBillboardだった場合
 	GameObject* gameObject = GetOwner();
 	//ゲームオブジェクトがない場合
 	if (!gameObject){
-		return worldMatrix_;
+		return GetOwner()->GetWorldMatrix();
 	}
 
 	//ビルボードの作成
@@ -469,21 +433,6 @@ std::string Object3d::GetTypeName() const{
 	return "Object3d";
 }
 
-//ワールド行列の取得
-const Matrix4x4& Object3d::GetWorldMatrix()const{
-	return worldMatrix_;
-}
-
-//親のローカル行列の取得
-const Matrix4x4& Object3d::GetParentMatrix() const{
-	return parentMatrix_;
-}
-
-//ワールド座標の取得
-Vector3 Object3d::GetWorldPos(){
-	return { worldMatrix_.m[3][0],worldMatrix_.m[3][1],worldMatrix_.m[3][2] };
-}
-
 //メッシュのサイズの取得
 uint32_t Object3d::GetMeshDataSize(){
 	if (!baseModel_){
@@ -610,14 +559,9 @@ const Node& Object3d::GetNode()const{
 	return node_;
 }
 
-//親ノードのパスを取得
-const std::string& Object3d::GetParentNodePath() const{
-	return parentNodePath_;
-}
-
-//親オブジェクトを取得
-const Object3d* Object3d::GetParentObject3d() const{
-	return parentObject3d_;
+//接続されたノードのパスを取得
+const std::string& Object3d::GetAttachedNodePath() const{
+	return attachedNodePath_;
 }
 
 //ノードの名前を集める
@@ -697,18 +641,12 @@ void Object3d::MakeWorldMatrix(){
 	assert(gameObject);
 
 	//親オブジェクトがある場合
-	if (parentObject3d_){
-		Node* node = parentObject3d_->FindNode(parentNodePath_);
-		if (node){
-			parentMatrix_ = node->modelMatrix * parentObject3d_->GetWorldMatrix();
-		}
+	if (parentNode_){
+		gameObject->SetAttachedMatrix(parentNode_->modelMatrix);
 	}
 
-	//このオブジェクト本来のワールド行列を求める
-	localMatrix_ = matrixUtility::MakeAffineMatrix(gameObject->GetTransform());
-
 	//ワールド行列を求める
-	worldMatrix_ = localMatrix_ * parentMatrix_;
+	//worldMatrix_ = localMatrix_ * parentMatrix_;
 
 	//ノードのメッシュインスタンスをクリア
 	nodeMeshInstance_.clear();

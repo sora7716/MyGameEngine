@@ -1,6 +1,7 @@
 #include "GameObject.h"
 #include "TagManager.h"
-#include "StringUtility.h"
+#include "Logger.h"
+#include "MatrixUtility.h"
 #include "Component.h"
 //衝突判定のテーブルの初期化
 std::vector<GameObject::NotifyOnCollision> GameObject::onCollisionTable = {
@@ -58,9 +59,75 @@ void GameObject::Initialize(const std::string& name){
 	tag_ = TagManager::kDefaultTagName;
 }
 
+//更新
+void GameObject::Update(UpdatePhase phase){
+	//コンポーネントの更新
+	UpdateComponents(phase);
+
+	//行列の更新
+	UpdateMatrices();
+}
+
+//親子付け
+bool GameObject::AttachTo(GameObject* parentObject){
+	if (!parentObject){
+		Logger::OutputLog("親子付けを行う際の親がnull参照しました");
+		return false;
+	}
+
+	if (parentObject == this){
+		Logger::OutputLog("親子付けを行う際に自分のポインタを参照しました");
+		return false;
+	}
+
+	//自分に親子付けしないようにする
+	const GameObject* ancestor = parentObject;
+	while (ancestor){
+		if (ancestor == this){
+			Logger::OutputLog("循環する親子付けはできません");
+			return false;
+		}
+
+		//次の親へ
+		ancestor = ancestor->GetParentObject();
+	}
+
+	//メンバ変数に記録
+	parentObject_ = parentObject;
+	parentMatrix_ = parentObject_->GetWorldMatrix();
+
+	//接続行列
+	Matrix4x4 incidenceMatrix = parentMatrix_;
+	Matrix4x4 newLocalMatrix = worldMatrix_ * incidenceMatrix.Inverse();
+	Transform newLocalTransform = matrixUtility::DecomposeMatrix(newLocalMatrix, transform_.scale);
+	transform_ = newLocalTransform;
+	return true;
+}
+
+//親子付けを外す
+void GameObject::Detach(){
+	//そもそも親がなければ
+	if (!parentObject_){
+		return;
+	}
+
+	//Transformを抽出
+	transform_ = matrixUtility::DecomposeMatrix(worldMatrix_, transform_.scale);
+
+	//親を解除
+	parentObject_ = nullptr;
+	parentMatrix_ = Matrix4x4::Identity4x4();
+	attachedMatrix_ = Matrix4x4::Identity4x4();
+}
+
 //トランスフォームの取得
 Transform& GameObject::GetTransform(){
 	return transform_;
+}
+
+//ワールドの位置の取得
+Vector3 GameObject::GetWorldPos(){
+	return { worldMatrix_.m[3][0],worldMatrix_.m[3][1],worldMatrix_.m[3][2] };
 }
 
 //トランスフォームの取得
@@ -71,6 +138,11 @@ const Transform& GameObject::GetTransform() const{
 //アクティブかどうかを設定
 void GameObject::SetIsActive(bool isActive){
 	isActive_ = isActive;
+}
+
+//接続する行列の設定
+void GameObject::SetAttachedMatrix(const Matrix4x4& attachedMatrix){
+	attachedMatrix_ = attachedMatrix;
 }
 
 //アクティブかどうかを取得
@@ -108,35 +180,34 @@ BaseScene* GameObject::GetCurrentScene(){
 	return currentScene_;
 }
 
+//ワールド行列の取得
+const Matrix4x4& GameObject::GetWorldMatrix() const{
+	return worldMatrix_;
+}
+
+//ローカル行列の取得
+const Matrix4x4& GameObject::GetLocalMatrix() const{
+	return localMatrix_;
+}
+
+//親オブジェクトの取得
+const GameObject* GameObject::GetParentObject() const{
+	return parentObject_;
+}
+
+//接続行列の取得
+const Matrix4x4& GameObject::GetAttachedMatrix() const{
+	return attachedMatrix_;
+}
+
+//親のワールド行列を取得
+const Matrix4x4& GameObject::GetParentMatrix() const{
+	return parentMatrix_;
+}
+
 //すべてのコンポーネントを取得
 const std::vector<std::unique_ptr<Component>>& GameObject::GetAllComponents()const{
 	return components_;
-}
-
-//コンポーネントの更新
-void GameObject::UpdateComponents(UpdatePhase phase){
-	//ゲームオブジェクトが有効か
-	if (!isActive_){
-		return;
-	}
-
-	//各コンポーネントごとに
-	for (const std::unique_ptr<Component>& component : components_){
-		if (!component){
-			//コンポーネントが存在しているか	
-			continue;
-
-		} else if (!component->IsEnabled()){
-			//コンポーネントが有効か
-			continue;
-		} else if (component->GetUpdatePhase() != phase){
-			//設定したフェーズか
-			continue;
-		}
-
-		//コンポーネントの更新
-		component->Update();
-	}
 }
 
 //デバッグでImGuiを使用できるようにする
@@ -281,4 +352,46 @@ void GameObject::NotifyOnTriggerExit(BaseCollider* other){
 		//コンポーネントに衝突を通知
 		component->OnTriggerExit(other);
 	}
+}
+
+//コンポーネントの更新
+void GameObject::UpdateComponents(UpdatePhase phase){
+	//ゲームオブジェクトが有効か
+	if (!isActive_){
+		return;
+	}
+
+	//各コンポーネントごとに
+	for (const std::unique_ptr<Component>& component : components_){
+		if (!component){
+			//コンポーネントが存在しているか	
+			continue;
+
+		} else if (!component->IsEnabled()){
+			//コンポーネントが有効か
+			continue;
+		} else if (component->GetUpdatePhase() != phase){
+			//設定したフェーズか
+			continue;
+		}
+
+		//コンポーネントの更新
+		component->Update();
+	}
+}
+
+//行列の更新
+void GameObject::UpdateMatrices(){
+	//このオブジェクト本来のワールド行列を求める
+	localMatrix_ = matrixUtility::MakeAffineMatrix(transform_);
+
+	//親子付けする行列の計算
+	if (parentObject_){
+		parentMatrix_ = parentObject_->GetWorldMatrix();
+	} else{
+		parentMatrix_ = Matrix4x4::Identity4x4();
+	}
+
+	//ワールド行列を求める
+	worldMatrix_ = localMatrix_ * attachedMatrix_ * parentMatrix_;
 }

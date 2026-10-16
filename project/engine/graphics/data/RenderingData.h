@@ -66,9 +66,9 @@ struct TransformationMatrixForSprite{
 
 //ノード構造体
 struct Node{
-	Matrix4x4 baseMatrix = Matrix4x4::Identity4x4();
-	Matrix4x4 localMatrix = Matrix4x4::Identity4x4();
-	Matrix4x4 modelMatrix = Matrix4x4::Identity4x4();
+	Matrix4x4 baseMatrix = Matrix4x4::Identity4x4();//読み込み時の元の姿勢
+	Matrix4x4 localMatrix = Matrix4x4::Identity4x4();//こちらで操作する用の行列
+	Matrix4x4 modelMatrix = Matrix4x4::Identity4x4();//他のNodeも合わせたモデル全体の姿勢
 	Transform localTransform = {};
 	std::string name = "";
 	std::vector<Node> children;

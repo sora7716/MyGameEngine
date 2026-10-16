@@ -246,14 +246,18 @@ void DebugEditor::DrawHierarchy(){
 			//ゲームオブジェクトの生ポインタを保存
 			GameObject* gameObjectPtr = gameObject.get();
 
+			//ゲームオブジェクトがNullがチェック
+			if (!gameObjectPtr){
+				return;
+			}
+
 			//ゲームオブジェクトにデバッグカメラの操作がコンポーネントであった場合
 			if (gameObjectPtr->GetComponent<DebugCameraController>()){
 				continue;
 			}
 
 			//親オブジェクトが存在した場合はスキップ
-			Object3d* object3d = gameObjectPtr->GetComponent<Object3d>();
-			if (object3d && object3d->GetParentObject3d()){
+			if (gameObjectPtr && gameObjectPtr->GetParentObject()){
 				continue;
 			}
 
@@ -315,8 +319,9 @@ void DebugEditor::DrawHierarchy(){
 
 				if (isOpen){
 					//ノードの描画
+					Object3d* object3d = gameObjectPtr->GetComponent<Object3d>();
 					if (object3d){
-						DrawNodeTree(object3d->GetNode(), object3d->GetNode().name, object3d);
+						DrawNodeTree(object3d->GetNode(), object3d->GetNode().name, gameObjectPtr);
 					}
 
 					ImGui::TreePop();
@@ -518,27 +523,24 @@ void DebugEditor::DrawGizmo(){
 	//選択しているGameObjectのワールド行列を取得
 	Matrix4x4 worldMatrix = matrixUtility::MakeAffineMatrix(selectedGameObject_->GetTransform());
 
-	//Object3dが持っているかどうか
-	Object3d* object3d = selectedGameObject_->GetComponent<Object3d>();
 	//親行列
 	Matrix4x4 parentMatrix = Matrix4x4::Identity4x4();
-	//ノード行列
-	Matrix4x4 nodeMatrix = Matrix4x4::Identity4x4();
+	//接続先ノードの行列
+	Matrix4x4 attachedMatrix = Matrix4x4::Identity4x4();
 	//オブジェクトのワールド行列
 	Matrix4x4 objectWorldMatrix = Matrix4x4::Identity4x4();
-	if (object3d){
+	if (selectedGameObject_){
 		//オブジェクトのワールド行列を設定
-		objectWorldMatrix = object3d->GetWorldMatrix();
+		objectWorldMatrix = selectedGameObject_->GetWorldMatrix();
 		//Nodeを選択した場合
 		if (!selectedNodePath_.empty()){
-			if (object3d->TryGetNodeModelMatrix(selectedNodePath_, nodeMatrix)){
-				worldMatrix = nodeMatrix * worldMatrix;
-			}
+			attachedMatrix = selectedGameObject_->GetAttachedMatrix();
+			worldMatrix = attachedMatrix * worldMatrix;
 		}
 
 		//親子付けも許容する
-		if (object3d->GetParentObject3d()){
-			parentMatrix = object3d->GetParentMatrix();
+		if (selectedGameObject_->GetParentObject()){
+			parentMatrix = selectedGameObject_->GetParentMatrix();
 			worldMatrix *= parentMatrix;
 		}
 	}
@@ -555,19 +557,28 @@ void DebugEditor::DrawGizmo(){
 		Transform transform = matrixUtility::DecomposeMatrix(localMatrix, selectedGameObject_->GetTransform().scale);
 
 		if (!selectedNodePath_.empty()){
-			Node node = {};
-			//ノードを取得
-			object3d->TryGetNodeForPath(selectedNodePath_, node);
+			//ノードのローカル行列
+			Matrix4x4 nodeLocalMatrix = Matrix4x4::Identity4x4();
+			//ノードのベース行列
+			Matrix4x4 nodeBaseMatrix = Matrix4x4::Identity4x4();
+			Object3d* object3d = selectedGameObject_->GetComponent<Object3d>();
+			if (object3d){
+				Node node = {};
+				//ノードを取得
+				object3d->TryGetNodeForPath(selectedNodePath_, node);
+				nodeLocalMatrix = node.localMatrix;
+				nodeBaseMatrix = node.baseMatrix;
+			}
 			//操作後のモデル行列
 			Matrix4x4 newModelMatrix = worldMatrix * objectWorldMatrix.Inverse();
 			//親ノードのモデル行列
-			Matrix4x4 parentNodeMatrix = node.localMatrix.Inverse() * nodeMatrix;
+			Matrix4x4 parentNodeMatrix = nodeLocalMatrix.Inverse() * attachedMatrix;
 			//操作後のローカル行列
 			Matrix4x4 newModelLocal = newModelMatrix * parentNodeMatrix.Inverse();
 			//ローカル行列
-			Matrix4x4 nodeLocalMatrix = newModelLocal * node.baseMatrix.Inverse();
+			Matrix4x4 newNodeLocalMatrix = newModelLocal * nodeBaseMatrix.Inverse();
 			//Transformを求める
-			Transform localNodeTransform = matrixUtility::DecomposeMatrix(nodeLocalMatrix, selectedGameObject_->GetTransform().scale);
+			Transform localNodeTransform = matrixUtility::DecomposeMatrix(newNodeLocalMatrix, selectedGameObject_->GetTransform().scale);
 			//NodeのLocalTransformに設定
 			object3d->SetNodeLocalTransform(selectedNodePath_, localNodeTransform);
 		} else{
@@ -1047,7 +1058,7 @@ void DebugEditor::BeginRename(GameObject* gameObject){
 }
 
 //ノードのツリーを描画
-void DebugEditor::DrawNodeTree([[maybe_unused]] const Node& node, [[maybe_unused]] const std::string& parentPath, [[maybe_unused]] Object3d* targetObject){
+void DebugEditor::DrawNodeTree([[maybe_unused]] const Node& node, [[maybe_unused]] const std::string& parentPath, [[maybe_unused]] GameObject* targetObject){
 #ifdef USE_IMGUI
 	//現在のパス
 	std::string currentPath = parentPath;
@@ -1061,7 +1072,7 @@ void DebugEditor::DrawNodeTree([[maybe_unused]] const Node& node, [[maybe_unused
 	}
 
 	//選択されていたらハイライトをつける
-	if (selectedGameObject_ == targetObject->GetOwner()){
+	if (selectedGameObject_ == targetObject){
 		if (selectedNodePath_ == currentPath){
 			nodeFlags |= ImGuiTreeNodeFlags_Selected;
 		}
@@ -1072,7 +1083,7 @@ void DebugEditor::DrawNodeTree([[maybe_unused]] const Node& node, [[maybe_unused
 
 	//子ノードを開く前に確認する(矢印をクリックしてない場合)
 	if (ImGui::IsItemClicked() && !ImGui::IsItemToggledOpen()){
-		SelectGameObject(targetObject->GetOwner());
+		SelectGameObject(targetObject);
 		//このNodeのパスを選択中のパスとして取得
 		selectedNodePath_ = currentPath;
 	}
@@ -1082,7 +1093,7 @@ void DebugEditor::DrawNodeTree([[maybe_unused]] const Node& node, [[maybe_unused
 		const ImGuiPayload* payload = ImGui::AcceptDragDropPayload(kGameObjectPayloadType.c_str());
 		if (payload){
 			GameObject* child = *static_cast<GameObject**>(payload->Data);
-			requestAttachTo_ = ParentRequest{ child,targetObject->GetOwner(),currentPath };
+			requestAttachTo_ = ParentRequest{ child,targetObject,currentPath };
 		}
 		ImGui::EndDragDropTarget();
 	}
@@ -1092,24 +1103,20 @@ void DebugEditor::DrawNodeTree([[maybe_unused]] const Node& node, [[maybe_unused
 
 	//このノードに接続されたGameObjectがないか探索
 	for (const std::unique_ptr<GameObject>& gameObject : *gameObjects_){
-		//Object3dが存在するか
-		Object3d* object3d = gameObject->GetComponent<Object3d>();
-		if (!object3d){
-			continue;
-		}
-
 		//親オブジェクトが存在するか
-		const Object3d* parentObject = object3d->GetParentObject3d();
+		const GameObject* parentObject = gameObject->GetParentObject();
 		if (!parentObject){
 			continue;
 		}
-		//対象のObject3dと親のObject3dが一致しているか
+
+		//対象と親が一致しているか
 		if (targetObject == parentObject){
-			//現在のパスが親のパスと一致しているか
-			std::string parentNodePath = object3d->GetParentNodePath();
-			if (currentPath == parentNodePath){
-				//接続されているゲームオブジェクト一覧に追加
-				attachedGameObjects.push_back(gameObject.get());
+			Object3d* object3d = targetObject->GetComponent<Object3d>();
+			if (object3d){
+				//現在のパスと接続されているノードのパスが一致しているか
+				if (currentPath == object3d->GetAttachedNodePath()){
+					attachedGameObjects.push_back(gameObject.get());
+				}
 			}
 		}
 	}
@@ -1163,7 +1170,7 @@ void DebugEditor::DrawNodeTree([[maybe_unused]] const Node& node, [[maybe_unused
 
 			if (isAttachedOpen){
 				//ツリーに描画
-				DrawNodeTree(attachedNode, attachedNode.name, attachedObject3d);
+				DrawNodeTree(attachedNode, attachedNode.name, attachedGameObject);
 				ImGui::TreePop();
 			}
 		}

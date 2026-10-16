@@ -81,9 +81,7 @@ void SceneManager::Update(){
 }
 
 //デバッグ
-void SceneManager::Debug(D3D12_GPU_DESCRIPTOR_HANDLE sceneHandle, D3D12_GPU_DESCRIPTOR_HANDLE previewHandle){
-	(void)sceneHandle;
-	(void)previewHandle;
+void SceneManager::Debug([[maybe_unused]] D3D12_GPU_DESCRIPTOR_HANDLE sceneHandle, [[maybe_unused]] D3D12_GPU_DESCRIPTOR_HANDLE previewHandle){
 #ifdef USE_IMGUI
 	sceneContext_.imGuiManager->Begin();
 	//デバッグエディタの描画
@@ -94,16 +92,22 @@ void SceneManager::Debug(D3D12_GPU_DESCRIPTOR_HANDLE sceneHandle, D3D12_GPU_DESC
 	if (debugEditor_->ConsumeParentRequest(parentRequest)){
 		GameObject* parent = parentRequest.parent;
 		GameObject* child = parentRequest.child;
-
 		//親と子が存在するか
 		if (parent && child){
+			//親子付け
+			bool isAttached = child->AttachTo(parent);
+			if (!isAttached){
+				Logger::OutputLog("親子付けが失敗しました");
+			}
+
+			//Object3dがあるか確認
 			Object3d* parentObject3d = parentRequest.parent->GetComponent<Object3d>();
 			Object3d* childObject3d = parentRequest.child->GetComponent<Object3d>();
 
 			//親と子でObject3dを取得できた場合
 			if (parentObject3d && childObject3d){
 				//親子付けを行う
-				bool isAttached = childObject3d->AttachTo(parentObject3d, parentRequest.nodePath);
+				isAttached = childObject3d->AttachTo(parentObject3d, parentRequest.nodePath);
 				if (!isAttached){
 					Logger::OutputLog("親子付けが失敗しました");
 				}
@@ -122,12 +126,14 @@ void SceneManager::Debug(D3D12_GPU_DESCRIPTOR_HANDLE sceneHandle, D3D12_GPU_DESC
 		if (!detachObject){
 			return;
 		}
+		//解除
+		detachObject->Detach();
 
 		//Object3dが取得できたか
 		Object3d* object3d = detachObject->GetComponent<Object3d>();
 		if (object3d){
 			//親子付けを解除
-			object3d->DetachParent();
+			object3d->Detach();
 		} else{
 			Logger::OutputLog("親子付け解除する対象のObject3d取得に失敗しました");
 		}

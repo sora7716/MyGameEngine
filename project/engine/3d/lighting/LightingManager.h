@@ -64,13 +64,13 @@ public://メンバ関数
 	/// 平行光源の設定
 	/// </summary>
 	/// <param name="directionalLight">平行光源</param>
-	void SetDirectionalLight(const DirectionalLight& directionalLight);
+	void SetDirectionalLight(const lightData::DirectionalLight& directionalLight);
 
 	/// <summary>
 	/// 平行光源の取得
 	/// </summary>
 	/// <returns>平行光源</returns>
-	DirectionalLight* GetDirectionalLight()const;
+	lightData::DirectionalLight* GetDirectionalLight()const;
 private://メンバ関数
 	//コピーコンストラクタ禁止
 	LightingManager(const LightingManager&) = delete;
@@ -114,9 +114,9 @@ private://メンバ変数
 	ComPtr<ID3D12Resource> pointLightResource_ = nullptr;//点光源
 	ComPtr<ID3D12Resource> spotLightResource_ = nullptr;//スポットライト
 	//バッファリソース内のデータを指すポインタ
-	DirectionalLight* directionalLight_ = nullptr;//平行光源
-	std::vector<PointLight> pointLights_;//点光源
-	std::vector<SpotLight> spotLights_;//スポットライト
+	lightData::DirectionalLight* directionalLight_ = nullptr;//平行光源
+	std::vector<lightData::PointLight> pointLights_;//点光源
+	std::vector<lightData::SpotLight> spotLights_;//スポットライト
 
 	//SRVインデックス
 	uint32_t srvIndexPoint_ = 0;//PointLight

@@ -105,7 +105,7 @@ void Object3d::RegisterProperties(PropertyRegistry* registry){
 	//登録
 	for (uint32_t i = 0; i < material->GetSlots().size(); i++){
 		//グループの開始
-		registry->BeginGroup("group" + std::to_string(i));
+		registry->BeginGroup("material" + std::to_string(i));
 		//色
 		registry->Add(
 			"color",
@@ -174,7 +174,7 @@ void Object3d::RegisterProperties(PropertyRegistry* registry){
 			[i, this](float coefficient){
 				this->SetEnvironmentCoefficient(i, coefficient);
 			},
-			0.01f
+			0.001f
 		);
 		//グループの終了
 		registry->EndGroup();

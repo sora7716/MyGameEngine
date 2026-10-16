@@ -36,6 +36,12 @@ public://メンバ関数
 	std::unique_ptr<Component> Clone(GameObject* gameObject)const override;
 
 	/// <summary>
+	/// プロパティ一覧を登録
+	/// </summary>
+	/// <param name="registry">レジストリ</param>
+	void RegisterProperties(PropertyRegistry* registry)override;
+
+	/// <summary>
 	/// 衝突したら
 	/// </summary>
 	/// <param name="info">衝突情報</param>

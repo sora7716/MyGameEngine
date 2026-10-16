@@ -50,15 +50,17 @@ void Enemy::Update(){
 
 //衝突瞬間
 void Enemy::OnTriggerEnter(BaseCollider* other){
-	//振る舞いを変更
-	behaviorRequest_ = Behavior::kDamage;
+	if (other->GetOwner()->GetTag() == "Player"){
+		//振る舞いを変更
+		behaviorRequest_ = Behavior::kDamage;
 
-	//自分の位置
-	const Vector3& myPosition = gameObject_->GetTransform().translate;
-	//衝突対象の位置
-	const Vector3& otherPosition = other->GetOwner()->GetTransform().translate;
-	//衝突した方向を取得
-	hitDirection_ = myPosition - otherPosition;
+		//自分の位置
+		const Vector3& myPosition = gameObject_->GetTransform().translate;
+		//衝突対象の位置
+		const Vector3& otherPosition = other->GetOwner()->GetTransform().translate;
+		//衝突した方向を取得
+		hitDirection_ = myPosition - otherPosition;
+	}
 }
 
 //コピー
@@ -77,6 +79,11 @@ std::unique_ptr<Component> Enemy::Clone(GameObject* gameObject) const{
 //振る舞いのリクエストの設定
 void Enemy::SetBehaviorRequest(Behavior request){
 	behaviorRequest_ = request;
+}
+
+//コンポーネントのタイプ名を取得
+std::string Enemy::GetTypeName() const{
+	return "Enemy";
 }
 
 //リジットボディの取得

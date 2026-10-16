@@ -10,6 +10,7 @@
 #include "Enemy.h"
 #include "RigidBody.h"
 #include "MathUtility.h"
+#include "Color.h"
 
 //コンストラクタ
 GameScene::GameScene(){
@@ -125,7 +126,7 @@ GameObject* GameScene::CreatePlayerObject(){
 	//ワイヤーフレーム
 	debugDraw::Cube* playerHitBox = gameObject->AddComponent<debugDraw::Cube>();
 	playerHitBox->SetLocalScale(playerHitBoxSize);
-	playerHitBox->SetColor(Vector4::GetRedColor());
+	playerHitBox->SetColor(Color::GetRed());
 
 	return gameObject;
 }
@@ -192,7 +193,7 @@ GameObject* GameScene::CreateEnemy(){
 	debugDraw::Cube* blockerDebug = gameObject->AddComponent<debugDraw::Cube>();
 	blockerDebug->SetLocalScale(blockerSize);
 	blockerDebug->SetLocalTranslate(blockerOffset);
-	blockerDebug->SetColor(Vector4::GetRedColor());
+	blockerDebug->SetColor(Color::GetRed());
 
 	//3Dオブジェクト
 	Object3d* enemyModel = gameObject->AddComponent<Object3d>();

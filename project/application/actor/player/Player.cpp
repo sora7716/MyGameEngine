@@ -154,6 +154,11 @@ void Player::SetRigidBody(RigidBody* rigidBody){
 	rigidBody_ = rigidBody;
 }
 
+//コンポーネントのタイプ名を取得
+std::string Player::GetTypeName() const{
+	return "Player";
+}
+
 //移動の操作
 void Player::MoveControl(){
 	//横移動

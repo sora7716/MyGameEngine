@@ -25,7 +25,7 @@ void debugDraw::BaseShape::Initialize(){
 	indices_.resize(indexCount_);
 
 	//白色に初期化
-	color_ = Vector4::GetWhiteColor();
+	color_ = Color::GetWhite();
 	//単位行列で初期化
 	worldMatrix_ = Matrix4x4::Identity4x4();
 
@@ -49,7 +49,7 @@ void debugDraw::BaseShape::Update(){
 }
 
 //色の設定
-void debugDraw::BaseShape::SetColor(const Vector4& color){
+void debugDraw::BaseShape::SetColor(const Color& color){
 	color_ = color;
 }
 
@@ -74,7 +74,7 @@ void debugDraw::BaseShape::SetLocalTranslate(const Vector3& translate){
 }
 
 //色の取得
-const Vector4& debugDraw::BaseShape::GetColor(){
+const Color& debugDraw::BaseShape::GetColor(){
 	return color_;
 }
 

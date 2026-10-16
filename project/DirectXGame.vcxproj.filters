@@ -441,6 +441,12 @@
     <ClCompile Include="externals\imguizmo\ImGuizmo.cpp">
       <Filter>externals\imguizmo</Filter>
     </ClCompile>
+    <ClCompile Include="engine\math\Color.cpp">
+      <Filter>engine\math</Filter>
+    </ClCompile>
+    <ClCompile Include="engine\debug\PropertyRegistry.cpp">
+      <Filter>engine\debug</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="application\scene\TestPlayScene.h">
@@ -767,11 +773,17 @@
     <ClInclude Include="engine\graphics\resource\RenderTexture.h">
       <Filter>engine\graphics\resource</Filter>
     </ClInclude>
-    <ClInclude Include="resources\resource.h">
-      <Filter>リソース ファイル</Filter>
-    </ClInclude>
     <ClInclude Include="externals\imguizmo\ImGuizmo.h">
       <Filter>externals\imguizmo</Filter>
+    </ClInclude>
+    <ClInclude Include="resource.h">
+      <Filter>リソース ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="engine\math\Color.h">
+      <Filter>engine\math</Filter>
+    </ClInclude>
+    <ClInclude Include="engine\debug\PropertyRegistry.h">
+      <Filter>engine\debug</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -827,16 +839,16 @@
     </None>
   </ItemGroup>
   <ItemGroup>
-    <Image Include="engine\resources\textures\SproutEngine_Transparent.ico">
-      <Filter>リソース ファイル</Filter>
-    </Image>
-    <Image Include="engine\resources\textures\SproutEngine.ico">
-      <Filter>リソース ファイル</Filter>
-    </Image>
-  </ItemGroup>
-  <ItemGroup>
-    <ResourceCompile Include="resources\GameEngine.rc">
+    <ResourceCompile Include="GameEngine.rc">
       <Filter>リソース ファイル</Filter>
     </ResourceCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="engine\resources\icons\hakoniwa.ico">
+      <Filter>リソース ファイル</Filter>
+    </Image>
+    <Image Include="engine\resources\icons\hakoniwaTransparent.ico">
+      <Filter>リソース ファイル</Filter>
+    </Image>
   </ItemGroup>
 </Project>

@@ -34,7 +34,7 @@ public://メンバ関数
 	/// </summary>
 	/// <param name="index">検索キー</param>
 	/// <param name="color">色</param>
-	void SetColor(uint32_t index, const Vector4& color);
+	void SetColor(uint32_t index, const Color& color);
 
 	/// <summary>
 	/// テクスチャの設定
@@ -104,7 +104,7 @@ public://メンバ関数
 	/// </summary>
 	/// <param name="index">検索キー</param>
 	/// <param name="color">リムライトの色</param>
-	void SetRimColor(const Vector4& color);
+	void SetRimColor(const Color& color);
 
 	/// <summary>
 	/// リムライトの強さの設定

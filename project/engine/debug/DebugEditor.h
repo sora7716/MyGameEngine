@@ -19,6 +19,7 @@ class TextureManager;
 class TagManager;
 class Camera;
 class Object3d;
+class Component;
 
 /// <summary>
 /// タグの名前変更リクエスト用
@@ -211,6 +212,18 @@ private://メンバ関数
 	void DrawInspector();
 
 	/// <summary>
+	/// 各コンポーネントのプロパティ一覧
+	/// </summary>
+	/// <param name="selectGameObject">選択したゲームオブジェクト</param>
+	void DrawPropertyTable(GameObject* selectGameObject);
+
+	/// <summary>
+	/// 1つのコンポーネントのプロパティ一覧
+	/// </summary>
+	/// <param name="component">コンポーネント</param>
+	void DrawProperties(Component* component);
+
+	/// <summary>
 	/// タグの管理の描画
 	/// </summary>
 	void DrawTagManager();
@@ -229,10 +242,8 @@ private://メンバ関数
 	/// <param name="targetObject">対象となるObject3d</param>
 	void DrawNodeTree(const Node& node, const std::string& parentPath, Object3d* targetObject);
 private://定数
-	//ゲームオブジェクトのpayloadType
+	//ゲームオブジェクトをDragAndDropで動かす用のpayloadType
 	static inline const std::string kGameObjectPayloadType = "GameObjectPayload";
-	//親子付け用のpayloadType
-	static inline const std::string kParentPayloadType = "ParentPayload";
 private://メンバ変数
 	//テクスチャの管理
 	TextureManager* textureManager_ = nullptr;

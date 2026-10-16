@@ -44,6 +44,11 @@ void debugDraw::Frustum::SetTargetCamera(Camera* targetCamera){
 	targetCamera_ = targetCamera;
 }
 
+//コンポーネントのタイプ名を取得
+std::string debugDraw::Frustum::GetTypeName() const{
+	return "Frustum";
+}
+
 //頂点の設定
 void debugDraw::Frustum::SettingVertexData(){
 	for (uint32_t i = 0; i < 8; i++){

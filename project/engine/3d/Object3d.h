@@ -4,6 +4,7 @@
 #include "RenderingData.h"
 #include "Object3dRenderData.h"
 #include "Component.h"
+#include "Color.h"
 #include <vector>
 #include <string>
 #include <memory>
@@ -64,6 +65,12 @@ public://メンバ関数
 	/// </summary>
 	/// <param name="distance">カメラとの距離</param>
 	void UpdateLOD(float distance);
+
+	/// <summary>
+	/// プロパティ一覧を登録
+	/// </summary>
+	/// <param name="registry">レジストリ</param>
+	void RegisterProperties(PropertyRegistry* registry)override;
 
 	/// <summary>
 	/// 親子付けを外す
@@ -129,7 +136,7 @@ public://メンバ関数
 	/// </summary>
 	/// <param name="index">マテリアルスロット番号の検索キー</param>
 	/// <param name="color">色</param>
-	void SetColor(uint32_t index, const Vector4& color);
+	void SetColor(uint32_t index, const Color& color);
 
 	/// <summary>
 	/// テクスチャの設定
@@ -150,7 +157,7 @@ public://メンバ関数
 	/// </summary>
 	/// <param name="index">マテリアルスロット番号の検索キー</param>
 	/// <param name="isLighting">ライティングフラグ</param>
-	void SetIsLighting(uint32_t index, bool isLighting);
+	void SetEnabledLighting(uint32_t index, bool isLighting);
 
 	/// <summary>
 	/// 輝度の設定
@@ -192,6 +199,12 @@ public://メンバ関数
 	/// <param name="localTransform">ローカルトランスフォーム</param>
 	/// <returns>Nodeの取得に成功したか</returns>
 	bool SetNodeLocalTransform(const std::string& path, const Transform& localTransform);
+
+	/// <summary>
+	/// コンポーネントのタイプ名を返す
+	/// </summary>
+	/// <returns>コンポーネントのタイプ名</returns>
+	std::string GetTypeName()const override;
 
 	/// <summary>
 	/// ワールド行列の取得

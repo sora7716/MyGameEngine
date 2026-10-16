@@ -149,7 +149,7 @@ private://メンバ変数
 	D3D12_INDEX_BUFFER_VIEW indexBufferView_ = {};
 
 	//マテリアル情報
-	Vector4* materialData_ = nullptr;
+	Color* materialData_ = nullptr;
 	//マテリアルのCBuffer
 	ComPtr<ID3D12Resource>materialResource_ = nullptr;
 

@@ -40,6 +40,11 @@ void debugDraw::Circle::SetCircle(const primitiveData::Circle& circle){
 	circle_ = circle;
 }
 
+//コンポーネントのタイプ名を取得
+std::string debugDraw::Circle::GetTypeName() const{
+	return "Circle";
+}
+
 //円のゲッター
 primitiveData::Circle debugDraw::Circle::GetCircle(){
 	return circle_;

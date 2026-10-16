@@ -42,6 +42,10 @@ std::unique_ptr<Component> RigidBody::Clone(GameObject* gameObject) const{
 	return cloneInstance;
 }
 
+//プロパティ一覧を登録
+void RigidBody::RegisterProperties(PropertyRegistry* registry){
+}
+
 //衝突したら
 void RigidBody::OnCollisionStay(const CollisionInfo& info){
 	//衝突対象が無ければ
@@ -78,6 +82,11 @@ void RigidBody::BeginCollisionFrame(){
 //地面に接している閾値の設定
 void RigidBody::SetGroundThreshold(float groundThreshold){
 	groundThreshold_ = groundThreshold;
+}
+
+//コンポーネントのタイプ名を取得
+std::string RigidBody::GetTypeName() const{
+	return "RigidBody";
 }
 
 //速度を取得

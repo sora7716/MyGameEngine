@@ -4,6 +4,7 @@
 #include "RenderingData.h"
 #include "SkyBoxRenderData.h"
 #include "Component.h"
+#include "Color.h"
 #include <array>
 #include <string>
 #include <memory>
@@ -58,6 +59,12 @@ public://メンバ関数
 	/// </summary>
 	/// <returns>描画データ</returns>
 	const SkyBoxRenderData& GetRenderData();
+
+	/// <summary>
+	/// コンポーネントのタイプ名を取得
+	/// </summary>
+	/// <returns>コンポーネントのタイプ名</returns>
+	std::string GetTypeName()const override;
 private://メンバ関数
 	/// <summary>
 	/// ワールド座標の更新
@@ -76,7 +83,7 @@ private://メンバ変数
 	std::string imageFileName_ = "";
 
 	//マテリアル
-	Vector4 material_ = Vector4::GetWhiteColor();
+	Color material_ = Color::GetWhite();
 
 	//ワールド行列
 	Matrix4x4 worldMatrix_ = {};

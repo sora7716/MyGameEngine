@@ -57,6 +57,7 @@
       </ExcludedFromBuild>
     </ClCompile>
     <ClCompile Include="engine\debug\Logger.cpp" />
+    <ClCompile Include="engine\debug\PropertyRegistry.cpp" />
     <ClCompile Include="engine\debug\wireframes\BaseShape.cpp" />
     <ClCompile Include="engine\debug\wireframes\Circle.cpp" />
     <ClCompile Include="engine\debug\wireframes\Cube.cpp" />
@@ -91,6 +92,7 @@
     <ClCompile Include="engine\graphics\texture\TextureManager.cpp" />
     <ClCompile Include="engine\input\Input.cpp" />
     <ClCompile Include="engine\main.cpp" />
+    <ClCompile Include="engine\math\Color.cpp" />
     <ClCompile Include="engine\math\MathUtility.cpp" />
     <ClCompile Include="engine\math\Matrix4x4.cpp" />
     <ClCompile Include="engine\math\MatrixUtility.cpp" />
@@ -164,6 +166,7 @@
       </ExcludedFromBuild>
     </ClInclude>
     <ClInclude Include="engine\debug\Logger.h" />
+    <ClInclude Include="engine\debug\PropertyRegistry.h" />
     <ClInclude Include="engine\debug\wireframes\BaseShape.h" />
     <ClInclude Include="engine\debug\wireframes\Circle.h" />
     <ClInclude Include="engine\debug\wireframes\Cube.h" />
@@ -207,6 +210,7 @@
     <ClInclude Include="engine\graphics\resource\RenderTexture.h" />
     <ClInclude Include="engine\graphics\texture\TextureManager.h" />
     <ClInclude Include="engine\input\Input.h" />
+    <ClInclude Include="engine\math\Color.h" />
     <ClInclude Include="engine\math\MathUtility.h" />
     <ClInclude Include="engine\math\Matrix3x3.h" />
     <ClInclude Include="engine\math\Matrix4x4.h" />
@@ -230,7 +234,7 @@
     <ClInclude Include="externals\imguizmo\ImGuizmo.h">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
     </ClInclude>
-    <ClInclude Include="resources\resource.h" />
+    <ClInclude Include="resource.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="engine\resources\shaders\CommonTypes.hlsli">
@@ -314,11 +318,11 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <Image Include="engine\resources\textures\SproutEngine.ico" />
-    <Image Include="engine\resources\textures\SproutEngine_Transparent.ico" />
+    <ResourceCompile Include="GameEngine.rc" />
   </ItemGroup>
   <ItemGroup>
-    <ResourceCompile Include="resources\GameEngine.rc" />
+    <Image Include="engine\resources\icons\hakoniwa.ico" />
+    <Image Include="engine\resources\icons\hakoniwaTransparent.ico" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>17.0</VCProjectVersion>

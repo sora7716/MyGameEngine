@@ -56,6 +56,12 @@ UpdatePhase Component::GetUpdatePhase(){
 	return UpdatePhase::kMain;
 }
 
+//プロパティ一覧を登録
+void Component::RegisterProperties(PropertyRegistry* registry){
+	//有効フラグを登録
+	registry->Add("isEnabled", isEnabled_);
+}
+
 //取り付け先を取得
 GameObject* Component::GetOwner() const{
 	return owner_;

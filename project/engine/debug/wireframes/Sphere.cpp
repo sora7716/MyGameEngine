@@ -51,6 +51,11 @@ primitiveData::Sphere Sphere::GetSphere(){
 	return sphere_;
 }
 
+//コンポーネントのタイプ名を取得
+std::string debugDraw::Sphere::GetTypeName() const{
+	return "Sphere";
+}
+
 //頂点データの設定
 void Sphere::SettingVertexData(){
 	for (int32_t i = 0; i < kCircleVertexCount; i++){

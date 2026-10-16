@@ -8,7 +8,10 @@
 #include "TextureManager.h"
 #include "DebugCameraController.h"
 #include "Object3d.h"
+#include "Component.h"
+#include "PropertyRegistry.h"
 #include <cassert>
+#include <array>
 
 //コンストラクタ
 DebugEditor::DebugEditor(){
@@ -46,9 +49,7 @@ void DebugEditor::Update(){
 }
 
 //描画
-void DebugEditor::Draw(D3D12_GPU_DESCRIPTOR_HANDLE sceneHandle, D3D12_GPU_DESCRIPTOR_HANDLE previewHandle){
-	(void)sceneHandle;
-	(void)previewHandle;
+void DebugEditor::Draw([[maybe_unused]] D3D12_GPU_DESCRIPTOR_HANDLE sceneHandle, [[maybe_unused]] D3D12_GPU_DESCRIPTOR_HANDLE previewHandle){
 #ifdef USE_IMGUI
 	//ドッキングスペースの描画
 	DrawDockSpace();
@@ -302,7 +303,7 @@ void DebugEditor::DrawHierarchy(){
 				//親子付け用のドラッグ元
 				if (ImGui::BeginDragDropSource()){
 					GameObject* dragged = gameObjectPtr;
-					ImGui::SetDragDropPayload(kParentPayloadType.c_str(), &dragged, sizeof(dragged));
+					ImGui::SetDragDropPayload(kGameObjectPayloadType.c_str(), &dragged, sizeof(dragged));
 					ImGui::TextUnformatted(gameObjectPtr->GetName().c_str());//ドラッグ中の表示
 					ImGui::EndDragDropSource();
 				}
@@ -321,19 +322,19 @@ void DebugEditor::DrawHierarchy(){
 					ImGui::TreePop();
 				}
 
-				//ドラッグ元
-				if (ImGui::BeginDragDropSource()){
-					ImGui::SetDragDropPayload(kGameObjectPayloadType.c_str(), &i, sizeof(i));
-					ImGui::EndDragDropSource();
-				}
-
 				//ドラッグ先
 				if (ImGui::BeginDragDropTarget()){
 					const ImGuiPayload* payload = ImGui::AcceptDragDropPayload(kGameObjectPayloadType.c_str());
-
 					//payloadがnullじゃなければ
 					if (payload){
-						draggedIndex_ = *static_cast<uint32_t*>(payload->Data);
+						GameObject* dropObject = *static_cast<GameObject**>(payload->Data);
+						//ドラッグしたインデックスを取得
+						for (uint32_t draggedIndex = 0; draggedIndex < gameObjects_->size(); draggedIndex++){
+							if (gameObjects_->at(draggedIndex).get() == dropObject){
+								draggedIndex_ = draggedIndex;
+								break;
+							}
+						}
 						dropTargetIndex_ = i;
 
 						//移動前と移動後のインデックスが違かったら
@@ -384,11 +385,11 @@ void DebugEditor::DrawHierarchy(){
 	ImVec2 remaining = ImGui::GetContentRegionAvail();
 	if (remaining.x > 0.0f && remaining.y > 0.0f){
 		//空白部分を透明のボタンで埋める
-		ImGui::InvisibleButton("##HierarchyEmptyDrop", remaining);	
+		ImGui::InvisibleButton("##HierarchyEmptyDrop", remaining);
 
 		//親子付け用のドロップ先
 		if (ImGui::BeginDragDropTarget()){
-			const ImGuiPayload* payload = ImGui::AcceptDragDropPayload(kParentPayloadType.c_str());
+			const ImGuiPayload* payload = ImGui::AcceptDragDropPayload(kGameObjectPayloadType.c_str());
 			if (payload){
 				GameObject* child = *static_cast<GameObject**>(payload->Data);
 				requestDetach_ = child;
@@ -409,8 +410,7 @@ void DebugEditor::DrawHierarchy(){
 }
 
 //シーンの描画
-void DebugEditor::DrawScene(D3D12_GPU_DESCRIPTOR_HANDLE handle){
-	(void)handle;
+void DebugEditor::DrawScene([[maybe_unused]] D3D12_GPU_DESCRIPTOR_HANDLE handle){
 #ifdef USE_IMGUI
 	ImGui::Begin("シーン");
 	//ツールバーの表示用チェックボックス
@@ -579,8 +579,7 @@ void DebugEditor::DrawGizmo(){
 }
 
 //プレビューシーンの描画
-void DebugEditor::DrawPreview(D3D12_GPU_DESCRIPTOR_HANDLE handle){
-	(void)handle;
+void DebugEditor::DrawPreview([[maybe_unused]] D3D12_GPU_DESCRIPTOR_HANDLE handle){
 #ifdef USE_IMGUI
 	ImGui::Begin("プレビュー");
 	//テクスチャのIDを取得(GPUのハンドルから取得)
@@ -707,10 +706,161 @@ void DebugEditor::DrawInspector(){
 			}
 		}
 
+		//各コンポーネントを操作
+		DrawPropertyTable(selectedGameObject_);
+
 	} else{
 		ImGui::TextDisabled("オブジェクトを選択していない");
 	}
 	ImGui::End();
+#endif // USE_IMGUI
+}
+
+//各コンポーネントのプロパティ一覧
+void DebugEditor::DrawPropertyTable([[maybe_unused]] GameObject* selectGameObject){
+#ifdef USE_IMGUI
+	//各コンポーネントを取得
+	const std::vector<std::unique_ptr<Component>>& components = selectGameObject->GetAllComponents();
+	//コンポーネントがなければ
+	if (components.empty()){
+		return;
+	}
+
+	//各コンポーネントにアクセス
+	for (uint32_t i = 0; i < components.size(); i++){
+		ImGui::PushID(i);
+
+		//コンポーネントを取得
+		Component* component = components[i].get();
+		//Nullかどうか確認
+		if (!component){
+			ImGui::PopID();
+			continue;
+		}
+
+		//コンポーネントを操作できる
+		DrawProperties(component);
+
+		ImGui::PopID();
+	}
+#endif // USE_IMGUI
+}
+
+//1つのコンポーネントのプロパティ一覧
+void DebugEditor::DrawProperties([[maybe_unused]] Component* component){
+#ifdef USE_IMGUI
+	//headerを作成
+	if (ImGui::CollapsingHeader(component->GetTypeName().c_str())){
+		//インデントをつける
+		ImGui::Indent();
+		//登録されているプロパティ一覧を取得
+		PropertyRegistry registry;
+		component->RegisterProperties(&registry);
+		std::vector<Property> properties = registry.GetProperties();
+
+		//グループのテーブルを表示するか
+		bool isGroupTableVisible = false;
+
+		//レジストリを使ってIｍGuiを描画
+		for (Property property : properties){
+			//Groupの開始を取得
+			inspector::GroupBegin* groupBegin = std::get_if<inspector::GroupBegin>(&property);
+			//Groupの終了を取得
+			inspector::GroupEnd* groupEnd = std::get_if<inspector::GroupEnd>(&property);
+			//浮動小数のプロパティを取得
+			inspector::FloatProperty* floatProperty = std::get_if<inspector::FloatProperty>(&property);
+			//フラグのプロパティを取得
+			inspector::BoolProperty* boolProperty = std::get_if<inspector::BoolProperty>(&property);
+			//整数のプロパティを取得
+			inspector::IntProperty* intProperty = std::get_if<inspector::IntProperty>(&property);
+			//Vector2のプロパティを取得
+			inspector::Vector2Property* vector2Property = std::get_if<inspector::Vector2Property>(&property);
+			//Vector3のプロパティを取得
+			inspector::Vector3Property* vector3Property = std::get_if<inspector::Vector3Property>(&property);
+			//Vector4のプロパティを取得
+			inspector::Vector4Property* vector4Property = std::get_if<inspector::Vector4Property>(&property);
+			//Colorのプロパティを取得
+			inspector::ColorProperty* colorProperty = std::get_if<inspector::ColorProperty>(&property);
+			//Stringのプロパティを取得
+			inspector::StringProperty* stringProperty = std::get_if<inspector::StringProperty>(&property);
+			//グループの開始だった場合
+			if (groupBegin){
+				isGroupTableVisible = ImGui::CollapsingHeader(groupBegin->displayName.c_str());
+				continue;
+			}
+
+			//グループの終了だった場合
+			if (groupEnd){
+				isGroupTableVisible = true;
+				continue;
+			}
+
+			//表示するフラグがfalseだった場合
+			if (!isGroupTableVisible){
+				continue;
+			}
+
+			//各項目のIｍGuiを表示
+			if (floatProperty){
+				float decimal = floatProperty->getter();
+				if (ImGui::DragFloat(floatProperty->displayName.c_str(), &decimal, floatProperty->dragSpeed)){
+					floatProperty->setter(decimal);
+				}
+			} else if (boolProperty){
+				bool frag = boolProperty->getter();
+				if (ImGui::Checkbox(boolProperty->displayName.c_str(), &frag)){
+					boolProperty->setter(frag);
+				}
+			} else if (intProperty){
+				int32_t digit = intProperty->getter();
+				if (ImGui::DragInt(intProperty->displayName.c_str(), &digit, intProperty->dragSpeed)){
+					intProperty->setter(digit);
+				}
+			} else if (vector2Property){
+				Vector2 vector2 = vector2Property->getter();
+				if (ImGui::DragFloat2(vector2Property->displayName.c_str(), &vector2.x, vector2Property->dragSpeed)){
+					vector2Property->setter(vector2);
+				}
+			} else if (vector3Property){
+				Vector3 vector3 = vector3Property->getter();
+				if (ImGui::DragFloat3(vector3Property->displayName.c_str(), &vector3.x, vector3Property->dragSpeed)){
+					vector3Property->setter(vector3);
+				}
+			} else if (vector4Property){
+				Vector4 vector4 = vector4Property->getter();
+				if (ImGui::DragFloat4(vector4Property->displayName.c_str(), &vector4.x, vector4Property->dragSpeed)){
+					vector4Property->setter(vector4);
+				}
+			} else if (colorProperty){
+				Color color = colorProperty->getter();
+				if (ImGui::ColorEdit4(colorProperty->displayName.c_str(), &color.r)){
+					colorProperty->setter(color);
+				}
+			} else if (stringProperty){
+				std::string text = stringProperty->getter();
+				std::array<char, 256> buffer = {};
+
+				//終端文字用に一つ残す
+				const size_t copyLength = std::min(text.size(), buffer.size() - 1);
+
+				//テキストの内容をBufferにコピー
+				std::copy_n(text.data(), copyLength, buffer.data());
+
+				//テキストを操作
+				if (ImGui::InputText(stringProperty->displayName.c_str(), buffer.data(), buffer.size())){
+					stringProperty->setter(static_cast<std::string>(buffer.data()));
+				}
+			}
+		}
+
+		//もし有効じゃなければ
+		if (!component->IsEnabled()){
+			return;
+		}
+
+		//インデントを解除
+		ImGui::Unindent();
+	}
 #endif // USE_IMGUI
 }
 
@@ -897,10 +1047,7 @@ void DebugEditor::BeginRename(GameObject* gameObject){
 }
 
 //ノードのツリーを描画
-void DebugEditor::DrawNodeTree(const Node& node, const std::string& parentPath, Object3d* targetObject){
-	(void)node;
-	(void)parentPath;
-	(void)targetObject;
+void DebugEditor::DrawNodeTree([[maybe_unused]] const Node& node, [[maybe_unused]] const std::string& parentPath, [[maybe_unused]] Object3d* targetObject){
 #ifdef USE_IMGUI
 	//現在のパス
 	std::string currentPath = parentPath;
@@ -932,7 +1079,7 @@ void DebugEditor::DrawNodeTree(const Node& node, const std::string& parentPath, 
 
 	//親子付け用のドロップ先
 	if (ImGui::BeginDragDropTarget()){
-		const ImGuiPayload* payload = ImGui::AcceptDragDropPayload(kParentPayloadType.c_str());
+		const ImGuiPayload* payload = ImGui::AcceptDragDropPayload(kGameObjectPayloadType.c_str());
 		if (payload){
 			GameObject* child = *static_cast<GameObject**>(payload->Data);
 			requestAttachTo_ = ParentRequest{ child,targetObject->GetOwner(),currentPath };
@@ -1006,7 +1153,7 @@ void DebugEditor::DrawNodeTree(const Node& node, const std::string& parentPath, 
 			//親子付け解除用のドラッグ元
 			if (ImGui::BeginDragDropSource()){
 				GameObject* dragged = attachedGameObject;
-				ImGui::SetDragDropPayload(kParentPayloadType.c_str(), &dragged, sizeof(dragged));
+				ImGui::SetDragDropPayload(kGameObjectPayloadType.c_str(), &dragged, sizeof(dragged));
 				ImGui::TextUnformatted(attachedGameObject->GetName().c_str());//ドラッグ中の表示
 				ImGui::EndDragDropSource();
 			}

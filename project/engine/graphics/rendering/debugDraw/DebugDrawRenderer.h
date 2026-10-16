@@ -32,7 +32,7 @@ private://構造体
 		uint32_t indexCapacity = 0;
 
 		//マテリアル
-		Vector4* materialData = {};
+		Color* materialData = {};
 		ComPtr<ID3D12Resource>materialResource = nullptr;
 
 		//ワールド行列

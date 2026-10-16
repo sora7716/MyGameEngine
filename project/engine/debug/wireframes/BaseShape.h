@@ -43,7 +43,7 @@ namespace debugDraw {
 		/// カラーの設定
 		/// </summary>
 		/// <param name="color">色</param>
-		void SetColor(const Vector4& color);
+		void SetColor(const Color& color);
 
 		/// <summary>
 		/// ブレンドモードの設定
@@ -73,7 +73,7 @@ namespace debugDraw {
 		/// 色の取得
 		/// </summary>
 		/// <returns>色</returns>
-		const Vector4& GetColor();
+		const Color& GetColor();
 
 		/// <summary>
 		/// ブレンドモードの取得
@@ -125,9 +125,8 @@ namespace debugDraw {
 	private://メンバ変数
 		//描画データ
 		DebugDrawRenderData renderData_ = {};
-
 		//色
-		Vector4 color_ = {};
+		Color color_ = {};
 		//ローカルのトランスフォーム
 		Transform localTransform_ = {};
 		//ワールド行列

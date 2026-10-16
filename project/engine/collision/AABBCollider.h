@@ -66,6 +66,12 @@ public://メンバ関数
 	std::unique_ptr<Component> Clone(GameObject* gameObject)const override;
 
 	/// <summary>
+	/// コンポーネントのタイプ名を取得
+	/// </summary>
+	/// <returns>コンポーネントのタイプ名</returns>
+	std::string GetTypeName()const override;
+
+	/// <summary>
 	/// コライダータイプの取得
 	/// </summary>
 	/// <returns>コライダータイプ</returns>

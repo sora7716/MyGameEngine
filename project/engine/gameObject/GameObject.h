@@ -187,6 +187,12 @@ public://メンバ関数
 	}
 
 	/// <summary>
+	/// すべてのコンポーネントを取得
+	/// </summary>
+	/// <returns>すべてのコンポーネント</returns>
+	const std::vector<std::unique_ptr<Component>>& GetAllComponents()const;
+
+	/// <summary>
 	/// コンポーネントの更新
 	/// </summary>
 	/// <param name="phase">更新のフェーズ</param>

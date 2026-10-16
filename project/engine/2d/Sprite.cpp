@@ -56,7 +56,7 @@ void Sprite::ChangeTexture(const std::string& spriteName){
 }
 
 //色のセッター
-void Sprite::SetColor(const Vector4& color){
+void Sprite::SetColor(const Color& color){
 	material_.color = color;
 }
 
@@ -83,6 +83,11 @@ void Sprite::SetUVTranslate(const Vector2& translate){
 //UVのトランスフォームの設定
 void Sprite::SetUVRectTransform(const RectTransform& rectTransform){
 	uvTransform_ = rectTransform;
+}
+
+//コンポーネントのタイプ名を取得
+std::string Sprite::GetTypeName() const{
+	return "Sprite";
 }
 
 //UVスケールの取得

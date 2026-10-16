@@ -48,7 +48,7 @@ public://メンバ関数
 	/// 色のセッター
 	/// </summary>
 	/// <param name="color">色</param>
-	void SetColor(const Vector4& color);
+	void SetColor(const Color& color);
 
 	/// <summary>
 	/// ブレンドモードのセッター
@@ -78,6 +78,12 @@ public://メンバ関数
 	/// </summary>
 	/// <param name="rectTransform">トランスフォーム</param>
 	void SetUVRectTransform(const RectTransform& rectTransform);
+
+	/// <summary>
+	/// コンポーネントのタイプ名を取得
+	/// </summary>
+	/// <returns>コンポーネントのタイプ名</returns>
+	std::string GetTypeName()const override;
 
 	/// <summary>
 	/// UVスケールの取得

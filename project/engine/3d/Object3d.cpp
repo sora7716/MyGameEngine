@@ -91,6 +91,96 @@ void Object3d::UpdateLOD(float distance){
 	currentLOD_ = lodController_->SelectLOD(distance, currentLOD_, baseModel_->GetLODCount());
 }
 
+//プロパティ一覧を登録
+void Object3d::RegisterProperties(PropertyRegistry* registry){
+	Component::RegisterProperties(registry);
+	//マテリアルインスタンスがNullなら
+	if (!materialInstance_){
+		return;
+	}
+
+	//マテリアルを取得
+	MaterialInstance* material = materialInstance_.get();
+
+	//登録
+	for (uint32_t i = 0; i < material->GetSlots().size(); i++){
+		//グループの開始
+		registry->BeginGroup("material" + std::to_string(i));
+		//色
+		registry->Add(
+			"color",
+			[i, material](){
+				return material->GetSlots()[i].material.color;
+			},
+			[i, this](const Color& color){
+				this->SetColor(i, color);
+			}
+		);
+		//UV
+		registry->Add(
+			"uvScale",
+			[i, material](){
+				return material->GetSlots()[i].uvTransform.scale;
+			},
+			[i, this](const Vector2& scale){
+				this->SetUVScale(i, scale);
+			}
+		);
+		registry->Add(
+			"uvTranslate",
+			[i, material](){
+				return material->GetSlots()[i].uvTransform.translate;
+			},
+			[i, this](const Vector2& translate){
+				this->SetUVTranslate(i, translate);
+			}
+		);
+		registry->Add(
+			"uvRotate",
+			[i, material](){
+				return material->GetSlots()[i].uvTransform.rotate;
+			},
+			[i, this](float rotate){
+				this->SetUVRotate(i, rotate);
+			},
+			0.1f
+		);
+		//ライティングするか
+		std::function<bool()> getter = [i, material]() -> bool{
+			return material->GetSlots()[i].material.enableLighting != 0;
+			};
+		std::function<void(bool)> setter = [i, this](bool value){
+			SetEnabledLighting(i, value);
+			};
+
+		registry->Add("enableLighting", getter, setter);
+		//輝度
+		registry->Add(
+			"shiness",
+			[i, material](){
+				return material->GetSlots()[i].material.shininess;
+			},
+			[i, this](float shininess){
+				this->SetShininess(i, shininess);
+			},
+			0.01f
+		);
+		//環境マップの映り込み
+		registry->Add(
+			"coefficient",
+			[i, material](){
+				return material->GetSlots()[i].material.environmentCoefficient;
+			},
+			[i, this](float coefficient){
+				this->SetEnvironmentCoefficient(i, coefficient);
+			},
+			0.001f
+		);
+		//グループの終了
+		registry->EndGroup();
+	}
+}
+
 //親子付けを外す
 void Object3d::DetachParent(){
 	//そもそも親がなければ
@@ -133,7 +223,7 @@ bool Object3d::AttachTo(Object3d* parent, const std::string& parentNodePath){
 			Logger::OutputLog("循環する親子付けはできません");
 			return false;
 		}
-		
+
 		//次の親へ
 		ancestor = ancestor->GetParentObject3d();
 	}
@@ -147,6 +237,15 @@ bool Object3d::AttachTo(Object3d* parent, const std::string& parentNodePath){
 	//メンバ変数に記録
 	parentObject3d_ = parent;
 	parentNodePath_ = parentNodePath;
+
+	//今のTransformを取得
+	Transform& transform = GetOwner()->GetTransform();
+
+	//接続行列
+	Matrix4x4 incidenceMatrix = found->modelMatrix * parentObject3d_->GetWorldMatrix();
+	Matrix4x4 newLocalMatrix = worldMatrix_ * incidenceMatrix.Inverse();
+	Transform newLocalTransform = matrixUtility::DecomposeMatrix(newLocalMatrix, transform.scale);
+	transform = newLocalTransform;
 	return true;
 }
 
@@ -263,7 +362,7 @@ void Object3d::SetUVTranslate(uint32_t index, const Vector2& uvTranslate){
 }
 
 //色の設定
-void Object3d::SetColor(uint32_t index, const Vector4& color){
+void Object3d::SetColor(uint32_t index, const Color& color){
 	//マテリアルインスタンスがなければ
 	if (!materialInstance_){
 		return;
@@ -297,7 +396,7 @@ void Object3d::SetEnvironmentMap(uint32_t index, const std::string& environmentM
 }
 
 //ライティングフラグの設定
-void Object3d::SetIsLighting(uint32_t index, bool isLighting){
+void Object3d::SetEnabledLighting(uint32_t index, bool isLighting){
 	//マテリアルインスタンスがなければ
 	if (!materialInstance_){
 		return;
@@ -363,6 +462,11 @@ bool Object3d::SetNodeLocalTransform(const std::string& path, const Transform& l
 	//ローカルトランスフォームを設定
 	found->localTransform = localTransform;
 	return true;
+}
+
+//コンポーネントのタイプ名を返す
+std::string Object3d::GetTypeName() const{
+	return "Object3d";
 }
 
 //ワールド行列の取得

@@ -43,6 +43,12 @@ namespace debugDraw {
 		/// </summary>
 		/// <param name="targetCamera">対象となるカメラ</param>
 		void SetTargetCamera(Camera*targetCamera);
+
+		/// <summary>
+		/// コンポーネントのタイプ名を取得
+		/// </summary>
+		/// <returns>コンポーネントのタイプ名</returns>
+		std::string GetTypeName()const override;
 	private://メンバ変数
 		/// <summary>
 		/// 頂点の設定

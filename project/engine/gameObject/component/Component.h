@@ -1,5 +1,7 @@
 #pragma once
+#include "PropertyRegistry.h"
 #include <memory>
+#include <string>
 
 //前方宣言
 class GameObject;
@@ -95,10 +97,22 @@ public://メンバ関数
 	virtual std::unique_ptr<Component> Clone(GameObject* gameObject)const = 0;
 
 	/// <summary>
+	/// プロパティ一覧を登録
+	/// </summary>
+	/// <param name="registry">レジストリ</param>
+	virtual void RegisterProperties(PropertyRegistry* registry);
+
+	/// <summary>
 	/// 取り付け先を取得
 	/// </summary>
 	/// <returns>取り付け先</returns>
 	GameObject* GetOwner()const;
+
+	/// <summary>
+	/// コンポーネントのタイプ名を返す
+	/// </summary>
+	/// <returns>コンポーネントのタイプ名</returns>
+	virtual std::string GetTypeName()const = 0;
 
 	/// <summary>
 	/// 有効状態の設定

@@ -32,6 +32,11 @@ std::unique_ptr<Component> debugDraw::Cube::Clone(GameObject* gameObject) const{
 	return cloneInstance;
 }
 
+//コンポーネントのタイプ名を取得
+std::string debugDraw::Cube::GetTypeName() const{
+	return "Cube";
+}
+
 //頂点データの設定
 void debugDraw::Cube::SettingVertexData(){
 	//AABB

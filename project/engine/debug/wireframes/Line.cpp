@@ -48,6 +48,11 @@ Segment Line::GetSegment(){
 	return segment_;
 }
 
+//コンポーネントのタイプ名を取得
+std::string debugDraw::Line::GetTypeName() const{
+	return "Line";
+}
+
 //頂点データの設定
 void Line::SettingVertexData(){
 	//始点

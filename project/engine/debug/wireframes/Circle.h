@@ -39,6 +39,12 @@ namespace debugDraw {
 		void SetCircle(const primitiveData::Circle& circle);
 
 		/// <summary>
+		/// コンポーネントのタイプ名を取得
+		/// </summary>
+		/// <returns>コンポーネントのタイプ名</returns>
+		std::string GetTypeName()const override;
+
+		/// <summary>
 		/// 円のゲッター
 		/// </summary>
 		/// <returns>円</returns>

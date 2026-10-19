@@ -240,6 +240,37 @@ private://メンバ関数
 	/// <param name="node">ノード</param>
 	/// <param name="targetObject">対象となるObject3d</param>
 	void DrawNodeTree(const Node& node, const std::string& parentPath, GameObject* targetObject);
+
+	/// <summary>
+	/// オブジェクト階層で順番入れ替えの操作
+	/// </summary>
+	/// <param name="currentIndex">現在のオブジェクトの検索キー</param>
+	/// <param name="rowMin">行の最小値(左,上)</param>
+	/// <param name="rowMax">行の最大値(右,下)</param>
+	/// <param name="mousePos">マウスの位置</param>
+	/// <returns>移動できるかどうか</returns>
+	bool IsReorderObjectOperation(uint32_t currentIndex, const Vector2& rowMin, const Vector2& rowMax, const Vector2& mousePos);
+
+	/// <summary>
+	/// オブジェクト階層で接続させる操作
+	/// </summary>
+	/// <param name="isReorder">順序入れ替えが可能か</param>
+	/// <param name="parentObject">親オブジェクト</param>
+	/// <param name="nodePath">ノードのパス</param>
+	void AttachToOperation(GameObject* parentObject, bool isReorder, const std::string& nodePath = "");
+
+	/// <summary>
+	/// オブジェクト階層で接続を解除する操作
+	/// </summary>
+	/// <param name="attachedObject">接続しているオブジェクト</param>
+	void DetachToOperation(GameObject*attachedObject);
+
+	/// <summary>
+	/// オブジェクトの階層で選択する操作
+	/// </summary>
+	/// <param name="selectGameObject">選択したオブジェクト</param>
+	/// <returns>選択しているか</returns>
+	bool SelectGameObjectOperation(GameObject* selectGameObject);
 private://定数
 	//ゲームオブジェクトをDragAndDropで動かす用のpayloadType
 	static inline const std::string kGameObjectPayloadType = "GameObjectPayload";

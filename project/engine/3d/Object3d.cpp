@@ -207,9 +207,18 @@ bool Object3d::AttachTo(Object3d* parent, const std::string& parentNodePath){
 	parentNode_ = found;
 	parentWorldMatrix_ = parent->GetOwner()->GetWorldMatrix();
 
+	//接続行列を渡す
+	GetOwner()->SetAttachedMatrix(parentNode_->modelMatrix);
+
+	//接続する
+	bool isAttachTo = GetOwner()->AttachTo(parent->GetOwner());
+	//接続が失敗したら
+	if (!isAttachTo){
+		return false;
+	}
+
 	//ノードパスを保存
 	attachedNodePath_ = parentNodePath;
-
 	return true;
 }
 

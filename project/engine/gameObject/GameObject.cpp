@@ -97,7 +97,7 @@ bool GameObject::AttachTo(GameObject* parentObject){
 	parentMatrix_ = parentObject_->GetWorldMatrix();
 
 	//接続行列
-	Matrix4x4 incidenceMatrix = parentMatrix_;
+	Matrix4x4 incidenceMatrix = attachedMatrix_ * parentMatrix_;
 	Matrix4x4 newLocalMatrix = worldMatrix_ * incidenceMatrix.Inverse();
 	Transform newLocalTransform = matrixUtility::DecomposeMatrix(newLocalMatrix, transform_.scale);
 	transform_ = newLocalTransform;

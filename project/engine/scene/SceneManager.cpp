@@ -94,25 +94,30 @@ void SceneManager::Debug([[maybe_unused]] D3D12_GPU_DESCRIPTOR_HANDLE sceneHandl
 		GameObject* child = parentRequest.child;
 		//親と子が存在するか
 		if (parent && child){
-			//親子付け
-			bool isAttached = child->AttachTo(parent);
-			if (!isAttached){
-				Logger::OutputLog("親子付けが失敗しました");
-			}
+			//親子付けが成功したか
+			bool isAttached = false;
 
-			//Object3dがあるか確認
-			Object3d* parentObject3d = parentRequest.parent->GetComponent<Object3d>();
-			Object3d* childObject3d = parentRequest.child->GetComponent<Object3d>();
-
-			//親と子でObject3dを取得できた場合
-			if (parentObject3d && childObject3d){
-				//親子付けを行う
-				isAttached = childObject3d->AttachTo(parentObject3d, parentRequest.nodePath);
+			//ノードパスが無ければGameObjectに接続
+			if (parentRequest.nodePath.empty()){
+				isAttached = child->AttachTo(parent);
 				if (!isAttached){
 					Logger::OutputLog("親子付けが失敗しました");
 				}
 			} else{
-				Logger::OutputLog("親または子でObject3d取得に失敗しました");
+				//Object3dがあるか確認
+				Object3d* parentObject3d = parentRequest.parent->GetComponent<Object3d>();
+				Object3d* childObject3d = parentRequest.child->GetComponent<Object3d>();
+
+				//親と子でObject3dを取得できた場合
+				if (parentObject3d && childObject3d){
+					//親子付けを行う
+					isAttached = childObject3d->AttachTo(parentObject3d, parentRequest.nodePath);
+					if (!isAttached){
+						Logger::OutputLog("親子付けが失敗しました");
+					}
+				} else{
+					Logger::OutputLog("親または子でObject3d取得に失敗しました");
+				}
 			}
 		} else{
 			Logger::OutputLog("親または子でGameObjectがNullでした");
@@ -122,20 +127,18 @@ void SceneManager::Debug([[maybe_unused]] D3D12_GPU_DESCRIPTOR_HANDLE sceneHandl
 	//親子付けを解除
 	GameObject* detachObject = nullptr;
 	if (debugEditor_->ConsumeDetachRequest(detachObject)){
-		//ターゲットがなければ
-		if (!detachObject){
-			return;
-		}
-		//解除
-		detachObject->Detach();
-
-		//Object3dが取得できたか
-		Object3d* object3d = detachObject->GetComponent<Object3d>();
-		if (object3d){
-			//親子付けを解除
-			object3d->Detach();
-		} else{
-			Logger::OutputLog("親子付け解除する対象のObject3d取得に失敗しました");
+		//ターゲットがある場合
+		if (detachObject){
+			//解除
+			detachObject->Detach();
+			//Object3dが取得できたか
+			Object3d* object3d = detachObject->GetComponent<Object3d>();
+			if (object3d){
+				//親子付けを解除
+				object3d->Detach();
+			} else{
+				Logger::OutputLog("親子付け解除する対象のObject3d取得に失敗しました");
+			}
 		}
 	}
 

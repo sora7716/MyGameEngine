@@ -6,6 +6,7 @@
 #include "CollisionSystem.h"
 #include "Object3d.h"
 #include "Logger.h"
+#include "LightingManager.h"
 #include <cassert>
 
 //生成
@@ -209,6 +210,9 @@ void SceneManager::Draw(CameraMode cameraMode){
 	renderSystem_->CollectActiveDebugDraw(gameObjects);
 	//ParticleSystemの描画
 	renderSystem_->CollectActiveParticleSystems(gameObjects);
+
+	//平行光源の追加
+	sceneContext_.lightingManager->CollectActiveDirectionalLight(gameObjects);
 }
 
 //ゲーム画面の描画

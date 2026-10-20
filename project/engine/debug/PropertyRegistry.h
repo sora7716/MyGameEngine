@@ -61,17 +61,25 @@ namespace inspector{
 		std::function<void(const Vector4&)>setter;
 		float dragSpeed = 0.0f;
 	};
-	//Colorの
+	//Color
 	struct ColorProperty{
 		std::string displayName = "";
 		std::function<Color()>getter;
 		std::function<void(const Color&)>setter;
 	};
-	//文字列の
+	//文字列
 	struct StringProperty{
 		std::string displayName = "";
 		std::function <std::string()>getter;
 		std::function<void(const std::string&)>setter;
+	};
+	//Enum
+	template <class T>
+	struct EnumProperty{
+		std::string displayName = "";
+		std::vector<std::string>options;
+		std::function <T()>getter;
+		std::function<void(T)>setter;
 	};
 }
 
@@ -236,6 +244,12 @@ public://メンバ関数
 	/// <param name="getter">Getter</param>
 	/// <param name="setter">Setter</param>
 	void Add(const std::string& displayName, std::function<std::string()> getter, std::function<void(const std::string&)>setter);
+
+	template <class T>
+	void Add(const std::string& displayName, const std::vector<std::string>& options, std::function<T()> getter, std::function<void(T)>setter){
+		EnumProperty enumProperty = { displayName,options,getter,setter };
+		properties_.push_back(enumProperty);
+	}
 
 	/// <summary>
 	/// プロパティの配列の取得

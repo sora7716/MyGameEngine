@@ -27,6 +27,7 @@
     <ClCompile Include="engine\2d\Sprite.cpp" />
     <ClCompile Include="engine\3d\lighting\DirectionalLight.cpp" />
     <ClCompile Include="engine\3d\lighting\LightingManager.cpp" />
+    <ClCompile Include="engine\3d\lighting\PointLight.cpp" />
     <ClCompile Include="engine\3d\lod\LODBuilder.cpp" />
     <ClCompile Include="engine\3d\lod\LODController.cpp" />
     <ClCompile Include="engine\3d\material\MaterialInstance.cpp" />
@@ -137,6 +138,7 @@
     <ClInclude Include="engine\3d\lighting\DirectionalLight.h" />
     <ClInclude Include="engine\3d\lighting\LightingData.h" />
     <ClInclude Include="engine\3d\lighting\LightingManager.h" />
+    <ClInclude Include="engine\3d\lighting\PointLight.h" />
     <ClInclude Include="engine\3d\lod\LODBuilder.h" />
     <ClInclude Include="engine\3d\lod\LODController.h" />
     <ClInclude Include="engine\3d\material\MaterialInstance.h" />

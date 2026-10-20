@@ -12,7 +12,7 @@ namespace lightData{
 		float intensity = 1.0f;//輝度
 		int32_t isLambert = 0;//lambertにするかどうか
 		int32_t isBlinnPhong = 0;//BlinnPhongReflectionを行うかどうか
-		int32_t enableDirectionalLighting = 0;//平行光源を有効にするか
+		int32_t enable = 0;//平行光源を有効にするか
 	};
 
 	//点光源

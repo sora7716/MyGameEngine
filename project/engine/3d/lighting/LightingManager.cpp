@@ -4,9 +4,10 @@
 #include "SRVManager.h"
 #include "TextureManager.h"
 #include "MathUtility.h"
+#include "DirectionalLight.h"
+#include "GameObject.h"
 #include <algorithm>
 #include <cassert>
-using namespace lightData;
 
 //生成
 std::unique_ptr<LightingManager> LightingManager::Create(ConstructorKey key, DirectXBase* directXBase, SRVManager* srvManager){
@@ -65,16 +66,34 @@ void LightingManager::Bind(){
 	directXBase_->GetCommandList()->SetGraphicsRootDescriptorTable(6, srvManager_->GetGPUDescriptorHandle(srvIndexSpot_));
 }
 
-//平行光源の設定
-void LightingManager::SetDirectionalLight(const DirectionalLight& directionalLight){
-	*directionalLight_ = directionalLight;
-	directionalLight_->direction = directionalLight.direction.Normalize();
-	directionalLight_->intensity = std::max(directionalLight.intensity, 0.0f);
-}
+//有効な平行光源を集める
+void LightingManager::CollectActiveDirectionalLight(const std::vector<std::unique_ptr<GameObject>>& gameObjects){
+	//ゲームオブジェクトの配列がなければ
+	if (gameObjects.empty()){
+		return;
+	}
 
-//平行光源の取得
-DirectionalLight* LightingManager::GetDirectionalLight() const{
-	return directionalLight_;
+	//各オブジェクトへアクセス
+	for (const std::unique_ptr<GameObject>& gameObject : gameObjects){
+		//ゲームオブジェクトがNullなら
+		if (!gameObject){
+			continue;
+		}
+		//平行光源が取得できた場合
+		DirectionalLight* directionalLight = gameObject->GetComponent<DirectionalLight>();
+		//平行光源が存在しない場合
+		if (!directionalLight){
+			continue;
+		}
+
+		//平行光源が有効じゃない場合
+		if (!directionalLight->IsEnabled()){
+			continue;
+		}
+
+		//平行光源のデータに保存
+		*directionalLight_ = directionalLight->GetDirectionalLightData();
+	}
 }
 
 //平行光源の生成
@@ -88,16 +107,16 @@ void LightingManager::CreateDirectionLight(){
 	directionalLight_->intensity = 1.0f;
 	directionalLight_->isLambert = false;
 	directionalLight_->isBlinnPhong = true;
-	directionalLight_->enableDirectionalLighting = true;
+	directionalLight_->enable = true;
 }
 
 //点光源の生成
 void LightingManager::CreatePointLight(){
 	// 配列サイズで確保
-	pointLightResource_ = directXBase_->CreateBufferResource(sizeof(PointLight) * kMaxLightCount);
+	pointLightResource_ = directXBase_->CreateBufferResource(sizeof(lightData::PointLight) * kMaxLightCount);
 
 	//点光源
-	PointLight* pointLightData = nullptr;
+	lightData::PointLight* pointLightData = nullptr;
 
 	//配列としてMap
 	pointLightResource_->Map(0, nullptr, reinterpret_cast<void**>(&pointLightData));
@@ -114,7 +133,7 @@ void LightingManager::CreatePointLight(){
 	}
 
 	//配列の内容をコピー
-	std::memcpy(pointLightData, pointLights_.data(), pointLights_.size() * sizeof(PointLight));
+	std::memcpy(pointLightData, pointLights_.data(), pointLights_.size() * sizeof(lightData::PointLight));
 }
 
 //点光源のストラクチャバッファの生成
@@ -125,17 +144,17 @@ void LightingManager::CreateStructuredBufferForPoint(){
 		srvIndexPoint_,
 		pointLightResource_.Get(),
 		kMaxLightCount,
-		sizeof(PointLight)
+		sizeof(lightData::PointLight)
 	);
 }
 
 //スポットライトの生成
 void LightingManager::CreateSpotLight(){
 	// 配列サイズで確保
-	spotLightResource_ = directXBase_->CreateBufferResource(sizeof(SpotLight) * kMaxLightCount);
+	spotLightResource_ = directXBase_->CreateBufferResource(sizeof(lightData::SpotLight) * kMaxLightCount);
 
 	//スポットライト
-	SpotLight* spotLightData = nullptr;
+	lightData::SpotLight* spotLightData = nullptr;
 	//光源データの書きこみ
 	spotLightResource_->Map(0, nullptr, reinterpret_cast<void**>(&spotLightData));
 
@@ -154,7 +173,7 @@ void LightingManager::CreateSpotLight(){
 	}
 
 	//配列の内容をコピー
-	std::memcpy(spotLightData, spotLights_.data(), spotLights_.size() * sizeof(SpotLight));
+	std::memcpy(spotLightData, spotLights_.data(), spotLights_.size() * sizeof(lightData::SpotLight));
 }
 
 //スポットライトのストラクチャバッファの生成
@@ -165,6 +184,6 @@ void LightingManager::CreateStructuredBufferForSpot(){
 		srvIndexSpot_,
 		spotLightResource_.Get(),
 		kMaxLightCount,
-		sizeof(SpotLight)
+		sizeof(lightData::SpotLight)
 	);
 }

@@ -11,6 +11,7 @@
 #include "RigidBody.h"
 #include "MathUtility.h"
 #include "Color.h"
+#include "DirectionalLight.h"
 
 //コンストラクタ
 GameScene::GameScene(){
@@ -61,6 +62,10 @@ void GameScene::Initialize(){
 	primitiveObjects[1]->SetName("plane");
 	primitiveObject3ds[2]->SetModel("sphere_32");
 	primitiveObjects[2]->SetName("sphere");
+
+	GameObject* directionalLightObject = CreateGameObject();
+	directionalLightObject->SetName("平行光源");
+	directionalLightObject->AddComponent<DirectionalLight>();
 }
 
 //更新のステート

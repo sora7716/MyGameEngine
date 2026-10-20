@@ -738,6 +738,7 @@ void DebugEditor::DrawInspector(){
 		}
 
 		//回転の切り替え(オイラー角からクォータニオンを求めてる)
+		inspectorEulerAngle_ = transform.GetEulerAngle();
 		if (ImGui::DragFloat3("回転", &inspectorEulerAngle_.x, 0.1f)){
 			transform.rotate = Quaternion::EulerAngleToQuaternion(inspectorEulerAngle_);
 			isChange = true;
@@ -851,6 +852,8 @@ void DebugEditor::DrawProperties([[maybe_unused]] Component* component){
 			inspector::ColorProperty* colorProperty = std::get_if<inspector::ColorProperty>(&property);
 			//Stringのプロパティを取得
 			inspector::StringProperty* stringProperty = std::get_if<inspector::StringProperty>(&property);
+			//Enumのプロパティを取得
+			inspector::EnumProperty* enumProperty = std::get_if<inspector::EnumProperty>(&property);
 			//グループの開始だった場合
 			if (groupBegin){
 				isGroupTableVisible = ImGui::CollapsingHeader(groupBegin->displayName.c_str());

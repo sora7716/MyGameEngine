@@ -9,6 +9,7 @@
 class Core;
 class DirectXBase;
 class SRVManager;
+class GameObject;
 
 /// <summary>
 /// ライティングの管理
@@ -61,16 +62,10 @@ public://メンバ関数
 	void Bind();
 
 	/// <summary>
-	/// 平行光源の設定
+	/// 有効な平行光源を集める
 	/// </summary>
-	/// <param name="directionalLight">平行光源</param>
-	void SetDirectionalLight(const lightData::DirectionalLight& directionalLight);
-
-	/// <summary>
-	/// 平行光源の取得
-	/// </summary>
-	/// <returns>平行光源</returns>
-	lightData::DirectionalLight* GetDirectionalLight()const;
+	/// <param name="gameObjects">ゲームオブジェクトの配列</param>
+	void CollectActiveDirectionalLight(const std::vector<std::unique_ptr<GameObject>>& gameObjects);
 private://メンバ関数
 	//コピーコンストラクタ禁止
 	LightingManager(const LightingManager&) = delete;

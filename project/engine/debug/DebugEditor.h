@@ -238,6 +238,7 @@ private://メンバ関数
 	/// ノードのツリーを描画
 	/// </summary>
 	/// <param name="node">ノード</param>
+	/// <param name="parentPath">親のパス</param>
 	/// <param name="targetObject">対象となるObject3d</param>
 	void DrawNodeTree(const Node& node, const std::string& parentPath, GameObject* targetObject);
 

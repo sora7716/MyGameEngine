@@ -45,6 +45,22 @@ void GameScene::Initialize(){
 
 	//剣の生成
 	CreateSword();
+
+	//ゲームオブジェクトの配列
+	std::array<GameObject*, 3> primitiveObjects = {};
+	std::array<Object3d*, primitiveObjects.size()> primitiveObject3ds = {};
+	for (uint32_t i = 0; i < primitiveObjects.size(); i++){
+		primitiveObjects[i] = CreateGameObject();
+		primitiveObjects[i]->GetTransform().translate.x = static_cast<float>(i * 2);
+		primitiveObjects[i]->GetTransform().translate.y = 2.0f;
+		primitiveObject3ds[i] = primitiveObjects[i]->AddComponent<Object3d>();
+	}
+	primitiveObject3ds[0]->SetModel("cube");
+	primitiveObjects[0]->SetName("cube");
+	primitiveObject3ds[1]->SetModel("plane");
+	primitiveObjects[1]->SetName("plane");
+	primitiveObject3ds[2]->SetModel("sphere_32");
+	primitiveObjects[2]->SetName("sphere");
 }
 
 //更新のステート

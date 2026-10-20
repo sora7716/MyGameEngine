@@ -233,216 +233,216 @@ void DebugEditor::DrawDockSpace(){
 
 //ヒエラルキーの描画
 void DebugEditor::DrawHierarchy(){
+	//オブジェクトの配列がなければ
+	if (!gameObjects_){
+		return;
+	}
 #ifdef USE_IMGUI
 	ImGui::Begin("オブジェクト階層");
-	if (gameObjects_){
-		for (uint32_t i = 0; i < gameObjects_->size(); i++){
-			const std::unique_ptr<GameObject>& currentGameObject = gameObjects_->at(i);
-			//現在のゲームオブジェクトがなかった場合
-			if (!currentGameObject){
-				continue;
+	for (uint32_t i = 0; i < gameObjects_->size(); i++){
+		const std::unique_ptr<GameObject>& currentGameObject = gameObjects_->at(i);
+		//現在のゲームオブジェクトがなかった場合
+		if (!currentGameObject){
+			continue;
+		}
+
+		//現在のゲームオブジェクトの生ポインタを保存
+		GameObject* currentGameObjectPtr = currentGameObject.get();
+
+		//ゲームオブジェクトがNullがチェック
+		if (!currentGameObjectPtr){
+			return;
+		}
+
+		//ゲームオブジェクトにデバッグカメラの操作がコンポーネントであった場合
+		if (currentGameObjectPtr->GetComponent<DebugCameraController>()){
+			continue;
+		}
+
+		//親オブジェクトが存在した場合はスキップ
+		if (currentGameObjectPtr && currentGameObjectPtr->GetParentObject()){
+			continue;
+		}
+
+		//IDを追加し、同じ名前のObjectでも衝突しないようにする
+		ImGui::PushID(currentGameObjectPtr);
+
+		//選んだオブジェクトと同じかどうか
+		ImGuiTreeNodeFlags isSelected = ImGuiTreeNodeFlags_OpenOnArrow | ImGuiTreeNodeFlags_SpanAvailWidth;
+
+		//選択されたか
+		if (selectedGameObject_ == currentGameObjectPtr){
+			if (selectedNodePath_.empty()){
+				isSelected |= ImGuiTreeNodeFlags_Selected;
+			}
+		}
+
+		//存在しているかどうか
+		const bool isActive = currentGameObjectPtr->IsActive();
+
+		//フォントの色を変更
+		if (!isActive){
+			ImGui::PushStyleColor(ImGuiCol_Text, ImGui::GetStyleColorVec4(ImGuiCol_TextDisabled));
+		}
+
+		//選択するテーブルの描画
+		if (renamingGameObject_ == currentGameObjectPtr){
+			//Renameを選んだ時だけフォーカスする
+			if (requestRenameFocus_){
+				ImGui::SetKeyboardFocusHere();
+				requestRenameFocus_ = false;
 			}
 
-			//現在のゲームオブジェクトの生ポインタを保存
-			GameObject* currentGameObjectPtr = currentGameObject.get();
+			const bool enterPressed = ImGui::InputText("##Rename", renameObjectBuffer_.data(), renameObjectBuffer_.size(), ImGuiInputTextFlags_EnterReturnsTrue | ImGuiInputTextFlags_AutoSelectAll);
 
-			//ゲームオブジェクトがNullがチェック
-			if (!currentGameObjectPtr){
-				return;
-			}
-
-			//ゲームオブジェクトにデバッグカメラの操作がコンポーネントであった場合
-			if (currentGameObjectPtr->GetComponent<DebugCameraController>()){
-				continue;
-			}
-
-			//親オブジェクトが存在した場合はスキップ
-			if (currentGameObjectPtr && currentGameObjectPtr->GetParentObject()){
-				continue;
-			}
-
-			//IDを追加し、同じ名前のObjectでも衝突しないようにする
-			ImGui::PushID(currentGameObjectPtr);
-
-			//選んだオブジェクトと同じかどうか
-			ImGuiTreeNodeFlags isSelected = ImGuiTreeNodeFlags_OpenOnArrow | ImGuiTreeNodeFlags_SpanAvailWidth;
-
-			//選択されたか
-			if (selectedGameObject_ == currentGameObjectPtr){
-				if (selectedNodePath_.empty()){
-					isSelected |= ImGuiTreeNodeFlags_Selected;
+			//Enterで名前を確定
+			if (enterPressed){
+				if (renameObjectBuffer_[0] != '\0'){
+					currentGameObjectPtr->SetName(renameObjectBuffer_.data());
 				}
+
+				renamingGameObject_ = nullptr;
+			}
+		} else{
+			//行の上端
+			ImVec2 rowMin = {};
+			//行の下端
+			ImVec2 rowMax = {};
+			//マウスの位置
+			ImVec2 mousePos = ImGui::GetMousePos();
+
+			//ツリーを開く
+			bool isOpen = ImGui::TreeNodeEx(currentGameObjectPtr->GetName().c_str(), isSelected);
+			rowMin = ImGui::GetItemRectMin();
+			rowMax = ImGui::GetItemRectMax();
+
+			//ドラッグ元
+			if (ImGui::BeginDragDropSource()){
+				GameObject* dragged = currentGameObjectPtr;
+				ImGui::SetDragDropPayload(kGameObjectPayloadType.c_str(), &dragged, sizeof(dragged));
+				ImGui::TextUnformatted(currentGameObjectPtr->GetName().c_str());//ドラッグ中の表示
+				ImGui::EndDragDropSource();
 			}
 
-			//存在しているかどうか
-			const bool isActive = currentGameObjectPtr->IsActive();
+			//クリックを確認
+			SelectGameObjectOperation(currentGameObjectPtr);
 
-			//フォントの色を変更
-			if (!isActive){
-				ImGui::PushStyleColor(ImGuiCol_Text, ImGui::GetStyleColorVec4(ImGuiCol_TextDisabled));
+			//ドラッグ先
+			if (ImGui::BeginDragDropTarget()){
+				//順番変更の操作
+				bool isReorder = IsReorderObjectOperation(i, { rowMin.x,rowMin.y }, { rowMax.x,rowMax.y }, { mousePos.x,mousePos.y });
+				//接続の操作
+				AttachToOperation(currentGameObjectPtr, isReorder);
+				ImGui::EndDragDropTarget();
 			}
 
-			//選択するテーブルの描画
-			if (renamingGameObject_ == currentGameObjectPtr){
-				//Renameを選んだ時だけフォーカスする
-				if (requestRenameFocus_){
-					ImGui::SetKeyboardFocusHere();
-					requestRenameFocus_ = false;
-				}
-
-				const bool enterPressed = ImGui::InputText("##Rename", renameObjectBuffer_.data(), renameObjectBuffer_.size(), ImGuiInputTextFlags_EnterReturnsTrue | ImGuiInputTextFlags_AutoSelectAll);
-
-				//Enterで名前を確定
-				if (enterPressed){
-					if (renameObjectBuffer_[0] != '\0'){
-						currentGameObjectPtr->SetName(renameObjectBuffer_.data());
+			//ノードを作成
+			if (isOpen){
+				//表示するゲームオブジェクトを探す
+				for (const std::unique_ptr<GameObject>& candidate : *gameObjects_){
+					//表示する候補がNullだった場合
+					if (!candidate){
+						continue;
 					}
 
-					renamingGameObject_ = nullptr;
-				}
-			} else{
-				//行の上端
-				ImVec2 rowMin = {};
-				//行の下端
-				ImVec2 rowMax = {};
-				//マウスの位置
-				ImVec2 mousePos = ImGui::GetMousePos();
+					//今の候補の親オブジェクトを取得
+					const GameObject* candidateParent = candidate->GetParentObject();
 
-				//ツリーを開く
-				bool isOpen = ImGui::TreeNodeEx(currentGameObjectPtr->GetName().c_str(), isSelected);
-				rowMin = ImGui::GetItemRectMin();
-				rowMax = ImGui::GetItemRectMax();
+					//今のオブジェクトと候補の親オブジェクトが一致したら
+					if (currentGameObjectPtr == candidateParent){
+						//矢印で開く(選択ハイライトの幅を行の右端まで伸ばす)
+						ImGuiTreeNodeFlags nodeFlags = ImGuiTreeNodeFlags_OpenOnArrow | ImGuiTreeNodeFlags_SpanAvailWidth;
 
-				//ドラッグ元
-				if (ImGui::BeginDragDropSource()){
-					GameObject* dragged = currentGameObjectPtr;
-					ImGui::SetDragDropPayload(kGameObjectPayloadType.c_str(), &dragged, sizeof(dragged));
-					ImGui::TextUnformatted(currentGameObjectPtr->GetName().c_str());//ドラッグ中の表示
-					ImGui::EndDragDropSource();
-				}
-
-				//クリックを確認
-				SelectGameObjectOperation(currentGameObjectPtr);
-
-				//ドラッグ先
-				if (ImGui::BeginDragDropTarget()){
-					//順番変更の操作
-					bool isReorder = IsReorderObjectOperation(i, { rowMin.x,rowMin.y }, { rowMax.x,rowMax.y }, { mousePos.x,mousePos.y });
-					//接続の操作
-					AttachToOperation(currentGameObjectPtr, isReorder);
-					ImGui::EndDragDropTarget();
-				}
-
-				//ノードを作成
-				if (isOpen){
-					//表示するゲームオブジェクトを探す
-					for (const std::unique_ptr<GameObject>& candidate : *gameObjects_){
-						//表示する候補がNullだった場合
-						if (!candidate){
+						//Object3dを持っているか
+						Object3d* candidateObject3d = candidate->GetComponent<Object3d>();
+						if (!candidateObject3d){
 							continue;
 						}
 
-						//今の候補の親オブジェクトを取得
-						const GameObject* candidateParent = candidate->GetParentObject();
-
-						//今のオブジェクトと候補の親オブジェクトが一致したら
-						if (currentGameObjectPtr == candidateParent){
-							//矢印で開く(選択ハイライトの幅を行の右端まで伸ばす)
-							ImGuiTreeNodeFlags nodeFlags = ImGuiTreeNodeFlags_OpenOnArrow | ImGuiTreeNodeFlags_SpanAvailWidth;
-
-							//Object3dを持っているか
-							Object3d* candidateObject3d = candidate->GetComponent<Object3d>();
-							//ノードの取得
-							Node candidateNode = {};
-							if (candidateObject3d){
-								//ノードの取得
-								candidateNode = candidateObject3d->GetNode();
-
-								//子ノードがなければ
-								if (candidateNode.children.empty()){
-									//末端ノードにする
-									nodeFlags |= ImGuiTreeNodeFlags_Leaf;
-								}
-
-								////選択されていたらハイライトをつける
-								//if (selectedGameObject_ == candidate.get()){
-								//	if (selectedNodePath_ == currentPath){
-								//		nodeFlags |= ImGuiTreeNodeFlags_Selected;
-								//	}
-								//}
-							}
-
-							//今描画しているGameObjetの子オブジェクト
-							if (ImGui::TreeNodeEx(candidate->GetName().c_str(), nodeFlags)){
-								//インスペクターに表示
-								SelectGameObjectOperation(candidate.get());
-
-								if (candidateObject3d){
-									//ノードの描画
-									DrawNodeTree(candidateNode, selectedNodePath_, candidate.get());
-								}
-
-								//接続や順番入れ替え
-								if (ImGui::BeginDragDropTarget()){
-									//順番変更の操作
-									bool isReorder = IsReorderObjectOperation(i, { rowMin.x,rowMin.y }, { rowMax.x,rowMax.y }, { mousePos.x,mousePos.y });
-
-									//接続の操作
-									AttachToOperation(currentGameObjectPtr, isReorder);
-
-									ImGui::EndDragDropTarget();
-								}
-
-								//親子付け解除用のドラッグ元
-								if (ImGui::BeginDragDropSource()){
-									DetachToOperation(candidate.get());
-									ImGui::EndDragDropSource();
-								}
-
-								ImGui::TreePop();
-							}
+						//接続するパスが空じゃないか
+						if (!candidateObject3d->GetAttachedNodePath().empty()){
+							continue;
 						}
+
+						//ノードの取得
+						Node candidateNode = {};
+						//ノードの取得
+						candidateNode = candidateObject3d->GetNode();
+
+						//今描画しているGameObjetの子オブジェクト
+						bool isChildOpen = ImGui::TreeNodeEx(candidate->GetName().c_str(), nodeFlags);
+
+						//インスペクターに表示
+						SelectGameObjectOperation(candidate.get());
+
+						//接続や順番入れ替え
+						if (ImGui::BeginDragDropTarget()){
+							//順番変更の操作
+							bool isReorder = IsReorderObjectOperation(i, { rowMin.x,rowMin.y }, { rowMax.x,rowMax.y }, { mousePos.x,mousePos.y });
+
+							//接続の操作
+							AttachToOperation(candidate.get(), isReorder);
+
+							ImGui::EndDragDropTarget();
+						}
+
+						//親子付け解除用のドラッグ元
+						if (ImGui::BeginDragDropSource()){
+							DetachToOperation(candidate.get());
+							ImGui::EndDragDropSource();
+						}
+
+						//子オブジェクトのツリーが開いたら
+						if (isChildOpen){
+							//Object3dがあった場合
+							if (candidateObject3d){
+								//ノードの描画
+								DrawNodeTree(candidateNode, selectedNodePath_, candidate.get());
+							}
+							ImGui::TreePop();
+						}
+
 					}
-
-					//ノードの描画
-					Object3d* object3d = currentGameObjectPtr->GetComponent<Object3d>();
-					if (object3d){
-						DrawNodeTree(object3d->GetNode(), object3d->GetNode().name, currentGameObjectPtr);
-					}
-					ImGui::TreePop();
 				}
+
+				//ノードの描画
+				Object3d* object3d = currentGameObjectPtr->GetComponent<Object3d>();
+				if (object3d){
+					DrawNodeTree(object3d->GetNode(), object3d->GetNode().name, currentGameObjectPtr);
+				}
+				ImGui::TreePop();
 			}
-
-			//SelectTableを描画した直後に元に戻す
-			if (!isActive){
-				ImGui::PopStyleColor();
-			}
-
-			//GameObjectを右クリックしたときのメニュー
-			if (ImGui::BeginPopupContextItem("GameObjectContext")){
-
-				if (ImGui::MenuItem("名前を変更")){
-					BeginRename(currentGameObjectPtr);
-				}
-
-				if (ImGui::MenuItem("有効", nullptr, isActive)){
-					currentGameObjectPtr->SetIsActive(!isActive);
-				}
-
-				ImGui::Separator();
-
-				if (ImGui::MenuItem("複製")){
-					requestDuplicateGameObject_ = currentGameObjectPtr;
-				}
-
-				if (ImGui::MenuItem("削除")){
-					requestDeleteGameObject_ = currentGameObjectPtr;
-				}
-				ImGui::EndPopup();
-			}
-
-			ImGui::PopID();
 		}
+
+		//SelectTableを描画した直後に元に戻す
+		if (!isActive){
+			ImGui::PopStyleColor();
+		}
+
+		//GameObjectを右クリックしたときのメニュー
+		if (ImGui::BeginPopupContextItem("GameObjectContext")){
+
+			if (ImGui::MenuItem("名前を変更")){
+				BeginRename(currentGameObjectPtr);
+			}
+
+			if (ImGui::MenuItem("有効", nullptr, isActive)){
+				currentGameObjectPtr->SetIsActive(!isActive);
+			}
+
+			ImGui::Separator();
+
+			if (ImGui::MenuItem("複製")){
+				requestDuplicateGameObject_ = currentGameObjectPtr;
+			}
+
+			if (ImGui::MenuItem("削除")){
+				requestDeleteGameObject_ = currentGameObjectPtr;
+			}
+			ImGui::EndPopup();
+		}
+
+		ImGui::PopID();
 	}
 
 	//親子付けの解除
@@ -581,27 +581,23 @@ void DebugEditor::DrawGizmo(){
 	Matrix4x4 projectionMatrix = debugCamera_->GetProjectionMatrix();
 
 	//選択しているGameObjectのワールド行列を取得
-	Matrix4x4 worldMatrix = matrixUtility::MakeAffineMatrix(selectedGameObject_->GetTransform());
+	Matrix4x4 worldMatrix = Matrix4x4::Identity4x4();
 
-	//親行列
-	Matrix4x4 parentMatrix = Matrix4x4::Identity4x4();
-	//接続先ノードの行列
-	Matrix4x4 attachedMatrix = Matrix4x4::Identity4x4();
+	//ノードのモデル行列
+	Matrix4x4 modelMatrix = Matrix4x4::Identity4x4();
 	//オブジェクトのワールド行列
 	Matrix4x4 objectWorldMatrix = Matrix4x4::Identity4x4();
-	if (selectedGameObject_){
-		//オブジェクトのワールド行列を設定
-		objectWorldMatrix = selectedGameObject_->GetWorldMatrix();
-		//Nodeを選択した場合
-		if (!selectedNodePath_.empty()){
-			attachedMatrix = selectedGameObject_->GetAttachedMatrix();
-			worldMatrix = attachedMatrix * worldMatrix;
-		}
 
-		//親子付けも許容する
-		if (selectedGameObject_->GetParentObject()){
-			parentMatrix = selectedGameObject_->GetParentMatrix();
-			worldMatrix *= parentMatrix;
+	//オブジェクトのワールド行列を設定
+	objectWorldMatrix = selectedGameObject_->GetWorldMatrix();
+	//ワールド行列を設定
+	worldMatrix = objectWorldMatrix;
+	//Nodeを選択した場合
+	if (!selectedNodePath_.empty()){
+		Object3d* selectedObject3d = selectedGameObject_->GetComponent<Object3d>();
+		if (selectedObject3d){
+			selectedObject3d->TryGetNodeModelMatrix(selectedNodePath_, modelMatrix);
+			worldMatrix = modelMatrix * objectWorldMatrix;
 		}
 	}
 
@@ -611,7 +607,7 @@ void DebugEditor::DrawGizmo(){
 	//行列が変更されたか
 	if (isChangedMatrix){
 		//ローカル行列
-		Matrix4x4 localMatrix = worldMatrix * parentMatrix.Inverse();
+		Matrix4x4 localMatrix = worldMatrix * selectedGameObject_->GetParentMatrix().Inverse();
 
 		//ワールド行列からトランスフォームに分解
 		Transform transform = matrixUtility::DecomposeMatrix(localMatrix, selectedGameObject_->GetTransform().scale);
@@ -632,7 +628,7 @@ void DebugEditor::DrawGizmo(){
 			//操作後のモデル行列
 			Matrix4x4 newModelMatrix = worldMatrix * objectWorldMatrix.Inverse();
 			//親ノードのモデル行列
-			Matrix4x4 parentNodeMatrix = nodeLocalMatrix.Inverse() * attachedMatrix;
+			Matrix4x4 parentNodeMatrix = nodeLocalMatrix.Inverse() * modelMatrix;
 			//操作後のローカル行列
 			Matrix4x4 newModelLocal = newModelMatrix * parentNodeMatrix.Inverse();
 			//ローカル行列
@@ -1150,6 +1146,7 @@ void DebugEditor::DrawNodeTree([[maybe_unused]] const Node& node, [[maybe_unused
 
 	//親子付け用のドロップ先
 	if (ImGui::BeginDragDropTarget()){
+		//接続
 		AttachToOperation(targetObject, false, currentPath);
 		ImGui::EndDragDropTarget();
 	}
@@ -1208,6 +1205,9 @@ void DebugEditor::DrawNodeTree([[maybe_unused]] const Node& node, [[maybe_unused
 				"%s",
 				attachedGameObject->GetName().c_str()
 			);
+
+			//オブジェクトを選択
+			SelectGameObjectOperation(attachedGameObject);
 
 			//親子付け解除用のドラッグ元
 			if (ImGui::BeginDragDropSource()){

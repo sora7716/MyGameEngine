@@ -173,7 +173,7 @@ public://メンバ関数
 	/// <param name="displayName">表示名</param>
 	/// <param name="getter">Getter</param>
 	/// <param name="setter">Setter</param>
-	void Add(const std::string& displayName, std::function<Vector2()> getter, std::function<void(const Vector2&)>setter);
+	void Add(const std::string& displayName, std::function<Vector2()> getter, std::function<void(const Vector2&)>setter, float dragSpeed = 0.1f);
 
 	/// <summary>
 	/// Vector3の追加

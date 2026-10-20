@@ -100,6 +100,7 @@ void Object3d::RegisterProperties(PropertyRegistry* registry){
 	for (uint32_t i = 0; i < material->GetSlots().size(); i++){
 		//グループの開始
 		registry->BeginGroup("material" + std::to_string(i));
+
 		//色
 		registry->Add(
 			"color",
@@ -110,7 +111,8 @@ void Object3d::RegisterProperties(PropertyRegistry* registry){
 				this->SetColor(i, color);
 			}
 		);
-		//UV
+
+		//UVScale
 		registry->Add(
 			"uvScale",
 			[i, material](){
@@ -118,17 +120,11 @@ void Object3d::RegisterProperties(PropertyRegistry* registry){
 			},
 			[i, this](const Vector2& scale){
 				this->SetUVScale(i, scale);
-			}
-		);
-		registry->Add(
-			"uvTranslate",
-			[i, material](){
-				return material->GetSlots()[i].uvTransform.translate;
 			},
-			[i, this](const Vector2& translate){
-				this->SetUVTranslate(i, translate);
-			}
+			0.1f
 		);
+
+		//UVRotate
 		registry->Add(
 			"uvRotate",
 			[i, material](){
@@ -139,6 +135,19 @@ void Object3d::RegisterProperties(PropertyRegistry* registry){
 			},
 			0.1f
 		);
+
+		//UVTranslate
+		registry->Add(
+			"uvTranslate",
+			[i, material](){
+				return material->GetSlots()[i].uvTransform.translate;
+			},
+			[i, this](const Vector2& translate){
+				this->SetUVTranslate(i, translate);
+			},
+			0.1f
+		);
+
 		//ライティングするか
 		std::function<bool()> getter = [i, material]() -> bool{
 			return material->GetSlots()[i].material.enableLighting != 0;

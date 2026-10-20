@@ -100,8 +100,8 @@ void PropertyRegistry::Add(const std::string& displayName, Vector2& value, float
 }
 
 //Vector2の追加
-void PropertyRegistry::Add(const std::string& displayName, std::function<Vector2()> getter, std::function<void(const Vector2&)>setter){
-	Vector2Property property = { displayName,getter,setter };
+void PropertyRegistry::Add(const std::string& displayName, std::function<Vector2()> getter, std::function<void(const Vector2&)>setter, float dragSpeed){
+	Vector2Property property = { displayName,getter,setter,dragSpeed };
 	properties_.push_back(property);
 }
 

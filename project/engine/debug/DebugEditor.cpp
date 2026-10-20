@@ -592,6 +592,7 @@ void DebugEditor::DrawGizmo(){
 	objectWorldMatrix = selectedGameObject_->GetWorldMatrix();
 	//ワールド行列を設定
 	worldMatrix = objectWorldMatrix;
+
 	//Nodeを選択した場合
 	if (!selectedNodePath_.empty()){
 		Object3d* selectedObject3d = selectedGameObject_->GetComponent<Object3d>();
@@ -826,7 +827,7 @@ void DebugEditor::DrawProperties([[maybe_unused]] Component* component){
 		std::vector<Property> properties = registry.GetProperties();
 
 		//グループのテーブルを表示するか
-		bool isGroupTableVisible = false;
+		bool isGroupTableVisible = true;
 
 		//レジストリを使ってIｍGuiを描画
 		for (Property property : properties){

@@ -47,6 +47,7 @@ std::unique_ptr<Component> DirectionalLight::Clone(GameObject* gameObject) const
 
 //プロパティ一覧の登録
 void DirectionalLight::RegisterProperties(PropertyRegistry* registry){
+	Component::RegisterProperties(registry);
 	registry->Add("enableLighting", enableLighting_);
 	registry->Add("color", color_);
 	registry->Add("intencity", intensity_);

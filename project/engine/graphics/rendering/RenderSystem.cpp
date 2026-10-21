@@ -66,6 +66,18 @@ void RenderSystem::Initialize(DirectXBase* directXBase, SRVManager* srvManager, 
 
 //描画
 void RenderSystem::Draw(){
+	//スカイボックス
+	for (uint32_t i = 0; i < skyBoxRenderer_->GetRenderDataSize(); i++){
+		//描画開始
+		PreDraw(skyBoxRenderer_->GetBlendMode(i), PipelineType::kSkyBox);
+		//カメラの設定
+		cameraRenderer_->Bind(selectCamera_.index, 3);
+		//スカイボックスの描画
+		skyBoxRenderer_->Draw(i);
+	}
+	//描画オブジェクトのリセット
+	skyBoxRenderer_->Reset();
+
 	//Object3d
 	for (uint32_t i = 0; i < object3dRenderer_->GetRenderDataSize(); i++){
 		//描画開始
@@ -105,18 +117,6 @@ void RenderSystem::Draw(){
 	//描画オブジェクトのリセット
 	debugDrawRenderer_->Reset();
 #endif // _DEBUG
-
-	//スカイボックス
-	for (uint32_t i = 0; i < skyBoxRenderer_->GetRenderDataSize(); i++){
-		//描画開始
-		PreDraw(skyBoxRenderer_->GetBlendMode(i), PipelineType::kSkyBox);
-		//カメラの設定
-		cameraRenderer_->Bind(selectCamera_.index, 3);
-		//スカイボックスの描画
-		skyBoxRenderer_->Draw(i);
-	}
-	//描画オブジェクトのリセット
-	skyBoxRenderer_->Reset();
 
 	//スプライト
 	for (uint32_t i = 0; i < spriteRenderer_->GetRenderDataSize(); i++){

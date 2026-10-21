@@ -921,6 +921,25 @@ void DebugEditor::DrawProperties([[maybe_unused]] Component* component){
 				if (ImGui::InputText(stringProperty->displayName.c_str(), buffer.data(), buffer.size())){
 					stringProperty->setter(static_cast<std::string>(buffer.data()));
 				}
+			} else if (enumProperty){
+				uint32_t selectOption = enumProperty->getter();
+				if (ImGui::BeginCombo(enumProperty->displayName.c_str(), enumProperty->options[selectOption].c_str())){
+					for (uint32_t i = 0; i < static_cast<uint32_t>(enumProperty->options.size()); i++){
+						//選択されたら
+						bool isSelect = (i == selectOption);
+
+						//オプションが選択されたら
+						if (ImGui::Selectable(enumProperty->options[i].c_str(), isSelect)){
+							selectOption = i;
+							enumProperty->setter(selectOption);
+						}
+
+						if (isSelect){
+							ImGui::SetItemDefaultFocus();//次に開いたときにフォーカスされる
+						}
+					}
+					ImGui::EndCombo();
+				}
 			}
 		}
 

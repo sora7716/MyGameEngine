@@ -59,13 +59,37 @@ private://メンバ関数
 	/// 乗算
 	/// </summary>
 	/// <returns></returns>
-	D3D12_BLEND_DESC BlendMultily();
+	D3D12_BLEND_DESC BlendMultiply();
 
 	/// <summary>
 	/// スクリーン
 	/// </summary>
 	/// <returns></returns>
 	D3D12_BLEND_DESC BlendScreen();
+
+	/// <summary>
+	/// プリマルチプライドアルファ
+	/// </summary>
+	/// <returns></returns>
+	D3D12_BLEND_DESC PremultipliedAlpha();
+
+	/// <summary>
+	/// 比較(明)
+	/// </summary>
+	/// <returns></returns>
+	D3D12_BLEND_DESC Lighten();
+
+	/// <summary>
+	/// 比較(暗)
+	/// </summary>
+	/// <returns></returns>
+	D3D12_BLEND_DESC Darken();
+
+	/// <summary>
+	/// 反転
+	/// </summary>
+	/// <returns></returns>
+	D3D12_BLEND_DESC Invert();
 private://メンバ関数ポインタ
 	//ブレンドモードのテーブル
 	static D3D12_BLEND_DESC(Blend::* BlendModeTable[])();

@@ -23,7 +23,7 @@ namespace lightData{
 		float distance = 0.0f;//ライトの届く最大距離
 		float decay = 0.0f;//減衰率
 		int32_t isBlinnPhong = 0;//BlinnPhongReflectionを行うかどうか
-		int32_t enablePointLighting = 0;//点光源を有効にするか
+		int32_t enable = 0;//点光源を有効にするか
 	};
 
 	//スポットライト

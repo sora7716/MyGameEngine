@@ -195,11 +195,15 @@ void SceneManager::Debug([[maybe_unused]] D3D12_GPU_DESCRIPTOR_HANDLE sceneHandl
 //描画
 void SceneManager::Draw(CameraMode cameraMode){
 	const std::vector<std::unique_ptr<GameObject>>& gameObjects = scene_->GetGameObjects();
+	//平行光源の追加
+	sceneContext_.lightingManager->CollectActiveDirectionalLight(gameObjects);
+	//点光源の追加
+	sceneContext_.lightingManager->CollectActivePointLight(gameObjects);
+
 	//カメラの追加
 	renderSystem_->CollectActiveCameras(gameObjects);
 	//カメラのモードを設定
 	renderSystem_->SetCameraMode(cameraMode);
-
 	//Object3dの追加
 	renderSystem_->CollectActiveObject3ds(gameObjects);
 	//SkyBoxの追加
@@ -210,9 +214,6 @@ void SceneManager::Draw(CameraMode cameraMode){
 	renderSystem_->CollectActiveDebugDraw(gameObjects);
 	//ParticleSystemの描画
 	renderSystem_->CollectActiveParticleSystems(gameObjects);
-
-	//平行光源の追加
-	sceneContext_.lightingManager->CollectActiveDirectionalLight(gameObjects);
 }
 
 //ゲーム画面の描画

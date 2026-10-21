@@ -66,6 +66,12 @@ public://メンバ関数
 	/// </summary>
 	/// <param name="gameObjects">ゲームオブジェクトの配列</param>
 	void CollectActiveDirectionalLight(const std::vector<std::unique_ptr<GameObject>>& gameObjects);
+
+	/// <summary>
+	/// 有効な点光源を集める
+	/// </summary>
+	/// <param name="gameObjects">ゲームオブジェクトの配列</param>
+	void CollectActivePointLight(const std::vector<std::unique_ptr<GameObject>>& gameObjects);
 private://メンバ関数
 	//コピーコンストラクタ禁止
 	LightingManager(const LightingManager&) = delete;
@@ -108,6 +114,7 @@ private://メンバ変数
 	ComPtr<ID3D12Resource> directionalLightResource_ = nullptr;//平行光源
 	ComPtr<ID3D12Resource> pointLightResource_ = nullptr;//点光源
 	ComPtr<ID3D12Resource> spotLightResource_ = nullptr;//スポットライト
+
 	//バッファリソース内のデータを指すポインタ
 	lightData::DirectionalLight* directionalLight_ = nullptr;//平行光源
 	std::vector<lightData::PointLight> pointLights_;//点光源
@@ -116,5 +123,8 @@ private://メンバ変数
 	//SRVインデックス
 	uint32_t srvIndexPoint_ = 0;//PointLight
 	uint32_t srvIndexSpot_ = 0;//SpotLight
+
+	//マップしたポインタ
+	lightData::PointLight* mappedPointLightData_ = nullptr;
 };
 

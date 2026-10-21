@@ -74,12 +74,11 @@ namespace inspector{
 		std::function<void(const std::string&)>setter;
 	};
 	//Enum
-	template <class T>
 	struct EnumProperty{
 		std::string displayName = "";
 		std::vector<std::string>options;
-		std::function <T()>getter;
-		std::function<void(T)>setter;
+		std::function <uint32_t()>getter;
+		std::function<void(uint32_t)>setter;
 	};
 }
 
@@ -93,7 +92,8 @@ using Property = std::variant<
 	inspector::Vector3Property,
 	inspector::Vector4Property,
 	inspector::ColorProperty,
-	inspector::StringProperty
+	inspector::StringProperty,
+	inspector::EnumProperty
 >;
 
 //プロパティをまとめる
@@ -245,11 +245,14 @@ public://メンバ関数
 	/// <param name="setter">Setter</param>
 	void Add(const std::string& displayName, std::function<std::string()> getter, std::function<void(const std::string&)>setter);
 
-	template <class T>
-	void Add(const std::string& displayName, const std::vector<std::string>& options, std::function<T()> getter, std::function<void(T)>setter){
-		EnumProperty enumProperty = { displayName,options,getter,setter };
-		properties_.push_back(enumProperty);
-	}
+	/// <summary>
+	/// 列挙型の追加
+	/// </summary>
+	/// <param name="displayName">表示名</param>
+	/// <param name="options">オプション</param>
+	/// <param name="getter">Getter</param>
+	/// <param name="setter">Setter</param>
+	void Add(const std::string& displayName, const std::vector<std::string>& options, std::function<uint32_t()> getter, std::function<void(uint32_t)>setter);
 
 	/// <summary>
 	/// プロパティの配列の取得

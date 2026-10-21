@@ -5,6 +5,7 @@
 #include "TextureManager.h"
 #include "MathUtility.h"
 #include "DirectionalLight.h"
+#include "PointLight.h"
 #include "GameObject.h"
 #include <algorithm>
 #include <cassert>
@@ -96,6 +97,51 @@ void LightingManager::CollectActiveDirectionalLight(const std::vector<std::uniqu
 	}
 }
 
+//有効なポイントライトを集める
+void LightingManager::CollectActivePointLight(const std::vector<std::unique_ptr<GameObject>>& gameObjects){
+	//GPUのライトをリセット
+	for (uint32_t i = 0; i < kMaxLightCount; i++){
+		mappedPointLightData_[i].enable = false;
+	}
+	//有効な点光源の配列をクリア
+	pointLights_.clear();
+
+	//ゲームオブジェクトの配列がなければ
+	if (gameObjects.empty()){
+		return;
+	}
+
+	//各オブジェクトへアクセス
+	for (const std::unique_ptr<GameObject>& gameObject : gameObjects){
+		//ゲームオブジェクトがNullなら
+		if (!gameObject){
+			continue;
+		}
+		//点光源が取得できた場合
+		PointLight* pointLight = gameObject->GetComponent<PointLight>();
+		//点光源が存在しない場合
+		if (!pointLight){
+			continue;
+		}
+
+		//点光源が有効じゃない場合
+		if (!pointLight->IsEnabled()){
+			continue;
+		}
+
+		//ライトの最大値を超えていた場合
+		if (pointLights_.size() > kMaxLightCount){
+			break;
+		}
+
+		//有効な点光源を保存
+		pointLights_.push_back(pointLight->GetPointLightData());
+	}
+
+	//GPUに送信
+	std::memcpy(mappedPointLightData_, pointLights_.data(), pointLights_.size() * sizeof(lightData::PointLight));
+}
+
 //平行光源の生成
 void LightingManager::CreateDirectionLight(){
 	//光源のリソースを作成
@@ -115,11 +161,8 @@ void LightingManager::CreatePointLight(){
 	// 配列サイズで確保
 	pointLightResource_ = directXBase_->CreateBufferResource(sizeof(lightData::PointLight) * kMaxLightCount);
 
-	//点光源
-	lightData::PointLight* pointLightData = nullptr;
-
 	//配列としてMap
-	pointLightResource_->Map(0, nullptr, reinterpret_cast<void**>(&pointLightData));
+	pointLightResource_->Map(0, nullptr, reinterpret_cast<void**>(&mappedPointLightData_));
 
 	// とりあえず全部初期化（必要なら0番だけGUI値を入れる）
 	for (uint32_t i = 0; i < kMaxLightCount; ++i){
@@ -129,11 +172,11 @@ void LightingManager::CreatePointLight(){
 		pointLights_[i].distance = 7.0f;
 		pointLights_[i].decay = 2.0f;
 		pointLights_[i].isBlinnPhong = true;
-		pointLights_[i].enablePointLighting = false;
+		pointLights_[i].enable = false;
 	}
 
 	//配列の内容をコピー
-	std::memcpy(pointLightData, pointLights_.data(), pointLights_.size() * sizeof(lightData::PointLight));
+	std::memcpy(mappedPointLightData_, pointLights_.data(), pointLights_.size() * sizeof(lightData::PointLight));
 }
 
 //点光源のストラクチャバッファの生成

@@ -7,8 +7,12 @@ D3D12_BLEND_DESC(Blend::* Blend::BlendModeTable[])() = {
 	&BlendNormal,
 	&BlendAdd,
 	&BlendSubtract,
-	&BlendMultily,
-	&BlendScreen
+	&BlendMultiply,
+	&BlendScreen,
+	&PremultipliedAlpha,
+	&Lighten,
+	&Darken,
+	&Invert
 };
 
 //コンストラクタ
@@ -51,7 +55,7 @@ D3D12_BLEND_DESC Blend::BlendNormal() {
 
 	blendDesc.RenderTarget[0].SrcBlendAlpha = D3D12_BLEND_ONE;
 	blendDesc.RenderTarget[0].BlendOpAlpha = D3D12_BLEND_OP_ADD;
-	blendDesc.RenderTarget[0].DestBlendAlpha = D3D12_BLEND_ZERO;
+	blendDesc.RenderTarget[0].DestBlendAlpha = D3D12_BLEND_ONE;
 	return blendDesc;
 }
 
@@ -64,7 +68,7 @@ D3D12_BLEND_DESC Blend::BlendAdd() {
 
 	blendDesc.RenderTarget[0].SrcBlendAlpha = D3D12_BLEND_ONE;
 	blendDesc.RenderTarget[0].BlendOpAlpha = D3D12_BLEND_OP_ADD;
-	blendDesc.RenderTarget[0].DestBlendAlpha = D3D12_BLEND_ZERO;
+	blendDesc.RenderTarget[0].DestBlendAlpha = D3D12_BLEND_ONE;
 	return blendDesc;
 }
 
@@ -77,20 +81,20 @@ D3D12_BLEND_DESC Blend::BlendSubtract() {
 
 	blendDesc.RenderTarget[0].SrcBlendAlpha = D3D12_BLEND_ONE;
 	blendDesc.RenderTarget[0].BlendOpAlpha = D3D12_BLEND_OP_ADD;
-	blendDesc.RenderTarget[0].DestBlendAlpha = D3D12_BLEND_ZERO;
+	blendDesc.RenderTarget[0].DestBlendAlpha = D3D12_BLEND_ONE;
 	return blendDesc;
 }
 
 //乗算
-D3D12_BLEND_DESC Blend::BlendMultily() {
+D3D12_BLEND_DESC Blend::BlendMultiply() {
 	D3D12_BLEND_DESC blendDesc = BlendModeCommon();
 	blendDesc.RenderTarget[0].SrcBlend = D3D12_BLEND_ZERO;
 	blendDesc.RenderTarget[0].BlendOp = D3D12_BLEND_OP_ADD;
 	blendDesc.RenderTarget[0].DestBlend = D3D12_BLEND_SRC_COLOR;
 
-	blendDesc.RenderTarget[0].SrcBlendAlpha = D3D12_BLEND_ONE;
+	blendDesc.RenderTarget[0].SrcBlendAlpha = D3D12_BLEND_ZERO;
 	blendDesc.RenderTarget[0].BlendOpAlpha = D3D12_BLEND_OP_ADD;
-	blendDesc.RenderTarget[0].DestBlendAlpha = D3D12_BLEND_ZERO;
+	blendDesc.RenderTarget[0].DestBlendAlpha = D3D12_BLEND_ONE;
 	return blendDesc;
 }
 
@@ -103,6 +107,58 @@ D3D12_BLEND_DESC Blend::BlendScreen() {
 
 	blendDesc.RenderTarget[0].SrcBlendAlpha = D3D12_BLEND_ONE;
 	blendDesc.RenderTarget[0].BlendOpAlpha = D3D12_BLEND_OP_ADD;
-	blendDesc.RenderTarget[0].DestBlendAlpha = D3D12_BLEND_ZERO;
+	blendDesc.RenderTarget[0].DestBlendAlpha = D3D12_BLEND_ONE;
+	return blendDesc;
+}
+
+//プリマルチプライドアルファ
+D3D12_BLEND_DESC Blend::PremultipliedAlpha(){
+	D3D12_BLEND_DESC blendDesc = BlendModeCommon();
+	blendDesc.RenderTarget[0].SrcBlend = D3D12_BLEND_ONE;
+	blendDesc.RenderTarget[0].BlendOp = D3D12_BLEND_OP_ADD;
+	blendDesc.RenderTarget[0].DestBlend = D3D12_BLEND_INV_SRC_ALPHA;
+
+	blendDesc.RenderTarget[0].SrcBlendAlpha = D3D12_BLEND_ONE;
+	blendDesc.RenderTarget[0].BlendOpAlpha = D3D12_BLEND_OP_ADD;
+	blendDesc.RenderTarget[0].DestBlendAlpha = D3D12_BLEND_ONE;
+	return blendDesc;
+}
+
+//比較(明)
+D3D12_BLEND_DESC Blend::Lighten(){
+	D3D12_BLEND_DESC blendDesc = BlendModeCommon();
+	blendDesc.RenderTarget[0].SrcBlend = D3D12_BLEND_ONE;
+	blendDesc.RenderTarget[0].BlendOp = D3D12_BLEND_OP_MAX;
+	blendDesc.RenderTarget[0].DestBlend = D3D12_BLEND_ONE;
+
+	blendDesc.RenderTarget[0].SrcBlendAlpha = D3D12_BLEND_ONE;
+	blendDesc.RenderTarget[0].BlendOpAlpha = D3D12_BLEND_OP_ADD;
+	blendDesc.RenderTarget[0].DestBlendAlpha = D3D12_BLEND_ONE;
+	return blendDesc;
+}
+
+//比較(暗)
+D3D12_BLEND_DESC Blend::Darken(){
+	D3D12_BLEND_DESC blendDesc = BlendModeCommon();
+	blendDesc.RenderTarget[0].SrcBlend = D3D12_BLEND_ONE;
+	blendDesc.RenderTarget[0].BlendOp = D3D12_BLEND_OP_MIN;
+	blendDesc.RenderTarget[0].DestBlend = D3D12_BLEND_ONE;
+
+	blendDesc.RenderTarget[0].SrcBlendAlpha = D3D12_BLEND_ONE;
+	blendDesc.RenderTarget[0].BlendOpAlpha = D3D12_BLEND_OP_ADD;
+	blendDesc.RenderTarget[0].DestBlendAlpha = D3D12_BLEND_ONE;
+	return blendDesc;
+}
+
+//比較
+D3D12_BLEND_DESC Blend::Invert(){
+	D3D12_BLEND_DESC blendDesc = BlendModeCommon();
+	blendDesc.RenderTarget[0].SrcBlend = D3D12_BLEND_INV_DEST_COLOR;
+	blendDesc.RenderTarget[0].BlendOp = D3D12_BLEND_OP_ADD;
+	blendDesc.RenderTarget[0].DestBlend = D3D12_BLEND_ZERO;
+
+	blendDesc.RenderTarget[0].SrcBlendAlpha = D3D12_BLEND_ONE;
+	blendDesc.RenderTarget[0].BlendOpAlpha = D3D12_BLEND_OP_ADD;
+	blendDesc.RenderTarget[0].DestBlendAlpha = D3D12_BLEND_ONE;
 	return blendDesc;
 }

@@ -186,6 +186,12 @@ void PropertyRegistry::Add(const std::string& displayName, std::function<std::st
 	properties_.push_back(property);
 }
 
+//列挙型の追加
+void PropertyRegistry::Add(const std::string& displayName, const std::vector<std::string>& options, std::function<uint32_t()> getter, std::function<void(uint32_t)> setter){
+	EnumProperty enumProperty = { displayName,options,getter,setter };
+	properties_.push_back(enumProperty);
+}
+
 //プロパティの配列の取得
 const std::vector<Property>& PropertyRegistry::GetProperties() const{
 	return properties_;

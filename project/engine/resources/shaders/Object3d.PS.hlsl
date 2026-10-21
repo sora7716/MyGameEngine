@@ -305,10 +305,9 @@ PixelShaderOutput main(VertexShaderOutput input) {
         output.color = gMaterial.color * textureColor;
     }
     
-    // 合成後のα値で一度だけ判定する
-    if (output.color.a <= 0.5f) {
+    // テクスチャのα値をが一定数以上下回ったら
+    if (textureColor.a <= 0.5f) {
         discard;
     }
-    output.color.rgb = output.color.rgb;
     return output;
 }

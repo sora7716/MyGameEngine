@@ -96,6 +96,16 @@ void Object3d::RegisterProperties(PropertyRegistry* registry){
 	//マテリアルを取得
 	MaterialInstance* material = materialInstance_.get();
 
+	//ブレンドモードの切り替え
+	std::function<uint32_t()> blendModeGetter = [this]() -> uint32_t{
+		return static_cast<uint32_t>(this->GetBlendMode());
+		};
+	std::function<void(uint32_t)> blendModeSetter = [this](uint32_t value){
+		this->SetBlendMode(static_cast<BlendMode>(value));
+		};
+	registry->Add("blendMode", { "None","Normal","Add","Subtract","Multiply","Screen","PremultipliedAlpha","Lighten","Darken","Invert" },
+		blendModeGetter, blendModeSetter);
+
 	//登録
 	for (uint32_t i = 0; i < material->GetSlots().size(); i++){
 		//グループの開始
@@ -149,14 +159,14 @@ void Object3d::RegisterProperties(PropertyRegistry* registry){
 		);
 
 		//ライティングするか
-		std::function<bool()> getter = [i, material]() -> bool{
+		std::function<bool()> boolGetter = [i, material]() -> bool{
 			return material->GetSlots()[i].material.enableLighting != 0;
 			};
-		std::function<void(bool)> setter = [i, this](bool value){
+		std::function<void(bool)> boolSetter = [i, this](bool value){
 			SetEnabledLighting(i, value);
 			};
 
-		registry->Add("enableLighting", getter, setter);
+		registry->Add("enableLighting", boolGetter, boolSetter);
 		//輝度
 		registry->Add(
 			"shiness",

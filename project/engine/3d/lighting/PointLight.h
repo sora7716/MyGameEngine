@@ -40,13 +40,25 @@ public://メンバ関数
 	/// プロパティ一覧を登録
 	/// </summary>
 	/// <param name="registry">レジストリ</param>
-	virtual void RegisterProperties(PropertyRegistry* registry);
+	void RegisterProperties(PropertyRegistry* registry)override;
 
 	/// <summary>
 	/// コンポーネントのタイプ名を返す
 	/// </summary>
 	/// <returns>コンポーネントのタイプ名</returns>
 	std::string GetTypeName()const override;
+
+	/// <summary>
+	/// 点光源のデータを取得
+	/// </summary>
+	/// <returns>点光源のデータ</returns>
+	lightData::PointLight GetPointLightData()const;
 private://メンバ変数
+	Color color_ = Color::GetWhite();//ライトの色
+	float intensity_ = 1.0f;//輝度
+	float distance_ = 1.0f;//ライトの届く最大距離
+	float decay_ = 1.0f;//減衰率
+	bool isBlinnPhong_ = 0;//BlinnPhongReflectionを行うかどうか
+	bool enableLighting_ = 0;//点光源を有効にするか
 };
 

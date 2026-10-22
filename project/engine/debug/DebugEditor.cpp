@@ -353,21 +353,18 @@ void DebugEditor::DrawHierarchy(){
 						//矢印で開く(選択ハイライトの幅を行の右端まで伸ばす)
 						ImGuiTreeNodeFlags nodeFlags = ImGuiTreeNodeFlags_OpenOnArrow | ImGuiTreeNodeFlags_SpanAvailWidth;
 
-						//Object3dを持っているか
+						//Object3dを持っている場合
 						Object3d* candidateObject3d = candidate->GetComponent<Object3d>();
-						if (!candidateObject3d){
-							continue;
-						}
-
-						//接続するパスが空じゃないか
-						if (!candidateObject3d->GetAttachedNodePath().empty()){
-							continue;
-						}
-
-						//ノードの取得
+						//ノード
 						Node candidateNode = {};
-						//ノードの取得
-						candidateNode = candidateObject3d->GetNode();
+						if (candidateObject3d){
+							//接続するパスが空じゃないか
+							if (!candidateObject3d->GetAttachedNodePath().empty()){
+								continue;
+							}
+							//ノードの取得
+							candidateNode = candidateObject3d->GetNode();
+						}
 
 						//今描画しているGameObjetの子オブジェクト
 						bool isChildOpen = ImGui::TreeNodeEx(candidate->GetName().c_str(), nodeFlags);
@@ -397,7 +394,7 @@ void DebugEditor::DrawHierarchy(){
 							//Object3dがあった場合
 							if (candidateObject3d){
 								//ノードの描画
-								DrawNodeTree(candidateNode, selectedNodePath_, candidate.get());
+								DrawNodeTree(candidateNode, candidateObject3d->GetNode().name, candidate.get());
 							}
 							ImGui::TreePop();
 						}
@@ -641,6 +638,8 @@ void DebugEditor::DrawGizmo(){
 		} else{
 			//Transformを設定
 			selectedGameObject_->GetTransform() = transform;
+			//オイラー角の設定
+			inspectorEulerAngle_ = transform.GetEulerAngle();
 		}
 	}
 #endif // USE_IMGUI
@@ -738,7 +737,6 @@ void DebugEditor::DrawInspector(){
 		}
 
 		//回転の切り替え(オイラー角からクォータニオンを求めてる)
-		inspectorEulerAngle_ = transform.GetEulerAngle();
 		if (ImGui::DragFloat3("回転", &inspectorEulerAngle_.x, 0.1f)){
 			transform.rotate = Quaternion::EulerAngleToQuaternion(inspectorEulerAngle_);
 			isChange = true;
@@ -818,6 +816,13 @@ void DebugEditor::DrawPropertyTable([[maybe_unused]] GameObject* selectGameObjec
 //1つのコンポーネントのプロパティ一覧
 void DebugEditor::DrawProperties([[maybe_unused]] Component* component){
 #ifdef USE_IMGUI
+	//コンポーネントが無効の場合
+	bool isChangeColor = false;
+	if (!component->IsEnabled()){
+		isChangeColor = true;
+		ImGui::PushStyleColor(ImGuiCol_Text, ImGui::GetStyleColorVec4(ImGuiCol_TextDisabled));
+	}
+
 	//headerを作成
 	if (ImGui::CollapsingHeader(component->GetTypeName().c_str())){
 		//インデントをつける
@@ -943,13 +948,13 @@ void DebugEditor::DrawProperties([[maybe_unused]] Component* component){
 			}
 		}
 
-		//もし有効じゃなければ
-		if (!component->IsEnabled()){
-			return;
-		}
-
 		//インデントを解除
 		ImGui::Unindent();
+	}
+
+	//色を変更した際に
+	if (isChangeColor){
+		ImGui::PopStyleColor();
 	}
 #endif // USE_IMGUI
 }

@@ -44,6 +44,7 @@ std::unique_ptr<Component> SpotLight::Clone(GameObject* gameObject) const{
 	cloneInstance->enableLighting_ = this->enableLighting_;
 	cloneInstance->distance_ = this->distance_;
 	cloneInstance->decay_ = this->decay_;
+	cloneInstance->isLambert_ = this->isLambert_;
 	cloneInstance->isBlinnPhong_ = this->isBlinnPhong_;
 	cloneInstance->intensity_ = this->intensity_;
 	cloneInstance->cosAngle_ = cosAngle_;
@@ -60,6 +61,7 @@ void SpotLight::RegisterProperties(PropertyRegistry* registry){
 	registry->Add("enableLight", enableLighting_);
 	registry->Add("color", color_);
 	registry->Add("intensity", intensity_);
+	registry->Add("isLambert", isLambert_);
 	registry->Add("isBlinnPhong", isBlinnPhong_);
 	registry->Add("distance", distance_);
 	registry->Add("decay", decay_);

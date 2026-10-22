@@ -22,6 +22,7 @@ namespace lightData{
 		float intensity = 1.0f;//輝度
 		float distance = 0.0f;//ライトの届く最大距離
 		float decay = 0.0f;//減衰率
+		int32_t isLambert = 0;//ランバート反射を行うか
 		int32_t isBlinnPhong = 0;//BlinnPhongReflectionを行うかどうか
 		int32_t enable = 0;//点光源を有効にするか
 	};
@@ -36,6 +37,7 @@ namespace lightData{
 		float decay = 0.0f;//減衰率
 		float cosAngle = 0.0f;//スポットライトの余弦
 		float cosFalloffStart = 0.0f;//
+		int32_t isLambert = 0;//ランバート反射を行うか
 		int32_t isBlinnPhong = 0;//BlinnPhongReflectionを行うかどうか
 		int32_t enable = 0;//点光源を有効にするか
 		float padding[2] = {};

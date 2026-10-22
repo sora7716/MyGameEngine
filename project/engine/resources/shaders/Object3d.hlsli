@@ -1,15 +1,15 @@
 #include "CommonTypes.hlsli"
 
 struct VertexShaderOutput{   
-    float32_t4 position : SV_POSITION;
-    float32_t2 texcoord : TEXCOORD0;
-    float32_t3 normal : NORMAL0;
-    float32_t3 worldPosition : POSITION0;
+    float4 position : SV_POSITION;
+    float2 texcoord : TEXCOORD0;
+    float3 normal : NORMAL0;
+    float3 worldPosition : POSITION0;
 };
 
 //Camera
 struct Camera {
-    float32_t3 worldPosition;
-    float32_t padding;
-    float32_t4x4 viewProjection;
+    float3 worldPosition;
+    float padding;
+    float4x4 viewProjection;
 };

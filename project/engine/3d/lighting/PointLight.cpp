@@ -37,6 +37,7 @@ std::unique_ptr<Component> PointLight::Clone(GameObject* gameObject) const{
 	cloneInstance->enableLighting_ = this->enableLighting_;
 	cloneInstance->distance_ = this->distance_;
 	cloneInstance->decay_ = this->decay_;
+	cloneInstance->isLambert_ = this->isLambert_;
 	cloneInstance->isBlinnPhong_ = this->isBlinnPhong_;
 	cloneInstance->intensity_ = this->intensity_;
 
@@ -51,6 +52,7 @@ void PointLight::RegisterProperties(PropertyRegistry* registry){
 	registry->Add("enableLighting", enableLighting_);
 	registry->Add("color", color_);
 	registry->Add("intensity", intensity_);
+	registry->Add("isLambert", isLambert_);
 	registry->Add("isBlinnPhong", isBlinnPhong_);
 	registry->Add("distance", distance_);
 	registry->Add("decay", decay_);
@@ -69,6 +71,7 @@ lightData::PointLight PointLight::GetPointLightData() const{
 	pointLightData.distance = distance_;
 	pointLightData.decay = decay_;
 	pointLightData.enable = enableLighting_;
+	pointLightData.isLambert = isLambert_;
 	pointLightData.intensity = intensity_;
 	pointLightData.isBlinnPhong = isBlinnPhong_;
 	return pointLightData;

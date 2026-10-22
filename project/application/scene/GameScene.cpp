@@ -70,7 +70,7 @@ void GameScene::Initialize(){
 	directionalLightObject->AddComponent<DirectionalLight>();
 
 	std::vector<GameObject*>pointLightObjects_ = {};
-	pointLightObjects_.resize(3);
+	pointLightObjects_.resize(1);
 	for (uint32_t i = 0; i < static_cast<uint32_t>(pointLightObjects_.size()); i++){
 		pointLightObjects_[i] = CreateGameObject();
 		pointLightObjects_[i]->SetName("点光源_" + std::to_string(i));
@@ -78,7 +78,7 @@ void GameScene::Initialize(){
 	}
 
 	std::vector<GameObject*>spotLightObjects_ = {};
-	spotLightObjects_.resize(3);
+	spotLightObjects_.resize(1);
 	for (uint32_t i = 0; i < static_cast<uint32_t>(spotLightObjects_.size()); i++){
 		spotLightObjects_[i] = CreateGameObject();
 		spotLightObjects_[i]->SetName("スポットライト_" + std::to_string(i));

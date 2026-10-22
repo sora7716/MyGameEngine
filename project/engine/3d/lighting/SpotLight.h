@@ -60,6 +60,7 @@ private://メンバ変数
 	float decay_ = 2.0f;//減衰率
 	float cosAngle_ = 0.7071f;//外接円
 	float cosFalloffStart_ = 0.8660f;//内接円
+	bool isLambert_ = false;
 	bool isBlinnPhong_ = true;//BlinnPhongReflectionを行うかどうか
 	bool enableLighting_ = true;//点光源を有効にするか
 };

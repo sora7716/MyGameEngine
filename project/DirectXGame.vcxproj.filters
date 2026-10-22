@@ -855,6 +855,7 @@
     <None Include="engine\resources\shaders\SkyBox.hlsli">
       <Filter>shaders</Filter>
     </None>
+    <None Include="engine\resources\shaders\Lighting.hlsli" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="GameEngine.rc">

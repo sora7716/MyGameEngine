@@ -91,7 +91,7 @@ void Framework::Run(){
 		Draw();
 #ifdef _DEBUG
 		//エスケイプを押したらループを抜ける
-		if (core_->GetInput()->TriggerRawKey(DIK_ESCAPE)){
+		if (core_->GetInput()->TriggerRawKey(DIK_ESCAPE) && core_->GetInput()->TriggerRawMouseButton(Click::kRight)){
 			break;
 		}
 #endif // _DEBUG

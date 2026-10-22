@@ -199,6 +199,8 @@ void SceneManager::Draw(CameraMode cameraMode){
 	sceneContext_.lightingManager->CollectActiveDirectionalLight(gameObjects);
 	//点光源の追加
 	sceneContext_.lightingManager->CollectActivePointLight(gameObjects);
+	//スポットライトの追加
+	sceneContext_.lightingManager->CollectActiveSpotLight(gameObjects);
 
 	//カメラの追加
 	renderSystem_->CollectActiveCameras(gameObjects);

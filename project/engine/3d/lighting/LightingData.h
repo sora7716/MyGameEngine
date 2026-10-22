@@ -37,7 +37,7 @@ namespace lightData{
 		float cosAngle = 0.0f;//スポットライトの余弦
 		float cosFalloffStart = 0.0f;//
 		int32_t isBlinnPhong = 0;//BlinnPhongReflectionを行うかどうか
-		int32_t enableSpotLighting = 0;//点光源を有効にするか
+		int32_t enable = 0;//点光源を有効にするか
 		float padding[2] = {};
 	};
 }

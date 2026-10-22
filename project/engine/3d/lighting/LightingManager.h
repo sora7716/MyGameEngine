@@ -72,6 +72,12 @@ public://メンバ関数
 	/// </summary>
 	/// <param name="gameObjects">ゲームオブジェクトの配列</param>
 	void CollectActivePointLight(const std::vector<std::unique_ptr<GameObject>>& gameObjects);
+
+	/// <summary>
+	/// 有効なスポットライトを集める
+	/// </summary>
+	/// <param name="gameObjects">ゲームオブジェクトの配列</param>
+	void CollectActiveSpotLight(const std::vector<std::unique_ptr<GameObject>>& gameObjects);
 private://メンバ関数
 	//コピーコンストラクタ禁止
 	LightingManager(const LightingManager&) = delete;
@@ -126,5 +132,6 @@ private://メンバ変数
 
 	//マップしたポインタ
 	lightData::PointLight* mappedPointLightData_ = nullptr;
+	lightData::SpotLight* mappedSpotLightData_ = nullptr;
 };
 

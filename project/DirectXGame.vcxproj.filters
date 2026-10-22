@@ -453,6 +453,9 @@
     <ClCompile Include="engine\3d\lighting\PointLight.cpp">
       <Filter>engine\3d\lighting</Filter>
     </ClCompile>
+    <ClCompile Include="engine\3d\lighting\SpotLight.cpp">
+      <Filter>engine\3d\lighting</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="application\scene\TestPlayScene.h">
@@ -795,6 +798,9 @@
       <Filter>engine\3d\lighting</Filter>
     </ClInclude>
     <ClInclude Include="engine\3d\lighting\PointLight.h">
+      <Filter>engine\3d\lighting</Filter>
+    </ClInclude>
+    <ClInclude Include="engine\3d\lighting\SpotLight.h">
       <Filter>engine\3d\lighting</Filter>
     </ClInclude>
   </ItemGroup>

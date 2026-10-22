@@ -17,12 +17,14 @@ void PointLight::Initialize(){
 //更新
 void PointLight::Update(){
 	Component::Update();
+	//小さい値
+	constexpr float kEpsilon = 0.001f;
 	//光の強さが0を下回らないように設定
 	intensity_ = std::max(intensity_, 0.0f);
 	//ライトの届く最大距離が0にならないように
-	distance_ = std::max(distance_, 0.001f);
+	distance_ = std::max(distance_, kEpsilon);
 	//減衰率が0にならないように
-	decay_ = std::max(decay_, 0.001f);
+	decay_ = std::max(decay_, kEpsilon);
 }
 
 //複製
@@ -49,9 +51,9 @@ void PointLight::RegisterProperties(PropertyRegistry* registry){
 	registry->Add("enableLighting", enableLighting_);
 	registry->Add("color", color_);
 	registry->Add("intensity", intensity_);
+	registry->Add("isBlinnPhong", isBlinnPhong_);
 	registry->Add("distance", distance_);
 	registry->Add("decay", decay_);
-	registry->Add("isBlinnPhong", isBlinnPhong_);
 }
 
 //コンポーネントのタイプ名を返す

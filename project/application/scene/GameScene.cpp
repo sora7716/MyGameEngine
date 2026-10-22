@@ -13,6 +13,7 @@
 #include "Color.h"
 #include "DirectionalLight.h"
 #include "PointLight.h"
+#include "SpotLight.h"
 
 //コンストラクタ
 GameScene::GameScene(){
@@ -74,6 +75,14 @@ void GameScene::Initialize(){
 		pointLightObjects_[i] = CreateGameObject();
 		pointLightObjects_[i]->SetName("点光源_" + std::to_string(i));
 		pointLightObjects_[i]->AddComponent<PointLight>();
+	}
+
+	std::vector<GameObject*>spotLightObjects_ = {};
+	spotLightObjects_.resize(3);
+	for (uint32_t i = 0; i < static_cast<uint32_t>(spotLightObjects_.size()); i++){
+		spotLightObjects_[i] = CreateGameObject();
+		spotLightObjects_[i]->SetName("スポットライト_" + std::to_string(i));
+		spotLightObjects_[i]->AddComponent<SpotLight>();
 	}
 }
 

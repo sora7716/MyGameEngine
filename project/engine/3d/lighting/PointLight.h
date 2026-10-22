@@ -58,7 +58,7 @@ private://メンバ変数
 	float intensity_ = 1.0f;//輝度
 	float distance_ = 1.0f;//ライトの届く最大距離
 	float decay_ = 1.0f;//減衰率
-	bool isBlinnPhong_ = 0;//BlinnPhongReflectionを行うかどうか
-	bool enableLighting_ = 0;//点光源を有効にするか
+	bool isBlinnPhong_ = true;//BlinnPhongReflectionを行うかどうか
+	bool enableLighting_ = true;//点光源を有効にするか
 };
 

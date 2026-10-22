@@ -6,6 +6,7 @@
 #include "MathUtility.h"
 #include "DirectionalLight.h"
 #include "PointLight.h"
+#include "SpotLight.h"
 #include "GameObject.h"
 #include <algorithm>
 #include <cassert>
@@ -69,6 +70,9 @@ void LightingManager::Bind(){
 
 //有効な平行光源を集める
 void LightingManager::CollectActiveDirectionalLight(const std::vector<std::unique_ptr<GameObject>>& gameObjects){
+	//GPUのライトをリセット
+	directionalLight_->enable = false;
+
 	//ゲームオブジェクトの配列がなければ
 	if (gameObjects.empty()){
 		return;
@@ -142,6 +146,51 @@ void LightingManager::CollectActivePointLight(const std::vector<std::unique_ptr<
 	std::memcpy(mappedPointLightData_, pointLights_.data(), pointLights_.size() * sizeof(lightData::PointLight));
 }
 
+//有効なスポットライトを集める
+void LightingManager::CollectActiveSpotLight(const std::vector<std::unique_ptr<GameObject>>& gameObjects){
+	//GPUのライトをリセット
+	for (uint32_t i = 0; i < kMaxLightCount; i++){
+		mappedSpotLightData_[i].enable = false;
+	}
+	//有効なスポットライトの配列をクリア
+	spotLights_.clear();
+
+	//ゲームオブジェクトの配列がなければ
+	if (gameObjects.empty()){
+		return;
+	}
+
+	//各オブジェクトへアクセス
+	for (const std::unique_ptr<GameObject>& gameObject : gameObjects){
+		//ゲームオブジェクトがNullなら
+		if (!gameObject){
+			continue;
+		}
+		//スポットライトが取得できた場合
+		SpotLight* spotLight = gameObject->GetComponent<SpotLight>();
+		//スポットライトが存在しない場合
+		if (!spotLight){
+			continue;
+		}
+
+		//スポットライトが有効じゃない場合
+		if (!spotLight->IsEnabled()){
+			continue;
+		}
+
+		//ライトの最大値を超えていた場合
+		if (spotLights_.size() > kMaxLightCount){
+			break;
+		}
+
+		//有効なスポットライトを保存
+		spotLights_.push_back(spotLight->GetSpotLightData());
+	}
+
+	//GPUに送信
+	std::memcpy(mappedSpotLightData_, spotLights_.data(), spotLights_.size() * sizeof(lightData::SpotLight));
+}
+
 //平行光源の生成
 void LightingManager::CreateDirectionLight(){
 	//光源のリソースを作成
@@ -196,10 +245,8 @@ void LightingManager::CreateSpotLight(){
 	// 配列サイズで確保
 	spotLightResource_ = directXBase_->CreateBufferResource(sizeof(lightData::SpotLight) * kMaxLightCount);
 
-	//スポットライト
-	lightData::SpotLight* spotLightData = nullptr;
 	//光源データの書きこみ
-	spotLightResource_->Map(0, nullptr, reinterpret_cast<void**>(&spotLightData));
+	spotLightResource_->Map(0, nullptr, reinterpret_cast<void**>(&mappedSpotLightData_));
 
 	// とりあえず全部初期化（必要なら0番だけGUI値を入れる）
 	for (uint32_t i = 0; i < kMaxLightCount; ++i){
@@ -212,11 +259,11 @@ void LightingManager::CreateSpotLight(){
 		spotLights_[i].cosAngle = std::cos(mathUtility::kPi / 3.0f);
 		spotLights_[i].cosFalloffStart = 1.0f;
 		spotLights_[i].isBlinnPhong = true;
-		spotLights_[i].enableSpotLighting = false;
+		spotLights_[i].enable = false;
 	}
 
 	//配列の内容をコピー
-	std::memcpy(spotLightData, spotLights_.data(), spotLights_.size() * sizeof(lightData::SpotLight));
+	std::memcpy(mappedSpotLightData_, spotLights_.data(), spotLights_.size() * sizeof(lightData::SpotLight));
 }
 
 //スポットライトのストラクチャバッファの生成

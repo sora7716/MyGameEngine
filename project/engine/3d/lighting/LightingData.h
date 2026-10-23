@@ -40,6 +40,5 @@ namespace lightData{
 		int32_t isLambert = 0;//ランバート反射を行うか
 		int32_t isBlinnPhong = 0;//BlinnPhongReflectionを行うかどうか
 		int32_t enable = 0;//点光源を有効にするか
-		float padding[2] = {};
 	};
 }

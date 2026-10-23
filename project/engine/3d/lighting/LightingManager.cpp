@@ -134,7 +134,7 @@ void LightingManager::CollectActivePointLight(const std::vector<std::unique_ptr<
 		}
 
 		//ライトの最大値を超えていた場合
-		if (pointLights_.size() > kMaxLightCount){
+		if (pointLights_.size() >= kMaxLightCount){
 			break;
 		}
 
@@ -179,7 +179,7 @@ void LightingManager::CollectActiveSpotLight(const std::vector<std::unique_ptr<G
 		}
 
 		//ライトの最大値を超えていた場合
-		if (spotLights_.size() > kMaxLightCount){
+		if (spotLights_.size() >= kMaxLightCount){
 			break;
 		}
 

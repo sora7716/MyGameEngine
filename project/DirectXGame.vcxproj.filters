@@ -837,9 +837,6 @@
     </FxCompile>
   </ItemGroup>
   <ItemGroup>
-    <None Include="engine\resources\shaders\Object3d.hlsli">
-      <Filter>shaders</Filter>
-    </None>
     <None Include="engine\resources\shaders\Particle.hlsli">
       <Filter>shaders</Filter>
     </None>
@@ -855,7 +852,12 @@
     <None Include="engine\resources\shaders\SkyBox.hlsli">
       <Filter>shaders</Filter>
     </None>
-    <None Include="engine\resources\shaders\Lighting.hlsli" />
+    <None Include="engine\resources\shaders\Lighting.hlsli">
+      <Filter>shaders</Filter>
+    </None>
+    <None Include="engine\resources\shaders\LightingCommon.hlsli">
+      <Filter>shaders</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="GameEngine.rc">

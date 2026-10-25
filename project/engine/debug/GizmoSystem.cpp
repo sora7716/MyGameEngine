@@ -21,7 +21,7 @@ GizmoSystem::~GizmoSystem(){
 }
 
 //ツールバーの描画
-void GizmoSystem::DrawToolbar(TextureManager* textureManager){
+void GizmoSystem::DrawToolbar([[maybe_unused]] TextureManager* textureManager){
 #ifdef USE_IMGUI
 	//ツールバーが非表示の場合
 	if (!isToolbarVisible_){
@@ -67,7 +67,7 @@ void GizmoSystem::DrawToolbar(TextureManager* textureManager){
 }
 
 //選択中のオブジェクトの Transform を操作する
-bool GizmoSystem::ManipulateSelectedTransform(const Vector2& sceneViewPosition, const Vector2& sceneViewSize){
+bool GizmoSystem::ManipulateSelectedTransform([[maybe_unused]] const Vector2& sceneViewPosition, [[maybe_unused]] const Vector2& sceneViewSize){
 #ifdef USE_IMGUI
 	//操作対象が存在するか
 	if (!selectedGameObject_){

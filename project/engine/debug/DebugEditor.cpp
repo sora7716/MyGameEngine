@@ -1204,20 +1204,24 @@ void DebugEditor::AttachToOperation([[maybe_unused]] GameObject* parentObject, [
 }
 
 //オブジェクト階層で接続を解除する操作
-void DebugEditor::DetachToOperation(GameObject* attachedObject){
+void DebugEditor::DetachToOperation([[maybe_unused]] GameObject* attachedObject){
+#ifdef USE_IMGUI
 	GameObject* dragged = attachedObject;
 	ImGui::SetDragDropPayload(kGameObjectPayloadType.c_str(), &dragged, sizeof(dragged));
 	ImGui::TextUnformatted(attachedObject->GetName().c_str());//ドラッグ中の表示
+#endif // USE_IMGUI
 }
 
 //オブジェクトの階層で選択する操作
-bool DebugEditor::SelectGameObjectOperation(GameObject* selectGameObject){
-	//表示した子オブジェクトの行のクリックを確認
+bool DebugEditor::SelectGameObjectOperation([[maybe_unused]] GameObject* selectGameObject){
+#ifdef USE_IMGUI
 	if (ImGui::IsItemClicked() && !ImGui::IsItemToggledOpen()){
 		SelectGameObject(selectGameObject);
+	//表示した子オブジェクトの行のクリックを確認
 		//Gizmoシステムにゲームオブジェクトを設定
 		gizmoSystem_->SetSelectedGameObject(selectGameObject);
 		return true;
 	}
 	return false;
+#endif // USE_IMGUI
 }

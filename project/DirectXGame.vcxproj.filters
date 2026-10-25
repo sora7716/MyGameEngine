@@ -456,6 +456,9 @@
     <ClCompile Include="engine\3d\lighting\SpotLight.cpp">
       <Filter>engine\3d\lighting</Filter>
     </ClCompile>
+    <ClCompile Include="engine\debug\GizmoSystem.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="application\scene\TestPlayScene.h">
@@ -802,6 +805,9 @@
     </ClInclude>
     <ClInclude Include="engine\3d\lighting\SpotLight.h">
       <Filter>engine\3d\lighting</Filter>
+    </ClInclude>
+    <ClInclude Include="engine\debug\GizmoSystem.h">
+      <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

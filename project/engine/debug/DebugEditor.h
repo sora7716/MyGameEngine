@@ -1,9 +1,5 @@
 #pragma once
 #include "RenderingData.h"
-#include "ImGuiManager.h"
-#ifdef USE_IMGUI
-#include "ImGuizmo.h"
-#endif // USE_IMGUI
 #include "Vector2.h"
 #include "Vector3.h"
 #include <vector>
@@ -20,6 +16,7 @@ class TagManager;
 class Camera;
 class Object3d;
 class Component;
+class GizmoSystem;
 
 /// <summary>
 /// タグの名前変更リクエスト用
@@ -28,15 +25,6 @@ struct RenameTagRequest{
 	std::string oldTag = "\0";
 	std::string newTag = "\0";
 };
-
-#ifdef USE_IMGUI
-//Gizmoのツール
-enum class GizmoTool{
-	kScale = ImGuizmo::SCALE,
-	kRotate = ImGuizmo::ROTATE,
-	kTranslate = ImGuizmo::TRANSLATE
-};
-#endif // USE_IMGUI
 
 //親子付けのリクエスト
 struct ParentRequest{
@@ -191,16 +179,6 @@ private://メンバ関数
 	void DrawScene(D3D12_GPU_DESCRIPTOR_HANDLE handle);
 
 	/// <summary>
-	/// Gizmo切り替え用ツールバーの描画
-	/// </summary>
-	void DrawGizmoToolbar();
-
-	/// <summary>
-	/// Gizmoの描画
-	/// </summary>
-	void DrawGizmo();
-
-	/// <summary>
 	/// プレビューシーンの描画
 	/// </summary>
 	/// <param name="handle">PreviewSceneのGPUハンドル</param>
@@ -281,9 +259,6 @@ private://メンバ変数
 	//タグの管理
 	TagManager* tagManager_ = nullptr;
 
-	//テクスチャを読み込む際のディレクトリパス
-	std::string directoryPath = "engine/resources/editorIcons/";
-
 	//選択するゲームオブジェクト
 	GameObject* selectedGameObject_ = nullptr;
 	//オブジェクトの詳細で編集するオイラー角
@@ -338,12 +313,8 @@ private://メンバ変数
 	//デバッグカメラ
 	Camera* debugCamera_ = nullptr;
 
-#ifdef USE_IMGUI
-	//Gizmoツール
-	GizmoTool gizmoTool_ = GizmoTool::kTranslate;
-#endif // USE_IMGUI
-	//Gizmoツールバーを表示するか
-	bool isGizmoToolbarVisible_ = true;
+	//Gizmoシステム
+	std::unique_ptr<GizmoSystem> gizmoSystem_ = nullptr;
 
 	//選択中のNodeパス
 	std::string selectedNodePath_ = "";

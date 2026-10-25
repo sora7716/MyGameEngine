@@ -10,6 +10,8 @@
 #include "Object3d.h"
 #include "Component.h"
 #include "PropertyRegistry.h"
+#include "GizmoSystem.h"
+#include "ImGuiManager.h"
 #include <cassert>
 #include <array>
 
@@ -42,6 +44,9 @@ void DebugEditor::Initialize(TextureManager* textureManager, TagManager* tagMana
 	requestDeleteGameObject_ = nullptr;
 	//名前変更
 	renamingGameObject_ = nullptr;
+
+	//GizmoSystemの生成と初期化
+	gizmoSystem_ = GizmoSystem::Create();
 }
 
 //更新
@@ -76,6 +81,8 @@ void DebugEditor::SetGameObjects(const std::vector<std::unique_ptr<GameObject>>&
 //デバッグカメラの設定
 void DebugEditor::SetDebugCamera(Camera* debugCamera){
 	debugCamera_ = debugCamera;
+	//Gizmoに設定
+	gizmoSystem_->SetDebugCamera(debugCamera);
 }
 
 //削除要求を取得
@@ -476,7 +483,7 @@ void DebugEditor::DrawScene([[maybe_unused]] D3D12_GPU_DESCRIPTOR_HANDLE handle)
 #ifdef USE_IMGUI
 	ImGui::Begin("シーン");
 	//ツールバーの表示用チェックボックス
-	ImGui::Checkbox("ツールバーを表示", &isGizmoToolbarVisible_);
+	ImGui::Checkbox("ツールバーを表示", &gizmoSystem_->IsToolbarVisible());
 
 	//テクスチャのIDを取得(GPUのハンドルから取得)
 	ImTextureID textureId = reinterpret_cast<ImTextureID>(handle.ptr);
@@ -493,155 +500,17 @@ void DebugEditor::DrawScene([[maybe_unused]] D3D12_GPU_DESCRIPTOR_HANDLE handle)
 	//今選択されているImGuiを判定
 	isSceneViewHovered_ = ImGui::IsItemHovered();
 
-	//Gizmoの描画
-	DrawGizmo();
+	//GizmoでTransformを操作
+	if (gizmoSystem_->ManipulateSelectedTransform(sceneViewRectInfo_.position, sceneViewRectInfo_.size)){
+		inspectorEulerAngle_ = selectedGameObject_->GetTransform().GetEulerAngle();
+	}
 
 	//画面の左上から少し内側にツールバーを配置
 	ImGui::SetCursorScreenPos(ImVec2(position.x + 8.0f, position.y + 8.0f));
 
 	//Gizmoの切り替え用ツールバーが表示する場合
-	if (isGizmoToolbarVisible_){
-		//Gizmoの切り替え用ツールバー
-		DrawGizmoToolbar();
-	}
+	gizmoSystem_->DrawToolbar(textureManager_);
 	ImGui::End();
-#endif // USE_IMGUI
-}
-
-//Gizmoの切り替え用ツールバーの描画
-void DebugEditor::DrawGizmoToolbar(){
-#ifdef USE_IMGUI
-	//画像サイズ
-	float imageSize = 32.0f;
-	//現在のスタイル
-	const ImGuiStyle& style = ImGui::GetStyle();
-	//ボタンのサイズ
-	const ImVec2 buttonSize = { imageSize,imageSize };
-	//ウィンドウサイズ
-	const ImVec2 windowSize = {
-		imageSize + style.FramePadding.x * 2.0f + style.WindowPadding.x * 2.0f,
-		(imageSize + style.FramePadding.y * 2.0f) * 3.0f + style.ItemSpacing.y * 2.0f + style.WindowPadding.x * 2.0f
-	};
-
-	//子ウィンドウを作成
-	ImGui::BeginChild("ツールバー", windowSize, true, ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_NoScrollWithMouse);
-
-	//各アイコンのハンドルを取得
-	D3D12_GPU_DESCRIPTOR_HANDLE scaleIconHandle = textureManager_->GetSRVHandleGPU(directoryPath + "scale.png");
-	D3D12_GPU_DESCRIPTOR_HANDLE rotateIconHandle = textureManager_->GetSRVHandleGPU(directoryPath + "rotate.png");
-	D3D12_GPU_DESCRIPTOR_HANDLE translateIconHandle = textureManager_->GetSRVHandleGPU(directoryPath + "translate.png");
-
-	//拡縮
-	if (ImGui::ImageButton("Scale", reinterpret_cast<ImTextureID>(scaleIconHandle.ptr), buttonSize)){
-		gizmoTool_ = GizmoTool::kScale;
-	}
-
-	//回転
-	if (ImGui::ImageButton("Rotate", reinterpret_cast<ImTextureID>(rotateIconHandle.ptr), buttonSize)){
-		gizmoTool_ = GizmoTool::kRotate;
-	}
-
-	//平行移動
-	if (ImGui::ImageButton("Translate", reinterpret_cast<ImTextureID>(translateIconHandle.ptr), buttonSize)){
-		gizmoTool_ = GizmoTool::kTranslate;
-	}
-	ImGui::EndChild();
-#endif // USE_IMGUI
-}
-
-//Gizmoの描画
-void DebugEditor::DrawGizmo(){
-#ifdef USE_IMGUI
-	//操作対象が存在するか
-	if (!selectedGameObject_){
-		return;
-	}
-
-	//デバッグカメラがあるか
-	if (!debugCamera_){
-		return;
-	}
-
-	ImGuizmo::SetDrawlist();
-
-	//どれくらいの範囲で描画するか
-	ImGuizmo::SetRect(
-		sceneViewRectInfo_.position.x,
-		sceneViewRectInfo_.position.y,
-		sceneViewRectInfo_.size.x,
-		sceneViewRectInfo_.size.y
-	);
-
-	//ビュー行列を取得
-	Matrix4x4 viewMatrix = debugCamera_->GetViewMatrix();
-	//透視投影行列を取得
-	Matrix4x4 projectionMatrix = debugCamera_->GetProjectionMatrix();
-
-	//選択しているGameObjectのワールド行列を取得
-	Matrix4x4 worldMatrix = Matrix4x4::Identity4x4();
-
-	//ノードのモデル行列
-	Matrix4x4 modelMatrix = Matrix4x4::Identity4x4();
-	//オブジェクトのワールド行列
-	Matrix4x4 objectWorldMatrix = Matrix4x4::Identity4x4();
-
-	//オブジェクトのワールド行列を設定
-	objectWorldMatrix = selectedGameObject_->GetWorldMatrix();
-	//ワールド行列を設定
-	worldMatrix = objectWorldMatrix;
-
-	//Nodeを選択した場合
-	if (!selectedNodePath_.empty()){
-		Object3d* selectedObject3d = selectedGameObject_->GetComponent<Object3d>();
-		if (selectedObject3d){
-			selectedObject3d->TryGetNodeModelMatrix(selectedNodePath_, modelMatrix);
-			worldMatrix = modelMatrix * objectWorldMatrix;
-		}
-	}
-
-	//実際に動かす
-	bool isChangedMatrix = ImGuizmo::Manipulate(&viewMatrix.m[0][0], &projectionMatrix.m[0][0], static_cast<ImGuizmo::OPERATION>(gizmoTool_), ImGuizmo::WORLD, &worldMatrix.m[0][0]);
-
-	//行列が変更されたか
-	if (isChangedMatrix){
-		//ローカル行列
-		Matrix4x4 localMatrix = worldMatrix * selectedGameObject_->GetParentMatrix().Inverse();
-
-		//ワールド行列からトランスフォームに分解
-		Transform transform = matrixUtility::DecomposeMatrix(localMatrix, selectedGameObject_->GetTransform().scale);
-
-		if (!selectedNodePath_.empty()){
-			//ノードのローカル行列
-			Matrix4x4 nodeLocalMatrix = Matrix4x4::Identity4x4();
-			//ノードのベース行列
-			Matrix4x4 nodeBaseMatrix = Matrix4x4::Identity4x4();
-			Object3d* object3d = selectedGameObject_->GetComponent<Object3d>();
-			if (object3d){
-				Node node = {};
-				//ノードを取得
-				object3d->TryGetNodeForPath(selectedNodePath_, node);
-				nodeLocalMatrix = node.localMatrix;
-				nodeBaseMatrix = node.baseMatrix;
-			}
-			//操作後のモデル行列
-			Matrix4x4 newModelMatrix = worldMatrix * objectWorldMatrix.Inverse();
-			//親ノードのモデル行列
-			Matrix4x4 parentNodeMatrix = nodeLocalMatrix.Inverse() * modelMatrix;
-			//操作後のローカル行列
-			Matrix4x4 newModelLocal = newModelMatrix * parentNodeMatrix.Inverse();
-			//ローカル行列
-			Matrix4x4 newNodeLocalMatrix = newModelLocal * nodeBaseMatrix.Inverse();
-			//Transformを求める
-			Transform localNodeTransform = matrixUtility::DecomposeMatrix(newNodeLocalMatrix, selectedGameObject_->GetTransform().scale);
-			//NodeのLocalTransformに設定
-			object3d->SetNodeLocalTransform(selectedNodePath_, localNodeTransform);
-		} else{
-			//Transformを設定
-			selectedGameObject_->GetTransform() = transform;
-			//オイラー角の設定
-			inspectorEulerAngle_ = transform.GetEulerAngle();
-		}
-	}
 #endif // USE_IMGUI
 }
 
@@ -1168,6 +1037,8 @@ void DebugEditor::DrawNodeTree([[maybe_unused]] const Node& node, [[maybe_unused
 	//子ノードを開く前に確認する(矢印をクリックしてない場合)
 	bool isSelectedObject = SelectGameObjectOperation(targetObject);
 	if (isSelectedObject){
+		//Gizmoシステムにノードパスを設定
+		gizmoSystem_->SetSelectedNodePath(currentPath);
 		//このNodeのパスを選択中のパスとして取得
 		selectedNodePath_ = currentPath;
 	}
@@ -1344,6 +1215,8 @@ bool DebugEditor::SelectGameObjectOperation(GameObject* selectGameObject){
 	//表示した子オブジェクトの行のクリックを確認
 	if (ImGui::IsItemClicked() && !ImGui::IsItemToggledOpen()){
 		SelectGameObject(selectGameObject);
+		//Gizmoシステムにゲームオブジェクトを設定
+		gizmoSystem_->SetSelectedGameObject(selectGameObject);
 		return true;
 	}
 	return false;

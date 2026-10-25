@@ -55,6 +55,7 @@
     <ClCompile Include="engine\debug\CrashHandler.cpp" />
     <ClCompile Include="engine\debug\DebugCameraController.cpp" />
     <ClCompile Include="engine\debug\DebugEditor.cpp" />
+    <ClCompile Include="engine\debug\GizmoSystem.cpp" />
     <ClCompile Include="engine\debug\ImGuiManager.cpp">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
       </ExcludedFromBuild>
@@ -167,6 +168,7 @@
     <ClInclude Include="engine\debug\CrashHandler.h" />
     <ClInclude Include="engine\debug\DebugCameraController.h" />
     <ClInclude Include="engine\debug\DebugEditor.h" />
+    <ClInclude Include="engine\debug\GizmoSystem.h" />
     <ClInclude Include="engine\debug\ImGuiManager.h">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
       </ExcludedFromBuild>

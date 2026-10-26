@@ -9,6 +9,7 @@
 class BaseCollider;
 class GameObject;
 class BoxCollider;
+class SphereCollider;
 
 /// <summary>
 /// 衝突状況
@@ -99,6 +100,22 @@ private://メンバ関数
 	/// <param name="collider1">コライダー1</param>
 	/// <param name="collider2">コライダー2</param>
 	void CheckCollisionOBB(BoxCollider* collider1, BoxCollider* collider2);
+
+	/// <summary>
+	/// Sphereの衝突判定を確認
+	/// </summary>
+	/// <param name="collider1">コライダー1</param>
+	/// <param name="collider2">コライダー2</param>
+	void CheckCollisionSphere(SphereCollider* collider1, SphereCollider* collider2);
+
+	/// <summary>
+	/// 衝突したコライダーのペアを処理する
+	/// </summary>
+	/// <param name="collider1">コライダー1</param>
+	/// <param name="collider2">コライダー2</param>
+	/// <param name="collisionInfo1">衝突情報1</param>
+	/// <param name="collisionInfo2">衝突情報2</param>
+	void HandleCollisionPair(BaseCollider* collider1, BaseCollider* collider2, const CollisionInfo& collisionInfo1, const CollisionInfo& collisionInfo2);
 
 	/// <summary>
 	/// 押し出す方向を取得

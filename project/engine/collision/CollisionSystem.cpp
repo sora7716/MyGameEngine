@@ -1,8 +1,9 @@
 #define NOMINMAX
 #include "CollisionSystem.h"
 #include "GameObject.h"
-#include "BoxCollider.h"
 #include "Collision.h"
+#include "BoxCollider.h"
+#include "SphereCollider.h"
 #include "RigidBody.h"
 
 //一致した場合
@@ -159,11 +160,11 @@ void CollisionSystem::CheckCollisionPair(BaseCollider* collider1, BaseCollider* 
 	ColliderType type1 = collider1->GetColliderType();
 	ColliderType type2 = collider2->GetColliderType();
 
-	//両方AABBかどうかを確認
 	if (type1 == ColliderType::kBox && type2 == ColliderType::kBox){
-		//両方とも軸に平行か
+		//両方Box同士なら
 		BoxCollider* boxCollider1 = static_cast<BoxCollider*>(collider1);
 		BoxCollider* boxCollider2 = static_cast<BoxCollider*>(collider2);
+		//両方とも軸に平行か
 		if (boxCollider1->IsAxisAligned() && boxCollider2->IsAxisAligned()){
 			//AABBの衝突判定
 			CheckCollisionAABB(boxCollider1, boxCollider2);
@@ -171,6 +172,11 @@ void CollisionSystem::CheckCollisionPair(BaseCollider* collider1, BaseCollider* 
 			//OBBも衝突判定
 			CheckCollisionOBB(boxCollider1, boxCollider2);
 		}
+	} else if (type1 == ColliderType::kSphere && type2 == ColliderType::kSphere){
+		//両方Sphere同士なら
+		SphereCollider* sphereCollider1 = static_cast<SphereCollider*>(collider1);
+		SphereCollider* sphereCollider2 = static_cast<SphereCollider*>(collider2);
+		CheckCollisionSphere(sphereCollider1, sphereCollider2);
 	}
 }
 
@@ -218,29 +224,8 @@ void CollisionSystem::CheckCollisionAABB(BoxCollider* collider1, BoxCollider* co
 	collisionInfo1.other = collider2;
 	collisionInfo2.other = collider1;
 
-	//コライダーのペアを登録
-	CollisionRecord collisionRecord = RegisterColliderPair(collider1, collider2, collisionInfo1, collisionInfo2);
-
-	//衝突状況の判断
-	collisionState_ = JudgeCollisionState(collisionRecord);
-
-	//ゲームオブジェクトを取得
-	GameObject* gameObject1 = collider1->GetOwner();
-	GameObject* gameObject2 = collider2->GetOwner();
-
-	//衝突していた場合
-	if (collider1->IsTrigger() || collider2->IsTrigger()){
-		//どちらか片方がIsTriggerがtrueだった場合
-		gameObject1->InvokeTriggerEvent(static_cast<uint32_t>(collisionState_), collider2);
-		gameObject2->InvokeTriggerEvent(static_cast<uint32_t>(collisionState_), collider1);
-	} else{
-		//オブジェクトを押し出す
-		ResolveCollision(collider1, collider2, collisionInfo1, collisionInfo2);
-
-		//どちらか片方がIsTriggerがfalseだった場合
-		gameObject1->InvokeCollisionEvent(static_cast<uint32_t>(collisionState_), collisionInfo1);
-		gameObject2->InvokeCollisionEvent(static_cast<uint32_t>(collisionState_), collisionInfo2);
-	}
+	//衝突したコライダーのペアを処理する
+	HandleCollisionPair(collider1, collider2, collisionInfo1, collisionInfo2);
 }
 
 //OBBの衝突判定を確認
@@ -260,6 +245,63 @@ void CollisionSystem::CheckCollisionOBB(BoxCollider* collider1, BoxCollider* col
 		return;
 	}
 
+	//衝突したコライダーのペアを処理する
+	HandleCollisionPair(collider1, collider2, collisionInfo1, collisionInfo2);
+}
+
+//Sphereの衝突判定を確認
+void CollisionSystem::CheckCollisionSphere(SphereCollider* collider1, SphereCollider* collider2){
+	//OBBを取得
+	primitiveData::Sphere sphere1 = collider1->GetSphere();
+	primitiveData::Sphere sphere2 = collider2->GetSphere();
+
+	//衝突したときの情報
+	CollisionInfo collisionInfo1 = {};
+	collisionInfo1.other = collider2;
+	CollisionInfo collisionInfo2 = {};
+	collisionInfo2.other = collider1;
+
+	//衝突したか確認
+	bool isCollision = collision::IsCollision(sphere1, sphere2);
+
+	//衝突していなければ
+	if (!isCollision){
+		return;
+	}
+
+	//衝突状況を保存
+	collisionInfo1.isCollision = isCollision;
+	collisionInfo2.isCollision = isCollision;
+
+	//中心との距離
+	Vector3 delta = sphere1.center - sphere2.center;
+	float distance = delta.Length();
+
+	//めり込み度
+	float depth = (sphere1.radius + sphere2.radius) - distance;
+	collisionInfo1.depth = depth;
+	collisionInfo2.depth = depth;
+
+	//押し出す方向を設定
+	constexpr float epsilon = 0.0001f;
+	Vector3 normal1 = {};
+	Vector3 normal2 = {};
+	if (distance <= epsilon){
+		normal1 = Vector3::GetRight();
+		normal2 = Vector3::GetLeft();
+	} else{
+		normal1 = delta / distance;
+		normal2 = -normal1;
+	}
+	collisionInfo1.normal = normal1;
+	collisionInfo2.normal = normal2;
+	
+	//衝突したコライダーのペアを処理する
+	HandleCollisionPair(collider1, collider2, collisionInfo1, collisionInfo2);
+}
+
+//衝突したコライダーのペアを処理する
+void CollisionSystem::HandleCollisionPair(BaseCollider* collider1, BaseCollider* collider2, const CollisionInfo& collisionInfo1, const CollisionInfo& collisionInfo2){
 	//コライダーのペアを登録
 	CollisionRecord collisionRecord = RegisterColliderPair(collider1, collider2, collisionInfo1, collisionInfo2);
 

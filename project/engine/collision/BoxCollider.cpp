@@ -12,7 +12,7 @@ BoxCollider::~BoxCollider(){
 
 //初期化
 void BoxCollider::Initialize(){
-	//基底クラスの更新
+	//基底クラスの初期化
 	BaseCollider::Initialize();
 	halfSize_ = Vector3::GetOne() / 2.0f;
 
@@ -22,6 +22,8 @@ void BoxCollider::Initialize(){
 
 //更新
 void BoxCollider::Update(){
+	//基底クラスの更新
+	BaseCollider::Update();
 	//中心座標
 	obb_.center = gameObject_->GetTransform().translate + offset_;
 
@@ -34,10 +36,7 @@ void BoxCollider::Update(){
 
 //プロパティ一覧を登
 void BoxCollider::RegisterProperties(PropertyRegistry* registry){
-	Component::RegisterProperties(registry);
-	std::function<bool()> boolGetter = [this]() -> bool{return this->IsTrigger(); };
-	std::function<void(bool)> boolSetter = [this](bool isTrigger){return this->SetIsTrigger(isTrigger); };
-	registry->Add("isTrigger", boolGetter, boolSetter);
+	BaseCollider::RegisterProperties(registry);
 	registry->Add("offset", offset_);
 	registry->Add("halfSize", halfSize_);
 }
@@ -77,6 +76,9 @@ std::unique_ptr<Component> BoxCollider::Clone(GameObject* gameObject) const{
 	cloneInstance->SetEnabled(this->IsEnabled());
 	cloneInstance->SetIsTrigger(this->IsTrigger());
 	cloneInstance->SetBodyType(this->GetBodyType());
+	cloneInstance->obb_ = this->obb_;
+	cloneInstance->halfSize_ = this->halfSize_;
+	cloneInstance->offset_ = this->offset_;
 
 	return cloneInstance;
 }

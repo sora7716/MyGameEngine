@@ -20,9 +20,7 @@ void Sphere::InitializeShape(){
 
 //更新
 void Sphere::UpdateShape(){
-	//GameObject* gameObject = GetOwner();
-	//sphere_.center = gameObject->GetTransform().translate;
-	//sphere_.radius = gameObject->GetTransform().scale.Max();
+	SetLocalTranslate(sphere_.center);
 }
 
 //複製

@@ -48,6 +48,12 @@ public://メンバ関数
 	void Initialize()override;
 
 	/// <summary>
+	/// プロパティ一覧を登録
+	/// </summary>
+	/// <param name="registry">レジストリ</param>
+	void RegisterProperties(PropertyRegistry* registry);
+
+	/// <summary>
 	/// 衝突したときの判定(押し戻しあり)
 	/// </summary>
 	/// <param name="info">衝突情報</param>

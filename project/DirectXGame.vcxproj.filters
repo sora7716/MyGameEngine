@@ -462,6 +462,9 @@
     <ClCompile Include="engine\debug\GizmoVisualizer.cpp">
       <Filter>engine\debug</Filter>
     </ClCompile>
+    <ClCompile Include="engine\collision\SphereCollider.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="application\scene\TestPlayScene.h">
@@ -814,6 +817,9 @@
     </ClInclude>
     <ClInclude Include="engine\debug\GizmoVisualizer.h">
       <Filter>engine\debug</Filter>
+    </ClInclude>
+    <ClInclude Include="engine\collision\SphereCollider.h">
+      <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

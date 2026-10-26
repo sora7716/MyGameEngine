@@ -5,6 +5,7 @@
 #include "SkyBox.h"
 #include "OrbitCameraController.h"
 #include "BoxCollider.h"
+#include "SphereCollider.h"
 #include "Cube.h"
 #include "ImGuiManager.h"
 #include "Enemy.h"
@@ -66,6 +67,7 @@ void GameScene::Initialize(){
 	primitiveObjects[1]->SetName("plane");
 	primitiveObject3ds[2]->SetModel("sphere_32");
 	primitiveObjects[2]->SetName("sphere");
+	primitiveObjects[2]->AddComponent<SphereCollider>();
 
 	GameObject* directionalLightObject = CreateGameObject();
 	directionalLightObject->SetName("平行光源");
@@ -151,6 +153,7 @@ GameObject* GameScene::CreatePlayerObject(){
 
 	//リジットボディ
 	RigidBody* rigidBody = gameObject->AddComponent<RigidBody>();
+	rigidBody->SetEnabled(false);
 
 	//プレイヤー
 	Player* player = gameObject->AddComponent<Player>();
@@ -158,11 +161,15 @@ GameObject* GameScene::CreatePlayerObject(){
 	player->SetObject3d(object3d);
 	player->SetRigidBody(rigidBody);
 
-	//AABBコンポーネント
+	//Boxコンポーネント
 	Vector3 playerHitBoxSize = Vector3::GetOne();
 	BoxCollider* playerAABB = gameObject->AddComponent<BoxCollider>();
 	playerAABB->SetHalfSize(playerHitBoxSize / 2.0f);
 	playerAABB->SetBodyType(BodyType::kDynamic);
+
+	//Sphereをコンポーネント
+	SphereCollider* playerAABBS = gameObject->AddComponent<SphereCollider>();
+	playerAABBS->SetBodyType(BodyType::kDynamic);
 
 	return gameObject;
 }

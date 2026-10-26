@@ -2,6 +2,7 @@
 #include "GameObject.h"
 #include "BaseCollider.h"
 #include "BoxCollider.h"
+#include "SphereCollider.h"
 #include "BaseShape.h"
 #include "Cube.h"
 #include "Sphere.h"
@@ -67,8 +68,21 @@ void GizmoVisualizer::Update(){
 				break;
 			}
 		case ColliderType::kSphere:{
-				std::unique_ptr<BaseShape> sphere = Sphere::Create<Sphere>();
+				std::unique_ptr<Sphere> sphere = Sphere::Create<Sphere>();
+
+				//Sphereコライダーにキャスト
+				SphereCollider* sphereCollider = static_cast<SphereCollider*>(baseCollider);
+
+				//Sphereを取得
+				primitiveData::Sphere sphereData = sphereCollider->GetSphere();
+
+				//中心座標と半径を設定
+				sphere->SetSphere(sphereData);
+
+				//更新
 				sphere->Update();
+
+				//描画データを追加
 				renderDatas_.push_back(sphere->GetRenderData());
 				break;
 			}

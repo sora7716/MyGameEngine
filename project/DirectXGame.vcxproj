@@ -52,6 +52,7 @@
     <ClCompile Include="engine\collision\BaseCollider.cpp" />
     <ClCompile Include="engine\collision\Collision.cpp" />
     <ClCompile Include="engine\collision\CollisionSystem.cpp" />
+    <ClCompile Include="engine\collision\SphereCollider.cpp" />
     <ClCompile Include="engine\debug\CrashHandler.cpp" />
     <ClCompile Include="engine\debug\DebugCameraController.cpp" />
     <ClCompile Include="engine\debug\DebugEditor.cpp" />
@@ -166,6 +167,7 @@
     <ClInclude Include="engine\collision\BaseCollider.h" />
     <ClInclude Include="engine\collision\Collision.h" />
     <ClInclude Include="engine\collision\CollisionSystem.h" />
+    <ClInclude Include="engine\collision\SphereCollider.h" />
     <ClInclude Include="engine\debug\CrashHandler.h" />
     <ClInclude Include="engine\debug\DebugCameraController.h" />
     <ClInclude Include="engine\debug\DebugEditor.h" />

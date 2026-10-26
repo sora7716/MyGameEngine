@@ -13,6 +13,14 @@ void BaseCollider::Initialize(){
 	gameObject_ = GetOwner();
 }
 
+//プロパティの一覧の登録
+void BaseCollider::RegisterProperties(PropertyRegistry* registry){
+	Component::RegisterProperties(registry);
+	std::function<bool()> boolGetter = [this]() -> bool{return this->IsTrigger(); };
+	std::function<void(bool)> boolSetter = [this](bool isTrigger){return this->SetIsTrigger(isTrigger); };
+	registry->Add("isTrigger", boolGetter, boolSetter);
+}
+
 //衝突したときの判定(押し戻しあり)
 void BaseCollider::OnCollisionStay([[maybe_unused]] const CollisionInfo& info){	
 }

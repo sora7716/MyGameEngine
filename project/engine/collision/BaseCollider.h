@@ -2,17 +2,16 @@
 #include "Component.h"
 #include <GameObject.h>
 
-//前方宣言
-class BaseCollider;
-
 //衝突判定の情報
 struct CollisionInfo{
 	//衝突した対象
 	BaseCollider* other = nullptr;
+	//衝突したか
+	bool isCollision;
 	//押し戻すベクトル
 	Vector3 normal = {};
 	//めり込んだ距離
-	float penetrationDepth = 0.0f;
+	float depth = 0.0f;
 };
 
 //コライダータイプ
@@ -91,7 +90,7 @@ public://メンバ関数
 	virtual ColliderType GetColliderType()const = 0;
 protected://メンバ変数
 	//ゲームオブジェクト
-	GameObject* gameObject_ = nullptr;
+	GameObject* gameObject_ = nullptr;;
 private://メンバ変数
 	//めり込むかを判定するフラグ
 	bool isTrigger_ = false;

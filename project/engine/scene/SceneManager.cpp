@@ -43,6 +43,10 @@ void SceneManager::Initialize(const SceneContext& sceneContext, RenderSystem* re
 	//デバッグエディターの生成と初期化
 	debugEditor_ = std::make_unique<DebugEditor>();
 	debugEditor_->Initialize(sceneContext_.textureManager, sceneContext_.tagManager);
+
+	//Gizmoの情報を見えるものにするの初期化と生成
+	gizmoVisualizer_ = std::make_unique<GizmoVisualizer>();
+	gizmoVisualizer_->Initialize();
 }
 
 //更新
@@ -73,6 +77,9 @@ void SceneManager::Update(){
 	collisionSystem_->Update(scene_->GetGameObjects());
 	//デバッグエディタの更新
 	debugEditor_->Update();
+	//Gizmoの見える情報の更新
+	gizmoVisualizer_->SetSelectedGameObject(debugEditor_->GetSelectedGameObject());
+	gizmoVisualizer_->Update();
 	//更新
 	scene_->Update();
 	//デバッグ操作が有効かを設定
@@ -213,7 +220,7 @@ void SceneManager::Draw(CameraMode cameraMode){
 	//Spriteの描画
 	renderSystem_->CollectActiveSprites(gameObjects);
 	//DebugDrawの描画
-	renderSystem_->CollectActiveDebugDraw(gameObjects);
+	renderSystem_->CollectActiveWireframe(gizmoVisualizer_->GetWireframeRenderDatas());
 	//ParticleSystemの描画
 	renderSystem_->CollectActiveParticleSystems(gameObjects);
 }

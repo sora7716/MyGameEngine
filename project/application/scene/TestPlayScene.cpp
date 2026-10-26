@@ -11,7 +11,7 @@
 #include "Cube.h"
 #include "Circle.h"
 #include "Plane.h"
-#include "Line.h"
+#include "Segment.h"
 #include "Sphere.h"
 #include "Frustum.h"
 #include "ParticleSystem.h"

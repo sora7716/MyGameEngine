@@ -7,19 +7,18 @@ class Camera;
 /// <summary>
 /// 視錐台
 /// </summary>
-namespace debugDraw {
-	class Frustum :public BaseShape {
+namespace wireframe {
+	class Frustum :public BaseShape{
 	public://メンバ関数
 		/// <summary>
 		/// コンストラクタ
 		/// </summary>
-		/// <param name="gameObject">ゲームオブジェクト</param>
-		explicit Frustum(GameObject* gameObject);
+		Frustum();
 
 		/// <summary>
 		/// デストラクタ
 		/// </summary>
-		~Frustum();
+		~Frustum()override;
 
 		/// <summary>
 		/// 初期化
@@ -32,23 +31,17 @@ namespace debugDraw {
 		void UpdateShape()override;
 
 		/// <summary>
-	    /// 複製
-	    /// </summary>
-	    /// <param name="gameObject">ゲームオブジェクト</param>
-	    /// <returns>コンポーネント</returns>
-		std::unique_ptr<Component>Clone(GameObject* gameObject)const override;
+		/// 複製
+		/// </summary>
+		/// <param name="gameObject">ゲームオブジェクト</param>
+		/// <returns>コンポーネント</returns>
+		std::unique_ptr<BaseShape>Clone()const override;
 
 		/// <summary>
 		/// 対象となるカメラの設定
 		/// </summary>
 		/// <param name="targetCamera">対象となるカメラ</param>
-		void SetTargetCamera(Camera*targetCamera);
-
-		/// <summary>
-		/// コンポーネントのタイプ名を取得
-		/// </summary>
-		/// <returns>コンポーネントのタイプ名</returns>
-		std::string GetTypeName()const override;
+		void SetTargetCamera(Camera* targetCamera);
 	private://メンバ変数
 		/// <summary>
 		/// 頂点の設定

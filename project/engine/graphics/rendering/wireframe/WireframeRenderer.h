@@ -1,5 +1,5 @@
 #pragma once
-#include "DebugDrawRenderData.h"
+#include "WireframeRenderData.h"
 #include <vector>
 #include <memory>
 #include <wrl.h>
@@ -13,7 +13,7 @@ class Camera;
 /// <summary>
 /// デバッグ描画のレンダラー
 /// </summary>
-class DebugDrawRenderer{
+class WireframeRenderer{
 private://エイリアステンプレート
 	template <class T>using ComPtr = Microsoft::WRL::ComPtr<T>;
 private://構造体
@@ -52,18 +52,18 @@ public://静的メンバ関数
 	/// <param name="key">コンストラクタKey</param>
 	/// <param name="directXBase">DirectXの基盤部分</param>
 	/// <returns>インスタンス</returns>
-	static std::unique_ptr<DebugDrawRenderer>Create(ConstructorKey key, DirectXBase* directXBase);
+	static std::unique_ptr<WireframeRenderer>Create(ConstructorKey key, DirectXBase* directXBase);
 public://メンバ関数
 	/// <summary>
 	/// コンストラクタ
 	/// </summary>
 	/// <param name="">PassKeyを受け取る</param>
-	explicit DebugDrawRenderer(ConstructorKey);
+	explicit WireframeRenderer(ConstructorKey);
 
 	/// <summary>
 	/// デストラクタ
 	/// </summary>
-	~DebugDrawRenderer();
+	~WireframeRenderer();
 
 	/// <summary>
 	/// 初期化
@@ -75,7 +75,7 @@ public://メンバ関数
 	/// 描画データの追加
 	/// </summary>
 	/// <param name="renderData">描画データ</param>
-	void AddRenderData(const DebugDrawRenderData& renderData);
+	void AddRenderData(const WireframeRenderData& renderData);
 
 	/// <summary>
 	/// 描画
@@ -102,9 +102,9 @@ public://メンバ関数
 	BlendMode GetBlendMode(uint32_t instanceIndex);
 private://メンバ関数
 	//コピーコンストラクタ禁止
-	DebugDrawRenderer(const DebugDrawRenderer&) = delete;
+	WireframeRenderer(const WireframeRenderer&) = delete;
 	//代入演算子の禁止
-	DebugDrawRenderer operator=(const DebugDrawRenderer&) = delete;
+	WireframeRenderer operator=(const WireframeRenderer&) = delete;
 
 	/// <summary>
 	/// 頂点リソースの生成
@@ -135,7 +135,7 @@ private://メンバ変数
 	//DirectXの基盤部分
 	DirectXBase* directXBase_ = nullptr;
 	//デバッグ描画のレンダーデータ
-	std::vector<DebugDrawRenderData>renderDatas_;
+	std::vector<WireframeRenderData>renderDatas_;
 	//GPUリソース
 	std::vector<GpuResource>gpuResources_;
 };

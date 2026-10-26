@@ -230,6 +230,11 @@ bool DebugEditor::IsPreviewHovered() const{
 #endif // _DEBUG
 }
 
+//選択されているゲームオブジェクトを取得
+GameObject* DebugEditor::GetSelectedGameObject() const{
+	return selectedGameObject_;
+}
+
 //ドッキングスペースの描画
 void DebugEditor::DrawDockSpace(){
 #ifdef USE_IMGUI
@@ -1217,8 +1222,8 @@ bool DebugEditor::SelectGameObjectOperation([[maybe_unused]] GameObject* selectG
 #ifdef USE_IMGUI
 	if (ImGui::IsItemClicked() && !ImGui::IsItemToggledOpen()){
 		SelectGameObject(selectGameObject);
-	//表示した子オブジェクトの行のクリックを確認
-		//Gizmoシステムにゲームオブジェクトを設定
+		//表示した子オブジェクトの行のクリックを確認
+			//Gizmoシステムにゲームオブジェクトを設定
 		gizmoSystem_->SetSelectedGameObject(selectGameObject);
 		return true;
 	}

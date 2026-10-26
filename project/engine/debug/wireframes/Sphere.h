@@ -1,19 +1,18 @@
 #pragma once
 #include "BaseShape.h"
 #include "PrimitiveData.h"
-namespace debugDraw {
-	class Sphere :public BaseShape {
+namespace wireframe {
+	class Sphere :public BaseShape{
 	public://メンバ関数
 		/// <summary>
 		/// コンストラクタ
 		/// </summary>
-		/// <param name="gameObject">ゲームオブジェクト</param>
-		explicit Sphere(GameObject* gameObject);
+		Sphere();
 
 		/// <summary>
 		/// デストラクタ
 		/// </summary>
-		~Sphere();
+		~Sphere()override;
 
 		/// <summary>
 		/// 初期化
@@ -28,9 +27,8 @@ namespace debugDraw {
 		/// <summary>
 		/// 複製
 		/// </summary>
-		/// <param name="gameObject">ゲームオブジェクト</param>
 		/// <returns>コンポーネント</returns>
-		std::unique_ptr<Component>Clone(GameObject* gameObject)const override;
+		std::unique_ptr<BaseShape>Clone()const override;
 
 		/// <summary>
 		/// 球のセッター
@@ -43,12 +41,6 @@ namespace debugDraw {
 		/// </summary>
 		/// <returns>球</returns>
 		primitiveData::Sphere GetSphere();
-
-		/// <summary>
-		/// コンポーネントのタイプ名を取得
-		/// </summary>
-		/// <returns>コンポーネントのタイプ名</returns>
-		std::string GetTypeName()const override;
 	private://メンバ変数
 		/// <summary>
 		/// 頂点データの設定

@@ -1,9 +1,14 @@
 #define NOMINMAX
 #include "CollisionSystem.h"
 #include "GameObject.h"
-#include "AABBCollider.h"
+#include "BoxCollider.h"
 #include "Collision.h"
 #include "RigidBody.h"
+
+//一致した場合
+bool CollisionRecord::operator==(const CollisionRecord& other)const{
+	return collider1 == other.collider1 && collider2 == other.collider2;
+}
 
 //コンストラクタ
 CollisionSystem::CollisionSystem(ConstructorKey){
@@ -156,12 +161,20 @@ void CollisionSystem::CheckCollisionPair(BaseCollider* collider1, BaseCollider* 
 
 	//両方AABBかどうかを確認
 	if (type1 == ColliderType::kBox && type2 == ColliderType::kBox){
-		//AABBの衝突判定
-		CheckCollisionAABB(static_cast<BoxCollider*>(collider1), static_cast<BoxCollider*>(collider2));
+		//両方とも軸に平行か
+		BoxCollider* boxCollider1 = static_cast<BoxCollider*>(collider1);
+		BoxCollider* boxCollider2 = static_cast<BoxCollider*>(collider2);
+		if (boxCollider1->IsAxisAligned() && boxCollider2->IsAxisAligned()){
+			//AABBの衝突判定
+			CheckCollisionAABB(boxCollider1, boxCollider2);
+		} else{
+			//OBBも衝突判定
+			CheckCollisionOBB(boxCollider1, boxCollider2);
+		}
 	}
 }
 
-//Boxの衝突判定を確認
+//AABBの衝突判定を確認
 void CollisionSystem::CheckCollisionAABB(BoxCollider* collider1, BoxCollider* collider2){
 	//AABBを取得
 	primitiveData::AABB aabb1 = collider1->GetAABB();
@@ -170,14 +183,16 @@ void CollisionSystem::CheckCollisionAABB(BoxCollider* collider1, BoxCollider* co
 	//衝突判定
 	bool isCollision = collision::IsCollision(aabb1, aabb2);
 
+	//衝突したときの情報
+	CollisionInfo collisionInfo1 = {};
+	collisionInfo1.isCollision = isCollision;
+	CollisionInfo collisionInfo2 = {};
+	collisionInfo2.isCollision = isCollision;
+
 	//衝突していなかったら
 	if (!isCollision){
 		return;
 	}
-
-	//衝突したときの情報
-	CollisionInfo collisionInfo1 = {};
-	CollisionInfo collisionInfo2 = {};
 
 	//位置ベクトルを取得
 	const Vector3& translate1 = collider1->GetOwner()->GetTransform().translate;
@@ -196,12 +211,54 @@ void CollisionSystem::CheckCollisionAABB(BoxCollider* collider1, BoxCollider* co
 	collisionInfo2.normal = CalculatePushOutNormal(translate2 - translate1, overlap);
 
 	//めり込み度を代入
-	collisionInfo1.penetrationDepth = depth;
-	collisionInfo2.penetrationDepth = depth;
+	collisionInfo1.depth = depth;
+	collisionInfo2.depth = depth;
 
 	//衝突対象を設定
 	collisionInfo1.other = collider2;
 	collisionInfo2.other = collider1;
+
+	//コライダーのペアを登録
+	CollisionRecord collisionRecord = RegisterColliderPair(collider1, collider2, collisionInfo1, collisionInfo2);
+
+	//衝突状況の判断
+	collisionState_ = JudgeCollisionState(collisionRecord);
+
+	//ゲームオブジェクトを取得
+	GameObject* gameObject1 = collider1->GetOwner();
+	GameObject* gameObject2 = collider2->GetOwner();
+
+	//衝突していた場合
+	if (collider1->IsTrigger() || collider2->IsTrigger()){
+		//どちらか片方がIsTriggerがtrueだった場合
+		gameObject1->InvokeTriggerEvent(static_cast<uint32_t>(collisionState_), collider2);
+		gameObject2->InvokeTriggerEvent(static_cast<uint32_t>(collisionState_), collider1);
+	} else{
+		//オブジェクトを押し出す
+		ResolveCollision(collider1, collider2, collisionInfo1, collisionInfo2);
+
+		//どちらか片方がIsTriggerがfalseだった場合
+		gameObject1->InvokeCollisionEvent(static_cast<uint32_t>(collisionState_), collisionInfo1);
+		gameObject2->InvokeCollisionEvent(static_cast<uint32_t>(collisionState_), collisionInfo2);
+	}
+}
+
+//OBBの衝突判定を確認
+void CollisionSystem::CheckCollisionOBB(BoxCollider* collider1, BoxCollider* collider2){
+	//OBBを取得
+	primitiveData::OBB obb1 = collider1->GetOBB();
+	primitiveData::OBB obb2 = collider2->GetOBB();
+
+	//衝突したときの情報
+	CollisionInfo collisionInfo1 = GetOBBCollisionInfo(obb1, obb2);
+	collisionInfo1.other = collider2;
+	CollisionInfo collisionInfo2 = GetOBBCollisionInfo(obb2, obb1);
+	collisionInfo2.other = collider1;
+
+	//衝突していなければ
+	if (!collisionInfo1.isCollision){
+		return;
+	}
 
 	//コライダーのペアを登録
 	CollisionRecord collisionRecord = RegisterColliderPair(collider1, collider2, collisionInfo1, collisionInfo2);
@@ -288,8 +345,8 @@ void CollisionSystem::ResolveCollision(BaseCollider* collider1, BaseCollider* co
 	float rate2 = moveFactor2 / moveFactorSum;
 
 	//押し戻しをする
-	transform1.translate += info1.normal * info1.penetrationDepth * rate1;
-	transform2.translate += info2.normal * info2.penetrationDepth * rate2;
+	transform1.translate += info1.normal * info1.depth * rate1;
+	transform2.translate += info2.normal * info2.depth * rate2;
 }
 
 //コライダーのペアを登録
@@ -336,7 +393,154 @@ CollisionState CollisionSystem::JudgeCollisionState(const CollisionRecord& colli
 	return CollisionState::kExit;
 }
 
-//一致した場合
-bool CollisionRecord::operator==(const CollisionRecord& other)const{
-	return collider1 == other.collider1 && collider2 == other.collider2;
+//衝突情報の取得(OBBとOBB)
+CollisionInfo CollisionSystem::GetOBBCollisionInfo(const primitiveData::OBB& obb1, const primitiveData::OBB& obb2){
+	//衝突情報
+	CollisionInfo collisionInfo = {};
+	collisionInfo.isCollision = false;
+	collisionInfo.normal = {};
+	collisionInfo.depth = std::numeric_limits<float>::max();
+
+	//分離軸
+	std::array<Vector3, 15> separationAxes;
+
+	//面の法線
+	//obb1
+	separationAxes[0] = obb1.orientations[0];
+	separationAxes[1] = obb1.orientations[1];
+	separationAxes[2] = obb1.orientations[2];
+
+	//obb2
+	separationAxes[3] = obb2.orientations[0];
+	separationAxes[4] = obb2.orientations[1];
+	separationAxes[5] = obb2.orientations[2];
+
+	//各辺のクロス積
+	separationAxes[6] = obb1.orientations[0].Cross(obb2.orientations[0]);
+	separationAxes[7] = obb1.orientations[0].Cross(obb2.orientations[1]);
+	separationAxes[8] = obb1.orientations[0].Cross(obb2.orientations[2]);
+
+	separationAxes[9] = obb1.orientations[1].Cross(obb2.orientations[0]);
+	separationAxes[10] = obb1.orientations[1].Cross(obb2.orientations[1]);
+	separationAxes[11] = obb1.orientations[1].Cross(obb2.orientations[2]);
+
+	separationAxes[12] = obb1.orientations[2].Cross(obb2.orientations[0]);
+	separationAxes[13] = obb1.orientations[2].Cross(obb2.orientations[1]);
+	separationAxes[14] = obb1.orientations[2].Cross(obb2.orientations[2]);
+
+	//obb1の各頂点
+	std::array<Vector3, 8> obb1Vertices;
+	//obb1のセンターからの長さ
+	std::array<Vector3, 3>obb1Length = {
+		obb1.orientations[0] * obb1.size.x,
+		obb1.orientations[1] * obb1.size.y,
+		obb1.orientations[2] * obb1.size.z
+	};
+	//背面
+	//左上
+	obb1Vertices[0] = obb1.center - obb1Length[0] + obb1Length[1] + obb1Length[2];
+	//左下
+	obb1Vertices[1] = obb1.center - obb1Length[0] - obb1Length[1] + obb1Length[2];
+	//右上
+	obb1Vertices[2] = obb1.center + obb1Length[0] + obb1Length[1] + obb1Length[2];
+	//右下
+	obb1Vertices[3] = obb1.center + obb1Length[0] - obb1Length[1] + obb1Length[2];
+
+	//正面
+	//左上
+	obb1Vertices[4] = obb1.center - obb1Length[0] + obb1Length[1] - obb1Length[2];
+	//左下
+	obb1Vertices[5] = obb1.center - obb1Length[0] - obb1Length[1] - obb1Length[2];
+	//右上
+	obb1Vertices[6] = obb1.center + obb1Length[0] + obb1Length[1] - obb1Length[2];
+	//右下
+	obb1Vertices[7] = obb1.center + obb1Length[0] - obb1Length[1] - obb1Length[2];
+
+	//obb2の各頂点
+	std::array<Vector3, 8> obb2Vertices;
+	//obb1のセンターからの長さ
+	std::array<Vector3, 3>obb2Length = {
+		obb2.orientations[0] * obb2.size.x,
+		obb2.orientations[1] * obb2.size.y,
+		obb2.orientations[2] * obb2.size.z
+	};
+	//背面
+	//左上
+	obb2Vertices[0] = obb2.center - obb2Length[0] + obb2Length[1] + obb2Length[2];
+	//左下
+	obb2Vertices[1] = obb2.center - obb2Length[0] - obb2Length[1] + obb2Length[2];
+	//右上
+	obb2Vertices[2] = obb2.center + obb2Length[0] + obb2Length[1] + obb2Length[2];
+	//右下
+	obb2Vertices[3] = obb2.center + obb2Length[0] - obb2Length[1] + obb2Length[2];
+
+	//正面
+	//左上
+	obb2Vertices[4] = obb2.center - obb2Length[0] + obb2Length[1] - obb2Length[2];
+	//左下
+	obb2Vertices[5] = obb2.center - obb2Length[0] - obb2Length[1] - obb2Length[2];
+	//右上
+	obb2Vertices[6] = obb2.center + obb2Length[0] + obb2Length[1] - obb2Length[2];
+	//右下
+	obb2Vertices[7] = obb2.center + obb2Length[0] - obb2Length[1] - obb2Length[2];
+
+	for (const Vector3& separationAxis : separationAxes){
+		//ゼロ軸を無視
+		Vector3 axis = separationAxis;
+		if (axis.Length() < 1e-6f){
+			continue;
+		}
+		axis = axis.Normalize();
+
+		//最大値と最小値の宣言
+		float obb1Max = std::numeric_limits<float>::lowest();
+		float obb1Min = std::numeric_limits<float>::max();
+		float obb2Max = obb1Max;
+		float obb2Min = obb1Min;
+
+		//obb1を分離軸で射影したときの最大値と最小値を求める
+		for (const Vector3& obb1Vertex : obb1Vertices){
+			//すべての頂点を分離軸で射影する
+			float projected = obb1Vertex.Dot(axis);
+			//射影した点の最大値と最小値を求める
+			obb1Max = std::max(obb1Max, projected);
+			obb1Min = std::min(obb1Min, projected);
+		}
+
+		//obb2を分離軸で射影したときの最大値と最小値を求める
+		for (const Vector3& obb2Vertex : obb2Vertices){
+			//すべての頂点を分離軸で射影する
+			float projected = obb2Vertex.Dot(axis);
+			//射影した点の最大値と最小値を求める
+			obb2Max = std::max(obb2Max, projected);
+			obb2Min = std::min(obb2Min, projected);
+		}
+
+		//差分が形状を分離軸に射影した長さ=L
+		float length = (obb1Max - obb1Min) + (obb2Max - obb2Min);
+
+		float longSpan = std::max(obb1Max, obb2Max) - std::min(obb1Min, obb2Min);
+
+		//重なり量
+		float overlap = std::min(obb1Max, obb2Max) - std::max(obb1Min, obb2Min);
+
+		if (length < longSpan){
+			//分離軸が見つかったので衝突していない
+			return collisionInfo;
+		}
+
+		if (overlap < collisionInfo.depth){
+			collisionInfo.depth = overlap;
+			collisionInfo.normal = axis;
+		}
+	}
+
+	collisionInfo.isCollision = true;
+
+	Vector3 cornerDelta = obb1.center - obb2.center;
+	if (cornerDelta.Dot(collisionInfo.normal) < 0.0f){
+		collisionInfo.normal = -collisionInfo.normal;
+	}
+
+	return collisionInfo;
 }

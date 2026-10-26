@@ -1,10 +1,12 @@
 #pragma once
-#include <vector>
-#include <memory>
+#include "PrimitiveData.h"
 #include "Vector3.h"
 #include "BaseCollider.h"
+#include <vector>
+#include <memory>
 
 //前方宣言
+class BaseCollider;
 class GameObject;
 class BoxCollider;
 
@@ -85,11 +87,18 @@ private://メンバ関数
 	void CheckCollisionPair(BaseCollider* collider1, BaseCollider* collider2);
 
 	/// <summary>
-	/// Boxの衝突判定を確認
+	/// AABBの衝突判定を確認
 	/// </summary>
 	/// <param name="collider1">コライダー1</param>
 	/// <param name="collider2">コライダー2</param>
 	void CheckCollisionAABB(BoxCollider* collider1, BoxCollider* collider2);
+
+	/// <summary>
+	/// OBBの衝突判定を確認
+	/// </summary>
+	/// <param name="collider1">コライダー1</param>
+	/// <param name="collider2">コライダー2</param>
+	void CheckCollisionOBB(BoxCollider* collider1, BoxCollider* collider2);
 
 	/// <summary>
 	/// 押し出す方向を取得
@@ -124,6 +133,14 @@ private://メンバ関数
 	/// <param name="collisionRecord">衝突判定の記録</param>
 	/// <returns>衝突状況</returns>
 	CollisionState JudgeCollisionState(const CollisionRecord& collisionRecord);
+
+	/// <summary>
+	/// 衝突情報の取得(OBBとOBB)
+	/// </summary>
+	/// <param name="obb1">obb1</param>
+	/// <param name="obb2">obb2</param>
+	/// <returns>衝突情報</returns>
+	CollisionInfo GetOBBCollisionInfo(const primitiveData::OBB& obb1, const primitiveData::OBB& obb2);
 private://メンバ変数
 	//コライダー
 	std::vector<BaseCollider*>colliders_;

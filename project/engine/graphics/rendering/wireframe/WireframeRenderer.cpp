@@ -1,33 +1,33 @@
-#include "DebugDrawRenderer.h"
+#include "WireframeRenderer.h"
 #include "DirectXBase.h"
 #include "Camera.h"
 #include <cassert>
 #include <cstring>
 
 //生成
-std::unique_ptr<DebugDrawRenderer> DebugDrawRenderer::Create(ConstructorKey key, DirectXBase* directXBase){
-	std::unique_ptr<DebugDrawRenderer>instance = std::make_unique<DebugDrawRenderer>(key);
+std::unique_ptr<WireframeRenderer> WireframeRenderer::Create(ConstructorKey key, DirectXBase* directXBase){
+	std::unique_ptr<WireframeRenderer>instance = std::make_unique<WireframeRenderer>(key);
 	instance->Initialize(directXBase);
 	return instance;
 }
 
 //コンストラクタ
-DebugDrawRenderer::DebugDrawRenderer(ConstructorKey){
+WireframeRenderer::WireframeRenderer(ConstructorKey){
 }
 
 //デストラクタ
-DebugDrawRenderer::~DebugDrawRenderer(){
+WireframeRenderer::~WireframeRenderer(){
 }
 
 //初期化
-void DebugDrawRenderer::Initialize(DirectXBase* directXBase){
+void WireframeRenderer::Initialize(DirectXBase* directXBase){
 	//DirectXの基盤部分の記録
 	assert(directXBase);
 	directXBase_ = directXBase;
 }
 
 //描画データの追加
-void DebugDrawRenderer::AddRenderData(const DebugDrawRenderData& renderData){
+void WireframeRenderer::AddRenderData(const WireframeRenderData& renderData){
 	renderDatas_.push_back(renderData);
 
 	//インスタンスの検索キー
@@ -71,9 +71,9 @@ void DebugDrawRenderer::AddRenderData(const DebugDrawRenderData& renderData){
 }
 
 //描画
-void DebugDrawRenderer::Draw(uint32_t instanceIndex){
+void WireframeRenderer::Draw(uint32_t instanceIndex){
 	//デバッグ描画の描画データ
-	const DebugDrawRenderData& renderData = renderDatas_[instanceIndex];
+	const WireframeRenderData& renderData = renderDatas_[instanceIndex];
 	//GPUリソース
 	GpuResource& gpuResource = gpuResources_[instanceIndex];
 	//描画データを適応
@@ -94,22 +94,22 @@ void DebugDrawRenderer::Draw(uint32_t instanceIndex){
 }
 
 //描画データのリセット
-void DebugDrawRenderer::Reset(){
+void WireframeRenderer::Reset(){
 	renderDatas_.clear();
 }
 
 //描画データのサイズの取得
-uint32_t DebugDrawRenderer::GetRenderDataSize(){
+uint32_t WireframeRenderer::GetRenderDataSize(){
 	return static_cast<uint32_t>(renderDatas_.size());
 }
 
 //ブレンドモードの取得
-BlendMode DebugDrawRenderer::GetBlendMode(uint32_t instanceIndex){
+BlendMode WireframeRenderer::GetBlendMode(uint32_t instanceIndex){
 	return renderDatas_[instanceIndex].blendMode;
 }
 
 //頂点データの生成
-void DebugDrawRenderer::CreateVertexResource(GpuResource& gpuResource, uint32_t vertexCount){
+void WireframeRenderer::CreateVertexResource(GpuResource& gpuResource, uint32_t vertexCount){
 	HRESULT hr = S_FALSE;
 	//頂点リソースを生成
 	gpuResource.vertexResource = directXBase_->CreateBufferResource(sizeof(Vector4) * vertexCount);
@@ -131,7 +131,7 @@ void DebugDrawRenderer::CreateVertexResource(GpuResource& gpuResource, uint32_t 
 
 
 //インデックスリソースの生成
-void DebugDrawRenderer::CreateIndexResource(GpuResource& gpuResource, uint32_t indexCount){
+void WireframeRenderer::CreateIndexResource(GpuResource& gpuResource, uint32_t indexCount){
 	HRESULT hr = S_FALSE;
 	//インデックスリソースの生成
 	gpuResource.indexResource = directXBase_->CreateBufferResource(sizeof(uint32_t) * indexCount);
@@ -153,7 +153,7 @@ void DebugDrawRenderer::CreateIndexResource(GpuResource& gpuResource, uint32_t i
 }
 
 //マテリアルリソースの生成
-void DebugDrawRenderer::CreateMaterialResource(GpuResource& gpuResource){
+void WireframeRenderer::CreateMaterialResource(GpuResource& gpuResource){
 	HRESULT hr = S_FALSE;
 	//マテリアルリソースを作る
 	gpuResource.materialResource = directXBase_->CreateBufferResource(sizeof(Color));
@@ -168,7 +168,7 @@ void DebugDrawRenderer::CreateMaterialResource(GpuResource& gpuResource){
 }
 
 //ワールド行列リソースの生成
-void DebugDrawRenderer::CreateWorldMatrixResource(GpuResource& gpuResource){
+void WireframeRenderer::CreateWorldMatrixResource(GpuResource& gpuResource){
 	HRESULT hr = S_FALSE;
 	//座標変換行列リソースを作成する
 	gpuResource.worldMatrixResource = directXBase_->CreateBufferResource(sizeof(Matrix4x4));

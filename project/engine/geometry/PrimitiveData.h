@@ -40,7 +40,6 @@ namespace primitiveData {
 	//OBB
 	struct OBB {
 		Vector3 center = {};//中心点
-		Quaternion quaternion = Quaternion::IdentityQuaternion();//回転
 		Vector3 orientations[3] = {
 			{1.0f,0.0f,0.0f},
 			{0.0f,1.0f,0.0f},

@@ -4,25 +4,25 @@
 using namespace primitiveData;
 
 //コンストラクタ
-debugDraw::Cube::Cube(GameObject* gameObject) :BaseShape(gameObject){
+wireframe::Cube::Cube(){
 }
 
 //デストラクタ
-debugDraw::Cube::~Cube(){}
+wireframe::Cube::~Cube(){}
 
 //初期化
-void debugDraw::Cube::InitializeShape(){
+void wireframe::Cube::InitializeShape(){
 	vertexCount_ = 8;
 	indexCount_ = 24;
 }
 
 //更新
-void debugDraw::Cube::UpdateShape(){
+void wireframe::Cube::UpdateShape(){
 }
 
 //複製
-std::unique_ptr<Component> debugDraw::Cube::Clone(GameObject* gameObject) const{
-	std::unique_ptr<Cube>cloneInstance = std::make_unique<Cube>(gameObject);
+std::unique_ptr<wireframe::BaseShape> wireframe::Cube::Clone() const{
+	std::unique_ptr<Cube>cloneInstance = std::make_unique<Cube>();
 
 	//初期化
 	cloneInstance->Initialize();
@@ -32,13 +32,8 @@ std::unique_ptr<Component> debugDraw::Cube::Clone(GameObject* gameObject) const{
 	return cloneInstance;
 }
 
-//コンポーネントのタイプ名を取得
-std::string debugDraw::Cube::GetTypeName() const{
-	return "Cube";
-}
-
 //頂点データの設定
-void debugDraw::Cube::SettingVertexData(){
+void wireframe::Cube::SettingVertexData(){
 	//AABB
 	AABB localAABB = {
 		{-0.5f,-0.5f,-0.5f},
@@ -66,7 +61,7 @@ void debugDraw::Cube::SettingVertexData(){
 }
 
 //インデックスの設定
-void debugDraw::Cube::SettingIndexData(){
+void wireframe::Cube::SettingIndexData(){
 	int32_t indices[] = {
 		//前面
 		0,1,

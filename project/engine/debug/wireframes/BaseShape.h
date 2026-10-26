@@ -1,43 +1,53 @@
 #pragma once
 #include "RenderData.h"
 #include "RenderingData.h"
-#include "DebugDrawRenderData.h"
-#include "Component.h"
+#include "WireframeRenderData.h"
 #include "BlendMode.h"
+#include "Matrix4x4.h"
+#include "Quaternion.h"
+#include "Vector3.h"
+#include "Vector4.h"
 #include <cstdint>
 #include <vector>
-#include <GameObject.h>
-#include <Matrix4x4.h>
-#include <Quaternion.h>
-#include <Vector3.h>
-#include <Vector4.h>
 
 /// <summary>
 /// 形
 /// </summary>
-namespace debugDraw {
-	class BaseShape :public Component{
+namespace wireframe {
+	class BaseShape{
+	public://静的メンバ関数
+		template <class T>
+		static std::unique_ptr<T>Create(){
+			std::unique_ptr<T>instance = std::make_unique<T>();
+			instance->Initialize();
+			return instance;
+		}
 	public://メンバ関数
 		/// <summary>
 		/// コンストラクタ
 		/// </summary>
-		/// <param name="gameObject">ゲームオブジェクト</param>
-		explicit BaseShape(GameObject* gameObject);
+		BaseShape();
 
 		/// <summary>
 		/// デストラクタ
 		/// </summary>
-		~BaseShape()override;
+		virtual ~BaseShape();
 
 		/// <summary>
 		/// 初期化
 		/// </summary>
-		void Initialize()final override;
+		void Initialize();
 
 		/// <summary>
 		/// 更新
 		/// </summary>
-		void Update()final override;
+		void Update();
+
+		/// <summary>
+		/// 複製
+		/// </summary>
+		/// <returns>コンポーネント</returns>
+		virtual std::unique_ptr<BaseShape>Clone()const = 0;
 
 		/// <summary>
 		/// カラーの設定
@@ -70,6 +80,12 @@ namespace debugDraw {
 		void SetLocalTranslate(const Vector3& translate);
 
 		/// <summary>
+		/// 有効状態を設定
+		/// </summary>
+		/// <param name="isEnabled">有効状態</param>
+		void SetEnabled(bool isEnabled);
+
+		/// <summary>
 		/// 色の取得
 		/// </summary>
 		/// <returns>色</returns>
@@ -85,7 +101,13 @@ namespace debugDraw {
 		/// 描画データの取得
 		/// </summary>
 		/// <returns>描画データ</returns>
-		const DebugDrawRenderData& GetRenderData();
+		const WireframeRenderData& GetRenderData();
+
+		/// <summary>
+		/// 有効状態を取得
+		/// </summary>
+		/// <returns>有効状態</returns>
+		bool IsEnabled()const;
 	protected://メンバ関数
 		/// <summary>
 		/// 頂点データの設定
@@ -123,8 +145,10 @@ namespace debugDraw {
 		/// </summary>
 		void SetupRenderData();
 	private://メンバ変数
+		//有効か
+		bool isEnabled_ = true;
 		//描画データ
-		DebugDrawRenderData renderData_ = {};
+		WireframeRenderData renderData_ = {};
 		//色
 		Color color_ = {};
 		//ローカルのトランスフォーム

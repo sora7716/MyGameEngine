@@ -3,30 +3,30 @@
 #include "GameObject.h"
 
 //コンストラクタ
-debugDraw::Frustum::Frustum(GameObject* gameObject) :BaseShape(gameObject){
+wireframe::Frustum::Frustum(){
 }
 
 //デストラクタ
-debugDraw::Frustum::~Frustum(){
+wireframe::Frustum::~Frustum(){
 }
 
 //初期化
-void debugDraw::Frustum::InitializeShape(){
+void wireframe::Frustum::InitializeShape(){
 	vertexCount_ = 8;
 	indexCount_ = 24;
 }
 
 //更新
-void debugDraw::Frustum::UpdateShape(){
-	GameObject* gameObject = GetOwner();
-	//トランスフォームに送信
-	gameObject->GetTransform().rotate = targetCamera_->GetQuaternion();
-	gameObject->GetTransform().translate = targetCamera_->GetTranslate();
+void wireframe::Frustum::UpdateShape(){
+	if (targetCamera_){
+		SetLocalRotate(targetCamera_->GetQuaternion());
+		SetLocalTranslate(targetCamera_->GetTranslate());
+	}
 }
 
 //複製
-std::unique_ptr<Component> debugDraw::Frustum::Clone(GameObject* gameObject) const{
-	std::unique_ptr<Frustum>cloneInstance = std::make_unique<Frustum>(gameObject);
+std::unique_ptr<wireframe::BaseShape> wireframe::Frustum::Clone() const{
+	std::unique_ptr<Frustum>cloneInstance = std::make_unique<Frustum>();
 
 	//初期化
 	cloneInstance->Initialize();
@@ -40,17 +40,12 @@ std::unique_ptr<Component> debugDraw::Frustum::Clone(GameObject* gameObject) con
 }
 
 //対象となるカメラの設定
-void debugDraw::Frustum::SetTargetCamera(Camera* targetCamera){
+void wireframe::Frustum::SetTargetCamera(Camera* targetCamera){
 	targetCamera_ = targetCamera;
 }
 
-//コンポーネントのタイプ名を取得
-std::string debugDraw::Frustum::GetTypeName() const{
-	return "Frustum";
-}
-
 //頂点の設定
-void debugDraw::Frustum::SettingVertexData(){
+void wireframe::Frustum::SettingVertexData(){
 	for (uint32_t i = 0; i < 8; i++){
 		//w=1.0fを入れて同次座標系に変換
 		vertices_[i] = targetCamera_->GetFrustum().localCorners[i];
@@ -58,7 +53,7 @@ void debugDraw::Frustum::SettingVertexData(){
 }
 
 //インデックスの設定
-void debugDraw::Frustum::SettingIndexData(){
+void wireframe::Frustum::SettingIndexData(){
 	uint32_t indices[] = {
 		//前面
 		0,1,

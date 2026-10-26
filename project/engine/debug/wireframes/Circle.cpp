@@ -3,26 +3,26 @@
 #include "GameObject.h"
 
 //コンストラクタ
-debugDraw::Circle::Circle(GameObject* gameObject) :BaseShape(gameObject){
+wireframe::Circle::Circle(){
 }
 
 //デストラクタ
-debugDraw::Circle::~Circle(){}
+wireframe::Circle::~Circle(){}
 
 //初期化
-void debugDraw::Circle::InitializeShape(){
+void wireframe::Circle::InitializeShape(){
 	vertexCount_ = 32;
 	indexCount_ = vertexCount_ * 2;
 	circle_.radius = 1.0f;
 }
 
 //更新
-void debugDraw::Circle::UpdateShape(){
+void wireframe::Circle::UpdateShape(){
 }
 
 //複製
-std::unique_ptr<Component> debugDraw::Circle::Clone(GameObject* gameObject) const{
-	std::unique_ptr<Circle>cloneInstance = std::make_unique<Circle>(gameObject);
+std::unique_ptr<wireframe::BaseShape> wireframe::Circle::Clone() const{
+	std::unique_ptr<Circle>cloneInstance = std::make_unique<Circle>();
 
 	//初期化
 	cloneInstance->Initialize();
@@ -36,22 +36,17 @@ std::unique_ptr<Component> debugDraw::Circle::Clone(GameObject* gameObject) cons
 }
 
 //円のセッター
-void debugDraw::Circle::SetCircle(const primitiveData::Circle& circle){
+void wireframe::Circle::SetCircle(const primitiveData::Circle& circle){
 	circle_ = circle;
 }
 
-//コンポーネントのタイプ名を取得
-std::string debugDraw::Circle::GetTypeName() const{
-	return "Circle";
-}
-
 //円のゲッター
-primitiveData::Circle debugDraw::Circle::GetCircle(){
+primitiveData::Circle wireframe::Circle::GetCircle(){
 	return circle_;
 }
 
 //頂点データの設定
-void debugDraw::Circle::SettingVertexData(){
+void wireframe::Circle::SettingVertexData(){
 	for (uint32_t i = 0; i < vertexCount_; i++){
 		float t = static_cast<float>(i) / static_cast<float>(vertexCount_);
 		float angle = t * mathUtility::kPi * 2.0f;
@@ -66,7 +61,7 @@ void debugDraw::Circle::SettingVertexData(){
 }
 
 //インデックスの設定
-void debugDraw::Circle::SettingIndexData(){
+void wireframe::Circle::SettingIndexData(){
 	for (uint32_t i = 0; i < vertexCount_; i++){
 		uint32_t next = (i + 1) % vertexCount_;
 

@@ -2,19 +2,18 @@
 #include "BaseShape.h"
 #include "PrimitiveData.h"
 #include <memory>
-namespace debugDraw {
-	class Cube :public BaseShape {
+namespace wireframe {
+	class Cube :public BaseShape{
 	public://メンバ関数
 		/// <summary>
 		/// コンストラクタ
 		/// </summary>
-		/// <param name="gameObject">ゲームオブジェクト</param>
-		explicit Cube(GameObject* gameObject);
+		Cube();
 
 		/// <summary>
 		/// デストラクタ
 		/// </summary>
-		~Cube();
+		~Cube()override;
 
 		/// <summary>
 		/// 初期化
@@ -29,15 +28,8 @@ namespace debugDraw {
 		/// <summary>
 		/// 複製
 		/// </summary>
-		/// <param name="gameObject">ゲームオブジェクト</param>
-		/// <returns>コンポーネント</returns>
-		std::unique_ptr<Component>Clone(GameObject* gameObject)const override;
-
-		/// <summary>
-		/// コンポーネントのタイプ名を取得
-		/// </summary>
-		/// <returns>コンポーネントのタイプ名</returns>
-		std::string GetTypeName()const override;
+		/// <returns>インスタンス</returns>
+		std::unique_ptr<BaseShape>Clone()const override;
 	private://メンバ変数
 		/// <summary>
 		/// 頂点データの設定

@@ -161,6 +161,12 @@ public://メンバ関数
 	/// </summary>
 	/// <returns>プレビューのImGuiウィンドウを選択しているか</returns>
 	bool IsPreviewHovered()const;
+
+	/// <summary>
+	/// 選択されているゲームオブジェクトを取得
+	/// </summary>
+	/// <returns>選択されているゲームオブジェクト</returns>
+	GameObject* GetSelectedGameObject()const;
 private://メンバ関数
 	/// <summary>
 	/// ドッキングスペースの描画
@@ -242,7 +248,7 @@ private://メンバ関数
 	/// オブジェクト階層で接続を解除する操作
 	/// </summary>
 	/// <param name="attachedObject">接続しているオブジェクト</param>
-	void DetachToOperation(GameObject*attachedObject);
+	void DetachToOperation(GameObject* attachedObject);
 
 	/// <summary>
 	/// オブジェクトの階層で選択する操作

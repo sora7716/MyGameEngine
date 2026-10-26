@@ -17,38 +17,38 @@ void Component::DebugImGui(){
 }
 
 //接触した瞬間
-void Component::OnCollisionEnter(const CollisionInfo& info){
-	(void)info;
+void Component::OnCollisionEnter([[maybe_unused]] const CollisionInfo& info){
+	
 }
 
 //接触中
-void Component::OnCollisionStay(const CollisionInfo& info){
-	(void)info;
+void Component::OnCollisionStay([[maybe_unused]] const CollisionInfo& info){
+	
 }
 
 //離れた瞬間
-void Component::OnCollisionExit(const CollisionInfo& info){
-	(void)info;
+void Component::OnCollisionExit([[maybe_unused]] const CollisionInfo& info){
+	
 }
 
 //接触した瞬間
-void Component::OnTriggerEnter(BaseCollider* other){
-	(void)other;
+void Component::OnTriggerEnter([[maybe_unused]] BaseCollider* other){
+	
 }
 
 //接触中
-void Component::OnTriggerStay(BaseCollider* other){
-	(void)other;
+void Component::OnTriggerStay([[maybe_unused]] BaseCollider* other){
+	
 }
 
 //離れた瞬間
-void Component::OnTriggerExit(BaseCollider* other){
-	(void)other;
+void Component::OnTriggerExit([[maybe_unused]] BaseCollider* other){
+	
 }
 
 //ゲームオブジェクトから解除する
-void Component::OnGameObjectRemoving(GameObject* target){
-	(void)target;
+void Component::OnGameObjectRemoving([[maybe_unused]] GameObject* target){
+	
 }
 
 //更新のフェーズの取得

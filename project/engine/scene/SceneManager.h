@@ -2,6 +2,7 @@
 #include "BaseScene.h"
 #include "AbstractSceneFactory.h"
 #include "CameraRenderData.h"
+#include "GizmoVisualizer.h"
 #include <memory>
 
 //前方宣言
@@ -108,5 +109,7 @@ private://メンバ変数
 	RenderSystem* renderSystem_ = nullptr;
 	//衝突判定システム
 	CollisionSystem* collisionSystem_ = nullptr;
+	//Gizmoの情報を見えるものにする
+	std::unique_ptr<GizmoVisualizer>gizmoVisualizer_ = nullptr;
 };
 

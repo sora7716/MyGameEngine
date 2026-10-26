@@ -4,7 +4,7 @@
 #include "Player.h"
 #include "SkyBox.h"
 #include "OrbitCameraController.h"
-#include "AABBCollider.h"
+#include "BoxCollider.h"
 #include "Cube.h"
 #include "ImGuiManager.h"
 #include "Enemy.h"
@@ -60,6 +60,8 @@ void GameScene::Initialize(){
 	}
 	primitiveObject3ds[0]->SetModel("cube");
 	primitiveObjects[0]->SetName("cube");
+	primitiveObjects[0]->AddComponent<BoxCollider>();
+
 	primitiveObject3ds[1]->SetModel("plane");
 	primitiveObjects[1]->SetName("plane");
 	primitiveObject3ds[2]->SetModel("sphere_32");
@@ -162,11 +164,6 @@ GameObject* GameScene::CreatePlayerObject(){
 	playerAABB->SetHalfSize(playerHitBoxSize / 2.0f);
 	playerAABB->SetBodyType(BodyType::kDynamic);
 
-	//ワイヤーフレーム
-	debugDraw::Cube* playerHitBox = gameObject->AddComponent<debugDraw::Cube>();
-	playerHitBox->SetLocalScale(playerHitBoxSize);
-	playerHitBox->SetColor(Color::GetRed());
-
 	return gameObject;
 }
 
@@ -183,8 +180,6 @@ GameObject* GameScene::CreateGround(){
 	BoxCollider* blocker = gameObject->AddComponent<BoxCollider>();
 	blocker->SetHalfSize(blockerSize / 2.0f);
 	blocker->SetBodyType(BodyType::kStatic);
-	debugDraw::Cube* blockerDebug = gameObject->AddComponent<debugDraw::Cube>();
-	blockerDebug->SetLocalScale(blockerSize);
 
 	//3Dオブジェクト
 	Object3d* groundModel = gameObject->AddComponent<Object3d>();
@@ -209,15 +204,11 @@ GameObject* GameScene::CreateEnemy(){
 	gameObject->AddComponent<Enemy>();
 
 	//AABBコンポーネント
-	Vector3 hitBoxSize = Vector3::GetOne();
+	Vector3 hitBoxSize = { 0.5f,0.5f,0.5f };
 	BoxCollider* hitBox = gameObject->AddComponent<BoxCollider>();
 	hitBox->SetIsTrigger(true);
+	hitBox->SetHalfSize(hitBoxSize);
 	hitBox->SetBodyType(BodyType::kDynamic);
-
-	//ワイヤーフレーム
-	debugDraw::Cube* hitBoxDebug = gameObject->AddComponent<debugDraw::Cube>();
-	hitBox->SetHalfSize(hitBoxSize / 2.0f);
-	hitBoxDebug->SetLocalScale(hitBoxSize);
 
 	//すり抜け防止用のコライダー
 	Vector3 blockerSize = { 0.3f,0.3f,0.3f };
@@ -227,12 +218,6 @@ GameObject* GameScene::CreateEnemy(){
 	blocker->SetOffset(blockerOffset);
 	blocker->SetIsTrigger(false);
 	blocker->SetBodyType(BodyType::kDynamic);
-
-	//ワイヤーフレーム
-	debugDraw::Cube* blockerDebug = gameObject->AddComponent<debugDraw::Cube>();
-	blockerDebug->SetLocalScale(blockerSize);
-	blockerDebug->SetLocalTranslate(blockerOffset);
-	blockerDebug->SetColor(Color::GetRed());
 
 	//3Dオブジェクト
 	Object3d* enemyModel = gameObject->AddComponent<Object3d>();

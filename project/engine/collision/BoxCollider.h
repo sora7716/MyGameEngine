@@ -29,6 +29,12 @@ public://メンバ関数
 	void Update()override;
 
 	/// <summary>
+	/// プロパティ一覧を登録
+	/// </summary>
+	/// <param name="registry">レジストリ</param>
+	void RegisterProperties(PropertyRegistry* registry);
+
+	/// <summary>
 	/// ハーフサイズの設定
 	/// </summary>
 	/// <param name="halfSize">ハーフサイズ</param>
@@ -41,22 +47,16 @@ public://メンバ関数
 	void SetOffset(const Vector3& offset);
 
 	/// <summary>
-	/// ハーフサイズの取得
+	/// OBBの取得
 	/// </summary>
-	/// <returns>ハーフサイズ</returns>
-	const Vector3& GetHalfSize()const;
+	/// <returns>OBB</returns>
+	const primitiveData::OBB& GetOBB();
 
 	/// <summary>
 	/// AABBの取得
 	/// </summary>
 	/// <returns>AABB</returns>
-	const primitiveData::AABB& GetAABB();
-
-	/// <summary>
-	/// オフセットの取得
-	/// </summary>
-	/// <returns>オフセット</returns>
-	const Vector3& GetOffset()const;
+	primitiveData::AABB GetAABB();
 
 	/// <summary>
 	/// コピー
@@ -64,6 +64,12 @@ public://メンバ関数
 	/// <param name="gameObject">ゲームオブジェクト</param>
 	/// <returns>コピーしたインスタンス</returns>
 	std::unique_ptr<Component> Clone(GameObject* gameObject)const override;
+
+	/// <summary>
+	/// 軸が平行かどうかを取得
+	/// </summary>
+	/// <returns>軸が平行かどうか</returns>
+	bool IsAxisAligned();
 
 	/// <summary>
 	/// コンポーネントのタイプ名を取得
@@ -77,12 +83,10 @@ public://メンバ関数
 	/// <returns>コライダータイプ</returns>
 	ColliderType GetColliderType()const override;
 private://メンバ変数
-	//AABB
-	primitiveData::AABB aabb_ = {};
+	//OBB
+	primitiveData::OBB obb_ = {};
 	//ハーフサイズ
 	Vector3 halfSize_ = {};
-	//ワールドのハーフサイズ
-	Vector3 worldHalfSize_ = {};
 	//オフセット
 	Vector3 offset_ = {};
 };

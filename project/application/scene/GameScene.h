@@ -3,7 +3,7 @@
 
 //前方宣言
 class BoxCollider;
-namespace debugDraw{
+namespace wireframe{
 	class Cube;
 }
 

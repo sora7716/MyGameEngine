@@ -1,17 +1,14 @@
-#include "Line.h"
+#include "Segment.h"
 using namespace primitiveData;
-using namespace debugDraw;
-
 
 //コンストラクタ
-debugDraw::Line::Line(GameObject* gameObject) :BaseShape(gameObject){
-}
+wireframe::Segment::Segment(){}
 
 //デストラクタ
-Line::~Line(){}
+wireframe::Segment::~Segment(){}
 
 //初期化
-void Line::InitializeShape(){
+void wireframe::Segment::InitializeShape(){
 	vertexCount_ = 2;
 	indexCount_ = 2;
 
@@ -20,12 +17,12 @@ void Line::InitializeShape(){
 }
 
 //更新
-void Line::UpdateShape(){
+void wireframe::Segment::UpdateShape(){
 }
 
 //複製
-std::unique_ptr<Component> debugDraw::Line::Clone(GameObject* gameObject) const{
-	std::unique_ptr<Line>cloneInstance = std::make_unique<Line>(gameObject);
+std::unique_ptr<wireframe::BaseShape> wireframe::Segment::Clone() const{
+	std::unique_ptr<Segment>cloneInstance = std::make_unique<Segment>();
 
 	//初期化
 	cloneInstance->Initialize();
@@ -39,22 +36,17 @@ std::unique_ptr<Component> debugDraw::Line::Clone(GameObject* gameObject) const{
 }
 
 //線分のゲッター
-void Line::SetSegment(const Segment& segment){
+void wireframe::Segment::SetSegment(const primitiveData::Segment& segment){
 	segment_ = segment;
 }
 
 //線分のゲッター
-Segment Line::GetSegment(){
+Segment wireframe::Segment::GetSegment(){
 	return segment_;
 }
 
-//コンポーネントのタイプ名を取得
-std::string debugDraw::Line::GetTypeName() const{
-	return "Line";
-}
-
 //頂点データの設定
-void Line::SettingVertexData(){
+void wireframe::Segment::SettingVertexData(){
 	//始点
 	vertices_[0] = segment_.origin;
 
@@ -63,7 +55,7 @@ void Line::SettingVertexData(){
 }
 
 //インデックスの設定
-void Line::SettingIndexData(){
+void wireframe::Segment::SettingIndexData(){
 	//始点
 	indices_[0] = 0;
 

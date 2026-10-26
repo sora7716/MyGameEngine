@@ -111,17 +111,6 @@ void ImGuiManager::UpdatePlatformWindow(){
 #endif // USE_IMGUI
 }
 
-//OBBデータ用のImGui
-void ImGuiManager::DragOBB([[maybe_unused]] primitiveData::OBB& obb){
-#ifdef USE_IMGUI
-	ImGui::DragFloat3("size", &obb.size.x, 0.1f);
-	static Vector3 obbRadian = {};
-	ImGui::DragFloat3("rotate", &obbRadian.x, 0.1f);
-	obb.quaternion = Quaternion::EulerAngleToQuaternion(obbRadian);
-	ImGui::DragFloat3("center", &obb.center.x, 0.1f);
-#endif // USE_IMGUI
-}
-
 //円用のImGui
 void ImGuiManager::DragCircle([[maybe_unused]] primitiveData::Circle& circle){
 #ifdef USE_IMGUI

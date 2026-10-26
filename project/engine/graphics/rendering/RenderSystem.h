@@ -2,6 +2,7 @@
 #include "PipelineManagerData.h"
 #include "RenderingData.h"
 #include "CameraRenderData.h"
+#include "WireframeRenderData.h"
 #include <vector>
 #include <memory>
 
@@ -21,10 +22,7 @@ class SkyBox;
 class SkyBoxRenderer;
 class Sprite;
 class SpriteRenderer;
-namespace debugDraw{
-	class BaseShape;
-}
-class DebugDrawRenderer;
+class WireframeRenderer;
 class ParticleSystem;
 class ParticleRenderer;
 class Camera;
@@ -123,10 +121,10 @@ public://メンバ関数
 	void CollectActiveSprites(const std::vector<std::unique_ptr<GameObject>>& gameObjects);
 
 	/// <summary>
-	/// 描画に有効なDebugDrawを集める
+	/// 描画に有効なワイヤーフレームを集める
 	/// </summary>
-	/// <param name="gameObjects">ゲームオブジェクトの配列</param>
-	void CollectActiveDebugDraw(const std::vector<std::unique_ptr<GameObject>>& gameObjects);
+	/// <param name="wireframes">ワイヤーフレームの描画データの配列</param>
+	void CollectActiveWireframe(const std::vector<WireframeRenderData>& wireframes);
 
 	/// <summary>
 	/// 描画に有効なパーティクルシステムを集める
@@ -217,10 +215,8 @@ private://メンバ関数
 	//スプライトのレンダラー
 	std::unique_ptr<SpriteRenderer>spriteRenderer_ = nullptr;
 
-	//描画に有効なDebugDraw
-	std::vector<debugDraw::BaseShape*>activeDebugDraws_;
-	//DebugDrawのレンダラー
-	std::unique_ptr<DebugDrawRenderer>debugDrawRenderer_ = nullptr;
+	//ワイヤーフレームのレンダラー
+	std::unique_ptr<WireframeRenderer>wireframeRenderer_ = nullptr;
 
 	//描画に有効なパーティクルシステム
 	std::vector<ParticleSystem*>activeParticleSystems_;

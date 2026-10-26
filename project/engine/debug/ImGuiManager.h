@@ -75,12 +75,6 @@ public://メンバ関数
 	void UpdatePlatformWindow();
 
 	/// <summary>
-	/// OBBデータ用のImGui
-	/// </summary>
-	/// <param name="obb">obb</param>
-	static void DragOBB(primitiveData::OBB& obb);
-
-	/// <summary>
 	/// 円用のImGui
 	/// </summary>
 	/// <param name="circle">円</param>

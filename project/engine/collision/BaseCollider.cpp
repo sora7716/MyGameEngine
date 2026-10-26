@@ -14,13 +14,12 @@ void BaseCollider::Initialize(){
 }
 
 //衝突したときの判定(押し戻しあり)
-void BaseCollider::OnCollisionStay(const CollisionInfo& info){
-	(void)info;
+void BaseCollider::OnCollisionStay([[maybe_unused]] const CollisionInfo& info){	
 }
 
 //衝突したときの判定(押し戻しなし)
-void BaseCollider::OnTriggerStay(BaseCollider* other){
-	(void)other;
+void BaseCollider::OnTriggerStay([[maybe_unused]] BaseCollider* other){
+	
 }
 
 //めり込むかを判定するフラグの設定

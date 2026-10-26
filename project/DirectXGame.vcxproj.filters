@@ -109,9 +109,6 @@
     <Filter Include="engine\graphics\rendering\skyBox">
       <UniqueIdentifier>{f80ce055-d702-4ba9-9313-f7ac42f92ef0}</UniqueIdentifier>
     </Filter>
-    <Filter Include="engine\graphics\rendering\debugDraw">
-      <UniqueIdentifier>{ee11c4a8-f24a-41a9-bd01-84ebb90bf872}</UniqueIdentifier>
-    </Filter>
     <Filter Include="engine\graphics\rendering\particle">
       <UniqueIdentifier>{45a0f329-24c2-4885-b42b-2b821b1ffa51}</UniqueIdentifier>
     </Filter>
@@ -147,6 +144,9 @@
     </Filter>
     <Filter Include="externals\imguizmo">
       <UniqueIdentifier>{80cb5927-8f8a-4f85-a67c-3f251ee4c0a1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="engine\graphics\rendering\wireframe">
+      <UniqueIdentifier>{ee11c4a8-f24a-41a9-bd01-84ebb90bf872}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -219,7 +219,7 @@
     <ClCompile Include="engine\debug\wireframes\Frustum.cpp">
       <Filter>engine\debug\wireframes</Filter>
     </ClCompile>
-    <ClCompile Include="engine\debug\wireframes\Line.cpp">
+    <ClCompile Include="engine\debug\wireframes\Segment.cpp">
       <Filter>engine\debug\wireframes</Filter>
     </ClCompile>
     <ClCompile Include="engine\debug\wireframes\Plane.cpp">
@@ -327,9 +327,6 @@
     <ClCompile Include="engine\graphics\rendering\skyBox\SkyBoxRenderer.cpp">
       <Filter>engine\graphics\rendering\skyBox</Filter>
     </ClCompile>
-    <ClCompile Include="engine\graphics\rendering\debugDraw\DebugDrawRenderer.cpp">
-      <Filter>engine\graphics\rendering\debugDraw</Filter>
-    </ClCompile>
     <ClCompile Include="application\scene\GameScene.cpp">
       <Filter>application\scene</Filter>
     </ClCompile>
@@ -348,7 +345,7 @@
     <ClCompile Include="application\actor\OrbitCameraController.cpp">
       <Filter>application\actor</Filter>
     </ClCompile>
-    <ClCompile Include="engine\collision\AABBCollider.cpp">
+    <ClCompile Include="engine\collision\BoxCollider.cpp">
       <Filter>engine\collision</Filter>
     </ClCompile>
     <ClCompile Include="engine\collision\CollisionSystem.cpp">
@@ -457,7 +454,13 @@
       <Filter>engine\3d\lighting</Filter>
     </ClCompile>
     <ClCompile Include="engine\debug\GizmoSystem.cpp">
-      <Filter>ソース ファイル</Filter>
+      <Filter>engine\debug</Filter>
+    </ClCompile>
+    <ClCompile Include="engine\graphics\rendering\wireframe\WireframeRenderer.cpp">
+      <Filter>engine\graphics\rendering\wireframe</Filter>
+    </ClCompile>
+    <ClCompile Include="engine\debug\GizmoVisualizer.cpp">
+      <Filter>engine\debug</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -527,7 +530,7 @@
     <ClInclude Include="engine\debug\wireframes\Frustum.h">
       <Filter>engine\debug\wireframes</Filter>
     </ClInclude>
-    <ClInclude Include="engine\debug\wireframes\Line.h">
+    <ClInclude Include="engine\debug\wireframes\Segment.h">
       <Filter>engine\debug\wireframes</Filter>
     </ClInclude>
     <ClInclude Include="engine\debug\wireframes\Plane.h">
@@ -647,12 +650,6 @@
     <ClInclude Include="engine\graphics\rendering\skyBox\SkyBoxRenderer.h">
       <Filter>engine\graphics\rendering\skyBox</Filter>
     </ClInclude>
-    <ClInclude Include="engine\graphics\rendering\debugDraw\DebugDrawRenderer.h">
-      <Filter>engine\graphics\rendering\debugDraw</Filter>
-    </ClInclude>
-    <ClInclude Include="engine\graphics\rendering\debugDraw\DebugDrawRenderData.h">
-      <Filter>engine\graphics\rendering\debugDraw</Filter>
-    </ClInclude>
     <ClInclude Include="engine\graphics\rendering\object3d\Object3dRenderData.h">
       <Filter>engine\graphics\rendering\object3d</Filter>
     </ClInclude>
@@ -686,7 +683,7 @@
     <ClInclude Include="application\actor\OrbitCameraController.h">
       <Filter>application\actor</Filter>
     </ClInclude>
-    <ClInclude Include="engine\collision\AABBCollider.h">
+    <ClInclude Include="engine\collision\BoxCollider.h">
       <Filter>engine\collision</Filter>
     </ClInclude>
     <ClInclude Include="engine\collision\CollisionSystem.h">
@@ -807,7 +804,16 @@
       <Filter>engine\3d\lighting</Filter>
     </ClInclude>
     <ClInclude Include="engine\debug\GizmoSystem.h">
-      <Filter>ヘッダー ファイル</Filter>
+      <Filter>engine\debug</Filter>
+    </ClInclude>
+    <ClInclude Include="engine\graphics\rendering\wireframe\WireframeRenderData.h">
+      <Filter>engine\graphics\rendering\wireframe</Filter>
+    </ClInclude>
+    <ClInclude Include="engine\graphics\rendering\wireframe\WireframeRenderer.h">
+      <Filter>engine\graphics\rendering\wireframe</Filter>
+    </ClInclude>
+    <ClInclude Include="engine\debug\GizmoVisualizer.h">
+      <Filter>engine\debug</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

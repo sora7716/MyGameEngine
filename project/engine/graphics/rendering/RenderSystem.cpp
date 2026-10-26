@@ -14,11 +14,12 @@
 #include "Sprite.h"
 #include "SpriteRenderer.h"
 #include "BaseShape.h"
-#include "DebugDrawRenderer.h"
+#include "WireframeRenderer.h"
 #include "ParticleSystem.h"
 #include "ParticleRenderer.h"
 #include "DebugCameraController.h"
 #include "CameraRenderer.h"
+#include "BaseShape.h"
 #include <algorithm>
 
 //生成
@@ -57,7 +58,7 @@ void RenderSystem::Initialize(DirectXBase* directXBase, SRVManager* srvManager, 
 	//スカイボックスのレンダラー
 	skyBoxRenderer_ = SkyBoxRenderer::Create(SkyBoxRenderer::ConstructorKey{}, directXBase, textureManager);
 	//デバッグ描画のレンダラー
-	debugDrawRenderer_ = DebugDrawRenderer::Create(DebugDrawRenderer::ConstructorKey{}, directXBase);
+	wireframeRenderer_ = WireframeRenderer::Create(WireframeRenderer::ConstructorKey{}, directXBase);
 	//パーティクルのレンダラー
 	particleRenderer_ = ParticleRenderer::Create(ParticleRenderer::ConstructorKey{}, directXBase, srvManager, textureManager);
 	//カメラのレンダラー
@@ -106,16 +107,16 @@ void RenderSystem::Draw(){
 
 #ifdef _DEBUG
 	//DebugDraw
-	for (uint32_t i = 0; i < debugDrawRenderer_->GetRenderDataSize(); i++){
+	for (uint32_t i = 0; i < wireframeRenderer_->GetRenderDataSize(); i++){
 		//描画開始
-		PreDraw(debugDrawRenderer_->GetBlendMode(i));
+		PreDraw(wireframeRenderer_->GetBlendMode(i));
 		//カメラの設定
 		cameraRenderer_->Bind(selectCamera_.index, 2);
 		//DebugDrawの描画
-		debugDrawRenderer_->Draw(i);
+		wireframeRenderer_->Draw(i);
 	}
 	//描画オブジェクトのリセット
-	debugDrawRenderer_->Reset();
+	wireframeRenderer_->Reset();
 #endif // _DEBUG
 
 	//スプライト
@@ -316,45 +317,17 @@ void RenderSystem::CollectActiveSprites(const std::vector<std::unique_ptr<GameOb
 	}
 }
 
-//描画に有効なDebugDrawを集める
-void RenderSystem::CollectActiveDebugDraw(const std::vector<std::unique_ptr<GameObject>>& gameObjects){
-	//描画に有効なDebugDrawをリセット
-	activeDebugDraws_.clear();
-
-	//探索開始
-	for (const std::unique_ptr<GameObject>& gameObject : gameObjects){
-		//ゲームオブジェクトがNullじゃないか
-		if (!gameObject){
-			continue;
-		}
-
-		//ゲームオブジェクトが有効状態か
-		if (!gameObject->IsActive()){
-			continue;
-		}
-
-		//DebugDrawを取得
-		std::vector<debugDraw::BaseShape*> debugDraws = gameObject->GetComponents<debugDraw::BaseShape>();
-
-		for (debugDraw::BaseShape* debugDraw : debugDraws){
-			//オブジェクト3dがNullか
-			if (!debugDraw){
-				continue;
-			}
-
-			//オブジェクト3dが有効状態か
-			if (!debugDraw->IsEnabled()){
-				continue;
-			}
-
-			//activeDebugDrawを追加
-			activeDebugDraws_.push_back(debugDraw);
-		}
+//描画に有効なワイヤーフレームをを集める
+void RenderSystem::CollectActiveWireframe(const std::vector<WireframeRenderData>& wireframes){
+	//受け取った配列が空だったら
+	if (wireframes.empty()){
+		return;
 	}
 
-	//レンダラーに追加
-	for (debugDraw::BaseShape* debugDraw : activeDebugDraws_){
-		debugDrawRenderer_->AddRenderData(debugDraw->GetRenderData());
+	//探索開始
+	for (const WireframeRenderData& wireframe : wireframes){
+		//レンダラーに追加
+		wireframeRenderer_->AddRenderData(wireframe);
 	}
 }
 

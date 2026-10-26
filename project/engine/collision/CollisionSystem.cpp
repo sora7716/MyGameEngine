@@ -5,6 +5,10 @@
 #include "BoxCollider.h"
 #include "SphereCollider.h"
 #include "RigidBody.h"
+#include <algorithm>
+#include <iterator>
+#include <array>
+#include <cstdint>
 
 //一致した場合
 bool CollisionRecord::operator==(const CollisionRecord& other)const{
@@ -177,6 +181,11 @@ void CollisionSystem::CheckCollisionPair(BaseCollider* collider1, BaseCollider* 
 		SphereCollider* sphereCollider1 = static_cast<SphereCollider*>(collider1);
 		SphereCollider* sphereCollider2 = static_cast<SphereCollider*>(collider2);
 		CheckCollisionSphere(sphereCollider1, sphereCollider2);
+	} else if (type1 == ColliderType::kSphere && type2 == ColliderType::kBox){
+		//片方がSphereでもう片方がBoxなら
+		SphereCollider* sphereCollider = static_cast<SphereCollider*>(collider1);
+		BoxCollider* boxCollider = static_cast<BoxCollider*>(collider2);
+		CheckCollisionSphereAndAABB(sphereCollider, boxCollider);
 	}
 }
 
@@ -251,7 +260,7 @@ void CollisionSystem::CheckCollisionOBB(BoxCollider* collider1, BoxCollider* col
 
 //Sphereの衝突判定を確認
 void CollisionSystem::CheckCollisionSphere(SphereCollider* collider1, SphereCollider* collider2){
-	//OBBを取得
+	//Sphereを取得
 	primitiveData::Sphere sphere1 = collider1->GetSphere();
 	primitiveData::Sphere sphere2 = collider2->GetSphere();
 
@@ -295,7 +304,94 @@ void CollisionSystem::CheckCollisionSphere(SphereCollider* collider1, SphereColl
 	}
 	collisionInfo1.normal = normal1;
 	collisionInfo2.normal = normal2;
-	
+
+	//衝突したコライダーのペアを処理する
+	HandleCollisionPair(collider1, collider2, collisionInfo1, collisionInfo2);
+}
+
+//SphereとAABBの衝突判定を確認
+void CollisionSystem::CheckCollisionSphereAndAABB(SphereCollider* collider1, BoxCollider* collider2){
+	//Sphereを取得
+	primitiveData::Sphere sphere = collider1->GetSphere();
+	//AABBを取得
+	primitiveData::AABB  aabb = collider2->GetAABB();
+
+	//衝突したときの情報
+	CollisionInfo collisionInfo1 = {};
+	collisionInfo1.other = collider2;
+	CollisionInfo collisionInfo2 = {};
+	collisionInfo2.other = collider1;
+
+	//衝突したか確認
+	bool isCollision = collision::IsCollision(aabb, sphere);
+
+	//衝突していなければ
+	if (!isCollision){
+		return;
+	}
+
+	//押し戻す方向
+	Vector3 normal = Vector3::GetZero();
+	//押し出す方向
+	float depth = 0.0f;
+
+	//最近接点を求める
+	Vector3 closestPoint{
+		std::clamp(sphere.center.x, aabb.min.x, aabb.max.x),
+		std::clamp(sphere.center.y, aabb.min.y, aabb.max.y),
+		std::clamp(sphere.center.z, aabb.min.z, aabb.max.z),
+	};
+
+	//最近接点と球の中心の差分
+	Vector3 delta = sphere.center - closestPoint;
+	float distance = delta.Length();
+
+	//距離が0以下だったら
+	if (distance == 0.0f){
+		//頂点数
+		constexpr uint32_t kVertexCount = 6;
+		//各6つの頂点の距離
+		std::array<float, kVertexCount> distances = {
+			sphere.center.x - aabb.min.x,//左
+			aabb.max.x - sphere.center.x,//右
+			sphere.center.y - aabb.min.y,//下
+			aabb.max.y - sphere.center.y,//上
+			sphere.center.z - aabb.min.z,//前
+			aabb.max.z - sphere.center.z//後
+		};
+		//各面に対する押し出すベクトル
+		std::array<Vector3, kVertexCount> normals = {
+			{
+				{-1.0f,0.0f,0.0f},//左
+				{1.0f,0.0f,0.0f},//右
+				{0.0f,-1.0f,0.0f},//下
+				{0.0f,1.0f,0.0f},//上
+				{0.0f,0.0f,-1.0f},//前
+				{0.0f,0.0f,1.0f}//後
+			}//後ろ
+		};
+
+		//最小のインデックスを求める(イテレータ)
+		std::array<float, kVertexCount>::iterator minIt = std::min_element(distances.begin(), distances.end());
+
+		//イテレータからインデックスを取得
+		uint32_t index = static_cast<uint32_t>(std::distance(distances.begin(), minIt));
+
+		//結果
+		normal = normals[index];
+		depth = *minIt + sphere.radius;
+	} else{
+		//球の中心がAABBの外側の場合
+		normal = delta / distance;
+		depth = sphere.radius - distance;
+	}
+
+	//情報を反映
+	collisionInfo1.normal = normal;
+	collisionInfo2.normal = -normal;
+	collisionInfo1.depth = depth;
+	collisionInfo2.depth = depth;
+
 	//衝突したコライダーのペアを処理する
 	HandleCollisionPair(collider1, collider2, collisionInfo1, collisionInfo2);
 }

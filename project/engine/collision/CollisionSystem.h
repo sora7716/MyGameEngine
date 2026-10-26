@@ -109,6 +109,13 @@ private://メンバ関数
 	void CheckCollisionSphere(SphereCollider* collider1, SphereCollider* collider2);
 
 	/// <summary>
+	/// SphereとAABBの衝突判定を確認
+	/// </summary>
+	/// <param name="collider1">コライダー1</param>
+	/// <param name="collider2">コライダー2</param>
+	void CheckCollisionSphereAndAABB(SphereCollider* collider1, BoxCollider* collider2);
+
+	/// <summary>
 	/// 衝突したコライダーのペアを処理する
 	/// </summary>
 	/// <param name="collider1">コライダー1</param>

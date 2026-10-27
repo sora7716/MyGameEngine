@@ -255,6 +255,58 @@ public://メンバ関数
 	void Add(const std::string& displayName, const std::vector<std::string>& options, std::function<uint32_t()> getter, std::function<void(uint32_t)>setter);
 
 	/// <summary>
+	/// 追加
+	/// </summary>
+	/// <typeparam name="T">操作対象の型</typeparam>
+	/// <typeparam name="Value">Inspectorで扱う型</typeparam>
+	/// <typeparam name="Arg">Setterが受け取る型</typeparam>
+	/// <param name="displayName">表示名</param>
+	/// <param name="value">値</param>
+	/// <param name="object">オブジェクト</param>
+	/// <param name="index">検索キー</param>
+	/// <param name="setter">セッター</param>
+	template <typename T, typename Value, typename Setter>
+	void Add(
+		const std::string& displayName,
+		const Value& value,
+		T* object,
+		uint32_t index,
+		Setter setter){
+		const Value* valuePtr = &value;
+		std::function<Value()>getter = [valuePtr]()->Value{return *valuePtr; };
+
+		std::function<void(const Value&)>setterFunc = [object, index, setter](const Value& value){(object->*setter)(index, value); };
+		Add(displayName, getter, setterFunc);
+	}
+
+	/// <summary>
+	/// 追加
+	/// </summary>
+	/// <typeparam name="T">操作対象の型</typeparam>
+	/// <typeparam name="Value">Inspectorで扱う型</typeparam>
+	/// <typeparam name="Arg">Setterが受け取る型</typeparam>
+	/// <param name="displayName">表示名</param>
+	/// <param name="value">値</param>
+	/// <param name="object">オブジェクト</param>
+	/// <param name="index">検索キー</param>
+	/// <param name="setter">セッターの関数ポインタ</param>
+	/// <param name="dragSpeed">ドラッグする速度</param>
+	template <typename T, typename Value, typename Setter>
+	void Add(
+		const std::string& displayName,
+		const Value& value,
+		T* object,
+		uint32_t index,
+		Setter setter,
+		float dragSpeed){
+		const Value* valuePtr = &value;
+		std::function<Value()>getter = [valuePtr]()->Value{return *valuePtr; };
+
+		std::function<void(const Value&)>setterFunc = [object, index, setter](const Value& value){(object->*setter)(index, value); };
+		Add(displayName, getter, setterFunc, dragSpeed);
+	}
+
+	/// <summary>
 	/// プロパティの配列の取得
 	/// </summary>
 	/// <returns>プロパティの配列</returns>

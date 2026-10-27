@@ -118,7 +118,7 @@ void Object3d::RegisterProperties(PropertyRegistry* registry){
 		std::function<void(uint32_t)> diffuseModelSetter = [i, this](uint32_t diffuseModel){
 			return this->SetDiffuseModel(i, static_cast<DiffuseModel>(diffuseModel));
 			};
-		registry->Add("diffuseModel", { "Lambert","HalfLambert" }, diffuseModelGetter, diffuseModelSetter);
+		registry->Add("拡散反射モデル", { "Lambert","HalfLambert" }, diffuseModelGetter, diffuseModelSetter);
 
 		//鏡面反射モデルの切り替え
 		std::function<uint32_t()> specularModelGetter = [i, material]()->uint32_t{
@@ -127,85 +127,28 @@ void Object3d::RegisterProperties(PropertyRegistry* registry){
 		std::function<void(uint32_t)> specularModelSetter = [i, this](uint32_t specularModel){
 			return this->SetSpecularModel(i, static_cast<SpecularModel>(specularModel));
 			};
-		registry->Add("specularModel", { "Phong","BlingPhong" }, specularModelGetter, specularModelSetter);
+		registry->Add("鏡面反射モデル", { "Phong","BlingPhong" }, specularModelGetter, specularModelSetter);
 		//色
-		registry->Add(
-			"color",
-			[i, material](){
-				return material->GetSlots()[i].material.color;
-			},
-			[i, this](const Color& color){
-				this->SetColor(i, color);
-			}
-		);
+		registry->Add("色", material->GetSlots()[i].material.color, this, i, &Object3d::SetColor);
 
 		//UVScale
-		registry->Add(
-			"uvScale",
-			[i, material](){
-				return material->GetSlots()[i].uvTransform.scale;
-			},
-			[i, this](const Vector2& scale){
-				this->SetUVScale(i, scale);
-			},
-			0.1f
-		);
+		registry->Add("UVの拡縮", material->GetSlots()[i].uvTransform.scale, this, i, &Object3d::SetUVScale, 0.1f);
 
 		//UVRotate
-		registry->Add(
-			"uvRotate",
-			[i, material](){
-				return material->GetSlots()[i].uvTransform.rotate;
-			},
-			[i, this](float rotate){
-				this->SetUVRotate(i, rotate);
-			},
-			0.1f
-		);
+		registry->Add("UVの角度", material->GetSlots()[i].uvTransform.rotate, this, i, &Object3d::SetUVRotate, 0.1f);
 
 		//UVTranslate
-		registry->Add(
-			"uvTranslate",
-			[i, material](){
-				return material->GetSlots()[i].uvTransform.translate;
-			},
-			[i, this](const Vector2& translate){
-				this->SetUVTranslate(i, translate);
-			},
-			0.1f
-		);
+		registry->Add("UVの位置", material->GetSlots()[i].uvTransform.scale, this, i, &Object3d::SetUVTranslate, 0.1f);
 
 		//ライティングするか
-		std::function<bool()> boolGetter = [i, material]() -> bool{
-			return material->GetSlots()[i].material.enableLighting != 0;
-			};
-		std::function<void(bool)> boolSetter = [i, this](bool value){
-			SetEnabledLighting(i, value);
-			};
+		registry->Add("ライティングするか", enabledLighting_, this, i, &Object3d::SetEnabledLighting);
 
-		registry->Add("enableLighting", boolGetter, boolSetter);
 		//輝度
-		registry->Add(
-			"shiness",
-			[i, material](){
-				return material->GetSlots()[i].material.shininess;
-			},
-			[i, this](float shininess){
-				this->SetShininess(i, shininess);
-			},
-			0.01f
-		);
+		registry->Add("輝度", material->GetSlots()[i].material.shininess, this, i, &Object3d::SetShininess, 0.1f);
+
 		//環境マップの映り込み
-		registry->Add(
-			"coefficient",
-			[i, material](){
-				return material->GetSlots()[i].material.environmentCoefficient;
-			},
-			[i, this](float coefficient){
-				this->SetEnvironmentCoefficient(i, coefficient);
-			},
-			0.001f
-		);
+		registry->Add("環境マップの映り込み", material->GetSlots()[i].material.environmentCoefficient, this, i, &Object3d::SetEnvironmentCoefficient, 0.1f);
+
 		//グループの終了
 		registry->EndGroup();
 	}
@@ -405,14 +348,15 @@ void Object3d::SetEnvironmentMap(uint32_t index, const std::string& environmentM
 }
 
 //ライティングフラグの設定
-void Object3d::SetEnabledLighting(uint32_t index, bool isLighting){
+void Object3d::SetEnabledLighting(uint32_t index, bool enabledLighting){
 	//マテリアルインスタンスがなければ
 	if (!materialInstance_){
 		return;
 	}
 	//マテリアルを個別化する
 	EnsureUniqueMaterialInstance();
-	materialInstance_->SetIsLighting(index, isLighting);
+	enabledLighting_ = enabledLighting;
+	materialInstance_->SetIsLighting(index, enabledLighting_);
 }
 
 //輝度の設定
@@ -427,7 +371,7 @@ void Object3d::SetShininess(uint32_t index, float shininess){
 }
 
 //環境マップの映り込み度を調整
-void Object3d::SetEnvironmentCoefficient(uint32_t index, float& environmentCoefficient){
+void Object3d::SetEnvironmentCoefficient(uint32_t index, float environmentCoefficient){
 	//マテリアルインスタンスがなければ
 	if (!materialInstance_){
 		return;

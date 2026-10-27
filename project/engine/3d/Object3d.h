@@ -154,11 +154,11 @@ public://メンバ関数
 	void SetEnvironmentMap(uint32_t index, const std::string& environmentMapFileName);
 
 	/// <summary>
-	/// ライティングフラグの設定
+	/// ライティングをするか
 	/// </summary>
 	/// <param name="index">マテリアルスロット番号の検索キー</param>
-	/// <param name="isLighting">ライティングフラグ</param>
-	void SetEnabledLighting(uint32_t index, bool isLighting);
+	/// <param name="enabledLighting">ライティングをするか</param>
+	void SetEnabledLighting(uint32_t index, bool enabledLighting);
 
 	/// <summary>
 	/// 輝度の設定
@@ -172,7 +172,7 @@ public://メンバ関数
 	/// </summary>
 	/// <param name="index">マテリアルスロット番号の検索キー</param>
 	/// <param name="environmentCoefficient">k環境マップの映り込み度</param>
-	void SetEnvironmentCoefficient(uint32_t index, float& environmentCoefficient);
+	void SetEnvironmentCoefficient(uint32_t index, float environmentCoefficient);
 
 	/// <summary>
 	/// 拡散反射モデルの切り替え
@@ -399,4 +399,7 @@ private://メンバ変数
 	std::string attachedNodePath_ = "";
 	//メッシュのワールド行列
 	std::vector<NodeMeshInstance>nodeMeshInstance_;
+
+	//ライティングするか
+	bool enabledLighting_ = true;
 };

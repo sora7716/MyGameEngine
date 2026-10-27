@@ -1,12 +1,14 @@
 #include "BaseScene.h"
 #include "AbstractSceneFactory.h"
 #include "WinApi.h"
+#include "DebugCameraController.h"
 #include "GameObject.h"
 #include "StringUtility.h"
 #include "TagManager.h"
-#include "RenderSystem.h"
+#include "Input.h"
+#include "Object3d.h"
+#include "CollisionSystem.h"
 #include <algorithm>
-//#include "algorithms/ColliderManager.h"
 
 //コンストラクタ
 BaseScene::BaseScene(){
@@ -33,45 +35,86 @@ void BaseScene::Initialize(){
 		}
 	}
 
-	//コライダーマネージャー
-	//colliderManager_ = std::make_unique<ColliderManager>();
-	////調整ファイルの読み込み
-	//GlobalVariables::GetInstance()->LoadFiles();
+	//デバッグカメラ
+	GameObject* debugCameraObject = CreateGameObject();
+	debugCamera_ = debugCameraObject->AddComponent<Camera>();
+	debugCameraController_ = debugCameraObject->AddComponent<DebugCameraController>();
+	debugCameraObject->SetName("debugCamera");
 }
 
 //更新
 void BaseScene::Update(){
-	//ゲームカメラの更新
-	if (gameCamera_){
-		gameCamera_->Update();
-	}
+	//更新のステート
+	UpdateState();
 
-	//ゲームオブジェクトのコンポーネントの更新
+	//ゲームオブジェクトの更新
 	for (const std::unique_ptr<GameObject>& gameObject : gameObjects_){
 		//gameObjectがNullじゃなければ
 		if (gameObject){
-			gameObject->UpdateComponents();
+			gameObject->Update(UpdatePhase::kMain);
 		}
 	}
+}
 
-	//コライダーマネージャー
-	//colliderManager_->ProcessCollision();
+//更新のステート
+void BaseScene::UpdateState(){
 }
 
 //デバッグ
 void BaseScene::Debug(){
-
+	//ゲームオブジェクト更新
+	for (const std::unique_ptr<GameObject>& gameObject : gameObjects_){
+		//gameObjectがNullじゃなければ
+		if (gameObject){
+			gameObject->Update(UpdatePhase::kDebug);
+			gameObject->DebugImGui();
+		}
+	}
 }
 
 //終了
 void BaseScene::Finalize(){
 	//シーンファクトリーの解放
-	delete sceneFactory_;
-	sceneFactory_ = nullptr;
+	sceneFactory_.reset();
 }
 
 //ゲームオブジェクトの削除
-void BaseScene::DeleteGameObject(GameObject* target){
+void BaseScene::DeleteGameObject(GameObject* target, CollisionSystem* collisionSystem){
+	if (target){
+		//親子関係の解消
+		for (std::unique_ptr<GameObject>& gameObject : gameObjects_){
+			//ゲームオブジェクトがNullなら
+			if (!gameObject){
+				continue;
+			}
+
+			//親オブジェクトと一致していたら
+			if (gameObject->GetParentObject() == target){
+				gameObject->Detach();
+				//Object3dがあった場合
+				Object3d* object3d = gameObject->GetComponent<Object3d>();
+				if (!object3d){
+					object3d->Detach();
+				}
+			}
+		}
+	}
+
+	//衝突判定システムから削除
+	collisionSystem->RemoveReflectionTo(target);
+
+	//GameObjectからコンポーネントを外すのを通知
+	for (const std::unique_ptr<GameObject>& gameObject : gameObjects_){
+		//ゲームオブジェクトが存在するか
+		if (gameObject){
+			//ゲームオブジェクトが対象と一致しているか
+			if (gameObject.get() != target){
+				gameObject->NotifyGameObjectRemoving(target);
+			}
+		}
+	}
+
+	//ゲームオブジェクトから削除
 	gameObjects_.erase(
 		std::remove_if(
 			gameObjects_.begin(),
@@ -147,6 +190,9 @@ GameObject* BaseScene::CreateGameObject(){
 	//GameObjectの生成
 	std::unique_ptr<GameObject>gameObject = GameObject::Create(name);
 
+	//現在のシーンを設定
+	gameObject->SetCurrentScene(this);
+
 	//ポインタを保存
 	GameObject* gameObjectPtr = gameObject.get();
 
@@ -158,18 +204,32 @@ GameObject* BaseScene::CreateGameObject(){
 
 //ゲームオブジェクトの取得
 const std::vector<std::unique_ptr<GameObject>>& BaseScene::GetGameObjects()const{
-	// TODO: return ステートメントをここに挿入します
 	return gameObjects_;
 }
 
-//シーンで必要な情報の設定
-void BaseScene::SetSceneContext(const SceneContext& sceneContext){
+//セットアップ
+void BaseScene::SetUp(const SceneContext& sceneContext){
 	sceneContext_ = sceneContext;
 }
 
-//ゲームカメラの取得
-Camera* BaseScene::GetGameCamera(){
-	return gameCamera_;
+//シーンで必要な情報の取得
+const SceneContext& BaseScene::GetSceneContext(){
+	return sceneContext_;
+}
+
+//デバッグが有効かの設定
+void BaseScene::SetIsDebugControlEnabled(bool isControlEnabled){
+	debugCameraController_->SetIsDebugControlEnabled(isControlEnabled);
+}
+
+//アプリケーションが有効かの設定
+void BaseScene::SetIsAppInputEnabled(bool isAppInputEnabled){
+	sceneContext_.input->SetIsAppInputEnabled(isAppInputEnabled);
+}
+
+//デバッグカメラの取得
+Camera* BaseScene::GetDebugCamera() const{
+	return debugCamera_;
 }
 
 //名前を重複しないようにする

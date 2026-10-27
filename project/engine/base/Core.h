@@ -1,23 +1,26 @@
 #pragma once
-#include "WinApi.h"
-#include "DirectXBase.h"
-#include "SRVManager.h"
-#include "Input.h"
-#include "TextureManager.h"
-#include "ModelManager.h"
-#include "ImGuiManager.h"
-#include "CameraManager.h"
-#include "SceneManager.h"
-#include "AudioManager.h"
-#include "GameObjectList.h"
-#include "AbstractSceneFactory.h"
-#include "TagManager.h"
-#include "PipelineManager.h"
-#include "LightingManager.h"
-#include "RenderSystem.h"
 #include "Context.h"
-
 #include <memory>
+
+//前方宣言
+class WinApi;
+class DirectXBase;
+class SRVManager;
+class RTVManager;
+class DSVManager;
+class Input;
+class TextureManager;
+class ModelManager;
+class ImGuiManager;
+class SceneManager;
+class AudioManager;
+class DefaultResourceLoader;
+class AbstractSceneFactory;
+class TagManager;
+class PipelineManager;
+class LightingManager;
+class RenderSystem;
+class CollisionSystem;
 
 /// <summary>
 /// エンジンの核
@@ -52,10 +55,22 @@ public://メンバ関数
 	DirectXBase* GetDirectXBase()const;
 
 	/// <summary>
-	/// SRVマネージャーの取得
+	/// SRVの管理の取得
 	/// </summary>
-	/// <returns>SRVマネージャー</returns>
+	/// <returns>SRVの管理</returns>
 	SRVManager* GetSRVManager()const;
+
+	/// <summary>
+	/// RTVの管理の取得
+	/// </summary>
+	/// <returns>RTVの管理</returns>
+	RTVManager* GetRTVManager()const;
+
+	/// <summary>
+	/// DSVの管理の取得
+	/// </summary>
+	/// <returns>DSVの管理</returns>
+	DSVManager* GetDSVManager()const;
 
 	/// <summary>
 	/// 入力の取得
@@ -82,12 +97,6 @@ public://メンバ関数
 	ImGuiManager* GetImGuiManager()const;
 
 	/// <summary>
-	/// カメラマネージャーの取得
-	/// </summary>
-	/// <returns>カメラマネージャー</returns>
-	CameraManager* GetCameraManager()const;
-
-	/// <summary>
 	/// シーンマネージャーの取得
 	/// </summary>
 	/// <returns>シーンマネージャー</returns>
@@ -103,7 +112,7 @@ public://メンバ関数
 	/// ゲームオブジェクトのリストの取得
 	/// </summary>
 	/// <returns>ゲームオブジェクトのリストの取得</returns>
-	GameObjectList* GetGameObjectList()const;
+	DefaultResourceLoader* GetGameObjectList()const;
 
 	/// <summary>
 	/// シーンファクトリの取得
@@ -134,6 +143,12 @@ public://メンバ関数
 	/// </summary>
 	/// <returns>描画システム</returns>
 	RenderSystem* GetRenderSystem()const;
+
+	/// <summary>
+	/// 衝突判定システムの取得
+	/// </summary>
+	/// <returns>衝突判定システム</returns>
+	CollisionSystem* GetCollisionSystem()const;
 private://メンバ関数
 	//コピーコンストラクタ禁止
 	Core(const Core&) = delete;
@@ -144,8 +159,12 @@ private://メンバ変数
 	std::unique_ptr<WinApi>winApi_ = nullptr;
 	//DirectXの基盤部分
 	std::unique_ptr<DirectXBase>directXBase_ = nullptr;
-	//SRVマネージャー
+	//SRVの管理
 	std::unique_ptr<SRVManager>srvManager_ = nullptr;
+	//RTVの管理
+	std::unique_ptr<RTVManager>rtvManager_ = nullptr;
+	//DSVの管理
+	std::unique_ptr<DSVManager>dsvManager_ = nullptr;
 	//入力
 	std::unique_ptr<Input>input_ = nullptr;
 	//テクスチャマネージャー
@@ -154,14 +173,12 @@ private://メンバ変数
 	std::unique_ptr<ModelManager>modelManager_ = nullptr;
 	//ImGuiマネージャー
 	std::unique_ptr<ImGuiManager>imGuiManager_ = nullptr;
-	//カメラマネージャー
-	std::unique_ptr<CameraManager>cameraManager_ = nullptr;
 	//シーンマネージャー
 	std::unique_ptr<SceneManager>sceneManager_ = nullptr;
 	//オーディオマネージャー
 	std::unique_ptr<AudioManager>audioManager_ = nullptr;
 	//ゲームオブジェクトのリスト
-	std::unique_ptr<GameObjectList>gameObjectList_ = nullptr;
+	std::unique_ptr<DefaultResourceLoader>gameObjectList_ = nullptr;
 	//シーンファクトリ
 	std::unique_ptr< AbstractSceneFactory> sceneFactory_ = nullptr;
 	//タグの管理
@@ -172,6 +189,8 @@ private://メンバ変数
 	std::unique_ptr<LightingManager>lightingManager_ = nullptr;
 	//描画システム
 	std::unique_ptr<RenderSystem>renderSystem_ = nullptr;
+	//衝突判定システム
+	std::unique_ptr<CollisionSystem>collisionSystem_ = nullptr;  
 	//シーンで必要なもの
 	SceneContext sceneContext_ = {};
 };

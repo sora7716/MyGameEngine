@@ -1,0 +1,250 @@
+#include "GameScene.h"
+#include "GameObject.h"
+#include "Object3d.h"
+#include "Player.h"
+#include "SkyBox.h"
+#include "OrbitCameraController.h"
+#include "BoxCollider.h"
+#include "SphereCollider.h"
+#include "Cube.h"
+#include "ImGuiManager.h"
+#include "Enemy.h"
+#include "RigidBody.h"
+#include "MathUtility.h"
+#include "Color.h"
+#include "DirectionalLight.h"
+#include "PointLight.h"
+#include "SpotLight.h"
+
+//コンストラクタ
+GameScene::GameScene(){
+}
+
+//デストラクタ
+GameScene::~GameScene(){
+}
+
+//初期化
+void GameScene::Initialize(){
+	//基底クラスの初期化
+	BaseScene::Initialize();
+
+	//SkyBoxの生成
+	CreateSkyBox();
+
+	//プレイヤーの生成
+	playerObject_ = CreatePlayerObject();
+
+	//ゲームカメラの生成
+	gameCameraObject_ = CreateGameCamera(playerObject_);
+
+	//プレイヤーにカメラを設定
+	playerObject_->GetComponent<Player>()->SetCameraObject(gameCameraObject_);
+
+	//地面の生成
+	CreateGround();
+
+	//敵の生成
+	CreateEnemy();
+
+	//剣の生成
+	CreateSword();
+
+	//ゲームオブジェクトの配列
+	std::array<GameObject*, 3> primitiveObjects = {};
+	std::array<Object3d*, primitiveObjects.size()> primitiveObject3ds = {};
+	for (uint32_t i = 0; i < primitiveObjects.size(); i++){
+		primitiveObjects[i] = CreateGameObject();
+		primitiveObjects[i]->GetTransform().translate.x = static_cast<float>(i * 2);
+		primitiveObjects[i]->GetTransform().translate.y = 2.0f;
+		primitiveObject3ds[i] = primitiveObjects[i]->AddComponent<Object3d>();
+	}
+	primitiveObject3ds[0]->SetModel("cube");
+	primitiveObjects[0]->SetName("cube");
+	primitiveObjects[0]->AddComponent<BoxCollider>();
+
+	primitiveObject3ds[1]->SetModel("plane");
+	primitiveObjects[1]->SetName("plane");
+	primitiveObject3ds[2]->SetModel("sphere_32");
+	primitiveObjects[2]->SetName("sphere");
+	primitiveObjects[2]->AddComponent<SphereCollider>();
+
+	GameObject* directionalLightObject = CreateGameObject();
+	directionalLightObject->SetName("平行光源");
+	directionalLightObject->AddComponent<DirectionalLight>();
+
+	std::vector<GameObject*>pointLightObjects_ = {};
+	pointLightObjects_.resize(1);
+	for (uint32_t i = 0; i < static_cast<uint32_t>(pointLightObjects_.size()); i++){
+		pointLightObjects_[i] = CreateGameObject();
+		pointLightObjects_[i]->SetName("点光源_" + std::to_string(i));
+		pointLightObjects_[i]->AddComponent<PointLight>();
+	}
+
+	std::vector<GameObject*>spotLightObjects_ = {};
+	spotLightObjects_.resize(1);
+	for (uint32_t i = 0; i < static_cast<uint32_t>(spotLightObjects_.size()); i++){
+		spotLightObjects_[i] = CreateGameObject();
+		spotLightObjects_[i]->SetName("スポットライト_" + std::to_string(i));
+		spotLightObjects_[i]->AddComponent<SpotLight>();
+	}
+}
+
+//更新のステート
+void GameScene::UpdateState(){
+}
+
+//デバッグ
+void GameScene::Debug(){
+	//基底クラスのデバッグ
+	BaseScene::Debug();
+}
+
+//解放処理
+void GameScene::Finalize(){
+	//基底クラスの解放
+	BaseScene::Finalize();
+}
+
+//SkyBoxの生成
+GameObject* GameScene::CreateSkyBox(){
+	//ゲームオブジェクト
+	GameObject* gameObject = CreateGameObject();
+	gameObject->GetTransform().scale = { 100.0f,100.0f,100.0f };
+	gameObject->SetName("SkyBox");
+	gameObject->SetTag("SkyBox");
+
+	//SkyBox
+	gameObject->AddComponent<SkyBox>();
+
+	return gameObject;
+}
+
+//ゲームカメラの生成
+GameObject* GameScene::CreateGameCamera(GameObject* playerObject){
+	//ゲームオブジェクト
+	GameObject* gameObject = CreateGameObject();
+	gameObject->SetName("ゲームカメラ");
+
+	//カメラ
+	gameObject->AddComponent<Camera>();
+
+	//3Dオブジェクト
+	Object3d* gameCameraModel = gameObject->AddComponent<Object3d>();
+	gameCameraModel->SetModel("camera");
+
+	//オービットカメラ
+	OrbitCameraController* orbitCamera = gameObject->AddComponent<OrbitCameraController>();
+	orbitCamera->SetTarget(playerObject);
+	orbitCamera->SetInput(GetSceneContext().input);
+
+	return gameObject;
+}
+
+//プレイヤーの生成
+GameObject* GameScene::CreatePlayerObject(){
+	GameObject* gameObject = CreateGameObject();
+	gameObject->SetName("プレイヤー");
+	gameObject->SetTag("Player");
+
+	//3Dオブジェクト
+	Object3d* object3d = gameObject->AddComponent<Object3d>();
+	object3d->SetModel("player");
+
+	//リジットボディ
+	RigidBody* rigidBody = gameObject->AddComponent<RigidBody>();
+	rigidBody->SetEnabled(false);
+
+	//プレイヤー
+	Player* player = gameObject->AddComponent<Player>();
+	player->SetInput(GetSceneContext().input);
+	player->SetObject3d(object3d);
+	player->SetRigidBody(rigidBody);
+
+	//Boxコンポーネント
+	Vector3 playerHitBoxSize = Vector3::GetOne();
+	BoxCollider* playerAABB = gameObject->AddComponent<BoxCollider>();
+	playerAABB->SetHalfSize(playerHitBoxSize / 2.0f);
+	playerAABB->SetBodyType(BodyType::kDynamic);
+
+	//Sphereをコンポーネント
+	SphereCollider* playerAABBS = gameObject->AddComponent<SphereCollider>();
+	playerAABBS->SetBodyType(BodyType::kDynamic);
+
+	return gameObject;
+}
+
+//地面の生成
+GameObject* GameScene::CreateGround(){
+	//ゲームオブジェく
+	GameObject* gameObject = CreateGameObject();
+	gameObject->GetTransform().scale = { 20.0f,1.0f,20.0f };
+	gameObject->SetName("地面");
+	gameObject->SetTag("Ground");
+
+	//AABBコライダー
+	Vector3 blockerSize = Vector3::GetOne();
+	BoxCollider* blocker = gameObject->AddComponent<BoxCollider>();
+	blocker->SetHalfSize(blockerSize / 2.0f);
+	blocker->SetBodyType(BodyType::kStatic);
+
+	//3Dオブジェクト
+	Object3d* groundModel = gameObject->AddComponent<Object3d>();
+	groundModel->SetModel("cube");
+	groundModel->SetTexture(0, "uvChecker.png");
+
+	return gameObject;
+}
+
+//敵の生成
+GameObject* GameScene::CreateEnemy(){
+	//ゲームオブジェクト
+	GameObject* gameObject = CreateGameObject();
+	gameObject->SetName("敵");
+	gameObject->SetTag("Enemy");
+	gameObject->GetTransform().translate = { 0.0f,1.0f,2.0f };
+
+	//リジッドボディ
+	gameObject->AddComponent<RigidBody>();
+
+	//Enemy
+	gameObject->AddComponent<Enemy>();
+
+	//AABBコンポーネント
+	Vector3 hitBoxSize = { 0.5f,0.5f,0.5f };
+	BoxCollider* hitBox = gameObject->AddComponent<BoxCollider>();
+	hitBox->SetIsTrigger(true);
+	hitBox->SetHalfSize(hitBoxSize);
+	hitBox->SetBodyType(BodyType::kDynamic);
+
+	//すり抜け防止用のコライダー
+	Vector3 blockerSize = { 0.3f,0.3f,0.3f };
+	Vector3 blockerOffset = { 0.0f,-0.4f,0.0f };
+	BoxCollider* blocker = gameObject->AddComponent<BoxCollider>();
+	blocker->SetHalfSize(blockerSize / 2.0f);
+	blocker->SetOffset(blockerOffset);
+	blocker->SetIsTrigger(false);
+	blocker->SetBodyType(BodyType::kDynamic);
+
+	//3Dオブジェクト
+	Object3d* enemyModel = gameObject->AddComponent<Object3d>();
+	enemyModel->SetModel("enemy");
+
+	return gameObject;
+}
+
+//剣の生成
+GameObject* GameScene::CreateSword(){
+	GameObject* gameObject = CreateGameObject();
+	gameObject->GetTransform().scale = { 2.0f,3.0f,2.0f };
+	gameObject->GetTransform().SetEulerAngle({ mathUtility::kPi / 2.0f,0.0f,1.90f });
+	gameObject->GetTransform().translate = { 0.2f,-0.6f,0.9f };
+	gameObject->SetName("sword");
+
+	//オブジェクト3d
+	Object3d* object3d = gameObject->AddComponent<Object3d>();
+	object3d->SetModel("sword");
+	object3d->AttachTo(playerObject_->GetComponent<Object3d>(), "Player_Root/Arm_L");
+
+	return gameObject;
+}

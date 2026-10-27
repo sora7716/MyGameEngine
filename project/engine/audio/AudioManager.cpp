@@ -1,4 +1,8 @@
 #include "AudioManager.h"
+
+//コンストラクタ
+AudioManager::AudioManager(ConstructorKey){}
+
 //デストラクタ
 AudioManager::~AudioManager() {
 	//オーディオ達の解放
@@ -6,6 +10,7 @@ AudioManager::~AudioManager() {
 		audio->Finalize();
 	}
 }
+
 //オーディオの追加
 void AudioManager::LoadAudio(const std::string& name, const std::string& filename) {
 	//読み込み済みのオーディオを検索
@@ -30,8 +35,4 @@ Audio* AudioManager::FindAudio(const std::string& name) {
 	}
 	//ファイルなし
 	return nullptr;
-}
-
-//コンストラクタ
-AudioManager::AudioManager(ConstructorKey) {
 }

@@ -7,10 +7,24 @@ using namespace rasterizerMode;
 void(PipelineManager::* PipelineManager::createPSOTable[])() = {
 	&CreatePSOForObject3d,
 	&CreatePSOForParticle,
-	&CreatePSOForDebugDraw,
+	&CreatePSOForWireframe,
 	&CreatePSOForSkyBox,
 	&CreatePSOForSprite,
 };
+
+//生成
+std::unique_ptr<PipelineManager> PipelineManager::Create(ConstructorKey key, DirectXBase* directXBase){
+	//生成
+	std::unique_ptr<PipelineManager>instance = std::make_unique<PipelineManager>(key);
+	//初期化
+	instance->Initialize(directXBase);
+
+	return instance;
+}
+
+//コンストラクタ
+PipelineManager::PipelineManager(ConstructorKey){
+}
 
 //デストラクタ
 PipelineManager::~PipelineManager(){
@@ -149,17 +163,17 @@ void PipelineManager::CreatePSOForSkyBox(){
 	pipelineSets_[static_cast<uint32_t>(PipelineType::kSkyBox)].rootSignature = graphicsPipeline_->GetRootSignature();
 }
 
-//PSOの作成(DebugDraw)
-void PipelineManager::CreatePSOForDebugDraw(){
+//PSOの作成(Wireframe)
+void PipelineManager::CreatePSOForWireframe(){
 	//シェーダを設定
-	graphicsPipeline_->SetVertexShaderFileName(L"DebugDraw.VS.hlsl");
-	graphicsPipeline_->SetPixelShaderFileName(L"DebugDraw.PS.hlsl");
+	graphicsPipeline_->SetVertexShaderFileName(L"Wireframe.VS.hlsl");
+	graphicsPipeline_->SetPixelShaderFileName(L"Wireframe.PS.hlsl");
 	//深度バッファ
-	graphicsPipeline_->CreateDepthStencilResourceForObject3d();
+	graphicsPipeline_->CreateDepthStencilResourceForWireframe();
 	//シグネイチャBlobの初期化
-	graphicsPipeline_->CreateRootSignatureBlobForDebugDraw();
+	graphicsPipeline_->CreateRootSignatureBlobForWireframe();
 	//インプットレイアウト
-	graphicsPipeline_->InitializeInputLayoutDescForDebugDraw();
+	graphicsPipeline_->InitializeInputLayoutDescForWireframe();
 	//ラスタライザステート
 	graphicsPipeline_->InitializeRasterizerState(FillMode::kSolid, CullingMode::kNone);
 	//頂点シェーダBlob
@@ -175,8 +189,4 @@ void PipelineManager::CreatePSOForDebugDraw(){
 	}
 	//ルートシグネイチャの記録
 	pipelineSets_[static_cast<uint32_t>(PipelineType::kDebugDraw)].rootSignature = graphicsPipeline_->GetRootSignature();
-}
-
-//コンストラクタ
-PipelineManager::PipelineManager(ConstructorKey){
 }

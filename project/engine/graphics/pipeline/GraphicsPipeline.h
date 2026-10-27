@@ -51,7 +51,7 @@ public://メンバ関数
 	/// <summary>
 	/// ルートシグネイチャBlobの生成(DebugDraw)
 	/// </summary>
-	void CreateRootSignatureBlobForDebugDraw();
+	void CreateRootSignatureBlobForWireframe();
 
 	/// <summary>
 	/// インプットレイアウトの初期化
@@ -71,7 +71,7 @@ public://メンバ関数
 	/// <summary>
 	/// インプットレイアウトの初期化(DebugDraw)
 	/// </summary>
-	void InitializeInputLayoutDescForDebugDraw();
+	void InitializeInputLayoutDescForWireframe();
 
 	/// <summary>
 	/// ブレンドステートの初期化
@@ -99,6 +99,11 @@ public://メンバ関数
 	/// 深度バッファの生成(Object3d)
 	/// </summary>
 	void CreateDepthStencilResourceForObject3d();
+
+	/// <summary>
+	/// 深度バッファの生成(Wireframe)
+	/// </summary>
+	void CreateDepthStencilResourceForWireframe();
 
 	/// <summary>
 	/// 深度バッファの生成(パーティクル)

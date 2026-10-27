@@ -1,5 +1,6 @@
 #pragma once
 #include "Core.h"
+#include <vector>
 
 /// <summary>
 /// ゲーム全体
@@ -9,12 +10,12 @@ public://メンバ関数
 	/// <summary>
 	/// コンストラクタ
 	/// </summary>
-	Framework() = default;
+	Framework();
 
 	/// <summary>
 	/// デストラクタ
 	/// </summary>
-	virtual ~Framework() = default;
+	virtual ~Framework();
 
 	/// <summary>
 	/// 初期化
@@ -54,7 +55,9 @@ public://メンバ関数
 protected://メンバ変数
 	//エンジンの核
 	std::unique_ptr<Core>core_ = nullptr;
-	//ウィンドウの検索キー
-	uint32_t windowIndex_ = 0;
+	//RTVの検索キーの配列
+	std::vector<uint32_t>rtvIndices_;
+	//DSVの検索キー
+	uint32_t dsvIndex_ = 0;
 };
 

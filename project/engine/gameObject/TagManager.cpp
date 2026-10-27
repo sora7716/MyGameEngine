@@ -5,6 +5,20 @@
 #include <nlohmann/json.hpp>
 #include <fstream>
 
+//生成
+std::unique_ptr<TagManager> TagManager::Create(ConstructorKey key){
+	//生成
+	std::unique_ptr<TagManager>instance = std::make_unique<TagManager>(key);
+	//初期化
+	instance->Initialize();
+
+	return instance;
+}
+
+//コンストラクタ
+TagManager::TagManager(ConstructorKey){
+}
+
 //デストラクタ
 TagManager::~TagManager(){
 }
@@ -190,8 +204,4 @@ void TagManager::LoadTagList(){
 
 	//タグリストに反映
 	tagList_ = tempTagList;
-}
-
-//コンストラクタ
-TagManager::TagManager(ConstructorKey){
 }

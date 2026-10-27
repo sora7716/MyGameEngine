@@ -6,14 +6,14 @@
 #include <cstring>
 
 //生成
-std::unique_ptr<SkyBoxRenderer> SkyBoxRenderer::Create(DirectXBase* directXBase, TextureManager* textureManager){
-	std::unique_ptr<SkyBoxRenderer>instance = std::make_unique<SkyBoxRenderer>();
+std::unique_ptr<SkyBoxRenderer> SkyBoxRenderer::Create(ConstructorKey key, DirectXBase* directXBase, TextureManager* textureManager){
+	std::unique_ptr<SkyBoxRenderer>instance = std::make_unique<SkyBoxRenderer>(key);
 	instance->Initialize(directXBase, textureManager);
 	return instance;
 }
 
 //コンストラクタ
-SkyBoxRenderer::SkyBoxRenderer(){
+SkyBoxRenderer::SkyBoxRenderer(ConstructorKey){
 }
 
 //デストラクタ
@@ -54,7 +54,7 @@ void SkyBoxRenderer::Reset(){
 }
 
 //描画
-void SkyBoxRenderer::Draw(uint32_t instanceIndex, Camera* renderCamera){
+void SkyBoxRenderer::Draw(uint32_t instanceIndex){
 	//スカイボックスの描画データ
 	SkyBoxRenderData skyBoxRenderData = renderDatas_[instanceIndex];
 
@@ -69,8 +69,6 @@ void SkyBoxRenderer::Draw(uint32_t instanceIndex, Camera* renderCamera){
 	//ワールド行列
 	*worldMatrix_ = skyBoxRenderData.worldMatrix;
 
-	//カメラ
-	renderCamera->DrawSetting(3);
 	//座標変換行列CBufferの場所を設定
 	directXBase_->GetCommandList()->SetGraphicsRootConstantBufferView(1, worldMatrixResource_->GetGPUVirtualAddress());
 	//VertexBufferViewの設定
@@ -263,11 +261,11 @@ void SkyBoxRenderer::CreateIndexResource(){
 //マテリアルリソースの生成
 void SkyBoxRenderer::CreateMaterialResource(){
 	//マテリアルリソースを作る
-	materialResource_ = directXBase_->CreateBufferResource(sizeof(Vector4));
+	materialResource_ = directXBase_->CreateBufferResource(sizeof(Color));
 	//書き込むためのアドレスを取得
 	materialResource_->Map(0, nullptr, reinterpret_cast<void**>(&materialData_));
 	//色を書き込む
-	*materialData_ = Vector4::MakeWhiteColor();
+	*materialData_ = Color::GetWhite();
 }
 
 //座標変換行列リソースの生成

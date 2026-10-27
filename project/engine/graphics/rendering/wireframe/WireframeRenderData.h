@@ -1,0 +1,15 @@
+#pragma once
+#include "BlendMode.h"
+#include "Matrix4x4.h"
+#include "Vector4.h"
+#include "Color.h"
+#include <vector>
+
+//デバッグ描画で必要な描画データ
+struct WireframeRenderData{
+	BlendMode blendMode = BlendMode::kNone;
+	std::vector<Vector4>vertices = {};
+	std::vector<uint32_t>indices = {};
+	Color material = Color::GetWhite();
+	Matrix4x4 worldMatrix = {};
+};

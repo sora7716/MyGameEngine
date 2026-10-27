@@ -1,12 +1,14 @@
 #pragma once
 #include "PrimitiveData.h"
+#include "RenderingData.h"
 #include "Vector4.h"
+#include "Color.h"
 
 //パーティクル単体のデータ
 struct Particle{
 	Transform transform = {};//SRVの情報
 	Vector3 velocity = {};//方向
-	Vector4 color = Vector4::MakeWhiteColor();//色
+	Color color = Color::GetWhite();//色
 	float lifeTime = 0.0f;//生存時間
 	float currentTime = 0.0f;//発生してからの
 	bool isEnabled = true;//表示するか

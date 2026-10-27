@@ -1,7 +1,21 @@
 #include "GameObject.h"
 #include "TagManager.h"
-#include "StringUtility.h"
+#include "Logger.h"
+#include "MatrixUtility.h"
 #include "Component.h"
+//衝突判定のテーブルの初期化
+std::vector<GameObject::NotifyOnCollision> GameObject::onCollisionTable = {
+	&GameObject::NotifyOnCollisionEnter,
+	&GameObject::NotifyOnCollisionStay,
+	&GameObject::NotifyOnCollisionExit
+};
+
+//衝突判定のテーブルの初期化
+std::vector<GameObject::NotifyOnTrigger> GameObject::onTriggerTable = {
+	&GameObject::NotifyOnTriggerEnter,
+	&GameObject::NotifyOnTriggerStay,
+	&GameObject::NotifyOnTriggerExit
+};
 
 //ゲームオブジェトの生成
 std::unique_ptr<GameObject> GameObject::Create(const std::string& name){
@@ -45,21 +59,90 @@ void GameObject::Initialize(const std::string& name){
 	tag_ = TagManager::kDefaultTagName;
 }
 
+//更新
+void GameObject::Update(UpdatePhase phase){
+	//コンポーネントの更新
+	UpdateComponents(phase);
+
+	//行列の更新
+	UpdateMatrices();
+}
+
+//親子付け
+bool GameObject::AttachTo(GameObject* parentObject){
+	if (!parentObject){
+		Logger::OutputLog("親子付けを行う際の親がnull参照しました");
+		return false;
+	}
+
+	if (parentObject == this){
+		Logger::OutputLog("親子付けを行う際に自分のポインタを参照しました");
+		return false;
+	}
+
+	//自分に親子付けしないようにする
+	const GameObject* ancestor = parentObject;
+	while (ancestor){
+		if (ancestor == this){
+			Logger::OutputLog("循環する親子付けはできません");
+			return false;
+		}
+
+		//次の親へ
+		ancestor = ancestor->GetParentObject();
+	}
+
+	//メンバ変数に記録
+	parentObject_ = parentObject;
+	parentMatrix_ = parentObject_->GetWorldMatrix();
+
+	//接続行列
+	Matrix4x4 incidenceMatrix = attachedMatrix_ * parentMatrix_;
+	Matrix4x4 newLocalMatrix = worldMatrix_ * incidenceMatrix.Inverse();
+	Transform newLocalTransform = matrixUtility::DecomposeMatrix(newLocalMatrix, transform_.scale);
+	transform_ = newLocalTransform;
+	return true;
+}
+
+//親子付けを外す
+void GameObject::Detach(){
+	//そもそも親がなければ
+	if (!parentObject_){
+		return;
+	}
+
+	//Transformを抽出
+	transform_ = matrixUtility::DecomposeMatrix(worldMatrix_, transform_.scale);
+
+	//親を解除
+	parentObject_ = nullptr;
+	parentMatrix_ = Matrix4x4::Identity4x4();
+	attachedMatrix_ = Matrix4x4::Identity4x4();
+}
+
 //トランスフォームの取得
 Transform& GameObject::GetTransform(){
-	// TODO: return ステートメントをここに挿入します
 	return transform_;
+}
+
+//ワールドの位置の取得
+Vector3 GameObject::GetWorldPos(){
+	return { worldMatrix_.m[3][0],worldMatrix_.m[3][1],worldMatrix_.m[3][2] };
 }
 
 //トランスフォームの取得
 const Transform& GameObject::GetTransform() const{
-	// TODO: return ステートメントをここに挿入します
 	return transform_;
 }
 
 //アクティブかどうかを設定
 void GameObject::SetIsActive(bool isActive){
 	isActive_ = isActive;
+}
+
+//接続する行列の設定
+void GameObject::SetAttachedMatrix(const Matrix4x4& attachedMatrix){
+	attachedMatrix_ = attachedMatrix;
 }
 
 //アクティブかどうかを取得
@@ -72,9 +155,13 @@ void GameObject::SetName(const std::string& name){
 	name_ = name;
 }
 
+//現在の接続シーンの設定
+void GameObject::SetCurrentScene(BaseScene* currentScene){
+	currentScene_ = currentScene;
+}
+
 //名前を取得
 const std::string& GameObject::GetName() const{
-	// TODO: return ステートメントをここに挿入します
 	return name_;
 }
 
@@ -85,12 +172,46 @@ void GameObject::SetTag(const std::string& tag){
 
 //タグの取得
 const std::string& GameObject::GetTag() const{
-	// TODO: return ステートメントをここに挿入します
 	return tag_;
 }
 
-//コンポーネントの更新
-void GameObject::UpdateComponents(){
+//現在の接続シーンの取得
+BaseScene* GameObject::GetCurrentScene(){
+	return currentScene_;
+}
+
+//ワールド行列の取得
+const Matrix4x4& GameObject::GetWorldMatrix() const{
+	return worldMatrix_;
+}
+
+//ローカル行列の取得
+const Matrix4x4& GameObject::GetLocalMatrix() const{
+	return localMatrix_;
+}
+
+//親オブジェクトの取得
+const GameObject* GameObject::GetParentObject() const{
+	return parentObject_;
+}
+
+//接続行列の取得
+const Matrix4x4& GameObject::GetAttachedMatrix() const{
+	return attachedMatrix_;
+}
+
+//親のワールド行列を取得
+const Matrix4x4& GameObject::GetParentMatrix() const{
+	return parentMatrix_;
+}
+
+//すべてのコンポーネントを取得
+const std::vector<std::unique_ptr<Component>>& GameObject::GetAllComponents()const{
+	return components_;
+}
+
+//デバッグでImGuiを使用できるようにする
+void GameObject::DebugImGui(){
 	//ゲームオブジェクトが有効か
 	if (!isActive_){
 		return;
@@ -107,7 +228,170 @@ void GameObject::UpdateComponents(){
 			continue;
 		}
 
+		//コンポーネントでImGuiを使用する
+		component->DebugImGui();
+	}
+}
+
+//衝突判定のイベントを呼び出す
+void GameObject::InvokeCollisionEvent(uint32_t index, const CollisionInfo& info){
+	(this->*onCollisionTable[index])(info);
+}
+
+//衝突判定のイベントを呼び出す
+void GameObject::InvokeTriggerEvent(uint32_t index, BaseCollider* other){
+	(this->*onTriggerTable[index])(other);
+}
+
+//ゲームオブジェクトから解除すると通知
+void GameObject::NotifyGameObjectRemoving(GameObject* target){
+	for (const std::unique_ptr<Component>& component : components_){
+		if (component){
+			component->OnGameObjectRemoving(target);
+		}
+	}
+}
+
+//接触した瞬間ということを各コンポーネントに通知する
+void GameObject::NotifyOnCollisionEnter(const CollisionInfo& info){
+	//各コンポーネントごとに
+	for (const std::unique_ptr<Component>& component : components_){
+		if (!component){
+			//コンポーネントが存在しているか	
+			continue;
+		} else if (!component->IsEnabled()){
+			//コンポーネントが有効か
+			continue;
+		}
+
+		//コンポーネントに衝突を通知
+		component->OnCollisionEnter(info);
+	}
+}
+
+//衝突したことを各コンポーネントに通知する
+void GameObject::NotifyOnCollisionStay(const CollisionInfo& info){
+	//各コンポーネントごとに
+	for (const std::unique_ptr<Component>& component : components_){
+		if (!component){
+			//コンポーネントが存在しているか	
+			continue;
+		} else if (!component->IsEnabled()){
+			//コンポーネントが有効か
+			continue;
+		}
+
+		//コンポーネントに衝突を通知
+		component->OnCollisionStay(info);
+	}
+}
+
+//離れた瞬間ということを各コンポーネントに通知する
+void GameObject::NotifyOnCollisionExit(const CollisionInfo& info){
+	//各コンポーネントごとに
+	for (const std::unique_ptr<Component>& component : components_){
+		if (!component){
+			//コンポーネントが存在しているか	
+			continue;
+		} else if (!component->IsEnabled()){
+			//コンポーネントが有効か
+			continue;
+		}
+
+		//コンポーネントに衝突を通知
+		component->OnCollisionExit(info);
+	}
+}
+
+//接触した瞬間ということを各コンポーネントに通知する
+void GameObject::NotifyOnTriggerEnter(BaseCollider* other){
+	//各コンポーネントごとに
+	for (const std::unique_ptr<Component>& component : components_){
+		if (!component){
+			//コンポーネントが存在しているか	
+			continue;
+		} else if (!component->IsEnabled()){
+			//コンポーネントが有効か
+			continue;
+		}
+
+		//コンポーネントに衝突を通知
+		component->OnTriggerEnter(other);
+	}
+}
+
+//衝突したことを各コンポーネントに通知する
+void GameObject::NotifyOnTriggerStay(BaseCollider* other){
+	//各コンポーネントごとに
+	for (const std::unique_ptr<Component>& component : components_){
+		if (!component){
+			//コンポーネントが存在しているか	
+			continue;
+		} else if (!component->IsEnabled()){
+			//コンポーネントが有効か
+			continue;
+		}
+
+		//コンポーネントに衝突を通知
+		component->OnTriggerStay(other);
+	}
+}
+
+//離れた瞬間ということを各コンポーネントに通知する
+void GameObject::NotifyOnTriggerExit(BaseCollider* other){
+	//各コンポーネントごとに
+	for (const std::unique_ptr<Component>& component : components_){
+		if (!component){
+			//コンポーネントが存在しているか	
+			continue;
+		} else if (!component->IsEnabled()){
+			//コンポーネントが有効か
+			continue;
+		}
+
+		//コンポーネントに衝突を通知
+		component->OnTriggerExit(other);
+	}
+}
+
+//コンポーネントの更新
+void GameObject::UpdateComponents(UpdatePhase phase){
+	//ゲームオブジェクトが有効か
+	if (!isActive_){
+		return;
+	}
+
+	//各コンポーネントごとに
+	for (const std::unique_ptr<Component>& component : components_){
+		if (!component){
+			//コンポーネントが存在しているか	
+			continue;
+
+		} else if (!component->IsEnabled()){
+			//コンポーネントが有効か
+			continue;
+		} else if (component->GetUpdatePhase() != phase){
+			//設定したフェーズか
+			continue;
+		}
+
 		//コンポーネントの更新
 		component->Update();
 	}
+}
+
+//行列の更新
+void GameObject::UpdateMatrices(){
+	//このオブジェクト本来のワールド行列を求める
+	localMatrix_ = matrixUtility::MakeAffineMatrix(transform_);
+
+	//親子付けする行列の計算
+	if (parentObject_){
+		parentMatrix_ = parentObject_->GetWorldMatrix();
+	} else{
+		parentMatrix_ = Matrix4x4::Identity4x4();
+	}
+
+	//ワールド行列を求める
+	worldMatrix_ = localMatrix_ * attachedMatrix_ * parentMatrix_;
 }

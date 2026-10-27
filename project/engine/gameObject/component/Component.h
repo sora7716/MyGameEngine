@@ -1,7 +1,20 @@
 #pragma once
+#include "PropertyRegistry.h"
 #include <memory>
+#include <string>
+
 //前方宣言
 class GameObject;
+class BaseCollider;
+struct CollisionInfo;
+
+/// <summary>
+/// 更新のフェーズ
+/// </summary>
+enum class UpdatePhase{
+	kMain,
+	kDebug
+};
 
 /// <summary>
 /// コンポーネント
@@ -24,6 +37,59 @@ public://メンバ関数
 	virtual void Update();
 
 	/// <summary>
+	/// デバッグでImGuiを使えるようにする
+	/// </summary>
+	virtual void DebugImGui();
+
+	/// <summary>
+	/// 接触した瞬間
+	/// </summary>
+	/// <param name="info">衝突情報</param>
+	virtual void OnCollisionEnter(const CollisionInfo& info);
+
+	/// <summary>
+	/// 接触中
+	/// </summary>
+	/// <param name="info">衝突情報</param>
+	virtual void OnCollisionStay(const CollisionInfo& info);
+
+	/// <summary>
+	/// 離れた瞬間
+	/// </summary>
+	/// <param name="info">衝突情報</param>
+	virtual void OnCollisionExit(const CollisionInfo& info);
+
+	/// <summary>
+	/// 接触した瞬間
+	/// </summary>
+	/// <param name="other">コライダー</param>
+	virtual void OnTriggerEnter(BaseCollider* other);
+
+	/// <summary>
+	/// 接触中
+	/// </summary>
+	/// <param name="other">コライダー</param>
+	virtual void OnTriggerStay(BaseCollider* other);
+
+	/// <summary>
+	/// 離れた瞬間
+	/// </summary>
+	/// <param name="other">コライダー</param>
+	virtual void OnTriggerExit(BaseCollider* other);
+
+	/// <summary>
+	/// ゲームオブジェクトから解除する
+	/// </summary>
+	/// <param name="target">対象</param>
+	virtual void OnGameObjectRemoving(GameObject* target);
+
+	/// <summary>
+	/// 更新のフェーズの取得
+	/// </summary>
+	/// <returns>更新のフェーズ</returns>
+	virtual UpdatePhase GetUpdatePhase();
+
+	/// <summary>
 	/// コピー
 	/// </summary>
 	/// <param name="gameObject">ゲームオブジェクト</param>
@@ -31,10 +97,22 @@ public://メンバ関数
 	virtual std::unique_ptr<Component> Clone(GameObject* gameObject)const = 0;
 
 	/// <summary>
+	/// プロパティ一覧を登録
+	/// </summary>
+	/// <param name="registry">レジストリ</param>
+	virtual void RegisterProperties(PropertyRegistry* registry);
+
+	/// <summary>
 	/// 取り付け先を取得
 	/// </summary>
 	/// <returns>取り付け先</returns>
 	GameObject* GetOwner()const;
+
+	/// <summary>
+	/// コンポーネントのタイプ名を返す
+	/// </summary>
+	/// <returns>コンポーネントのタイプ名</returns>
+	virtual std::string GetTypeName()const = 0;
 
 	/// <summary>
 	/// 有効状態の設定

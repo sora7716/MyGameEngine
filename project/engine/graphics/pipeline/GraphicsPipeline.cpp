@@ -299,7 +299,7 @@ void GraphicsPipeline::CreateRootSignatureBlobForParticle(){
 }
 
 //ルートシグネイチャBlobの生成(DebugDraw)
-void GraphicsPipeline::CreateRootSignatureBlobForDebugDraw(){
+void GraphicsPipeline::CreateRootSignatureBlobForWireframe(){
 	//RootSignature作成
 	D3D12_ROOT_SIGNATURE_DESC descriptionRootSignature{};
 	descriptionRootSignature.Flags = D3D12_ROOT_SIGNATURE_FLAG_ALLOW_INPUT_ASSEMBLER_INPUT_LAYOUT;
@@ -401,7 +401,7 @@ void GraphicsPipeline::InitializeInputLayoutDescForSprite(){
 }
 
 //インプットレイアウトの初期化(DebugDraw)
-void GraphicsPipeline::InitializeInputLayoutDescForDebugDraw(){
+void GraphicsPipeline::InitializeInputLayoutDescForWireframe(){
 	//InputElementDesc
 	static D3D12_INPUT_ELEMENT_DESC inputElementDescs[1] = {};
 	inputElementDescs[0].SemanticName = "POSITION";
@@ -521,13 +521,18 @@ void GraphicsPipeline::CreateDepthStencilResourceForObject3d(){
 	depthStencilDesc_.DepthWriteMask = D3D12_DEPTH_WRITE_MASK_ALL;
 	//比較関数はLessEqual。つまり、近ければ描画される
 	depthStencilDesc_.DepthFunc = D3D12_COMPARISON_FUNC_LESS_EQUAL;
+}
 
-	//DSVの設定
-	D3D12_DEPTH_STENCIL_VIEW_DESC dsvDesc{};
-	dsvDesc.Format = DXGI_FORMAT_D24_UNORM_S8_UINT;//Format。基本的にはResourceに合わせる
-	dsvDesc.ViewDimension = D3D12_DSV_DIMENSION_TEXTURE2D;//2dTexture
-	//DSVHeapの先頭にDSVを作る
-	directXBase_->GetDevice()->CreateDepthStencilView(depthStencilResource_.Get(), &dsvDesc, directXBase_->GetDSVCPUDescriptorHandle(0));
+//深度バッファの生成(Wireframe)
+void GraphicsPipeline::CreateDepthStencilResourceForWireframe(){
+	//深度バッファを取得
+	depthStencilResource_ = directXBase_->GetDepthStencilTexture();
+	//Depthの機能を有効化
+	depthStencilDesc_.DepthEnable = true;
+	//書き込みをする
+	depthStencilDesc_.DepthWriteMask = D3D12_DEPTH_WRITE_MASK_ZERO;
+	//比較関数
+	depthStencilDesc_.DepthFunc = D3D12_COMPARISON_FUNC_LESS_EQUAL;
 }
 
 //深度バッファの生成(パーティクル)
@@ -540,13 +545,6 @@ void GraphicsPipeline::CreateDepthStencilResourceForParticle(){
 	depthStencilDesc_.DepthWriteMask = D3D12_DEPTH_WRITE_MASK_ZERO;
 	//比較関数はLessEqual。つまり、近ければ描画される
 	depthStencilDesc_.DepthFunc = D3D12_COMPARISON_FUNC_LESS_EQUAL;
-
-	//DSVの設定
-	D3D12_DEPTH_STENCIL_VIEW_DESC dsvDesc{};
-	dsvDesc.Format = DXGI_FORMAT_D24_UNORM_S8_UINT;//Format。基本的にはResourceに合わせる
-	dsvDesc.ViewDimension = D3D12_DSV_DIMENSION_TEXTURE2D;//2dTexture
-	//DSVHeapの先頭にDSVを作る
-	directXBase_->GetDevice()->CreateDepthStencilView(depthStencilResource_.Get(), &dsvDesc, directXBase_->GetDSVCPUDescriptorHandle(0));
 }
 
 //ルートシグネイチャのゲッター

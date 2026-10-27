@@ -6,18 +6,11 @@
 /// プリミティブのメッシュを作成
 /// </summary>
 namespace primitiveMeshFactory {
-	//プリミティブのタイプ
-	enum class Type :uint32_t {
-		kCube,
-		kSphere,
-		kPlane,
-		kTypeCount
-	};
-
 	//設定データ
-	struct Desc {
-		Vector3 size = Vector3::MakeAllOne();
-		uint32_t subdivision = 16;
+	struct Desc{
+		Vector3 size = Vector3::GetOne();
+		uint32_t radialSubdivision = 16;
+		uint32_t verticalSubdivision = 16;
 		float radius = 1.0f;
 	};
 	//関数ポインタの型定義
@@ -45,7 +38,11 @@ namespace primitiveMeshFactory {
 	/// <returns>平面メッシュ</returns>
 	MeshData CreatePlane(const Desc& desc = {});
 
-	//プリミティブのメッシュ作成関数のテーブル
-	extern std::array<CrateMeshData, static_cast<uint32_t>(Type::kTypeCount)> createMeshDataTable;
+	/// <summary>
+	/// カプセルメッシュの生成
+	/// </summary>
+	/// <param name="desc">設定データ</param>
+	/// <returns>カプセルメッシュ</returns>
+	MeshData CreateCapsule(const Desc& desc = {});
 }
 

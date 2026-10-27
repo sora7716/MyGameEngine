@@ -1,6 +1,6 @@
 {
 	"asset":{
-		"generator":"Khronos glTF Blender I/O v5.0.21",
+		"generator":"Khronos glTF Blender I/O v5.1.20",
 		"version":"2.0"
 	},
 	"scene":0,
@@ -8,38 +8,78 @@
 		{
 			"name":"Scene",
 			"nodes":[
-				0
+				4
 			]
 		}
 	],
 	"nodes":[
 		{
 			"mesh":0,
-			"name":"Cube.001",
-			"rotation":[
+			"name":"Arm_L",
+			"translation":[
+				0.44999998807907104,
+				-0.04196234047412872,
+				0.0008785724639892578
+			]
+		},
+		{
+			"mesh":1,
+			"name":"Arm_R",
+			"translation":[
+				-0.44999998807907104,
+				-0.04196234047412872,
+				0.0008785724639892578
+			]
+		},
+		{
+			"mesh":2,
+			"name":"Body",
+			"translation":[
 				0,
-				0.9999845623970032,
+				-0.026962339878082275,
+				0.0008785724639892578
+			]
+		},
+		{
+			"mesh":3,
+			"name":"Head",
+			"translation":[
 				0,
-				0.0055554695427417755
+				0.048037659376859665,
+				0.0008785724639892578
+			]
+		},
+		{
+			"children":[
+				0,
+				1,
+				2,
+				3
+			],
+			"name":"Player_Root",
+			"scale":[
+				0.5,
+				0.5,
+				0.5
 			]
 		}
 	],
 	"materials":[
 		{
 			"doubleSided":true,
-			"name":"Material.001",
+			"name":"Enemy_UV_Atlas",
 			"pbrMetallicRoughness":{
 				"baseColorTexture":{
 					"index":0
 				},
 				"metallicFactor":0,
-				"roughnessFactor":0.5
+				"roughnessFactor":0.8600000143051147
 			}
 		}
 	],
 	"meshes":[
 		{
-			"name":"Cube.001",
+			"name":"Arm_L",
 			"primitives":[
 				{
 					"attributes":{
@@ -48,6 +88,48 @@
 						"TEXCOORD_0":2
 					},
 					"indices":3,
+					"material":0
+				}
+			]
+		},
+		{
+			"name":"Arm_R",
+			"primitives":[
+				{
+					"attributes":{
+						"POSITION":4,
+						"NORMAL":5,
+						"TEXCOORD_0":6
+					},
+					"indices":7,
+					"material":0
+				}
+			]
+		},
+		{
+			"name":"Sphere",
+			"primitives":[
+				{
+					"attributes":{
+						"POSITION":8,
+						"NORMAL":9,
+						"TEXCOORD_0":10
+					},
+					"indices":11,
+					"material":0
+				}
+			]
+		},
+		{
+			"name":"Sphere.001",
+			"primitives":[
+				{
+					"attributes":{
+						"POSITION":12,
+						"NORMAL":13,
+						"TEXCOORD_0":14
+					},
+					"indices":15,
 					"material":0
 				}
 			]
@@ -61,70 +143,244 @@
 	],
 	"images":[
 		{
-			"mimeType":"image/jpeg",
-			"name":"cube",
-			"uri":"cube.jpg"
+			"mimeType":"image/png",
+			"name":"enemy_basecolor",
+			"uri":"enemy_basecolor.png"
 		}
 	],
 	"accessors":[
 		{
 			"bufferView":0,
 			"componentType":5126,
-			"count":49,
+			"count":120,
 			"max":[
-				1,
-				1,
-				1.9298818111419678
+				0.42255496978759766,
+				0.031968142837285995,
+				0.17499999701976776
 			],
 			"min":[
-				-1,
-				-1,
-				-1
+				-0.10663652420043945,
+				-0.9610753059387207,
+				-0.17499999701976776
 			],
 			"type":"VEC3"
 		},
 		{
 			"bufferView":1,
 			"componentType":5126,
-			"count":49,
+			"count":120,
 			"type":"VEC3"
 		},
 		{
 			"bufferView":2,
 			"componentType":5126,
-			"count":49,
+			"count":120,
 			"type":"VEC2"
 		},
 		{
 			"bufferView":3,
 			"componentType":5123,
-			"count":96,
+			"count":408,
+			"type":"SCALAR"
+		},
+		{
+			"bufferView":4,
+			"componentType":5126,
+			"count":120,
+			"max":[
+				0.10663652420043945,
+				0.031968142837285995,
+				0.17499999701976776
+			],
+			"min":[
+				-0.42255496978759766,
+				-0.9610753059387207,
+				-0.17499999701976776
+			],
+			"type":"VEC3"
+		},
+		{
+			"bufferView":5,
+			"componentType":5126,
+			"count":120,
+			"type":"VEC3"
+		},
+		{
+			"bufferView":6,
+			"componentType":5126,
+			"count":120,
+			"type":"VEC2"
+		},
+		{
+			"bufferView":7,
+			"componentType":5123,
+			"count":408,
+			"type":"SCALAR"
+		},
+		{
+			"bufferView":8,
+			"componentType":5126,
+			"count":220,
+			"max":[
+				0.4300000071525574,
+				0.1899999976158142,
+				0.3400000035762787
+			],
+			"min":[
+				-0.429999977350235,
+				-0.9300000071525574,
+				-0.3400000035762787
+			],
+			"type":"VEC3"
+		},
+		{
+			"bufferView":9,
+			"componentType":5126,
+			"count":220,
+			"type":"VEC3"
+		},
+		{
+			"bufferView":10,
+			"componentType":5126,
+			"count":220,
+			"type":"VEC2"
+		},
+		{
+			"bufferView":11,
+			"componentType":5123,
+			"count":864,
+			"type":"SCALAR"
+		},
+		{
+			"bufferView":12,
+			"componentType":5126,
+			"count":754,
+			"max":[
+				0.6000000238418579,
+				0.9549999833106995,
+				0.4699999988079071
+			],
+			"min":[
+				-0.5999999642372131,
+				-0.14500002562999725,
+				-0.6421999931335449
+			],
+			"type":"VEC3"
+		},
+		{
+			"bufferView":13,
+			"componentType":5126,
+			"count":754,
+			"type":"VEC3"
+		},
+		{
+			"bufferView":14,
+			"componentType":5126,
+			"count":754,
+			"type":"VEC2"
+		},
+		{
+			"bufferView":15,
+			"componentType":5123,
+			"count":2856,
 			"type":"SCALAR"
 		}
 	],
 	"bufferViews":[
 		{
 			"buffer":0,
-			"byteLength":588,
+			"byteLength":1440,
 			"byteOffset":0,
 			"target":34962
 		},
 		{
 			"buffer":0,
-			"byteLength":588,
-			"byteOffset":588,
+			"byteLength":1440,
+			"byteOffset":1440,
 			"target":34962
 		},
 		{
 			"buffer":0,
-			"byteLength":392,
-			"byteOffset":1176,
+			"byteLength":960,
+			"byteOffset":2880,
 			"target":34962
 		},
 		{
 			"buffer":0,
-			"byteLength":192,
-			"byteOffset":1568,
+			"byteLength":816,
+			"byteOffset":3840,
+			"target":34963
+		},
+		{
+			"buffer":0,
+			"byteLength":1440,
+			"byteOffset":4656,
+			"target":34962
+		},
+		{
+			"buffer":0,
+			"byteLength":1440,
+			"byteOffset":6096,
+			"target":34962
+		},
+		{
+			"buffer":0,
+			"byteLength":960,
+			"byteOffset":7536,
+			"target":34962
+		},
+		{
+			"buffer":0,
+			"byteLength":816,
+			"byteOffset":8496,
+			"target":34963
+		},
+		{
+			"buffer":0,
+			"byteLength":2640,
+			"byteOffset":9312,
+			"target":34962
+		},
+		{
+			"buffer":0,
+			"byteLength":2640,
+			"byteOffset":11952,
+			"target":34962
+		},
+		{
+			"buffer":0,
+			"byteLength":1760,
+			"byteOffset":14592,
+			"target":34962
+		},
+		{
+			"buffer":0,
+			"byteLength":1728,
+			"byteOffset":16352,
+			"target":34963
+		},
+		{
+			"buffer":0,
+			"byteLength":9048,
+			"byteOffset":18080,
+			"target":34962
+		},
+		{
+			"buffer":0,
+			"byteLength":9048,
+			"byteOffset":27128,
+			"target":34962
+		},
+		{
+			"buffer":0,
+			"byteLength":6032,
+			"byteOffset":36176,
+			"target":34962
+		},
+		{
+			"buffer":0,
+			"byteLength":5712,
+			"byteOffset":42208,
 			"target":34963
 		}
 	],
@@ -136,7 +392,7 @@
 	],
 	"buffers":[
 		{
-			"byteLength":1760,
+			"byteLength":47920,
 			"uri":"enemy.bin"
 		}
 	]

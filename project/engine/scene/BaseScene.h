@@ -1,19 +1,16 @@
 #pragma once
 #include "Context.h"
 #include "Input.h"
-#include "DebugCamera.h"
 #include "Camera.h"
 #include <memory>
 
 // 前方宣言
 class DirectXBase;
 class AbstractSceneFactory;
-class ColliderManager;
 class GameObject;
-class Object3dRenderer;
-class SkyBoxRenderer;
-class DebugDrawRenderer;
-class ParticleRenderer;
+class DebugCameraController;
+class Camera;
+class CollisionSystem;
 
 /// <summary>
 /// シーンの基底クラス
@@ -38,7 +35,12 @@ public://メンバ関数
 	/// <summary>
 	/// 更新
 	/// </summary>
-	virtual void Update();
+	void Update();
+
+	/// <summary>
+	/// 更新のステート
+	/// </summary>
+	virtual void UpdateState();
 
 	/// <summary>
 	/// デバッグ
@@ -54,7 +56,8 @@ public://メンバ関数
 	/// ゲームオブジェクトの削除
 	/// </summary>
 	/// <param name="target">対象となるゲームオブジェクト</param>
-	void DeleteGameObject(GameObject* target);
+	/// <param name="collisionSystem">衝突判定のシステム</param>
+	void DeleteGameObject(GameObject* target,CollisionSystem*collisionSystem);
 
 	/// <summary>
 	/// ゲームオブジェトの複製
@@ -89,16 +92,34 @@ public://メンバ関数
 	const std::vector<std::unique_ptr<GameObject>>& GetGameObjects()const;
 
 	/// <summary>
-	/// シーンで必要な情報の設定
+	/// セットアップ
 	/// </summary>
 	/// <param name="sceneContext">シーンに必要な情報</param>
-	void SetSceneContext(const SceneContext& sceneContext);
-	
+	void SetUp(const SceneContext& sceneContext);
+
 	/// <summary>
-	/// ゲームカメラの取得
+	/// シーンで必要な情報の取得
 	/// </summary>
-	/// <returns>ゲームカメラ</returns>
-	Camera* GetGameCamera();
+	/// <returns>シーンに必要な情報</returns>
+	const SceneContext& GetSceneContext();
+
+	/// <summary>
+	/// デバッグが有効かの設定
+	/// </summary>
+	/// <param name="isControlEnabled">デバッグが有効か</param>
+	void SetIsDebugControlEnabled(bool isControlEnabled);
+
+	/// <summary>
+	/// アプリケーションが有効かの設定
+	/// </summary>
+	/// <param name="isAppInputEnabled">アプリケーションが有効か</param>
+	void SetIsAppInputEnabled(bool isAppInputEnabled);
+
+	/// <summary>
+	/// デバッグカメラの取得
+	/// </summary>
+	/// <returns>デバッグカメラ</returns>
+	Camera* GetDebugCamera()const;
 private://メンバ関数
 	/// <summary>
 	/// 名前を重複しないようにする
@@ -107,20 +128,20 @@ private://メンバ関数
 	/// <param name="remove">省きたい部分</param>
 	std::string CreateUniqueGameObjectName(const std::string& baseName, std::string_view remove)const;
 private://定数
-	//オブジェクトの大きさ
+	//オブジェクトのメモリ確保数
 	static inline const uint32_t kGameObjectSize = 65536;
 protected://メンバ変数
 	//Xboxの番号
 	DWORD xBoxPadNumber_ = 0;
-	//シーンで必要なもの
-	SceneContext sceneContext_ = {};
+private://メンバ変数
 	//シーンファクトリー
-	AbstractSceneFactory* sceneFactory_ = nullptr;
-	//コライダーマネージャー
-	//std::unique_ptr<ColliderManager>colliderManager_ = nullptr;
-	//ゲームプレイ用のカメラ
-	Camera* gameCamera_ = nullptr;
+	std::unique_ptr<AbstractSceneFactory> sceneFactory_ = nullptr;
 	//ゲームオブジェクトの一覧
 	std::vector<std::unique_ptr<GameObject>> gameObjects_;
+	//シーンで必要なもの
+	SceneContext sceneContext_ = {};
+	//デバッグカメラの操作
+	DebugCameraController* debugCameraController_ = nullptr;
+	//デバッグカメラのポインタ
+	Camera* debugCamera_ = nullptr;
 };
-

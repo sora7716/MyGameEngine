@@ -3,6 +3,7 @@
 #include "BlendMode.h"
 #include "ParticleRenderData.h"
 #include "Component.h"
+#include "Color.h"
 #include <memory>
 
 //前方宣言
@@ -113,7 +114,7 @@ public://メンバ関数
 	/// </summary>
 	/// <param name="index">マテリアルスロット番号の検索キー</param>
 	/// <param name="color">色</param>
-	void SetColor(uint32_t index, const Vector4& color);
+	void SetColor(uint32_t index, const Color& color);
 
 	/// <summary>
 	/// テクスチャの設定
@@ -128,6 +129,12 @@ public://メンバ関数
 	/// <param name="index">マテリアルスロット番号の検索キー</param>
 	/// <param name="uvTransform">UV座標</param>
 	void SetUVTransform(uint32_t index, const RectTransform& uvTransform);
+
+	/// <summary>
+	/// コンポーネントのタイプ名を取得
+	/// </summary>
+	/// <returns>コンポーネントのタイプ名</returns>
+	std::string GetTypeName()const override;
 
 	/// <summary>
 	/// モデルの取得

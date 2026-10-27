@@ -1,7 +1,7 @@
 #pragma once
 #include "RenderingData.h"
-#include "LightingData.h"
 #include "Vector4.h"
+#include "Color.h"
 #include <cstdint>
 #include <string>
 #include <vector>
@@ -17,18 +17,19 @@ struct VertexData{
 
 //マテリアル
 struct Material{
-	Vector4 color = Vector4::MakeWhiteColor();//色
+	Color color = Color::GetWhite();//色
 	int32_t enableLighting = 0;//ライティングするかどうかのフラグ
 	float padding1[3] = {};
 	Matrix4x4 uvMatrix = Matrix4x4::Identity4x4();//UVTransform
 	float shininess = 1.0f;//光沢度
+	uint32_t diffuseModel = 0;//拡散反射モデルの切り替え
+	uint32_t specularModel = 0;//鏡面反射モデルの切り替え
 	float environmentCoefficient = 0.0f;//映り込み度を調整
-	float padding2[2] = {};
 };
 
 //マテリアル
 struct MaterialForSprite{
-	Vector4 color = Vector4::MakeWhiteColor();//色
+	Color color = Color::GetWhite();//色
 	Matrix4x4 uvMatrix = Matrix4x4::Identity4x4();//UVTransform
 };
 
@@ -67,7 +68,7 @@ struct CameraForGPU{
 
 //リムライトの構造体
 struct RimLight{
-	Vector4 color = Vector4::MakeWhiteColor();//リムライトの色
+	Color color = Color::GetWhite();//リムライトの色
 	float power = 0.0f; //リムライトの強さ
 	float outLinePower = 0.0f; //リムライトの外側の強さ
 	float softness = 0.0f;//リムライトの柔らかさ

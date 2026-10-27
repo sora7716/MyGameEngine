@@ -10,8 +10,28 @@ class Blend;
 /// <summary>
 /// パイプラインの管理
 /// </summary>
-class PipelineManager{	
+class PipelineManager{
+public://PassKey
+	class ConstructorKey{
+	private:
+		ConstructorKey() = default;
+		friend class Core;
+	};
+public://静的メンバ関数
+	/// <summary>
+	/// 生成
+	/// </summary>
+	/// <param name="key">コンストラクタのKey</param>
+	/// <param name="directXBase">DirectXの基盤部分</param>
+	/// <returns>インスタンス</returns>
+	static std::unique_ptr<PipelineManager>Create(ConstructorKey key, DirectXBase* directXBase);
 public://メンバ関数
+	/// <summary>
+	/// コンストラクタ
+	/// </summary>
+	/// <param name="">PassKeyを受け取る</param>
+	explicit PipelineManager(ConstructorKey);
+
 	/// <summary>
 	/// デストラクタ
 	/// </summary>
@@ -35,6 +55,11 @@ public://メンバ関数
 	/// <returns>パイプラインセット</returns>
 	const PipelineSet& GetPipelineSet(PipelineType pipelineSetType)const;
 private://メンバ関数
+	//コピーコンストラクタ禁止
+	PipelineManager(const PipelineManager&) = delete;
+	//代入演算子の禁止
+	PipelineManager& operator=(const PipelineManager&) = delete;
+
 	/// <summary>
 	/// PSOの作成(Object3d)
 	/// </summary>
@@ -56,20 +81,9 @@ private://メンバ関数
 	void CreatePSOForSkyBox();
 
 	/// <summary>
-	/// PSOの作成(DebugDraw)
+	/// PSOの作成(Wireframe)
 	/// </summary>
-	void CreatePSOForDebugDraw();
-public://PassKeyIdiom
-	class ConstructorKey{
-	private:
-		ConstructorKey() = default;
-		friend class Core;
-	};
-	/// <summary>
-	/// コンストラクタ
-	/// </summary>
-	/// <param name="">PassKeyを受け取る</param>
-	explicit PipelineManager(ConstructorKey);
+	void CreatePSOForWireframe();
 private://静的メンバ変数
 	//PSOの作成関数のテーブル
 	static void (PipelineManager::* createPSOTable[])();

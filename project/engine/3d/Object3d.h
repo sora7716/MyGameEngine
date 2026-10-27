@@ -4,21 +4,34 @@
 #include "RenderingData.h"
 #include "Object3dRenderData.h"
 #include "Component.h"
+#include "Color.h"
 #include <vector>
 #include <string>
 #include <memory>
+#include "MaterialInstance.h"
 
 //前方宣言
 class Model;
 class GameObject;
 class MaterialInstance;
 class LODController;
-class Culling;
 
 /// <summary>
 /// 3Dオブジェクト
 /// </summary>
 class Object3d :public Component{
+public://構造体
+	//メッシュのインスタンス
+	struct NodeMeshInstance{
+		uint32_t meshIndex = 0;
+		Matrix4x4 nodeMatrix = Matrix4x4::Identity4x4();
+	};
+
+	//ノードの情報
+	struct NodeInfo{
+		std::string name;
+		std::string path;
+	};
 public://メンバ関数
 	/// <summary>
 	/// コンストラクタ
@@ -55,6 +68,25 @@ public://メンバ関数
 	void UpdateLOD(float distance);
 
 	/// <summary>
+	/// プロパティ一覧を登録
+	/// </summary>
+	/// <param name="registry">レジストリ</param>
+	void RegisterProperties(PropertyRegistry* registry)override;
+
+	/// <summary>
+	/// 親子付けを外す
+	/// </summary>
+	void Detach();
+
+	/// <summary>
+	/// 親子付け
+	/// </summary>
+	/// <param name="parent">親</param>
+	/// <param name="parentNodePath">親となるノードのパス</param>
+	/// <returns>成功したか</returns>
+	bool AttachTo(Object3d* parent, const std::string& parentNodePath);
+
+	/// <summary>
 	/// ワールド行列を作成
 	/// </summary>
 	/// <param name="cameraWorldMatrix">カメラのワールド行列</param>
@@ -64,8 +96,8 @@ public://メンバ関数
 	/// <summary>
 	/// モデルの設定
 	/// </summary>
-	/// <param name="model">モデル</param>
-	void SetModel(Model* model);
+	/// <param name="modelName">モデル名</param>
+	void SetModel(const std::string& modelName);
 
 	/// <summary>
 	/// LODの切り替え距離の設定
@@ -105,7 +137,7 @@ public://メンバ関数
 	/// </summary>
 	/// <param name="index">マテリアルスロット番号の検索キー</param>
 	/// <param name="color">色</param>
-	void SetColor(uint32_t index, const Vector4& color);
+	void SetColor(uint32_t index, const Color& color);
 
 	/// <summary>
 	/// テクスチャの設定
@@ -122,11 +154,11 @@ public://メンバ関数
 	void SetEnvironmentMap(uint32_t index, const std::string& environmentMapFileName);
 
 	/// <summary>
-	/// ライティングフラグの設定
+	/// ライティングをするか
 	/// </summary>
 	/// <param name="index">マテリアルスロット番号の検索キー</param>
-	/// <param name="isLighting">ライティングフラグ</param>
-	void SetIsLighting(uint32_t index, bool isLighting);
+	/// <param name="enabledLighting">ライティングをするか</param>
+	void SetEnabledLighting(uint32_t index, bool enabledLighting);
 
 	/// <summary>
 	/// 輝度の設定
@@ -140,7 +172,21 @@ public://メンバ関数
 	/// </summary>
 	/// <param name="index">マテリアルスロット番号の検索キー</param>
 	/// <param name="environmentCoefficient">k環境マップの映り込み度</param>
-	void SetEnvironmentCoefficient(uint32_t index, float& environmentCoefficient);
+	void SetEnvironmentCoefficient(uint32_t index, float environmentCoefficient);
+
+	/// <summary>
+	/// 拡散反射モデルの切り替え
+	/// </summary>
+	/// <param name="index">検索キー</param>
+	/// <param name="diffuseModel">拡散反射モデルの切り替え</param>
+	void SetDiffuseModel(uint32_t index,DiffuseModel diffuseModel);
+
+	/// <summary>
+	/// 鏡面反射モデルの切り替え
+	/// </summary>
+	/// <param name="index">検索キー</param>
+	/// <param name="specularModel">鏡面反射モデルの切り替え</param>
+	void SetSpecularModel(uint32_t index, SpecularModel specularModel);
 
 	/// <summary>
 	/// UV座標の設定
@@ -162,17 +208,18 @@ public://メンバ関数
 	void SetRenderTransformMode(RenderTransformMode transformMode);
 
 	/// <summary>
-	/// ワールド行列の取得
+	/// ノードのローカルトランスフォームの設定
 	/// </summary>
-	/// <returns>ワールド行列</returns>
-	const Matrix4x4& GetWorldMatrix()const;
+	/// <param name="path">ノードのパス名</param>
+	/// <param name="localTransform">ローカルトランスフォーム</param>
+	/// <returns>Nodeの取得に成功したか</returns>
+	bool SetNodeLocalTransform(const std::string& path, const Transform& localTransform);
 
 	/// <summary>
-	/// ワールド座標の取得
+	/// コンポーネントのタイプ名を返す
 	/// </summary>
-	/// <param name="instanceIndex">インスタンスのマテリアルスロット番号の検索キー</param>
-	/// <returns>ワールド座標</returns>
-	Vector3 GetWorldPos();
+	/// <returns>コンポーネントのタイプ名</returns>
+	std::string GetTypeName()const override;
 
 	/// <summary>
 	/// メッシュのサイズの取得
@@ -233,7 +280,78 @@ public://メンバ関数
 	/// </summary>
 	/// <returns>現在のLOD番号</returns>
 	uint32_t GetCurrentLOD()const;
+
+	/// <summary>
+	/// ノードのメッシュインスタンスの取得
+	/// </summary>
+	/// <returns>ノードのメッシュインスタンス</returns>
+	const std::vector<NodeMeshInstance>& GetNodeMeshInstance()const;
+
+	/// <summary>
+	/// ノードのローカルトランスフォームの取得
+	/// </summary>
+	/// <param name="path">ノードのパス</param>
+	/// <returns>ノードのローカルトランスフォーム</returns>
+	const Transform GetNodeLocalTransform(const std::string& path);
+
+	/// <summary>
+	/// ノードの行列を取得できるか試す
+	/// </summary>
+	/// <param name="path">ノードのパス</param>
+	/// <param name="outMatrix">取得できた行列</param>
+	/// <returns>成功したか</returns>
+	bool TryGetNodeModelMatrix(const std::string& path, Matrix4x4& outMatrix);
+
+	/// <summary>
+	/// ノードを取得できるか試す
+	/// </summary>
+	/// <param name="path">ノードパス</param>
+	/// <param name="node">取得できたノード</param>
+	/// <returns>成功したか</returns>
+	bool TryGetNodeForPath(const std::string& path, Node& node);
+
+	/// <summary>
+	/// ノードの名前一覧を取得
+	/// </summary>
+	/// <returns>ノードの情報の配列</returns>
+	std::vector<Object3d::NodeInfo>GetNodeNames()const;
+
+	/// <summary>
+	/// ノードを取得
+	/// </summary>
+	/// <returns>ノード</returns>
+	const Node& GetNode()const;
+
+	/// <summary>
+	/// 接続されたノードのパスを取得
+	/// </summary>
+	/// <returns>接続されたノードのパス</returns>
+	const std::string& GetAttachedNodePath()const;
 private://メンバ関数
+	/// <summary>
+	/// ノードの名前を集める
+	/// </summary>
+	/// <param name="node">ノード</param>
+	/// <param name="parentPath">親のパス</param>
+	/// <param name="nodeInfos">ノードの情報を集める配列</param>
+	void CollectNodeNames(const Node& node, const std::string& parentPath, std::vector<NodeInfo>& nodeInfos)const;
+
+	/// <summary>
+	/// ノードを探す
+	/// </summary>
+	/// <param name="name">ノードのパス</param>
+	/// <returns>ノード</returns>
+	Node* FindNode(const std::string& path);
+
+	/// <summary>
+	/// ノードを再起関数で探す
+	/// </summary>
+	/// <param name="node">ノード</param>
+	/// <param name="parentPath">親のパス</param>
+	/// <param name="targetPath">対象のパス</param>
+	/// <returns>ノード</returns>
+	Node* FindNodeRecursive(Node& node, const std::string& parentPath, const std::string& targetPath);
+
 	/// <summary>
 	/// ワールド行列を作成
 	/// </summary>
@@ -243,6 +361,13 @@ private://メンバ関数
 	/// マテリアルを個別化する
 	/// </summary>
 	void EnsureUniqueMaterialInstance();
+
+	/// <summary>
+	/// Nodeの行列を更新
+	/// </summary>
+	/// <param name="node">ノード</param>
+	/// <param name="parentMatrix">親行列</param>
+	void UpdateNodeMatrices(Node& node, const Matrix4x4& parentMatrix);
 private://定数
 	//インスタンスの最大数
 	static const inline uint32_t kMaxInstanceCount_ = 1024;
@@ -263,8 +388,18 @@ private://メンバ変数
 
 	//オブジェクトの見た目
 	RenderTransformMode renderTransformMode_ = RenderTransformMode::kNormal;
-	//ワールド行列
-	Matrix4x4 worldMatrix_ = {};
+
+	//親のノード
+	Node* parentNode_ = nullptr;
+	Matrix4x4 parentWorldMatrix_ = Matrix4x4::Identity4x4();
+
 	//ノード
 	Node node_ = {};
+	//接続されたノードのパス
+	std::string attachedNodePath_ = "";
+	//メッシュのワールド行列
+	std::vector<NodeMeshInstance>nodeMeshInstance_;
+
+	//ライティングするか
+	bool enabledLighting_ = true;
 };

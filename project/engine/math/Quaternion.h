@@ -1,8 +1,9 @@
 #pragma once
-#include "Vector3.h"
+struct Vector3;
+struct Matrix4x4;
 
 //クォータニオン
-struct Quaternion {
+struct Quaternion{
 	float x = 0.0f;
 	float y = 0.0f;
 	float z = 0.0f;
@@ -59,7 +60,29 @@ struct Quaternion {
 	/// </summary>
 	/// <param name="rotate">オイラー角</param>
 	/// <returns>クォータニオン</returns>
-	static Quaternion MakeQuaternionForEulerAngle(const Vector3& rotate);
+	static Quaternion EulerAngleToQuaternion(const Vector3& rotate);
+
+	/// <summary>
+	/// ベクトルをクォータニオンで回転させた結果のベクトルを求める
+	/// </summary>
+	/// <param name="vector">ベクトル</param>
+	/// <returns>クォータニオンで回転させたベクトル</returns>
+	Vector3 RotateVector(const Vector3& vector)const;
+
+	/// <summary>
+	/// 任意軸回転を表すクォータニオンの生成
+	/// </summary>
+	/// <param name="axis">3軸</param>
+	/// <param name="angle">角度</param>
+	/// <returns>任意軸回転を表すクォータニオン</returns>
+	static Quaternion MakeRotateAxisAngleQuaternion(const Vector3& axis, float angle);
+
+	/// <summary>
+	/// 行列をクォータニオンに変換
+	/// </summary>
+	/// <param name="m">行列</param>
+	/// <returns>クォータニオン</returns>
+	static Quaternion RotationMatrixToQuaternion(const Matrix4x4& m);
 
 	/// <summary>
 	/// 加算

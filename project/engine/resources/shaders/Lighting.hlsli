@@ -1,0 +1,199 @@
+#include "LightingCommon.hlsli"
+
+//平行光源
+struct DirectionalLight {
+    float4 color; //ライトの色
+    float3 direction; //ライトの向き
+    float intensity; //輝度
+    int enabled; //平行光源を有効にするか
+};
+
+//点光源
+struct PointLight {
+    float4 color; //ライトの色
+    float3 position; //ライトの位置
+    float intensity; //輝度
+    float distance; //ライトが届く最大距離
+    float decay; //減衰率
+    int enabled; //点光源を有効にするか
+};
+
+//スポットライト
+struct SpotLight {
+    float4 color; //ライトの色
+    float3 position; //ライトの位置
+    float intensity; //輝度
+    float3 direction; //スポットライトの方向
+    float distance; //ライトの届く最大距離
+    float decay; //減衰率
+    float cosAngle; //スポットライトの余弦
+    float cosFalloffStart;
+    int enabled; //点光源を有効にするか
+};
+
+//マテリアル
+struct Material {
+    float4 color;
+    int enableLighring;
+    float4x4 uvMatrix;
+    float shininess;
+    int diffuseModel;
+    int specularModel;
+    float environmentCoefficient;
+};
+
+//ライティング
+struct Lighting {
+    float3 baseColor;
+    float3 lightColor;
+    float3 diffuse;
+    float3 specular;
+};
+
+//拡散反射光の明るさの係数の計算
+float CalculateDiffuseFactor(float3 normal, float3 direction, int diffuseModel) {
+    float result = 0.0f;
+    if (diffuseModel == 0) {
+        //lambert
+        result = saturate(dot(normalize(normal), -direction));
+    } else {
+        //half lambert
+        float NdotL = dot(normalize(normal), -direction);
+        //拡散反射
+        result = pow(NdotL * 0.5f + 0.5f, 2.0f);
+    }
+    
+    return result;
+}
+
+//鏡面反射の強さを計算
+float CalculateSpecularFactor(float3 normal, float3 toEye, float shininess, float3 direction, int specularModel) {
+    float result = 0.0f;
+    if (specularModel == 0) {
+        //PhongReflectionModel
+        //入射光の反射ベクトルを求める
+        float3 reflectLight = reflect(direction, normalize(normal));
+        //鏡面反射の強度
+        float RdotE = dot(reflectLight, toEye);
+        result = pow(saturate(RdotE), shininess); //反射強度
+    } else {
+        //BlingPhongReflectionModel
+        //ハーフベクトル
+        float3 halfVector = normalize(-direction + toEye);
+        float NDotH = dot(normalize(normal), halfVector);
+        result = pow(saturate(NDotH), shininess); //反射強度
+    }
+    
+    return result;
+}
+
+//距離減衰の計算
+float CalculateDistanceAttenuation(float3 toLight, float distance, float decay) {
+    //実際の距離
+    float actualDistance = length(toLight);
+    //距離減衰(1 - 実際の距離/最大距離)
+    float attenuation = saturate(1.0f - (actualDistance / distance));
+    //最終的な減衰を計算
+    attenuation = pow(attenuation, decay);
+    
+    return attenuation;
+}
+
+//平行光源
+float3 CalculateDirectionalLight(VertexShaderOutput input, DirectionalLight directionalLight, Material material, float4 textureColor, float3 toEye) {
+     //ライティング
+    Lighting result;
+    
+    //拡散反射光の明るさ
+    float diffuseFactor = CalculateDiffuseFactor(input.normal, directionalLight.direction, material.diffuseModel);
+        
+    //鏡面反射の強度
+    float specularFactor = CalculateSpecularFactor(input.normal, toEye, material.shininess, directionalLight.direction, material.specularModel);
+    
+    //元の色
+    result.baseColor = textureColor.rgb * material.color.rgb;
+    //光の色と強さ
+    result.lightColor = directionalLight.color.rgb * directionalLight.intensity;
+    //拡散反射光
+    result.diffuse = result.baseColor * diffuseFactor;
+    //鏡面反射
+    result.specular = specularFactor * float3(1.0f, 1.0f, 1.0f);
+    return (result.diffuse + result.specular) * result.lightColor;
+}
+
+//点光源
+float3 CalculatePointLight(VertexShaderOutput input, PointLight pointLight, Material material, float4 textureColor, float3 toEye) {
+    //ライティング
+    Lighting result;
+    
+    //ライトまでの距離
+    float3 toLight = input.worldPosition - pointLight.position;
+    //点光源の方向ベクトル
+    float3 pointLightDirection = normalize(toLight);
+   
+    //拡散反射光の明るさ
+    float diffuseFactor = CalculateDiffuseFactor(input.normal, pointLightDirection, material.diffuseModel);
+    
+    //鏡面反射の強度
+    float specularFactor = CalculateSpecularFactor(input.normal, toEye, material.shininess, pointLightDirection, material.specularModel);
+    
+    //距離減衰(1 - 実際の距離/最大距離)
+    float attenuation = CalculateDistanceAttenuation(toLight, pointLight.distance, pointLight.decay);
+    
+    //元の色
+    result.baseColor = textureColor.rgb * material.color.rgb;
+    //光の色
+    result.lightColor = pointLight.color.rgb * pointLight.intensity;
+    //拡散反射
+    result.diffuse = result.baseColor * diffuseFactor;
+    //鏡面反射
+    result.specular = specularFactor * float3(1.0f, 1.0f, 1.0f);
+    
+    //距離減衰を適応
+    result.diffuse *= attenuation;
+    result.specular *= attenuation;
+    
+    return (result.diffuse + result.specular) * result.lightColor;
+}
+
+//スポットライト
+float3 CalculateSpotLight(VertexShaderOutput input, SpotLight spotLight, Material material, float4 textureColor, float3 toEye) {
+    //ライティング
+    Lighting result;
+    
+    //ライトの位置
+    float3 toLight = input.worldPosition - spotLight.position;
+    
+    //スポットライトの入射光
+    float3 spotLightDirectionOnSurface = normalize(toLight);
+    
+    //コサイン
+    float diffuseFactor = CalculateDiffuseFactor(input.normal, spotLightDirectionOnSurface, material.diffuseModel);
+
+     //鏡面反射の強度
+    float specularFactor = CalculateSpecularFactor(input.normal, toEye, material.shininess, spotLightDirectionOnSurface, material.specularModel);
+        
+    //元の色
+    result.baseColor = textureColor.rgb * material.color.rgb;
+    //ライトの色
+    result.lightColor = spotLight.color.rgb * spotLight.intensity;
+    //拡散反射
+    result.diffuse = result.baseColor * diffuseFactor;
+    //鏡面反射
+    result.specular = specularFactor * float3(1.0f, 1.0f, 1.0f);
+    
+    //光の円の計算
+    //外接円
+    float cosAngle = dot(spotLightDirectionOnSurface, spotLight.direction);
+    //内接円
+    float falloffFactor = saturate((cosAngle - spotLight.cosAngle) / (spotLight.cosFalloffStart - spotLight.cosAngle));
+        
+    //光の減衰
+    float attenuation = CalculateDistanceAttenuation(toLight, spotLight.distance, spotLight.decay);
+        
+    //光の減衰を適応
+    result.diffuse *= attenuation * falloffFactor;
+    result.specular *= attenuation * falloffFactor;
+    
+    return (result.diffuse + result.specular) * result.lightColor;
+}

@@ -4,9 +4,44 @@
 #include <algorithm>
 #include <cassert>
 
-//Vector3のメンバ変数すべてに1.0fを代入したVector3を作成
-Vector3 Vector3::MakeAllOne(){
+//すべて1.0fのベクトルを取得
+Vector3 Vector3::GetOne(){
 	return Vector3(1.0f, 1.0f, 1.0f);
+}
+
+//すべて0.0fのベクトルを取得
+Vector3 Vector3::GetZero(){
+	return Vector3(0.0f, 0.0f, 0.0f);
+}
+
+//Y軸だけに1.0fのベクトルを取得
+Vector3 Vector3::GetUp(){
+	return Vector3(0.0f, 1.0f, 0.0f);
+}
+
+//Y軸だけに-1.0fのベクトルを取得
+Vector3 Vector3::GetDown(){
+	return Vector3(0.0f, -1.0f, 0.0f);
+}
+
+//X軸だけに-1.0fのベクトルを取得
+Vector3 Vector3::GetLeft(){
+	return Vector3(-1.0f, 0.0f, 0.0f);
+}
+
+//X軸だけに1.0fのベクトルを取得
+Vector3 Vector3::GetRight(){
+	return Vector3(1.0f, 0.0f, 0.0f);
+}
+
+//Z軸だけに1.0fのベクトルを取得
+Vector3 Vector3::GetForward(){
+	return Vector3(0.0f, 0.0f, 1.0f);
+}
+
+//Z軸だけに-1.0fのベクトルを取得
+Vector3 Vector3::GetBack(){
+	return Vector3(0.0f, 0.0f, -1.0f);
 }
 
 //クランプ
@@ -30,12 +65,32 @@ Vector3 Vector3::Min(const Vector3& v) const{
 	return result;
 }
 
+//最小値
+Vector3 Vector3::Min(const Vector3& v1, const Vector3& v2) const{
+	Vector3 result = {};
+	result.x = std::min({ x, v1.x,v2.x });
+	result.y = std::min({ y, v1.y,v2.y });
+	result.z = std::min({ z, v1.z,v2.z });
+
+	return result;
+}
+
 //最大値
 Vector3 Vector3::Max(const Vector3& v) const{
 	Vector3 result = {};
 	result.x = std::max(x, v.x);
 	result.y = std::max(y, v.y);
 	result.z = std::max(z, v.z);
+
+	return result;
+}
+
+//最大値
+Vector3 Vector3::Max(const Vector3& v1, const Vector3& v2) const{
+	Vector3 result = {};
+	result.x = std::max({ x, v1.x,v2.x });
+	result.y = std::max({ y, v1.y,v2.y });
+	result.z = std::max({ z, v1.z,v2.z });
 
 	return result;
 }

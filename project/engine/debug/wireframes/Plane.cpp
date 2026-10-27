@@ -1,14 +1,13 @@
 #include "Plane.h"
 
 //コンストラクタ
-debugDraw::Plane::Plane(GameObject* gameObject) :BaseShape(gameObject){
-}
+wireframe::Plane::Plane(){}
 
 //デストラクタ
-debugDraw::Plane::~Plane(){}
+wireframe::Plane::~Plane(){}
 
 //初期化
-void debugDraw::Plane::InitializeShape(){
+void wireframe::Plane::InitializeShape(){
 	vertexCount_ = 4;
 	indexCount_ = 8;
 	plane_ = {
@@ -18,12 +17,12 @@ void debugDraw::Plane::InitializeShape(){
 }
 
 //更新
-void debugDraw::Plane::UpdateShape(){
+void wireframe::Plane::UpdateShape(){
 }
 
 //複製
-std::unique_ptr<Component> debugDraw::Plane::Clone(GameObject* gameObject) const{
-	std::unique_ptr<Plane>cloneInstance = std::make_unique<Plane>(gameObject);
+std::unique_ptr<wireframe::BaseShape> wireframe::Plane::Clone() const{
+	std::unique_ptr<Plane>cloneInstance = std::make_unique<Plane>();
 
 	//初期化
 	cloneInstance->Initialize();
@@ -37,17 +36,18 @@ std::unique_ptr<Component> debugDraw::Plane::Clone(GameObject* gameObject) const
 }
 
 //平面の設定
-void debugDraw::Plane::SetPlane(const primitiveData::Plane& plane){
+void wireframe::Plane::SetPlane(const primitiveData::Plane& plane){
 	plane_ = plane;
 }
 
 //平面の取得
-const primitiveData::Plane& debugDraw::Plane::GetPlane() const{
+const primitiveData::Plane& wireframe::Plane::GetPlane() const{
 	return plane_;
+	//デストラクタ
 }
 
 //頂点データの設定
-void debugDraw::Plane::SettingVertexData(){
+void wireframe::Plane::SettingVertexData(){
 	Vector3 normal = plane_.normal.Normalize();
 
 	//平面上の中心点
@@ -79,7 +79,7 @@ void debugDraw::Plane::SettingVertexData(){
 }
 
 //インデックスの設定
-void debugDraw::Plane::SettingIndexData(){
+void wireframe::Plane::SettingIndexData(){
 	uint32_t indices[] = {
 		//前面
 		0,1,
@@ -96,7 +96,7 @@ void debugDraw::Plane::SettingIndexData(){
 }
 
 //垂直の処理
-Vector3 debugDraw::Plane::Perpendicular(const Vector3& v){
+Vector3 wireframe::Plane::Perpendicular(const Vector3& v){
 	// TODO: return ステートメントをここに挿入します
 	if (v.x != 0.0f || v.y != 0.0f){
 		return { -v.y, v.x, 0.0f };

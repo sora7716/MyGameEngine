@@ -2,33 +2,29 @@
 //前方宣言
 class WinApi;
 class Input;
-class DirectXBase;
-class SRVManager;
 class TextureManager;
 class ModelManager;
 class SceneManager;
-class CameraManager;
 class AudioManager;
 class ImGuiManager;
 class TagManager;
-class PipelineManager;
 class LightingManager;
 class Core;
+class DirectXBase;
+class SRVManager;
+class DSVManager;
+class RTVManager;
 
 //シーンで必要なクラス
-struct SceneContext {
+struct SceneContext{
 	WinApi* winApi;
 	Input* input;
-	DirectXBase* directXBase;
-	SRVManager* srvManager;
 	TextureManager* textureManager;
 	ModelManager* modelManager;
 	SceneManager* sceneManager;
-	CameraManager* cameraManager;
 	AudioManager* audioManager;
 	ImGuiManager* imGuiManager;
 	TagManager* tagManager;
-	PipelineManager* pipelineManager;
 	LightingManager* lightingManager;
 
 	/// <summary>
@@ -36,4 +32,20 @@ struct SceneContext {
 	/// </summary>
 	/// <param name="core">ゲームエンジンの核</param>
 	void operator=(Core* core);
+};
+
+/// <summary>
+/// レンダーテクスチャで必要なもの
+/// </summary>
+struct RenderTextureContext{
+	DirectXBase* directXBase = nullptr;
+	SRVManager* srvManager = nullptr;
+	DSVManager* dsvManager = nullptr;
+	RTVManager* rtvManager = nullptr;
+
+	/// <summary>
+	/// ゲームエンジンの核から必要な物を抽出する
+	/// </summary>
+	/// <param name="core">ゲームエンジンの核</param>
+	void SetUp(Core* core);
 };

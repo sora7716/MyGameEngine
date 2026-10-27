@@ -11,18 +11,25 @@
 #include <cassert>
 
 //生成
-std::unique_ptr<Object3dRenderer> Object3dRenderer::Create(DirectXBase* directXBase, SRVManager* srvManager, TextureManager* textureManager, uint32_t maxInstance){
-	std::unique_ptr<Object3dRenderer>instance = std::make_unique<Object3dRenderer>();
+std::unique_ptr<Object3dRenderer> Object3dRenderer::Create(ConstructorKey key, DirectXBase* directXBase, SRVManager* srvManager, TextureManager* textureManager, uint32_t maxInstance){
+	std::unique_ptr<Object3dRenderer>instance = std::make_unique<Object3dRenderer>(key);
 	instance->Initialize(directXBase, srvManager, textureManager, maxInstance);
 	return instance;
 }
 
 //コンストラクタ
-Object3dRenderer::Object3dRenderer(){
+Object3dRenderer::Object3dRenderer(ConstructorKey){
 }
 
 //デストラクタ
 Object3dRenderer::~Object3dRenderer(){
+	//SRVの解放
+	for (const Object3dGpuResource& objectResource : objectResources_){
+		for (const LODGpuResource& lodResource : objectResource.lodResources){
+			srvManager_->Free(lodResource.srvIndex);
+		}
+
+	}
 }
 
 //初期化
@@ -83,28 +90,37 @@ void Object3dRenderer::Reset(){
 }
 
 //描画
-void Object3dRenderer::Draw(uint32_t instanceIndex, Camera* renderCamera){
-
-	//カメラ
-	renderCamera->DrawSetting(4);
-
+void Object3dRenderer::Draw(uint32_t instanceIndex){
 	for (uint32_t lodIndex = 0; lodIndex < renderDatas_[instanceIndex].lodRenderData.modelRendererDatas.size(); lodIndex++){
 		//LODモデルが存在してなかったら
 		if (renderDatas_[instanceIndex].lodRenderData.modelRendererDatas.empty()){
 			continue;
 		}
 
+		//オブジェクト3dのリソース
 		const Object3dGpuResource& objectResource = objectResources_[renderDatas_[instanceIndex].renderHandle];
 
+		//LODのリソース
 		const LODGpuResource& lodResource = objectResource.lodResources[lodIndex];
 
 		//モデルの描画に必要なデータ
 		ModelRenderData modelRenderData = renderDatas_[instanceIndex].lodRenderData.modelRendererDatas[lodIndex];
+
+		//メッシュの検索キー
+		uint32_t meshIndex = renderDatas_[instanceIndex].meshIndex;
+
+		//メッシュの検索キーとサイズを比べて
+		if (meshIndex >= static_cast<uint32_t>(modelRenderData.meshRenderDatas.size())){
+			continue;
+		}
+
+		//メッシュ描画データ
+		const MeshRenderData& meshRenderData = modelRenderData.meshRenderDatas[meshIndex];
+
 		//WVPのSRVIndex
 		uint32_t wvpSrvIndex = lodResource.srvIndex;
 		//描画カウント
 		uint32_t drawCount = renderDatas_[instanceIndex].lodRenderData.matrixCounts[lodIndex];
-
 		//LOD描画カウントが0だったら
 		if (drawCount == 0){
 			continue;
@@ -116,40 +132,39 @@ void Object3dRenderer::Draw(uint32_t instanceIndex, Camera* renderCamera){
 		//リムライトのCBufferの場所を設定
 		directXBase_->GetCommandList()->SetGraphicsRootConstantBufferView(7, modelRenderData.rimLightResource->GetGPUVirtualAddress());
 		//メッシュの描画
-		for (const MeshRenderData& meshRenderData : modelRenderData.meshRenderDatas){
-			uint32_t materialIndex = meshRenderData.meshData.materialIndex;
+		uint32_t materialIndex = meshRenderData.meshData.materialIndex;
 
-			//VertexBufferViewの設定
-			directXBase_->GetCommandList()->IASetVertexBuffers(0, 1, &meshRenderData.vertexBufferView);
+		//VertexBufferViewの設定
+		directXBase_->GetCommandList()->IASetVertexBuffers(0, 1, &meshRenderData.vertexBufferView);
 
-			//IndexBufferViewの設定
-			directXBase_->GetCommandList()->IASetIndexBuffer(&meshRenderData.indexBufferView);
+		//IndexBufferViewの設定
+		directXBase_->GetCommandList()->IASetIndexBuffer(&meshRenderData.indexBufferView);
 
-			//マテリアルCBufferの場所を設定
-			directXBase_->GetCommandList()->SetGraphicsRootConstantBufferView(0, modelRenderData.materialResources[materialIndex]->GetGPUVirtualAddress());
+		//マテリアルCBufferの場所を設定
+		directXBase_->GetCommandList()->SetGraphicsRootConstantBufferView(0, modelRenderData.materialResources[materialIndex]->GetGPUVirtualAddress());
 
-			MaterialTexturePaths& materialTexturePath = modelRenderData.modelData.materialTexturePaths[materialIndex];
+		MaterialTexturePaths& materialTexturePath = modelRenderData.modelData.materialTexturePaths[materialIndex];
 
-			//テクスチャをセット
-			directXBase_->GetCommandList()->SetGraphicsRootDescriptorTable(2, textureManager_->GetSRVHandleGPU(materialTexturePath.textureFilePath));
+		//テクスチャをセット
+		directXBase_->GetCommandList()->SetGraphicsRootDescriptorTable(2, textureManager_->GetSRVHandleGPU(materialTexturePath.textureFilePath));
 
-			//環境マップのセット
-			directXBase_->GetCommandList()->SetGraphicsRootDescriptorTable(8, textureManager_->GetSRVHandleGPU(materialTexturePath.environmentMap));
+		//環境マップのセット
+		directXBase_->GetCommandList()->SetGraphicsRootDescriptorTable(8, textureManager_->GetSRVHandleGPU(materialTexturePath.environmentMap));
 
-			//オブジェクト数が0より大きければ
-			if (drawCount > 0){
-				//メッシュが空じゃなければ
-				if (!meshRenderData.meshData.indices.empty()){
-					//描画
-					directXBase_->GetCommandList()->DrawIndexedInstanced(UINT(meshRenderData.meshData.indices.size()), drawCount, 0, 0, 0);
-				}
+		//オブジェクト数が0より大きければ
+		if (drawCount > 0){
+			//メッシュが空じゃなければ
+			if (!meshRenderData.meshData.indices.empty()){
+				//描画
+				directXBase_->GetCommandList()->DrawIndexedInstanced(static_cast<UINT>(meshRenderData.meshData.indices.size()), drawCount, 0, 0, 0);
 			}
 		}
 	}
+
 }
 
 //バッチを受け取る関数
-void Object3dRenderer::SubmitBatch(Model* model, MaterialInstance* materialInstance, BlendMode blendMode, const std::vector<TransformationMatrix>& transformations){
+void Object3dRenderer::SubmitBatch(Model* model, uint32_t meshIndex, MaterialInstance* materialInstance, BlendMode blendMode, const std::vector<TransformationMatrix>& transformations){
 	if (!model || !materialInstance){
 		return;
 	} else if (transformations.empty()){
@@ -165,10 +180,11 @@ void Object3dRenderer::SubmitBatch(Model* model, MaterialInstance* materialInsta
 	auto batchIt = std::find_if(
 		batchResources_.begin(),
 		batchResources_.end(),
-		[model, materialInstance, blendMode](const BatchResource& batchResource){
+		[model, meshIndex, materialInstance, blendMode](const BatchResource& batchResource){
 			return batchResource.model == model &&
 				batchResource.materialInstance == materialInstance &&
-				batchResource.blendMode == blendMode;
+				batchResource.blendMode == blendMode &&
+				batchResource.meshIndex == meshIndex;
 		}
 	);
 
@@ -187,6 +203,7 @@ void Object3dRenderer::SubmitBatch(Model* model, MaterialInstance* materialInsta
 		newResource.materialInstance = materialInstance;
 		newResource.blendMode = blendMode;
 		newResource.handle = handle;
+		newResource.meshIndex = meshIndex;
 
 		//GPUリソースを生成
 		CreateMaterialInstanceResource(newResource);
@@ -203,9 +220,12 @@ void Object3dRenderer::SubmitBatch(Model* model, MaterialInstance* materialInsta
 
 	//ここからObject3dRenderDataを作る
 	Object3dRenderData renderData = {};
-
+	//ハンドルの設定
 	renderData.renderHandle = handle;
+	//ブレンドモードを設定
 	renderData.blendMode = blendMode;
+	//メッシュインデックスの設定
+	renderData.meshIndex = meshIndex;
 
 	//Modelからメッシュを含む描画データをコピー
 	ModelRenderData modelRenderData = model->GetModelRenderData();
@@ -292,7 +312,6 @@ void Object3dRenderer::CreateTransformationMatrixResource(LODGpuResource& lodGpu
 	assert(SUCCEEDED(result));
 	//単位行列を書き込んでおく
 	for (uint32_t i = 0; i < lodGpuResource.capacity; i++){
-		lodGpuResource.wvpData[i].wvp = Matrix4x4::Identity4x4();
 		lodGpuResource.wvpData[i].world = Matrix4x4::Identity4x4();
 		lodGpuResource.wvpData[i].worldInverseTranspose = Matrix4x4::Identity4x4();
 	}

@@ -22,10 +22,16 @@ struct Vector2 final {
 	Vector2 Floor()const;
 
 	/// <summary>
-	/// Vector2のメンバ変数すべてに1.0fを代入したVector2を作成
+	/// 単位ベクトルを取得
 	/// </summary>
-	/// <returns>Vector2</returns>
-	static Vector2 MakeAllOne();
+	/// <returns>単位ベクトル</returns>
+	static Vector2 GetOne();
+
+	/// <summary>
+	/// ゼロベクトルを取得
+	/// </summary>
+	/// <returns>ゼロベクトル</returns>
+	static Vector2 GetZero();
 
 	//加法
 	Vector2 operator+(const Vector2& v)const;

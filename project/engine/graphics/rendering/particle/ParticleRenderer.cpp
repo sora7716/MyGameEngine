@@ -11,18 +11,22 @@
 #include <cassert>
 
 //生成
-std::unique_ptr<ParticleRenderer> ParticleRenderer::Create(DirectXBase* directXBase, SRVManager* srvManager, TextureManager* textureManager){
-	std::unique_ptr<ParticleRenderer>instance = std::make_unique<ParticleRenderer>();
+std::unique_ptr<ParticleRenderer> ParticleRenderer::Create(ConstructorKey key, DirectXBase* directXBase, SRVManager* srvManager, TextureManager* textureManager){
+	std::unique_ptr<ParticleRenderer>instance = std::make_unique<ParticleRenderer>(key);
 	instance->Initialize(directXBase, srvManager, textureManager);
 	return instance;
 }
 
 //コンストラクタ
-ParticleRenderer::ParticleRenderer(){
+ParticleRenderer::ParticleRenderer(ConstructorKey){
 }
 
 //デストラクタ
 ParticleRenderer::~ParticleRenderer(){
+	//SRVの解放
+	for (const GpuResource& gpuResource : gpuResources_){
+		srvManager_->Free(gpuResource.srvIndex);
+	}
 }
 
 //初期化
@@ -50,9 +54,6 @@ void ParticleRenderer::Draw(uint32_t instanceIndex, Camera* renderCamera){
 	//GPUリソースを取得
 	GpuResource& gpuResource = gpuResources_[instanceIndex];
 
-	//Nullチェック
-	assert(renderCamera);
-
 	//マテリアルインスタンスのスロットを取得
 	const std::vector <MaterialInstanceSlot>& slots = renderData.materialInstance->GetSlots();
 	//サイズを確認
@@ -65,11 +66,6 @@ void ParticleRenderer::Draw(uint32_t instanceIndex, Camera* renderCamera){
 
 	//インスタンスデータの適応
 	uint32_t drawCount = UpdateParticleInstance(gpuResource, renderData, renderCamera);
-
-	//ワールド行列の更新
-	//emitter_->UpdateWorldMatrix(instancingData_);
-	//カメラ
-	renderCamera->DrawSetting(3);
 
 	//ワールドトランスフォームの描画
 	directXBase_->GetCommandList()->SetGraphicsRootDescriptorTable(1, srvManager_->GetGPUDescriptorHandle(gpuResource.srvIndex));
@@ -161,7 +157,7 @@ void ParticleRenderer::CreateTransformationMatrixResource(GpuResource& gpuResour
 	for (uint32_t i = 0; i < gpuResource.capacity; i++){
 		//単位行列を書き込んでおく
 		gpuResource.instanceData[i].world = Matrix4x4::Identity4x4();
-		gpuResource.instanceData[i].color = Vector4(1.0f, 1.0f, 1.0f, 1.0f); // 初期色を白に設定
+		gpuResource.instanceData[i].color = Color(1.0f, 1.0f, 1.0f, 1.0f); // 初期色を白に設定
 	}
 }
 
@@ -189,7 +185,7 @@ void ParticleRenderer::CreateMaterialResources(GpuResource& gpuResource, uint32_
 		//書き込むためのアドレスを取得
 		gpuResource.materialResources[i]->Map(0, nullptr, reinterpret_cast<void**>(&gpuResource.materialDatas[i]));
 		//色を書き込む
-		gpuResource.materialDatas[i]->color = Vector4::MakeWhiteColor();
+		gpuResource.materialDatas[i]->color = Color::GetWhite();
 		gpuResource.materialDatas[i]->enableLighting = true;
 		gpuResource.materialDatas[i]->uvMatrix = Matrix4x4::Identity4x4();
 		gpuResource.materialDatas[i]->shininess = 10.0f;

@@ -2,19 +2,18 @@
 #include "BaseShape.h"
 #include "PrimitiveData.h"
 #include <Vector3.h>
-namespace debugDraw {
-	class Plane :public BaseShape {
+namespace wireframe {
+	class Plane :public BaseShape{
 	public://メンバ関数
 		/// <summary>
 		/// コンストラクタ
 		/// </summary>
-		/// <param name="gameObject">ゲームオブジェクト</param>
-		explicit Plane(GameObject* gameObject);
+		Plane();
 
 		/// <summary>
 		/// デストラクタ
 		/// </summary>
-		~Plane();
+		~Plane()override;
 
 		/// <summary>
 		/// 初期化
@@ -27,11 +26,10 @@ namespace debugDraw {
 		void UpdateShape()override;
 
 		/// <summary>
-        /// 複製
-        /// </summary>
-        /// <param name="gameObject">ゲームオブジェクト</param>
-        /// <returns>コンポーネント</returns>
-		std::unique_ptr<Component>Clone(GameObject* gameObject)const override;
+		/// 複製
+		/// </summary>
+		/// <returns>インスタンス</returns>
+		std::unique_ptr<BaseShape>Clone()const override;
 
 		/// <summary>
 		/// 平面の設定

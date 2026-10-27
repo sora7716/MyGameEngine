@@ -38,6 +38,7 @@ struct LODRenderData{
 //描画に必要なデータ
 struct Object3dRenderData{
 	Object3dRenderHandle renderHandle = kInvalidObject3dRenderHandle;
+	uint32_t meshIndex = 0;
 	LODRenderData lodRenderData;
 	BlendMode blendMode = BlendMode::kNone;
 };

@@ -1,37 +1,52 @@
 #include "SceneManager.h"
 #include "ImGuiManager.h"
 #include "DebugEditor.h"
-#include "CameraManager.h"
 #include "TagManager.h"
 #include "RenderSystem.h"
-#include "DebugCamera.h"
+#include "CollisionSystem.h"
+#include "Object3d.h"
+#include "Logger.h"
+#include "LightingManager.h"
 #include <cassert>
 
-//コンストラクタ
-SceneManager::SceneManager(){
+//生成
+std::unique_ptr<SceneManager> SceneManager::Create(ConstructorKey key, const SceneContext& sceneContext, RenderSystem* renderSystem, CollisionSystem* collisionSystem){
+	//生成
+	std::unique_ptr<SceneManager>instance = std::make_unique<SceneManager>(key);
+	//初期化
+	instance->Initialize(sceneContext, renderSystem, collisionSystem);
+
+	return instance;
 }
+
+//コンストラクタ
+SceneManager::SceneManager(ConstructorKey){}
 
 //デストラクタ
 SceneManager::~SceneManager(){
 	scene_->Finalize();
 	delete scene_;
-	delete instance;
 }
 
 //初期化
-void SceneManager::Initialize(const SceneContext& sceneContext, RenderSystem* renderSystem){
+void SceneManager::Initialize(const SceneContext& sceneContext, RenderSystem* renderSystem, CollisionSystem* collisionSystem){
+	//必要な物を記録
 	sceneContext_ = sceneContext;
+	//描画システムを記録
+	assert(renderSystem);
+	renderSystem_ = renderSystem;
+	//衝突判定システムを記録
+	assert(collisionSystem);
+	collisionSystem_ = collisionSystem;
 	//シーンマネージャだけ自分から渡す
 	sceneContext_.sceneManager = this;
 	//デバッグエディターの生成と初期化
 	debugEditor_ = std::make_unique<DebugEditor>();
-	debugEditor_->Initialize(sceneContext_.tagManager);
-	//デバックカメラ
-	debugCamera_ = std::make_unique<DebugCamera>();
-	debugCamera_->Initialize(sceneContext_.cameraManager->FindCamera("debugCamera"));
-	//描画システムの記録
-	assert(renderSystem);
-	renderSystem_ = renderSystem;
+	debugEditor_->Initialize(sceneContext_.textureManager, sceneContext_.tagManager);
+
+	//Gizmoの情報を見えるものにするの初期化と生成
+	gizmoVisualizer_ = std::make_unique<GizmoVisualizer>();
+	gizmoVisualizer_->Initialize();
 }
 
 //更新
@@ -41,7 +56,7 @@ void SceneManager::Update(){
 		//旧シーンの終了
 		if (scene_){
 			//デバッグエディタの初期化
-			debugEditor_->Initialize(sceneContext_.tagManager);
+			debugEditor_->Initialize(sceneContext_.textureManager, sceneContext_.tagManager);
 			//旧シーンの解放
 			scene_->Finalize();
 			delete scene_;
@@ -50,31 +65,90 @@ void SceneManager::Update(){
 		scene_ = nextScene_;
 		nextScene_ = nullptr;
 		//シーンに必要な情報の設定
-		scene_->SetSceneContext(sceneContext_);
+		scene_->SetUp(sceneContext_);
 		//次のシーン
 		scene_->Initialize();
-		//ゲームオブジェクト一覧をDebugEditorに登録
+		//ゲームオブジェクト一覧をDebugEditorに設定
 		debugEditor_->SetGameObjects(scene_->GetGameObjects());
+		//デバッグカメラをDebugEditorに設定
+		debugEditor_->SetDebugCamera(scene_->GetDebugCamera());
 	}
-	//更新
-	scene_->Update();
+	//衝突判定システムの更新
+	collisionSystem_->Update(scene_->GetGameObjects());
 	//デバッグエディタの更新
 	debugEditor_->Update();
-
-#ifdef USE_IMGUI
-	sceneContext_.imGuiManager->Begin();
-	//デバックカメラ
-	debugCamera_->Update();
-#endif // USE_IMGUI
-
+	//Gizmoの見える情報の更新
+	gizmoVisualizer_->SetSelectedGameObject(debugEditor_->GetSelectedGameObject());
+	gizmoVisualizer_->Update();
+	//更新
+	scene_->Update();
+	//デバッグ操作が有効かを設定
+	scene_->SetIsDebugControlEnabled(debugEditor_->IsSceneViewHovered());
+	//アプリケーションが有効かを設定
+	scene_->SetIsAppInputEnabled(debugEditor_->IsPreviewHovered());
 }
 
 //デバッグ
-void SceneManager::Debug(){
+void SceneManager::Debug([[maybe_unused]] D3D12_GPU_DESCRIPTOR_HANDLE sceneHandle, [[maybe_unused]] D3D12_GPU_DESCRIPTOR_HANDLE previewHandle){
 #ifdef USE_IMGUI
-
+	sceneContext_.imGuiManager->Begin();
 	//デバッグエディタの描画
-	debugEditor_->Draw();
+	debugEditor_->Draw(sceneHandle, previewHandle);
+
+	//親子付けを要求
+	ParentRequest parentRequest = {};
+	if (debugEditor_->ConsumeParentRequest(parentRequest)){
+		GameObject* parent = parentRequest.parent;
+		GameObject* child = parentRequest.child;
+		//親と子が存在するか
+		if (parent && child){
+			//親子付けが成功したか
+			bool isAttached = false;
+
+			//ノードパスが無ければGameObjectに接続
+			if (parentRequest.nodePath.empty()){
+				isAttached = child->AttachTo(parent);
+				if (!isAttached){
+					Logger::OutputLog("親子付けが失敗しました");
+				}
+			} else{
+				//Object3dがあるか確認
+				Object3d* parentObject3d = parentRequest.parent->GetComponent<Object3d>();
+				Object3d* childObject3d = parentRequest.child->GetComponent<Object3d>();
+
+				//親と子でObject3dを取得できた場合
+				if (parentObject3d && childObject3d){
+					//親子付けを行う
+					isAttached = childObject3d->AttachTo(parentObject3d, parentRequest.nodePath);
+					if (!isAttached){
+						Logger::OutputLog("親子付けが失敗しました");
+					}
+				} else{
+					Logger::OutputLog("親または子でObject3d取得に失敗しました");
+				}
+			}
+		} else{
+			Logger::OutputLog("親または子でGameObjectがNullでした");
+		}
+	}
+
+	//親子付けを解除
+	GameObject* detachObject = nullptr;
+	if (debugEditor_->ConsumeDetachRequest(detachObject)){
+		//ターゲットがある場合
+		if (detachObject){
+			//解除
+			detachObject->Detach();
+			//Object3dが取得できたか
+			Object3d* object3d = detachObject->GetComponent<Object3d>();
+			if (object3d){
+				//親子付けを解除
+				object3d->Detach();
+			} else{
+				Logger::OutputLog("親子付け解除する対象のObject3d取得に失敗しました");
+			}
+		}
+	}
 
 	//生成要求
 	if (debugEditor_->ConsumeCreateRequest()){
@@ -84,13 +158,15 @@ void SceneManager::Debug(){
 	}
 
 	//複製要求
-	if (GameObject* target = debugEditor_->ConsumeDuplicateRequest()){
-		scene_->DuplicateGameObject(target);
+	GameObject* duplicateObject = nullptr;
+	if (debugEditor_->ConsumeDuplicateRequest(duplicateObject)){
+		scene_->DuplicateGameObject(duplicateObject);
 	}
 
 	//削除要求
-	if (GameObject* target = debugEditor_->ConsumeDeleteRequest()){
-		scene_->DeleteGameObject(target);
+	GameObject* deleteObject = nullptr;
+	if (debugEditor_->ConsumeDeleteRequest(deleteObject)){
+		scene_->DeleteGameObject(deleteObject, collisionSystem_);
 	}
 
 	//ゲームオブジェクトの移動要求
@@ -124,30 +200,41 @@ void SceneManager::Debug(){
 }
 
 //描画
-void SceneManager::Draw(Camera* camera){
+void SceneManager::Draw(CameraMode cameraMode){
 	const std::vector<std::unique_ptr<GameObject>>& gameObjects = scene_->GetGameObjects();
+	//平行光源の追加
+	sceneContext_.lightingManager->CollectActiveDirectionalLight(gameObjects);
+	//点光源の追加
+	sceneContext_.lightingManager->CollectActivePointLight(gameObjects);
+	//スポットライトの追加
+	sceneContext_.lightingManager->CollectActiveSpotLight(gameObjects);
+
+	//カメラの追加
+	renderSystem_->CollectActiveCameras(gameObjects);
+	//カメラのモードを設定
+	renderSystem_->SetCameraMode(cameraMode);
 	//Object3dの追加
-	renderSystem_->CollectActiveObject3ds(gameObjects, camera);
+	renderSystem_->CollectActiveObject3ds(gameObjects);
 	//SkyBoxの追加
-	renderSystem_->CollectActiveSkyBox(gameObjects, camera);
+	renderSystem_->CollectActiveSkyBox(gameObjects);
 	//Spriteの描画
 	renderSystem_->CollectActiveSprites(gameObjects);
 	//DebugDrawの描画
-	renderSystem_->CollectActiveDebugDraw(gameObjects, camera);
+	renderSystem_->CollectActiveWireframe(gizmoVisualizer_->GetWireframeRenderDatas());
 	//ParticleSystemの描画
-	renderSystem_->CollectActiveParticleSystems(gameObjects, camera);
+	renderSystem_->CollectActiveParticleSystems(gameObjects);
 }
 
 //ゲーム画面の描画
-void SceneManager::GameDraw(){
+void SceneManager::PreviewDraw(){
 	//描画
-	Draw(scene_->GetGameCamera());
+	Draw(CameraMode::kMain);
 }
 
 //デバッグ画面の描画
-void SceneManager::DebugDraw(){
+void SceneManager::SceneDraw(){
 	//描画
-	Draw(debugCamera_->GetCamera());
+	Draw(CameraMode::kDebug);
 }
 
 //シーンファクトリーのセッター
@@ -160,8 +247,4 @@ void SceneManager::ChangeScene(const std::string& sceneName){
 	assert(sceneFactory_);
 	assert(nextScene_ == nullptr);
 	nextScene_ = sceneFactory_->CreateScene(sceneName);
-}
-
-//コンストラクタ
-SceneManager::SceneManager(ConstructorKey){
 }

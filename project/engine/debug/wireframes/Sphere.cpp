@@ -2,11 +2,10 @@
 #include "MathUtility.h"
 #include "ImGuiManager.h"
 #include "GameObject.h"
-using namespace debugDraw;
+using namespace wireframe;
 
 //コンストラクタ
-debugDraw::Sphere::Sphere(GameObject* gameObject) :BaseShape(gameObject){
-}
+wireframe::Sphere::Sphere(){}
 
 //デストラクタ
 Sphere::~Sphere(){}
@@ -21,14 +20,12 @@ void Sphere::InitializeShape(){
 
 //更新
 void Sphere::UpdateShape(){
-	GameObject* gameObject = GetOwner();
-	sphere_.center = gameObject->GetTransform().translate;
-	sphere_.radius = gameObject->GetTransform().scale.Max();
+	SetLocalTranslate(sphere_.center);
 }
 
 //複製
-std::unique_ptr<Component> debugDraw::Sphere::Clone(GameObject* gameObject) const{
-	std::unique_ptr<Sphere>cloneInstance = std::make_unique<Sphere>(gameObject);
+std::unique_ptr<wireframe::BaseShape> wireframe::Sphere::Clone() const{
+	std::unique_ptr<Sphere>cloneInstance = std::make_unique<Sphere>();
 
 	//初期化
 	cloneInstance->Initialize();

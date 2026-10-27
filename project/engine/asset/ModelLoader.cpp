@@ -1,4 +1,5 @@
 #include "ModelLoader.h"
+#include "MathUtility.h"
 #include <cassert>
 #include <fstream>
 #include <sstream>
@@ -22,16 +23,31 @@ static Node ReadNode(aiNode* node){
 	//aiMatrix4x4からMatrix4x4へ変換
 	for (int32_t i = 0; i < 4; i++){
 		for (int32_t j = 0; j < 4; j++){
-			result.localMatrix.m[i][j] = aiLocalMatrix[i][j];
+			result.baseMatrix.m[i][j] = aiLocalMatrix[i][j];
 		}
 	}
+
+	//Zだけを反転させる
+	Matrix4x4 flipZ = Matrix4x4::Identity4x4();
+	flipZ.m[2][2] = -1.0f;
+
+	//頂点と同じ座標系へ変換
+	result.baseMatrix = flipZ * result.baseMatrix * flipZ;
+
 	//Nodeの名前を取得
 	result.name = node->mName.C_Str();
 	//子の数だけ
 	result.children.resize(node->mNumChildren);
 
+	//このNodeが持つメッシュの数に合わせる
+	result.meshIndices.resize(node->mNumMeshes);
+	//各メッシュの番号を保存
+	for (uint32_t meshIndex = 0; meshIndex < node->mNumMeshes; meshIndex++){
+		result.meshIndices[meshIndex] = node->mMeshes[meshIndex];
+	}
+
+	//再帰的に呼んで階層構造を作っていく
 	for (uint32_t childIndex = 0; childIndex < node->mNumChildren; childIndex++){
-		//再帰的に呼んで階層構造を作っていく
 		result.children[childIndex] = ReadNode(node->mChildren[childIndex]);
 	}
 

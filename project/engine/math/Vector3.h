@@ -4,16 +4,58 @@
 /// <summary>
 /// 3次元ベクトル
 /// </summary>
-struct Vector3 final {
+struct Vector3 final{
 	float x = 0.0f;
 	float y = 0.0f;
 	float z = 0.0f;
 
 	/// <summary>
-	/// Vector3のメンバ変数すべてに1.0fを代入したVector3を作成
+	/// すべて1.0fのベクトルを取得
 	/// </summary>
 	/// <returns>Vector3</returns>
-	static Vector3 MakeAllOne();
+	static Vector3 GetOne();
+
+	/// <summary>
+	/// すべて0.0fのベクトルを取得
+	/// </summary>
+	/// <returns>Vector3</returns>
+	static Vector3 GetZero();
+
+	/// <summary>
+	/// Y軸だけに1.0fのベクトルを取得
+	/// </summary>
+	/// <returns>Vector3</returns>
+	static Vector3 GetUp();
+
+	/// <summary>
+	/// Y軸だけに-1.0fのベクトルを取得
+	/// </summary>
+	/// <returns>Vector3</returns>
+	static Vector3 GetDown();
+
+	/// <summary>
+	/// X軸だけに-1.0fのベクトルを取得
+	/// </summary>
+	/// <returns>Vector3</returns>
+	static Vector3 GetLeft();
+
+	/// <summary>
+	/// X軸だけに1.0fのベクトルを取得
+	/// </summary>
+	/// <returns>Vector3</returns>
+	static Vector3 GetRight();
+
+	/// <summary>
+	/// Z軸だけに1.0fのベクトルを取得
+	/// </summary>
+	/// <returns>Vector3</returns>
+	static Vector3 GetForward();
+
+	/// <summary>
+	/// Z軸だけに-1.0fのベクトルを取得
+	/// </summary>
+	/// <returns>Vector3</returns>
+	static Vector3 GetBack();
 
 	/// <summary>
 	/// クランプ
@@ -31,11 +73,27 @@ struct Vector3 final {
 	Vector3 Min(const Vector3& v)const;
 
 	/// <summary>
+	/// 最小値
+	/// </summary>
+	/// <param name="v1">ベクトル1</param>
+	/// <param name="v2">ベクトル2</param>
+	/// <returns>最小値</returns>
+	Vector3 Min(const Vector3& v1, const Vector3& v2)const;
+
+	/// <summary>
 	/// 最大値
 	/// </summary>
 	/// <param name="v">ベクトル</param>
 	/// <returns>最大値</returns>
 	Vector3 Max(const Vector3& v)const;
+
+	/// <summary>
+	/// 最大値
+	/// </summary>
+	/// <param name="v1">ベクトル1</param>
+	/// <param name="v2">ベクトル2</param>
+	/// <returns>最大値</returns>
+	Vector3 Max(const Vector3& v1, const Vector3& v2)const;
 
 	/// <summary>
 	/// 最小値
@@ -146,7 +204,7 @@ const Vector3 operator*(float n, const Vector3& v);
 /// <summary>
 /// 3次元ベクトルの整数型
 /// </summary>
-struct Vector3Int {
+struct Vector3Int{
 	int32_t x = 0;
 	int32_t y = 0;
 	int32_t z = 0;

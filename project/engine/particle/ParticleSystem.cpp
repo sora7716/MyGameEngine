@@ -154,7 +154,7 @@ void ParticleSystem::SetUVTranslate(uint32_t index, const Vector2& uvTranslate){
 }
 
 //色の設定
-void ParticleSystem::SetColor(uint32_t index, const Vector4& color){
+void ParticleSystem::SetColor(uint32_t index, const Color& color){
 	//マテリアルインスタンスがなければ
 	if (!materialInstance_){
 		return;
@@ -184,6 +184,11 @@ void ParticleSystem::SetUVTransform(uint32_t index, const RectTransform& uvTrans
 	//マテリアルを個別化する
 	EnsureUniqueMaterialInstance();
 	materialInstance_->SetUVTransform(index, uvTransform);
+}
+
+//コンポーネントのタイプ名を取得
+std::string ParticleSystem::GetTypeName() const{
+	return "ParticleSystem";
 }
 
 //モデルの取得

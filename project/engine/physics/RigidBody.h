@@ -1,0 +1,119 @@
+#pragma once
+#include "Component.h"
+#include "Vector3.h"
+
+/// <summary>
+/// 物理演算をするためのボディ
+/// </summary>
+class RigidBody :public Component{
+public://メンバ関数
+	/// <summary>
+	/// コンストラクタ
+	/// </summary>
+	/// <param name="gameObject">ゲームオブジェクト</param>
+	explicit RigidBody(GameObject* gameObject);
+
+	/// <summary>
+	/// デストラクタ
+	/// </summary>
+	~RigidBody()override;
+
+	/// <summary>
+	/// 初期化
+	/// </summary>
+	void Initialize()override;
+
+	/// <summary>
+	/// 更新
+	/// </summary>
+	void Update()override;
+
+	/// <summary>
+	/// 複製
+	/// </summary>
+	/// <param name="gameObject">ゲームオブジェクト</param>
+	/// <returns>コピーしたインスタンス</returns>
+	std::unique_ptr<Component> Clone(GameObject* gameObject)const override;
+
+	/// <summary>
+	/// 衝突したら
+	/// </summary>
+	/// <param name="info">衝突情報</param>
+	void OnCollisionStay(const CollisionInfo& info)override;
+
+	/// <summary>
+	/// 衝突判定が開始する瞬間
+	/// </summary>
+	void BeginCollisionFrame();
+
+	/// <summary>
+	/// 地面に接している閾値の設定
+	/// </summary>
+	/// <param name="groundThreshold">地面に接している閾値</param>
+	void SetGroundThreshold(float groundThreshold);
+
+	/// <summary>
+	/// コンポーネントのタイプ名を取得
+	/// </summary>
+	/// <returns>コンポーネントのタイプ名</returns>
+	std::string GetTypeName()const override;
+
+	/// <summary>
+	/// 速度の取得
+	/// </summary>
+	/// <returns>速度</returns>
+	Vector3& GetVelocity();
+
+	/// <summary>
+	/// 速度の取得
+	/// </summary>
+	/// <returns>速度</returns>
+	const Vector3& GetVelocity()const;
+
+	/// <summary>
+	/// 加速度の取得
+	/// </summary>
+	/// <returns>加速度</returns>
+	Vector3& GetAcceleration();
+
+	/// <summary>
+	/// 加速度の取得
+	/// </summary>
+	/// <returns>加速度</returns>
+	const Vector3& GetAcceleration()const;
+
+	/// <summary>
+	/// 地面に接している閾値の取得
+	/// </summary>
+	/// <returns>地面に接している閾値</returns>
+	float GetGroundThreshold()const;
+
+	/// <summary>
+	/// 地面に接しているか
+	/// </summary>
+	/// <returns>地面に接しているか</returns>
+	bool IsOnGround()const;
+private://メンバ関数
+	/// <summary>
+	/// 速度と加速度を適応
+	/// </summary>
+	void UpdateMotion();
+
+	/// <summary>
+	/// 重力を適応
+	/// </summary>
+	void ApplyGravity();
+private://メンバ変数
+	//ゲームオブジェクト
+	GameObject* gameObject_ = nullptr;
+	//速度
+	Vector3 velocity_ = {};
+	//加速度
+	Vector3 acceleration_ = {};
+	//重さ
+	float mass = 1.0f;
+	//地面に接している閾値
+	float groundThreshold_ = 0.0f;
+	//地面に接している
+	bool isOnGround_ = true;
+};

@@ -8,38 +8,77 @@
 		{
 			"name":"Scene",
 			"nodes":[
-				0
+				4
 			]
 		}
 	],
 	"nodes":[
 		{
 			"mesh":0,
-			"name":"Sphere",
-			"rotation":[
+			"name":"Arm_L",
+			"translation":[
+				0.44999998807907104,
+				-0.04196234047412872,
+				0.11249999701976776
+			]
+		},
+		{
+			"mesh":1,
+			"name":"Arm_R",
+			"translation":[
+				-0.44999998807907104,
+				-0.04196234047412872,
+				0.11249999701976776
+			]
+		},
+		{
+			"mesh":2,
+			"name":"Body",
+			"translation":[
 				0,
-				-1,
+				-0.026962339878082275,
+				0.11249999701976776
+			]
+		},
+		{
+			"mesh":3,
+			"name":"Head",
+			"translation":[
 				0,
-				4.371138828673793e-08
+				0.04803766310214996,
+				0.11249999701976776
+			]
+		},
+		{
+			"children":[
+				0,
+				1,
+				2,
+				3
+			],
+			"name":"Player_Root",
+			"scale":[
+				0.5,
+				0.5,
+				0.5
 			]
 		}
 	],
 	"materials":[
 		{
-			"doubleSided":true,
-			"name":"Material.001",
+			"name":"UV_Texture_Atlas",
 			"pbrMetallicRoughness":{
 				"baseColorTexture":{
 					"index":0
 				},
 				"metallicFactor":0,
-				"roughnessFactor":0.5
+				"roughnessFactor":0.8600000143051147
 			}
 		}
 	],
 	"meshes":[
 		{
-			"name":"Sphere",
+			"name":"Arm_L",
 			"primitives":[
 				{
 					"attributes":{
@@ -48,6 +87,48 @@
 						"TEXCOORD_0":2
 					},
 					"indices":3,
+					"material":0
+				}
+			]
+		},
+		{
+			"name":"Arm_R",
+			"primitives":[
+				{
+					"attributes":{
+						"POSITION":4,
+						"NORMAL":5,
+						"TEXCOORD_0":6
+					},
+					"indices":3,
+					"material":0
+				}
+			]
+		},
+		{
+			"name":"Sphere",
+			"primitives":[
+				{
+					"attributes":{
+						"POSITION":7,
+						"NORMAL":8,
+						"TEXCOORD_0":9
+					},
+					"indices":10,
+					"material":0
+				}
+			]
+		},
+		{
+			"name":"Sphere.001",
+			"primitives":[
+				{
+					"attributes":{
+						"POSITION":11,
+						"NORMAL":12,
+						"TEXCOORD_0":13
+					},
+					"indices":14,
 					"material":0
 				}
 			]
@@ -62,81 +143,243 @@
 	"images":[
 		{
 			"mimeType":"image/png",
-			"name":"uvChecker",
-			"uri":"uvChecker.png"
+			"name":"player_atlas",
+			"uri":"player_atlas.png"
 		}
 	],
 	"accessors":[
 		{
 			"bufferView":0,
 			"componentType":5126,
-			"count":1984,
+			"count":260,
 			"max":[
-				0.9999997019767761,
-				1,
-				1.691842794418335
+				0.42255496978759766,
+				0.031968142837285995,
+				0.17499999701976776
 			],
 			"min":[
-				-0.9999990463256836,
-				-1,
-				-1
+				-0.10663652420043945,
+				-0.9610753059387207,
+				-0.17499999701976776
 			],
 			"type":"VEC3"
 		},
 		{
 			"bufferView":1,
 			"componentType":5126,
-			"count":1984,
+			"count":260,
 			"type":"VEC3"
 		},
 		{
 			"bufferView":2,
 			"componentType":5126,
-			"count":1984,
+			"count":260,
 			"type":"VEC2"
 		},
 		{
 			"bufferView":3,
 			"componentType":5123,
-			"count":2880,
+			"count":408,
+			"type":"SCALAR"
+		},
+		{
+			"bufferView":4,
+			"componentType":5126,
+			"count":260,
+			"max":[
+				0.10663652420043945,
+				0.031968142837285995,
+				0.17499999701976776
+			],
+			"min":[
+				-0.42255496978759766,
+				-0.9610753059387207,
+				-0.17499999701976776
+			],
+			"type":"VEC3"
+		},
+		{
+			"bufferView":5,
+			"componentType":5126,
+			"count":260,
+			"type":"VEC3"
+		},
+		{
+			"bufferView":6,
+			"componentType":5126,
+			"count":260,
+			"type":"VEC2"
+		},
+		{
+			"bufferView":7,
+			"componentType":5126,
+			"count":608,
+			"max":[
+				0.4300000071525574,
+				0.1899999976158142,
+				0.3400000035762787
+			],
+			"min":[
+				-0.429999977350235,
+				-0.9300000071525574,
+				-0.3400000035762787
+			],
+			"type":"VEC3"
+		},
+		{
+			"bufferView":8,
+			"componentType":5126,
+			"count":608,
+			"type":"VEC3"
+		},
+		{
+			"bufferView":9,
+			"componentType":5126,
+			"count":608,
+			"type":"VEC2"
+		},
+		{
+			"bufferView":10,
+			"componentType":5123,
+			"count":864,
+			"type":"SCALAR"
+		},
+		{
+			"bufferView":11,
+			"componentType":5126,
+			"count":2040,
+			"max":[
+				0.6000000238418579,
+				0.9549999833106995,
+				0.4699999988079071
+			],
+			"min":[
+				-0.5999999642372131,
+				-0.14500002562999725,
+				-0.6949999928474426
+			],
+			"type":"VEC3"
+		},
+		{
+			"bufferView":12,
+			"componentType":5126,
+			"count":2040,
+			"type":"VEC3"
+		},
+		{
+			"bufferView":13,
+			"componentType":5126,
+			"count":2040,
+			"type":"VEC2"
+		},
+		{
+			"bufferView":14,
+			"componentType":5123,
+			"count":2856,
 			"type":"SCALAR"
 		}
 	],
 	"bufferViews":[
 		{
 			"buffer":0,
-			"byteLength":23808,
+			"byteLength":3120,
 			"byteOffset":0,
 			"target":34962
 		},
 		{
 			"buffer":0,
-			"byteLength":23808,
-			"byteOffset":23808,
+			"byteLength":3120,
+			"byteOffset":3120,
 			"target":34962
 		},
 		{
 			"buffer":0,
-			"byteLength":15872,
-			"byteOffset":47616,
+			"byteLength":2080,
+			"byteOffset":6240,
 			"target":34962
 		},
 		{
 			"buffer":0,
-			"byteLength":5760,
-			"byteOffset":63488,
+			"byteLength":816,
+			"byteOffset":8320,
+			"target":34963
+		},
+		{
+			"buffer":0,
+			"byteLength":3120,
+			"byteOffset":9136,
+			"target":34962
+		},
+		{
+			"buffer":0,
+			"byteLength":3120,
+			"byteOffset":12256,
+			"target":34962
+		},
+		{
+			"buffer":0,
+			"byteLength":2080,
+			"byteOffset":15376,
+			"target":34962
+		},
+		{
+			"buffer":0,
+			"byteLength":7296,
+			"byteOffset":17456,
+			"target":34962
+		},
+		{
+			"buffer":0,
+			"byteLength":7296,
+			"byteOffset":24752,
+			"target":34962
+		},
+		{
+			"buffer":0,
+			"byteLength":4864,
+			"byteOffset":32048,
+			"target":34962
+		},
+		{
+			"buffer":0,
+			"byteLength":1728,
+			"byteOffset":36912,
+			"target":34963
+		},
+		{
+			"buffer":0,
+			"byteLength":24480,
+			"byteOffset":38640,
+			"target":34962
+		},
+		{
+			"buffer":0,
+			"byteLength":24480,
+			"byteOffset":63120,
+			"target":34962
+		},
+		{
+			"buffer":0,
+			"byteLength":16320,
+			"byteOffset":87600,
+			"target":34962
+		},
+		{
+			"buffer":0,
+			"byteLength":5712,
+			"byteOffset":103920,
 			"target":34963
 		}
 	],
 	"samplers":[
 		{
-			"magFilter":9729,
-			"minFilter":9987
+			"magFilter":9728,
+			"minFilter":9984
 		}
 	],
 	"buffers":[
 		{
-			"byteLength":69248,
+			"byteLength":109632,
 			"uri":"player.bin"
 		}
 	]

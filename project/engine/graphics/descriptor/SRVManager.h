@@ -5,6 +5,7 @@
 #include <wrl.h>
 #include <d3d12.h>
 #include <queue>
+#include <memory>
 
 //前方宣言
 class DirectXBase;
@@ -13,10 +14,30 @@ class Core;
 /// <summary>
 /// SRV管理
 /// </summary>
-class SRVManager {
+class SRVManager{
 private://エイリアステンプレート
 	template <class T>using ComPtr = Microsoft::WRL::ComPtr<T>;
+public://PassKey
+	class ConstructorKey{
+	private:
+		ConstructorKey() = default;
+		friend class Core;
+	};
+public://静的メンバ関数
+	/// <summary>
+	/// 生成
+	/// </summary>
+	/// <param name="key">コンストラクタのKey</param>
+	/// <param name="directXBase">DirectXBaseの基盤部分</param>
+	/// <returns>インスタンス</returns>
+	static std::unique_ptr<SRVManager>Create(ConstructorKey key, DirectXBase* directXBase);
 public://メンバ関数
+	/// <summary>
+	/// コンストラクタ
+	/// </summary>
+	/// <param name="">PassKeyを受け取る</param>
+	explicit SRVManager(ConstructorKey);
+
 	/// <summary>
 	/// デストラクタ
 	/// </summary>
@@ -64,7 +85,7 @@ public://メンバ関数
 	void PreDraw();
 
 	/// <summary>
-	/// rootDescriptorTableのセッター
+	/// rootDescriptorTableの設定
 	/// </summary>
 	/// <param name="rootParameterIndex">rootParameterのインデックス</param>
 	/// <param name="srvIndex">srvインデックス</param>
@@ -78,21 +99,21 @@ public://メンバ関数
 	bool TextureLimitCheck(uint32_t kSRVTop);
 
 	/// <summary>
-	/// CPUデスクリプタハンドルのゲッター
+	/// CPUデスクリプタハンドルの取得
 	/// </summary>
 	/// <param name="index">インデックス</param>
 	/// <returns>CPUデスクリプタハンドル</returns>
 	D3D12_CPU_DESCRIPTOR_HANDLE GetCPUDescriptorHandle(uint32_t index);
 
 	/// <summary>
-	/// GPUデスクリプタハンドルのゲッター
+	/// GPUデスクリプタハンドルの取得
 	/// </summary>
 	/// <param name="index">インデックス</param>
 	/// <returns>GPUデスクリプタハンドル</returns>
 	D3D12_GPU_DESCRIPTOR_HANDLE GetGPUDescriptorHandle(uint32_t index);
 
 	/// <summary>
-	/// デスクリプタヒープのゲッター
+	/// デスクリプタヒープの取得
 	/// </summary>
 	/// <returns>デスクリプタヒープ</returns>
 	ID3D12DescriptorHeap* GetDescriptorHeap()const;
@@ -100,19 +121,7 @@ private://メンバ関数
 	//コピーコンストラクタ禁止
 	SRVManager(const SRVManager&) = delete;
 	//代入演算子の禁止
-	SRVManager operator=(const SRVManager&) = delete;
-public://PassKey
-	class ConstructorKey {
-	private:
-		ConstructorKey() = default;
-		friend class Core;
-	};
-
-	/// <summary>
-	/// コンストラクタ
-	/// </summary>
-	/// <param name="">PassKeyを受け取る</param>
-	explicit SRVManager(ConstructorKey);
+	SRVManager& operator=(const SRVManager&) = delete;
 public://定数
 	static inline const uint32_t kMaxSRVCount = 65536;
 private://メンバ変数

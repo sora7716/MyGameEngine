@@ -1,12 +1,22 @@
 #pragma once
+#include "RenderingData.h"
+#include "Vector2.h"
+#include "Vector3.h"
 #include <vector>
 #include <array>
 #include <string>
 #include <memory>
 #include <optional>
+#include <d3d12.h>
+
 //前方宣言
 class GameObject;
+class TextureManager;
 class TagManager;
+class Camera;
+class Object3d;
+class Component;
+class GizmoSystem;
 
 /// <summary>
 /// タグの名前変更リクエスト用
@@ -16,10 +26,25 @@ struct RenameTagRequest{
 	std::string newTag = "\0";
 };
 
+//親子付けのリクエスト
+struct ParentRequest{
+	GameObject* child = nullptr;
+	GameObject* parent = nullptr;
+	std::string nodePath = "";
+};
+
 /// <summary>
 /// デバッグエディター
 /// </summary>
 class DebugEditor{
+private://構造体
+	/// <summary>
+	/// シーンビューの矩形情報
+	/// </summary>
+	struct SceneViewRectInfo{
+		Vector2 position = Vector2::GetZero();
+		Vector2 size = Vector2::GetZero();
+	};
 public://メンバ関数
 	/// <summary>
 	/// コンストラクタ
@@ -34,8 +59,9 @@ public://メンバ関数
 	/// <summary>
 	/// 初期化
 	/// </summary>
+	/// <param name="textureManager">テクスチャの管理</param>
 	/// <param name="tagManager">タグの管理</param>
-	void Initialize(TagManager* tagManager);
+	void Initialize(TextureManager* textureManager, TagManager* tagManager);
 
 	/// <summary>
 	/// 更新
@@ -45,7 +71,9 @@ public://メンバ関数
 	/// <summary>
 	/// 描画
 	/// </summary>
-	void Draw();
+	/// <param name="sceneHandle">SceneのGPUハンドル</param>
+	/// <param name="previewHandle">PreviewのGPUハンドル</param>
+	void Draw(D3D12_GPU_DESCRIPTOR_HANDLE sceneHandle, D3D12_GPU_DESCRIPTOR_HANDLE previewHandle);
 
 	/// <summary>
 	/// ゲームオブジェクト一覧の設定
@@ -54,16 +82,24 @@ public://メンバ関数
 	void SetGameObjects(const std::vector<std::unique_ptr<GameObject>>& gameObjects);
 
 	/// <summary>
+	/// デバッグカメラの設定
+	/// </summary>
+	/// <param name="debugCamera">デバッグカメラ</param>
+	void SetDebugCamera(Camera* debugCamera);
+
+	/// <summary>
 	/// 削除要求を取得
 	/// </summary>
+	/// <param name="target">対象</param>
 	/// <returns>削除要求</returns>
-	GameObject* ConsumeDeleteRequest();
+	bool ConsumeDeleteRequest(GameObject*& target);
 
 	/// <summary>
 	/// 複製要求を取得
 	/// </summary>
+	/// <param name="target">対象</param>
 	/// <returns>複製要求</returns>
-	GameObject* ConsumeDuplicateRequest();
+	bool ConsumeDuplicateRequest(GameObject*& target);
 
 	/// <summary>
 	/// 生成要求を取得
@@ -95,10 +131,42 @@ public://メンバ関数
 	bool ConsumeDeleteTagRequest(std::string& tag);
 
 	/// <summary>
+	/// 親子付けの要求の取得
+	/// </summary>
+	/// <param name="parentRequest">親子付けの要求</param>
+	/// <returns>親子付けされたか</returns>
+	bool ConsumeParentRequest(ParentRequest& parentRequest);
+
+	/// <summary>
+	/// 親子付け解除の要求を取得
+	/// </summary>
+	/// <param name="target">対象</param>
+	/// <returns>親子付け解除されたか</returns>
+	bool ConsumeDetachRequest(GameObject*& target);
+
+	/// <summary>
 	/// GameObjectを選択
 	/// </summary>
 	/// <param name="gameObject">ゲームオブジェクト</param>
 	void SelectGameObject(GameObject* gameObject);
+
+	/// <summary>
+	/// シーンのImGuiウィンドウを選択しているかの取得
+	/// </summary>
+	/// <returns>シーンのImGuiウィンドウを選択しているか</returns>
+	bool IsSceneViewHovered()const;
+
+	/// <summary>
+	/// プレビューのImGuiウィンドウを選択しているかの取得
+	/// </summary>
+	/// <returns>プレビューのImGuiウィンドウを選択しているか</returns>
+	bool IsPreviewHovered()const;
+
+	/// <summary>
+	/// 選択されているゲームオブジェクトを取得
+	/// </summary>
+	/// <returns>選択されているゲームオブジェクト</returns>
+	GameObject* GetSelectedGameObject()const;
 private://メンバ関数
 	/// <summary>
 	/// ドッキングスペースの描画
@@ -111,9 +179,33 @@ private://メンバ関数
 	void DrawHierarchy();
 
 	/// <summary>
+	/// シーンの描画
+	/// </summary>
+	/// <param name="handle">SceneのGPUハンドル</param>
+	void DrawScene(D3D12_GPU_DESCRIPTOR_HANDLE handle);
+
+	/// <summary>
+	/// プレビューシーンの描画
+	/// </summary>
+	/// <param name="handle">PreviewSceneのGPUハンドル</param>
+	void DrawPreview(D3D12_GPU_DESCRIPTOR_HANDLE handle);
+
+	/// <summary>
 	/// インスペクターの描画
 	/// </summary>
 	void DrawInspector();
+
+	/// <summary>
+	/// 各コンポーネントのプロパティ一覧
+	/// </summary>
+	/// <param name="selectGameObject">選択したゲームオブジェクト</param>
+	void DrawPropertyTable(GameObject* selectGameObject);
+
+	/// <summary>
+	/// 1つのコンポーネントのプロパティ一覧
+	/// </summary>
+	/// <param name="component">コンポーネント</param>
+	void DrawProperties(Component* component);
 
 	/// <summary>
 	/// タグの管理の描画
@@ -125,28 +217,76 @@ private://メンバ関数
 	/// </summary>
 	/// <param name="gameObject">ゲームオブジェクト</param>
 	void BeginRename(GameObject* gameObject);
+
+	/// <summary>
+	/// ノードのツリーを描画
+	/// </summary>
+	/// <param name="node">ノード</param>
+	/// <param name="parentPath">親のパス</param>
+	/// <param name="targetObject">対象となるObject3d</param>
+	void DrawNodeTree(const Node& node, const std::string& parentPath, GameObject* targetObject);
+
+	/// <summary>
+	/// オブジェクト階層で順番入れ替えの操作
+	/// </summary>
+	/// <param name="currentIndex">現在のオブジェクトの検索キー</param>
+	/// <param name="rowMin">行の最小値(左,上)</param>
+	/// <param name="rowMax">行の最大値(右,下)</param>
+	/// <param name="mousePos">マウスの位置</param>
+	/// <returns>移動できるかどうか</returns>
+	bool IsReorderObjectOperation(uint32_t currentIndex, const Vector2& rowMin, const Vector2& rowMax, const Vector2& mousePos);
+
+	/// <summary>
+	/// オブジェクト階層で接続させる操作
+	/// </summary>
+	/// <param name="isReorder">順序入れ替えが可能か</param>
+	/// <param name="parentObject">親オブジェクト</param>
+	/// <param name="nodePath">ノードのパス</param>
+	void AttachToOperation(GameObject* parentObject, bool isReorder, const std::string& nodePath = "");
+
+	/// <summary>
+	/// オブジェクト階層で接続を解除する操作
+	/// </summary>
+	/// <param name="attachedObject">接続しているオブジェクト</param>
+	void DetachToOperation(GameObject* attachedObject);
+
+	/// <summary>
+	/// オブジェクトの階層で選択する操作
+	/// </summary>
+	/// <param name="selectGameObject">選択したオブジェクト</param>
+	/// <returns>選択しているか</returns>
+	bool SelectGameObjectOperation(GameObject* selectGameObject);
 private://定数
-	//ゲームオブジェクトのpayloadType
+	//ゲームオブジェクトをDragAndDropで動かす用のpayloadType
 	static inline const std::string kGameObjectPayloadType = "GameObjectPayload";
 private://メンバ変数
+	//テクスチャの管理
+	TextureManager* textureManager_ = nullptr;
+	//タグの管理
+	TagManager* tagManager_ = nullptr;
+
 	//選択するゲームオブジェクト
 	GameObject* selectedGameObject_ = nullptr;
+	//オブジェクトの詳細で編集するオイラー角
+	Vector3 inspectorEulerAngle_ = Vector3::GetZero();
+
 	//ゲームオブジェクトの一覧へのポインタ
-	const std::vector<std::unique_ptr<GameObject>>* gameObjects_;
+	const std::vector<std::unique_ptr<GameObject>>* gameObjects_ = nullptr;
+
 	//作成要求
 	bool requestCreateGameObject_ = false;
 	//複製要求
 	GameObject* requestDuplicateGameObject_ = nullptr;
 	//削除要求
 	GameObject* requestDeleteGameObject_ = nullptr;
+
 	//名前変更
 	GameObject* renamingGameObject_ = nullptr;
 	//名前変更用の文字列バッファ
 	std::array<char, 256>renameObjectBuffer_ = {};
 	//InputTextへフォーカスする要求
 	bool requestRenameFocus_ = false;
-	//タグの管理
-	TagManager* tagManager_ = nullptr;
+
 	//タグの管理を開くかのフラグ
 	bool isTegManagerOpen_ = false;
 	//新規タグ入力用
@@ -160,11 +300,35 @@ private://メンバ変数
 	std::optional<std::string>requestDeleteTag_ = "\0";
 	//削除用
 	std::string deleteTargetTag_ = "\0";
+
 	//移動前のインデックス
 	uint32_t draggedIndex_ = 0;
 	//移動後のインデックス
 	uint32_t dropTargetIndex_ = 0;
 	//ゲームオブジェクトの移動要求
 	bool requestMoveGameObject_ = false;
+
+	//シーンビューを選択しているか
+	bool isSceneViewHovered_ = false;
+	//プレビューを選択しているか
+	bool isPreviewHovered_ = false;
+
+	//シーンビューの矩形情報
+	SceneViewRectInfo sceneViewRectInfo_ = {};
+
+	//デバッグカメラ
+	Camera* debugCamera_ = nullptr;
+
+	//Gizmoシステム
+	std::unique_ptr<GizmoSystem> gizmoSystem_ = nullptr;
+
+	//選択中のNodeパス
+	std::string selectedNodePath_ = "";
+
+	//親子付けの要求
+	std::optional<ParentRequest>requestAttachTo_ = {};
+
+	//親子付け解除の要求
+	std::optional<GameObject*>requestDetach_ = {};
 };
 

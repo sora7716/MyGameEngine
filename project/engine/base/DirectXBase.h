@@ -6,9 +6,9 @@
 #include <wrl.h>
 #include <vector>
 #include <array>
-#include "engine/math/Vector4.h"
-#include "externals/DirectXTex/DirectXTex.h"
-#include "externals/DirectXTex/d3dx12.h"
+#include "Vector4.h"
+#include "DirectXTex/DirectXTex.h"
+#include "DirectXTex/d3dx12.h"
 
 //前方宣言
 class WinApi;
@@ -17,10 +17,51 @@ class Core;
 /// <summary>
 /// DirectXコモン
 /// </summary>
-class DirectXBase {
+class DirectXBase{
 private://エイリアステンプレート
 	template <class T>using ComPtr = Microsoft::WRL::ComPtr<T>;
+public://PassKey
+	class ConstructorKey{
+	private:
+		ConstructorKey() = default;
+		friend class Core;
+	};
+public://静的メンバ関数
+	/// <summary>
+	/// 生成
+	/// </summary>
+	/// <param name="key">コンストラクタのKey</param>
+	/// <param name="winApi">ウィンドウズAPI</param>
+	/// <returns>インスタンス</returns>
+	static std::unique_ptr<DirectXBase>Create(ConstructorKey key, WinApi* winApi);
+
+	/// <summary>
+	/// デスクリプターCPUハンドルの取得
+	/// </summary>
+	/// <param name="descriptorHeap">デスクリプターヒープ</param>
+	/// <param name="descriptorSize">デスクリプターサイズ</param>
+	/// <param name="index">インデックス</param>
+	/// <returns>デスクリプターCPUハンドル</returns>
+	static D3D12_CPU_DESCRIPTOR_HANDLE GetCPUDescriptorHandle(Microsoft::WRL::ComPtr<ID3D12DescriptorHeap> descriptorHeap, uint32_t descriptorSize, uint32_t index);
+
+	/// <summary>
+	/// デスクリプターGPUハンドルの取得
+	/// </summary>
+	/// <param name="descriptorHeap">デスクリプターヒープ</param>
+	/// <param name="descriptorSize">デスクリプターサイズ</param>
+	/// <param name="index">インデックス</param>
+	/// <returns>デスクリプターGPUハンドル</returns>
+	static D3D12_GPU_DESCRIPTOR_HANDLE GetGPUDescriptorHandle(Microsoft::WRL::ComPtr<ID3D12DescriptorHeap> descriptorHeap, uint32_t descriptorSize, uint32_t index);
+private://定数
+	//スワップチェインのバックバッファの数
+	static inline const uint32_t kBackBufferCount = 2;
 public://メンバ関数
+	/// <summary>
+	/// コンストラクタ
+	/// </summary>
+	/// <param name="">PassKeyを受け取る</param>
+	DirectXBase(ConstructorKey);
+
 	/// <summary>
 	/// デストラクタ
 	/// </summary>
@@ -36,16 +77,6 @@ public://メンバ関数
 	/// コマンド関連の生成
 	/// </summary>
 	void CreateCommands();
-
-	/// <summary>
-	/// 各種デスクリプターヒープの生成
-	/// </summary>
-	void CreateDescriptorHeap();
-
-	/// <summary>
-	/// RTVの生成
-	/// </summary>
-	void CreateRenderTargetView();
 
 	/// <summary>
 	/// ビューポート矩形の初期化
@@ -65,14 +96,14 @@ public://メンバ関数
 	/// <summary>
 	/// 描画開始位置
 	/// </summary>
-	/// <param name="swapChainIndex">スワップチェインの検索キー</param>
-	void PreDraw(uint32_t swapChainIndex);
+	/// <param name="rtvHandle">rtvのハンドル</param>
+	/// <param name="dsvHandle">dsvのハンドル</param>
+	void PreDraw(D3D12_CPU_DESCRIPTOR_HANDLE rtvHandle, D3D12_CPU_DESCRIPTOR_HANDLE dsvHandle);
 
 	/// <summary>
 	/// 描画終了位置
 	/// </summary>
-	/// <param name="swapChainIndex">スワップチェインの検索キー</param>
-	void PostDraw(uint32_t swapChainIndex);
+	void PostDraw();
 
 	/// <summary>
 	/// DescriptorHeapの作成
@@ -115,97 +146,53 @@ public://メンバ関数
 	ComPtr<ID3D12Resource> UploadTextureData(ID3D12Resource* texture, D3D12_RESOURCE_STATES& inOutState, const DirectX::ScratchImage& mipImages);
 
 	/// <summary>
-	/// RTVの指定番号のCPUデスクリプタハンドルを取得する
-	/// </summary>
-	/// <param name="index">検索番号</param>
-	/// <returns></returns>
-	D3D12_CPU_DESCRIPTOR_HANDLE GetRTVCPUDescriptorHandle(uint32_t index);
-
-	/// <summary>
-	/// RTVの指定番号のGPUデスクリプタハンドルを取得する
-	/// </summary>
-	/// <param name="index">検索番号</param>
-	/// <returns></returns>
-	D3D12_GPU_DESCRIPTOR_HANDLE GetRTVGPUDescriptorHandle(uint32_t index);
-
-	/// <summary>
-	/// DSVの指定番号のCPUデスクリプタハンドルを取得する
-	/// </summary>
-	/// <param name="index">検索番号</param>
-	/// <returns></returns>
-	D3D12_CPU_DESCRIPTOR_HANDLE GetDSVCPUDescriptorHandle(uint32_t index);
-
-	/// <summary>
-	/// DSVの指定番号のGPUデスクリプタハンドルを取得する
-	/// </summary>
-	/// <param name="index">検索番号</param>
-	/// <returns></returns>
-	D3D12_GPU_DESCRIPTOR_HANDLE GetDSVGPUDescriptorHandle(uint32_t index);
-
-	/// <summary>
-	/// デバイスのゲッター
-	/// </summary>
-	/// <returns>デバイス</returns>
-	ID3D12Device* GetDevice()const;
-
-	/// <summary>
-	/// コマンドリストのゲッター
-	/// </summary>
-	/// <returns></returns>
-	ID3D12GraphicsCommandList* GetCommandList()const;
-
-	/// <summary>
-	/// スワップチェーンのリソース数のゲッター
-	/// </summary>
-	/// <returns>スワップチェーンのリソース数</returns>
-	size_t GetSwapChainResourceNum()const;
-
-	/// <summary>
-	/// デプスステンシルテクスチャの取得
-	/// </summary>
-	/// <returns>デプスステンシルテクスチャ</returns>
-	ID3D12Resource* GetDepthStencilTexture()const;
-public://PassKey
-	class ConstructorKey {
-		ConstructorKey() = default;
-		friend class Core;
-	};
-	/// <summary>
-	/// コンストラクタ
-	/// </summary>
-	/// <param name="">PressKeyを受け取る</param>
-	explicit DirectXBase(ConstructorKey);
-public://静的メンバ関数
-	/// <summary>
-	/// デスクリプターCPUハンドルのゲッター
-	/// </summary>
-	/// <param name="descriptorHeap">デスクリプターヒープ</param>
-	/// <param name="descriptorSize">デスクリプターサイズ</param>
-	/// <param name="index">インデックス</param>
-	/// <returns>デスクリプターCPUハンドル</returns>
-	static D3D12_CPU_DESCRIPTOR_HANDLE GetCPUDescriptorHandle(Microsoft::WRL::ComPtr<ID3D12DescriptorHeap> descriptorHeap, uint32_t descriptorSize, uint32_t index);
-
-	/// <summary>
-	/// デスクリプターGPUハンドルのゲッター
-	/// </summary>
-	/// <param name="descriptorHeap">デスクリプターヒープ</param>
-	/// <param name="descriptorSize">デスクリプターサイズ</param>
-	/// <param name="index">インデックス</param>
-	/// <returns>デスクリプターGPUハンドル</returns>
-	static D3D12_GPU_DESCRIPTOR_HANDLE GetGPUDescriptorHandle(Microsoft::WRL::ComPtr<ID3D12DescriptorHeap> descriptorHeap, uint32_t descriptorSize, uint32_t index);
-
-private://メンバ関数
-	//コピーコンストラクタ禁止
-	DirectXBase(const DirectXBase&) = delete;
-	//代入演算子を禁止
-	const DirectXBase operator=(const DirectXBase&) = delete;
-	/// <summary>
 	/// 深度バッファリソースの設定
 	/// </summary>
 	/// <param name="width">横幅</param>
 	/// <param name="height">縦幅</param>
 	/// <returns></returns>
 	ComPtr<ID3D12Resource> CreateDepthStencilTextureResource(int32_t width, int32_t height);
+
+	/// <summary>
+	/// デバイスの取得
+	/// </summary>
+	/// <returns>デバイス</returns>
+	ID3D12Device* GetDevice()const;
+
+	/// <summary>
+	/// コマンドリストの取得
+	/// </summary>
+	/// <returns></returns>
+	ID3D12GraphicsCommandList* GetCommandList()const;
+
+	/// <summary>
+	/// デプスステンシルテクスチャの取得
+	/// </summary>
+	/// <returns>デプスステンシルテクスチャ</returns>
+	ID3D12Resource* GetDepthStencilTexture()const;
+
+	/// <summary>
+	/// スワップチェーンのリソースのサイズの取得
+	/// </summary>
+	/// <returns>スワップチェーンのリソースのサイズ</returns>
+	uint32_t GetSwapChainResourceSize()const;
+
+	/// <summary>
+	/// スワップチェーンのリソースの取得
+	/// </summary>
+	/// <returns>スワップチェーンのリソース</returns>
+	const std::array<ComPtr<ID3D12Resource>, kBackBufferCount>& GetSwapChainResources()const;
+
+	/// <summary>
+	/// バックバッファの検索キーの取得
+	/// </summary>
+	/// <returns>バックバッファの検索キー</returns>
+	uint32_t GetBackBufferIndex()const;
+private://メンバ関数
+	//コピーコンストラクタ禁止
+	DirectXBase(const DirectXBase&) = delete;
+	//代入演算子を禁止
+	const DirectXBase& operator=(const DirectXBase&) = delete;
 
 	/// <summary>
 	/// IDXIファクトリーの生成
@@ -249,10 +236,8 @@ private://メンバ関数
 	/// <param name="windowWidth">画面の横幅</param>
 	/// <param name="windowHeight">画面の縦幅</param>
 	/// <param name="bufferSize">バッファサイズ</param>
-	/// <param name="hwndIndex">windowの検索キー</param>
-	/// <returns></returns>
-/// <returns>スワップチェーン</returns>
-	ComPtr<IDXGISwapChain4> CreateSwapChain(int32_t windowWidth, int32_t windowHeight, uint32_t bufferSize, uint32_t hwndIndex);
+	/// <returns>スワップチェーン</returns>
+	ComPtr<IDXGISwapChain4> CreateSwapChain(int32_t windowWidth, int32_t windowHeight, uint32_t bufferSize);
 
 	/// <summary>
 	/// SwapChainからResourceを引っ張ってくる
@@ -277,11 +262,6 @@ private://メンバ関数
 	/// 実行を停止する(エラー・警告の場合)
 	/// </summary>
 	void StopExecution();
-private://定数
-	//スワップチェインの数
-	static inline const uint32_t kSwapChainCount = 2;
-	//スワップチェインのバッファサイズ
-	static inline const uint32_t kSwapChainBufferCount = 2;
 private://メンバ変数
 	//WindowAPI
 	WinApi* winApi_ = nullptr;
@@ -300,20 +280,9 @@ private://メンバ変数
 	//コマンドリスト
 	ComPtr<ID3D12GraphicsCommandList> commandList_ = nullptr;
 	//ゲーム画面用のスワップチェーン
-	std::array<ComPtr<IDXGISwapChain4>, kSwapChainBufferCount> swapChain_ = { nullptr };
-	//スワップチェインを作成するカウント
-	uint32_t createSwapChainCount_ = 1;
+	ComPtr<IDXGISwapChain4> swapChain_ = { nullptr };
 	//スワップチェーンからリソースを引っ張ってくる
-	std::array<ComPtr<ID3D12Resource>, kSwapChainCount* kSwapChainBufferCount> swapChainResources_ = { nullptr };
-	//RTVを2つ作るのでディスクリプタを2つ用意
-	std::vector<D3D12_CPU_DESCRIPTOR_HANDLE> rtvHandles_ = {};
-	//RTV(描画情報の使い方)
-	ComPtr<ID3D12DescriptorHeap> rtvDescriptorHeap_ = nullptr;
-	//DSV(深度情報の使い方)
-	ComPtr<ID3D12DescriptorHeap> dsvDescriptorHeap_ = nullptr;
-	//DescriptorSize
-	uint32_t descriptorSizeRTV_ = 0;//RTV
-	uint32_t descriptorSizeDSV_ = 0;//DSV
+	std::array<ComPtr<ID3D12Resource>, kBackBufferCount> swapChainResources_ = { nullptr };
 	//深度バッファ
 	ComPtr<ID3D12Resource> depthStencilResource_ = nullptr;
 	//Fence

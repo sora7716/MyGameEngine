@@ -9,12 +9,26 @@
 #pragma comment(lib,"dxguid.lib")
 #pragma comment(lib,"xinput.lib")
 
+//生成
+std::unique_ptr<Input> Input::Create(ConstructorKey key, WinApi* winApi){
+	//生成
+	std::unique_ptr<Input>instance = std::make_unique<Input>(key);
+	//初期化
+	instance->Initialize(winApi);
+
+	return instance;
+}
+
+//コンストラクタ
+Input::Input(ConstructorKey){
+}
+
 //デストラクタ
-Input::~Input() {
+Input::~Input(){
 }
 
 //初期化
-void Input::Initialize(WinApi* winApi) {
+void Input::Initialize(WinApi* winApi){
 	//ウィンドウズアプリケーションを受け取る
 	winApi_ = winApi;
 	//キーボード入力
@@ -22,13 +36,13 @@ void Input::Initialize(WinApi* winApi) {
 	//マウス入力
 	MouseInitialize();
 	//デッドゾーンを設定
-	for (uint32_t i = 0; i < 4; i++) {
+	for (uint32_t i = 0; i < 4; i++){
 		xboxPadDatas_[i].deadZone = 0.1f;
 	}
 }
 
 //更新
-void Input::Update() {
+void Input::Update(){
 	//キーボード入力
 	KeyboardUpdate();
 	//マウス入力
@@ -37,87 +51,72 @@ void Input::Update() {
 	XboxPadUpdate();
 }
 
-// キーの押下をチェック
-bool Input::PressKey(BYTE keyNumber) {
+//アプリケーションが有効かの設定
+void Input::SetIsAppInputEnabled(bool isAppInputEnabled){
+	isAppInputEnabled_ = isAppInputEnabled;
+}
+
+//キーの押下をチェック(エンジン用)
+bool Input::PressRawKey(BYTE keyNumber){
 	//指定キーを押していればtrueを返す
-	if (keys_[keyNumber]) {
+	if (keys_[keyNumber]){
 		return true;
 	}
 	//そうでなければfalseを返す
 	return false;
 }
 
-// キーを押下した瞬間をチェック
-bool Input::TriggerKey(BYTE keyNumber) {
+//キーを押下した瞬間をチェック(エンジン用)
+bool Input::TriggerRawKey(BYTE keyNumber){
 	//キーを押下した瞬間ならばtrueを返す
-	if (keys_[keyNumber] && !preKeys_[keyNumber]) {
+	if (keys_[keyNumber] && !preKeys_[keyNumber]){
 		return true;
 	}
 	//そうでなければfalseを返す
 	return false;
 }
 
-// キーを離した瞬間をチェック
-bool Input::ReleaseTriggerKey(BYTE keyNumber) {
-	//キーを離した瞬間ならばtrueを返す
-	if (!keys_[keyNumber] && preKeys_[keyNumber]) {
-		return true;
-	}
-	//そうでなければfalseを返す
-	return false;
-}
-
-//マウスのボタンの押下をチェック
-bool Input::PressMouseButton(Click mouseClickPos) {
+//マウスのボタンの押下をチェック(エンジン用)
+bool Input::PressRawMouseButton(Click mouseClick){
 	//マウスの押していればtrueを返す
-	if (mouseState_.rgbButtons[static_cast<uint32_t>(mouseClickPos)]) {
+	if (mouseState_.rgbButtons[static_cast<uint32_t>(mouseClick)]){
 		return true;
 	}
 	//そうでなければfalseを返す
 	return false;
 }
 
-//マウスのボタンの押下した瞬間をチェック
-bool Input::TriggerMouseButton(Click mouseClickPos) {
+//マウスのボタンの押下した瞬間をチェック(エンジン用)
+bool Input::TriggerRawMouseButton(Click mouseClick){
 	//マウスの押していればtrueを返す
-	if (mouseState_.rgbButtons[static_cast<uint32_t>(mouseClickPos)] && !preMouseState_.rgbButtons[static_cast<uint32_t>(mouseClickPos)]) {
+	if (mouseState_.rgbButtons[static_cast<uint32_t>(mouseClick)] && !preMouseState_.rgbButtons[static_cast<uint32_t>(mouseClick)]){
 		return true;
 	}
 	//そうでなければfalseを返す
 	return false;
 }
 
-//マウスのボタンを話した瞬間をチェック
-bool Input::ReleaseTriggerMouseButton(Click mouseClickPos) {
-	//マウスの押していればtrueを返す
-	if (!mouseState_.rgbButtons[static_cast<uint32_t>(mouseClickPos)] && preMouseState_.rgbButtons[static_cast<uint32_t>(mouseClickPos)]) {
-		return true;
-	}
-	//そうでなければfalseを返す
-	return false;
-}
-
-//マウスの移動量のゲッター
-Vector2Int Input::GetMouseMoveAmount() const {
-	Vector2Int result = { mouseState_.lX,mouseState_.lY };
+//マウスの移動量の取得(エンジン用)
+Vector2 Input::GetRawMouseMoveAmount() const{
+	Vector2 result = { static_cast<float>(mouseState_.lX),static_cast<float>(mouseState_.lY) };
 	return result;
 }
 
-//マウスホイールの回転量のゲッター
-int32_t Input::GetWheelRotate() const {
-	int32_t result = mouseState_.lZ;
+//マウスホイールの回転量の取得(エンジン用)
+float Input::GetRawWheelRotate() const{
+	float result = static_cast<float>(mouseState_.lZ);
 	return result;
 }
 
-//ワールド座標系のマウスの位置のゲッター
-Vector3 Input::GetWorldMousePosition(Camera* camera) const {
+//ワールド座標系のマウスの位置の取得(エンジン用)
+Vector3 Input::GetRawWorldMousePosition(Camera* camera) const{
 	// マウスの座標
 	POINT mousePosition;
 	// マウス座標(スクリーン座標)を取得する
 	GetCursorPos(&mousePosition);
 
 	// クライアントエリア座標に変換する
-	HWND hwnd = winApi_->GetActiveHwnd();
+	HWND hwnd = winApi_->GetHwnd();
 	ScreenToClient(hwnd, &mousePosition);
 
 	// ビューポートサイズを取得
@@ -144,32 +143,203 @@ Vector3 Input::GetWorldMousePosition(Camera* camera) const {
 	return mouseDirection;
 }
 
-//スクリーン座標系のマウスの位置のゲッター
-Vector2Int Input::GetMousePosition() const {
+//スクリーン座標系のマウスの位置の取得(エンジン用)
+Vector2 Input::GetRawMousePosition() const{
 	// マウスの座標
 	POINT mousePosition;
 	// マウス座標(スクリーン座標)を取得する
 	GetCursorPos(&mousePosition);
 
 	// クライアントエリア座標に変換する
-	HWND hwnd = winApi_->GetActiveHwnd();
+	HWND hwnd = winApi_->GetHwnd();
 	ScreenToClient(hwnd, &mousePosition);
-	Vector2Int result = { mousePosition.x,mousePosition.y };
+	Vector2 result = { static_cast<float>(mousePosition.x),static_cast<float>(mousePosition.y) };
+	return result;
+}
+
+// キーの押下をチェック(アプリ用)
+bool Input::PressKey(BYTE keyNumber){
+	//アプリの入力がされて無ければ
+	if (!isAppInputEnabled_){
+		return false;
+	}
+
+	//指定キーを押していればtrueを返す
+	if (keys_[keyNumber]){
+		return true;
+	}
+	//そうでなければfalseを返す
+	return false;
+}
+
+// キーを押下した瞬間をチェック(アプリ用)
+bool Input::TriggerKey(BYTE keyNumber){
+	//アプリの入力がされて無ければ
+	if (!isAppInputEnabled_){
+		return false;
+	}
+
+	//キーを押下した瞬間ならばtrueを返す
+	if (keys_[keyNumber] && !preKeys_[keyNumber]){
+		return true;
+	}
+	//そうでなければfalseを返す
+	return false;
+}
+
+// キーを離した瞬間をチェック
+bool Input::ReleaseTriggerKey(BYTE keyNumber){
+	//キーを離した瞬間ならばtrueを返す
+	if (!keys_[keyNumber] && preKeys_[keyNumber]){
+		return true;
+	}
+	//そうでなければfalseを返す
+	return false;
+}
+
+//キーを離した事をチェック
+bool Input::ReleaseKey(BYTE keyNumber){
+	//キーを離した瞬間ならばtrueを返す
+	if (!keys_[keyNumber] && !preKeys_[keyNumber]){
+		return true;
+	}
+	//そうでなければfalseを返す
+	return false;
+}
+
+//マウスのボタンの押下をチェック(アプリ用)
+bool Input::PressMouseButton(Click mouseClick){
+	//アプリの入力がされて無ければ
+	if (!isAppInputEnabled_){
+		return false;
+	}
+
+	//マウスの押していればtrueを返す
+	if (mouseState_.rgbButtons[static_cast<uint32_t>(mouseClick)]){
+		return true;
+	}
+	//そうでなければfalseを返す
+	return false;
+}
+
+//マウスのボタンの押下した瞬間をチェック(アプリ用)
+bool Input::TriggerMouseButton(Click mouseClick){
+	//アプリの入力がされて無ければ
+	if (!isAppInputEnabled_){
+		return false;
+	}
+
+	//マウスの押していればtrueを返す
+	if (mouseState_.rgbButtons[static_cast<uint32_t>(mouseClick)] && !preMouseState_.rgbButtons[static_cast<uint32_t>(mouseClick)]){
+		return true;
+	}
+	//そうでなければfalseを返す
+	return false;
+}
+
+//マウスのボタンを話した瞬間をチェック
+bool Input::ReleaseTriggerMouseButton(Click mouseClick){
+	//マウスの押していればtrueを返す
+	if (!mouseState_.rgbButtons[static_cast<uint32_t>(mouseClick)] && preMouseState_.rgbButtons[static_cast<uint32_t>(mouseClick)]){
+		return true;
+	}
+	//そうでなければfalseを返す
+	return false;
+}
+
+//マウスの移動量の取得(アプリ用)
+Vector2 Input::GetMouseMoveAmount() const{
+	//アプリの入力がされて無ければ
+	if (!isAppInputEnabled_){
+		return Vector2::GetZero();
+	}
+
+	Vector2 result = { static_cast<float>(mouseState_.lX),static_cast<float>(mouseState_.lY) };
+	return result;
+}
+
+//マウスホイールの回転量の取得(アプリ用)
+float Input::GetWheelRotate() const{
+	//アプリの入力がされて無ければ
+	if (!isAppInputEnabled_){
+		return 0.0f;
+	}
+
+	float result = static_cast<float>(mouseState_.lZ);
+	return result;
+}
+
+//ワールド座標系のマウスの位置の取得(アプリ用)
+Vector3 Input::GetWorldMousePosition(Camera* camera) const{
+	//アプリの入力がされて無ければ
+	if (!isAppInputEnabled_){
+		return Vector3::GetZero();
+	}
+
+	// マウスの座標
+	POINT mousePosition;
+	// マウス座標(スクリーン座標)を取得する
+	GetCursorPos(&mousePosition);
+
+	// クライアントエリア座標に変換する
+	HWND hwnd = winApi_->GetHwnd();
+	ScreenToClient(hwnd, &mousePosition);
+
+	// ビューポートサイズを取得
+	float windowWidth = static_cast<float>(WinApi::kClientWidth);
+	float windowHeight = static_cast<float>(WinApi::kClientHeight);
+
+	// マウス座標を正規化デバイス座標系(NDC)に変換
+	float mouseX = (2.0f * mousePosition.x) / windowWidth - 1.0f;
+	float mouseY = 1.0f - (2.0f * mousePosition.y) / windowHeight;
+	Vector3 posNDC = { mouseX, mouseY, 1.0f }; // 遠平面(z = 1.0f)でのNDC
+
+	// ビュープロジェクション行列の逆行列を取得
+	Matrix4x4 matInverseVP = (camera->GetViewMatrix() * camera->GetProjectionMatrix()).Inverse();
+
+	// NDCからワールド座標系への変換（遠平面）
+	Vector3 posFar = posNDC * matInverseVP;
+
+	// NDCを近平面(z = 0)に調整
+	posNDC.z = 0.0f;
+	Vector3 posNear = posNDC * matInverseVP;
+
+	// マウスレイの方向を計算
+	Vector3 mouseDirection = (posFar - posNear).Normalize();
+	return mouseDirection;
+}
+
+//スクリーン座標系のマウスの位置の取得(アプリ用)
+Vector2 Input::GetMousePosition() const{
+	//アプリの入力がされて無ければ
+	if (!isAppInputEnabled_){
+		return Vector2::GetZero();
+	}
+
+	// マウスの座標
+	POINT mousePosition;
+	// マウス座標(スクリーン座標)を取得する
+	GetCursorPos(&mousePosition);
+
+	// クライアントエリア座標に変換する
+	HWND hwnd = winApi_->GetHwnd();
+	ScreenToClient(hwnd, &mousePosition);
+	Vector2 result = { static_cast<float>(mousePosition.x),static_cast<float>(mousePosition.y) };
 	return result;
 }
 
 //Xboxが接続できたかどうか
-bool Input::IsXboxPadConnected(DWORD xBoxPadNumber) {
+bool Input::IsXboxPadConnected(DWORD xBoxPadNumber){
 	return xboxPadDatas_[static_cast<uint32_t>(xBoxPadNumber)].isConnected;
 }
 
 //XboxPadのボタンの押下をチェック
-bool Input::PressXboxPad(DWORD xBoxPadNumber, XboxInput xboxButton) {
-	if (xboxButton == XboxInput::kLT) {
+bool Input::PressXboxPad(DWORD xBoxPadNumber, XboxInput xboxButton){
+	if (xboxButton == XboxInput::kLT){
 		//LT
 		xboxPadDatas_[static_cast<uint32_t>(xBoxPadNumber)].currButton.leftTriggerButton = xboxPadDatas_[static_cast<uint32_t>(xBoxPadNumber)].leftTrigger > 0.0f;
 		return xboxPadDatas_[static_cast<uint32_t>(xBoxPadNumber)].currButton.leftTriggerButton;
-	} else if (xboxButton == XboxInput::kRT) {
+	} else if (xboxButton == XboxInput::kRT){
 		//RT
 		xboxPadDatas_[static_cast<uint32_t>(xBoxPadNumber)].currButton.rightTriggerButton = xboxPadDatas_[static_cast<uint32_t>(xBoxPadNumber)].rightTrigger > 0.0f;
 		return xboxPadDatas_[static_cast<uint32_t>(xBoxPadNumber)].currButton.rightTriggerButton;
@@ -180,12 +350,12 @@ bool Input::PressXboxPad(DWORD xBoxPadNumber, XboxInput xboxButton) {
 }
 
 //XboxPadのボタンの押下した瞬間をチェック
-bool Input::TriggerXboxPad(DWORD xBoxPadNumber, XboxInput xboxButton) {
-	if (xboxButton == XboxInput::kLT) {
+bool Input::TriggerXboxPad(DWORD xBoxPadNumber, XboxInput xboxButton){
+	if (xboxButton == XboxInput::kLT){
 		//LT
 		xboxPadDatas_[static_cast<uint32_t>(xBoxPadNumber)].currButton.leftTriggerButton = xboxPadDatas_[static_cast<uint32_t>(xBoxPadNumber)].leftTrigger > 0.0f;
 		return xboxPadDatas_[static_cast<uint32_t>(xBoxPadNumber)].currButton.leftTriggerButton && !xboxPadDatas_[static_cast<uint32_t>(xBoxPadNumber)].preButton.leftTriggerButton;
-	} else if (xboxButton == XboxInput::kRT) {
+	} else if (xboxButton == XboxInput::kRT){
 		//RT
 		xboxPadDatas_[static_cast<uint32_t>(xBoxPadNumber)].currButton.rightTriggerButton = xboxPadDatas_[static_cast<uint32_t>(xBoxPadNumber)].rightTrigger > 0.0f;
 		return xboxPadDatas_[static_cast<uint32_t>(xBoxPadNumber)].currButton.rightTriggerButton && !xboxPadDatas_[static_cast<uint32_t>(xBoxPadNumber)].preButton.rightTriggerButton;
@@ -196,12 +366,12 @@ bool Input::TriggerXboxPad(DWORD xBoxPadNumber, XboxInput xboxButton) {
 }
 
 //XboxPadのボタンの離した瞬間をチェック
-bool Input::ReleaseTriggerXboxPad(DWORD xBoxPadNumber, XboxInput xboxButton) {
-	if (xboxButton == XboxInput::kLT) {
+bool Input::ReleaseTriggerXboxPad(DWORD xBoxPadNumber, XboxInput xboxButton){
+	if (xboxButton == XboxInput::kLT){
 		//LT
 		xboxPadDatas_[static_cast<uint32_t>(xBoxPadNumber)].currButton.leftTriggerButton = xboxPadDatas_[static_cast<uint32_t>(xBoxPadNumber)].leftTrigger > 0.0f;
 		return !xboxPadDatas_[static_cast<uint32_t>(xBoxPadNumber)].currButton.leftTriggerButton && xboxPadDatas_[static_cast<uint32_t>(xBoxPadNumber)].preButton.leftTriggerButton;
-	} else if (xboxButton == XboxInput::kRT) {
+	} else if (xboxButton == XboxInput::kRT){
 		//RT
 		xboxPadDatas_[static_cast<uint32_t>(xBoxPadNumber)].currButton.rightTriggerButton = xboxPadDatas_[static_cast<uint32_t>(xBoxPadNumber)].rightTrigger > 0.0f;
 		return !xboxPadDatas_[static_cast<uint32_t>(xBoxPadNumber)].currButton.rightTriggerButton && xboxPadDatas_[static_cast<uint32_t>(xBoxPadNumber)].preButton.rightTriggerButton;
@@ -211,8 +381,8 @@ bool Input::ReleaseTriggerXboxPad(DWORD xBoxPadNumber, XboxInput xboxButton) {
 	return !xboxPadDatas_[static_cast<uint32_t>(xBoxPadNumber)].currButton.button && xboxPadDatas_[static_cast<uint32_t>(xBoxPadNumber)].preButton.button;
 }
 
-//Xboxの左スティックのゲッター
-const Vector2 Input::GetXboxPadLeftStick(DWORD xBoxPadNumber) {
+//Xboxの左スティックの取得
+const Vector2 Input::GetXboxPadLeftStick(DWORD xBoxPadNumber){
 	//横軸
 	xboxPadDatas_[static_cast<uint32_t>(xBoxPadNumber)].leftStick.x = static_cast<float>(xboxPadDatas_[static_cast<uint32_t>(xBoxPadNumber)].state.Gamepad.sThumbLX) / static_cast<float>(SHRT_MAX);
 
@@ -220,20 +390,20 @@ const Vector2 Input::GetXboxPadLeftStick(DWORD xBoxPadNumber) {
 	xboxPadDatas_[static_cast<uint32_t>(xBoxPadNumber)].leftStick.y = static_cast<float>(xboxPadDatas_[static_cast<uint32_t>(xBoxPadNumber)].state.Gamepad.sThumbLY) / static_cast<float>(SHRT_MAX);
 
 	//横軸の場合のデッドゾーン
-	if (std::fabs(xboxPadDatas_[static_cast<uint32_t>(xBoxPadNumber)].leftStick.x) < xboxPadDatas_[static_cast<uint32_t>(xBoxPadNumber)].deadZone) {
+	if (std::fabs(xboxPadDatas_[static_cast<uint32_t>(xBoxPadNumber)].leftStick.x) < xboxPadDatas_[static_cast<uint32_t>(xBoxPadNumber)].deadZone){
 		xboxPadDatas_[static_cast<uint32_t>(xBoxPadNumber)].leftStick.x = 0.0f;
 	}
 
 	//縦軸の場合のデッドゾーン
-	if (std::fabs(xboxPadDatas_[static_cast<uint32_t>(xBoxPadNumber)].leftStick.y) < xboxPadDatas_[static_cast<uint32_t>(xBoxPadNumber)].deadZone) {
+	if (std::fabs(xboxPadDatas_[static_cast<uint32_t>(xBoxPadNumber)].leftStick.y) < xboxPadDatas_[static_cast<uint32_t>(xBoxPadNumber)].deadZone){
 		xboxPadDatas_[static_cast<uint32_t>(xBoxPadNumber)].leftStick.y = 0.0f;
 	}
 
 	return xboxPadDatas_[static_cast<uint32_t>(xBoxPadNumber)].leftStick;
 }
 
-//Xboxの右スティックのゲッター
-const Vector2 Input::GetXboxPadRightStick(DWORD xBoxPadNumber) {
+//Xboxの右スティックの取得
+const Vector2 Input::GetXboxPadRightStick(DWORD xBoxPadNumber){
 	//横軸
 	xboxPadDatas_[static_cast<uint32_t>(xBoxPadNumber)].rightStick.x = static_cast<float>(xboxPadDatas_[static_cast<uint32_t>(xBoxPadNumber)].state.Gamepad.sThumbRX) / static_cast<float>(SHRT_MAX);
 
@@ -241,12 +411,12 @@ const Vector2 Input::GetXboxPadRightStick(DWORD xBoxPadNumber) {
 	xboxPadDatas_[static_cast<uint32_t>(xBoxPadNumber)].rightStick.y = static_cast<float>(xboxPadDatas_[static_cast<uint32_t>(xBoxPadNumber)].state.Gamepad.sThumbRY) / static_cast<float>(SHRT_MAX);
 
 	//横軸の場合のデッドゾーン
-	if (std::fabs(xboxPadDatas_[static_cast<uint32_t>(xBoxPadNumber)].rightStick.x) < xboxPadDatas_[static_cast<uint32_t>(xBoxPadNumber)].deadZone) {
+	if (std::fabs(xboxPadDatas_[static_cast<uint32_t>(xBoxPadNumber)].rightStick.x) < xboxPadDatas_[static_cast<uint32_t>(xBoxPadNumber)].deadZone){
 		xboxPadDatas_[static_cast<uint32_t>(xBoxPadNumber)].rightStick.x = 0.0f;
 	}
 
 	//縦軸の場合のデッドゾーン
-	if (std::fabs(xboxPadDatas_[static_cast<uint32_t>(xBoxPadNumber)].rightStick.y) < xboxPadDatas_[static_cast<uint32_t>(xBoxPadNumber)].deadZone) {
+	if (std::fabs(xboxPadDatas_[static_cast<uint32_t>(xBoxPadNumber)].rightStick.y) < xboxPadDatas_[static_cast<uint32_t>(xBoxPadNumber)].deadZone){
 		xboxPadDatas_[static_cast<uint32_t>(xBoxPadNumber)].rightStick.y = 0.0f;
 	}
 
@@ -254,16 +424,12 @@ const Vector2 Input::GetXboxPadRightStick(DWORD xBoxPadNumber) {
 }
 
 //Xboxのデッドゾーン
-void Input::SetDeadZone(DWORD xBoxPadNumber, float deadZone) {
+void Input::SetDeadZone(DWORD xBoxPadNumber, float deadZone){
 	xboxPadDatas_[static_cast<uint32_t>(xBoxPadNumber)].deadZone = deadZone;
 }
 
-//コンストラクタ
-Input::Input(ConstructorKey) {
-}
-
 //キーボード入力の初期化
-void Input::KeyboardInitialize() {
+void Input::KeyboardInitialize(){
 	HRESULT result = S_FALSE;
 	//DirectInputの初期化
 	ComPtr<IDirectInput8> directInput = nullptr;
@@ -276,12 +442,12 @@ void Input::KeyboardInitialize() {
 	result = keyboard_->SetDataFormat(&c_dfDIKeyboard);
 	assert(SUCCEEDED(result));
 	//排他制御レベルのセット
-	result = keyboard_->SetCooperativeLevel(winApi_->GetHwnd(WindowType::kGame), DISCL_FOREGROUND | DISCL_NONEXCLUSIVE | DISCL_NOWINKEY);
+	result = keyboard_->SetCooperativeLevel(winApi_->GetHwnd(), DISCL_BACKGROUND | DISCL_NONEXCLUSIVE);
 	assert(SUCCEEDED(result));
 }
 
 //キーボード入力の更新
-void Input::KeyboardUpdate() {
+void Input::KeyboardUpdate(){
 	HRESULT result = S_FALSE;
 	// 現在の状態を前回の状態として保存
 	memcpy(preKeys_, keys_, sizeof(keys_));
@@ -291,7 +457,7 @@ void Input::KeyboardUpdate() {
 }
 
 //マウス入力の初期化
-void Input::MouseInitialize() {
+void Input::MouseInitialize(){
 	HRESULT result = S_FALSE;
 	//DirectInputの初期化
 	ComPtr<IDirectInput8> directInput = nullptr;
@@ -304,12 +470,12 @@ void Input::MouseInitialize() {
 	result = mouse_->SetDataFormat(&c_dfDIMouse);
 	assert(SUCCEEDED(result));
 	//排他制御レベルのセット
-	result = mouse_->SetCooperativeLevel(winApi_->GetHwnd(WindowType::kGame), DISCL_FOREGROUND | DISCL_NONEXCLUSIVE);
+	result = mouse_->SetCooperativeLevel(winApi_->GetHwnd(), DISCL_BACKGROUND | DISCL_NONEXCLUSIVE);
 	assert(SUCCEEDED(result));
 }
 
 //マウス入力の更新
-void Input::MouseUpdate() {
+void Input::MouseUpdate(){
 	HRESULT result = S_FALSE;
 	// 現在の状態を前回の状態として保存
 	memcpy(&preMouseState_, &mouseState_, sizeof(DIMOUSESTATE));
@@ -319,15 +485,15 @@ void Input::MouseUpdate() {
 }
 
 //XboxPadの更新
-void Input::XboxPadUpdate() {
+void Input::XboxPadUpdate(){
 	//コントローラを接続したかどうか
-	for (uint32_t i = 0; i < 4; i++) {
+	for (uint32_t i = 0; i < 4; i++){
 		DWORD result = XInputGetState(0, &xboxPadDatas_[i].state);
 		xboxPadDatas_[i].isConnected = result == ERROR_SUCCESS;
 	}
 
 	//接続されてなければ
-	if (!xboxPadDatas_[0].isConnected) {
+	if (!xboxPadDatas_[0].isConnected){
 		return;//早期リターン
 	}
 

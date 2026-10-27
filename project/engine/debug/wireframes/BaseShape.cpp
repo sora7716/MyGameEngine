@@ -1,28 +1,19 @@
 #include "BaseShape.h"
-#include "DirectXBase.h"
+#include "GameObject.h"
 #include "MatrixUtility.h"
-#include "MathUtility.h"
-#include "Logger.h"
-#include "GraphicsPipeline.h"
-#include "Camera.h"
-#include "ImGuiManager.h"
 using namespace Microsoft::WRL;
-using namespace debugDraw;
 
 #pragma comment(lib,"d3d12.lib")
 
 //コンストラクタ
-debugDraw::BaseShape::BaseShape(GameObject* gameObject) :Component(gameObject){
+wireframe::BaseShape::BaseShape(){
 }
 
 //デストラクタ
-BaseShape::~BaseShape(){}
+wireframe::BaseShape::~BaseShape(){}
 
 //初期化
-void debugDraw::BaseShape::Initialize(){
-	//基底クラスの初期化
-	Component::Initialize();
-
+void wireframe::BaseShape::Initialize(){
 	//形の初期化
 	InitializeShape();
 
@@ -30,17 +21,19 @@ void debugDraw::BaseShape::Initialize(){
 	vertices_.resize(vertexCount_);
 	indices_.resize(indexCount_);
 
-	//白色に初期化
-	color_ = Vector4::MakeWhiteColor();
+	//緑色に初期化
+	color_ = Color::GetGreen();
 	//単位行列で初期化
 	worldMatrix_ = Matrix4x4::Identity4x4();
+	//ブレンドモードを切り替え
+	blendMode_ = BlendMode::kNone;
 
 	//インデックスの設定
 	SettingIndexData();
 }
 
 //更新
-void BaseShape::Update(){
+void wireframe::BaseShape::Update(){
 	//形の更新
 	UpdateShape();
 
@@ -55,38 +48,68 @@ void BaseShape::Update(){
 }
 
 //色の設定
-void BaseShape::SetColor(const Vector4& color){
+void wireframe::BaseShape::SetColor(const Color& color){
 	color_ = color;
 }
 
 //ブレンドモードの設定
-void debugDraw::BaseShape::SetBlendMode(BlendMode blendMode){
+void wireframe::BaseShape::SetBlendMode(BlendMode blendMode){
 	blendMode_ = blendMode;
 }
 
+//ローカルスケールを設定
+void wireframe::BaseShape::SetLocalScale(const Vector3& scale){
+	localTransform_.scale = scale;
+}
+
+//ローカルの回転を設定
+void wireframe::BaseShape::SetLocalRotate(const Quaternion& rotate){
+	localTransform_.rotate = rotate;
+}
+
+//ローカルの平行移動を設定
+void wireframe::BaseShape::SetLocalTranslate(const Vector3& translate){
+	localTransform_.translate = translate;
+}
+
+//有効状態を取得
+void wireframe::BaseShape::SetEnabled(bool isEnabled){
+	isEnabled_ = isEnabled;
+}
+
 //色の取得
-const Vector4& debugDraw::BaseShape::GetColor(){
+const Color& wireframe::BaseShape::GetColor(){
 	return color_;
 }
 
 //ブレンドモードの取得
-BlendMode debugDraw::BaseShape::GetBlendMode() const{
+BlendMode wireframe::BaseShape::GetBlendMode() const{
 	return blendMode_;
 }
 
 //描画データの取得
-const DebugDrawRenderData& debugDraw::BaseShape::GetRenderData(){
+const WireframeRenderData& wireframe::BaseShape::GetRenderData(){
 	return renderData_;
 }
 
+//有効状態を取得
+bool wireframe::BaseShape::IsEnabled() const{
+	return isEnabled_;
+}
+
 //座標の更新
-void BaseShape::UpdateTransform(){
-	GameObject* gameObject = GetOwner();
-	worldMatrix_ = matrixUtility::MakeAffineMatrix(gameObject->GetTransform());
+void wireframe::BaseShape::UpdateTransform(){
+	//ローカルのワールド行列
+	Matrix4x4 localMatrix = matrixUtility::MakeAffineMatrix(localTransform_);
+	////ゲームオブジェクトのワールド行列
+	//Matrix4x4 ownerMatrix = matrixUtility::MakeAffineMatrix(gameObject->GetTransform());
+
+	//ワールド行列を設定
+	worldMatrix_ = localMatrix;
 }
 
 //描画に必要なデータのセットアップ
-void debugDraw::BaseShape::SetupRenderData(){
+void wireframe::BaseShape::SetupRenderData(){
 	renderData_.blendMode = blendMode_;
 	renderData_.material = color_;
 	renderData_.worldMatrix = worldMatrix_;
@@ -95,7 +118,7 @@ void debugDraw::BaseShape::SetupRenderData(){
 }
 
 //複製する際の元となる設定
-void debugDraw::BaseShape::CopyBaseSetting(debugDraw::BaseShape& baseShape)const{
+void wireframe::BaseShape::CopyBaseSetting(wireframe::BaseShape& baseShape)const{
 	//BaseShapeが持つ設定だけ複製
 	baseShape.SetEnabled(IsEnabled());
 	baseShape.color_ = color_;

@@ -1,22 +1,41 @@
 #pragma once
 #include "BaseScene.h"
 #include "AbstractSceneFactory.h"
+#include "CameraRenderData.h"
+#include "GizmoVisualizer.h"
+#include <memory>
 
 //前方宣言
 class DebugEditor;
-class DebugCamera;
 class RenderSystem;
-class Camera;
+class CollisionSystem;
 
 /// <summary>
 /// シーン管理
 /// </summary>
 class SceneManager{
+public://PassKey
+	class ConstructorKey{
+	private:
+		ConstructorKey() = default;
+		friend class Core;
+	};
+public://静的メンバ関数
+	/// <summary>
+	/// 生成
+	/// </summary>
+	/// <param name="key">コンストラクタのKey</param>
+	/// <param name="sceneContext">シーンで必要なもの</param>
+	/// <param name="renderSystem">描画システム</param>
+	/// <param name="collisionSystem">衝突判定システム</param>
+	/// <returns>インスタンス</returns>
+	static std::unique_ptr<SceneManager>Create(ConstructorKey key, const SceneContext& sceneContext, RenderSystem* renderSystem, CollisionSystem* collisionSystem);
 public://メンバ関数
 	/// <summary>
 	/// コンストラクタ
 	/// </summary>
-	SceneManager();
+	/// <param name="">PassKeyを受け取る</param>
+	explicit SceneManager(ConstructorKey);
 
 	/// <summary>
 	/// デストラクタ
@@ -27,7 +46,9 @@ public://メンバ関数
 	/// 初期化
 	/// </summary>
 	/// <param name="sceneContext">シーンで必要なもの</param>
-	void Initialize(const SceneContext& sceneContext, RenderSystem* renderSystem);
+	/// <param name="renderSystem">描画システム</param>
+	/// <param name="collisionSystem">衝突判定システム</param>
+	void Initialize(const SceneContext& sceneContext, RenderSystem* renderSystem, CollisionSystem* collisionSystem);
 
 	/// <summary>
 	/// 更新
@@ -37,23 +58,25 @@ public://メンバ関数
 	/// <summary>
 	/// デバッグ
 	/// </summary>
-	void Debug();
+	/// <param name="sceneHandle">SceneのGPUハンドル</param>
+	/// <param name="previewHandle">PreviewのGPUハンドル</param>
+	void Debug(D3D12_GPU_DESCRIPTOR_HANDLE sceneHandle,D3D12_GPU_DESCRIPTOR_HANDLE previewHandle);
 
 	/// <summary>
 	/// 描画
 	/// </summary>
-	/// <param name="camera">カメラ</param>
-	void Draw(Camera* camera);
+	/// <param name="cameraMode">カメラモード</param>
+	void Draw(CameraMode cameraMode);
 
 	/// <summary>
 	/// ゲーム画面の描画
 	/// </summary>
-	void GameDraw();
+	void PreviewDraw();
 
 	/// <summary>
 	/// デバッグ画面の描画
 	/// </summary>
-	void DebugDraw();
+	void SceneDraw();
 
 	/// <summary>
 	/// シーンファクトリーのセッター
@@ -66,28 +89,11 @@ public://メンバ関数
 	/// </summary>
 	/// <param name="sceneName"></param>
 	void ChangeScene(const std::string& sceneName);
-public://PassKey
-	class ConstructorKey{
-	private:
-		ConstructorKey() = default;
-		friend class Core;
-	};
-
-	/// <summary>
-	/// コンストラクタ
-	/// </summary>
-	/// <param name="">PassKeyを受け取る</param>
-	explicit SceneManager(ConstructorKey);
 private://メンバ関数
 	//コピーコンストラクタを禁止
 	SceneManager(const SceneManager&) = delete;
 	//代入演算子を禁止
-	SceneManager operator=(const SceneManager&) = delete;
-private://静的メンバ変数
-	//インスタンス
-	static inline SceneManager* instance = nullptr;
-	//Finalizeをしたかどうか
-	static inline bool isFinalize = false;
+	SceneManager& operator=(const SceneManager&) = delete;
 private://メンバ変数
 	//シーンで必要なもの
 	SceneContext sceneContext_ = {};
@@ -99,9 +105,11 @@ private://メンバ変数
 	BaseScene* nextScene_ = nullptr;
 	//デバッグエディタ
 	std::unique_ptr<DebugEditor>debugEditor_ = nullptr;
-	//デバックカメラ
-	std::unique_ptr<DebugCamera>debugCamera_ = nullptr;
 	//描画システム
 	RenderSystem* renderSystem_ = nullptr;
+	//衝突判定システム
+	CollisionSystem* collisionSystem_ = nullptr;
+	//Gizmoの情報を見えるものにする
+	std::unique_ptr<GizmoVisualizer>gizmoVisualizer_ = nullptr;
 };
 

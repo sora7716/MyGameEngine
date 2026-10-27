@@ -1,6 +1,7 @@
 #pragma once
-
-enum class BlendMode {
+#include <string>
+#include <vector>
+enum class BlendMode{
 	//ブレンドなし
 	kNone,
 	//通常のαブレンド Src * SrcA + Dest * (1 - SrcA)
@@ -23,4 +24,9 @@ enum class BlendMode {
 	kInvert,
 	//利用してはいけない(ブレンドモードの数)
 	kCountOfBlendMode,
+};
+
+//ブレンドモード一覧
+inline const std::vector<std::string>kBlendOptions = {
+	"None","Normal","Add","Subtract","Multiply","Screen","PremultipliedAlpha","Lighten","Darken","Invert"
 };

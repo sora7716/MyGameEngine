@@ -103,8 +103,7 @@ void Object3d::RegisterProperties(PropertyRegistry* registry){
 	std::function<void(uint32_t)> blendModeSetter = [this](uint32_t value){
 		this->SetBlendMode(static_cast<BlendMode>(value));
 		};
-	registry->Add("blendMode", { "None","Normal","Add","Subtract","Multiply","Screen","PremultipliedAlpha","Lighten","Darken","Invert" },
-		blendModeGetter, blendModeSetter);
+	registry->Add("blendMode", kBlendOptions, blendModeGetter, blendModeSetter);
 
 	//登録
 	for (uint32_t i = 0; i < material->GetSlots().size(); i++){

@@ -5,6 +5,8 @@
 #include "BoxCollider.h"
 #include "SphereCollider.h"
 #include "RigidBody.h"
+#include "MatrixUtility.h"
+#include "MathUtility.h"
 #include <algorithm>
 #include <iterator>
 #include <array>
@@ -181,11 +183,21 @@ void CollisionSystem::CheckCollisionPair(BaseCollider* collider1, BaseCollider* 
 		SphereCollider* sphereCollider1 = static_cast<SphereCollider*>(collider1);
 		SphereCollider* sphereCollider2 = static_cast<SphereCollider*>(collider2);
 		CheckCollisionSphere(sphereCollider1, sphereCollider2);
-	} else if (type1 == ColliderType::kSphere && type2 == ColliderType::kBox){
-		//片方がSphereでもう片方がBoxなら
-		SphereCollider* sphereCollider = static_cast<SphereCollider*>(collider1);
-		BoxCollider* boxCollider = static_cast<BoxCollider*>(collider2);
-		CheckCollisionSphereAndAABB(sphereCollider, boxCollider);
+	} else if (type1 == ColliderType::kSphere && type2 == ColliderType::kBox ||
+		type1 == ColliderType::kBox && type2 == ColliderType::kSphere){
+		SphereCollider* sphereCollider = nullptr;
+		BoxCollider* boxCollider = nullptr;
+		//コライダーのキャスト
+		if (type1 == ColliderType::kSphere){
+			sphereCollider = static_cast<SphereCollider*>(collider1);
+			boxCollider = static_cast<BoxCollider*>(collider2);
+		} else{
+			sphereCollider = static_cast<SphereCollider*>(collider2);
+			boxCollider = static_cast<BoxCollider*>(collider1);
+		}
+
+		//判定
+		CheckCollisionSphereAndBox(sphereCollider, boxCollider);
 	}
 }
 
@@ -309,12 +321,12 @@ void CollisionSystem::CheckCollisionSphere(SphereCollider* collider1, SphereColl
 	HandleCollisionPair(collider1, collider2, collisionInfo1, collisionInfo2);
 }
 
-//SphereとAABBの衝突判定を確認
-void CollisionSystem::CheckCollisionSphereAndAABB(SphereCollider* collider1, BoxCollider* collider2){
+//SphereとBoxの衝突判定を確認
+void CollisionSystem::CheckCollisionSphereAndBox(SphereCollider* collider1, BoxCollider* collider2){
 	//Sphereを取得
 	primitiveData::Sphere sphere = collider1->GetSphere();
 	//AABBを取得
-	primitiveData::AABB  aabb = collider2->GetAABB();
+	primitiveData::OBB  obb = collider2->GetOBB();
 
 	//衝突したときの情報
 	CollisionInfo collisionInfo1 = {};
@@ -323,7 +335,7 @@ void CollisionSystem::CheckCollisionSphereAndAABB(SphereCollider* collider1, Box
 	collisionInfo2.other = collider1;
 
 	//衝突したか確認
-	bool isCollision = collision::IsCollision(aabb, sphere);
+	bool isCollision = collision::IsCollision(obb, sphere);
 
 	//衝突していなければ
 	if (!isCollision){
@@ -335,15 +347,28 @@ void CollisionSystem::CheckCollisionSphereAndAABB(SphereCollider* collider1, Box
 	//押し出す方向
 	float depth = 0.0f;
 
+	//OBBのワールド行列の逆行列を作成
+	Matrix4x4 obbWorldMatrix = matrixUtility::MakeOBBWorldMatrix(obb.orientations, obb.center);
+	Matrix4x4 obbWorldMatrixInverse = obbWorldMatrix.Inverse();
+
+	//球の中心をOBB空間上に持っていく
+	Vector3 centerInOBBLocalSpace = sphere.center * obbWorldMatrixInverse;
+
+	//AABBをOBBのサイズをもとに作成
+	primitiveData::AABB aabbOBBLocal = { -obb.size,obb.size };
+
+	//OBB空間上に持って行った中心座標を元に球を作成
+	primitiveData::Sphere sphereOBBLocal = { centerInOBBLocalSpace,sphere.radius };
+
 	//最近接点を求める
 	Vector3 closestPoint{
-		std::clamp(sphere.center.x, aabb.min.x, aabb.max.x),
-		std::clamp(sphere.center.y, aabb.min.y, aabb.max.y),
-		std::clamp(sphere.center.z, aabb.min.z, aabb.max.z),
+		std::clamp(sphereOBBLocal.center.x, aabbOBBLocal.min.x, aabbOBBLocal.max.x),
+		std::clamp(sphereOBBLocal.center.y, aabbOBBLocal.min.y, aabbOBBLocal.max.y),
+		std::clamp(sphereOBBLocal.center.z, aabbOBBLocal.min.z, aabbOBBLocal.max.z),
 	};
 
 	//最近接点と球の中心の差分
-	Vector3 delta = sphere.center - closestPoint;
+	Vector3 delta = sphereOBBLocal.center - closestPoint;
 	float distance = delta.Length();
 
 	//距離が0以下だったら
@@ -352,22 +377,22 @@ void CollisionSystem::CheckCollisionSphereAndAABB(SphereCollider* collider1, Box
 		constexpr uint32_t kVertexCount = 6;
 		//各6つの頂点の距離
 		std::array<float, kVertexCount> distances = {
-			sphere.center.x - aabb.min.x,//左
-			aabb.max.x - sphere.center.x,//右
-			sphere.center.y - aabb.min.y,//下
-			aabb.max.y - sphere.center.y,//上
-			sphere.center.z - aabb.min.z,//前
-			aabb.max.z - sphere.center.z//後
+			sphereOBBLocal.center.x - aabbOBBLocal.min.x,//左
+			aabbOBBLocal.max.x - sphereOBBLocal.center.x,//右
+			sphereOBBLocal.center.y - aabbOBBLocal.min.y,//下
+			aabbOBBLocal.max.y - sphereOBBLocal.center.y,//上
+			sphereOBBLocal.center.z - aabbOBBLocal.min.z,//前
+			aabbOBBLocal.max.z - sphereOBBLocal.center.z//後
 		};
 		//各面に対する押し出すベクトル
 		std::array<Vector3, kVertexCount> normals = {
 			{
-				{-1.0f,0.0f,0.0f},//左
-				{1.0f,0.0f,0.0f},//右
-				{0.0f,-1.0f,0.0f},//下
-				{0.0f,1.0f,0.0f},//上
-				{0.0f,0.0f,-1.0f},//前
-				{0.0f,0.0f,1.0f}//後
+				{ -1.0f,0.0f,0.0f },//左
+				{ 1.0f,0.0f,0.0f },//右
+				{ 0.0f,-1.0f,0.0f },//下
+				{ 0.0f,1.0f,0.0f },//上
+				{ 0.0f,0.0f,-1.0f },//前
+				{ 0.0f,0.0f,1.0f }//後
 			}//後ろ
 		};
 
@@ -378,12 +403,12 @@ void CollisionSystem::CheckCollisionSphereAndAABB(SphereCollider* collider1, Box
 		uint32_t index = static_cast<uint32_t>(std::distance(distances.begin(), minIt));
 
 		//結果
-		normal = normals[index];
-		depth = *minIt + sphere.radius;
+		normal = mathUtility::TransformNormal(normals[index], obbWorldMatrix);
+		depth = *minIt + sphereOBBLocal.radius;
 	} else{
 		//球の中心がAABBの外側の場合
-		normal = delta / distance;
-		depth = sphere.radius - distance;
+		normal = mathUtility::TransformNormal((delta / distance), obbWorldMatrix);
+		depth = sphereOBBLocal.radius - distance;
 	}
 
 	//情報を反映

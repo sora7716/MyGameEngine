@@ -26,7 +26,7 @@ void wireframe::BaseShape::Initialize(){
 	//単位行列で初期化
 	worldMatrix_ = Matrix4x4::Identity4x4();
 	//ブレンドモードを切り替え
-	blendMode_ = BlendMode::kAdd;
+	blendMode_ = BlendMode::kNone;
 
 	//インデックスの設定
 	SettingIndexData();

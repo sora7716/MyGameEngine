@@ -1,4 +1,4 @@
-#include "DebugDraw.hlsli"
+#include "Wireframe.hlsli"
 
 //マテリアル
 struct Material {

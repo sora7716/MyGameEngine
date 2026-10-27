@@ -81,9 +81,9 @@ private://メンバ関数
 	void CreatePSOForSkyBox();
 
 	/// <summary>
-	/// PSOの作成(DebugDraw)
+	/// PSOの作成(Wireframe)
 	/// </summary>
-	void CreatePSOForDebugDraw();
+	void CreatePSOForWireframe();
 private://静的メンバ変数
 	//PSOの作成関数のテーブル
 	static void (PipelineManager::* createPSOTable[])();

@@ -25,7 +25,7 @@ void SphereCollider::Update(){
 	GameObject* gameObject = GetOwner();
 	//SphereとGameObjectをリンクさせる
 	sphere_.center = center_ + gameObject->GetTransform().translate;
-	sphere_.radius = radius_ * gameObject_->GetTransform().scale.Abs().Max();
+	sphere_.radius = radius_ * gameObject_->GetTransform().scale.Abs().Max() + 0.01f;
 }
 
 //プロパティ一覧の登録

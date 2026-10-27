@@ -7,7 +7,7 @@ using namespace rasterizerMode;
 void(PipelineManager::* PipelineManager::createPSOTable[])() = {
 	&CreatePSOForObject3d,
 	&CreatePSOForParticle,
-	&CreatePSOForDebugDraw,
+	&CreatePSOForWireframe,
 	&CreatePSOForSkyBox,
 	&CreatePSOForSprite,
 };
@@ -163,17 +163,17 @@ void PipelineManager::CreatePSOForSkyBox(){
 	pipelineSets_[static_cast<uint32_t>(PipelineType::kSkyBox)].rootSignature = graphicsPipeline_->GetRootSignature();
 }
 
-//PSOの作成(DebugDraw)
-void PipelineManager::CreatePSOForDebugDraw(){
+//PSOの作成(Wireframe)
+void PipelineManager::CreatePSOForWireframe(){
 	//シェーダを設定
-	graphicsPipeline_->SetVertexShaderFileName(L"DebugDraw.VS.hlsl");
-	graphicsPipeline_->SetPixelShaderFileName(L"DebugDraw.PS.hlsl");
+	graphicsPipeline_->SetVertexShaderFileName(L"Wireframe.VS.hlsl");
+	graphicsPipeline_->SetPixelShaderFileName(L"Wireframe.PS.hlsl");
 	//深度バッファ
-	graphicsPipeline_->CreateDepthStencilResourceForObject3d();
+	graphicsPipeline_->CreateDepthStencilResourceForWireframe();
 	//シグネイチャBlobの初期化
-	graphicsPipeline_->CreateRootSignatureBlobForDebugDraw();
+	graphicsPipeline_->CreateRootSignatureBlobForWireframe();
 	//インプットレイアウト
-	graphicsPipeline_->InitializeInputLayoutDescForDebugDraw();
+	graphicsPipeline_->InitializeInputLayoutDescForWireframe();
 	//ラスタライザステート
 	graphicsPipeline_->InitializeRasterizerState(FillMode::kSolid, CullingMode::kNone);
 	//頂点シェーダBlob

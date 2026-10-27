@@ -432,14 +432,14 @@ void GraphicsPipeline::InitializeRasterizerState(FillMode fillMode, CullingMode 
 //頂点シェーダのコンパイル
 void GraphicsPipeline::CompileVertexShader(){
 	//VertexShader
-	vertexShaderBlob_ = directXBase_->CompilerShader(L"engine/resources/shaders/" + vertexShaderFileName_, L"vs_6_0");
+	vertexShaderBlob_ = directXBase_->CompilerShader(L"engine/resources/shaders/vertex/" + vertexShaderFileName_, L"vs_6_0");
 	assert(vertexShaderBlob_ != nullptr);
 }
 
 //ピクセルシェーダのコンパイル
 void GraphicsPipeline::CompilePixelShader(){
 	//PixelShader
-	pixelShaderBlob_ = directXBase_->CompilerShader(L"engine/resources/shaders/" + pixelShaderFileName_, L"ps_6_0");
+	pixelShaderBlob_ = directXBase_->CompilerShader(L"engine/resources/shaders/pixel/" + pixelShaderFileName_, L"ps_6_0");
 	assert(pixelShaderBlob_ != nullptr);
 }
 

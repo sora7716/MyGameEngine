@@ -234,6 +234,7 @@ ComPtr<IDxcBlob> DirectXBase::CompilerShader(const std::wstring& filePath, const
 	//2. Compilerする
 	LPCWSTR arguments[] = {
 		filePath.c_str(),//コンパイル対象のhlslファイル名
+		L"-I", L"engine/resources/shaders/header",
 		L"-E",L"main",//エントリーポイントの指定。基本的にmain以外にはしない
 		L"-T",profile,//ShaderProfileの設定
 		L"-Zi",L"-Qembed_debug",//デバック用の情報を埋め込む

@@ -268,7 +268,7 @@ private://メンバ変数
 	//選択するゲームオブジェクト
 	GameObject* selectedGameObject_ = nullptr;
 	//オブジェクトの詳細で編集するオイラー角
-	Vector3 inspectorEulerAngle_ = Vector3::GetZero();
+	Vector3 inspectorDegreeAngle_ = Vector3::GetZero();
 
 	//ゲームオブジェクトの一覧へのポインタ
 	const std::vector<std::unique_ptr<GameObject>>* gameObjects_ = nullptr;

@@ -15,6 +15,7 @@
 #include "DirectionalLight.h"
 #include "PointLight.h"
 #include "SpotLight.h"
+#include "ParticleSystem.h"
 
 //コンストラクタ
 GameScene::GameScene(){
@@ -88,6 +89,11 @@ void GameScene::Initialize(){
 		spotLightObjects_[i]->SetName("スポットライト_" + std::to_string(i));
 		spotLightObjects_[i]->AddComponent<SpotLight>();
 	}
+
+	//パーティクルを作成
+	GameObject* particleObject = CreateGameObject();
+	ParticleSystem* particleSystem = particleObject->AddComponent<ParticleSystem>();
+	particleSystem->SetModel("plane");
 }
 
 //更新のステート

@@ -85,8 +85,8 @@ public://メンバ関数
 	/// <summary>
 	/// モデルの設定
 	/// </summary>
-	/// <param name="model">モデル</param>
-	void SetModel(Model* model);
+	/// <param name="modelName">モデル名</param>
+	void SetModel(const std::string& modelName);
 
 	/// <summary>
 	/// uvスケールの設定

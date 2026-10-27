@@ -36,6 +36,12 @@ struct Transform{
 	Vector3 GetEulerAngle();
 
 	/// <summary>
+	/// 度数法での角度の取得
+	/// </summary>
+	/// <returns>度数法での角度</returns>
+	Vector3 GetDegreeAngle();
+
+	/// <summary>
 	/// 補間
 	/// </summary>
 	/// <param name="transform1">トランスフォーム1</param>

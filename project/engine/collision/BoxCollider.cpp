@@ -14,7 +14,7 @@ BoxCollider::~BoxCollider(){
 void BoxCollider::Initialize(){
 	//基底クラスの初期化
 	BaseCollider::Initialize();
-	halfSize_ = Vector3::GetOne() / 2.0f;
+	halfSize_ = Vector3::GetOne();
 
 	//OBBの初期化
 	obb_.Initialize();
@@ -27,6 +27,18 @@ void BoxCollider::Update(){
 	//中心座標
 	obb_.center = gameObject_->GetTransform().translate + offset_;
 
+	//ハーフサイズのより0の方が大きくなったら
+	if (halfSize_.x <= 0.0f){
+		halfSize_.x = 0.0f;
+	}
+
+	if (halfSize_.y <= 0.0f){
+		halfSize_.y = 0.0f;
+	}
+
+	if (halfSize_.z <= 0.0f){
+		halfSize_.z = 0.0f;
+	}
 	//Sizeを設定
 	obb_.size = halfSize_ * gameObject_->GetTransform().scale.Abs();
 

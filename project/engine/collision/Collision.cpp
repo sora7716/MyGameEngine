@@ -41,6 +41,11 @@ bool collision::IsCollision(const AABB& aabb1, const AABB& aabb2) {
 /// <param name="sphere">球</param>
 /// <returns>衝突したかのフラグ</returns>
 bool collision::IsCollision(const AABB& aabb, const Sphere& sphere) {
+	//MaxよりMinの方が大きくなった場合
+	if (aabb.min.x > aabb.max.x || aabb.min.y > aabb.max.y || aabb.min.z > aabb.max.z){
+		return false;
+	}
+
 	//最近接点を求める
 	Vector3 closestPoint{
 		std::clamp(sphere.center.x, aabb.min.x, aabb.max.x),

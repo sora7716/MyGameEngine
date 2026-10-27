@@ -41,6 +41,11 @@ public://メンバ関数
 	/// </summary>
 	/// <returns>描画データ</returns>
 	const std::vector<WireframeRenderData>& GetWireframeRenderDatas()const;
+private://メンバ関数
+	/// <summary>
+	/// コライダーごとに適当なワイヤーフレームを決める
+	/// </summary>
+	void SelectColliderWireframe();
 private://メンバ変数
 	//選択されたゲームオブジェクト
 	GameObject* selectedGameObject_ = nullptr;

@@ -12,6 +12,7 @@
 #include "PropertyRegistry.h"
 #include "GizmoSystem.h"
 #include "ImGuiManager.h"
+#include "MathUtility.h"
 #include <cassert>
 #include <array>
 
@@ -212,7 +213,7 @@ void DebugEditor::SelectGameObject(GameObject* gameObject){
 
 	//選択したオブジェクトがNullじゃなければ
 	if (selectedGameObject_){
-		inspectorEulerAngle_ = selectedGameObject_->GetTransform().GetEulerAngle();
+		inspectorDegreeAngle_ = selectedGameObject_->GetTransform().GetDegreeAngle();
 	}
 }
 
@@ -507,7 +508,7 @@ void DebugEditor::DrawScene([[maybe_unused]] D3D12_GPU_DESCRIPTOR_HANDLE handle)
 
 	//GizmoでTransformを操作
 	if (gizmoSystem_->ManipulateSelectedTransform(sceneViewRectInfo_.position, sceneViewRectInfo_.size)){
-		inspectorEulerAngle_ = selectedGameObject_->GetTransform().GetEulerAngle();
+		inspectorDegreeAngle_ = selectedGameObject_->GetTransform().GetDegreeAngle();
 	}
 
 	//画面の左上から少し内側にツールバーを配置
@@ -589,7 +590,7 @@ void DebugEditor::DrawInspector(){
 			Object3d* object3d = selectedGameObject_->GetComponent<Object3d>();
 			if (object3d){
 				transform = object3d->GetNodeLocalTransform(selectedNodePath_);
-				inspectorEulerAngle_ = transform.GetEulerAngle();
+				inspectorDegreeAngle_ = transform.GetDegreeAngle();
 			}
 		}
 
@@ -600,7 +601,7 @@ void DebugEditor::DrawInspector(){
 		}
 
 		//スケールの切り替え
-		if (ImGui::DragFloat3("拡縮", &transform.scale.x, 0.1f)){
+		if (ImGui::DragFloat3("拡縮", &transform.scale.x, 0.1f, 0.0f, 0.0f, "%.2f")){
 			isChange = true;
 		}
 		ImGui::SameLine();
@@ -611,20 +612,22 @@ void DebugEditor::DrawInspector(){
 		}
 
 		//回転の切り替え(オイラー角からクォータニオンを求めてる)
-		if (ImGui::DragFloat3("回転", &inspectorEulerAngle_.x, 0.1f)){
-			transform.rotate = Quaternion::EulerAngleToQuaternion(inspectorEulerAngle_);
+		if (ImGui::DragFloat3("回転", &inspectorDegreeAngle_.x, 1.0f, 0.0f, 0.0f, "%.2f")){
+			Vector3 eulerAngle = inspectorDegreeAngle_ * mathUtility::kRad;
+			transform.rotate = Quaternion::EulerAngleToQuaternion(eulerAngle);
 			isChange = true;
 		}
 		ImGui::SameLine();
 		//回転のリセット
 		if (ImGui::SmallButton("リセット##rotate")){
 			transform.rotate = Quaternion::IdentityQuaternion();
+			inspectorDegreeAngle_ = {};
 			isChange = true;
 		}
 
 
 		//平行移動成分の切り替え
-		if (ImGui::DragFloat3("平行移動", &transform.translate.x, 0.1f)){
+		if (ImGui::DragFloat3("平行移動", &transform.translate.x, 0.1f, 0.0f, 0.0f, "%.2f")){
 			isChange = true;
 		}
 		ImGui::SameLine();
@@ -753,7 +756,7 @@ void DebugEditor::DrawProperties([[maybe_unused]] Component* component){
 			//各項目のIｍGuiを表示
 			if (floatProperty){
 				float decimal = floatProperty->getter();
-				if (ImGui::DragFloat(floatProperty->displayName.c_str(), &decimal, floatProperty->dragSpeed)){
+				if (ImGui::DragFloat(floatProperty->displayName.c_str(), &decimal, floatProperty->dragSpeed, 0.0f, 0.0f, "%.2f")){
 					floatProperty->setter(decimal);
 				}
 			} else if (boolProperty){
@@ -768,17 +771,17 @@ void DebugEditor::DrawProperties([[maybe_unused]] Component* component){
 				}
 			} else if (vector2Property){
 				Vector2 vector2 = vector2Property->getter();
-				if (ImGui::DragFloat2(vector2Property->displayName.c_str(), &vector2.x, vector2Property->dragSpeed)){
+				if (ImGui::DragFloat2(vector2Property->displayName.c_str(), &vector2.x, vector2Property->dragSpeed, 0.0f, 0.0f, "%.2f")){
 					vector2Property->setter(vector2);
 				}
 			} else if (vector3Property){
 				Vector3 vector3 = vector3Property->getter();
-				if (ImGui::DragFloat3(vector3Property->displayName.c_str(), &vector3.x, vector3Property->dragSpeed)){
+				if (ImGui::DragFloat3(vector3Property->displayName.c_str(), &vector3.x, vector3Property->dragSpeed, 0.0f, 0.0f, "%.2f")){
 					vector3Property->setter(vector3);
 				}
 			} else if (vector4Property){
 				Vector4 vector4 = vector4Property->getter();
-				if (ImGui::DragFloat4(vector4Property->displayName.c_str(), &vector4.x, vector4Property->dragSpeed)){
+				if (ImGui::DragFloat4(vector4Property->displayName.c_str(), &vector4.x, vector4Property->dragSpeed, 0.0f, 0.0f, "%.2f")){
 					vector4Property->setter(vector4);
 				}
 			} else if (colorProperty){

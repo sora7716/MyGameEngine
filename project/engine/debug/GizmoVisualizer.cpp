@@ -31,6 +31,22 @@ void GizmoVisualizer::Update(){
 		return;
 	}
 
+	//コライダーごとに適当なワイヤーフレームを決める
+	SelectColliderWireframe();
+}
+
+//選択されたゲームオブジェクトの設定
+void GizmoVisualizer::SetSelectedGameObject(GameObject* selectedGameObject){
+	selectedGameObject_ = selectedGameObject;
+}
+
+//ワイヤーフレームの描画データの配列の取得
+const std::vector<WireframeRenderData>& GizmoVisualizer::GetWireframeRenderDatas() const{
+	return renderDatas_;
+}
+
+//コライダーごとに適当なワイヤーフレームを決める
+void GizmoVisualizer::SelectColliderWireframe(){
 	//コライダーの配列を取得
 	std::vector<BaseCollider*>baseColliders = selectedGameObject_->GetComponents<BaseCollider>();
 	//コライダーの配列を探索
@@ -52,13 +68,13 @@ void GizmoVisualizer::Update(){
 				//Boxコライダーにキャスト
 				BoxCollider* boxCollider = static_cast<BoxCollider*>(baseCollider);
 
-				//AABBを取得
-				primitiveData::AABB aabb = boxCollider->GetAABB();
+				//OBBを取得
+				primitiveData::OBB obb = boxCollider->GetOBB();
 
 				//SRTの設定
-				cube->SetLocalScale(aabb.max - aabb.min);
+				cube->SetLocalScale(obb.size);
 				cube->SetLocalRotate(boxCollider->GetOwner()->GetTransform().rotate);
-				cube->SetLocalTranslate((aabb.min + aabb.max) / 2.0f);
+				cube->SetLocalTranslate(obb.center);
 
 				//更新
 				cube->Update();
@@ -88,14 +104,4 @@ void GizmoVisualizer::Update(){
 			}
 		}
 	}
-}
-
-//選択されたゲームオブジェクトの設定
-void GizmoVisualizer::SetSelectedGameObject(GameObject* selectedGameObject){
-	selectedGameObject_ = selectedGameObject;
-}
-
-//ワイヤーフレームの描画データの配列の取得
-const std::vector<WireframeRenderData>& GizmoVisualizer::GetWireframeRenderDatas() const{
-	return renderDatas_;
 }

@@ -4,6 +4,8 @@
 #include "MaterialInstance.h"
 #include "ParticleEmitter.h"
 #include "GameObject.h"
+#include "ModelManager.h"
+#include "BaseScene.h"
 #include <string>
 
 //コンストラクタ
@@ -101,9 +103,29 @@ void ParticleSystem::SetFrequency(float frequency){
 }
 
 //モデルの設定
-void ParticleSystem::SetModel(Model* model){
+void ParticleSystem::SetModel(const std::string& modelName){
+	//ゲームオブジェクトを取得
+	GameObject* gameObject = GetOwner();
+	//ゲームオブジェクトが無ければ
+	if (!gameObject){
+		return;
+	}
+
+	//現在接続されているシーンを取得
+	BaseScene* currentScene_ = gameObject->GetCurrentScene();
+	//現在接続されているシーンがなければ
+	if (!currentScene_){
+		return;
+	}
+
+	//モデルマネージャを取得
+	ModelManager* modelManager = currentScene_->GetSceneContext().modelManager;
+	//モデルマネージャーがなければ
+	if (!modelManager){
+		return;
+	}
 	//元になるモデルを取得
-	model_ = model;
+	model_ = modelManager->FindModel(modelName);
 
 	//モデルが存在する場合
 	if (model_){

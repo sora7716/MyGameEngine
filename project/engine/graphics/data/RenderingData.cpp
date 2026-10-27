@@ -23,6 +23,12 @@ Vector3 Transform::GetEulerAngle(){
 	return mathUtility::MakeEulerAngleForQuaternion(rotate);
 }
 
+//度数法での角度の取得
+Vector3 Transform::GetDegreeAngle(){
+	Vector3 radian = mathUtility::MakeEulerAngleForQuaternion(rotate);
+	return radian * 180.0f / mathUtility::kPi;
+}
+
 //補間
 Transform Transform::Lerp(const Transform& transform1, const Transform& transform2, float t){
 	Transform result = {};

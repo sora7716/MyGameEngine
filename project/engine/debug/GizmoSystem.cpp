@@ -152,12 +152,14 @@ bool GizmoSystem::ManipulateSelectedTransform([[maybe_unused]] const Vector2& sc
 			Transform localNodeTransform = matrixUtility::DecomposeMatrix(newNodeLocalMatrix, selectedGameObject_->GetTransform().scale);
 			//NodeのLocalTransformに設定
 			object3d->SetNodeLocalTransform(selectedNodePath_, localNodeTransform);
+			return true;
 		} else{
 			//Transformを設定
 			selectedGameObject_->GetTransform() = transform;
+			return true;
 		}
 	}
-	return true;
+	return false;
 #endif // USE_IMGUI
 }
 

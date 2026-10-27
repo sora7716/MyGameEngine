@@ -137,7 +137,7 @@ void Object3d::RegisterProperties(PropertyRegistry* registry){
 		registry->Add("UVの角度", material->GetSlots()[i].uvTransform.rotate, this, i, &Object3d::SetUVRotate, 0.1f);
 
 		//UVTranslate
-		registry->Add("UVの位置", material->GetSlots()[i].uvTransform.scale, this, i, &Object3d::SetUVTranslate, 0.1f);
+		registry->Add("UVの位置", material->GetSlots()[i].uvTransform.translate, this, i, &Object3d::SetUVTranslate, 0.1f);
 
 		//ライティングするか
 		registry->Add("ライティングするか", enabledLighting_, this, i, &Object3d::SetEnabledLighting);

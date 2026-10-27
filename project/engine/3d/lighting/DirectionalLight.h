@@ -92,9 +92,5 @@ private://メンバ変数
 	Color color_ = Color::GetWhite();
 	//光の強さ
 	float intensity_ = 1.0f;
-	//ランバート反射に切り替えるか
-	bool isLambert_ = false;
-	//Blinn-Phong反射に切り替えるか
-	bool isBlinnPhong_ = true;
 };
 

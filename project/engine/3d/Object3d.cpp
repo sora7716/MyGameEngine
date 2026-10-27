@@ -111,6 +111,23 @@ void Object3d::RegisterProperties(PropertyRegistry* registry){
 		//グループの開始
 		registry->BeginGroup("material" + std::to_string(i));
 
+		//拡散反射モデルの切り替え
+		std::function<uint32_t()> diffuseModelGetter = [i, material]()->uint32_t{
+			return material->GetSlots()[i].material.diffuseModel;
+			};
+		std::function<void(uint32_t)> diffuseModelSetter = [i, this](uint32_t diffuseModel){
+			return this->SetDiffuseModel(i, static_cast<DiffuseModel>(diffuseModel));
+			};
+		registry->Add("diffuseModel", { "Lambert","HalfLambert" }, diffuseModelGetter, diffuseModelSetter);
+
+		//鏡面反射モデルの切り替え
+		std::function<uint32_t()> specularModelGetter = [i, material]()->uint32_t{
+			return material->GetSlots()[i].material.specularModel;
+			};
+		std::function<void(uint32_t)> specularModelSetter = [i, this](uint32_t specularModel){
+			return this->SetSpecularModel(i, static_cast<SpecularModel>(specularModel));
+			};
+		registry->Add("specularModel", { "Phong","BlingPhong" }, specularModelGetter, specularModelSetter);
 		//色
 		registry->Add(
 			"color",
@@ -418,6 +435,28 @@ void Object3d::SetEnvironmentCoefficient(uint32_t index, float& environmentCoeff
 	//マテリアルを個別化する
 	EnsureUniqueMaterialInstance();
 	materialInstance_->SetEnvironmentCoefficient(index, environmentCoefficient);
+}
+
+//拡散反射モデルの切り替え
+void Object3d::SetDiffuseModel(uint32_t index, DiffuseModel diffuseModel){
+	//マテリアルインスタンスがなければ
+	if (!materialInstance_){
+		return;
+	}
+	//マテリアルを個別化する
+	EnsureUniqueMaterialInstance();
+	materialInstance_->SetDiffuseModel(index, diffuseModel);
+}
+
+//鏡面反射モデルの切り替え
+void Object3d::SetSpecularModel(uint32_t index, SpecularModel specularModel){
+	//マテリアルインスタンスがなければ
+	if (!materialInstance_){
+		return;
+	}
+	//マテリアルを個別化する
+	EnsureUniqueMaterialInstance();
+	materialInstance_->SetSpecularModel(index, specularModel);
 }
 
 //UV座標の設定

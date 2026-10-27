@@ -22,6 +22,8 @@ void MaterialInstance::Initialize(const std::vector<MaterialTexturePaths>& textu
 		slot.material.enableLighting = true;
 		slot.material.environmentCoefficient = 0.0f;
 		slot.material.shininess = 100.0f;
+		slot.material.diffuseModel = static_cast<uint32_t>(DiffuseModel::kHalfLambert);
+		slot.material.specularModel = static_cast<uint32_t>(SpecularModel::kBlingPhong);
 		slot.material.uvMatrix = Matrix4x4::Identity4x4();
 
 		//UVトランスフォームの初期化
@@ -177,6 +179,32 @@ void MaterialInstance::SetEnvironmentCoefficient(uint32_t index, float coefficie
 	}
 
 	slots_[index].material.environmentCoefficient = std::clamp(coefficient, 0.0f, 1.0f);
+
+	//変更があったので加算
+	revision_++;
+}
+
+//拡散反射のモデル切り替え
+void MaterialInstance::SetDiffuseModel(uint32_t index, DiffuseModel diffuseModel){
+	//検索キーとスロットのサイズを比較して
+	if (index >= slots_.size()){
+		return;
+	}
+
+	slots_[index].material.diffuseModel = static_cast<uint32_t>(diffuseModel);
+
+	//変更があったので加算
+	revision_++;
+}
+
+//鏡面反射のモデル切り替え
+void MaterialInstance::SetSpecularModel(uint32_t index, SpecularModel specularModel){
+	//検索キーとスロットのサイズを比較して
+	if (index >= slots_.size()){
+		return;
+	}
+
+	slots_[index].material.specularModel = static_cast<uint32_t>(specularModel);
 
 	//変更があったので加算
 	revision_++;

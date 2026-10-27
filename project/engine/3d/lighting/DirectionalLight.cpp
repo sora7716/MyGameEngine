@@ -36,8 +36,6 @@ std::unique_ptr<Component> DirectionalLight::Clone(GameObject* gameObject) const
 	cloneInstance->color_ = this->color_;
 	cloneInstance->direction_ = this->direction_;
 	cloneInstance->enableLighting_ = this->enableLighting_;
-	cloneInstance->isLambert_ = this->isLambert_;
-	cloneInstance->isBlinnPhong_ = this->isBlinnPhong_;
 	cloneInstance->intensity_ = this->intensity_;
 
 	//Playerが持つ設定だけ複製
@@ -51,8 +49,6 @@ void DirectionalLight::RegisterProperties(PropertyRegistry* registry){
 	registry->Add("enableLighting", enableLighting_);
 	registry->Add("color", color_);
 	registry->Add("intencity", intensity_);
-	registry->Add("isLambert", isLambert_);
-	registry->Add("isBlinnPhong", isBlinnPhong_);
 }
 
 //コンポーネントのタイプ名を返す
@@ -63,16 +59,6 @@ std::string DirectionalLight::GetTypeName() const{
 //ライトの有効/無効の設定
 void DirectionalLight::SetEnabledLighting(bool enabledLighting){
 	enableLighting_ = enabledLighting;
-}
-
-//ランバート反射モデルにするか
-void DirectionalLight::SetIsLambert(bool isLambert){
-	isLambert_ = isLambert;
-}
-
-//Blinn-Phong反射に切り替えるか
-void DirectionalLight::SetIsBlinnPhong(bool isBlinnPhong){
-	isBlinnPhong_ = isBlinnPhong;
 }
 
 //光の強さを設定
@@ -92,7 +78,5 @@ lightData::DirectionalLight DirectionalLight::GetDirectionalLightData()const{
 	directionalLightData.direction = direction_;
 	directionalLightData.enable = enableLighting_;
 	directionalLightData.intensity = intensity_;
-	directionalLightData.isBlinnPhong = isBlinnPhong_;
-	directionalLightData.isLambert = isLambert_;
 	return directionalLightData;
 }

@@ -200,8 +200,6 @@ void LightingManager::CreateDirectionLight(){
 	directionalLight_->color = { 1.0f,1.0f,1.0f,1.0f };
 	directionalLight_->direction = { 0.0f,-1.0f,0.0f };
 	directionalLight_->intensity = 1.0f;
-	directionalLight_->isLambert = false;
-	directionalLight_->isBlinnPhong = true;
 	directionalLight_->enable = true;
 }
 
@@ -220,7 +218,6 @@ void LightingManager::CreatePointLight(){
 		pointLights_[i].intensity = 10.0f;
 		pointLights_[i].distance = 7.0f;
 		pointLights_[i].decay = 2.0f;
-		pointLights_[i].isBlinnPhong = true;
 		pointLights_[i].enable = false;
 	}
 
@@ -258,7 +255,6 @@ void LightingManager::CreateSpotLight(){
 		spotLights_[i].decay = 2.0f;
 		spotLights_[i].cosAngle = std::cos(mathUtility::kPi / 3.0f);
 		spotLights_[i].cosFalloffStart = 1.0f;
-		spotLights_[i].isBlinnPhong = true;
 		spotLights_[i].enable = false;
 	}
 

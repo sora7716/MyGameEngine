@@ -1,14 +1,4 @@
 #include "Lighting.hlsli"
-
-//マテリアル
-struct Material {
-    float4 color;
-    int enableLighring;
-    float4x4 uvMatrix;
-    float shininess;
-    float environmentCoefficient;
-};
-
 //リムライト
 struct RimLight {
     float4 color; //ライトの色
@@ -35,10 +25,8 @@ struct PixelShaderOutput {
 
 //ライティングのモードを切り替える用の関数
 float3 SetLightingMode(VertexShaderOutput input, float4 textureColor, float3 toEye) {
-    //ベースの色
-    float4 baseColor = gMaterial.color * textureColor;
     //平行光源
-    float3 directionalLighting = CalculateDirectionalLight(input, baseColor, gDirectionalLight, gMaterial.shininess, toEye);
+    float3 directionalLighting = CalculateDirectionalLight(input, gDirectionalLight, gMaterial, textureColor, toEye);
         
     //点光源
     uint pointLightCount, stridePoint;
@@ -50,7 +38,7 @@ float3 SetLightingMode(VertexShaderOutput input, float4 textureColor, float3 toE
         if (!gPointLight[i].enabled) {
             continue;
         }
-        pointLighting += CalculatePointLight(input, baseColor, gPointLight[i], gMaterial.shininess, toEye);
+        pointLighting += CalculatePointLight(input, gPointLight[i], gMaterial, textureColor, toEye);
     }
     
     //スポットライト
@@ -62,7 +50,7 @@ float3 SetLightingMode(VertexShaderOutput input, float4 textureColor, float3 toE
         if (!gSpotLight[i].enabled) {
             continue;
         }
-        spotLight += CalculateSpotLight(input, baseColor, gSpotLight[i], gMaterial.shininess, toEye);
+        spotLight += CalculateSpotLight(input, gSpotLight[i], gMaterial, textureColor, toEye);
     }
         
     float3 directionalRgb = {

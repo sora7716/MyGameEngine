@@ -8,6 +8,7 @@
 #include <vector>
 #include <string>
 #include <memory>
+#include "MaterialInstance.h"
 
 //前方宣言
 class Model;
@@ -172,6 +173,20 @@ public://メンバ関数
 	/// <param name="index">マテリアルスロット番号の検索キー</param>
 	/// <param name="environmentCoefficient">k環境マップの映り込み度</param>
 	void SetEnvironmentCoefficient(uint32_t index, float& environmentCoefficient);
+
+	/// <summary>
+	/// 拡散反射モデルの切り替え
+	/// </summary>
+	/// <param name="index">検索キー</param>
+	/// <param name="diffuseModel">拡散反射モデルの切り替え</param>
+	void SetDiffuseModel(uint32_t index,DiffuseModel diffuseModel);
+
+	/// <summary>
+	/// 鏡面反射モデルの切り替え
+	/// </summary>
+	/// <param name="index">検索キー</param>
+	/// <param name="specularModel">鏡面反射モデルの切り替え</param>
+	void SetSpecularModel(uint32_t index, SpecularModel specularModel);
 
 	/// <summary>
 	/// UV座標の設定

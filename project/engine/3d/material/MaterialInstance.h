@@ -8,6 +8,18 @@ struct MaterialInstanceSlot{
 	RectTransform uvTransform = {};
 };
 
+//拡散反射の反射モデル
+enum DiffuseModel:uint32_t{
+	kLambert,
+	kHalfLambert
+};
+
+//鏡面反射の反射モデル
+enum SpecularModel :uint32_t{
+	kPhong,
+	kBlingPhong
+};
+
 /// <summary>
 /// マテリアルのインスタンス
 /// </summary>
@@ -98,6 +110,20 @@ public://メンバ関数
 	/// <param name="index">検索キー</param>
 	/// <param name="coefficient">環境マップの映り込み度</param>
 	void SetEnvironmentCoefficient(uint32_t index, float coefficient);
+
+	/// <summary>
+	/// 拡散反射のモデル切り替え
+	/// </summary>
+	/// <param name="index">検索キー</param>
+	/// <param name="diffuseModel">拡散反射のモデル</param>
+	void SetDiffuseModel(uint32_t index, DiffuseModel diffuseModel);
+
+	/// <summary>
+	/// 鏡面反射のモデル切り替え
+	/// </summary>
+	/// <param name="index">検索キー</param>
+	/// <param name="specularModel">鏡面反射のモデル</param>
+	void SetSpecularModel(uint32_t index, SpecularModel specularModel);
 
 	/// <summary>
 	/// リムライトの色の設定

@@ -21,6 +21,7 @@
 #include "CameraRenderer.h"
 #include "BaseShape.h"
 #include <algorithm>
+using namespace rasterizerMode;
 
 //生成
 std::unique_ptr<RenderSystem> RenderSystem::Create(ConstructorKey key, DirectXBase* directXBase, SRVManager* srvManager, TextureManager* textureManager, PipelineManager* pipelineManager, LightingManager* lightingManager){
@@ -70,7 +71,11 @@ void RenderSystem::Draw(){
 	//スカイボックス
 	for (uint32_t i = 0; i < skyBoxRenderer_->GetRenderDataSize(); i++){
 		//描画開始
-		PreDraw(skyBoxRenderer_->GetBlendMode(i), PipelineType::kSkyBox);
+		PreDraw(PipelineType::kSkyBox,
+			skyBoxRenderer_->GetPixelShaderFilePath(i),
+			skyBoxRenderer_->GetBlendMode(i),
+			skyBoxRenderer_->GetCullingMode(i),
+			skyBoxRenderer_->GetFillMode(i));
 		//カメラの設定
 		cameraRenderer_->Bind(selectCamera_.index, 3);
 		//スカイボックスの描画
@@ -82,7 +87,11 @@ void RenderSystem::Draw(){
 	//Object3d
 	for (uint32_t i = 0; i < object3dRenderer_->GetRenderDataSize(); i++){
 		//描画開始
-		PreDraw(object3dRenderer_->GetBlendMode(i), PipelineType::kObject3d);
+		PreDraw(PipelineType::kObject3d,
+			object3dRenderer_->GetPixelShaderFilePath(i),
+			object3dRenderer_->GetBlendMode(i),
+			object3dRenderer_->GetCullingMode(i),
+			object3dRenderer_->GetFillMode(i));
 		//ライティングの設定
 		lightingManager_->Bind();
 		//カメラの設定
@@ -96,7 +105,11 @@ void RenderSystem::Draw(){
 	//Particle
 	for (uint32_t i = 0; i < particleRenderer_->GetRenderDataSize(); i++){
 		//描画の開始
-		PreDraw(particleRenderer_->GetBlendMode(i), PipelineType::kParticle);
+		PreDraw(PipelineType::kParticle,
+			particleRenderer_->GetPixelShaderFilePath(i),
+			particleRenderer_->GetBlendMode(i),
+			particleRenderer_->GetCullingMode(i),
+			particleRenderer_->GetFillMode(i));
 		//カメラの設定
 		cameraRenderer_->Bind(selectCamera_.index, 3);
 		//Particleの描画
@@ -109,7 +122,10 @@ void RenderSystem::Draw(){
 	//DebugDraw
 	for (uint32_t i = 0; i < wireframeRenderer_->GetRenderDataSize(); i++){
 		//描画開始
-		PreDraw(wireframeRenderer_->GetBlendMode(i));
+		PreDraw(wireframeRenderer_->GetPixelShaderFilePath(i),
+			wireframeRenderer_->GetBlendMode(i),
+			wireframeRenderer_->GetCullingMode(i),
+			wireframeRenderer_->GetFillMode(i));
 		//カメラの設定
 		cameraRenderer_->Bind(selectCamera_.index, 2);
 		//DebugDrawの描画
@@ -122,7 +138,11 @@ void RenderSystem::Draw(){
 	//スプライト
 	for (uint32_t i = 0; i < spriteRenderer_->GetRenderDataSize(); i++){
 		//描画開始
-		PreDraw(spriteRenderer_->GetBlendMode(i), PipelineType::kSprite);
+		PreDraw(PipelineType::kSprite,
+			spriteRenderer_->GetPixelShaderFilePath(i),
+			spriteRenderer_->GetBlendMode(i),
+			spriteRenderer_->GetCullingMode(i),
+			spriteRenderer_->GetFillMode(i));
 		//Spriteの描画
 		spriteRenderer_->Draw(i);
 	}
@@ -443,29 +463,43 @@ bool RenderSystem::SetCameraMode(CameraMode cameraMode){
 }
 
 //描画開始
-void RenderSystem::PreDraw(BlendMode blendMode, PipelineType pipelineType){
+void RenderSystem::PreDraw(PipelineType pipelineType, std::string pixelShaderPath, BlendMode blendMode, rasterizerMode::CullingMode cullingMode, rasterizerMode::FillMode fillMode){
+	//PSOの検索キーを作成
+	PipelineKey key{};
+	key.pixelShaderFilePath = pixelShaderPath;
+	key.pipelineType = pipelineType;
+	key.blendMode = blendMode;
+	key.cullingMode = cullingMode;
+	key.fillMode = fillMode;
 	//パイプラインのセットを取得
-	PipelineSet pipelineSet = pipelineManager_->GetPipelineSet(pipelineType);
+	PipelineSet pipelineSet = pipelineManager_->GetPSO(key);
 	//ルートシグネイチャをセットするコマンド
 	directXBase_->GetCommandList()->SetGraphicsRootSignature(pipelineSet.rootSignature.Get());
 	//プリミティブトポロジーをセットするコマンド
 	directXBase_->GetCommandList()->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 	//PSO
-	ID3D12PipelineState* pso = pipelineSet.graphicsPipelineStates[static_cast<uint32_t>(blendMode)].Get();
+	ID3D12PipelineState* pso = pipelineSet.graphicsPipelineState.Get();
 	//グラフィックスパイプラインをセットするコマンド
 	directXBase_->GetCommandList()->SetPipelineState(pso);
 }
 
 //描画開始
-void RenderSystem::PreDraw(BlendMode blendMode){
+void RenderSystem::PreDraw(std::string pixelShaderPath, BlendMode blendMode, rasterizerMode::CullingMode cullingMode, rasterizerMode::FillMode fillMode){
+	//PSOの検索キーを作成
+	PipelineKey key{};
+	key.pixelShaderFilePath = pixelShaderPath;
+	key.pipelineType = PipelineType::kWireframe;
+	key.blendMode = blendMode;
+	key.cullingMode = cullingMode;
+	key.fillMode = fillMode;
 	//パイプラインのセットを取得
-	PipelineSet pipelineSet = pipelineManager_->GetPipelineSet(PipelineType::kWireframe);
+	PipelineSet pipelineSet = pipelineManager_->GetPSO(key);
 	//ルートシグネイチャをセットするコマンド
 	directXBase_->GetCommandList()->SetGraphicsRootSignature(pipelineSet.rootSignature.Get());
 	//プリミティブトポロジーをセットするコマンド
 	directXBase_->GetCommandList()->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_LINELIST);
 	//PSO
-	ID3D12PipelineState* pso = pipelineSet.graphicsPipelineStates[static_cast<uint32_t>(blendMode)].Get();
+	ID3D12PipelineState* pso = pipelineSet.graphicsPipelineState.Get();
 	//グラフィックスパイプラインをセットするコマンド
 	directXBase_->GetCommandList()->SetPipelineState(pso);
 }
@@ -486,8 +520,14 @@ void RenderSystem::BuildObject3dBatches(){
 		Model* model = object3d->GetRenderModel();
 		//マテリアルインスタンスを取得
 		MaterialInstance* materialInstance = object3d->GetMaterialInstance();
+		//ピクセルシェーダファイルパス
+		std::string pixelShaderFilePath = object3d->GetPixelShaderFilePath();
 		//ブレンドモードを取得
 		BlendMode blendMode = object3d->GetBlendMode();
+		//カリングモード
+		CullingMode cullingMode = object3d->GetCullingMode();
+		//フィルモード
+		FillMode fillMode = object3d->GetFillMode();
 
 		//モデル、またはマテリアルインスタンスがなければスキップ
 		if (!model || !materialInstance){
@@ -500,10 +540,13 @@ void RenderSystem::BuildObject3dBatches(){
 			auto batchIt = std::find_if(
 				object3dBatches_.begin(),
 				object3dBatches_.end(),
-				[model, materialInstance, blendMode, meshIndex](const Object3dBatch& batch){
+				[model, materialInstance, pixelShaderFilePath, blendMode, cullingMode, fillMode, meshIndex](const Object3dBatch& batch){
 					return batch.model == model &&
 						batch.materialInstance == materialInstance &&
+						batch.pixelShaderFilePath == pixelShaderFilePath &&
 						batch.blendMode == blendMode &&
+						batch.cullingMode == cullingMode &&
+						batch.fillMode == fillMode &&
 						meshIndex == batch.meshIndex;
 				}
 			);
@@ -516,7 +559,10 @@ void RenderSystem::BuildObject3dBatches(){
 				Object3dBatch newBatch = {
 					.model = model,
 					.materialInstance = materialInstance,
+					.pixelShaderFilePath=pixelShaderFilePath,
 					.blendMode = blendMode,
+					.cullingMode = cullingMode,
+					.fillMode = fillMode,
 					.meshIndex = meshIndex
 				};
 				newBatch.meshDrawInstance.push_back({ object3d,nodeMesh.nodeMatrix });

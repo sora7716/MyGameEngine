@@ -87,6 +87,7 @@
     <ClCompile Include="engine\graphics\pipeline\Blend.cpp" />
     <ClCompile Include="engine\graphics\pipeline\GraphicsPipeline.cpp" />
     <ClCompile Include="engine\graphics\pipeline\PipelineManager.cpp" />
+    <ClCompile Include="engine\graphics\pipeline\PipelineManagerData.cpp" />
     <ClCompile Include="engine\graphics\pipeline\RootSignatureBuilder.cpp" />
     <ClCompile Include="engine\graphics\rendering\camera\CameraRenderer.cpp" />
     <ClCompile Include="engine\graphics\rendering\object3d\Object3dRenderer.cpp" />

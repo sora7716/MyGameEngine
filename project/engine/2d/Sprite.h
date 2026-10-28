@@ -45,15 +45,33 @@ public://メンバ関数
 	void ChangeTexture(const std::string& spriteName);
 
 	/// <summary>
-	/// 色のセッター
+	/// 色の設定
 	/// </summary>
 	/// <param name="color">色</param>
 	void SetColor(const Color& color);
 
 	/// <summary>
-	/// ブレンドモードのセッター
+	/// ピクセルシェーダファイルパスの設定
+	/// </summary>
+	/// <param name="pixelShaderFilePath">ピクセルシェーダファイルパス</param>
+	void SetPixelShaderFilePath(const std::string& pixelShaderFilePath);
+
+	/// <summary>
+	/// ブレンドモードの設定
 	/// </summary>
 	void SetBlendMode(BlendMode blendMode);
+
+	/// <summary>
+	/// カリングモードの設定
+	/// </summary>
+	/// <param name="cullingMode">カリングモード</param>
+	void SetCullingMode(rasterizerMode::CullingMode cullingMode);
+
+	/// <summary>
+	/// フィルモードの設定
+	/// </summary>
+	/// <param name="fillMode">フィルモード</param>
+	void SetFillMode(rasterizerMode::FillMode fillMode);
 
 	/// <summary>
 	/// UVスケールの設定
@@ -121,8 +139,8 @@ private://メンバ関数
 	void UpdateTransform();
 
 	/// <summary>
-    /// UVの座標変換の更新
-    /// </summary>
+	/// UVの座標変換の更新
+	/// </summary>
 	void UpdateUVTransform();
 
 	/// <summary>
@@ -132,16 +150,18 @@ private://メンバ関数
 private://メンバ変数
 	//テクスチャ番号
 	std::string imageFileName_ = {};
-
 	//UVTransform
 	RectTransform uvTransform_ = {};
-
+	//ピクセルシェーダファイルパス
+	std::string pixelShaderFilePath_ = "Sprite.PS.hlsl";
 	//ブレンドモード
 	BlendMode blendMode_ = BlendMode::kNone;
-
+	//カリングモード
+	rasterizerMode::CullingMode cullingMode_ = rasterizerMode::CullingMode::kBack;
+	//フィルモード
+	rasterizerMode::FillMode fillMode_ = rasterizerMode::FillMode::kSolid;
 	//マテリアル
 	MaterialForSprite material_ = {};
-
 	//トランスフォーメーション行列
 	TransformationMatrixForSprite transformationMatrix_ = {};
 

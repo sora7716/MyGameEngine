@@ -108,6 +108,21 @@ BlendMode WireframeRenderer::GetBlendMode(uint32_t instanceIndex){
 	return renderDatas_[instanceIndex].blendMode;
 }
 
+//ピクセルシェーダのファイルパスを取得
+const std::string& WireframeRenderer::GetPixelShaderFilePath(uint32_t instanceIndex){
+	return renderDatas_[instanceIndex].pixelShaderFilePath;
+}
+
+//カリングモードの取得
+rasterizerMode::CullingMode WireframeRenderer::GetCullingMode(uint32_t instanceIndex){
+	return renderDatas_[instanceIndex].cullingMode;
+}
+
+//フィルモードの取得
+rasterizerMode::FillMode WireframeRenderer::GetFillMode(uint32_t instanceIndex){
+	return renderDatas_[instanceIndex].fillMode;
+}
+
 //頂点データの生成
 void WireframeRenderer::CreateVertexResource(GpuResource& gpuResource, uint32_t vertexCount){
 	HRESULT hr = S_FALSE;

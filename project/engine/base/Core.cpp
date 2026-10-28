@@ -49,7 +49,6 @@ void Core::Initialize(){
 	imGuiManager_ = ImGuiManager::Create(ImGuiManager::ConstructorKey{}, winApi_.get(), directXBase_.get(), srvManager_.get());
 	//パイプラインの管理
 	pipelineManager_ = PipelineManager::Create(PipelineManager::ConstructorKey{}, directXBase_.get());
-	pipelineManager_->CreatePSO();
 	//シーンファクトリ
 	sceneFactory_ = std::make_unique<SceneFactory>(AbstractSceneFactory::ConstructorKey{});
 	//オーディオマネージャー

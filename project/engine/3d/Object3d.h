@@ -1,6 +1,7 @@
 #pragma once
 #include "MatrixUtility.h"
 #include "BlendMode.h"
+#include "RasterizerMode.h"
 #include "RenderingData.h"
 #include "Object3dRenderData.h"
 #include "Component.h"
@@ -196,10 +197,28 @@ public://メンバ関数
 	void SetUVTransform(uint32_t index, const RectTransform& uvTransform);
 
 	/// <summary>
+	/// ピクセルシェーダファイルパスの設定
+	/// </summary>
+	/// <param name="pixelShaderFilePath">ピクセルシェーダファイルパス</param>
+	void SetPixelShaderFilePath(const std::string& pixelShaderFilePath);
+
+	/// <summary>
 	/// ブレンドモードの設定
 	/// </summary>
 	/// <param name="blendMode">ブレンドモード</param>
 	void SetBlendMode(BlendMode blendMode);
+
+	/// <summary>
+	/// カリングモードの設定
+	/// </summary>
+	/// <param name="cullingMode">カリングモード</param>
+	void SetCullingMode(rasterizerMode::CullingMode cullingMode);
+
+	/// <summary>
+	/// フィルモードの設定
+	/// </summary>
+	/// <param name="fillMode">フィルモード</param>
+	void SetFillMode(rasterizerMode::FillMode fillMode);
 
 	/// <summary>
 	/// 描画時のトランスフォームモードの設定
@@ -246,10 +265,28 @@ public://メンバ関数
 	bool HasModel()const;
 
 	/// <summary>
+	/// ピクセルシェーダファイルパスの取得
+	/// </summary>
+	/// <returns>ピクセルシェーダファイルパス</returns>
+	const std::string& GetPixelShaderFilePath()const;
+
+	/// <summary>
 	/// ブレンドモードの取得
 	/// </summary>
 	/// <returns>ブレンドモード</returns>
 	BlendMode GetBlendMode()const;
+
+	/// <summary>
+	/// カリングモードの取得
+	/// </summary>
+	/// <returns>カリングモード</returns>
+	rasterizerMode::CullingMode GetCullingMode()const;
+
+	/// <summary>
+	/// フィルモードの取得
+	/// </summary>
+	/// <returns>フィルモード</returns>
+	rasterizerMode::FillMode GetFillMode()const;
 
 	/// <summary>
 	/// 描画時のトランスフォームモードの取得
@@ -372,8 +409,14 @@ private://定数
 	//インスタンスの最大数
 	static const inline uint32_t kMaxInstanceCount_ = 1024;
 private://メンバ変数
+	//ピクセルシェーダ
+	std::string pixelShaderFilePath_ = "Object3d.PS.hlsl";
 	//ブレンドモード
 	BlendMode blendMode_ = BlendMode::kNone;
+	//カリングモード
+	rasterizerMode::CullingMode cullingMode_ = rasterizerMode::CullingMode::kBack;
+	//フィルモード
+	rasterizerMode::FillMode fillMode_ = rasterizerMode::FillMode::kSolid;
 
 	//モデル
 	Model* baseModel_ = nullptr;

@@ -38,7 +38,10 @@ struct MeshDrawInstance{
 struct Object3dBatch{
 	Model* model = nullptr;
 	MaterialInstance* materialInstance = nullptr;
+	std::string pixelShaderFilePath = "";
 	BlendMode blendMode = BlendMode::kNone;
+	rasterizerMode::CullingMode cullingMode = rasterizerMode::CullingMode::kNone;
+	rasterizerMode::FillMode fillMode = rasterizerMode::FillMode::kSolid;
 	uint32_t meshIndex = 0;
 
 	//ワールド行列の配列
@@ -153,15 +156,21 @@ private://メンバ関数
 	/// <summary>
 	/// 描画の開始
 	/// </summary>
-	/// <param name="blendMode">ブレンドモード</param>
 	/// <param name="pipelineType">パイプラインモード</param>
-	void PreDraw(BlendMode blendMode, PipelineType pipelineType);
+	/// <param name="pixelShaderPath">ピクセルシェーダのファイルパス</param>
+	/// <param name="blendMode">ブレンドモード</param>
+	/// <param name="cullingMode">カリングモード</param>
+	/// <param name="fillMode">フィルモード</param>
+	void PreDraw(PipelineType pipelineType, std::string pixelShaderPath, BlendMode blendMode, rasterizerMode::CullingMode cullingMode, rasterizerMode::FillMode fillMode);
 
 	/// <summary>
 	/// 描画開始
 	/// </summary>
+	/// <param name="pixelShaderPath">ピクセルシェーダのファイルパス</param>
 	/// <param name="blendMode">ブレンドモード</param>
-	void PreDraw(BlendMode blendMode);
+	/// <param name="cullingMode">カリングモード</param>
+	/// <param name="fillMode">フィルモード</param>
+	void PreDraw(std::string pixelShaderPath, BlendMode blendMode, rasterizerMode::CullingMode cullingMode, rasterizerMode::FillMode fillMode);
 
 	/// <summary>
 	/// オブジェクト3dの描画グループを構築

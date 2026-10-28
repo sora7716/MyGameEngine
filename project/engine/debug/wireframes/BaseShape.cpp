@@ -52,9 +52,24 @@ void wireframe::BaseShape::SetColor(const Color& color){
 	color_ = color;
 }
 
+//ピクセルシェーダファイルパスの設定
+void wireframe::BaseShape::SetPixelShaderFilePath(const std::string& pixelShaderFilePath){
+	pixelShaderFilePath_ = pixelShaderFilePath;
+}
+
 //ブレンドモードの設定
 void wireframe::BaseShape::SetBlendMode(BlendMode blendMode){
 	blendMode_ = blendMode;
+}
+
+//カリングモードの設定
+void wireframe::BaseShape::SetCullingMode(rasterizerMode::CullingMode cullingMode){
+	cullingMode_ = cullingMode;
+}
+
+//フィルモードの設定
+void wireframe::BaseShape::SetFillMode(rasterizerMode::FillMode fillMode){
+	fillMode_ = fillMode;
 }
 
 //ローカルスケールを設定
@@ -82,9 +97,24 @@ const Color& wireframe::BaseShape::GetColor(){
 	return color_;
 }
 
+//ピクセルシェーダファイルパスの取得
+const std::string& wireframe::BaseShape::GetPixelShaderFilePath() const{
+	return pixelShaderFilePath_;
+}
+
 //ブレンドモードの取得
 BlendMode wireframe::BaseShape::GetBlendMode() const{
 	return blendMode_;
+}
+
+//カリングモードの取得
+rasterizerMode::CullingMode wireframe::BaseShape::GetCullingMode() const{
+	return cullingMode_;
+}
+
+//フィルモードの取得
+rasterizerMode::FillMode wireframe::BaseShape::GetFillMode() const{
+	return fillMode_;
 }
 
 //描画データの取得
@@ -110,7 +140,10 @@ void wireframe::BaseShape::UpdateTransform(){
 
 //描画に必要なデータのセットアップ
 void wireframe::BaseShape::SetupRenderData(){
+	renderData_.pixelShaderFilePath = pixelShaderFilePath_;
 	renderData_.blendMode = blendMode_;
+	renderData_.cullingMode = cullingMode_;
+	renderData_.fillMode = fillMode_;
 	renderData_.material = color_;
 	renderData_.worldMatrix = worldMatrix_;
 	renderData_.indices = indices_;
@@ -122,5 +155,8 @@ void wireframe::BaseShape::CopyBaseSetting(wireframe::BaseShape& baseShape)const
 	//BaseShapeが持つ設定だけ複製
 	baseShape.SetEnabled(IsEnabled());
 	baseShape.color_ = color_;
+	baseShape.pixelShaderFilePath_ = pixelShaderFilePath_;
 	baseShape.blendMode_ = blendMode_;
+	baseShape.cullingMode_ = cullingMode_;
+	baseShape.fillMode_ = fillMode_;
 }

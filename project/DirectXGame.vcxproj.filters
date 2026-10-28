@@ -475,6 +475,9 @@
       <Filter>engine\collision</Filter>
     </ClCompile>
     <ClCompile Include="engine\graphics\pipeline\RootSignatureBuilder.cpp">
+      <Filter>engine\graphics\pipeline</Filter>
+    </ClCompile>
+    <ClCompile Include="engine\graphics\pipeline\PipelineManagerData.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
   </ItemGroup>
@@ -834,7 +837,7 @@
       <Filter>engine\collision</Filter>
     </ClInclude>
     <ClInclude Include="engine\graphics\pipeline\RootSignatureBuilder.h">
-      <Filter>ヘッダー ファイル</Filter>
+      <Filter>engine\graphics\pipeline</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

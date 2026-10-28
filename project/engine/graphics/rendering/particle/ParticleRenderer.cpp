@@ -147,6 +147,21 @@ BlendMode ParticleRenderer::GetBlendMode(uint32_t instanceIndex){
 	return renderDatas_[instanceIndex].blendMode;
 }
 
+//ピクセルシェーダのファイルパスを取得
+const std::string& ParticleRenderer::GetPixelShaderFilePath(uint32_t instanceIndex){
+	return renderDatas_[instanceIndex].pixelShaderFilePath;
+}
+
+//カリングモードの取得
+rasterizerMode::CullingMode ParticleRenderer::GetCullingMode(uint32_t instanceIndex){
+	return renderDatas_[instanceIndex].cullingMode;
+}
+
+//フィルモードの取得
+rasterizerMode::FillMode ParticleRenderer::GetFillMode(uint32_t instanceIndex){
+	return renderDatas_[instanceIndex].fillMode;
+}
+
 //座標変換行列リソースの生成
 void ParticleRenderer::CreateTransformationMatrixResource(GpuResource& gpuResource){
 	//座標変換行列リソースを作成する	

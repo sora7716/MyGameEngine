@@ -46,7 +46,10 @@ std::unique_ptr<Component> Object3d::Clone(GameObject* gameObject) const{
 
 	//Object3dが持つ設定だけ複製
 	cloneInstance->SetEnabled(this->IsEnabled());
+	cloneInstance->SetPixelShaderFilePath(this->pixelShaderFilePath_);
 	cloneInstance->SetBlendMode(this->blendMode_);
+	cloneInstance->SetCullingMode(this->cullingMode_);
+	cloneInstance->SetFillMode(this->fillMode_);
 	cloneInstance->SetRenderTransformMode(this->renderTransformMode_);
 	return cloneInstance;
 }
@@ -413,9 +416,24 @@ void Object3d::SetUVTransform(uint32_t index, const RectTransform& uvTransform){
 	materialInstance_->SetUVTransform(index, uvTransform);
 }
 
+//ピクセルシェーダファイルパスの設定
+void Object3d::SetPixelShaderFilePath(const std::string& pixelShaderFilePath){
+	pixelShaderFilePath_ = pixelShaderFilePath;
+}
+
 //ブレンドモードの設定
 void Object3d::SetBlendMode(BlendMode blendMode){
 	blendMode_ = blendMode;
+}
+
+//カリングモードの設定
+void Object3d::SetCullingMode(rasterizerMode::CullingMode cullingMode){
+	cullingMode_ = cullingMode;
+}
+
+//フィルモードの設定
+void Object3d::SetFillMode(rasterizerMode::FillMode fillMode){
+	fillMode_ = fillMode;
 }
 
 //描画時のトランスフォームモードの設定
@@ -469,9 +487,24 @@ bool Object3d::HasModel()const{
 	return false;
 }
 
+//ピクセルシェーダファイルパスの取得
+const std::string& Object3d::GetPixelShaderFilePath() const{
+	return pixelShaderFilePath_;
+}
+
 //ブレンドモードの取得
 BlendMode Object3d::GetBlendMode()const{
 	return blendMode_;
+}
+
+//カリングモードの取得
+rasterizerMode::CullingMode Object3d::GetCullingMode() const{
+	return cullingMode_;
+}
+
+//フィルモードの取得
+rasterizerMode::FillMode Object3d::GetFillMode() const{
+	return fillMode_;
 }
 
 //描画時のトランスフォームモードの取得

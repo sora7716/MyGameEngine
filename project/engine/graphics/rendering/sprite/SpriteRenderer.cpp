@@ -82,6 +82,21 @@ BlendMode SpriteRenderer::GetBlendMode(uint32_t instanceIndex){
 	return renderDatas_[instanceIndex].blendMode;
 }
 
+//ピクセルシェーダのファイルパスを取得
+const std::string& SpriteRenderer::GetPixelShaderFilePath(uint32_t instanceIndex){
+	return renderDatas_[instanceIndex].pixelShaderFilePath;
+}
+
+//カリングモードの取得
+rasterizerMode::CullingMode SpriteRenderer::GetCullingMode(uint32_t instanceIndex){
+	return renderDatas_[instanceIndex].cullingMode;
+}
+
+//フィルモードの取得
+rasterizerMode::FillMode SpriteRenderer::GetFillMode(uint32_t instanceIndex){
+	return renderDatas_[instanceIndex].fillMode;
+}
+
 //描画データの配列のサイズの取得
 uint32_t SpriteRenderer::GetRenderDataSize(){
 	return static_cast<uint32_t>(renderDatas_.size());

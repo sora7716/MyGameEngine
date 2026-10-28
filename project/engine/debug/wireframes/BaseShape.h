@@ -56,10 +56,28 @@ namespace wireframe {
 		void SetColor(const Color& color);
 
 		/// <summary>
+		/// ピクセルシェーダファイルパスの設定
+		/// </summary>
+		/// <param name="pixelShaderFilePath">ピクセルシェーダファイルパス</param>
+		void SetPixelShaderFilePath(const std::string& pixelShaderFilePath);
+
+		/// <summary>
 		/// ブレンドモードの設定
 		/// </summary>
 		/// <param name="blendMode">ブレンドモード</param>
 		void SetBlendMode(BlendMode blendMode);
+		
+		/// <summary>
+		/// カリングモードの設定
+		/// </summary>
+		/// <param name="cullingMode">カリングモード</param>
+		void SetCullingMode(rasterizerMode::CullingMode cullingMode);
+
+		/// <summary>
+		/// フィルモードの設定
+		/// </summary>
+		/// <param name="fillMode">フィルモード</param>
+		void SetFillMode(rasterizerMode::FillMode fillMode);
 
 		/// <summary>
 		/// ローカルスケールを設定
@@ -92,10 +110,28 @@ namespace wireframe {
 		const Color& GetColor();
 
 		/// <summary>
+		/// ピクセルシェーダファイルパスの取得
+		/// </summary>
+		/// <returns>ピクセルシェーダファイルパス</returns>
+		const std::string& GetPixelShaderFilePath()const;
+
+		/// <summary>
 		/// ブレンドモードの取得
 		/// </summary>
 		/// <returns>ブレンドモード</returns>
 		BlendMode GetBlendMode()const;
+
+		/// <summary>
+		/// カリングモードの取得
+		/// </summary>
+		/// <returns>カリングモード</returns>
+		rasterizerMode::CullingMode GetCullingMode()const;
+		
+		/// <summary>
+		/// フィルモードの取得
+		/// </summary>
+		/// <returns>フィルモード</returns>
+		rasterizerMode::FillMode GetFillMode()const;
 
 		/// <summary>
 		/// 描画データの取得
@@ -155,8 +191,14 @@ namespace wireframe {
 		Transform localTransform_ = {};
 		//ワールド行列
 		Matrix4x4 worldMatrix_ = {};
+		//ピクセルシェーダファイルパス
+		std::string pixelShaderFilePath_ = "Wireframe.PS.hlsl";
 		//ブレンドモード
 		BlendMode blendMode_ = BlendMode::kNone;
+		//カリングモード
+		rasterizerMode::CullingMode cullingMode_ = rasterizerMode::CullingMode::kNone;
+		//フィルモード
+		rasterizerMode::FillMode fillMode_ = rasterizerMode::FillMode::kSolid;
 	protected://メンバ変数
 		//頂点数
 		uint32_t vertexCount_ = 0;

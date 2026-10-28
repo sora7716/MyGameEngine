@@ -102,6 +102,27 @@ public://メンバ関数
 	/// <param name="instanceIndex">インスタンス検索キー</param>
 	/// <returns>ブレンドモード</returns>
 	BlendMode GetBlendMode(uint32_t instanceIndex);
+
+	/// <summary>
+	/// ピクセルシェーダのファイルパスを取得
+	/// </summary>
+	/// <param name="instanceIndex">インスタンスの検索キー</param>
+	/// <returns>ピクセルシェーダのファイルパス</returns>
+	const std::string& GetPixelShaderFilePath(uint32_t instanceIndex);
+
+	/// <summary>
+	/// カリングモードの取得
+	/// </summary>
+	/// <param name="instanceIndex">インスタンスの検索キー</param>
+	/// <returns>カリングモード</returns>
+	rasterizerMode::CullingMode GetCullingMode(uint32_t instanceIndex);
+
+	/// <summary>
+	/// フィルモードの取得
+	/// </summary>
+	/// <param name="instanceIndex">インスタンスの検索キー</param>
+	/// <returns>フィルモードurns>
+	rasterizerMode::FillMode GetFillMode(uint32_t instanceIndex);
 private://メンバ関数
 	//コピーコンストラクタ禁止
 	ParticleRenderer(const ParticleRenderer&) = delete;

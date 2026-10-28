@@ -44,7 +44,10 @@ std::unique_ptr<Component> Sprite::Clone(GameObject* gameObject) const{
 	//Spriteが持つ設定だけ複製
 	cloneInstance->SetEnabled(this->IsEnabled());
 	cloneInstance->imageFileName_ = this->imageFileName_;
+	cloneInstance->pixelShaderFilePath_ = this->pixelShaderFilePath_;
 	cloneInstance->blendMode_ = this->blendMode_;
+	cloneInstance->cullingMode_ = this->cullingMode_;
+	cloneInstance->fillMode_ = this->fillMode_;
 	cloneInstance->material_ = this->material_;
 	cloneInstance->uvTransform_ = uvTransform_;
 	return cloneInstance;
@@ -55,14 +58,29 @@ void Sprite::ChangeTexture(const std::string& spriteName){
 	imageFileName_ = "engine/resources/textures/" + spriteName;
 }
 
-//色のセッター
+//色の設定
 void Sprite::SetColor(const Color& color){
 	material_.color = color;
 }
 
-//ブレンドモードのセッター
+//ピクセルシェーダファイルパス
+void Sprite::SetPixelShaderFilePath(const std::string& pixelShaderFilePath){
+	pixelShaderFilePath_ = pixelShaderFilePath;
+}
+
+//ブレンドモードの設定
 void Sprite::SetBlendMode(BlendMode blendMode){
 	blendMode_ = blendMode;
+}
+
+//カリングモードの設定
+void Sprite::SetCullingMode(rasterizerMode::CullingMode cullingMode){
+	cullingMode_ = cullingMode;
+}
+
+//フィルモードの設定
+void Sprite::SetFillMode(rasterizerMode::FillMode fillMode){
+	fillMode_ = fillMode;
 }
 
 //UVスケールの設定
@@ -135,7 +153,10 @@ void Sprite::UpdateUVTransform(){
 //描画に必要なデータのセットアップ
 void Sprite::SetupRenderData(){
 	GameObject* gameObject = GetOwner();
+	renderData_.pixelShaderFilePath = pixelShaderFilePath_;
 	renderData_.blendMode = blendMode_;
+	renderData_.cullingMode = cullingMode_;
+	renderData_.fillMode = fillMode_;
 	renderData_.isActive = gameObject->IsActive();
 	renderData_.material = material_;
 	renderData_.transformationMatrix = transformationMatrix_;

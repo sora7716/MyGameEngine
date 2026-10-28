@@ -4,7 +4,7 @@
 #include "Camera.h"
 #include "GameObject.h"
 #include <cassert>
-
+using namespace rasterizerMode;
 //コンストラクタ
 SkyBox::SkyBox(GameObject* gameObject) :Component(gameObject){
 }
@@ -20,7 +20,6 @@ void SkyBox::Initialize(){
 
 	//スカイボックス固有のデータの初期化
 	imageFileName_ = "engine/resources/textures/skybox_cube.dds";
-	blendMode_ = BlendMode::kNone;
 }
 
 //更新
@@ -45,7 +44,10 @@ std::unique_ptr<Component> SkyBox::Clone(GameObject* gameObject) const{
 	//SkyBoxが持つ設定だけ複製
 	cloneInstance->SetEnabled(this->IsEnabled());
 	cloneInstance->imageFileName_ = this->imageFileName_;
+	cloneInstance->pixelShaderFilePath_ = this->pixelShaderFilePath_;
 	cloneInstance->blendMode_ = this->blendMode_;
+	cloneInstance->cullingMode_ = this->cullingMode_;
+	cloneInstance->fillMode_ = this->fillMode_;
 	cloneInstance->material_ = this->material_;
 	return cloneInstance;
 }
@@ -56,9 +58,24 @@ void SkyBox::SetCubeMap(const std::string& cubeMap){
 	imageFileName_ = "engine/resources/textures/" + cubeMap;
 }
 
+//ピクセルシェーダファイルパスの設定
+void SkyBox::SetPixelShaderFilePath(const std::string& pixelShaderFilePath){
+	pixelShaderFilePath_ = pixelShaderFilePath;
+}
+
 //ブレンドモードの設定
 void SkyBox::SetBlendMode(BlendMode blendMode){
 	blendMode_ = blendMode;
+}
+
+//カリングモードの設定
+void SkyBox::SetCullingMode(rasterizerMode::CullingMode cullingMode){
+	cullingMode_ = cullingMode;
+}
+
+//フィルモードの設定
+void SkyBox::SetFillMode(rasterizerMode::FillMode fillMode){
+	fillMode_ = fillMode;
 }
 
 //描画データの取得
@@ -83,7 +100,10 @@ void SkyBox::SetupRenderData(){
 	GameObject* gameObject = GetOwner();
 
 	//描画データをまとめる
+	renderData_.pixelShaderFilePath = pixelShaderFilePath_;
 	renderData_.blendMode = blendMode_;
+	renderData_.cullingMode = cullingMode_;
+	renderData_.fillMode = fillMode_;
 	renderData_.imageFileName = imageFileName_;
 	renderData_.material = material_;
 	renderData_.worldMatrix = worldMatrix_;

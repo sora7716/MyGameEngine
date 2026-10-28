@@ -301,6 +301,21 @@ uint32_t Object3dRenderer::GetRenderDataSize(){
 	return static_cast<uint32_t>(renderDatas_.size());
 }
 
+//ピクセルシェーダのファイルパスを取得
+const std::string& Object3dRenderer::GetPixelShaderFilePath(uint32_t instanceIndex){
+	return renderDatas_[instanceIndex].pixelShaderFilePath;
+}
+
+//カリングモードの取得
+rasterizerMode::CullingMode Object3dRenderer::GetCullingMode(uint32_t instanceIndex){
+	return renderDatas_[instanceIndex].cullingMode;
+}
+
+//フィルモードの取得
+rasterizerMode::FillMode Object3dRenderer::GetFillMode(uint32_t instanceIndex){
+	return renderDatas_[instanceIndex].fillMode;
+}
+
 //座標変換行列リソースの生成
 void Object3dRenderer::CreateTransformationMatrixResource(LODGpuResource& lodGpuResource){
 	HRESULT result = S_FALSE;

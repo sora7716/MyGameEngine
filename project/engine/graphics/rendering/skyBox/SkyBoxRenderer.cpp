@@ -88,6 +88,21 @@ BlendMode SkyBoxRenderer::GetBlendMode(uint32_t instanceIndex){
 	return renderDatas_[instanceIndex].blendMode;
 }
 
+//ピクセルシェーダのファイルパスを取得
+const std::string& SkyBoxRenderer::GetPixelShaderFilePath(uint32_t instanceIndex){
+	return renderDatas_[instanceIndex].pixelShaderFilePath;
+}
+
+//カリングモードの取得
+rasterizerMode::CullingMode SkyBoxRenderer::GetCullingMode(uint32_t instanceIndex){
+	return renderDatas_[instanceIndex].cullingMode;
+}
+
+//フィルモードの取得
+rasterizerMode::FillMode SkyBoxRenderer::GetFillMode(uint32_t instanceIndex){
+	return renderDatas_[instanceIndex].fillMode;
+}
+
 //描画データのサイズの取得
 uint32_t SkyBoxRenderer::GetRenderDataSize(){
 	return static_cast<uint32_t>(renderDatas_.size());

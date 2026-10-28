@@ -49,10 +49,28 @@ public://メンバ関数
 	void SetCubeMap(const std::string& cubeMap);
 
 	/// <summary>
+	/// ピクセルシェーダファイルパスの設定
+	/// </summary>
+	/// <param name="pixelShaderFilePath">ピクセルシェーダファイルパス</param>
+	void SetPixelShaderFilePath(const std::string& pixelShaderFilePath);
+
+	/// <summary>
 	/// ブレンドモードの設定
 	/// </summary>
 	/// <param name="blendMode">ブレンドモード</param>
 	void SetBlendMode(BlendMode blendMode);
+
+	/// <summary>
+	/// カリングモードの設定
+	/// </summary>
+	/// <param name="cullingMode">カリングモード</param>
+	void SetCullingMode(rasterizerMode::CullingMode cullingMode);
+
+	/// <summary>
+	/// フィルモードの設定
+	/// </summary>
+	/// <param name="fillMode">フィルモード</param>
+	void SetFillMode(rasterizerMode::FillMode fillMode);
 
 	/// <summary>
 	/// 描画データの取得
@@ -76,8 +94,14 @@ private://メンバ関数
 	/// </summary>
 	void SetupRenderData();
 private://メンバ変数
+	//ピクセルシェーダファイルパス
+	std::string pixelShaderFilePath_ = "SkyBox.PS.hlsl";
 	//ブレンドモード
 	BlendMode blendMode_ = BlendMode::kNone;
+	//カリングモード
+	rasterizerMode::CullingMode cullingMode_ = rasterizerMode::CullingMode::kBack;
+	//フィルモード
+	rasterizerMode::FillMode fillMode_ = rasterizerMode::FillMode::kSolid;
 
 	//画像のファイル名
 	std::string imageFileName_ = "";

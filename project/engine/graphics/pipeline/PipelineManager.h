@@ -1,7 +1,6 @@
 #pragma once
 #include "PipelineManagerData.h"
 #include "BlendMode.h"
-#include "RasterizerMode.h"
 #include <string>
 #include <memory>
 #include <unordered_map>
@@ -10,24 +9,6 @@
 class DirectXBase;
 class GraphicsPipeline;
 class Blend;
-
-//パイプラインの検索キー
-struct PipelineKey{
-	std::string pixelShaderFilePath = "";
-	PipelineType pipelineType = PipelineType::kObject3d;
-	BlendMode blendMode = BlendMode::kNone;
-	rasterizerMode::CullingMode cullingMode = rasterizerMode::CullingMode::kNone;
-	rasterizerMode::FillMode fillingMode = rasterizerMode::FillMode::kSolid;
-
-	//パイプライン同じか確認
-	bool operator==(const PipelineKey& pipelineKey)const;
-
-	/// <summary>
-	/// ハッシュキーを作成
-	/// </summary>
-	/// <returns>ハッシュキー</returns>
-	size_t MakeHashKey()const;
-};
 
 //パイプラインの検索キーのハッシュを作成
 struct PipelineKeyHasher{

@@ -1,30 +1,9 @@
 #include "PipelineManager.h"
 #include "GraphicsPipeline.h"
 #include "Blend.h"
-#include "HashUtility.h"
 #include "StringUtility.h"
 #include <functional>
 using namespace rasterizerMode;
-
-//パイプライン同じか確認
-bool PipelineKey::operator==(const PipelineKey& pipelineKey)const{
-	return pixelShaderFilePath == pipelineKey.pixelShaderFilePath &&
-		pipelineType == pipelineKey.pipelineType &&
-		blendMode == pipelineKey.blendMode &&
-		cullingMode == pipelineKey.cullingMode &&
-		fillingMode == pipelineKey.fillingMode;
-}
-
-//ハッシュキーの作成
-size_t PipelineKey::MakeHashKey()const{
-	size_t hashValue = 0;
-	hashUtility::CreateHash(hashValue, std::hash<std::string>{}(pixelShaderFilePath));
-	hashUtility::CreateHash(hashValue, std::hash<PipelineType>{}(pipelineType));
-	hashUtility::CreateHash(hashValue, std::hash<BlendMode>{}(blendMode));
-	hashUtility::CreateHash(hashValue, std::hash<rasterizerMode::CullingMode>{}(cullingMode));
-	hashUtility::CreateHash(hashValue, std::hash<rasterizerMode::FillMode>{}(fillingMode));
-	return hashValue;
-}
 
 //パイプラインの検索キーのハッシュを作成
 size_t PipelineKeyHasher::operator()(const PipelineKey& key)const{
@@ -92,7 +71,7 @@ void PipelineManager::CreatePSOForObject3d(const PipelineKey& key){
 	//インプットレイアウト
 	graphicsPipeline_->InitializeInputLayoutDesc();
 	//ラスタライザステート
-	graphicsPipeline_->InitializeRasterizerState(key.fillingMode, key.cullingMode);
+	graphicsPipeline_->InitializeRasterizerState(key.fillMode, key.cullingMode);
 	//頂点シェーダBlob
 	graphicsPipeline_->CompileVertexShader();
 	//ピクセルシェーダBlob
@@ -122,7 +101,7 @@ void PipelineManager::CreatePSOForSprite(const PipelineKey& key){
 	//インプットレイアウト
 	graphicsPipeline_->InitializeInputLayoutDesc();
 	//ラスタライザステート
-	graphicsPipeline_->InitializeRasterizerState(key.fillingMode, key.cullingMode);
+	graphicsPipeline_->InitializeRasterizerState(key.fillMode, key.cullingMode);
 	//頂点シェーダBlob
 	graphicsPipeline_->CompileVertexShader();
 	//ピクセルシェーダBlob
@@ -149,7 +128,7 @@ void PipelineManager::CreatePSOForParticle(const PipelineKey& key){
 	//インプットレイアウト
 	graphicsPipeline_->InitializeInputLayoutDesc();
 	//ラスタライザステート
-	graphicsPipeline_->InitializeRasterizerState(key.fillingMode, key.cullingMode);
+	graphicsPipeline_->InitializeRasterizerState(key.fillMode, key.cullingMode);
 	//頂点シェーダBlob
 	graphicsPipeline_->CompileVertexShader();
 	//ピクセルシェーダBlob
@@ -181,7 +160,7 @@ void PipelineManager::CreatePSOForSkyBox(const PipelineKey& key){
 	//インプットレイアウト
 	graphicsPipeline_->InitializeInputLayoutDescForSkyBox();
 	//ラスタライザステート
-	graphicsPipeline_->InitializeRasterizerState(key.fillingMode, key.cullingMode);
+	graphicsPipeline_->InitializeRasterizerState(key.fillMode, key.cullingMode);
 	//頂点シェーダBlob
 	graphicsPipeline_->CompileVertexShader();
 	//ピクセルシェーダBlob
@@ -211,7 +190,7 @@ void PipelineManager::CreatePSOForWireframe(const PipelineKey& key){
 	//インプットレイアウト
 	graphicsPipeline_->InitializeInputLayoutDescForWireframe();
 	//ラスタライザステート
-	graphicsPipeline_->InitializeRasterizerState(key.fillingMode, key.cullingMode);
+	graphicsPipeline_->InitializeRasterizerState(key.fillMode, key.cullingMode);
 	//頂点シェーダBlob
 	graphicsPipeline_->CompileVertexShader();
 	//ピクセルシェーダBlob

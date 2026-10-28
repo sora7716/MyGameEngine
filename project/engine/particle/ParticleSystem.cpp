@@ -51,7 +51,10 @@ std::unique_ptr<Component> ParticleSystem::Clone(GameObject* gameObject) const{
 
 	//Spriteが持つ設定だけ複製
 	cloneInstance->SetEnabled(this->IsEnabled());
+	cloneInstance->pixelShaderFilePath_ = this->pixelShaderFilePath_;
 	cloneInstance->blendMode_ = this->blendMode_;
+	cloneInstance->cullingMode_ = this->cullingMode_;
+	cloneInstance->fillMode_ = this->fillMode_;
 	cloneInstance->model_ = this->model_;
 	cloneInstance->node_ = this->node_;
 	cloneInstance->materialInstance_ = this->materialInstance_;
@@ -77,9 +80,24 @@ Matrix4x4 ParticleSystem::MakeRenderWorldMatrix(const Matrix4x4& cameraWorldMatr
 	return renderWorldMatrix;
 }
 
+//ピクセルシェーダファイルパスの設定
+void ParticleSystem::SetPixelShaderFilePath(const std::string& pixelShaderFilePath){
+	pixelShaderFilePath_ = pixelShaderFilePath;
+}
+
 //ブレンドモードの設定
 void ParticleSystem::SetBlendMode(BlendMode blendMode){
 	blendMode_ = blendMode;
+}
+
+//カリングモードの設定
+void ParticleSystem::SetCullingMode(rasterizerMode::CullingMode cullingMode){
+	cullingMode_ = cullingMode;
+}
+
+//フィルモードの設定
+void ParticleSystem::SetFillMode(rasterizerMode::FillMode fillMode){
+	fillMode_ = fillMode;
 }
 
 //パーティクルの数の設定
@@ -246,7 +264,10 @@ void ParticleSystem::EnsureUniqueMaterialInstance(){
 
 //描画に必要なデータのセットアップ
 void ParticleSystem::SetupRenderData(){
+	renderData_.pixelShaderFilePath = pixelShaderFilePath_;
 	renderData_.blendMode = blendMode_;
+	renderData_.cullingMode = cullingMode_;
+	renderData_.fillMode = fillMode_;
 	renderData_.materialInstance = materialInstance_.get();
 	renderData_.model = model_;
 	renderData_.numInstance = emitter_->GetNumInstance();

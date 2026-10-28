@@ -53,10 +53,28 @@ public://メンバ関数
 	Matrix4x4 MakeRenderWorldMatrix(const Matrix4x4& cameraWorldMatrix)const;
 
 	/// <summary>
+	/// ピクセルシェーダファイルパスの設定
+	/// </summary>
+	/// <param name="pixelShaderFilePath">ピクセルシェーダファイルパス</param>
+	void SetPixelShaderFilePath(const std::string& pixelShaderFilePath);
+
+	/// <summary>
 	/// ブレンドモードの設定
 	/// </summary>
 	/// <param name="blendMode">ブレンドモード</param>
 	void SetBlendMode(BlendMode blendMode);
+
+	/// <summary>
+	/// カリングモードの設定
+	/// </summary>
+	/// <param name="cullingMode">カリングモード</param>
+	void SetCullingMode(rasterizerMode::CullingMode cullingMode);
+
+	/// <summary>
+	/// フィルモードの設定
+	/// </summary>
+	/// <param name="fillMode">フィルモード</param>
+	void SetFillMode(rasterizerMode::FillMode fillMode);
 
 	/// <summary>
 	/// パーティクルの数の設定
@@ -155,8 +173,8 @@ public://メンバ関数
 	bool HasModel()const;
 private://メンバ関数
 	/// <summary>
-    /// マテリアルを個別化する
-    /// </summary>
+	/// マテリアルを個別化する
+	/// </summary>
 	void EnsureUniqueMaterialInstance();
 
 	/// <summary>
@@ -164,8 +182,14 @@ private://メンバ関数
 	/// </summary>
 	void SetupRenderData();
 private://メンバ変数
+	//ピクセルシェーダ
+	std::string pixelShaderFilePath_ = "Particle.PS.hlsl";
 	//ブレンドモード
 	BlendMode blendMode_ = BlendMode::kAdd;
+	//カリングモード
+	rasterizerMode::CullingMode cullingMode_ = rasterizerMode::CullingMode::kBack;
+	//フィルモード
+	rasterizerMode::FillMode fillMode_ = rasterizerMode::FillMode::kSolid;
 	//パーティクルの発生源
 	std::unique_ptr<ParticleEmitter>emitter_ = nullptr;
 	//モデル

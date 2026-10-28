@@ -1,6 +1,7 @@
 #pragma once
 #include "RenderData.h"
 #include "BlendMode.h"
+#include "RasterizerMode.h"
 #include <wrl.h>
 #include <d3d12.h>
 #include <vector>
@@ -40,5 +41,8 @@ struct Object3dRenderData{
 	Object3dRenderHandle renderHandle = kInvalidObject3dRenderHandle;
 	uint32_t meshIndex = 0;
 	LODRenderData lodRenderData;
+	std::string pixelShaderFilePath = "";
 	BlendMode blendMode = BlendMode::kNone;
+	rasterizerMode::CullingMode cullingMode = rasterizerMode::CullingMode::kNone;
+	rasterizerMode::FillMode fillMode = rasterizerMode::FillMode::kSolid;
 };

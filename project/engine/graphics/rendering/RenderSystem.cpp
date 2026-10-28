@@ -20,6 +20,7 @@
 #include "DebugCameraController.h"
 #include "CameraRenderer.h"
 #include "BaseShape.h"
+#include "Logger.h"
 #include <algorithm>
 using namespace rasterizerMode;
 
@@ -71,11 +72,17 @@ void RenderSystem::Draw(){
 	//スカイボックス
 	for (uint32_t i = 0; i < skyBoxRenderer_->GetRenderDataSize(); i++){
 		//描画開始
-		PreDraw(PipelineType::kSkyBox,
+		bool isSuccess = PreDraw(PipelineType::kSkyBox,
 			skyBoxRenderer_->GetPixelShaderFilePath(i),
 			skyBoxRenderer_->GetBlendMode(i),
 			skyBoxRenderer_->GetCullingMode(i),
 			skyBoxRenderer_->GetFillMode(i));
+		//失敗したら
+		if (!isSuccess){
+			Logger::OutputLog("SkyBoxの描画設定が失敗しました");
+			continue;
+		}
+
 		//カメラの設定
 		cameraRenderer_->Bind(selectCamera_.index, 3);
 		//スカイボックスの描画
@@ -87,11 +94,17 @@ void RenderSystem::Draw(){
 	//Object3d
 	for (uint32_t i = 0; i < object3dRenderer_->GetRenderDataSize(); i++){
 		//描画開始
-		PreDraw(PipelineType::kObject3d,
+		bool isSuccess = PreDraw(PipelineType::kObject3d,
 			object3dRenderer_->GetPixelShaderFilePath(i),
 			object3dRenderer_->GetBlendMode(i),
 			object3dRenderer_->GetCullingMode(i),
 			object3dRenderer_->GetFillMode(i));
+		//失敗したら
+		if (!isSuccess){
+			Logger::OutputLog("Object3dの描画設定が失敗しました");
+			continue;
+		}
+
 		//ライティングの設定
 		lightingManager_->Bind();
 		//カメラの設定
@@ -105,11 +118,17 @@ void RenderSystem::Draw(){
 	//Particle
 	for (uint32_t i = 0; i < particleRenderer_->GetRenderDataSize(); i++){
 		//描画の開始
-		PreDraw(PipelineType::kParticle,
+		bool isSuccess = PreDraw(PipelineType::kParticle,
 			particleRenderer_->GetPixelShaderFilePath(i),
 			particleRenderer_->GetBlendMode(i),
 			particleRenderer_->GetCullingMode(i),
 			particleRenderer_->GetFillMode(i));
+		//失敗したら
+		if (!isSuccess){
+			Logger::OutputLog("Particleの描画設定が失敗しました");
+			continue;
+		}
+
 		//カメラの設定
 		cameraRenderer_->Bind(selectCamera_.index, 3);
 		//Particleの描画
@@ -119,13 +138,19 @@ void RenderSystem::Draw(){
 	particleRenderer_->Reset();
 
 #ifdef _DEBUG
-	//DebugDraw
+	//Wireframe
 	for (uint32_t i = 0; i < wireframeRenderer_->GetRenderDataSize(); i++){
 		//描画開始
-		PreDraw(wireframeRenderer_->GetPixelShaderFilePath(i),
+		bool isSuccess = PreDraw(wireframeRenderer_->GetPixelShaderFilePath(i),
 			wireframeRenderer_->GetBlendMode(i),
 			wireframeRenderer_->GetCullingMode(i),
 			wireframeRenderer_->GetFillMode(i));
+		//失敗したら
+		if (!isSuccess){
+			Logger::OutputLog("Wireframeの描画設定が失敗しました");
+			continue;
+		}
+
 		//カメラの設定
 		cameraRenderer_->Bind(selectCamera_.index, 2);
 		//DebugDrawの描画
@@ -138,11 +163,17 @@ void RenderSystem::Draw(){
 	//スプライト
 	for (uint32_t i = 0; i < spriteRenderer_->GetRenderDataSize(); i++){
 		//描画開始
-		PreDraw(PipelineType::kSprite,
+		bool isSuccess = PreDraw(PipelineType::kSprite,
 			spriteRenderer_->GetPixelShaderFilePath(i),
 			spriteRenderer_->GetBlendMode(i),
 			spriteRenderer_->GetCullingMode(i),
 			spriteRenderer_->GetFillMode(i));
+		//失敗したら
+		if (!isSuccess){
+			Logger::OutputLog("Spriteの描画設定が失敗しました");
+			continue;
+		}
+
 		//Spriteの描画
 		spriteRenderer_->Draw(i);
 	}
@@ -463,7 +494,7 @@ bool RenderSystem::SetCameraMode(CameraMode cameraMode){
 }
 
 //描画開始
-void RenderSystem::PreDraw(PipelineType pipelineType, std::string pixelShaderPath, BlendMode blendMode, rasterizerMode::CullingMode cullingMode, rasterizerMode::FillMode fillMode){
+bool RenderSystem::PreDraw(PipelineType pipelineType, std::string pixelShaderPath, BlendMode blendMode, rasterizerMode::CullingMode cullingMode, rasterizerMode::FillMode fillMode){
 	//PSOの検索キーを作成
 	PipelineKey key{};
 	key.pixelShaderFilePath = pixelShaderPath;
@@ -472,19 +503,26 @@ void RenderSystem::PreDraw(PipelineType pipelineType, std::string pixelShaderPat
 	key.cullingMode = cullingMode;
 	key.fillMode = fillMode;
 	//パイプラインのセットを取得
-	PipelineSet pipelineSet = pipelineManager_->GetPSO(key);
+	PipelineSet* pipelineSet = pipelineManager_->GetPSO(key);
+	//パイプラインセットがNullなら
+	if (!pipelineSet){
+		return false;
+	}
+
 	//ルートシグネイチャをセットするコマンド
-	directXBase_->GetCommandList()->SetGraphicsRootSignature(pipelineSet.rootSignature.Get());
+	directXBase_->GetCommandList()->SetGraphicsRootSignature(pipelineSet->rootSignature.Get());
 	//プリミティブトポロジーをセットするコマンド
 	directXBase_->GetCommandList()->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 	//PSO
-	ID3D12PipelineState* pso = pipelineSet.graphicsPipelineState.Get();
+	ID3D12PipelineState* pso = pipelineSet->graphicsPipelineState.Get();
 	//グラフィックスパイプラインをセットするコマンド
 	directXBase_->GetCommandList()->SetPipelineState(pso);
+
+	return true;
 }
 
 //描画開始
-void RenderSystem::PreDraw(std::string pixelShaderPath, BlendMode blendMode, rasterizerMode::CullingMode cullingMode, rasterizerMode::FillMode fillMode){
+bool RenderSystem::PreDraw(std::string pixelShaderPath, BlendMode blendMode, rasterizerMode::CullingMode cullingMode, rasterizerMode::FillMode fillMode){
 	//PSOの検索キーを作成
 	PipelineKey key{};
 	key.pixelShaderFilePath = pixelShaderPath;
@@ -493,15 +531,22 @@ void RenderSystem::PreDraw(std::string pixelShaderPath, BlendMode blendMode, ras
 	key.cullingMode = cullingMode;
 	key.fillMode = fillMode;
 	//パイプラインのセットを取得
-	PipelineSet pipelineSet = pipelineManager_->GetPSO(key);
+	PipelineSet* pipelineSet = pipelineManager_->GetPSO(key);
+	//パイプラインセットがNullなら
+	if (!pipelineSet){
+		return false;
+	}
+
 	//ルートシグネイチャをセットするコマンド
-	directXBase_->GetCommandList()->SetGraphicsRootSignature(pipelineSet.rootSignature.Get());
+	directXBase_->GetCommandList()->SetGraphicsRootSignature(pipelineSet->rootSignature.Get());
 	//プリミティブトポロジーをセットするコマンド
 	directXBase_->GetCommandList()->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_LINELIST);
 	//PSO
-	ID3D12PipelineState* pso = pipelineSet.graphicsPipelineState.Get();
+	ID3D12PipelineState* pso = pipelineSet->graphicsPipelineState.Get();
 	//グラフィックスパイプラインをセットするコマンド
 	directXBase_->GetCommandList()->SetPipelineState(pso);
+
+	return true;
 }
 
 //オブジェクト3dの描画グループを構築
@@ -559,7 +604,7 @@ void RenderSystem::BuildObject3dBatches(){
 				Object3dBatch newBatch = {
 					.model = model,
 					.materialInstance = materialInstance,
-					.pixelShaderFilePath=pixelShaderFilePath,
+					.pixelShaderFilePath = pixelShaderFilePath,
 					.blendMode = blendMode,
 					.cullingMode = cullingMode,
 					.fillMode = fillMode,
@@ -612,7 +657,7 @@ void RenderSystem::SubmitObject3dBatches(){
 
 	//レンダラーにバッチを送信
 	for (const Object3dBatch& batch : object3dBatches_){
-		object3dRenderer_->SubmitBatch(batch.model, batch.meshIndex, batch.materialInstance, batch.blendMode, batch.transformations);
+		object3dRenderer_->SubmitBatch(batch.model, batch.meshIndex, batch.materialInstance, batch.pixelShaderFilePath, batch.blendMode, batch.cullingMode, batch.fillMode, batch.transformations);
 	}
 }
 

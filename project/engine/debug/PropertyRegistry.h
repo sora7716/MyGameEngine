@@ -255,6 +255,15 @@ public://メンバ関数
 	void Add(const std::string& displayName, const std::vector<std::string>& options, std::function<uint32_t()> getter, std::function<void(uint32_t)>setter);
 
 	/// <summary>
+	/// 列挙型の追加
+	/// </summary>
+	/// <param name="displayName">表示名</param>
+	/// <param name="options">オプション</param>
+	/// <param name="getter">Getter</param>
+	/// <param name="setter">Setter</param>
+	void Add(const std::string& displayName, const std::vector<std::string>& options, uint32_t& value);
+
+	/// <summary>
 	/// 追加
 	/// </summary>
 	/// <typeparam name="T">操作対象の型</typeparam>

@@ -59,7 +59,7 @@ public://メンバ関数
 	/// PSOの取得(存在しない場合は確保してキャッシュする)
 	/// </summary>
 	/// <param name="key">検索キー</param>
-	const PipelineSet& GetPSO(PipelineKey key);
+	PipelineSet* GetPSO(const PipelineKey& key);
 private://メンバ関数
 	//コピーコンストラクタ禁止
 	PipelineManager(const PipelineManager&) = delete;

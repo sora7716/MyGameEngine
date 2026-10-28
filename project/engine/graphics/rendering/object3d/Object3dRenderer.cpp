@@ -164,7 +164,7 @@ void Object3dRenderer::Draw(uint32_t instanceIndex){
 }
 
 //バッチを受け取る関数
-void Object3dRenderer::SubmitBatch(Model* model, uint32_t meshIndex, MaterialInstance* materialInstance, BlendMode blendMode, const std::vector<TransformationMatrix>& transformations){
+void Object3dRenderer::SubmitBatch(Model* model, uint32_t meshIndex, MaterialInstance* materialInstance, const std::string& pixelShaderFilePath, BlendMode blendMode, rasterizerMode::CullingMode cullingMode, rasterizerMode::FillMode fillMode, const std::vector<TransformationMatrix>& transformations){
 	if (!model || !materialInstance){
 		return;
 	} else if (transformations.empty()){
@@ -180,10 +180,13 @@ void Object3dRenderer::SubmitBatch(Model* model, uint32_t meshIndex, MaterialIns
 	auto batchIt = std::find_if(
 		batchResources_.begin(),
 		batchResources_.end(),
-		[model, meshIndex, materialInstance, blendMode](const BatchResource& batchResource){
+		[model, meshIndex, materialInstance, pixelShaderFilePath, blendMode, cullingMode, fillMode](const BatchResource& batchResource){
 			return batchResource.model == model &&
 				batchResource.materialInstance == materialInstance &&
+				batchResource.pixelShaderFilePath == pixelShaderFilePath &&
 				batchResource.blendMode == blendMode &&
+				batchResource.cullingMode == cullingMode &&
+				batchResource.fillMode == fillMode &&
 				batchResource.meshIndex == meshIndex;
 		}
 	);
@@ -201,7 +204,10 @@ void Object3dRenderer::SubmitBatch(Model* model, uint32_t meshIndex, MaterialIns
 		BatchResource newResource = {};
 		newResource.model = model;
 		newResource.materialInstance = materialInstance;
+		newResource.pixelShaderFilePath = pixelShaderFilePath;
 		newResource.blendMode = blendMode;
+		newResource.cullingMode = cullingMode;
+		newResource.fillMode = fillMode;
 		newResource.handle = handle;
 		newResource.meshIndex = meshIndex;
 
@@ -222,8 +228,14 @@ void Object3dRenderer::SubmitBatch(Model* model, uint32_t meshIndex, MaterialIns
 	Object3dRenderData renderData = {};
 	//ハンドルの設定
 	renderData.renderHandle = handle;
+	//ピクセルシェーダファイルパス
+	renderData.pixelShaderFilePath = pixelShaderFilePath;
 	//ブレンドモードを設定
 	renderData.blendMode = blendMode;
+	//カリングモード
+	renderData.cullingMode = cullingMode;
+	//フィルモード
+	renderData.fillMode = fillMode;
 	//メッシュインデックスの設定
 	renderData.meshIndex = meshIndex;
 

@@ -108,6 +108,24 @@ void Object3d::RegisterProperties(PropertyRegistry* registry){
 		};
 	registry->Add("blendMode", kBlendOptions, blendModeGetter, blendModeSetter);
 
+	//フィルモードの切り替え
+	std::function<uint32_t()> fillModeGetter = [this]() -> uint32_t{
+		return static_cast<uint32_t>(this->GetFillMode());
+		};
+	std::function<void(uint32_t)> fillModeSetter = [this](uint32_t value){
+		this->SetFillMode(static_cast<rasterizerMode::FillMode>(value));
+		};
+	registry->Add("fillMode", kFillOptions, fillModeGetter, fillModeSetter);
+
+	//カリングモードの切り替え
+	std::function<uint32_t()> cullingModeGetter = [this]() -> uint32_t{
+		return static_cast<uint32_t>(this->GetCullingMode());
+		};
+	std::function<void(uint32_t)> cullingModeSetter = [this](uint32_t value){
+		this->SetCullingMode(static_cast<rasterizerMode::CullingMode>(value));
+		};
+	registry->Add("CullingMode", kCullingOptions, cullingModeGetter, cullingModeSetter);
+
 	//登録
 	for (uint32_t i = 0; i < material->GetSlots().size(); i++){
 		//グループの開始

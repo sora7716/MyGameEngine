@@ -161,7 +161,8 @@ private://メンバ関数
 	/// <param name="blendMode">ブレンドモード</param>
 	/// <param name="cullingMode">カリングモード</param>
 	/// <param name="fillMode">フィルモード</param>
-	void PreDraw(PipelineType pipelineType, std::string pixelShaderPath, BlendMode blendMode, rasterizerMode::CullingMode cullingMode, rasterizerMode::FillMode fillMode);
+	/// <returns>成功したかどうか</returns>
+	bool PreDraw(PipelineType pipelineType, std::string pixelShaderPath, BlendMode blendMode, rasterizerMode::CullingMode cullingMode, rasterizerMode::FillMode fillMode);
 
 	/// <summary>
 	/// 描画開始
@@ -170,7 +171,7 @@ private://メンバ関数
 	/// <param name="blendMode">ブレンドモード</param>
 	/// <param name="cullingMode">カリングモード</param>
 	/// <param name="fillMode">フィルモード</param>
-	void PreDraw(std::string pixelShaderPath, BlendMode blendMode, rasterizerMode::CullingMode cullingMode, rasterizerMode::FillMode fillMode);
+	bool PreDraw(std::string pixelShaderPath, BlendMode blendMode, rasterizerMode::CullingMode cullingMode, rasterizerMode::FillMode fillMode);
 
 	/// <summary>
 	/// オブジェクト3dの描画グループを構築

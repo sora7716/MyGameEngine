@@ -215,10 +215,23 @@ void GraphicsPipeline::InitializeBlendState(BlendMode blendMode){
 
 //ラスタライザステートの初期化
 void GraphicsPipeline::InitializeRasterizerState(FillMode fillMode, CullingMode cullingMode){
+	//現在のカリングモードの切り替え
+	D3D12_CULL_MODE currentCullingMode = D3D12_CULL_MODE_NONE;
+	if (cullingMode == CullingMode::kBack){
+		currentCullingMode = D3D12_CULL_MODE_BACK;
+	} else if (cullingMode == CullingMode::kFront){
+		currentCullingMode = D3D12_CULL_MODE_FRONT;
+	}
 	//裏面(時計周り)を表示しない
-	rasterizerDesc_.CullMode = static_cast<D3D12_CULL_MODE>(cullingMode);
+	rasterizerDesc_.CullMode = currentCullingMode;
+
+	//現在のフィルモードの切り替え
+	D3D12_FILL_MODE currentFillMode = D3D12_FILL_MODE_SOLID;
+	if (fillMode == FillMode::kWireframe){
+		currentFillMode = D3D12_FILL_MODE_WIREFRAME;
+	}
 	//三角形の中を塗りつぶす
-	rasterizerDesc_.FillMode = static_cast<D3D12_FILL_MODE>(fillMode);
+	rasterizerDesc_.FillMode = currentFillMode;
 }
 
 //頂点シェーダのコンパイル

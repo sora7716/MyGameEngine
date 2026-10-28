@@ -25,7 +25,10 @@ private://構造体など
 	struct BatchResource{
 		Model* model = nullptr;
 		MaterialInstance* materialInstance = nullptr;
+		std::string pixelShaderFilePath = "";
 		BlendMode blendMode = BlendMode::kNone;
+		rasterizerMode::CullingMode cullingMode = rasterizerMode::CullingMode::kNone;
+		rasterizerMode::FillMode fillMode = rasterizerMode::FillMode::kSolid;
 		uint32_t meshIndex = 0;
 		Object3dRenderHandle handle = kInvalidObject3dRenderHandle;
 		std::vector<ComPtr<ID3D12Resource>>materialResources;
@@ -109,9 +112,12 @@ public://メンバ関数
 	/// <param name="model">モデル</param>
 	/// <param name="meshIndex">メッシュの検索キー</param>
 	/// <param name="materialInstance">マテリアルインスタンス</param>
+	/// <param name="pixelShaderFilePath">ピクセルシェーダファイルパス</param>
 	/// <param name="blendMode">ブレンドモード</param>
+	/// <param name="cullingMode">カリングモード</param>
+	/// <param name="fillMode">フィルモード</param>
 	/// <param name="transformations">トランスフォーメーションデータ</param>
-	void SubmitBatch(Model* model, uint32_t meshIndex, MaterialInstance* materialInstance, BlendMode blendMode, const std::vector<TransformationMatrix>& transformations);
+	void SubmitBatch(Model* model, uint32_t meshIndex, MaterialInstance* materialInstance, const std::string& pixelShaderFilePath, BlendMode blendMode, rasterizerMode::CullingMode cullingMode, rasterizerMode::FillMode fillMode, const std::vector<TransformationMatrix>& transformations);
 
 	/// <summary>
 	/// 描画データの追加

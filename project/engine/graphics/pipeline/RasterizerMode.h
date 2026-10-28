@@ -1,20 +1,26 @@
 #pragma once
-#include "d3d12.h"
+#include <vector>
+#include <string>
 
 //ラスタライザモード
 namespace rasterizerMode{
 
 	//ポリゴンを“塗るか”“骨組みだけ描くか”を決める設定
 	enum class FillMode{
-		kSolid = D3D12_FILL_MODE_SOLID,
-		kWireframe = D3D12_FILL_MODE_WIREFRAME
+		kSolid,
+		kWireframe
 	};
 
 	//カリングモード
 	enum class CullingMode{
-		kBack = D3D12_CULL_MODE_BACK,
-		kFront = D3D12_CULL_MODE_FRONT,
-		kNone = D3D12_CULL_MODE_NONE
+		kBack,
+		kFront,
+		kNone
 	};
 }
+
+//フィルモード一覧
+inline const std::vector<std::string> kFillOptions = { "Solid","Wireframe" };
+//カリングモード一覧
+inline const std::vector<std::string> kCullingOptions = { "Back","Front","None" };
 

@@ -48,15 +48,20 @@ void PipelineManager::Initialize(DirectXBase* directXBase){
 }
 
 //PSOの取得(存在しない場合は確保してキャッシュする)
-const PipelineSet& PipelineManager::GetPSO(PipelineKey key){
+PipelineSet* PipelineManager::GetPSO(const PipelineKey& key){
 	//すでに存在したら
 	if (pipelineSets_.contains(key)){
-		return pipelineSets_.at(key);
+		return &pipelineSets_.at(key);
+	}
+
+	//ピクセルシェーダファイルパスがなければ
+	if (key.pixelShaderFilePath.empty()){
+		return nullptr;
 	}
 
 	//存在しない場合
 	(this->*createPSOTable[static_cast<uint32_t>(key.pipelineType)])(key);
-	return pipelineSets_.at(key);
+	return &pipelineSets_.at(key);
 }
 
 //オブジェクト3D用のPSO
@@ -79,12 +84,12 @@ void PipelineManager::CreatePSOForObject3d(const PipelineKey& key){
 	//PSO
 	//ブレンドステート
 	graphicsPipeline_->InitializeBlendState(key.blendMode);
+	
 	PipelineSet pipelineSet = {};
 	//グラフィックスパイプラインの生成
 	pipelineSet.graphicsPipelineState = graphicsPipeline_->CreateGraphicsPipeline();
 	//ルートシグネイチャの記録
 	pipelineSet.rootSignature = graphicsPipeline_->GetRootSignature();
-
 	//パイプラインセットの配列に追加
 	pipelineSets_.emplace(key, pipelineSet);
 }
@@ -109,12 +114,12 @@ void PipelineManager::CreatePSOForSprite(const PipelineKey& key){
 	//PSO
 	//ブレンドステート
 	graphicsPipeline_->InitializeBlendState(key.blendMode);
+
 	PipelineSet pipelineSet = {};
 	//グラフィックスパイプラインの生成
 	pipelineSet.graphicsPipelineState = graphicsPipeline_->CreateGraphicsPipeline();
 	//ルートシグネイチャの記録
 	pipelineSet.rootSignature = graphicsPipeline_->GetRootSignature();
-
 	//パイプラインセットの配列に追加
 	pipelineSets_.emplace(key, pipelineSet);
 }
@@ -138,12 +143,12 @@ void PipelineManager::CreatePSOForParticle(const PipelineKey& key){
 	//PSO
 	//ブレンドステート
 	graphicsPipeline_->InitializeBlendState(key.blendMode);
+
 	PipelineSet pipelineSet = {};
-	//グラフィックスパイプラインの生成[
+	//グラフィックスパイプラインの生成
 	pipelineSet.graphicsPipelineState = graphicsPipeline_->CreateGraphicsPipeline();
 	//ルートシグネイチャの記録
 	pipelineSet.rootSignature = graphicsPipeline_->GetRootSignature();
-
 	//パイプラインセットの配列に追加
 	pipelineSets_.emplace(key, pipelineSet);
 }
@@ -168,12 +173,12 @@ void PipelineManager::CreatePSOForSkyBox(const PipelineKey& key){
 	//PSO
 	//ブレンドステート
 	graphicsPipeline_->InitializeBlendState(key.blendMode);
+
 	PipelineSet pipelineSet = {};
 	//グラフィックスパイプラインの生成
 	pipelineSet.graphicsPipelineState = graphicsPipeline_->CreateGraphicsPipeline();
 	//ルートシグネイチャの記録
 	pipelineSet.rootSignature = graphicsPipeline_->GetRootSignature();
-
 	//パイプラインセットの配列に追加
 	pipelineSets_.emplace(key, pipelineSet);
 }
@@ -198,12 +203,12 @@ void PipelineManager::CreatePSOForWireframe(const PipelineKey& key){
 	//PSO
 	//ブレンドステート
 	graphicsPipeline_->InitializeBlendState(key.blendMode);
+
 	PipelineSet pipelineSet = {};
 	//グラフィックスパイプラインの生成
 	pipelineSet.graphicsPipelineState = graphicsPipeline_->CreateGraphicsPipelineForWireframe();
 	//ルートシグネイチャの記録
 	pipelineSet.rootSignature = graphicsPipeline_->GetRootSignature();
-
 	//パイプラインセットの配列に追加
 	pipelineSets_.emplace(key, pipelineSet);
 }

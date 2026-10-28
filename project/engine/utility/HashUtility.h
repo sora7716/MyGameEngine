@@ -1,6 +1,4 @@
 #pragma once
-#include <cstdint>
-
 /// <summary>
 /// ハッシュ関係
 /// </summary>
@@ -10,6 +8,6 @@ namespace hashUtility {
 	/// </summary>
 	/// <param name="seed"></param>
 	/// <param name="value"></param>
-	void CreateHash(size_t& seed, int32_t value);
+	void CreateHash(size_t& seed, size_t value);
 };
 

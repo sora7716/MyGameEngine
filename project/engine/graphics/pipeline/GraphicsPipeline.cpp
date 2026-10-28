@@ -207,10 +207,10 @@ void GraphicsPipeline::InitializeInputLayoutDescForWireframe(){
 }
 
 //ブレンドステートの初期化
-void GraphicsPipeline::InitializeBlendState(int32_t blendMode){
+void GraphicsPipeline::InitializeBlendState(BlendMode blendMode){
 	//ブレンド関係のクラスの生成
 	std::unique_ptr<Blend> blend = std::make_unique<Blend>();
-	blendDesc_ = blend->SetBlendDesc(static_cast<BlendMode>(blendMode));
+	blendDesc_ = blend->SetBlendDesc(blendMode);
 }
 
 //ラスタライザステートの初期化
@@ -270,7 +270,7 @@ ComPtr<ID3D12PipelineState> GraphicsPipeline::CreateGraphicsPipeline(){
 }
 
 //PSOの生成(DebugDraw)
-ComPtr<ID3D12PipelineState> GraphicsPipeline::CreateGraphicsPipelineForDebugDraw(){
+ComPtr<ID3D12PipelineState> GraphicsPipeline::CreateGraphicsPipelineForWireframe(){
 	HRESULT result = S_FALSE;
 	//PSOを生成
 	D3D12_GRAPHICS_PIPELINE_STATE_DESC graphicsPipelineStateDesc{};

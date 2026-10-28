@@ -1,10 +1,38 @@
 #include "PipelineManager.h"
 #include "GraphicsPipeline.h"
 #include "Blend.h"
+#include "HashUtility.h"
+#include "StringUtility.h"
+#include <functional>
 using namespace rasterizerMode;
 
+//パイプライン同じか確認
+bool PipelineKey::operator==(const PipelineKey& pipelineKey)const{
+	return pixelShaderFilePath == pipelineKey.pixelShaderFilePath &&
+		pipelineType == pipelineKey.pipelineType &&
+		blendMode == pipelineKey.blendMode &&
+		cullingMode == pipelineKey.cullingMode &&
+		fillingMode == pipelineKey.fillingMode;
+}
+
+//ハッシュキーの作成
+size_t PipelineKey::MakeHashKey()const{
+	size_t hashValue = 0;
+	hashUtility::CreateHash(hashValue, std::hash<std::string>{}(pixelShaderFilePath));
+	hashUtility::CreateHash(hashValue, std::hash<PipelineType>{}(pipelineType));
+	hashUtility::CreateHash(hashValue, std::hash<BlendMode>{}(blendMode));
+	hashUtility::CreateHash(hashValue, std::hash<rasterizerMode::CullingMode>{}(cullingMode));
+	hashUtility::CreateHash(hashValue, std::hash<rasterizerMode::FillMode>{}(fillingMode));
+	return hashValue;
+}
+
+//パイプラインの検索キーのハッシュを作成
+size_t PipelineKeyHasher::operator()(const PipelineKey& key)const{
+	return key.MakeHashKey();
+}
+
 //テーブルの初期化
-void(PipelineManager::* PipelineManager::createPSOTable[])() = {
+void(PipelineManager::* PipelineManager::createPSOTable[])(const PipelineKey& key) = {
 	&CreatePSOForObject3d,
 	&CreatePSOForParticle,
 	&CreatePSOForWireframe,
@@ -40,25 +68,23 @@ void PipelineManager::Initialize(DirectXBase* directXBase){
 	graphicsPipeline_->SetDirectXBase(directXBase);
 }
 
-//PSOの作成
-void PipelineManager::CreatePSO(){
-	for (uint32_t i = 0; i < static_cast<uint32_t>(PipelineType::kPiplineTypeCount); i++){
-		(this->*createPSOTable[i])();
+//PSOの取得(存在しない場合は確保してキャッシュする)
+const PipelineSet& PipelineManager::GetPSO(PipelineKey key){
+	//すでに存在したら
+	if (pipelineSets_.contains(key)){
+		return pipelineSets_.at(key);
 	}
-}
 
-//パイプラインセットの取得
-const PipelineSet& PipelineManager::GetPipelineSet(PipelineType pipelineSetType) const{
-	// TODO: return ステートメントをここに挿入します
-	uint32_t index = static_cast<uint32_t>(pipelineSetType);
-	return pipelineSets_[index];
+	//存在しない場合
+	(this->*createPSOTable[static_cast<uint32_t>(key.pipelineType)])(key);
+	return pipelineSets_.at(key);
 }
 
 //オブジェクト3D用のPSO
-void PipelineManager::CreatePSOForObject3d(){
+void PipelineManager::CreatePSOForObject3d(const PipelineKey& key){
 	//シェーダを設定
 	graphicsPipeline_->SetVertexShaderFileName(L"Object3d.VS.hlsl");
-	graphicsPipeline_->SetPixelShaderFileName(L"Object3d.PS.hlsl");
+	graphicsPipeline_->SetPixelShaderFileName(stringUtility::ConvertString(key.pixelShaderFilePath));
 	//深度バッファ
 	graphicsPipeline_->CreateDepthStencilResourceReadWrite();
 	//シグネイチャBlobの初期化
@@ -66,26 +92,29 @@ void PipelineManager::CreatePSOForObject3d(){
 	//インプットレイアウト
 	graphicsPipeline_->InitializeInputLayoutDesc();
 	//ラスタライザステート
-	graphicsPipeline_->InitializeRasterizerState(FillMode::kSolid);
+	graphicsPipeline_->InitializeRasterizerState(key.fillingMode, key.cullingMode);
 	//頂点シェーダBlob
 	graphicsPipeline_->CompileVertexShader();
 	//ピクセルシェーダBlob
 	graphicsPipeline_->CompilePixelShader();
 	//PSO
-	for (uint32_t i = 0; i < static_cast<int32_t>(BlendMode::kCountOfBlendMode); i++){
-		//ブレンドステート
-		graphicsPipeline_->InitializeBlendState(i);
-		//グラフィックスパイプラインの生成
-		pipelineSets_[static_cast<uint32_t>(PipelineType::kObject3d)].graphicsPipelineStates[i] = graphicsPipeline_->CreateGraphicsPipeline();
-	}	//ルートシグネイチャの記録
-	pipelineSets_[static_cast<uint32_t>(PipelineType::kObject3d)].rootSignature = graphicsPipeline_->GetRootSignature();
+	//ブレンドステート
+	graphicsPipeline_->InitializeBlendState(key.blendMode);
+	PipelineSet pipelineSet = {};
+	//グラフィックスパイプラインの生成
+	pipelineSet.graphicsPipelineState = graphicsPipeline_->CreateGraphicsPipeline();
+	//ルートシグネイチャの記録
+	pipelineSet.rootSignature = graphicsPipeline_->GetRootSignature();
+
+	//パイプラインセットの配列に追加
+	pipelineSets_.emplace(key, pipelineSet);
 }
 
 //PSOの作成(Sprite)
-void PipelineManager::CreatePSOForSprite(){
+void PipelineManager::CreatePSOForSprite(const PipelineKey& key){
 	//シェーダを設定
 	graphicsPipeline_->SetVertexShaderFileName(L"Sprite.VS.hlsl");
-	graphicsPipeline_->SetPixelShaderFileName(L"Sprite.PS.hlsl");
+	graphicsPipeline_->SetPixelShaderFileName(stringUtility::ConvertString(key.pixelShaderFilePath));
 	//深度バッファ
 	graphicsPipeline_->CreateRootSignatureBlobForSprite();
 	//シグネイチャBlobの初期化
@@ -93,32 +122,34 @@ void PipelineManager::CreatePSOForSprite(){
 	//インプットレイアウト
 	graphicsPipeline_->InitializeInputLayoutDesc();
 	//ラスタライザステート
-	graphicsPipeline_->InitializeRasterizerState();
+	graphicsPipeline_->InitializeRasterizerState(key.fillingMode, key.cullingMode);
 	//頂点シェーダBlob
 	graphicsPipeline_->CompileVertexShader();
 	//ピクセルシェーダBlob
 	graphicsPipeline_->CompilePixelShader();
 	//PSO
-	for (uint32_t i = 0; i < static_cast<int32_t>(BlendMode::kCountOfBlendMode); i++){
-		//ブレンドステート
-		graphicsPipeline_->InitializeBlendState(i);
-		//グラフィックスパイプラインの生成
-		pipelineSets_[static_cast<uint32_t>(PipelineType::kSprite)].graphicsPipelineStates[i] = graphicsPipeline_->CreateGraphicsPipeline();
-	}
+	//ブレンドステート
+	graphicsPipeline_->InitializeBlendState(key.blendMode);
+	PipelineSet pipelineSet = {};
+	//グラフィックスパイプラインの生成
+	pipelineSet.graphicsPipelineState = graphicsPipeline_->CreateGraphicsPipeline();
 	//ルートシグネイチャの記録
-	pipelineSets_[static_cast<uint32_t>(PipelineType::kSprite)].rootSignature = graphicsPipeline_->GetRootSignature();
+	pipelineSet.rootSignature = graphicsPipeline_->GetRootSignature();
+
+	//パイプラインセットの配列に追加
+	pipelineSets_.emplace(key, pipelineSet);
 }
 
 //PSOの作成(Particle)
-void PipelineManager::CreatePSOForParticle(){
+void PipelineManager::CreatePSOForParticle(const PipelineKey& key){
 	graphicsPipeline_->SetVertexShaderFileName(L"Particle.VS.hlsl");
-	graphicsPipeline_->SetPixelShaderFileName(L"Particle.PS.hlsl");
+	graphicsPipeline_->SetPixelShaderFileName(stringUtility::ConvertString(key.pixelShaderFilePath));
 	//シグネイチャBlobの初期化
 	graphicsPipeline_->CreateRootSignatureBlobForParticle();
 	//インプットレイアウト
 	graphicsPipeline_->InitializeInputLayoutDesc();
 	//ラスタライザステート
-	graphicsPipeline_->InitializeRasterizerState();
+	graphicsPipeline_->InitializeRasterizerState(key.fillingMode, key.cullingMode);
 	//頂点シェーダBlob
 	graphicsPipeline_->CompileVertexShader();
 	//ピクセルシェーダBlob
@@ -126,20 +157,23 @@ void PipelineManager::CreatePSOForParticle(){
 	//深度バッファ
 	graphicsPipeline_->CreateDepthStencilResourceReadOnly();
 	//PSO
-	for (uint32_t i = 0; i < static_cast<int32_t>(BlendMode::kCountOfBlendMode); i++){
-		//ブレンドステート
-		graphicsPipeline_->InitializeBlendState(i);
-		//グラフィックスパイプラインの生成[
-		pipelineSets_[static_cast<uint32_t>(PipelineType::kParticle)].graphicsPipelineStates[i] = graphicsPipeline_->CreateGraphicsPipeline();
-	}	//ルートシグネイチャの記録
-	pipelineSets_[static_cast<uint32_t>(PipelineType::kParticle)].rootSignature = graphicsPipeline_->GetRootSignature();
+	//ブレンドステート
+	graphicsPipeline_->InitializeBlendState(key.blendMode);
+	PipelineSet pipelineSet = {};
+	//グラフィックスパイプラインの生成[
+	pipelineSet.graphicsPipelineState = graphicsPipeline_->CreateGraphicsPipeline();
+	//ルートシグネイチャの記録
+	pipelineSet.rootSignature = graphicsPipeline_->GetRootSignature();
+
+	//パイプラインセットの配列に追加
+	pipelineSets_.emplace(key, pipelineSet);
 }
 
 //PSOの作成(SkyBox)
-void PipelineManager::CreatePSOForSkyBox(){
+void PipelineManager::CreatePSOForSkyBox(const PipelineKey& key){
 	//シェーダを設定
 	graphicsPipeline_->SetVertexShaderFileName(L"SkyBox.VS.hlsl");
-	graphicsPipeline_->SetPixelShaderFileName(L"SkyBox.PS.hlsl");
+	graphicsPipeline_->SetPixelShaderFileName(stringUtility::ConvertString(key.pixelShaderFilePath));
 	//深度バッファ
 	graphicsPipeline_->CreateDepthStencilResourceReadOnly();
 	//シグネイチャBlobの初期化
@@ -147,27 +181,29 @@ void PipelineManager::CreatePSOForSkyBox(){
 	//インプットレイアウト
 	graphicsPipeline_->InitializeInputLayoutDescForSkyBox();
 	//ラスタライザステート
-	graphicsPipeline_->InitializeRasterizerState();
+	graphicsPipeline_->InitializeRasterizerState(key.fillingMode, key.cullingMode);
 	//頂点シェーダBlob
 	graphicsPipeline_->CompileVertexShader();
 	//ピクセルシェーダBlob
 	graphicsPipeline_->CompilePixelShader();
 	//PSO
-	for (uint32_t i = 0; i < static_cast<int32_t>(BlendMode::kCountOfBlendMode); i++){
-		//ブレンドステート
-		graphicsPipeline_->InitializeBlendState(i);
-		//グラフィックスパイプラインの生成
-		pipelineSets_[static_cast<uint32_t>(PipelineType::kSkyBox)].graphicsPipelineStates[i] = graphicsPipeline_->CreateGraphicsPipeline();
-	}
+	//ブレンドステート
+	graphicsPipeline_->InitializeBlendState(key.blendMode);
+	PipelineSet pipelineSet = {};
+	//グラフィックスパイプラインの生成
+	pipelineSet.graphicsPipelineState = graphicsPipeline_->CreateGraphicsPipeline();
 	//ルートシグネイチャの記録
-	pipelineSets_[static_cast<uint32_t>(PipelineType::kSkyBox)].rootSignature = graphicsPipeline_->GetRootSignature();
+	pipelineSet.rootSignature = graphicsPipeline_->GetRootSignature();
+
+	//パイプラインセットの配列に追加
+	pipelineSets_.emplace(key, pipelineSet);
 }
 
 //PSOの作成(Wireframe)
-void PipelineManager::CreatePSOForWireframe(){
+void PipelineManager::CreatePSOForWireframe(const PipelineKey& key){
 	//シェーダを設定
 	graphicsPipeline_->SetVertexShaderFileName(L"Wireframe.VS.hlsl");
-	graphicsPipeline_->SetPixelShaderFileName(L"Wireframe.PS.hlsl");
+	graphicsPipeline_->SetPixelShaderFileName(stringUtility::ConvertString(key.pixelShaderFilePath));
 	//深度バッファ
 	graphicsPipeline_->CreateDepthStencilResourceReadOnly();
 	//シグネイチャBlobの初期化
@@ -175,18 +211,20 @@ void PipelineManager::CreatePSOForWireframe(){
 	//インプットレイアウト
 	graphicsPipeline_->InitializeInputLayoutDescForWireframe();
 	//ラスタライザステート
-	graphicsPipeline_->InitializeRasterizerState(FillMode::kSolid, CullingMode::kNone);
+	graphicsPipeline_->InitializeRasterizerState(key.fillingMode, key.cullingMode);
 	//頂点シェーダBlob
 	graphicsPipeline_->CompileVertexShader();
 	//ピクセルシェーダBlob
 	graphicsPipeline_->CompilePixelShader();
 	//PSO
-	for (uint32_t i = 0; i < static_cast<int32_t>(BlendMode::kCountOfBlendMode); i++){
-		//ブレンドステート
-		graphicsPipeline_->InitializeBlendState(i);
-		//グラフィックスパイプラインの生成
-		pipelineSets_[static_cast<uint32_t>(PipelineType::kDebugDraw)].graphicsPipelineStates[i] = graphicsPipeline_->CreateGraphicsPipelineForDebugDraw();
-	}
+	//ブレンドステート
+	graphicsPipeline_->InitializeBlendState(key.blendMode);
+	PipelineSet pipelineSet = {};
+	//グラフィックスパイプラインの生成
+	pipelineSet.graphicsPipelineState = graphicsPipeline_->CreateGraphicsPipelineForWireframe();
 	//ルートシグネイチャの記録
-	pipelineSets_[static_cast<uint32_t>(PipelineType::kDebugDraw)].rootSignature = graphicsPipeline_->GetRootSignature();
+	pipelineSet.rootSignature = graphicsPipeline_->GetRootSignature();
+
+	//パイプラインセットの配列に追加
+	pipelineSets_.emplace(key, pipelineSet);
 }

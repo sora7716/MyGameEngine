@@ -77,13 +77,13 @@ public://メンバ関数
 	/// ブレンドステートの初期化
 	/// </summary>
 	/// <param name="blendMode">ブレンドモード</param>
-	void InitializeBlendState(int32_t blendMode);
+	void InitializeBlendState(BlendMode blendMode);
 
 	/// <summary>
 	/// ラスタライザステートの初期化
 	/// </summary>
 	/// <param name="fillMode">ポリゴンをどう描画するかの設定</param>
-	void InitializeRasterizerState(rasterizerMode::FillMode fillMode = rasterizerMode::FillMode::kSolid, rasterizerMode::CullingMode cullingMode = rasterizerMode::CullingMode::kBack);
+	void InitializeRasterizerState(rasterizerMode::FillMode fillMode, rasterizerMode::CullingMode cullingMode);
 
 	/// <summary>
 	/// 頂点シェーダのコンパイル
@@ -115,7 +115,7 @@ public://メンバ関数
 	/// PSOの生成(DebugDraw)
 	/// </summary>
 	/// <returns>PSO</returns>
-	ComPtr<ID3D12PipelineState> CreateGraphicsPipelineForDebugDraw();
+	ComPtr<ID3D12PipelineState> CreateGraphicsPipelineForWireframe();
 
 	/// <summary>
 	/// ルートシグネイチャのゲッター

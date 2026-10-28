@@ -459,7 +459,7 @@ void RenderSystem::PreDraw(BlendMode blendMode, PipelineType pipelineType){
 //描画開始
 void RenderSystem::PreDraw(BlendMode blendMode){
 	//パイプラインのセットを取得
-	PipelineSet pipelineSet = pipelineManager_->GetPipelineSet(PipelineType::kDebugDraw);
+	PipelineSet pipelineSet = pipelineManager_->GetPipelineSet(PipelineType::kWireframe);
 	//ルートシグネイチャをセットするコマンド
 	directXBase_->GetCommandList()->SetGraphicsRootSignature(pipelineSet.rootSignature.Get());
 	//プリミティブトポロジーをセットするコマンド

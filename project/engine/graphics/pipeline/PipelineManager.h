@@ -1,12 +1,43 @@
 #pragma once
 #include "PipelineManagerData.h"
+#include "BlendMode.h"
+#include "RasterizerMode.h"
+#include <string>
 #include <memory>
+#include <unordered_map>
 
 //前方宣言
 class DirectXBase;
 class GraphicsPipeline;
 class Blend;
 
+//パイプラインの検索キー
+struct PipelineKey{
+	std::string pixelShaderFilePath = "";
+	PipelineType pipelineType = PipelineType::kObject3d;
+	BlendMode blendMode = BlendMode::kNone;
+	rasterizerMode::CullingMode cullingMode = rasterizerMode::CullingMode::kNone;
+	rasterizerMode::FillMode fillingMode = rasterizerMode::FillMode::kSolid;
+
+	//パイプライン同じか確認
+	bool operator==(const PipelineKey& pipelineKey)const;
+
+	/// <summary>
+	/// ハッシュキーを作成
+	/// </summary>
+	/// <returns>ハッシュキー</returns>
+	size_t MakeHashKey()const;
+};
+
+//パイプラインの検索キーのハッシュを作成
+struct PipelineKeyHasher{
+	/// <summary>
+	/// パイプラインの検索キーからハッシュを作成する関数を取得
+	/// </summary>
+	/// <param name="key">検索キー</param>
+	/// <returns>ハッシュ</returns>
+	size_t operator()(const PipelineKey& key)const;
+};
 /// <summary>
 /// パイプラインの管理
 /// </summary>
@@ -44,16 +75,10 @@ public://メンバ関数
 	void Initialize(DirectXBase* directXBase);
 
 	/// <summary>
-	/// PSOの作成
+	/// PSOの取得(存在しない場合は確保してキャッシュする)
 	/// </summary>
-	void CreatePSO();
-
-	/// <summary>
-	/// パイプラインセットの取得
-	/// </summary>
-	/// <param name="pipelineSetType">パイプラインセットのタイプ</param>
-	/// <returns>パイプラインセット</returns>
-	const PipelineSet& GetPipelineSet(PipelineType pipelineSetType)const;
+	/// <param name="key">検索キー</param>
+	const PipelineSet& GetPSO(PipelineKey key);
 private://メンバ関数
 	//コピーコンストラクタ禁止
 	PipelineManager(const PipelineManager&) = delete;
@@ -63,36 +88,41 @@ private://メンバ関数
 	/// <summary>
 	/// PSOの作成(Object3d)
 	/// </summary>
-	void CreatePSOForObject3d();
+	/// <param name="key">検索キー</param>
+	void CreatePSOForObject3d(const PipelineKey& key);
 
 	/// <summary>
 	/// PSOの作成(Sprite)
 	/// </summary>
-	void CreatePSOForSprite();
+	/// <param name="key">検索キー</param>
+	void CreatePSOForSprite(const PipelineKey& key);
 
 	/// <summary>
 	/// PSOの作成(Particle)
 	/// </summary>
-	void CreatePSOForParticle();
+	/// <param name="key">検索キー</param>
+	void CreatePSOForParticle(const PipelineKey& key);
 
 	/// <summary>
 	/// PSOの作成(SkyBox)
 	/// </summary>
-	void CreatePSOForSkyBox();
+	/// <param name="key">検索キー</param>
+	void CreatePSOForSkyBox(const PipelineKey& key);
 
 	/// <summary>
 	/// PSOの作成(Wireframe)
 	/// </summary>
-	void CreatePSOForWireframe();
+	/// <param name="key">検索キー</param>
+	void CreatePSOForWireframe(const PipelineKey& key);
 private://静的メンバ変数
 	//PSOの作成関数のテーブル
-	static void (PipelineManager::* createPSOTable[])();
+	static void (PipelineManager::* createPSOTable[])(const PipelineKey& key);
 private://メンバ変数
 	//ブレンド
 	std::unique_ptr<Blend> blend_ = nullptr;
 	//グラフィックスパイプライン
 	std::unique_ptr<GraphicsPipeline> graphicsPipeline_ = nullptr;
 	//各オブジェクトごとにパイプラインタイプ
-	std::array<PipelineSet, static_cast<uint32_t>(PipelineType::kPiplineTypeCount)> pipelineSets_ = {};
+	std::unordered_map<PipelineKey, PipelineSet, PipelineKeyHasher>pipelineSets_ = {};
 };
 

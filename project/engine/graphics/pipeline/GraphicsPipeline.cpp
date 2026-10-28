@@ -2,13 +2,14 @@
 #include "DirectXBase.h"
 #include "Logger.h"
 #include "StringUtility.h"
+#include "RootSignatureBuilder.h"
 #include <cassert>
 #pragma comment(lib,"d3d12.lib")
 #pragma comment(lib,"dxgi.lib")
 #pragma comment(lib,"dxguid.lib")
 #pragma comment(lib,"dxcompiler.lib")
 using namespace Microsoft::WRL;
-using namespace rasterizerMode;;
+using namespace rasterizerMode;
 
 //コンストラクタ
 GraphicsPipeline::GraphicsPipeline(){}
@@ -18,326 +19,117 @@ GraphicsPipeline::~GraphicsPipeline(){}
 
 //ルートシグネイチャBlobの生成(スプライト用)
 void GraphicsPipeline::CreateRootSignatureBlobForSprite(){
-	//RootSignature作成
-	D3D12_ROOT_SIGNATURE_DESC descriptionRootSignature{};
-	descriptionRootSignature.Flags = D3D12_ROOT_SIGNATURE_FLAG_ALLOW_INPUT_ASSEMBLER_INPUT_LAYOUT;
+	//ルートシグネイチャのビルダー
+	std::unique_ptr<RootSignatureBuilder>builder = std::make_unique<RootSignatureBuilder>();
+	builder->Initialize();
 
 	//Samplerの設定
-	std::array<D3D12_STATIC_SAMPLER_DESC, 1> staticSamplers = SettingSampler();
-	descriptionRootSignature.pStaticSamplers = &staticSamplers[0];
-	descriptionRootSignature.NumStaticSamplers = static_cast<uint32_t>(staticSamplers.size());
-
-	//DescriptorRange
-	D3D12_DESCRIPTOR_RANGE descriptorRange[1] = {};
-	descriptorRange[0].BaseShaderRegister = 0;//0から始まる
-	descriptorRange[0].NumDescriptors = 1;//数は1つ
-	descriptorRange[0].RangeType = D3D12_DESCRIPTOR_RANGE_TYPE_SRV;//SRVを使う
-	descriptorRange[0].OffsetInDescriptorsFromTableStart = D3D12_DESCRIPTOR_RANGE_OFFSET_APPEND;//Offsetを自動計算
-
-
+	builder->AddStaticSampler(ShaderType::kPixel, 0);
 	//RootParameterの作成。複数設定できるので配列。
 	D3D12_ROOT_PARAMETER rootParameters[3] = {};
 	//色情報
-	rootParameters[0].ParameterType = D3D12_ROOT_PARAMETER_TYPE_CBV;//CBVを使うb0のbと一致する	
-	rootParameters[0].ShaderVisibility = D3D12_SHADER_VISIBILITY_PIXEL;//PixelShaderを使う
-	rootParameters[0].Descriptor.ShaderRegister = 0;//レジスタ番号0とバインドb0の0と一致する
-
+	builder->AddCBV(ShaderType::kPixel, 0);
 	//Transform
-	rootParameters[1].ParameterType = D3D12_ROOT_PARAMETER_TYPE_CBV;//CBVを使う
-	rootParameters[1].ShaderVisibility = D3D12_SHADER_VISIBILITY_VERTEX;//VertexShaderを使う
-	rootParameters[1].Descriptor.ShaderRegister = 0;//レジスタ番号
-
+	builder->AddCBV(ShaderType::kVertex, 0);
 	//テクスチャ情報
-	rootParameters[2].ParameterType = D3D12_ROOT_PARAMETER_TYPE_DESCRIPTOR_TABLE;//DescriptorTableを使う
-	rootParameters[2].ShaderVisibility = D3D12_SHADER_VISIBILITY_PIXEL;//PixelShaderを使う
-	rootParameters[2].DescriptorTable.pDescriptorRanges = descriptorRange;//Tableの中身の配列を指定
-	rootParameters[2].DescriptorTable.NumDescriptorRanges = _countof(descriptorRange);//Tableで利用する数
+	builder->AddSRVTable(ShaderType::kPixel, 0);
 
-	descriptionRootSignature.pParameters = rootParameters;//ルートパラメータ配列へのポインタ
-	descriptionRootSignature.NumParameters = _countof(rootParameters);//配列の長さ
-	//ルートシグネイチャBlob
-	ComPtr<ID3DBlob>signatureBlob = nullptr;
-	ComPtr<ID3DBlob> errorBlob = nullptr;
-	//シリアライズしてバイナリにする
-	HRESULT hr = D3D12SerializeRootSignature(&descriptionRootSignature, D3D_ROOT_SIGNATURE_VERSION_1, &signatureBlob, &errorBlob);
-	if (FAILED(hr)){
-		Logger::OutputLog(reinterpret_cast<char*>(errorBlob->GetBufferPointer()));
-		assert(false);
-	}
-	HRESULT result = S_FALSE;
-	result = directXBase_->GetDevice()->CreateRootSignature(0, signatureBlob->GetBufferPointer(), signatureBlob->GetBufferSize(), IID_PPV_ARGS(&rootSignature_));
-	assert(SUCCEEDED(result));
+	//構築
+	rootSignature_ = builder->Build(directXBase_->GetDevice());
 }
 
 //ルートシグネイチャBlobの生成(SkyBox用)
 void GraphicsPipeline::CreateRootSignatureBlobForSkyBox(){
-	//RootSignature作成
-	D3D12_ROOT_SIGNATURE_DESC descriptionRootSignature{};
-	descriptionRootSignature.Flags = D3D12_ROOT_SIGNATURE_FLAG_ALLOW_INPUT_ASSEMBLER_INPUT_LAYOUT;
+	//ルートシグネイチャのビルダー
+	std::unique_ptr<RootSignatureBuilder>builder = std::make_unique<RootSignatureBuilder>();
+	builder->Initialize();
 
 	//Samplerの設定
-	std::array<D3D12_STATIC_SAMPLER_DESC, 1> staticSamplers = SettingSampler();
-	descriptionRootSignature.pStaticSamplers = &staticSamplers[0];
-	descriptionRootSignature.NumStaticSamplers = static_cast<uint32_t>(staticSamplers.size());
-
-	//DescriptorRange
-	D3D12_DESCRIPTOR_RANGE descriptorRange[1] = {};
-	descriptorRange[0].BaseShaderRegister = 0;//0から始まる
-	descriptorRange[0].NumDescriptors = 1;//数は1つ
-	descriptorRange[0].RangeType = D3D12_DESCRIPTOR_RANGE_TYPE_SRV;//SRVを使う
-	descriptorRange[0].OffsetInDescriptorsFromTableStart = D3D12_DESCRIPTOR_RANGE_OFFSET_APPEND;//Offsetを自動計算
-
-
+	builder->AddStaticSampler(ShaderType::kPixel, 0);
 	//RootParameterの作成。複数設定できるので配列。
 	D3D12_ROOT_PARAMETER rootParameters[4] = {};
 	//色情報
-	rootParameters[0].ParameterType = D3D12_ROOT_PARAMETER_TYPE_CBV;//CBVを使うb0のbと一致する	
-	rootParameters[0].ShaderVisibility = D3D12_SHADER_VISIBILITY_PIXEL;//PixelShaderを使う
-	rootParameters[0].Descriptor.ShaderRegister = 0;//レジスタ番号0とバインドb0の0と一致する
-
+	builder->AddCBV(ShaderType::kPixel, 0);
 	//Transform
-	rootParameters[1].ParameterType = D3D12_ROOT_PARAMETER_TYPE_CBV;//CBVを使う
-	rootParameters[1].ShaderVisibility = D3D12_SHADER_VISIBILITY_VERTEX;//VertexShaderを使う
-	rootParameters[1].Descriptor.ShaderRegister = 0;//レジスタ番号
-
+	builder->AddCBV(ShaderType::kVertex, 0);
 	//テクスチャ情報
-	rootParameters[2].ParameterType = D3D12_ROOT_PARAMETER_TYPE_DESCRIPTOR_TABLE;//DescriptorTableを使う
-	rootParameters[2].ShaderVisibility = D3D12_SHADER_VISIBILITY_PIXEL;//PixelShaderを使う
-	rootParameters[2].DescriptorTable.pDescriptorRanges = descriptorRange;//Tableの中身の配列を指定
-	rootParameters[2].DescriptorTable.NumDescriptorRanges = _countof(descriptorRange);//Tableで利用する数
-
+	builder->AddSRVTable(ShaderType::kPixel, 0);
 	//Camera
-	rootParameters[3].ParameterType = D3D12_ROOT_PARAMETER_TYPE_CBV;//CBVを使う
-	rootParameters[3].ShaderVisibility = D3D12_SHADER_VISIBILITY_VERTEX;//VertexShaderを使う
-	rootParameters[3].Descriptor.ShaderRegister = 1;//レジスタ番号
+	builder->AddCBV(ShaderType::kVertex, 1);
 
-	descriptionRootSignature.pParameters = rootParameters;//ルートパラメータ配列へのポインタ
-	descriptionRootSignature.NumParameters = _countof(rootParameters);//配列の長さ
-	//ルートシグネイチャBlob
-	ComPtr<ID3DBlob>signatureBlob = nullptr;
-	ComPtr<ID3DBlob> errorBlob = nullptr;
-	//シリアライズしてバイナリにする
-	HRESULT hr = D3D12SerializeRootSignature(&descriptionRootSignature, D3D_ROOT_SIGNATURE_VERSION_1, &signatureBlob, &errorBlob);
-	if (FAILED(hr)){
-		Logger::OutputLog(reinterpret_cast<char*>(errorBlob->GetBufferPointer()));
-		assert(false);
-	}
-	HRESULT result = S_FALSE;
-	result = directXBase_->GetDevice()->CreateRootSignature(0, signatureBlob->GetBufferPointer(), signatureBlob->GetBufferSize(), IID_PPV_ARGS(&rootSignature_));
-	assert(SUCCEEDED(result));
+	//構築
+	rootSignature_ = builder->Build(directXBase_->GetDevice());
 }
 
 //ルートシグネイチャBlobの生成(Object3d用)
 void GraphicsPipeline::CreateRootSignatureBlobForObject3d(){
-	//RootSignature作成
-	D3D12_ROOT_SIGNATURE_DESC descriptionRootSignature{};
-	descriptionRootSignature.Flags = D3D12_ROOT_SIGNATURE_FLAG_ALLOW_INPUT_ASSEMBLER_INPUT_LAYOUT;
+	//ルートシグネイチャのビルダー
+	std::unique_ptr<RootSignatureBuilder>builder = std::make_unique<RootSignatureBuilder>();
+	builder->Initialize();
 
 	//Samplerの設定
-	std::array<D3D12_STATIC_SAMPLER_DESC, 1> staticSamplers = SettingSampler();
-	descriptionRootSignature.pStaticSamplers = &staticSamplers[0];
-	descriptionRootSignature.NumStaticSamplers = static_cast<uint32_t>(staticSamplers.size());
-
-	//DescriptorRange
-	D3D12_DESCRIPTOR_RANGE descriptorRange[5] = {};
-
-	//Texture(Texture2D)
-	descriptorRange[0].BaseShaderRegister = 0;//0から始まる
-	descriptorRange[0].NumDescriptors = 1;//数は1つ
-	descriptorRange[0].RangeType = D3D12_DESCRIPTOR_RANGE_TYPE_SRV;//SRVを使う
-	descriptorRange[0].OffsetInDescriptorsFromTableStart = D3D12_DESCRIPTOR_RANGE_OFFSET_APPEND;//Offsetを自動計算
-
-	//ポイントライト
-	descriptorRange[1].BaseShaderRegister = 1;//0から始まる
-	descriptorRange[1].NumDescriptors = 1;//数は1つ
-	descriptorRange[1].RangeType = D3D12_DESCRIPTOR_RANGE_TYPE_SRV;//SRVを使う
-	descriptorRange[1].OffsetInDescriptorsFromTableStart = D3D12_DESCRIPTOR_RANGE_OFFSET_APPEND;//Offsetを自動計算
-
-	//スポットライト
-	descriptorRange[2].BaseShaderRegister = 2;//0から始まる
-	descriptorRange[2].NumDescriptors = 1;//数は1つ
-	descriptorRange[2].RangeType = D3D12_DESCRIPTOR_RANGE_TYPE_SRV;//SRVを使う
-	descriptorRange[2].OffsetInDescriptorsFromTableStart = D3D12_DESCRIPTOR_RANGE_OFFSET_APPEND;//Offsetを自動計算
-
-	//平行移動
-	descriptorRange[3].BaseShaderRegister = 0;//0から始まる
-	descriptorRange[3].NumDescriptors = 1;//数は1つ
-	descriptorRange[3].RangeType = D3D12_DESCRIPTOR_RANGE_TYPE_SRV;//SRVを使う
-	descriptorRange[3].OffsetInDescriptorsFromTableStart = D3D12_DESCRIPTOR_RANGE_OFFSET_APPEND;//Offsetを自動計算
-
-	//環境マップ(TextureCube)
-	descriptorRange[4].BaseShaderRegister = 3;//0から始まる
-	descriptorRange[4].NumDescriptors = 1;//数は1つ
-	descriptorRange[4].RangeType = D3D12_DESCRIPTOR_RANGE_TYPE_SRV;//SRVを使う
-	descriptorRange[4].OffsetInDescriptorsFromTableStart = D3D12_DESCRIPTOR_RANGE_OFFSET_APPEND;//Offsetを自動計算
-
-	//RootParameterの作成。複数設定できるので配列。
-	D3D12_ROOT_PARAMETER rootParameters[9] = {};
-	//色情報
-	rootParameters[0].ParameterType = D3D12_ROOT_PARAMETER_TYPE_CBV;//CBVを使うb0のbと一致する	
-	rootParameters[0].ShaderVisibility = D3D12_SHADER_VISIBILITY_PIXEL;//PixelShaderを使う
-	rootParameters[0].Descriptor.ShaderRegister = 0;//レジスタ番号0とバインドb0の0と一致する
-
+	builder->AddStaticSampler(ShaderType::kPixel, 0);
+	////色情報
+	builder->AddCBV(ShaderType::kPixel, 0);
 	//Transform
-	rootParameters[1].ParameterType = D3D12_ROOT_PARAMETER_TYPE_DESCRIPTOR_TABLE;//SRVを使う
-	rootParameters[1].ShaderVisibility = D3D12_SHADER_VISIBILITY_VERTEX;//VertexShaderを使う
-	rootParameters[1].Descriptor.ShaderRegister = 0;//レジスタ番号
-	rootParameters[1].DescriptorTable.pDescriptorRanges = &descriptorRange[3];//Tableの中身の配列を指定
-	rootParameters[1].DescriptorTable.NumDescriptorRanges = 1;
-
+	builder->AddSRVTable(ShaderType::kVertex, 0);
 	//テクスチャ情報
-	rootParameters[2].ParameterType = D3D12_ROOT_PARAMETER_TYPE_DESCRIPTOR_TABLE;//DescriptorTableを使う
-	rootParameters[2].ShaderVisibility = D3D12_SHADER_VISIBILITY_PIXEL;//PixelShaderを使う
-	rootParameters[2].DescriptorTable.pDescriptorRanges = &descriptorRange[0];//Tableの中身の配列を指定
-	rootParameters[2].DescriptorTable.NumDescriptorRanges = 1;
-
+	builder->AddSRVTable(ShaderType::kPixel, 0);
 	//平行光源
-	rootParameters[3].ParameterType = D3D12_ROOT_PARAMETER_TYPE_CBV;//CBVを使う
-	rootParameters[3].ShaderVisibility = D3D12_SHADER_VISIBILITY_PIXEL;//PixelShaderを使う
-	rootParameters[3].Descriptor.ShaderRegister = 1;//レジスタ番号1を使う
-
+	builder->AddCBV(ShaderType::kPixel, 1);
 	//カメラ
-	rootParameters[4].ParameterType = D3D12_ROOT_PARAMETER_TYPE_CBV;//CBVを使う
-	rootParameters[4].ShaderVisibility = D3D12_SHADER_VISIBILITY_ALL;//PixelShaderを使う
-	rootParameters[4].Descriptor.ShaderRegister = 2;//レジスタ番号2を使う
-
+	builder->AddCBV(ShaderType::kAll, 2);
 	//点光源
-	rootParameters[5].ParameterType = D3D12_ROOT_PARAMETER_TYPE_DESCRIPTOR_TABLE;//SRVを使う
-	rootParameters[5].ShaderVisibility = D3D12_SHADER_VISIBILITY_PIXEL;//PixelShaderを使う
-	rootParameters[5].DescriptorTable.pDescriptorRanges = &descriptorRange[1];//Tableの中身の配列を指定
-	rootParameters[5].DescriptorTable.NumDescriptorRanges = 1;
-
+	builder->AddSRVTable(ShaderType::kPixel, 1);
 	//スポットライト
-	rootParameters[6].ParameterType = D3D12_ROOT_PARAMETER_TYPE_DESCRIPTOR_TABLE;//SRVを使う
-	rootParameters[6].ShaderVisibility = D3D12_SHADER_VISIBILITY_PIXEL;//PixelShaderを使う
-	rootParameters[6].DescriptorTable.pDescriptorRanges = &descriptorRange[2];//Tableの中身の配列を指定
-	rootParameters[6].DescriptorTable.NumDescriptorRanges = 1;
-
+	builder->AddSRVTable(ShaderType::kPixel, 2);
 	//リムライト
-	rootParameters[7].ParameterType = D3D12_ROOT_PARAMETER_TYPE_CBV;//CBVを使うb0のbと一致する	
-	rootParameters[7].ShaderVisibility = D3D12_SHADER_VISIBILITY_PIXEL;//PixelShaderを使う
-	rootParameters[7].Descriptor.ShaderRegister = 3;//レジスタ番号3
-
+	builder->AddCBV(ShaderType::kPixel, 3);
 	//環境マップ情報
-	rootParameters[8].ParameterType = D3D12_ROOT_PARAMETER_TYPE_DESCRIPTOR_TABLE;//DescriptorTableを使う
-	rootParameters[8].ShaderVisibility = D3D12_SHADER_VISIBILITY_PIXEL;//PixelShaderを使う
-	rootParameters[8].DescriptorTable.pDescriptorRanges = &descriptorRange[4];//Tableの中身の配列を指定
-	rootParameters[8].DescriptorTable.NumDescriptorRanges = 1;
+	builder->AddSRVTable(ShaderType::kPixel, 3);
 
-	descriptionRootSignature.pParameters = rootParameters;//ルートパラメータ配列へのポインタ
-	descriptionRootSignature.NumParameters = _countof(rootParameters);//配列の長さ
-	//ルートシグネイチャBlob
-	ComPtr<ID3DBlob>signatureBlob = nullptr;
-	ComPtr<ID3DBlob> errorBlob = nullptr;
-	//シリアライズしてバイナリにする
-	HRESULT hr = D3D12SerializeRootSignature(&descriptionRootSignature, D3D_ROOT_SIGNATURE_VERSION_1, &signatureBlob, &errorBlob);
-	if (FAILED(hr)){
-		Logger::OutputLog(reinterpret_cast<char*>(errorBlob->GetBufferPointer()));
-		assert(false);
-	}
-	HRESULT result = S_FALSE;
-	result = directXBase_->GetDevice()->CreateRootSignature(0, signatureBlob->GetBufferPointer(), signatureBlob->GetBufferSize(), IID_PPV_ARGS(&rootSignature_));
-	assert(SUCCEEDED(result));
+	//構築
+	rootSignature_ = builder->Build(directXBase_->GetDevice());
 }
 
 //ルートシグネイチャBlobの生成(Particle用)
 void GraphicsPipeline::CreateRootSignatureBlobForParticle(){
-	//RootSignature作成
-	D3D12_ROOT_SIGNATURE_DESC descriptionRootSignature{};
-	descriptionRootSignature.Flags = D3D12_ROOT_SIGNATURE_FLAG_ALLOW_INPUT_ASSEMBLER_INPUT_LAYOUT;
+	//ルートシグネイチャのビルダー
+	std::unique_ptr<RootSignatureBuilder>builder = std::make_unique<RootSignatureBuilder>();
+	builder->Initialize();
 
 	//Samplerの設定
-	std::array<D3D12_STATIC_SAMPLER_DESC, 1> staticSamplers = SettingSampler();
-	descriptionRootSignature.pStaticSamplers = &staticSamplers[0];
-	descriptionRootSignature.NumStaticSamplers = static_cast<uint32_t>(staticSamplers.size());
-
-	//DescriptorRange
-	D3D12_DESCRIPTOR_RANGE descriptorRangeForInstancing[1] = {};
-	descriptorRangeForInstancing[0].BaseShaderRegister = 0;//0から始まる
-	descriptorRangeForInstancing[0].NumDescriptors = 1;//数は1つ
-	descriptorRangeForInstancing[0].RangeType = D3D12_DESCRIPTOR_RANGE_TYPE_SRV;//SRVを使う
-	descriptorRangeForInstancing[0].OffsetInDescriptorsFromTableStart = D3D12_DESCRIPTOR_RANGE_OFFSET_APPEND;//Offsetを自動計算
-
-	//RootParameterの作成。複数設定できるので配列。
-	D3D12_ROOT_PARAMETER rootParameters[4] = {};
+	builder->AddStaticSampler(ShaderType::kPixel, 0);
 	//色情報
-	rootParameters[0].ParameterType = D3D12_ROOT_PARAMETER_TYPE_CBV;//CBVを使うb0のbと一致する	
-	rootParameters[0].ShaderVisibility = D3D12_SHADER_VISIBILITY_PIXEL;//PixelShaderを使う
-	rootParameters[0].Descriptor.ShaderRegister = 0;//レジスタ番号0とバインドb0の0と一致する
-
+	builder->AddCBV(ShaderType::kPixel, 0);
 	//Transform
-	rootParameters[1].ParameterType = D3D12_ROOT_PARAMETER_TYPE_DESCRIPTOR_TABLE;//DescriptorTableを使う
-	rootParameters[1].ShaderVisibility = D3D12_SHADER_VISIBILITY_VERTEX;//VertexShaderを使う
-	rootParameters[1].DescriptorTable.pDescriptorRanges = descriptorRangeForInstancing;//Tableの中身の配列を指定
-	rootParameters[1].DescriptorTable.NumDescriptorRanges = _countof(descriptorRangeForInstancing);//Tableで利用する数
-
-	//DescriptorTable(DescriptorRangeをまとめたもの)
-	rootParameters[2].ParameterType = D3D12_ROOT_PARAMETER_TYPE_DESCRIPTOR_TABLE;//DescriptorTableを使う
-	rootParameters[2].ShaderVisibility = D3D12_SHADER_VISIBILITY_PIXEL;//PixelShaderを使う
-	rootParameters[2].DescriptorTable.pDescriptorRanges = descriptorRangeForInstancing;//Tableの中身の配列を指定
-	rootParameters[2].DescriptorTable.NumDescriptorRanges = _countof(descriptorRangeForInstancing);//Tableで利用する数
-
+	builder->AddSRVTable(ShaderType::kVertex, 0);
+	//テクスチャ
+	builder->AddSRVTable(ShaderType::kPixel, 0);
 	//カメラ
-	rootParameters[3].ParameterType = D3D12_ROOT_PARAMETER_TYPE_CBV;//CBVを使う
-	rootParameters[3].ShaderVisibility = D3D12_SHADER_VISIBILITY_VERTEX;//PixelShaderを使う
-	rootParameters[3].Descriptor.ShaderRegister = 0;//レジスタ番号2を使う
+	builder->AddCBV(ShaderType::kVertex, 0);
 
-	descriptionRootSignature.pParameters = rootParameters;//ルートパラメータ配列へのポインタ
-	descriptionRootSignature.NumParameters = _countof(rootParameters);//配列の長さ
-	//ルートシグネイチャBlob
-	ComPtr<ID3DBlob>signatureBlob = nullptr;
-	ComPtr<ID3DBlob> errorBlob = nullptr;
-	//シリアライズしてバイナリにする
-	HRESULT hr = D3D12SerializeRootSignature(&descriptionRootSignature, D3D_ROOT_SIGNATURE_VERSION_1, &signatureBlob, &errorBlob);
-	if (FAILED(hr)){
-		Logger::OutputLog(reinterpret_cast<char*>(errorBlob->GetBufferPointer()));
-		assert(false);
-	}
-	HRESULT result = S_FALSE;
-	result = directXBase_->GetDevice()->CreateRootSignature(0, signatureBlob->GetBufferPointer(), signatureBlob->GetBufferSize(), IID_PPV_ARGS(&rootSignature_));
-	assert(SUCCEEDED(result));
+	//構築
+	rootSignature_ = builder->Build(directXBase_->GetDevice());
 }
 
 //ルートシグネイチャBlobの生成(DebugDraw)
 void GraphicsPipeline::CreateRootSignatureBlobForWireframe(){
-	//RootSignature作成
-	D3D12_ROOT_SIGNATURE_DESC descriptionRootSignature{};
-	descriptionRootSignature.Flags = D3D12_ROOT_SIGNATURE_FLAG_ALLOW_INPUT_ASSEMBLER_INPUT_LAYOUT;
+	//ルートシグネイチャのビルダー
+	std::unique_ptr<RootSignatureBuilder>builder = std::make_unique<RootSignatureBuilder>();
+	builder->Initialize();
 
 	//RootParameterの作成。複数設定できるので配列。
 	D3D12_ROOT_PARAMETER rootParameters[3] = {};
 	//色情報
-	rootParameters[0].ParameterType = D3D12_ROOT_PARAMETER_TYPE_CBV;//CBVを使うb0のbと一致する	
-	rootParameters[0].ShaderVisibility = D3D12_SHADER_VISIBILITY_PIXEL;//PixelShaderを使う
-	rootParameters[0].Descriptor.ShaderRegister = 0;//レジスタ番号0とバインドb0の0と一致する
-
+	builder->AddCBV(ShaderType::kPixel, 0);
 	//Transform
-	rootParameters[1].ParameterType = D3D12_ROOT_PARAMETER_TYPE_CBV;//CBVを使う
-	rootParameters[1].ShaderVisibility = D3D12_SHADER_VISIBILITY_VERTEX;//VertexShaderを使う
-	rootParameters[1].Descriptor.ShaderRegister = 0;//レジスタ番号
-
+	builder->AddCBV(ShaderType::kVertex, 0);
 	//Camera
-	rootParameters[2].ParameterType = D3D12_ROOT_PARAMETER_TYPE_CBV;//CBVを使う
-	rootParameters[2].ShaderVisibility = D3D12_SHADER_VISIBILITY_VERTEX;//VertexShaderを使う
-	rootParameters[2].Descriptor.ShaderRegister = 1;//レジスタ番号
+	builder->AddCBV(ShaderType::kVertex, 1);
 
-	descriptionRootSignature.pParameters = rootParameters;//ルートパラメータ配列へのポインタ
-	descriptionRootSignature.NumParameters = _countof(rootParameters);//配列の長さ
-
-	//ルートシグネイチャBlob
-	ComPtr<ID3DBlob>signatureBlob = nullptr;
-	ComPtr<ID3DBlob> errorBlob = nullptr;
-
-	//シリアライズしてバイナリにする
-	HRESULT hr = D3D12SerializeRootSignature(&descriptionRootSignature, D3D_ROOT_SIGNATURE_VERSION_1, &signatureBlob, &errorBlob);
-	if (FAILED(hr)){
-		Logger::OutputLog(reinterpret_cast<char*>(errorBlob->GetBufferPointer()));
-		assert(false);
-	}
-
-	HRESULT result = S_FALSE;
-	result = directXBase_->GetDevice()->CreateRootSignature(0, signatureBlob->GetBufferPointer(), signatureBlob->GetBufferSize(), IID_PPV_ARGS(&rootSignature_));
-	assert(SUCCEEDED(result));
+	//構築
+	rootSignature_ = builder->Build(directXBase_->GetDevice());
 }
 
 //インプットレイアウトの初期化
@@ -511,8 +303,8 @@ ComPtr<ID3D12PipelineState> GraphicsPipeline::CreateGraphicsPipelineForDebugDraw
 	return graphicsPipelineState;
 }
 
-//深度バッファの生成(Object3d)
-void GraphicsPipeline::CreateDepthStencilResourceForObject3d(){
+//深度バッファの生成(ReadWrite)
+void GraphicsPipeline::CreateDepthStencilResourceReadWrite(){
 	//深度バッファを取得
 	depthStencilResource_ = directXBase_->GetDepthStencilTexture();
 	//Depthの機能を有効化
@@ -523,20 +315,8 @@ void GraphicsPipeline::CreateDepthStencilResourceForObject3d(){
 	depthStencilDesc_.DepthFunc = D3D12_COMPARISON_FUNC_LESS_EQUAL;
 }
 
-//深度バッファの生成(Wireframe)
-void GraphicsPipeline::CreateDepthStencilResourceForWireframe(){
-	//深度バッファを取得
-	depthStencilResource_ = directXBase_->GetDepthStencilTexture();
-	//Depthの機能を有効化
-	depthStencilDesc_.DepthEnable = true;
-	//書き込みをする
-	depthStencilDesc_.DepthWriteMask = D3D12_DEPTH_WRITE_MASK_ZERO;
-	//比較関数
-	depthStencilDesc_.DepthFunc = D3D12_COMPARISON_FUNC_LESS_EQUAL;
-}
-
 //深度バッファの生成(パーティクル)
-void GraphicsPipeline::CreateDepthStencilResourceForParticle(){
+void GraphicsPipeline::CreateDepthStencilResourceReadOnly(){
 	//深度バッファを取得
 	depthStencilResource_ = directXBase_->GetDepthStencilTexture();
 	//Depthの機能を有効化
@@ -571,19 +351,3 @@ void GraphicsPipeline::SetVertexShaderFileName(const std::wstring& fileName){
 void GraphicsPipeline::SetPixelShaderFileName(const std::wstring& fileName){
 	pixelShaderFileName_ = fileName;
 }
-
-//Samplerの設定
-std::array<D3D12_STATIC_SAMPLER_DESC, 1> GraphicsPipeline::SettingSampler(){
-	//Samplerの設定
-	std::array<D3D12_STATIC_SAMPLER_DESC, 1> staticSamplers = {};
-	staticSamplers[0].Filter = D3D12_FILTER_MIN_MAG_MIP_LINEAR;//バイナリフィルター
-	staticSamplers[0].AddressU = D3D12_TEXTURE_ADDRESS_MODE_WRAP;//0~1の範囲外をリピート
-	staticSamplers[0].AddressV = D3D12_TEXTURE_ADDRESS_MODE_WRAP;//0~1の範囲外をリピート
-	staticSamplers[0].AddressW = D3D12_TEXTURE_ADDRESS_MODE_WRAP;//0~1の範囲外をリピート
-	staticSamplers[0].ComparisonFunc = D3D12_COMPARISON_FUNC_NEVER;//比較しない
-	staticSamplers[0].MaxLOD = D3D12_FLOAT32_MAX;//ありたっけのMipmapを使う
-	staticSamplers[0].ShaderRegister = 0;//レジスタ番号
-	staticSamplers[0].ShaderVisibility = D3D12_SHADER_VISIBILITY_PIXEL;//PixelShaderを使う
-	return staticSamplers;
-}
-

@@ -1,6 +1,6 @@
 #pragma once
 #include "Blend.h"
-#include "GraphicsPipelineData.h"
+#include "RasterizerMode.h"
 #include <dxcapi.h>
 #include <wrl.h>
 #include <d3d12.h>
@@ -96,19 +96,14 @@ public://メンバ関数
 	void CompilePixelShader();
 
 	/// <summary>
-	/// 深度バッファの生成(Object3d)
+	/// 深度バッファの生成(ReadWrite)
 	/// </summary>
-	void CreateDepthStencilResourceForObject3d();
+	void CreateDepthStencilResourceReadWrite();
 
 	/// <summary>
-	/// 深度バッファの生成(Wireframe)
+	/// 深度バッファの生成(ReadOnly)
 	/// </summary>
-	void CreateDepthStencilResourceForWireframe();
-
-	/// <summary>
-	/// 深度バッファの生成(パーティクル)
-	/// </summary>
-	void CreateDepthStencilResourceForParticle();
+	void CreateDepthStencilResourceReadOnly();
 
 	/// <summary>
 	/// PSOの生成
@@ -151,12 +146,6 @@ public://メンバ関数
 	/// </summary>
 	/// <param name="fileName">ファイル名</param>
 	void SetPixelShaderFileName(const std::wstring& fileName);
-private://メンバ関数
-	/// <summary>
-	/// Samplerの設定
-	/// </summary>
-	/// <returns>Sampler</returns>
-	std::array<D3D12_STATIC_SAMPLER_DESC, 1> SettingSampler();
 private://メンバ変数
 	//DirectXの基盤
 	DirectXBase* directXBase_ = nullptr;

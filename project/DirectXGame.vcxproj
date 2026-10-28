@@ -87,6 +87,7 @@
     <ClCompile Include="engine\graphics\pipeline\Blend.cpp" />
     <ClCompile Include="engine\graphics\pipeline\GraphicsPipeline.cpp" />
     <ClCompile Include="engine\graphics\pipeline\PipelineManager.cpp" />
+    <ClCompile Include="engine\graphics\pipeline\RootSignatureBuilder.cpp" />
     <ClCompile Include="engine\graphics\rendering\camera\CameraRenderer.cpp" />
     <ClCompile Include="engine\graphics\rendering\object3d\Object3dRenderer.cpp" />
     <ClCompile Include="engine\graphics\rendering\particle\ParticleRenderer.cpp" />
@@ -203,9 +204,10 @@
     <ClInclude Include="engine\graphics\pipeline\Blend.h" />
     <ClInclude Include="engine\graphics\pipeline\BlendMode.h" />
     <ClInclude Include="engine\graphics\pipeline\GraphicsPipeline.h" />
-    <ClInclude Include="engine\graphics\pipeline\GraphicsPipelineData.h" />
+    <ClInclude Include="engine\graphics\pipeline\RasterizerMode.h" />
     <ClInclude Include="engine\graphics\pipeline\PipelineManager.h" />
     <ClInclude Include="engine\graphics\pipeline\PipelineManagerData.h" />
+    <ClInclude Include="engine\graphics\pipeline\RootSignatureBuilder.h" />
     <ClInclude Include="engine\graphics\rendering\camera\CameraRenderData.h" />
     <ClInclude Include="engine\graphics\rendering\camera\CameraRenderer.h" />
     <ClInclude Include="engine\graphics\rendering\object3d\Object3dRenderer.h" />

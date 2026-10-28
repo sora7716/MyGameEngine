@@ -474,6 +474,9 @@
     <ClCompile Include="engine\collision\SphereCollider.cpp">
       <Filter>engine\collision</Filter>
     </ClCompile>
+    <ClCompile Include="engine\graphics\pipeline\RootSignatureBuilder.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="application\scene\TestPlayScene.h">
@@ -731,7 +734,7 @@
     <ClInclude Include="engine\graphics\pipeline\GraphicsPipeline.h">
       <Filter>engine\graphics\pipeline</Filter>
     </ClInclude>
-    <ClInclude Include="engine\graphics\pipeline\GraphicsPipelineData.h">
+    <ClInclude Include="engine\graphics\pipeline\RasterizerMode.h">
       <Filter>engine\graphics\pipeline</Filter>
     </ClInclude>
     <ClInclude Include="engine\graphics\texture\TextureManager.h">
@@ -829,6 +832,9 @@
     </ClInclude>
     <ClInclude Include="engine\collision\SphereCollider.h">
       <Filter>engine\collision</Filter>
+    </ClInclude>
+    <ClInclude Include="engine\graphics\pipeline\RootSignatureBuilder.h">
+      <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

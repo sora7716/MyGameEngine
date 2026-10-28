@@ -60,7 +60,7 @@ void PipelineManager::CreatePSOForObject3d(){
 	graphicsPipeline_->SetVertexShaderFileName(L"Object3d.VS.hlsl");
 	graphicsPipeline_->SetPixelShaderFileName(L"Object3d.PS.hlsl");
 	//深度バッファ
-	graphicsPipeline_->CreateDepthStencilResourceForObject3d();
+	graphicsPipeline_->CreateDepthStencilResourceReadWrite();
 	//シグネイチャBlobの初期化
 	graphicsPipeline_->CreateRootSignatureBlobForObject3d();
 	//インプットレイアウト
@@ -124,7 +124,7 @@ void PipelineManager::CreatePSOForParticle(){
 	//ピクセルシェーダBlob
 	graphicsPipeline_->CompilePixelShader();
 	//深度バッファ
-	graphicsPipeline_->CreateDepthStencilResourceForParticle();
+	graphicsPipeline_->CreateDepthStencilResourceReadOnly();
 	//PSO
 	for (uint32_t i = 0; i < static_cast<int32_t>(BlendMode::kCountOfBlendMode); i++){
 		//ブレンドステート
@@ -141,7 +141,7 @@ void PipelineManager::CreatePSOForSkyBox(){
 	graphicsPipeline_->SetVertexShaderFileName(L"SkyBox.VS.hlsl");
 	graphicsPipeline_->SetPixelShaderFileName(L"SkyBox.PS.hlsl");
 	//深度バッファ
-	graphicsPipeline_->CreateDepthStencilResourceForParticle();
+	graphicsPipeline_->CreateDepthStencilResourceReadOnly();
 	//シグネイチャBlobの初期化
 	graphicsPipeline_->CreateRootSignatureBlobForSkyBox();
 	//インプットレイアウト
@@ -169,7 +169,7 @@ void PipelineManager::CreatePSOForWireframe(){
 	graphicsPipeline_->SetVertexShaderFileName(L"Wireframe.VS.hlsl");
 	graphicsPipeline_->SetPixelShaderFileName(L"Wireframe.PS.hlsl");
 	//深度バッファ
-	graphicsPipeline_->CreateDepthStencilResourceForWireframe();
+	graphicsPipeline_->CreateDepthStencilResourceReadOnly();
 	//シグネイチャBlobの初期化
 	graphicsPipeline_->CreateRootSignatureBlobForWireframe();
 	//インプットレイアウト

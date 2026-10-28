@@ -72,7 +72,7 @@ void GizmoVisualizer::SelectColliderWireframe(){
 				primitiveData::OBB obb = boxCollider->GetOBB();
 
 				//SRTの設定
-				cube->SetLocalScale(obb.size);
+				cube->SetLocalScale(obb.size * 2.0f);
 				cube->SetLocalRotate(boxCollider->GetOwner()->GetTransform().rotate);
 				cube->SetLocalTranslate(obb.center);
 

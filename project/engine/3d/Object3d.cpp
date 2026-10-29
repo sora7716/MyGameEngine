@@ -167,7 +167,7 @@ void Object3d::RegisterProperties(PropertyRegistry* registry){
 		registry->Add("輝度", material->GetSlots()[i].material.shininess, this, i, &Object3d::SetShininess, 0.1f);
 
 		//環境マップの映り込み
-		registry->Add("環境マップの映り込み", material->GetSlots()[i].material.environmentCoefficient, this, i, &Object3d::SetEnvironmentCoefficient, 0.1f);
+		registry->Add("環境マップの映り込み", material->GetSlots()[i].material.environmentCoefficient, this, i, &Object3d::SetEnvironmentCoefficient, 0.01f);
 
 		//グループの終了
 		registry->EndGroup();

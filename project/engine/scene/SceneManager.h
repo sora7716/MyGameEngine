@@ -9,6 +9,8 @@
 class DebugEditor;
 class RenderSystem;
 class CollisionSystem;
+class TagManager;
+class LightingManager;
 
 /// <summary>
 /// シーン管理
@@ -28,8 +30,10 @@ public://静的メンバ関数
 	/// <param name="sceneContext">シーンで必要なもの</param>
 	/// <param name="renderSystem">描画システム</param>
 	/// <param name="collisionSystem">衝突判定システム</param>
+	/// <param name="tagManager">タグの管理</param>
+	/// <param name="lightingManager">ライティングの管理</param>
 	/// <returns>インスタンス</returns>
-	static std::unique_ptr<SceneManager>Create(ConstructorKey key, const SceneContext& sceneContext, RenderSystem* renderSystem, CollisionSystem* collisionSystem);
+	static std::unique_ptr<SceneManager>Create(ConstructorKey key, const SceneContext& sceneContext, RenderSystem* renderSystem, CollisionSystem* collisionSystem, TagManager* tagManager,LightingManager*lightingManager);
 public://メンバ関数
 	/// <summary>
 	/// コンストラクタ
@@ -48,7 +52,9 @@ public://メンバ関数
 	/// <param name="sceneContext">シーンで必要なもの</param>
 	/// <param name="renderSystem">描画システム</param>
 	/// <param name="collisionSystem">衝突判定システム</param>
-	void Initialize(const SceneContext& sceneContext, RenderSystem* renderSystem, CollisionSystem* collisionSystem);
+	/// <param name="tagManager">タグの管理</param>
+	/// <param name="lightingManager">ライティングの管理</param>
+	void Initialize(const SceneContext& sceneContext, RenderSystem* renderSystem, CollisionSystem* collisionSystem, TagManager* tagManager, LightingManager* lightingManager);
 
 	/// <summary>
 	/// 更新
@@ -60,7 +66,7 @@ public://メンバ関数
 	/// </summary>
 	/// <param name="sceneHandle">SceneのGPUハンドル</param>
 	/// <param name="previewHandle">PreviewのGPUハンドル</param>
-	void Debug(D3D12_GPU_DESCRIPTOR_HANDLE sceneHandle,D3D12_GPU_DESCRIPTOR_HANDLE previewHandle);
+	void Debug(D3D12_GPU_DESCRIPTOR_HANDLE sceneHandle, D3D12_GPU_DESCRIPTOR_HANDLE previewHandle);
 
 	/// <summary>
 	/// 描画
@@ -111,5 +117,9 @@ private://メンバ変数
 	CollisionSystem* collisionSystem_ = nullptr;
 	//Gizmoの情報を見えるものにする
 	std::unique_ptr<GizmoVisualizer>gizmoVisualizer_ = nullptr;
+	//タグの管理
+	TagManager* tagManager_ = nullptr;
+	//ライティングの管理
+	LightingManager* lightingManager_ = nullptr;
 };
 

@@ -3,6 +3,7 @@
 #include "Logger.h"
 #include "StringUtility.h"
 #include "RootSignatureBuilder.h"
+#include "ShaderCompiler.h"
 #include <cassert>
 #pragma comment(lib,"d3d12.lib")
 #pragma comment(lib,"dxgi.lib")
@@ -11,11 +12,24 @@
 using namespace Microsoft::WRL;
 using namespace rasterizerMode;
 
+//生成
+std::unique_ptr<GraphicsPipeline> GraphicsPipeline::Create(){
+	std::unique_ptr<GraphicsPipeline>instance = std::make_unique<GraphicsPipeline>();
+	instance->Initialize();
+	return instance;
+}
+
 //コンストラクタ
 GraphicsPipeline::GraphicsPipeline(){}
 
 //デストラクタ
 GraphicsPipeline::~GraphicsPipeline(){}
+
+//初期化
+void GraphicsPipeline::Initialize(){
+	//シェーダコンパイラ
+	shaderCompiler_ = ShaderCompiler::Create();
+}
 
 //ルートシグネイチャBlobの生成(スプライト用)
 void GraphicsPipeline::CreateRootSignatureBlobForSprite(){
@@ -237,14 +251,14 @@ void GraphicsPipeline::InitializeRasterizerState(FillMode fillMode, CullingMode 
 //頂点シェーダのコンパイル
 void GraphicsPipeline::CompileVertexShader(){
 	//VertexShader
-	vertexShaderBlob_ = directXBase_->CompilerShader(L"engine/resources/shaders/vertex/" + vertexShaderFileName_, L"vs_6_0");
+	vertexShaderBlob_ = shaderCompiler_->CompileShader(L"engine/resources/shaders/vertex/" + vertexShaderFileName_, L"vs_6_0");
 	assert(vertexShaderBlob_ != nullptr);
 }
 
 //ピクセルシェーダのコンパイル
 void GraphicsPipeline::CompilePixelShader(){
 	//PixelShader
-	pixelShaderBlob_ = directXBase_->CompilerShader(L"engine/resources/shaders/pixel/" + pixelShaderFileName_, L"ps_6_0");
+	pixelShaderBlob_ = shaderCompiler_->CompileShader(L"engine/resources/shaders/pixel/" + pixelShaderFileName_, L"ps_6_0");
 	assert(pixelShaderBlob_ != nullptr);
 }
 

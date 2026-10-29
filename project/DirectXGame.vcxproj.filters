@@ -480,6 +480,9 @@
     <ClCompile Include="engine\graphics\pipeline\PipelineManagerData.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
+    <ClCompile Include="engine\asset\ShaderCompiler.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="application\scene\TestPlayScene.h">
@@ -838,6 +841,9 @@
     </ClInclude>
     <ClInclude Include="engine\graphics\pipeline\RootSignatureBuilder.h">
       <Filter>engine\graphics\pipeline</Filter>
+    </ClInclude>
+    <ClInclude Include="engine\asset\ShaderCompiler.h">
+      <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

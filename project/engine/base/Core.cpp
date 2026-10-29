@@ -67,7 +67,7 @@ void Core::Initialize(){
 	sceneContext_ = this;
 
 	//シーンマネージャー
-	sceneManager_ = SceneManager::Create(SceneManager::ConstructorKey{}, sceneContext_, renderSystem_.get(), collisionSystem_.get());
+	sceneManager_ = SceneManager::Create(SceneManager::ConstructorKey{}, sceneContext_, renderSystem_.get(), collisionSystem_.get(), tagManager_.get(), lightingManager_.get());
 	sceneManager_->SetSceneFactory(sceneFactory_.get());
 }
 

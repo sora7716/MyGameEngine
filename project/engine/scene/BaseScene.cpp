@@ -18,6 +18,13 @@ BaseScene::BaseScene(){
 BaseScene::~BaseScene(){
 }
 
+//セットアップ
+void BaseScene::Setup(const SceneContext& sceneContext, TagManager* tagManager){
+	sceneContext_ = sceneContext;
+	assert(tagManager);
+	tagManager_ = tagManager;
+}
+
 //初期化
 void BaseScene::Initialize(){
 	//ゲームオブジェクトの大きさを確保しておく(要素数は増えない)
@@ -29,7 +36,7 @@ void BaseScene::Initialize(){
 			continue;
 		}
 
-		if (!sceneContext_.tagManager->IsContainsTag(gameObject->GetTag())){
+		if (!tagManager_->IsContainsTag(gameObject->GetTag())){
 			//ゲームオブジェクトのタグがタグの管理になかった場合
 			gameObject->SetTag(TagManager::kDefaultTagName);
 		}
@@ -205,11 +212,6 @@ GameObject* BaseScene::CreateGameObject(){
 //ゲームオブジェクトの取得
 const std::vector<std::unique_ptr<GameObject>>& BaseScene::GetGameObjects()const{
 	return gameObjects_;
-}
-
-//セットアップ
-void BaseScene::SetUp(const SceneContext& sceneContext){
-	sceneContext_ = sceneContext;
 }
 
 //シーンで必要な情報の取得

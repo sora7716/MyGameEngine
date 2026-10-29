@@ -10,6 +10,7 @@
 
 //前方宣言
 class DirectXBase;
+class ShaderCompiler;
 
 /// <summary>
 /// グラフィックスパイプライン
@@ -17,6 +18,12 @@ class DirectXBase;
 class GraphicsPipeline{
 private://エイリアステンプレート
 	template <class T>using ComPtr = Microsoft::WRL::ComPtr<T>;
+public://静的メンバ関数
+	/// <summary>
+	/// 生成
+	/// </summary>
+	/// <returns>インスタンス</returns>
+	static std::unique_ptr<GraphicsPipeline>Create();
 public://メンバ関数
 	/// <summary>
 	/// コンストラクタ
@@ -27,6 +34,11 @@ public://メンバ関数
 	/// デストラクタ
 	/// </summary>
 	~GraphicsPipeline();
+
+	/// <summary>
+	/// 初期化
+	/// </summary>
+	void Initialize();
 
 	/// <summary>
 	/// ルートシグネイチャBlobの生成(スプライト用)
@@ -149,6 +161,8 @@ public://メンバ関数
 private://メンバ変数
 	//DirectXの基盤
 	DirectXBase* directXBase_ = nullptr;
+	//シェーダコンパイラ
+	std::unique_ptr<ShaderCompiler>shaderCompiler_ = nullptr;
 	//ルートシグネイチャ
 	ComPtr<ID3D12RootSignature>rootSignature_ = nullptr;
 	//インプットレイアウト

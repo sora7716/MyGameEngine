@@ -11,6 +11,7 @@ class GameObject;
 class DebugCameraController;
 class Camera;
 class CollisionSystem;
+class TagManager;
 
 /// <summary>
 /// シーンの基底クラス
@@ -26,6 +27,13 @@ public://メンバ関数
 	/// デストラクタ
 	/// </summary>
 	virtual ~BaseScene();
+
+	/// <summary>
+	/// セットアップ
+	/// </summary>
+	/// <param name="sceneContext">シーンに必要な情報</param>
+	/// <param name="tagManager">タグの管理</param>
+	void Setup(const SceneContext& sceneContext, TagManager* tagManager);
 
 	/// <summary>
 	/// 初期化
@@ -92,12 +100,6 @@ public://メンバ関数
 	const std::vector<std::unique_ptr<GameObject>>& GetGameObjects()const;
 
 	/// <summary>
-	/// セットアップ
-	/// </summary>
-	/// <param name="sceneContext">シーンに必要な情報</param>
-	void SetUp(const SceneContext& sceneContext);
-
-	/// <summary>
 	/// シーンで必要な情報の取得
 	/// </summary>
 	/// <returns>シーンに必要な情報</returns>
@@ -144,4 +146,6 @@ private://メンバ変数
 	DebugCameraController* debugCameraController_ = nullptr;
 	//デバッグカメラのポインタ
 	Camera* debugCamera_ = nullptr;
+	//タグの管理
+	TagManager* tagManager_ = nullptr;
 };

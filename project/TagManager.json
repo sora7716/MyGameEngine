@@ -4,7 +4,7 @@
         "SkyBox",
         "Player",
         "Enemy",
-        "Weapon",
-        "Ground"
+        "Ground",
+        "Light"
     ]
 }

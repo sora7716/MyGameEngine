@@ -1,5 +1,9 @@
 #pragma once
 #include "RenderData.h"
+#include <unordered_map>
+#include <string>
+#include <vector>
+#include <cstddef>
 
 //スロット
 struct MaterialInstanceSlot{
@@ -18,6 +22,12 @@ enum DiffuseModel:uint32_t{
 enum SpecularModel :uint32_t{
 	kPhong,
 	kBlingPhong
+};
+
+//パラメータの情報
+struct ParameterInfo{
+	float offset;//パラメータの位置
+	float size;//パラメータのサイズ
 };
 
 /// <summary>
@@ -190,5 +200,10 @@ private://メンバ変数
 	RimLight rimLight_ = {};
 	//マテリアルが変更されたかを判断する変数
 	uint64_t revision_ = 0;
+
+	//パラメータの情報
+	std::unordered_map<std::string, ParameterInfo>parameterInfos_;
+	//パラメータのバイト
+	std::vector<std::byte>parameterValues_;
 };
 

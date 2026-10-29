@@ -38,6 +38,7 @@
     <ClCompile Include="engine\3d\Object3d.cpp" />
     <ClCompile Include="engine\3d\SkyBox.cpp" />
     <ClCompile Include="engine\asset\ModelLoader.cpp" />
+    <ClCompile Include="engine\asset\ShaderCompiler.cpp" />
     <ClCompile Include="engine\asset\TextureLoader.cpp" />
     <ClCompile Include="engine\audio\Audio.cpp" />
     <ClCompile Include="engine\audio\AudioManager.cpp" />
@@ -155,6 +156,7 @@
     <ClInclude Include="engine\3d\Object3d.h" />
     <ClInclude Include="engine\3d\SkyBox.h" />
     <ClInclude Include="engine\asset\ModelLoader.h" />
+    <ClInclude Include="engine\asset\ShaderCompiler.h" />
     <ClInclude Include="engine\asset\TextureLoader.h" />
     <ClInclude Include="engine\audio\Audio.h" />
     <ClInclude Include="engine\audio\AudioManager.h" />

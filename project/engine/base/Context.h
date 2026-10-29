@@ -7,8 +7,6 @@ class ModelManager;
 class SceneManager;
 class AudioManager;
 class ImGuiManager;
-class TagManager;
-class LightingManager;
 class Core;
 class DirectXBase;
 class SRVManager;
@@ -17,15 +15,12 @@ class RTVManager;
 
 //シーンで必要なクラス
 struct SceneContext{
-	WinApi* winApi;
 	Input* input;
 	TextureManager* textureManager;
 	ModelManager* modelManager;
 	SceneManager* sceneManager;
 	AudioManager* audioManager;
 	ImGuiManager* imGuiManager;
-	TagManager* tagManager;
-	LightingManager* lightingManager;
 
 	/// <summary>
 	/// ゲームエンジンの核から必要な物を抽出する

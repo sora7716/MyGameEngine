@@ -10,11 +10,11 @@
 #include <cassert>
 
 //生成
-std::unique_ptr<SceneManager> SceneManager::Create(ConstructorKey key, const SceneContext& sceneContext, RenderSystem* renderSystem, CollisionSystem* collisionSystem){
+std::unique_ptr<SceneManager> SceneManager::Create(ConstructorKey key, const SceneContext& sceneContext, RenderSystem* renderSystem, CollisionSystem* collisionSystem, TagManager* tagManager, LightingManager* lightingManager){
 	//生成
 	std::unique_ptr<SceneManager>instance = std::make_unique<SceneManager>(key);
 	//初期化
-	instance->Initialize(sceneContext, renderSystem, collisionSystem);
+	instance->Initialize(sceneContext, renderSystem, collisionSystem, tagManager, lightingManager);
 
 	return instance;
 }
@@ -29,20 +29,28 @@ SceneManager::~SceneManager(){
 }
 
 //初期化
-void SceneManager::Initialize(const SceneContext& sceneContext, RenderSystem* renderSystem, CollisionSystem* collisionSystem){
+void SceneManager::Initialize(const SceneContext& sceneContext, RenderSystem* renderSystem, CollisionSystem* collisionSystem, TagManager* tagManager, LightingManager* lightingManager){
 	//必要な物を記録
 	sceneContext_ = sceneContext;
 	//描画システムを記録
 	assert(renderSystem);
 	renderSystem_ = renderSystem;
+	//タグの管理を記録
+	assert(tagManager);
+	tagManager_ = tagManager;
 	//衝突判定システムを記録
 	assert(collisionSystem);
 	collisionSystem_ = collisionSystem;
+	//ライティングの管理を記録
+	assert(lightingManager);
+	lightingManager_ = lightingManager;
+
 	//シーンマネージャだけ自分から渡す
 	sceneContext_.sceneManager = this;
+
 	//デバッグエディターの生成と初期化
 	debugEditor_ = std::make_unique<DebugEditor>();
-	debugEditor_->Initialize(sceneContext_.textureManager, sceneContext_.tagManager);
+	debugEditor_->Initialize(sceneContext_.textureManager, tagManager_);
 
 	//Gizmoの情報を見えるものにするの初期化と生成
 	gizmoVisualizer_ = std::make_unique<GizmoVisualizer>();
@@ -56,7 +64,7 @@ void SceneManager::Update(){
 		//旧シーンの終了
 		if (scene_){
 			//デバッグエディタの初期化
-			debugEditor_->Initialize(sceneContext_.textureManager, sceneContext_.tagManager);
+			debugEditor_->Initialize(sceneContext_.textureManager, tagManager_);
 			//旧シーンの解放
 			scene_->Finalize();
 			delete scene_;
@@ -65,7 +73,7 @@ void SceneManager::Update(){
 		scene_ = nextScene_;
 		nextScene_ = nullptr;
 		//シーンに必要な情報の設定
-		scene_->SetUp(sceneContext_);
+		scene_->Setup(sceneContext_, tagManager_);
 		//次のシーン
 		scene_->Initialize();
 		//ゲームオブジェクト一覧をDebugEditorに設定
@@ -180,7 +188,7 @@ void SceneManager::Debug([[maybe_unused]] D3D12_GPU_DESCRIPTOR_HANDLE sceneHandl
 	std::string oldTag = "\0";
 	std::string newTag = "\0";
 	if (debugEditor_->ConsumeRenameTagRequest(oldTag, newTag)){
-		if (sceneContext_.tagManager->RenameTag(oldTag, newTag)){
+		if (tagManager_->RenameTag(oldTag, newTag)){
 			scene_->ReplaceGameObjectTag(oldTag, newTag);
 		}
 	}
@@ -188,7 +196,7 @@ void SceneManager::Debug([[maybe_unused]] D3D12_GPU_DESCRIPTOR_HANDLE sceneHandl
 	//タグの削除を要求
 	std::string deleteTag = "\0";
 	if (debugEditor_->ConsumeDeleteTagRequest(deleteTag)){
-		if (sceneContext_.tagManager->RemoveTag(deleteTag)){
+		if (tagManager_->RemoveTag(deleteTag)){
 			scene_->ReplaceGameObjectTag(deleteTag, TagManager::kDefaultTagName);
 		}
 	}
@@ -203,11 +211,11 @@ void SceneManager::Debug([[maybe_unused]] D3D12_GPU_DESCRIPTOR_HANDLE sceneHandl
 void SceneManager::Draw(CameraMode cameraMode){
 	const std::vector<std::unique_ptr<GameObject>>& gameObjects = scene_->GetGameObjects();
 	//平行光源の追加
-	sceneContext_.lightingManager->CollectActiveDirectionalLight(gameObjects);
+	lightingManager_->CollectActiveDirectionalLight(gameObjects);
 	//点光源の追加
-	sceneContext_.lightingManager->CollectActivePointLight(gameObjects);
+	lightingManager_->CollectActivePointLight(gameObjects);
 	//スポットライトの追加
-	sceneContext_.lightingManager->CollectActiveSpotLight(gameObjects);
+	lightingManager_->CollectActiveSpotLight(gameObjects);
 
 	//カメラの追加
 	renderSystem_->CollectActiveCameras(gameObjects);

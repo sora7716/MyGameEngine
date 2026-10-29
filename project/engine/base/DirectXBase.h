@@ -89,11 +89,6 @@ public://メンバ関数
 	void InitializeScissorRect();
 
 	/// <summary>
-	/// DXCコンパイラの生成
-	/// </summary>
-	void CreateDXCCompiler();
-
-	/// <summary>
 	/// 描画開始位置
 	/// </summary>
 	/// <param name="rtvHandle">rtvのハンドル</param>
@@ -113,14 +108,6 @@ public://メンバ関数
 	/// <param name="shaderVisible">シェーダを使うか</param>
 	/// <returns>デスクリプターヒープ</returns>
 	ComPtr<ID3D12DescriptorHeap> CreateDescriptorHeap(D3D12_DESCRIPTOR_HEAP_TYPE heapType, UINT numDescriptors, bool shaderVisible);
-
-	/// <summary>
-	/// シェーダーのコンパイラ
-	/// </summary>
-	/// <param name="filePath">CompilerするShaderファイルへのパス</param>
-	/// <param name="profile">Compilerに使用するProfile</param>
-	/// <returns>コンパイラシェーダー</returns>
-	ComPtr<IDxcBlob> CompilerShader(const std::wstring& filePath, const wchar_t* profile);
 
 	/// <summary>
 	/// バッファリソースの生成
@@ -289,12 +276,6 @@ private://メンバ変数
 	ComPtr<ID3D12Fence> fence_ = nullptr;
 	//FenceEvent	
 	HANDLE fenceEvent_ = 0;
-	//DXCユーティリティ
-	ComPtr<IDxcUtils> dxcUtils_ = nullptr;
-	//DXCコンパイラ
-	ComPtr<IDxcCompiler3> dxcCompiler_ = nullptr;
-	//デフォルトインクルードハンドラ
-	ComPtr<IDxcIncludeHandler> includeHandler_ = nullptr;
 	//FenceValue
 	uint64_t fenceValue_ = 0;
 	//ビューポート

@@ -42,7 +42,8 @@ void PipelineManager::Initialize(DirectXBase* directXBase){
 	//ブレンド
 	blend_ = std::make_unique<Blend>();
 	//グラフィックスパイプライン
-	graphicsPipeline_ = std::make_unique<GraphicsPipeline>();
+	graphicsPipeline_ = GraphicsPipeline::Create();
+
 	//DirectXを記録
 	graphicsPipeline_->SetDirectXBase(directXBase);
 }
@@ -84,7 +85,7 @@ void PipelineManager::CreatePSOForObject3d(const PipelineKey& key){
 	//PSO
 	//ブレンドステート
 	graphicsPipeline_->InitializeBlendState(key.blendMode);
-	
+
 	PipelineSet pipelineSet = {};
 	//グラフィックスパイプラインの生成
 	pipelineSet.graphicsPipelineState = graphicsPipeline_->CreateGraphicsPipeline();

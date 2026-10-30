@@ -1,6 +1,7 @@
 #pragma once
 #include <dxgi1_6.h>
 #include <dxgidebug.h>
+#include <string>
 #include <dxcapi.h>
 #include <wrl.h>
 #include <memory>

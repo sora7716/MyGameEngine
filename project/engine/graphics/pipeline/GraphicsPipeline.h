@@ -11,6 +11,7 @@
 //前方宣言
 class DirectXBase;
 class ShaderCompiler;
+class ShaderManager;
 
 /// <summary>
 /// グラフィックスパイプライン
@@ -22,8 +23,9 @@ public://静的メンバ関数
 	/// <summary>
 	/// 生成
 	/// </summary>
+	/// <param name="shaderManager">シェーダの管理</param>
 	/// <returns>インスタンス</returns>
-	static std::unique_ptr<GraphicsPipeline>Create();
+	static std::unique_ptr<GraphicsPipeline>Create(ShaderManager*shaderManager);
 public://メンバ関数
 	/// <summary>
 	/// コンストラクタ
@@ -38,7 +40,8 @@ public://メンバ関数
 	/// <summary>
 	/// 初期化
 	/// </summary>
-	void Initialize();
+	/// <param name="shaderManager">シェーダの管理</param>
+	void Initialize(ShaderManager* shaderManager);
 
 	/// <summary>
 	/// ルートシグネイチャBlobの生成(スプライト用)
@@ -152,12 +155,6 @@ public://メンバ関数
 	/// </summary>
 	/// <param name="fileName">ファイル名</param>
 	void SetVertexShaderFileName(const std::wstring& fileName);
-
-	/// <summary>
-	/// ピクセルシェーダのファイル名をセット
-	/// </summary>
-	/// <param name="fileName">ファイル名</param>
-	void SetPixelShaderFileName(const std::wstring& fileName);
 private://メンバ変数
 	//DirectXの基盤
 	DirectXBase* directXBase_ = nullptr;
@@ -181,5 +178,5 @@ private://メンバ変数
 	ComPtr<ID3D12Resource> depthStencilResource_ = nullptr;
 	D3D12_DEPTH_STENCIL_DESC depthStencilDesc_{};
 	//シェーダの管理
-
+	ShaderManager* shaderManager_ = nullptr;
 };

@@ -52,7 +52,7 @@ public://メンバ関数
 	/// <param name="filePath">ファイルパス</param>
 	/// <param name="profile">プロファイル</param>
 	/// <returns>シェーダ</returns>
-	ShaderInfo* FindShaderInfo(const std::string& name, const std::string& filePath, const wchar_t* profile);
+	ShaderInfo* FindShaderInfo(const std::string& name, const std::wstring& filePath, const wchar_t* profile);
 private://メンバ変数
 	//シェーダの情報を格納する配列
 	std::unordered_map<std::string, ShaderInfo> shaderInfos_;

@@ -269,52 +269,52 @@
     <Image Include="engine\resources\icons\hakoniwaTransparent.ico" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="engine\resources\shaders\header\CommonTypes.hlsli" />
-    <None Include="engine\resources\shaders\header\Lighting.hlsli" />
-    <None Include="engine\resources\shaders\header\LightingCommon.hlsli" />
-    <None Include="engine\resources\shaders\header\Particle.hlsli" />
-    <None Include="engine\resources\shaders\header\SkyBox.hlsli" />
-    <None Include="engine\resources\shaders\header\Sprite.hlsli" />
-    <None Include="engine\resources\shaders\header\Wireframe.hlsli" />
+    <None Include="engine\resources\shaders\headers\CommonTypes.hlsli" />
+    <None Include="engine\resources\shaders\headers\Lighting.hlsli" />
+    <None Include="engine\resources\shaders\headers\LightingCommon.hlsli" />
+    <None Include="engine\resources\shaders\headers\Particle.hlsli" />
+    <None Include="engine\resources\shaders\headers\SkyBox.hlsli" />
+    <None Include="engine\resources\shaders\headers\Sprite.hlsli" />
+    <None Include="engine\resources\shaders\headers\Wireframe.hlsli" />
   </ItemGroup>
   <ItemGroup>
-    <FxCompile Include="engine\resources\shaders\pixel\Object3d.PS.hlsl">
+    <FxCompile Include="engine\resources\shaders\pixels\Object3d.PS.hlsl">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
     </FxCompile>
-    <FxCompile Include="engine\resources\shaders\pixel\Particle.PS.hlsl">
+    <FxCompile Include="engine\resources\shaders\pixels\Particle.PS.hlsl">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
     </FxCompile>
-    <FxCompile Include="engine\resources\shaders\pixel\SkyBox.PS.hlsl">
+    <FxCompile Include="engine\resources\shaders\pixels\SkyBox.PS.hlsl">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
     </FxCompile>
-    <FxCompile Include="engine\resources\shaders\pixel\Sprite.PS.hlsl">
+    <FxCompile Include="engine\resources\shaders\pixels\Sprite.PS.hlsl">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
     </FxCompile>
-    <FxCompile Include="engine\resources\shaders\pixel\Wireframe.PS.hlsl">
+    <FxCompile Include="engine\resources\shaders\pixels\Wireframe.PS.hlsl">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
     </FxCompile>
-    <FxCompile Include="engine\resources\shaders\vertex\Object3d.VS.hlsl">
+    <FxCompile Include="engine\resources\shaders\vertices\Object3d.VS.hlsl">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
     </FxCompile>
-    <FxCompile Include="engine\resources\shaders\vertex\Particle.VS.hlsl">
+    <FxCompile Include="engine\resources\shaders\vertices\Particle.VS.hlsl">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
     </FxCompile>
-    <FxCompile Include="engine\resources\shaders\vertex\SkyBox.VS.hlsl">
+    <FxCompile Include="engine\resources\shaders\vertices\SkyBox.VS.hlsl">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
     </FxCompile>
-    <FxCompile Include="engine\resources\shaders\vertex\Sprite.VS.hlsl">
+    <FxCompile Include="engine\resources\shaders\vertices\Sprite.VS.hlsl">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
     </FxCompile>
-    <FxCompile Include="engine\resources\shaders\vertex\Wireframe.VS.hlsl">
+    <FxCompile Include="engine\resources\shaders\vertices\Wireframe.VS.hlsl">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
     </FxCompile>

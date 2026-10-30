@@ -4,6 +4,7 @@
 #include "StringUtility.h"
 #include "RootSignatureBuilder.h"
 #include "ShaderCompiler.h"
+#include "ShaderManager.h"
 #include <cassert>
 #pragma comment(lib,"d3d12.lib")
 #pragma comment(lib,"dxgi.lib")
@@ -13,9 +14,9 @@ using namespace Microsoft::WRL;
 using namespace rasterizerMode;
 
 //生成
-std::unique_ptr<GraphicsPipeline> GraphicsPipeline::Create(){
+std::unique_ptr<GraphicsPipeline> GraphicsPipeline::Create(ShaderManager* shaderManager){
 	std::unique_ptr<GraphicsPipeline>instance = std::make_unique<GraphicsPipeline>();
-	instance->Initialize();
+	instance->Initialize(shaderManager);
 	return instance;
 }
 
@@ -26,9 +27,12 @@ GraphicsPipeline::GraphicsPipeline(){}
 GraphicsPipeline::~GraphicsPipeline(){}
 
 //初期化
-void GraphicsPipeline::Initialize(){
+void GraphicsPipeline::Initialize(ShaderManager* shaderManager){
 	//シェーダコンパイラ
 	shaderCompiler_ = ShaderCompiler::Create();
+	//シェーダの管理を記録
+	assert(shaderManager);
+	shaderManager_ = shaderManager;
 }
 
 //ルートシグネイチャBlobの生成(スプライト用)
@@ -251,14 +255,16 @@ void GraphicsPipeline::InitializeRasterizerState(FillMode fillMode, CullingMode 
 //頂点シェーダのコンパイル
 void GraphicsPipeline::CompileVertexShader(){
 	//VertexShader
-	vertexShaderBlob_ = shaderCompiler_->CompileShader(L"engine/resources/shaders/vertex/" + vertexShaderFileName_, L"vs_6_0");
+	vertexShaderBlob_ = shaderCompiler_->CompileShader(L"engine/resources/shaders/vertices/" + vertexShaderFileName_, L"vs_6_0");
 	assert(vertexShaderBlob_ != nullptr);
 }
 
 //ピクセルシェーダのコンパイル
 void GraphicsPipeline::CompilePixelShader(const std::wstring& filePath, const wchar_t* profile){
+	//シェーダの情報を取得
+	ShaderInfo* shaderInfo = shaderManager_->FindShaderInfo(stringUtility::ConvertString(filePath), filePath, profile);
 	//PixelShader
-	pixelShaderBlob_ = shaderCompiler_->CompileShader(L"engine/resources/shaders/pixel/" + pixelShaderFileName_, L"ps_6_0");
+	pixelShaderBlob_ = shaderInfo->shaderBlob;
 	assert(pixelShaderBlob_ != nullptr);
 }
 
@@ -372,9 +378,4 @@ void GraphicsPipeline::SetDirectXBase(DirectXBase* directXBase){
 //頂点シェーダのファイル名をセット
 void GraphicsPipeline::SetVertexShaderFileName(const std::wstring& fileName){
 	vertexShaderFileName_ = fileName;
-}
-
-//ピクセルシェーダのファイル名をセット
-void GraphicsPipeline::SetPixelShaderFileName(const std::wstring& fileName){
-	pixelShaderFileName_ = fileName;
 }

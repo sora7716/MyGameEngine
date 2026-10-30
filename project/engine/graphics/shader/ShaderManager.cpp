@@ -1,6 +1,5 @@
 #include "ShaderManager.h"
 #include "ShaderCompiler.h"
-#include "StringUtility.h"
 using namespace Microsoft::WRL;
 
 //生成
@@ -25,15 +24,22 @@ void ShaderManager::Initialize(){
 }
 
 //シェーダの情報を取得
-ShaderInfo* ShaderManager::FindShaderInfo(const std::string& name, const std::string& filePath, const wchar_t* profile){
+ShaderInfo* ShaderManager::FindShaderInfo(const std::string& name, const std::wstring& filePath, const wchar_t* profile){
 	//存在していたら
 	if (shaderInfos_.contains(name)){
 		return &shaderInfos_.at(name);
 	}
-	//存在していない場合
+
+	//パスが存在しなければ
+	if (filePath.empty()){
+		return nullptr;
+	}
+	//ディレクトリパス
+	std::wstring directoryPath = L"engine/resources/shaders/pixels/";
+
 	//存在していない場合
 	//コンパイルを行う
-	shaderCompiler_->CompileShader(stringUtility::ConvertString(filePath), profile);
+	shaderCompiler_->CompileShader(directoryPath + filePath, profile);
 	//コンパイルしたシェーダにアクセス
 	std::unordered_map<std::string, ParameterInfo>parameters;
 	for (const CompileShaderInfo& compileShaderInfo : shaderCompiler_->GetCompileShaderInfos()){
@@ -54,5 +60,5 @@ ShaderInfo* ShaderManager::FindShaderInfo(const std::string& name, const std::st
 		parameters
 	};
 	shaderInfos_.insert(std::make_pair(name, shaderInfo));
-	return &shaderInfos_.at(name)
+	return &shaderInfos_.at(name);
 }

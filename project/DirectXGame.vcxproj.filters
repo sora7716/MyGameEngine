@@ -148,14 +148,17 @@
     <Filter Include="engine\graphics\rendering\wireframe">
       <UniqueIdentifier>{ee11c4a8-f24a-41a9-bd01-84ebb90bf872}</UniqueIdentifier>
     </Filter>
-    <Filter Include="shaders\header">
-      <UniqueIdentifier>{0c6a4236-c101-4a68-8188-de6ca156af01}</UniqueIdentifier>
+    <Filter Include="shaders\vertices">
+      <UniqueIdentifier>{4f5e7215-a75a-43ce-9598-8ac255589728}</UniqueIdentifier>
     </Filter>
-    <Filter Include="shaders\pixel">
+    <Filter Include="shaders\pixels">
       <UniqueIdentifier>{fe10821b-352b-43d7-8cf6-f97d2d0f7bbc}</UniqueIdentifier>
     </Filter>
-    <Filter Include="shaders\vertex">
-      <UniqueIdentifier>{4f5e7215-a75a-43ce-9598-8ac255589728}</UniqueIdentifier>
+    <Filter Include="shaders\heders">
+      <UniqueIdentifier>{0c6a4236-c101-4a68-8188-de6ca156af01}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="engine\graphics\shader">
+      <UniqueIdentifier>{d899db8f-3bbb-49a4-847e-f9ecedd4ed84}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -480,11 +483,11 @@
     <ClCompile Include="engine\asset\ShaderCompiler.cpp">
       <Filter>engine\asset</Filter>
     </ClCompile>
-    <ClCompile Include="engine\graphics\shader\ShaderManager.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
     <ClCompile Include="engine\graphics\pipeline\PipelineManagerData.cpp">
       <Filter>engine\graphics\pipeline</Filter>
+    </ClCompile>
+    <ClCompile Include="engine\graphics\shader\ShaderManager.cpp">
+      <Filter>engine\graphics\shader</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -849,10 +852,10 @@
       <Filter>engine\asset</Filter>
     </ClInclude>
     <ClInclude Include="engine\graphics\shader\ShaderManager.h">
-      <Filter>ヘッダー ファイル</Filter>
+      <Filter>engine\graphics\shader</Filter>
     </ClInclude>
     <ClInclude Include="engine\graphics\shader\ShaderInfo.h">
-      <Filter>ヘッダー ファイル</Filter>
+      <Filter>engine\graphics\shader</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -869,58 +872,58 @@
     </Image>
   </ItemGroup>
   <ItemGroup>
-    <None Include="engine\resources\shaders\header\CommonTypes.hlsli">
-      <Filter>shaders\header</Filter>
+    <None Include="engine\resources\shaders\headers\CommonTypes.hlsli">
+      <Filter>shaders\heders</Filter>
     </None>
-    <None Include="engine\resources\shaders\header\Lighting.hlsli">
-      <Filter>shaders\header</Filter>
+    <None Include="engine\resources\shaders\headers\Lighting.hlsli">
+      <Filter>shaders\heders</Filter>
     </None>
-    <None Include="engine\resources\shaders\header\LightingCommon.hlsli">
-      <Filter>shaders\header</Filter>
+    <None Include="engine\resources\shaders\headers\LightingCommon.hlsli">
+      <Filter>shaders\heders</Filter>
     </None>
-    <None Include="engine\resources\shaders\header\Particle.hlsli">
-      <Filter>shaders\header</Filter>
+    <None Include="engine\resources\shaders\headers\Particle.hlsli">
+      <Filter>shaders\heders</Filter>
     </None>
-    <None Include="engine\resources\shaders\header\SkyBox.hlsli">
-      <Filter>shaders\header</Filter>
+    <None Include="engine\resources\shaders\headers\SkyBox.hlsli">
+      <Filter>shaders\heders</Filter>
     </None>
-    <None Include="engine\resources\shaders\header\Sprite.hlsli">
-      <Filter>shaders\header</Filter>
+    <None Include="engine\resources\shaders\headers\Sprite.hlsli">
+      <Filter>shaders\heders</Filter>
     </None>
-    <None Include="engine\resources\shaders\header\Wireframe.hlsli">
-      <Filter>shaders\header</Filter>
+    <None Include="engine\resources\shaders\headers\Wireframe.hlsli">
+      <Filter>shaders\heders</Filter>
     </None>
   </ItemGroup>
   <ItemGroup>
-    <FxCompile Include="engine\resources\shaders\pixel\Object3d.PS.hlsl">
-      <Filter>shaders\pixel</Filter>
+    <FxCompile Include="engine\resources\shaders\pixels\Object3d.PS.hlsl">
+      <Filter>shaders\pixels</Filter>
     </FxCompile>
-    <FxCompile Include="engine\resources\shaders\pixel\Particle.PS.hlsl">
-      <Filter>shaders\pixel</Filter>
+    <FxCompile Include="engine\resources\shaders\pixels\Particle.PS.hlsl">
+      <Filter>shaders\pixels</Filter>
     </FxCompile>
-    <FxCompile Include="engine\resources\shaders\pixel\SkyBox.PS.hlsl">
-      <Filter>shaders\pixel</Filter>
+    <FxCompile Include="engine\resources\shaders\pixels\SkyBox.PS.hlsl">
+      <Filter>shaders\pixels</Filter>
     </FxCompile>
-    <FxCompile Include="engine\resources\shaders\pixel\Sprite.PS.hlsl">
-      <Filter>shaders\pixel</Filter>
+    <FxCompile Include="engine\resources\shaders\pixels\Sprite.PS.hlsl">
+      <Filter>shaders\pixels</Filter>
     </FxCompile>
-    <FxCompile Include="engine\resources\shaders\pixel\Wireframe.PS.hlsl">
-      <Filter>shaders\pixel</Filter>
+    <FxCompile Include="engine\resources\shaders\pixels\Wireframe.PS.hlsl">
+      <Filter>shaders\pixels</Filter>
     </FxCompile>
-    <FxCompile Include="engine\resources\shaders\vertex\Object3d.VS.hlsl">
-      <Filter>shaders\vertex</Filter>
+    <FxCompile Include="engine\resources\shaders\vertices\Object3d.VS.hlsl">
+      <Filter>shaders\vertices</Filter>
     </FxCompile>
-    <FxCompile Include="engine\resources\shaders\vertex\Particle.VS.hlsl">
-      <Filter>shaders\vertex</Filter>
+    <FxCompile Include="engine\resources\shaders\vertices\Particle.VS.hlsl">
+      <Filter>shaders\vertices</Filter>
     </FxCompile>
-    <FxCompile Include="engine\resources\shaders\vertex\SkyBox.VS.hlsl">
-      <Filter>shaders\vertex</Filter>
+    <FxCompile Include="engine\resources\shaders\vertices\SkyBox.VS.hlsl">
+      <Filter>shaders\vertices</Filter>
     </FxCompile>
-    <FxCompile Include="engine\resources\shaders\vertex\Sprite.VS.hlsl">
-      <Filter>shaders\vertex</Filter>
+    <FxCompile Include="engine\resources\shaders\vertices\Sprite.VS.hlsl">
+      <Filter>shaders\vertices</Filter>
     </FxCompile>
-    <FxCompile Include="engine\resources\shaders\vertex\Wireframe.VS.hlsl">
-      <Filter>shaders\vertex</Filter>
+    <FxCompile Include="engine\resources\shaders\vertices\Wireframe.VS.hlsl">
+      <Filter>shaders\vertices</Filter>
     </FxCompile>
   </ItemGroup>
 </Project>

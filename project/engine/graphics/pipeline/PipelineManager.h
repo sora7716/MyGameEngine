@@ -9,6 +9,7 @@
 class DirectXBase;
 class GraphicsPipeline;
 class Blend;
+class ShaderManager;
 
 //パイプラインの検索キーのハッシュを作成
 struct PipelineKeyHasher{
@@ -35,8 +36,9 @@ public://静的メンバ関数
 	/// </summary>
 	/// <param name="key">コンストラクタのKey</param>
 	/// <param name="directXBase">DirectXの基盤部分</param>
+	/// <param name="shaderManager">シェーダの管理</param>
 	/// <returns>インスタンス</returns>
-	static std::unique_ptr<PipelineManager>Create(ConstructorKey key, DirectXBase* directXBase);
+	static std::unique_ptr<PipelineManager>Create(ConstructorKey key, DirectXBase* directXBase, ShaderManager* shaderManager);
 public://メンバ関数
 	/// <summary>
 	/// コンストラクタ
@@ -53,7 +55,8 @@ public://メンバ関数
 	/// 初期化
 	/// </summary>
 	/// <param name="directXBase">DirectXの基盤部分</param>
-	void Initialize(DirectXBase* directXBase);
+	/// <param name="shaderManager">シェーダの管理</param>
+	void Initialize(DirectXBase* directXBase,ShaderManager*shaderManager);
 
 	/// <summary>
 	/// PSOの取得(存在しない場合は確保してキャッシュする)

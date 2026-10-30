@@ -20,11 +20,11 @@ void(PipelineManager::* PipelineManager::createPSOTable[])(const PipelineKey& ke
 };
 
 //生成
-std::unique_ptr<PipelineManager> PipelineManager::Create(ConstructorKey key, DirectXBase* directXBase){
+std::unique_ptr<PipelineManager> PipelineManager::Create(ConstructorKey key, DirectXBase* directXBase, ShaderManager* shaderManager){
 	//生成
 	std::unique_ptr<PipelineManager>instance = std::make_unique<PipelineManager>(key);
 	//初期化
-	instance->Initialize(directXBase);
+	instance->Initialize(directXBase, shaderManager);
 
 	return instance;
 }
@@ -38,11 +38,11 @@ PipelineManager::~PipelineManager(){
 }
 
 //初期化
-void PipelineManager::Initialize(DirectXBase* directXBase){
+void PipelineManager::Initialize(DirectXBase* directXBase, ShaderManager* shaderManager){
 	//ブレンド
 	blend_ = std::make_unique<Blend>();
 	//グラフィックスパイプライン
-	graphicsPipeline_ = GraphicsPipeline::Create();
+	graphicsPipeline_ = GraphicsPipeline::Create(shaderManager);
 
 	//DirectXを記録
 	graphicsPipeline_->SetDirectXBase(directXBase);
@@ -69,7 +69,6 @@ PipelineSet* PipelineManager::GetPSO(const PipelineKey& key){
 void PipelineManager::CreatePSOForObject3d(const PipelineKey& key){
 	//シェーダを設定
 	graphicsPipeline_->SetVertexShaderFileName(L"Object3d.VS.hlsl");
-	graphicsPipeline_->SetPixelShaderFileName(stringUtility::ConvertString(key.pixelShaderFilePath));
 	//深度バッファ
 	graphicsPipeline_->CreateDepthStencilResourceReadWrite();
 	//シグネイチャBlobの初期化
@@ -81,7 +80,7 @@ void PipelineManager::CreatePSOForObject3d(const PipelineKey& key){
 	//頂点シェーダBlob
 	graphicsPipeline_->CompileVertexShader();
 	//ピクセルシェーダBlob
-	graphicsPipeline_->CompilePixelShader();
+	graphicsPipeline_->CompilePixelShader(stringUtility::ConvertString(key.pixelShaderFilePath));
 	//PSO
 	//ブレンドステート
 	graphicsPipeline_->InitializeBlendState(key.blendMode);
@@ -99,7 +98,6 @@ void PipelineManager::CreatePSOForObject3d(const PipelineKey& key){
 void PipelineManager::CreatePSOForSprite(const PipelineKey& key){
 	//シェーダを設定
 	graphicsPipeline_->SetVertexShaderFileName(L"Sprite.VS.hlsl");
-	graphicsPipeline_->SetPixelShaderFileName(stringUtility::ConvertString(key.pixelShaderFilePath));
 	//深度バッファ
 	graphicsPipeline_->CreateRootSignatureBlobForSprite();
 	//シグネイチャBlobの初期化
@@ -111,7 +109,7 @@ void PipelineManager::CreatePSOForSprite(const PipelineKey& key){
 	//頂点シェーダBlob
 	graphicsPipeline_->CompileVertexShader();
 	//ピクセルシェーダBlob
-	graphicsPipeline_->CompilePixelShader();
+	graphicsPipeline_->CompilePixelShader(stringUtility::ConvertString(key.pixelShaderFilePath));
 	//PSO
 	//ブレンドステート
 	graphicsPipeline_->InitializeBlendState(key.blendMode);
@@ -128,7 +126,6 @@ void PipelineManager::CreatePSOForSprite(const PipelineKey& key){
 //PSOの作成(Particle)
 void PipelineManager::CreatePSOForParticle(const PipelineKey& key){
 	graphicsPipeline_->SetVertexShaderFileName(L"Particle.VS.hlsl");
-	graphicsPipeline_->SetPixelShaderFileName(stringUtility::ConvertString(key.pixelShaderFilePath));
 	//シグネイチャBlobの初期化
 	graphicsPipeline_->CreateRootSignatureBlobForParticle();
 	//インプットレイアウト
@@ -138,7 +135,7 @@ void PipelineManager::CreatePSOForParticle(const PipelineKey& key){
 	//頂点シェーダBlob
 	graphicsPipeline_->CompileVertexShader();
 	//ピクセルシェーダBlob
-	graphicsPipeline_->CompilePixelShader();
+	graphicsPipeline_->CompilePixelShader(stringUtility::ConvertString(key.pixelShaderFilePath));
 	//深度バッファ
 	graphicsPipeline_->CreateDepthStencilResourceReadOnly();
 	//PSO
@@ -158,7 +155,6 @@ void PipelineManager::CreatePSOForParticle(const PipelineKey& key){
 void PipelineManager::CreatePSOForSkyBox(const PipelineKey& key){
 	//シェーダを設定
 	graphicsPipeline_->SetVertexShaderFileName(L"SkyBox.VS.hlsl");
-	graphicsPipeline_->SetPixelShaderFileName(stringUtility::ConvertString(key.pixelShaderFilePath));
 	//深度バッファ
 	graphicsPipeline_->CreateDepthStencilResourceReadOnly();
 	//シグネイチャBlobの初期化
@@ -170,7 +166,7 @@ void PipelineManager::CreatePSOForSkyBox(const PipelineKey& key){
 	//頂点シェーダBlob
 	graphicsPipeline_->CompileVertexShader();
 	//ピクセルシェーダBlob
-	graphicsPipeline_->CompilePixelShader();
+	graphicsPipeline_->CompilePixelShader(stringUtility::ConvertString(key.pixelShaderFilePath));
 	//PSO
 	//ブレンドステート
 	graphicsPipeline_->InitializeBlendState(key.blendMode);
@@ -188,7 +184,6 @@ void PipelineManager::CreatePSOForSkyBox(const PipelineKey& key){
 void PipelineManager::CreatePSOForWireframe(const PipelineKey& key){
 	//シェーダを設定
 	graphicsPipeline_->SetVertexShaderFileName(L"Wireframe.VS.hlsl");
-	graphicsPipeline_->SetPixelShaderFileName(stringUtility::ConvertString(key.pixelShaderFilePath));
 	//深度バッファ
 	graphicsPipeline_->CreateDepthStencilResourceReadOnly();
 	//シグネイチャBlobの初期化
@@ -200,7 +195,7 @@ void PipelineManager::CreatePSOForWireframe(const PipelineKey& key){
 	//頂点シェーダBlob
 	graphicsPipeline_->CompileVertexShader();
 	//ピクセルシェーダBlob
-	graphicsPipeline_->CompilePixelShader();
+	graphicsPipeline_->CompilePixelShader(stringUtility::ConvertString(key.pixelShaderFilePath));
 	//PSO
 	//ブレンドステート
 	graphicsPipeline_->InitializeBlendState(key.blendMode);

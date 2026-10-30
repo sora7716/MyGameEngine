@@ -45,7 +45,7 @@ ComPtr<IDxcBlob> ShaderCompiler::CompileShader(const std::wstring& filePath, con
 	//2. Compilerする
 	LPCWSTR arguments[] = {
 		filePath.c_str(),//コンパイル対象のhlslファイル名
-		L"-I", L"engine/resources/shaders/header",
+		L"-I", L"engine/resources/shaders/headers",
 		L"-E",L"main",//エントリーポイントの指定。基本的にmain以外にはしない
 		L"-T",profile,//ShaderProfileの設定
 		L"-Zi",L"-Qembed_debug",//デバック用の情報を埋め込む
@@ -131,20 +131,28 @@ void ShaderCompiler::ReflectionShader(ComPtr<IDxcResult> shaderResult){
 
 	//CBufferの変数にアクセス
 	D3D12_SHADER_DESC shaderDesc = {};
-	reflection->GetDesc(&shaderDesc);
+	hr = reflection->GetDesc(&shaderDesc);
+	assert(SUCCEEDED(hr));
 	for (uint32_t i = 0; i < shaderDesc.ConstantBuffers; i++){
-		//最初のCBuffer
+		//CBufferを取得
 		auto* constantBuffer = reflection->GetConstantBufferByIndex(i);
 
-		//最初の変数
-		auto* variable = constantBuffer->GetVariableByIndex(i);
+		//CBufferに割り当てられている変数を取得
+		D3D12_SHADER_BUFFER_DESC bufferDesc = {};
+		hr = constantBuffer->GetDesc(&bufferDesc);
+		assert(SUCCEEDED(hr));
+		for (uint32_t j = 0; j < bufferDesc.Variables; j++){
+			auto* variable = constantBuffer->GetVariableByIndex(j);
 
-		D3D12_SHADER_VARIABLE_DESC variableDesc = {};
-		variable->GetDesc(&variableDesc);
-		//値を追加
-		std::string name = static_cast<std::string>(variableDesc.Name);
-		uint32_t offset = static_cast<uint32_t>(variableDesc.StartOffset);
-		uint32_t size = static_cast<uint32_t>(variableDesc.Size);
-		compileShaderInfos_.push_back({ name,offset,size });
+			D3D12_SHADER_VARIABLE_DESC variableDesc = {};
+			hr = variable->GetDesc(&variableDesc);
+			assert(SUCCEEDED(hr));
+
+			//値を追加
+			std::string name = static_cast<std::string>(variableDesc.Name);
+			uint32_t offset = static_cast<uint32_t>(variableDesc.StartOffset);
+			uint32_t size = static_cast<uint32_t>(variableDesc.Size);
+			compileShaderInfos_.push_back({ name,offset,size });
+		}
 	}
 }

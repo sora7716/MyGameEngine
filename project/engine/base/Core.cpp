@@ -48,8 +48,10 @@ void Core::Initialize(){
 	modelManager_ = ModelManager::Create(ModelManager::ConstructorKey{}, directXBase_.get(), textureManager_.get());
 	//ImGuiマネージャー
 	imGuiManager_ = ImGuiManager::Create(ImGuiManager::ConstructorKey{}, winApi_.get(), directXBase_.get(), srvManager_.get());
+	//シェーダの管理
+	shaderManager_ = ShaderManager::Create(ShaderManager::ConstructorKey{});
 	//パイプラインの管理
-	pipelineManager_ = PipelineManager::Create(PipelineManager::ConstructorKey{}, directXBase_.get());
+	pipelineManager_ = PipelineManager::Create(PipelineManager::ConstructorKey{}, directXBase_.get(), shaderManager_.get());
 	//シーンファクトリ
 	sceneFactory_ = std::make_unique<SceneFactory>(AbstractSceneFactory::ConstructorKey{});
 	//オーディオマネージャー
@@ -64,8 +66,6 @@ void Core::Initialize(){
 	renderSystem_ = RenderSystem::Create(RenderSystem::ConstructorKey{}, directXBase_.get(), srvManager_.get(), textureManager_.get(), pipelineManager_.get(), lightingManager_.get());
 	//衝突判定システム
 	collisionSystem_ = std::make_unique<CollisionSystem>(CollisionSystem::ConstructorKey{});
-	//シェーダの管理
-	shaderManager_ = ShaderManager::Create(ShaderManager::ConstructorKey{});
 	//シーンでの必要なものを取得
 	sceneContext_ = this;
 

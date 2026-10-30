@@ -256,7 +256,7 @@ void GraphicsPipeline::CompileVertexShader(){
 }
 
 //ピクセルシェーダのコンパイル
-void GraphicsPipeline::CompilePixelShader(){
+void GraphicsPipeline::CompilePixelShader(const std::wstring& filePath, const wchar_t* profile){
 	//PixelShader
 	pixelShaderBlob_ = shaderCompiler_->CompileShader(L"engine/resources/shaders/pixel/" + pixelShaderFileName_, L"ps_6_0");
 	assert(pixelShaderBlob_ != nullptr);

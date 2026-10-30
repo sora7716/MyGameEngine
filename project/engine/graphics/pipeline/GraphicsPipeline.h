@@ -105,7 +105,7 @@ public://メンバ関数
 	/// <summary>
 	/// ピクセルシェーダのコンパイル
 	/// </summary>
-	void CompilePixelShader();
+	void CompilePixelShader(const std::wstring& filePath, const wchar_t* profile = L"ps_6_0");
 
 	/// <summary>
 	/// 深度バッファの生成(ReadWrite)
@@ -177,8 +177,9 @@ private://メンバ変数
 	ComPtr<IDxcBlob> pixelShaderBlob_ = nullptr;
 	//ファイル名
 	std::wstring vertexShaderFileName_ = L"";//頂点
-	std::wstring pixelShaderFileName_ = L"";//ピクセル
 	//深度バッファ
 	ComPtr<ID3D12Resource> depthStencilResource_ = nullptr;
 	D3D12_DEPTH_STENCIL_DESC depthStencilDesc_{};
+	//シェーダの管理
+
 };

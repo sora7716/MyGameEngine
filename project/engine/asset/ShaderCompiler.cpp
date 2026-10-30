@@ -73,8 +73,7 @@ ComPtr<IDxcBlob> ShaderCompiler::CompileShader(const std::wstring& filePath, con
 	}
 	//4. Compiler結果を受け取って返す
 	//コンパイル結果から実行用のバイナリ部分を取得
-	ComPtr<IDxcBlob> shaderBlob = nullptr;
-	hr = shaderResult->GetOutput(DXC_OUT_OBJECT, IID_PPV_ARGS(&shaderBlob), nullptr);
+	hr = shaderResult->GetOutput(DXC_OUT_OBJECT, IID_PPV_ARGS(&shaderBlob_), nullptr);
 	assert(SUCCEEDED(hr));
 	//成功したらログを出す
 	Logger::OutputLog(stringUtility::ConvertString(std::format(L"Compile Succeeded, path:{},profile:{}\n", filePath, profile)));
@@ -82,7 +81,36 @@ ComPtr<IDxcBlob> ShaderCompiler::CompileShader(const std::wstring& filePath, con
 	ReflectionShader(shaderResult);
 
 	//実行用のバイナリを返却
-	return shaderBlob;
+	return shaderBlob_;
+}
+
+//コンパイル済みのシェーダBlobを取得
+const ComPtr<IDxcBlob>& ShaderCompiler::GetShaderBlob() const{
+	return shaderBlob_;
+}
+
+//コンパイルした際のシェーダ情報を取得
+const std::vector<CompileShaderInfo>& ShaderCompiler::GetCompileShaderInfos() const{
+	return compileShaderInfos_;
+}
+
+//コンパイルしたシェーダの情報の数の取得
+uint32_t ShaderCompiler::GetCompileShaderInfoCount() const{
+	return static_cast<uint32_t>(compileShaderInfos_.size());
+}
+
+//DXCコンパイラの生成
+void ShaderCompiler::CreateDXCCompiler(){
+	HRESULT result = S_FALSE;
+	//DXCユーティリティの生成
+	result = DxcCreateInstance(CLSID_DxcUtils, IID_PPV_ARGS(&dxcUtils_));
+	assert(SUCCEEDED(result));
+	//DXCコンパイラの生成
+	result = DxcCreateInstance(CLSID_DxcCompiler, IID_PPV_ARGS(&dxcCompiler_));
+	assert(SUCCEEDED(result));
+	//デフォルトインクルードハンドラの生成
+	result = dxcUtils_->CreateDefaultIncludeHandler(&includeHandler_);
+	assert(SUCCEEDED(result));
 }
 
 //シェーダリフレクション
@@ -104,27 +132,19 @@ void ShaderCompiler::ReflectionShader(ComPtr<IDxcResult> shaderResult){
 	//CBufferの変数にアクセス
 	D3D12_SHADER_DESC shaderDesc = {};
 	reflection->GetDesc(&shaderDesc);
+	for (uint32_t i = 0; i < shaderDesc.ConstantBuffers; i++){
+		//最初のCBuffer
+		auto* constantBuffer = reflection->GetConstantBufferByIndex(i);
 
-	//最初のCBuffer
-	auto* constantBuffer = reflection->GetConstantBufferByIndex(0);
+		//最初の変数
+		auto* variable = constantBuffer->GetVariableByIndex(i);
 
-	//最初の変数
-	auto* variable = constantBuffer->GetVariableByIndex(0);
-
-	D3D12_SHADER_VARIABLE_DESC variableDesc = {};
-	variable->GetDesc(&variableDesc);
-}
-
-//DXCコンパイラの生成
-void ShaderCompiler::CreateDXCCompiler(){
-	HRESULT result = S_FALSE;
-	//DXCユーティリティの生成
-	result = DxcCreateInstance(CLSID_DxcUtils, IID_PPV_ARGS(&dxcUtils_));
-	assert(SUCCEEDED(result));
-	//DXCコンパイラの生成
-	result = DxcCreateInstance(CLSID_DxcCompiler, IID_PPV_ARGS(&dxcCompiler_));
-	assert(SUCCEEDED(result));
-	//デフォルトインクルードハンドラの生成
-	result = dxcUtils_->CreateDefaultIncludeHandler(&includeHandler_);
-	assert(SUCCEEDED(result));
+		D3D12_SHADER_VARIABLE_DESC variableDesc = {};
+		variable->GetDesc(&variableDesc);
+		//値を追加
+		std::string name = static_cast<std::string>(variableDesc.Name);
+		uint32_t offset = static_cast<uint32_t>(variableDesc.StartOffset);
+		uint32_t size = static_cast<uint32_t>(variableDesc.Size);
+		compileShaderInfos_.push_back({ name,offset,size });
+	}
 }

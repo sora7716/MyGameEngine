@@ -1,10 +1,18 @@
 #pragma once
 #include <dxgi1_6.h>
 #include <dxgidebug.h>
-#include <string>
 #include <dxcapi.h>
 #include <wrl.h>
+#include <string>
 #include <memory>
+#include <vector>
+
+//コンパイルしたときのシェーダの情報
+struct CompileShaderInfo{
+	std::string name;
+	uint32_t offset;
+	uint32_t size;
+};
 
 /// <summary>
 /// シェーダコンパイラ
@@ -43,15 +51,33 @@ public://メンバ関数
 	ComPtr<IDxcBlob> CompileShader(const std::wstring& filePath, const wchar_t* profile);
 
 	/// <summary>
-	/// シェーダリフレクション
+	/// コンパイル済みのシェーダBlobを取得
 	/// </summary>
-	/// <param name="shaderResult">コンパイルしたシェーダの結果</param>
-	void ReflectionShader(ComPtr<IDxcResult> shaderResult);
+	/// <returns>コンパイル済みのシェーダBlob</returns>
+	const ComPtr<IDxcBlob>& GetShaderBlob()const;
+
+	/// <summary>
+	/// コンパイルした際のシェーダ情報を取得
+	/// </summary>
+	/// <returns>コンパイルした際のシェーダ情報</returns>
+	const std::vector<CompileShaderInfo>& GetCompileShaderInfos()const;
+
+	/// <summary>
+	/// コンパイルしたシェーダの情報の数の取得
+	/// </summary>
+	/// <returns>コンパイルしたシェーダの情報の数</returns>
+	uint32_t GetCompileShaderInfoCount()const;
 private://メンバ関数
 	/// <summary>
 	/// DXCコンパイラの生成
 	/// </summary>
 	void CreateDXCCompiler();
+
+	/// <summary>
+	/// シェーダリフレクション
+	/// </summary>
+	/// <param name="shaderResult">コンパイルしたシェーダの結果</param>
+	void ReflectionShader(ComPtr<IDxcResult> shaderResult);
 private://メンバ変数
 	//DXCユーティリティ
 	ComPtr<IDxcUtils> dxcUtils_ = nullptr;
@@ -59,5 +85,9 @@ private://メンバ変数
 	ComPtr<IDxcCompiler3> dxcCompiler_ = nullptr;
 	//デフォルトインクルードハンドラ
 	ComPtr<IDxcIncludeHandler> includeHandler_ = nullptr;
+	//コンパイルしたシェーダの情報
+	ComPtr<IDxcBlob> shaderBlob_ = nullptr;
+	//コンパイルしたときのシェーダの情報
+	std::vector<CompileShaderInfo>compileShaderInfos_;
 };
 

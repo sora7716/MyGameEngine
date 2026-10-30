@@ -18,6 +18,7 @@
 #include "RenderSystem.h"
 #include "SceneFactory.h"
 #include "CollisionSystem.h"
+#include "ShaderManager.h"
 
 //コンストラクタ
 Core::Core(){
@@ -63,6 +64,8 @@ void Core::Initialize(){
 	renderSystem_ = RenderSystem::Create(RenderSystem::ConstructorKey{}, directXBase_.get(), srvManager_.get(), textureManager_.get(), pipelineManager_.get(), lightingManager_.get());
 	//衝突判定システム
 	collisionSystem_ = std::make_unique<CollisionSystem>(CollisionSystem::ConstructorKey{});
+	//シェーダの管理
+	shaderManager_ = ShaderManager::Create(ShaderManager::ConstructorKey{});
 	//シーンでの必要なものを取得
 	sceneContext_ = this;
 

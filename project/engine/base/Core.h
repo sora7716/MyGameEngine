@@ -21,6 +21,7 @@ class PipelineManager;
 class LightingManager;
 class RenderSystem;
 class CollisionSystem;
+class ShaderManager;
 
 /// <summary>
 /// エンジンの核
@@ -190,7 +191,9 @@ private://メンバ変数
 	//描画システム
 	std::unique_ptr<RenderSystem>renderSystem_ = nullptr;
 	//衝突判定システム
-	std::unique_ptr<CollisionSystem>collisionSystem_ = nullptr;  
+	std::unique_ptr<CollisionSystem>collisionSystem_ = nullptr;
+	//シェーダの管理
+	std::unique_ptr<ShaderManager>shaderManager_ = nullptr;
 	//シーンで必要なもの
 	SceneContext sceneContext_ = {};
 };

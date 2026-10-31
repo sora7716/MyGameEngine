@@ -9,6 +9,7 @@
 //前方宣言
 class DirectXBase;
 class TextureManager;
+class ShaderManager;
 class Model;
 
 /// <summary>
@@ -30,10 +31,11 @@ public://メンバ関数
 	/// LODモデルの生成
 	/// </summary>
 	/// <param name="directXBase">DirectXの基盤部分</param>
+	/// <param name="shaderManager">シェーダの管理</param>
 	/// <param name="model">モデル</param>
 	/// <param name="keepRates">頂点合成する割合</param>
 	/// <returns>LODモデル</returns>
-	void CreateLODModel(DirectXBase* directXBase, Model* model, const std::vector<float>& keepRates);
+	void CreateLODModel(DirectXBase* directXBase, ShaderManager* shaderManager, Model* model, const std::vector<float>& keepRates);
 
 	/// <summary>
 	/// LODモデルの取得

@@ -44,12 +44,12 @@ void Core::Initialize(){
 	input_ = Input::Create(Input::ConstructorKey{}, winApi_.get());
 	//テクスチャマネージャー
 	textureManager_ = TextureManager::Create(TextureManager::ConstructorKey{}, directXBase_.get(), srvManager_.get());
-	//モデルマネージャー
-	modelManager_ = ModelManager::Create(ModelManager::ConstructorKey{}, directXBase_.get(), textureManager_.get());
-	//ImGuiマネージャー
-	imGuiManager_ = ImGuiManager::Create(ImGuiManager::ConstructorKey{}, winApi_.get(), directXBase_.get(), srvManager_.get());
 	//シェーダの管理
 	shaderManager_ = ShaderManager::Create(ShaderManager::ConstructorKey{});
+	//モデルマネージャー
+	modelManager_ = ModelManager::Create(ModelManager::ConstructorKey{}, directXBase_.get(), textureManager_.get(), shaderManager_.get());
+	//ImGuiマネージャー
+	imGuiManager_ = ImGuiManager::Create(ImGuiManager::ConstructorKey{}, winApi_.get(), directXBase_.get(), srvManager_.get());
 	//パイプラインの管理
 	pipelineManager_ = PipelineManager::Create(PipelineManager::ConstructorKey{}, directXBase_.get(), shaderManager_.get());
 	//シーンファクトリ
@@ -162,4 +162,9 @@ RenderSystem* Core::GetRenderSystem() const{
 //衝突判定システムの取得
 CollisionSystem* Core::GetCollisionSystem() const{
 	return collisionSystem_.get();
+}
+
+//シェーダの管理の取得
+ShaderManager* Core::GetShaderManager() const{
+	return shaderManager_.get();
 }

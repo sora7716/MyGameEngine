@@ -10,35 +10,35 @@
 #include <functional>
 
 //モデルの生成(ファイルを読み込んでの)
-std::unique_ptr<Model>Model::CreateModel(DirectXBase* directXBase, const std::string& modelFileName){
+std::unique_ptr<Model>Model::CreateModel(DirectXBase* directXBase, const std::string& modelFileName, ShaderManager* shaderManager){
 	//インスタンスの生成
 	std::unique_ptr<Model>instance = std::make_unique<Model>();
 	//初期化
-	instance->Initialize(directXBase);
+	instance->Initialize(directXBase, shaderManager);
 	//モデルの生成
-	instance->CreateModel(modelFileName);
+	instance->CreateModel(modelFileName, shaderManager);
 	return instance;
 }
 
 //モデルの生成(メッシュデータ)
-std::unique_ptr<Model> Model::CreateModel(DirectXBase* directXBase, const std::vector<MeshData>& meshDatas){
+std::unique_ptr<Model> Model::CreateModel(DirectXBase* directXBase, const std::vector<MeshData>& meshDatas, ShaderManager* shaderManager){
 	//インスタンスの生成
 	std::unique_ptr<Model>instance = std::make_unique<Model>();
 	//初期化
-	instance->Initialize(directXBase);
+	instance->Initialize(directXBase, shaderManager);
 	//モデルの生成
-	instance->CreateModel(meshDatas);
+	instance->CreateModel(meshDatas, shaderManager);
 	return instance;
 }
 
 //モデルの生成(モデルデータ)
-std::unique_ptr<Model> Model::CreateModel(DirectXBase* directXBase, const ModelData& modelData){
+std::unique_ptr<Model> Model::CreateModel(DirectXBase* directXBase, const ModelData& modelData, ShaderManager* shaderManager){
 	//インスタンスの生成
 	std::unique_ptr<Model>instance = std::make_unique<Model>();
 	//初期化
-	instance->Initialize(directXBase);
+	instance->Initialize(directXBase, shaderManager);
 	//モデルの生成
-	instance->CreateModel(modelData);
+	instance->CreateModel(modelData, shaderManager);
 	return instance;
 }
 
@@ -51,10 +51,13 @@ Model::~Model(){
 }
 
 //初期化
-void Model::Initialize(DirectXBase* directXBase){
+void Model::Initialize(DirectXBase* directXBase, ShaderManager* shaderManager){
 	//DirectXの基盤部分を記録
 	assert(directXBase);
 	directXBase_ = directXBase;
+	//シェーダの管理を記録
+	assert(shaderManager);
+	shaderManager_ = shaderManager;
 }
 
 //メッシュの再構成
@@ -151,7 +154,7 @@ void Model::CreateLODModels(const std::vector<float>& keepRates){
 	//LODの倍率を保存
 	generatedLODRates_ = lodRate;
 
-	lodBuilder_->CreateLODModel(directXBase_, this, lodRate);
+	lodBuilder_->CreateLODModel(directXBase_,shaderManager_, this, lodRate);
 
 	//LODを作成したらtrueにする
 	isLODGenerated_ = true;
@@ -230,7 +233,7 @@ void Model::BuildMesh(){
 }
 
 //モデルの作成(メッシュデータから)
-void Model::CreateModel(const std::vector<MeshData>& meshDatas, const std::string& nodeName){
+void Model::CreateModel(const std::vector<MeshData>& meshDatas, ShaderManager* shaderManager, const std::string& nodeName){
 	//モデルの読み込み
 	modelData_.meshDatas = { meshDatas };
 	//メッシュの再構築
@@ -252,13 +255,13 @@ void Model::CreateModel(const std::vector<MeshData>& meshDatas, const std::strin
 
 	//マテリアルインスタンスの生成と初期化
 	defaultMaterialInstance_ = std::make_shared<MaterialInstance>();
-	defaultMaterialInstance_->Initialize(modelData_.materialTexturePaths);
+	defaultMaterialInstance_->Initialize(modelData_.materialTexturePaths, shaderManager);
 	//描画データをまとめる
 	SetupRenderData();
 }
 
 //モデルの生成(モデルのファイルから)
-void Model::CreateModel(const std::string& objectFileName){
+void Model::CreateModel(const std::string& objectFileName, ShaderManager* shaderManager){
 	//モデルの読み込み
 	modelData_ = modelLoader::LoadModelFile("engine/resources/models", objectFileName);
 	//メッシュの再構築
@@ -269,13 +272,13 @@ void Model::CreateModel(const std::string& objectFileName){
 	}
 	//マテリアルインスタンスの生成と初期化
 	defaultMaterialInstance_ = std::make_shared<MaterialInstance>();
-	defaultMaterialInstance_->Initialize(modelData_.materialTexturePaths);
+	defaultMaterialInstance_->Initialize(modelData_.materialTexturePaths, shaderManager);
 	//描画データをまとめる
 	SetupRenderData();
 }
 
 //モデルの生成(モデルデータ)
-void Model::CreateModel(const ModelData& modelData){
+void Model::CreateModel(const ModelData& modelData, ShaderManager* shaderManager){
 	modelData_ = modelData;
 	//メッシュの再構成
 	RebuildMeshes(modelData_.meshDatas);
@@ -285,7 +288,7 @@ void Model::CreateModel(const ModelData& modelData){
 	}
 	//マテリアルインスタンスの生成と初期化
 	defaultMaterialInstance_ = std::make_shared<MaterialInstance>();
-	defaultMaterialInstance_->Initialize(modelData_.materialTexturePaths);
+	defaultMaterialInstance_->Initialize(modelData_.materialTexturePaths, shaderManager);
 	//描画データをまとめる
 	SetupRenderData();
 }

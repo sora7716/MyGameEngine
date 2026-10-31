@@ -13,6 +13,7 @@ class DirectXBase;
 class Mesh;
 class MaterialInstance;
 class LODBuilder;
+class ShaderManager;
 
 /// <summary>
 /// モデル
@@ -26,24 +27,27 @@ public://静的メンバ関数
 	/// </summary>
 	/// <param name="directXBase">DirectXの基盤部分</param>
 	/// <param name="modelFileName">モデルのファイル名</param>
+	/// <param name="shaderManager">シェーダの管理</param>
 	/// <returns>モデル</returns>
-	static std::unique_ptr<Model> CreateModel(DirectXBase* directXBase, const std::string& modelFileName);
+	static std::unique_ptr<Model> CreateModel(DirectXBase* directXBase, const std::string& modelFileName, ShaderManager* shaderManager);
 
 	/// <summary>
 	/// モデルの生成(メッシュデータ)
 	/// </summary>
 	/// <param name="directXBase">DirectXの基盤部分</param>
 	/// <param name="meshDatas">メッシュデータ</param>
+	/// <param name="shaderManager">シェーダの管理</param>
 	/// <returns>モデル</returns>
-	static std::unique_ptr<Model> CreateModel(DirectXBase* directXBase, const std::vector<MeshData>& meshDatas);
+	static std::unique_ptr<Model> CreateModel(DirectXBase* directXBase, const std::vector<MeshData>& meshDatas, ShaderManager* shaderManager);
 
 	/// <summary>
 	/// モデルの生成(モデルデータ)
 	/// </summary>
 	/// <param name="directXBase">DirectXの基盤部分</param>
 	/// <param name="modelData">モデルデータ</param>
+	/// <param name="shaderManager">シェーダの管理</param>
 	/// <returns>モデル</returns>
-	static std::unique_ptr<Model> CreateModel(DirectXBase* directXBase, const ModelData& modelData);
+	static std::unique_ptr<Model> CreateModel(DirectXBase* directXBase, const ModelData& modelData, ShaderManager* shaderManager);
 public://メンバ関数
 	/// <summary>
 	/// コンストラクタ
@@ -59,7 +63,8 @@ public://メンバ関数
 	/// 初期化
 	/// </summary>
 	/// <param name="directXBase">DirectXの基盤部分</param>
-	void Initialize(DirectXBase* directXBase);
+	/// <param name="shaderManager">シェーダの管理</param>
+	void Initialize(DirectXBase* directXBase,ShaderManager*shaderManager);
 
 	/// <summary>
 	/// メッシュの再構成
@@ -124,22 +129,29 @@ private://メンバ関数
 	/// モデルの作成(メッシュデータから)
 	/// </summary>
 	/// <param name="meshDatas">メッシュデータ</param>
-	void CreateModel(const std::vector<MeshData>& meshDatas, const std::string& nodeName = "primitive");
+	/// <param name="shaderManager">シェーダの管理</param>
+	/// <param name="nodeName">ノード名</param>
+	void CreateModel(const std::vector<MeshData>& meshDatas, ShaderManager* shaderManager, const std::string& nodeName = "primitive");
 
 	/// <summary>
 	/// モデルの生成(モデルのファイルから)
 	/// </summary>
 	/// <param name="objectFileName">オブジェクトのファイル名</param>
-	void CreateModel(const std::string& objectFileName);
+	/// <param name="shaderManager">シェーダの管理</param>
+	void CreateModel(const std::string& objectFileName, ShaderManager* shaderManager);
 
 	/// <summary>
 	/// モデルの生成(モデルデータ)
 	/// </summary>
 	/// <param name="modelData">モデルデータ</param>
-	void CreateModel(const ModelData& modelData);
+	/// <param name="shaderManager">シェーダの管理</param>
+	void CreateModel(const ModelData& modelData, ShaderManager* shaderManager);
 private://メンバ変数
 	//DirectXの基盤部分
 	DirectXBase* directXBase_ = nullptr;
+
+	//シェーダの管理
+	ShaderManager* shaderManager_ = nullptr;
 
 	//メッシュ
 	std::vector<std::unique_ptr<Mesh>>meshes_;

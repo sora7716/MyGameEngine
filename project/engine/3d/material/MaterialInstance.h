@@ -5,6 +5,9 @@
 #include <vector>
 #include <cstddef>
 
+//前方宣言
+class ShaderManager;
+
 //スロット
 struct MaterialInstanceSlot{
 	Material material = {};
@@ -13,7 +16,7 @@ struct MaterialInstanceSlot{
 };
 
 //拡散反射の反射モデル
-enum DiffuseModel:uint32_t{
+enum DiffuseModel :uint32_t{
 	kLambert,
 	kHalfLambert
 };
@@ -42,8 +45,9 @@ public://メンバ関数
 	/// <summary>
 	/// 初期化
 	/// </summary>
-	/// <param name="texturePaths"></param>
-	void Initialize(const std::vector<MaterialTexturePaths>& texturePaths);
+	/// <param name="texturePaths">テクスチャのパス</param>
+	/// <param name="shaderManager">シェーダの管理</param>
+	void Initialize(const std::vector<MaterialTexturePaths>& texturePaths, ShaderManager* shaderManager);
 
 	/// <summary>
 	/// 色の設定
@@ -188,6 +192,8 @@ public://メンバ関数
 	/// <returns>マテリアルが変更されたかを判断する変数</returns>
 	uint64_t GetRevision()const;
 private://メンバ変数
+	//シェーダの管理
+	ShaderManager* shaderManager_ = nullptr;
 	//マテリアルインスタンスのスロット
 	std::vector<MaterialInstanceSlot>slots_;
 	//リムライト

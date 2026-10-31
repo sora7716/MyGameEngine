@@ -115,6 +115,8 @@ void ShaderCompiler::CreateDXCCompiler(){
 
 //シェーダリフレクション
 void ShaderCompiler::ReflectionShader(ComPtr<IDxcResult> shaderResult){
+	//配列のリセット
+	compileShaderInfos_.clear();
 	HRESULT hr = S_FALSE;
 	//Reflectionデータの取得
 	ComPtr<IDxcBlob>reflectionBlob = nullptr;
@@ -128,6 +130,7 @@ void ShaderCompiler::ReflectionShader(ComPtr<IDxcResult> shaderResult){
 
 	ComPtr<ID3D12ShaderReflection> reflection = nullptr;
 	hr = dxcUtils_->CreateReflection(&reflectionData, IID_PPV_ARGS(&reflection));
+	assert(SUCCEEDED(hr));
 
 	//CBufferの変数にアクセス
 	D3D12_SHADER_DESC shaderDesc = {};

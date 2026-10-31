@@ -6,6 +6,7 @@ void SceneContext::operator=(Core* core){
 	input = core->GetInput();
 	textureManager = core->GetTextureManager();
 	modelManager = core->GetModelManager();
+	shaderManager = core->GetShaderManager();
 	sceneManager = core->GetSceneManager();
 	audioManager = core->GetAudioManager();
 	imGuiManager = core->GetImGuiManager();

@@ -7,6 +7,7 @@
 //前方宣言
 class DirectXBase;
 class TextureManager;
+class ShaderManager;
 class Model;
 
 /// <summary>
@@ -26,8 +27,9 @@ public://静的メンバ関数
 	/// <param name="key">コンストラクタのKey</param>
 	/// <param name="directXBase">DirectXの基盤部分</param>
 	/// <param name="textureManager">テクスチャの管理</param>
+	/// <param name="shaderManager">シェーダの管理</param>
 	/// <returns>インスタンス</returns>
-	static std::unique_ptr<ModelManager>Create(ConstructorKey key, DirectXBase* directXBase, TextureManager* textureManager);
+	static std::unique_ptr<ModelManager>Create(ConstructorKey key, DirectXBase* directXBase, TextureManager* textureManager, ShaderManager* shaderManager);
 public://メンバ関数
 	/// <summary>
 	/// コンストラクタ
@@ -45,7 +47,8 @@ public://メンバ関数
 	/// </summary>
 	/// <param name="directXBase">DirectXの基盤部分</param>
 	/// <param name="textureManager">テクスチャの管理</param>
-	void Initialize(DirectXBase* directXBase, TextureManager* textureManager);
+	/// <param name="shaderManager">シェーダの管理</param>
+	void Initialize(DirectXBase* directXBase, TextureManager* textureManager, ShaderManager* shaderManager);
 
 	/// <summary>
 	/// プリミティブなモデルの生成
@@ -77,5 +80,7 @@ private://メンバ変数
 	DirectXBase* directXBase_ = nullptr;
 	//Textureの管理
 	TextureManager* textureManager_ = nullptr;
+	//シェーダの管理
+	ShaderManager* shaderManager_ = nullptr;
 };
 

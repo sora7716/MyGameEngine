@@ -150,6 +150,12 @@ public://メンバ関数
 	/// </summary>
 	/// <returns>衝突判定システム</returns>
 	CollisionSystem* GetCollisionSystem()const;
+
+	/// <summary>
+	/// シェーダの管理の取得
+	/// </summary>
+	/// <returns>シェーダの管理</returns>
+	ShaderManager* GetShaderManager()const;
 private://メンバ関数
 	//コピーコンストラクタ禁止
 	Core(const Core&) = delete;

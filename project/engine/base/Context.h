@@ -1,23 +1,25 @@
 #pragma once
 //前方宣言
-class WinApi;
-class Input;
-class TextureManager;
-class ModelManager;
-class SceneManager;
-class AudioManager;
-class ImGuiManager;
 class Core;
+class WinApi;
 class DirectXBase;
+class Input;
 class SRVManager;
 class DSVManager;
 class RTVManager;
+class TextureManager;
+class ModelManager;
+class ShaderManager;
+class SceneManager;
+class AudioManager;
+class ImGuiManager;
 
 //シーンで必要なクラス
 struct SceneContext{
 	Input* input;
 	TextureManager* textureManager;
 	ModelManager* modelManager;
+	ShaderManager* shaderManager;
 	SceneManager* sceneManager;
 	AudioManager* audioManager;
 	ImGuiManager* imGuiManager;

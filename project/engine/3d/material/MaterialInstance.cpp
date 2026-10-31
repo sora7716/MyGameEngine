@@ -11,7 +11,11 @@ MaterialInstance::~MaterialInstance(){
 }
 
 //初期化
-void MaterialInstance::Initialize(const std::vector<MaterialTexturePaths>& texturePaths){
+void MaterialInstance::Initialize(const std::vector<MaterialTexturePaths>& texturePaths, ShaderManager* shaderManager){
+	//シェーダの管理を記録
+	assert(shaderManager);
+	shaderManager_ = shaderManager;
+
 	//テクスチャパスと同じ数のスロットを作る
 	slots_.assign(texturePaths.size(), MaterialInstanceSlot{});
 

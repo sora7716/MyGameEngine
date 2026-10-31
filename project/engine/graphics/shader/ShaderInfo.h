@@ -19,3 +19,13 @@ struct ShaderInfo{
 	Microsoft::WRL::ComPtr<IDxcBlob>shaderBlob = nullptr;
 	std::unordered_map<std::string, ParameterInfo>parameters;
 };
+
+//パラメータタイプ
+enum class ParameterType{
+	kFloat,
+	kVector2,
+	kVector3,
+	kColor,
+	kInt,
+	kBool
+};

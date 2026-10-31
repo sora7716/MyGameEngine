@@ -145,7 +145,13 @@ void ShaderCompiler::ReflectionShader(ComPtr<IDxcResult> shaderResult){
 		hr = constantBuffer->GetDesc(&bufferDesc);
 		assert(SUCCEEDED(hr));
 		for (uint32_t j = 0; j < bufferDesc.Variables; j++){
-			auto* variable = constantBuffer->GetVariableByIndex(j);
+			ID3D12ShaderReflectionVariable* variable = constantBuffer->GetVariableByIndex(j);
+			
+			//型を取得
+			ID3D12ShaderReflectionType* type = variable->GetType();
+			D3D12_SHADER_TYPE_DESC typeDesc = {};
+			hr = type->GetDesc(&typeDesc);
+			assert(SUCCEEDED(hr));
 
 			D3D12_SHADER_VARIABLE_DESC variableDesc = {};
 			hr = variable->GetDesc(&variableDesc);

@@ -2,7 +2,7 @@
 
 struct Material {
     float32_t4 color;
-    int32_t enableLighring;
+    uint32_t enableLighring;
     float32_t4x4 uvTransform;
 };
 

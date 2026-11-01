@@ -5,7 +5,7 @@ struct RimLight {
     float power; //リムライトの強さ
     float outLinePower; //リムライトの外側の強さ
     float softness; //リムライトの柔らかさ
-    int enableRimLighting; //リムライトを有効にするか
+    uint enableRimLighting; //リムライトを有効にするか
 };
 
 ConstantBuffer<Material> gMaterial : register(b0);

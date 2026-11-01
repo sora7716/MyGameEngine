@@ -24,14 +24,14 @@ void ShaderManager::Initialize(){
 }
 
 //シェーダの情報を取得
-ShaderInfo* ShaderManager::FindShaderInfo(const std::string& name, const std::wstring& filePath, const wchar_t* profile){
+ShaderInfo* ShaderManager::FindPixelShaderInfo(const std::string& name, const std::wstring& fileName, const wchar_t* profile){
 	//存在していたら
 	if (shaderInfos_.contains(name)){
 		return &shaderInfos_.at(name);
 	}
 
 	//パスが存在しなければ
-	if (filePath.empty()){
+	if (fileName.empty()){
 		return nullptr;
 	}
 	//ディレクトリパス
@@ -39,7 +39,7 @@ ShaderInfo* ShaderManager::FindShaderInfo(const std::string& name, const std::ws
 
 	//存在していない場合
 	//コンパイルを行う
-	shaderCompiler_->CompileShader(directoryPath + filePath, profile);
+	shaderCompiler_->CompileShader(directoryPath + fileName, profile);
 	//コンパイルしたシェーダにアクセス
 	std::unordered_map<std::string, ParameterInfo>parameters;
 	for (const CompileShaderInfo& compileShaderInfo : shaderCompiler_->GetCompileShaderInfos()){
@@ -47,6 +47,7 @@ ShaderInfo* ShaderManager::FindShaderInfo(const std::string& name, const std::ws
 		std::string constantBufferName = compileShaderInfo.name;
 		//パラメータの情報
 		ParameterInfo parameterInfo = {
+			compileShaderInfo.type,
 			compileShaderInfo.offset,
 			compileShaderInfo.size
 		};

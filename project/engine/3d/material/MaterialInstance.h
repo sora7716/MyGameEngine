@@ -1,10 +1,14 @@
 #pragma once
 #include "RenderData.h"
 #include "ShaderInfo.h"
+#include "Vector2.h"
+#include "Vector3.h"
+#include "Color.h"
 #include <unordered_map>
 #include <string>
 #include <vector>
 #include <cstddef>
+#include <concepts>
 
 //前方宣言
 class ShaderManager;
@@ -192,9 +196,87 @@ public://メンバ関数
 	/// </summary>
 	/// <returns>マテリアルが変更されたかを判断する変数</returns>
 	uint64_t GetRevision()const;
+
+	/// <summary>
+	/// ピクセルシェーダのファイルパスを取得
+	/// </summary>
+	/// <param name="pixelShaderFileName">ピクセルシェーダファイル名</param>
+	void SetPixelShaderFileName(const std::string& pixelShaderFileName);
+
+	/// <summary>
+	/// パラメータの設定
+	/// </summary>
+	/// <typeparam name="T">型</typeparam>
+	/// <param name="name">名前</param>
+	/// <param name="value">値</param>
+	template<typename T>
+	void SetParameter(const std::string& name, T value){
+		//存在しなかったら
+		if (!parameterInfos_.contains(name)){
+			return;
+		}
+		ParameterInfo parameterInfo = parameterInfos_.at(name);
+
+		//型とサイズが一致していなかった場合
+		if (parameterInfo.size != sizeof(value)){
+			return;
+		}
+
+		//サイズの範囲内か確認
+		if (parameterInfo.offset > parameterValues_.size() || parameterInfo.size > parameterValues_.size() - parameterInfo.offset){
+			return;
+		}
+
+		//書き込む先を取得
+		std::byte* parameterValue = parameterValues_.data() + parameterInfo.offset;
+		switch (parameterInfo.type){
+			case ParameterType::kFloat:{
+					if (!std::same_as<T, float>){
+						return;
+					}
+					break;
+				}
+			case ParameterType::kVector2:{
+					if (!std::same_as<T, Vector2>){
+						return;
+					}
+					break;
+				}
+			case ParameterType::kVector3:{
+					if (!std::same_as<T, Vector3>){
+						return;
+					}
+					break;
+				}
+			case ParameterType::kColor:{
+					if (!std::same_as<T, Color>){
+						return;
+					}
+					break;
+				}
+			case ParameterType::kInt:{
+					if (!std::same_as<T, int32_t>){
+						return;
+					}
+					break;
+				}
+			case ParameterType::kBool:{
+					if (!std::same_as<T, uint32_t>){
+						return;
+					}
+					break;
+				}
+		}
+		std::memcpy(parameterValue, &value, parameterInfo.size);
+
+		//変更があったので加算
+		revision_++;
+	}
 private://メンバ変数
 	//シェーダの管理
 	ShaderManager* shaderManager_ = nullptr;
+	//ピクセルシェーダの名
+	std::string pixelShaderFileName_ = "";
 	//マテリアルインスタンスのスロット
 	std::vector<MaterialInstanceSlot>slots_;
 	//リムライト

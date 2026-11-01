@@ -1,8 +1,8 @@
 #include "ShaderCompiler.h"
 #include "Logger.h"
 #include "StringUtility.h"
-#include <d3d12shader.h>
 #include <cassert>
+#include <array>
 #pragma comment(lib,"dxcompiler.lib")
 using namespace Microsoft::WRL;
 
@@ -146,11 +146,11 @@ void ShaderCompiler::ReflectionShader(ComPtr<IDxcResult> shaderResult){
 		assert(SUCCEEDED(hr));
 		for (uint32_t j = 0; j < bufferDesc.Variables; j++){
 			ID3D12ShaderReflectionVariable* variable = constantBuffer->GetVariableByIndex(j);
-			
+
 			//型を取得
-			ID3D12ShaderReflectionType* type = variable->GetType();
+			ID3D12ShaderReflectionType* reflectionType = variable->GetType();
 			D3D12_SHADER_TYPE_DESC typeDesc = {};
-			hr = type->GetDesc(&typeDesc);
+			hr = reflectionType->GetDesc(&typeDesc);
 			assert(SUCCEEDED(hr));
 
 			D3D12_SHADER_VARIABLE_DESC variableDesc = {};
@@ -159,9 +159,51 @@ void ShaderCompiler::ReflectionShader(ComPtr<IDxcResult> shaderResult){
 
 			//値を追加
 			std::string name = static_cast<std::string>(variableDesc.Name);
+			ParameterType type = ConvertToParameterType(typeDesc);
 			uint32_t offset = static_cast<uint32_t>(variableDesc.StartOffset);
 			uint32_t size = static_cast<uint32_t>(variableDesc.Size);
-			compileShaderInfos_.push_back({ name,offset,size });
+			CompileShaderInfo info = {
+				.name = name,
+				.type = type,
+				.offset = offset,
+				.size = size
+			};
+			compileShaderInfos_.push_back(info);
 		}
 	}
+}
+
+//パラメータの型をDirectXの型からわかりやすいように変換
+ParameterType ShaderCompiler::ConvertToParameterType(const D3D12_SHADER_TYPE_DESC& desc){
+	//型
+	D3D_SHADER_VARIABLE_TYPE type = desc.Type;
+	//列
+	uint32_t col = static_cast<UINT>(desc.Columns);
+
+	//パラメータタイプ
+	ParameterType parameterType = ParameterType::kUnknow;
+	//見やすい方へ変換
+	switch (type){
+	case D3D_SVT_FLOAT:{
+			//浮動小数点の一覧
+			constexpr std::array<ParameterType, 4>floatTypes{
+				ParameterType::kFloat,
+				ParameterType::kVector2,
+				ParameterType::kVector3,
+				ParameterType::kColor,
+			};
+			parameterType = floatTypes[col - 1];
+			break;
+		}
+	case D3D_SVT_INT:{
+			parameterType = ParameterType::kInt;
+			break;
+		}
+	case D3D_SVT_UINT:{
+			parameterType = ParameterType::kBool;
+			break;
+		}
+	}
+
+	return parameterType;
 }

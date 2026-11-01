@@ -49,10 +49,10 @@ public://メンバ関数
 	/// シェーダの情報を取得
 	/// </summary>
 	/// <param name="name">登録したシェーダ名</param>
-	/// <param name="filePath">ファイルパス</param>
+	/// <param name="fileName">ファイル名</param>
 	/// <param name="profile">プロファイル</param>
 	/// <returns>シェーダ</returns>
-	ShaderInfo* FindShaderInfo(const std::string& name, const std::wstring& filePath, const wchar_t* profile);
+	ShaderInfo* FindPixelShaderInfo(const std::string& name, const std::wstring& fileName, const wchar_t* profile = L"ps_6_0");
 private://メンバ変数
 	//シェーダの情報を格納する配列
 	std::unordered_map<std::string, ShaderInfo> shaderInfos_;

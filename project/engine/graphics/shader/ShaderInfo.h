@@ -7,9 +7,20 @@
 #include <memory>
 #include <string>
 #include <unordered_map>
+//パラメータタイプ
+enum class ParameterType :uint32_t{
+	kUnknow,
+	kFloat,
+	kVector2,
+	kVector3,
+	kColor,
+	kInt,
+	kBool,
+};
 
 //パラメータの情報
 struct ParameterInfo{
+	ParameterType type;
 	uint32_t offset = 0;//パラメータの位置
 	uint32_t size = 0;//パラメータのサイズ
 };
@@ -18,14 +29,4 @@ struct ParameterInfo{
 struct ShaderInfo{
 	Microsoft::WRL::ComPtr<IDxcBlob>shaderBlob = nullptr;
 	std::unordered_map<std::string, ParameterInfo>parameters;
-};
-
-//パラメータタイプ
-enum class ParameterType{
-	kFloat,
-	kVector2,
-	kVector3,
-	kColor,
-	kInt,
-	kBool
 };

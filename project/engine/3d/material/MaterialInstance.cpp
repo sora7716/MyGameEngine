@@ -1,5 +1,7 @@
 #include "MaterialInstance.h"
 #include "MatrixUtility.h"
+#include "ShaderManager.h"
+#include "StringUtility.h"
 #include <algorithm>
 
 //コンストラクタ
@@ -275,4 +277,22 @@ const RimLight& MaterialInstance::GetRimLight() const{
 //マテリアルが変更されたかを判断する変数の取得
 uint64_t MaterialInstance::GetRevision() const{
 	return revision_;
+}
+
+//ピクセルシェーダのファイルパスを設定
+void MaterialInstance::SetPixelShaderFileName(const std::string& pixelShaderFileName){
+	//シェーダの情報を取得
+	ShaderInfo* shaderInfo = shaderManager_->FindPixelShaderInfo(pixelShaderFileName, stringUtility::ConvertString(pixelShaderFileName));
+	//シェーダの情報が無ければ
+	if (!shaderInfo){
+		return;
+	}
+	//ファイル名を取得
+	pixelShaderFileName_ = pixelShaderFileName;
+
+	//パラメータを保存
+	parameterInfos_ = shaderInfo->parameters;
+
+	//変更があったので加算
+	revision_++;
 }

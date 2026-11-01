@@ -1,7 +1,9 @@
 #pragma once
+#include "ShaderInfo.h"
 #include <dxgi1_6.h>
 #include <dxgidebug.h>
 #include <dxcapi.h>
+#include <d3d12shader.h>
 #include <wrl.h>
 #include <string>
 #include <memory>
@@ -10,6 +12,7 @@
 //コンパイルしたときのシェーダの情報
 struct CompileShaderInfo{
 	std::string name;
+	ParameterType type;
 	uint32_t offset;
 	uint32_t size;
 };
@@ -78,6 +81,13 @@ private://メンバ関数
 	/// </summary>
 	/// <param name="shaderResult">コンパイルしたシェーダの結果</param>
 	void ReflectionShader(ComPtr<IDxcResult> shaderResult);
+
+	/// <summary>
+	/// パラメータの型をDirectXの型からわかりやすいように変換
+	/// </summary>
+	/// <param name="desc">DirectXでの型を取得</param>
+	/// <returns>わかりやすい型に変換</returns>
+	ParameterType ConvertToParameterType(const D3D12_SHADER_TYPE_DESC& desc);
 private://メンバ変数
 	//DXCユーティリティ
 	ComPtr<IDxcUtils> dxcUtils_ = nullptr;

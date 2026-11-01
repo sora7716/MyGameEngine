@@ -262,7 +262,7 @@ void GraphicsPipeline::CompileVertexShader(){
 //ピクセルシェーダのコンパイル
 void GraphicsPipeline::CompilePixelShader(const std::wstring& filePath, const wchar_t* profile){
 	//シェーダの情報を取得
-	ShaderInfo* shaderInfo = shaderManager_->FindShaderInfo(stringUtility::ConvertString(filePath), filePath, profile);
+	ShaderInfo* shaderInfo = shaderManager_->FindPixelShaderInfo(stringUtility::ConvertString(filePath), filePath, profile);
 	//PixelShader
 	pixelShaderBlob_ = shaderInfo->shaderBlob;
 	assert(pixelShaderBlob_ != nullptr);

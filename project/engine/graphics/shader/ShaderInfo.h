@@ -15,7 +15,7 @@ enum class ParameterType :uint32_t{
 	kVector3,
 	kColor,
 	kInt,
-	kBool,
+	kUint,
 };
 
 //パラメータの情報
@@ -25,8 +25,15 @@ struct ParameterInfo{
 	uint32_t size = 0;//パラメータのサイズ
 };
 
+//CBufferの情報
+struct ConstantBufferInfo {
+	uint32_t bufferSize;
+	uint32_t registerNum;
+	std::unordered_map<std::string , ParameterInfo>parameters;
+};
+
 //シェーダの情報
 struct ShaderInfo{
 	Microsoft::WRL::ComPtr<IDxcBlob>shaderBlob = nullptr;
-	std::unordered_map<std::string, ParameterInfo>parameters;
+	std::unordered_map<std::string, ConstantBufferInfo>constantBuffers;
 };

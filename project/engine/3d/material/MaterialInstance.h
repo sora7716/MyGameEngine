@@ -14,28 +14,28 @@
 class ShaderManager;
 
 //スロット
-struct MaterialInstanceSlot{
+struct MaterialInstanceSlot {
 	Material material = {};
 	MaterialTexturePaths texturePaths = {};
 	RectTransform uvTransform = {};
 };
 
 //拡散反射の反射モデル
-enum DiffuseModel :uint32_t{
-	kLambert,
+enum DiffuseModel :uint32_t {
+	kLambert ,
 	kHalfLambert
 };
 
 //鏡面反射の反射モデル
-enum SpecularModel :uint32_t{
-	kPhong,
+enum SpecularModel :uint32_t {
+	kPhong ,
 	kBlingPhong
 };
 
 /// <summary>
 /// マテリアルのインスタンス
 /// </summary>
-class MaterialInstance{
+class MaterialInstance {
 public://メンバ関数
 	/// <summary>
 	/// コンストラクタ
@@ -52,91 +52,91 @@ public://メンバ関数
 	/// </summary>
 	/// <param name="texturePaths">テクスチャのパス</param>
 	/// <param name="shaderManager">シェーダの管理</param>
-	void Initialize(const std::vector<MaterialTexturePaths>& texturePaths, ShaderManager* shaderManager);
+	void Initialize(const std::vector<MaterialTexturePaths>& texturePaths , ShaderManager* shaderManager);
 
 	/// <summary>
 	/// 色の設定
 	/// </summary>
 	/// <param name="index">検索キー</param>
 	/// <param name="color">色</param>
-	void SetColor(uint32_t index, const Color& color);
+	void SetColor(uint32_t index , const Color& color);
 
 	/// <summary>
 	/// テクスチャの設定
 	/// </summary>
 	/// <param name="index">検索キー</param>
 	/// <param name="path">テクスチャパス</param>
-	void SetTexture(uint32_t index, const std::string& path);
+	void SetTexture(uint32_t index , const std::string& path);
 
 	/// <summary>
 	/// 環境マップの設定
 	/// </summary>
 	/// <param name="index">検索キー</param>
 	/// <param name="path">環境マップパス</param>
-	void SetEnvironmentMap(uint32_t index, const std::string& path);
+	void SetEnvironmentMap(uint32_t index , const std::string& path);
 
 	/// <summary>
 	/// UVのスケールの設定
 	/// </summary>
 	/// <param name="index">検索キー</param>
 	/// <param name="scale">スケール</param>
-	void SetUVScale(uint32_t index, const Vector2& scale);
+	void SetUVScale(uint32_t index , const Vector2& scale);
 
 	/// <summary>
 	/// UVの回転の設定
 	/// </summary>
 	/// <param name="index">検索キー</param>
 	/// <param name="rotate">回転</param>
-	void SetUVRotate(uint32_t index, float rotate);
+	void SetUVRotate(uint32_t index , float rotate);
 
 	/// <summary>
 	/// UVの平行移動の設定
 	/// </summary>
 	/// <param name="index">検索キー</param>
 	/// <param name="translate">平行移動</param>
-	void SetUVTranslate(uint32_t index, const Vector2& translate);
+	void SetUVTranslate(uint32_t index , const Vector2& translate);
 
 	/// <summary>
 	/// UVトランスフォームの設定
 	/// </summary>
 	/// <param name="index">検索キー</param>
 	/// <param name="transform">UVトランスフォーム</param>
-	void SetUVTransform(uint32_t index, const RectTransform& transform);
+	void SetUVTransform(uint32_t index , const RectTransform& transform);
 
 	/// <summary>
 	/// ライティングするかの設定
 	/// </summary>
 	/// <param name="index">検索キー</param>
 	/// <param name="enabled">ライティングするかのフラグ</param>
-	void SetIsLighting(uint32_t index, bool enabled);
+	void SetIsLighting(uint32_t index , bool enabled);
 
 	/// <summary>
 	/// 光沢度の設定
 	/// </summary>
 	/// <param name="index">検索キー</param>
 	/// <param name="shininess">光沢度</param>
-	void SetShininess(uint32_t index, float shininess);
+	void SetShininess(uint32_t index , float shininess);
 
 	/// <summary>
 	/// 環境マップの映り込み度の設定
 	/// </summary>
 	/// <param name="index">検索キー</param>
 	/// <param name="coefficient">環境マップの映り込み度</param>
-	void SetEnvironmentCoefficient(uint32_t index, float coefficient);
+	void SetEnvironmentCoefficient(uint32_t index , float coefficient);
 
 	/// <summary>
 	/// 拡散反射のモデル切り替え
 	/// </summary>
 	/// <param name="index">検索キー</param>
 	/// <param name="diffuseModel">拡散反射のモデル</param>
-	void SetDiffuseModel(uint32_t index, DiffuseModel diffuseModel);
+	void SetDiffuseModel(uint32_t index , DiffuseModel diffuseModel);
 
 	/// <summary>
 	/// 鏡面反射のモデル切り替え
 	/// </summary>
 	/// <param name="index">検索キー</param>
 	/// <param name="specularModel">鏡面反射のモデル</param>
-	void SetSpecularModel(uint32_t index, SpecularModel specularModel);
+	void SetSpecularModel(uint32_t index , SpecularModel specularModel);
 
 	/// <summary>
 	/// リムライトの色の設定
@@ -192,16 +192,11 @@ public://メンバ関数
 	const RimLight& GetRimLight()const;
 
 	/// <summary>
-	/// マテリアルが変更されたかを判断する変数の取得
-	/// </summary>
-	/// <returns>マテリアルが変更されたかを判断する変数</returns>
-	uint64_t GetRevision()const;
-
-	/// <summary>
 	/// ピクセルシェーダのファイルパスを取得
 	/// </summary>
 	/// <param name="pixelShaderFileName">ピクセルシェーダファイル名</param>
-	void SetPixelShaderFileName(const std::string& pixelShaderFileName);
+	/// <param name="cBufferName">コンスタントバッファ名</param>
+	void SetPixelShaderFileName(const std::string& pixelShaderFileName,const std::string& cBufferName);
 
 	/// <summary>
 	/// パラメータの設定
@@ -210,68 +205,90 @@ public://メンバ関数
 	/// <param name="name">名前</param>
 	/// <param name="value">値</param>
 	template<typename T>
-	void SetParameter(const std::string& name, T value){
+	void SetParameter(const std::string& name , T value) {
 		//存在しなかったら
-		if (!parameterInfos_.contains(name)){
+		if ( !parameterInfos_.contains(name) ) {
 			return;
 		}
 		ParameterInfo parameterInfo = parameterInfos_.at(name);
 
 		//型とサイズが一致していなかった場合
-		if (parameterInfo.size != sizeof(value)){
+		if ( parameterInfo.size != sizeof(value) ) {
 			return;
 		}
 
 		//サイズの範囲内か確認
-		if (parameterInfo.offset > parameterValues_.size() || parameterInfo.size > parameterValues_.size() - parameterInfo.offset){
+		if ( parameterInfo.offset > parameterValues_.size() || parameterInfo.size > parameterValues_.size() - parameterInfo.offset ) {
 			return;
 		}
 
 		//書き込む先を取得
 		std::byte* parameterValue = parameterValues_.data() + parameterInfo.offset;
-		switch (parameterInfo.type){
-			case ParameterType::kFloat:{
-					if (!std::same_as<T, float>){
+		switch ( parameterInfo.type ) {
+			case ParameterType::kFloat: {
+					if ( !std::same_as<T , float> ) {
 						return;
 					}
 					break;
 				}
-			case ParameterType::kVector2:{
-					if (!std::same_as<T, Vector2>){
+			case ParameterType::kVector2: {
+					if ( !std::same_as<T , Vector2> ) {
 						return;
 					}
 					break;
 				}
-			case ParameterType::kVector3:{
-					if (!std::same_as<T, Vector3>){
+			case ParameterType::kVector3: {
+					if ( !std::same_as<T , Vector3> ) {
 						return;
 					}
 					break;
 				}
-			case ParameterType::kColor:{
-					if (!std::same_as<T, Color>){
+			case ParameterType::kColor: {
+					if ( !std::same_as<T , Color> ) {
 						return;
 					}
 					break;
 				}
-			case ParameterType::kInt:{
-					if (!std::same_as<T, int32_t>){
+			case ParameterType::kInt: {
+					if ( !std::same_as<T , int32_t> ) {
 						return;
 					}
 					break;
 				}
-			case ParameterType::kBool:{
-					if (!std::same_as<T, uint32_t>){
+			case ParameterType::kUint: {
+					if ( !std::same_as<T , uint32_t> ) {
 						return;
 					}
+					break;
+				}
+			default: {
+					return;
 					break;
 				}
 		}
-		std::memcpy(parameterValue, &value, parameterInfo.size);
+		std::memcpy(parameterValue , &value , parameterInfo.size);
 
 		//変更があったので加算
 		revision_++;
 	}
+
+	/// <summary>
+	/// マテリアルが変更されたかを判断する変数の取得
+	/// </summary>
+	/// <returns>マテリアルが変更されたかを判断する変数</returns>
+	uint64_t GetRevision()const;
+
+	/// <summary>
+	/// コンスタントバッファの情報を取得
+	/// </summary>
+	/// <returns>コンスタントバッファの情報</returns>
+	const ConstantBufferInfo& GetCBufferInfo()const;
+
+	/// <summary>
+	/// パラメータのメモリの値を取得
+	/// </summary>
+	/// <returns>パラメータの値</returns>
+	const std::vector<std::byte>& GetParameterValues()const;
 private://メンバ変数
 	//シェーダの管理
 	ShaderManager* shaderManager_ = nullptr;
@@ -284,8 +301,10 @@ private://メンバ変数
 	//マテリアルが変更されたかを判断する変数
 	uint64_t revision_ = 0;
 
+	//コンスタントバッファの情報を取得
+	ConstantBufferInfo cBuffer_ = {};
 	//パラメータの情報
-	std::unordered_map<std::string, ParameterInfo>parameterInfos_;
+	std::unordered_map<std::string , ParameterInfo>parameterInfos_;
 	//パラメータのバイト
 	std::vector<std::byte>parameterValues_;
 };

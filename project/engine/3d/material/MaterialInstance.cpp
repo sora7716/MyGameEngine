@@ -2,26 +2,27 @@
 #include "MatrixUtility.h"
 #include "ShaderManager.h"
 #include "StringUtility.h"
+#include "Logger.h"
 #include <algorithm>
 
 //コンストラクタ
-MaterialInstance::MaterialInstance(){
+MaterialInstance::MaterialInstance() {
 }
 
 //デストラクタ
-MaterialInstance::~MaterialInstance(){
+MaterialInstance::~MaterialInstance() {
 }
 
 //初期化
-void MaterialInstance::Initialize(const std::vector<MaterialTexturePaths>& texturePaths, ShaderManager* shaderManager){
+void MaterialInstance::Initialize(const std::vector<MaterialTexturePaths>& texturePaths , ShaderManager* shaderManager) {
 	//シェーダの管理を記録
 	assert(shaderManager);
 	shaderManager_ = shaderManager;
 
 	//テクスチャパスと同じ数のスロットを作る
-	slots_.assign(texturePaths.size(), MaterialInstanceSlot{});
+	slots_.assign(texturePaths.size() , MaterialInstanceSlot{});
 
-	for (uint32_t i = 0; i < static_cast<uint32_t>(slots_.size()); i++){
+	for (uint32_t i = 0; i < static_cast<uint32_t>(slots_.size()); i++) {
 		MaterialInstanceSlot& slot = slots_[i];
 		//マテリアルの初期化
 		slot.material.color = Color::GetWhite();
@@ -35,7 +36,7 @@ void MaterialInstance::Initialize(const std::vector<MaterialTexturePaths>& textu
 		//UVトランスフォームの初期化
 		slot.uvTransform.scale = Vector2::GetOne();
 		slot.uvTransform.rotate = 0.0f;
-		slot.uvTransform.translate = { 0.0f,0.0f };
+		slot.uvTransform.translate = { 0.0f , 0.0f };
 
 		//テクスチャファイルパスの初期化
 		slot.texturePaths = texturePaths[i];
@@ -53,9 +54,9 @@ void MaterialInstance::Initialize(const std::vector<MaterialTexturePaths>& textu
 }
 
 //色の設定
-void MaterialInstance::SetColor(uint32_t index, const Color& color){
+void MaterialInstance::SetColor(uint32_t index , const Color& color) {
 	//検索キーとスロットのサイズを比較して
-	if (index >= slots_.size()){
+	if (index >= slots_.size()) {
 		return;
 	}
 
@@ -66,9 +67,9 @@ void MaterialInstance::SetColor(uint32_t index, const Color& color){
 }
 
 //テクスチャの設定
-void MaterialInstance::SetTexture(uint32_t index, const std::string& path){
+void MaterialInstance::SetTexture(uint32_t index , const std::string& path) {
 	//検索キーとスロットのサイズを比較して
-	if (index >= slots_.size()){
+	if (index >= slots_.size()) {
 		return;
 	}
 
@@ -79,9 +80,9 @@ void MaterialInstance::SetTexture(uint32_t index, const std::string& path){
 }
 
 //環境マップの設定
-void MaterialInstance::SetEnvironmentMap(uint32_t index, const std::string& path){
+void MaterialInstance::SetEnvironmentMap(uint32_t index , const std::string& path) {
 	//検索キーとスロットのサイズを比較して
-	if (index >= slots_.size()){
+	if (index >= slots_.size()) {
 		return;
 	}
 
@@ -92,9 +93,9 @@ void MaterialInstance::SetEnvironmentMap(uint32_t index, const std::string& path
 }
 
 //UVのスケールの設定
-void MaterialInstance::SetUVScale(uint32_t index, const Vector2& scale){
+void MaterialInstance::SetUVScale(uint32_t index , const Vector2& scale) {
 	//検索キーとスロットのサイズを比較して
-	if (index >= slots_.size()){
+	if (index >= slots_.size()) {
 		return;
 	}
 
@@ -107,9 +108,9 @@ void MaterialInstance::SetUVScale(uint32_t index, const Vector2& scale){
 }
 
 //UVの回転の設定
-void MaterialInstance::SetUVRotate(uint32_t index, float rotate){
+void MaterialInstance::SetUVRotate(uint32_t index , float rotate) {
 	//検索キーとスロットのサイズを比較して
-	if (index >= slots_.size()){
+	if (index >= slots_.size()) {
 		return;
 	}
 
@@ -122,9 +123,9 @@ void MaterialInstance::SetUVRotate(uint32_t index, float rotate){
 }
 
 //UVの平行移動の設定
-void MaterialInstance::SetUVTranslate(uint32_t index, const Vector2& translate){
+void MaterialInstance::SetUVTranslate(uint32_t index , const Vector2& translate) {
 	//検索キーとスロットのサイズを比較して
-	if (index >= slots_.size()){
+	if (index >= slots_.size()) {
 		return;
 	}
 
@@ -137,9 +138,9 @@ void MaterialInstance::SetUVTranslate(uint32_t index, const Vector2& translate){
 }
 
 //UVトランスフォームの設定
-void MaterialInstance::SetUVTransform(uint32_t index, const RectTransform& transform){
+void MaterialInstance::SetUVTransform(uint32_t index , const RectTransform& transform) {
 	//検索キーとスロットのサイズを比較して
-	if (index >= slots_.size()){
+	if (index >= slots_.size()) {
 		return;
 	}
 
@@ -152,22 +153,22 @@ void MaterialInstance::SetUVTransform(uint32_t index, const RectTransform& trans
 }
 
 //ライティングするかの設定
-void MaterialInstance::SetIsLighting(uint32_t index, bool enabled){
+void MaterialInstance::SetIsLighting(uint32_t index , bool enabled) {
 	//検索キーとスロットのサイズを比較して
-	if (index >= slots_.size()){
+	if (index >= slots_.size()) {
 		return;
 	}
 
-	slots_[index].material.enableLighting = static_cast<int32_t>(enabled);
+	slots_[index].material.enableLighting = static_cast<int32_t>( enabled );
 
 	//変更があったので加算
 	revision_++;
 }
 
 //光沢度の設定
-void MaterialInstance::SetShininess(uint32_t index, float shininess){
+void MaterialInstance::SetShininess(uint32_t index , float shininess) {
 	//検索キーとスロットのサイズを比較して
-	if (index >= slots_.size()){
+	if (index >= slots_.size()) {
 		return;
 	}
 
@@ -178,46 +179,46 @@ void MaterialInstance::SetShininess(uint32_t index, float shininess){
 }
 
 //環境マップの映り込み度の設定
-void MaterialInstance::SetEnvironmentCoefficient(uint32_t index, float coefficient){
+void MaterialInstance::SetEnvironmentCoefficient(uint32_t index , float coefficient) {
 	//検索キーとスロットのサイズを比較して
-	if (index >= slots_.size()){
+	if (index >= slots_.size()) {
 		return;
 	}
 
-	slots_[index].material.environmentCoefficient = std::clamp(coefficient, 0.0f, 1.0f);
+	slots_[index].material.environmentCoefficient = std::clamp(coefficient , 0.0f , 1.0f);
 
 	//変更があったので加算
 	revision_++;
 }
 
 //拡散反射のモデル切り替え
-void MaterialInstance::SetDiffuseModel(uint32_t index, DiffuseModel diffuseModel){
+void MaterialInstance::SetDiffuseModel(uint32_t index , DiffuseModel diffuseModel) {
 	//検索キーとスロットのサイズを比較して
-	if (index >= slots_.size()){
+	if (index >= slots_.size()) {
 		return;
 	}
 
-	slots_[index].material.diffuseModel = static_cast<uint32_t>(diffuseModel);
+	slots_[index].material.diffuseModel = static_cast<uint32_t>( diffuseModel );
 
 	//変更があったので加算
 	revision_++;
 }
 
 //鏡面反射のモデル切り替え
-void MaterialInstance::SetSpecularModel(uint32_t index, SpecularModel specularModel){
+void MaterialInstance::SetSpecularModel(uint32_t index , SpecularModel specularModel) {
 	//検索キーとスロットのサイズを比較して
-	if (index >= slots_.size()){
+	if (index >= slots_.size()) {
 		return;
 	}
 
-	slots_[index].material.specularModel = static_cast<uint32_t>(specularModel);
+	slots_[index].material.specularModel = static_cast<uint32_t>( specularModel );
 
 	//変更があったので加算
 	revision_++;
 }
 
 //リムライトの色の設定
-void MaterialInstance::SetRimColor(const Color& color){
+void MaterialInstance::SetRimColor(const Color& color) {
 	rimLight_.color = color;
 
 	//変更があったので加算
@@ -225,7 +226,7 @@ void MaterialInstance::SetRimColor(const Color& color){
 }
 
 //リムライトの強さの設定
-void MaterialInstance::SetRimPower(float power){
+void MaterialInstance::SetRimPower(float power) {
 	rimLight_.power = power;
 
 	//変更があったので加算
@@ -233,7 +234,7 @@ void MaterialInstance::SetRimPower(float power){
 }
 
 //リムライトのアウトラインの強さの設定
-void MaterialInstance::SetRimOutLinePower(float outLinePower){
+void MaterialInstance::SetRimOutLinePower(float outLinePower) {
 	rimLight_.outLinePower = outLinePower;
 
 	//変更があったので加算
@@ -241,7 +242,7 @@ void MaterialInstance::SetRimOutLinePower(float outLinePower){
 }
 
 //リムライトの柔らかさの設定
-void MaterialInstance::SetRimSoftness(float softness){
+void MaterialInstance::SetRimSoftness(float softness) {
 	rimLight_.softness = softness;
 
 	//変更があったので加算
@@ -249,15 +250,15 @@ void MaterialInstance::SetRimSoftness(float softness){
 }
 
 //リムライトをするかの設定
-void MaterialInstance::SetIsRimLighting(bool enabled){
-	rimLight_.enableRimLighting = static_cast<int32_t>(enabled);
+void MaterialInstance::SetIsRimLighting(bool enabled) {
+	rimLight_.enableRimLighting = static_cast<int32_t>( enabled );
 
 	//変更があったので加算
 	revision_++;
 }
 
 //リムライトの設定
-void MaterialInstance::SetRimLight(const RimLight& rimLight){
+void MaterialInstance::SetRimLight(const RimLight& rimLight) {
 	rimLight_ = rimLight;
 
 	//変更があったので加算
@@ -265,34 +266,57 @@ void MaterialInstance::SetRimLight(const RimLight& rimLight){
 }
 
 //スロットの取得
-const std::vector<MaterialInstanceSlot>& MaterialInstance::GetSlots() const{
+const std::vector<MaterialInstanceSlot>& MaterialInstance::GetSlots() const {
 	return slots_;
 }
 
 //リムライトを取得
-const RimLight& MaterialInstance::GetRimLight() const{
+const RimLight& MaterialInstance::GetRimLight() const {
 	return rimLight_;
 }
 
-//マテリアルが変更されたかを判断する変数の取得
-uint64_t MaterialInstance::GetRevision() const{
-	return revision_;
-}
-
 //ピクセルシェーダのファイルパスを設定
-void MaterialInstance::SetPixelShaderFileName(const std::string& pixelShaderFileName){
+void MaterialInstance::SetPixelShaderFileName(const std::string& pixelShaderFileName , const std::string& cBufferName) {
 	//シェーダの情報を取得
-	ShaderInfo* shaderInfo = shaderManager_->FindPixelShaderInfo(pixelShaderFileName, stringUtility::ConvertString(pixelShaderFileName));
+	ShaderInfo* shaderInfo = shaderManager_->FindPixelShaderInfo(pixelShaderFileName , stringUtility::ConvertString(pixelShaderFileName));
 	//シェーダの情報が無ければ
-	if (!shaderInfo){
+	if (!shaderInfo) {
 		return;
 	}
+
+	//コンスタントバッファが存在しなかったら
+	if (!shaderInfo->constantBuffers.contains(cBufferName)) {
+		Logger::OutputLog("コンスタントバッファ名が存在しませんでした");
+		return;
+	}
+	//コンスタントバッファの情報を取得
+	cBuffer_ = shaderInfo->constantBuffers.at(cBufferName);
+
 	//ファイル名を取得
 	pixelShaderFileName_ = pixelShaderFileName;
 
+	//パラメータのメモリの値の配列サイズを設定
+	parameterValues_.clear();
+	parameterValues_.resize(cBuffer_.bufferSize);
+
 	//パラメータを保存
-	parameterInfos_ = shaderInfo->parameters;
+	parameterInfos_ = shaderInfo->constantBuffers.at(cBufferName).parameters;
 
 	//変更があったので加算
 	revision_++;
+}
+
+//マテリアルが変更されたかを判断する変数の取得
+uint64_t MaterialInstance::GetRevision() const {
+	return revision_;
+}
+
+//コンスタントバッファの情報の取得
+const ConstantBufferInfo& MaterialInstance::GetCBufferInfo() const {
+	return cBuffer_;
+}
+
+//パラメータのメモリの値を取得
+const std::vector<std::byte>& MaterialInstance::GetParameterValues() const {
+	return parameterValues_;
 }

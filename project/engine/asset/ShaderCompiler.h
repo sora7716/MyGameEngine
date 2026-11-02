@@ -9,18 +9,10 @@
 #include <memory>
 #include <vector>
 
-//コンパイルしたときのシェーダの情報
-struct CompileShaderInfo{
-	std::string name;
-	ParameterType type;
-	uint32_t offset;
-	uint32_t size;
-};
-
 /// <summary>
 /// シェーダコンパイラ
 /// </summary>
-class ShaderCompiler{
+class ShaderCompiler {
 private://エイリアステンプレート
 	template <class T>using ComPtr = Microsoft::WRL::ComPtr<T>;
 public://静的メンバ関数
@@ -50,26 +42,13 @@ public://メンバ関数
 	/// </summary>
 	/// <param name="filePath">CompilerするShaderファイルへのパス</param>
 	/// <param name="profile">Compilerに使用するProfile</param>
-	/// <returns>コンパイラシェーダー</returns>
-	ComPtr<IDxcBlob> CompileShader(const std::wstring& filePath, const wchar_t* profile);
+	void CompileShader(const std::wstring& filePath , const wchar_t* profile);
 
 	/// <summary>
-	/// コンパイル済みのシェーダBlobを取得
+	/// シェーダの情報を取得
 	/// </summary>
-	/// <returns>コンパイル済みのシェーダBlob</returns>
-	const ComPtr<IDxcBlob>& GetShaderBlob()const;
-
-	/// <summary>
-	/// コンパイルした際のシェーダ情報を取得
-	/// </summary>
-	/// <returns>コンパイルした際のシェーダ情報</returns>
-	const std::vector<CompileShaderInfo>& GetCompileShaderInfos()const;
-
-	/// <summary>
-	/// コンパイルしたシェーダの情報の数の取得
-	/// </summary>
-	/// <returns>コンパイルしたシェーダの情報の数</returns>
-	uint32_t GetCompileShaderInfoCount()const;
+	/// <returns>シェーダの情報</returns>
+	const ShaderInfo& GetShaderInfo()const;
 private://メンバ関数
 	/// <summary>
 	/// DXCコンパイラの生成
@@ -95,9 +74,7 @@ private://メンバ変数
 	ComPtr<IDxcCompiler3> dxcCompiler_ = nullptr;
 	//デフォルトインクルードハンドラ
 	ComPtr<IDxcIncludeHandler> includeHandler_ = nullptr;
-	//コンパイルしたシェーダの情報
-	ComPtr<IDxcBlob> shaderBlob_ = nullptr;
-	//コンパイルしたときのシェーダの情報
-	std::vector<CompileShaderInfo>compileShaderInfos_;
+	//シェーダの情報
+	ShaderInfo shaderInfo_ = {};
 };
 

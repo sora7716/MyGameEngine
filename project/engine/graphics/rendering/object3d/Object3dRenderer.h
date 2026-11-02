@@ -17,12 +17,12 @@ class MaterialInstance;
 /// <summary>
 /// Object3dのレンダラー
 /// </summary>
-class Object3dRenderer{
+class Object3dRenderer {
 private://エイリアステンプレート
 	template <class T>using ComPtr = Microsoft::WRL::ComPtr<T>;
 private://構造体など
 	//オブジェクト3dのバッチリソース
-	struct BatchResource{
+	struct BatchResource {
 		Model* model = nullptr;
 		MaterialInstance* materialInstance = nullptr;
 		std::string pixelShaderFilePath = "";
@@ -31,15 +31,16 @@ private://構造体など
 		rasterizerMode::FillMode fillMode = rasterizerMode::FillMode::kSolid;
 		uint32_t meshIndex = 0;
 		Object3dRenderHandle handle = kInvalidObject3dRenderHandle;
-		std::vector<ComPtr<ID3D12Resource>>materialResources;
-		std::vector<Material*>materialPtrs;
+		ComPtr<ID3D12Resource>materialResource = nullptr;
+		std::byte* materialPtr = nullptr;
+		uint32_t allocatedSize = 0;
 		ComPtr<ID3D12Resource>rimLightResource = nullptr;
 		RimLight* rimLightPtr = nullptr;
 		uint64_t uploadedRevision = (std::numeric_limits<uint64_t>::max)();
 	};
 
 	//LodのGPUに送る用のデータ
-	struct LODGpuResource{
+	struct LODGpuResource {
 		Microsoft::WRL::ComPtr<ID3D12Resource> wvpResource = nullptr;
 		TransformationMatrix* wvpData = nullptr;
 		uint32_t srvIndex = 0;
@@ -47,11 +48,11 @@ private://構造体など
 	};
 
 	//Object3dのGPUに送る用のデータ
-	struct Object3dGpuResource{
+	struct Object3dGpuResource {
 		std::vector<LODGpuResource> lodResources;
 	};
 public://PassKey
-	class ConstructorKey{
+	class ConstructorKey {
 	private:
 		ConstructorKey() = default;
 		friend class RenderSystem;
@@ -66,7 +67,7 @@ public://静的メンバ関数
 	/// <param name="textureManager">テクスチャの管理</param>
 	/// <param name="maxInstance">インスタンスの最大値</param>
 	/// <returns>インスタンス</returns>
-	static std::unique_ptr<Object3dRenderer>Create(ConstructorKey key, DirectXBase* directXBase, SRVManager* srvManager, TextureManager* textureManager, uint32_t maxInstance = 1024);
+	static std::unique_ptr<Object3dRenderer>Create(ConstructorKey key , DirectXBase* directXBase , SRVManager* srvManager , TextureManager* textureManager , uint32_t maxInstance = 1024);
 public://メンバ関数
 	/// <summary>
 	/// コンストラクタ
@@ -86,14 +87,14 @@ public://メンバ関数
 	/// <param name="srvManager">SRVの管理</param>
 	/// <param name="textureManager">テクスチャの管理</param>
 	/// <param name="maxInstance">インスタンスの最大値</param>
-	void Initialize(DirectXBase* directXBase, SRVManager* srvManager, TextureManager* textureManager, uint32_t maxInstance);
+	void Initialize(DirectXBase* directXBase , SRVManager* srvManager , TextureManager* textureManager , uint32_t maxInstance);
 
 	/// <summary>
 	/// オブジェクトを登録
 	/// </summary>
 	/// <param name="lodCount">Lodの数</param>
 	/// <param name="maxInstance">Object3dが表示される最大数</param>
-	Object3dRenderHandle RegisterObject(uint32_t lodCount, uint32_t maxInstance);
+	Object3dRenderHandle RegisterObject(uint32_t lodCount , uint32_t maxInstance);
 
 	/// <summary>
 	///リセット
@@ -117,7 +118,7 @@ public://メンバ関数
 	/// <param name="cullingMode">カリングモード</param>
 	/// <param name="fillMode">フィルモード</param>
 	/// <param name="transformations">トランスフォーメーションデータ</param>
-	void SubmitBatch(Model* model, uint32_t meshIndex, MaterialInstance* materialInstance, const std::string& pixelShaderFilePath, BlendMode blendMode, rasterizerMode::CullingMode cullingMode, rasterizerMode::FillMode fillMode, const std::vector<TransformationMatrix>& transformations);
+	void SubmitBatch(Model* model , uint32_t meshIndex , MaterialInstance* materialInstance , const std::string& pixelShaderFilePath , BlendMode blendMode , rasterizerMode::CullingMode cullingMode , rasterizerMode::FillMode fillMode , const std::vector<TransformationMatrix>& transformations);
 
 	/// <summary>
 	/// 描画データの追加

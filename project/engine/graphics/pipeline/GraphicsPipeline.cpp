@@ -255,7 +255,8 @@ void GraphicsPipeline::InitializeRasterizerState(FillMode fillMode, CullingMode 
 //頂点シェーダのコンパイル
 void GraphicsPipeline::CompileVertexShader(){
 	//VertexShader
-	vertexShaderBlob_ = shaderCompiler_->CompileShader(L"engine/resources/shaders/vertices/" + vertexShaderFileName_, L"vs_6_0");
+	shaderCompiler_->CompileShader(L"engine/resources/shaders/vertices/" + vertexShaderFileName_, L"vs_6_0");
+	vertexShaderBlob_ = shaderCompiler_->GetShaderInfo().shaderBlob;
 	assert(vertexShaderBlob_ != nullptr);
 }
 

@@ -3,35 +3,35 @@
 using namespace Microsoft::WRL;
 
 //生成
-std::unique_ptr<ShaderManager> ShaderManager::Create(ConstructorKey key){
+std::unique_ptr<ShaderManager> ShaderManager::Create(ConstructorKey key) {
 	std::unique_ptr<ShaderManager>instance = std::make_unique<ShaderManager>(key);
 	instance->Initialize();
 	return instance;
 }
 
 //コンストラクタ
-ShaderManager::ShaderManager(ConstructorKey){
+ShaderManager::ShaderManager(ConstructorKey) {
 }
 
 //デストラクタ
-ShaderManager::~ShaderManager(){
+ShaderManager::~ShaderManager() {
 }
 
 //初期化
-void ShaderManager::Initialize(){
+void ShaderManager::Initialize() {
 	//シェーダコンパイラの生成
 	shaderCompiler_ = ShaderCompiler::Create();
 }
 
 //シェーダの情報を取得
-ShaderInfo* ShaderManager::FindPixelShaderInfo(const std::string& name, const std::wstring& fileName, const wchar_t* profile){
+ShaderInfo* ShaderManager::FindPixelShaderInfo(const std::string& name , const std::wstring& fileName , const wchar_t* profile) {
 	//存在していたら
-	if (shaderInfos_.contains(name)){
+	if (shaderInfos_.contains(name)) {
 		return &shaderInfos_.at(name);
 	}
 
 	//パスが存在しなければ
-	if (fileName.empty()){
+	if (fileName.empty()) {
 		return nullptr;
 	}
 	//ディレクトリパス
@@ -39,27 +39,7 @@ ShaderInfo* ShaderManager::FindPixelShaderInfo(const std::string& name, const st
 
 	//存在していない場合
 	//コンパイルを行う
-	shaderCompiler_->CompileShader(directoryPath + fileName, profile);
-	//コンパイルしたシェーダにアクセス
-	std::unordered_map<std::string, ParameterInfo>parameters;
-	for (const CompileShaderInfo& compileShaderInfo : shaderCompiler_->GetCompileShaderInfos()){
-		//変数名
-		std::string constantBufferName = compileShaderInfo.name;
-		//パラメータの情報
-		ParameterInfo parameterInfo = {
-			compileShaderInfo.type,
-			compileShaderInfo.offset,
-			compileShaderInfo.size
-		};
-		//パラメータに追加
-		parameters.insert(std::make_pair(constantBufferName, parameterInfo));
-	}
-	//ShaderInfoに追加
-	const ComPtr<IDxcBlob>& shaderBlob = shaderCompiler_->GetShaderBlob();
-	ShaderInfo shaderInfo = {
-		shaderBlob,
-		parameters
-	};
-	shaderInfos_.insert(std::make_pair(name, shaderInfo));
+	shaderCompiler_->CompileShader(directoryPath + fileName , profile);
+	shaderInfos_.insert(std::make_pair(name , shaderCompiler_->GetShaderInfo()));
 	return &shaderInfos_.at(name);
 }

@@ -87,6 +87,8 @@ void GameSystem::Draw(){
 	core_->GetImGuiManager()->Draw();
 	//描画終了位置
 	core_->GetDirectXBase()->PostDraw();
+	//描画システムの解放
+	core_->GetRenderSystem()->Finalize();
 	//ImGuiのプラットフォームウィンドウの更新
 	core_->GetImGuiManager()->UpdatePlatformWindow();
 #else
@@ -99,7 +101,9 @@ void GameSystem::Draw(){
 	//描画
 	core_->GetRenderSystem()->Draw();
 	//描画終了位置
-	core_->GetDirectXBase()->PostDraw();	
+	core_->GetDirectXBase()->PostDraw();
+	//描画システムの解放
+	core_->GetRenderSystem()->Finalize();
 #endif // _DEBUG
 }
 

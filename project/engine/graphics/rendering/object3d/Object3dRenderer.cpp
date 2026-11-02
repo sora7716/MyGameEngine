@@ -97,17 +97,20 @@ void Object3dRenderer::Draw(uint32_t instanceIndex) {
 			continue;
 		}
 
+		//描画データ
+		Object3dRenderData& renderData = renderDatas_[instanceIndex];
+
 		//オブジェクト3dのリソース
-		const Object3dGpuResource& objectResource = objectResources_[renderDatas_[instanceIndex].renderHandle];
+		const Object3dGpuResource& objectResource = objectResources_[renderData.renderHandle];
 
 		//LODのリソース
 		const LODGpuResource& lodResource = objectResource.lodResources[lodIndex];
 
 		//モデルの描画に必要なデータ
-		ModelRenderData modelRenderData = renderDatas_[instanceIndex].lodRenderData.modelRendererDatas[lodIndex];
+		ModelRenderData modelRenderData = renderData.lodRenderData.modelRendererDatas[lodIndex];
 
 		//メッシュの検索キー
-		uint32_t meshIndex = renderDatas_[instanceIndex].meshIndex;
+		uint32_t meshIndex = renderData.meshIndex;
 
 		//メッシュの検索キーとサイズを比べて
 		if (meshIndex >= static_cast<uint32_t>(modelRenderData.meshRenderDatas.size())) {
@@ -130,9 +133,7 @@ void Object3dRenderer::Draw(uint32_t instanceIndex) {
 		directXBase_->GetCommandList()->SetGraphicsRootDescriptorTable(1 , srvManager_->GetGPUDescriptorHandle(wvpSrvIndex));
 
 		//リムライトのCBufferの場所を設定
-		directXBase_->GetCommandList()->SetGraphicsRootConstantBufferView(7 , modelRenderData.rimLightResource->GetGPUVirtualAddress());
-		//メッシュの描画
-		uint32_t materialIndex = meshRenderData.meshData.materialIndex;
+		directXBase_->GetCommandList()->SetGraphicsRootConstantBufferView(7 , renderData.rimLightResource->GetGPUVirtualAddress());
 
 		//VertexBufferViewの設定
 		directXBase_->GetCommandList()->IASetVertexBuffers(0 , 1 , &meshRenderData.vertexBufferView);
@@ -141,9 +142,9 @@ void Object3dRenderer::Draw(uint32_t instanceIndex) {
 		directXBase_->GetCommandList()->IASetIndexBuffer(&meshRenderData.indexBufferView);
 
 		//マテリアルCBufferの場所を設定
-		directXBase_->GetCommandList()->SetGraphicsRootConstantBufferView(0 , modelRenderData.materialResources[materialIndex]->GetGPUVirtualAddress());
+		directXBase_->GetCommandList()->SetGraphicsRootConstantBufferView(0 , renderData.materialResource->GetGPUVirtualAddress());
 
-		MaterialTexturePaths& materialTexturePath = modelRenderData.modelData.materialTexturePaths[materialIndex];
+		MaterialTexturePaths& materialTexturePath = renderData.textureFilePath;
 
 		//テクスチャをセット
 		directXBase_->GetCommandList()->SetGraphicsRootDescriptorTable(2 , textureManager_->GetSRVHandleGPU(materialTexturePath.textureFilePath));
@@ -161,6 +162,12 @@ void Object3dRenderer::Draw(uint32_t instanceIndex) {
 		}
 	}
 
+}
+
+//解放
+void Object3dRenderer::Finalize() {
+	//解放待ちのリソースの解放
+	retiredResources_.clear();
 }
 
 //バッチを受け取る関数
@@ -241,24 +248,18 @@ void Object3dRenderer::SubmitBatch(Model* model , uint32_t meshIndex , MaterialI
 
 	//Modelからメッシュを含む描画データをコピー
 	ModelRenderData modelRenderData = model->GetModelRenderData();
+	
 	//マテリアル用のGPUリソースを差し替え　
-	modelRenderData.materialResources = currentBatchResource->materialResources;
+	renderData.materialResource = currentBatchResource->materialResource;
 	//リムライト用のGPUリソースを差し替え
-	modelRenderData.rimLightResource = currentBatchResource->rimLightResource;
-	//マテリアルインスタンスのスロットを取得
-	const std::vector<MaterialInstanceSlot>& slots = materialInstance->GetSlots();
-	//モデルの描画データのテクスチャパスの要素数を設定
-	modelRenderData.modelData.materialTexturePaths.resize(slots.size());
-	//テクスチャパスをコピー
-	for (uint32_t i = 0; i < static_cast<uint32_t>(slots.size()); i++) {
-		modelRenderData.modelData.materialTexturePaths[i] = slots[i].texturePaths;
-	}
+	renderData.rimLightResource = currentBatchResource->rimLightResource;
+	//今回使うテクスチャ
+	renderData.textureFilePath = materialInstance->GetTextureFilePaths();
 	//描画データに追加
 	renderData.lodRenderData.modelRendererDatas.push_back(std::move(modelRenderData));
 
 	//LOD0の描画数
 	renderData.lodRenderData.transformationData.push_back(transformations);
-
 	//LOD0の行列配列数
 	renderData.lodRenderData.matrixCounts.push_back(static_cast<uint32_t>(transformations.size()));
 
@@ -369,12 +370,12 @@ void Object3dRenderer::CreateMaterialInstanceResource(BatchResource& batchResour
 	//マテリアルインスタンスのスロットを取得
 	const std::vector<std::byte>& parameterValues = batchResource.materialInstance->GetParameterValues();
 	size_t cBufferSize = static_cast<size_t>(batchResource.materialInstance->GetCBufferInfo().bufferSize);
-	
-	//現在確保しているサイズを保存
-	batchResource.allocatedSize = batchResource.materialInstance->GetCBufferInfo().bufferSize;
-	
+
+
 	//マテリアルリソースの生成
 	size_t alignedSize = (cBufferSize + 255) & ~255;
+	//現在確保しているサイズを保存
+	batchResource.allocatedSize = alignedSize;
 	batchResource.materialResource = directXBase_->CreateBufferResource(alignedSize);
 	hr = batchResource.materialResource->Map(0 , nullptr , reinterpret_cast<void**>(&batchResource.materialPtr));
 	assert(SUCCEEDED(hr));
@@ -393,6 +394,7 @@ void Object3dRenderer::CreateMaterialInstanceResource(BatchResource& batchResour
 
 //マテリアルインスタンスの更新
 void Object3dRenderer::UpdateMaterialInstanceResource(BatchResource& batchResource) {
+	HRESULT hr = S_FALSE;
 	//マテリアルインスタンスがなければ
 	if (!batchResource.materialInstance) {
 		return;
@@ -409,11 +411,27 @@ void Object3dRenderer::UpdateMaterialInstanceResource(BatchResource& batchResour
 
 	//変更があった場合
 	//サイズを確認
-	uint32_t cBufferSize = batchResource.materialInstance->GetCBufferInfo().bufferSize;
-	if (batchResource.allocatedSize <= cBufferSize) {
+	size_t cBufferSize = static_cast<size_t>(batchResource.materialInstance->GetCBufferInfo().bufferSize);
+	ComPtr<ID3D12Resource>newResource = nullptr;
+	std::byte* newMaterialPtr = nullptr;
+	if (batchResource.allocatedSize < cBufferSize) {
 		//メモリの再確保
+		size_t alignedSize = (cBufferSize + 255) & ~255;
+		newResource = directXBase_->CreateBufferResource(alignedSize);
+		hr = newResource->Map(0 , nullptr , reinterpret_cast<void**>(&newMaterialPtr));
+		assert(SUCCEEDED(hr));
+
+		//現在のリソースを解放待ちへ移動
+		retiredResources_.push_back(std::move(batchResource.materialResource));
+
+		//今のマテリアルリソースを新しいのに置き換える
+		batchResource.materialResource = newResource;
+		batchResource.materialPtr = newMaterialPtr;
+
+		//サイズを更新
+		batchResource.allocatedSize = alignedSize;
 	}
-	
+
 	//マテリアルを変更
 	const std::vector<std::byte>& parameterValues = batchResource.materialInstance->GetParameterValues();
 	std::memcpy(batchResource.materialPtr , parameterValues.data() , parameterValues.size());

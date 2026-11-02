@@ -33,7 +33,7 @@ private://構造体など
 		Object3dRenderHandle handle = kInvalidObject3dRenderHandle;
 		ComPtr<ID3D12Resource>materialResource = nullptr;
 		std::byte* materialPtr = nullptr;
-		uint32_t allocatedSize = 0;
+		size_t allocatedSize = 0;
 		ComPtr<ID3D12Resource>rimLightResource = nullptr;
 		RimLight* rimLightPtr = nullptr;
 		uint64_t uploadedRevision = (std::numeric_limits<uint64_t>::max)();
@@ -106,6 +106,11 @@ public://メンバ関数
 	/// </summary>
 	/// <param name="instanceIndex">インスタンス検索キー</param>
 	void Draw(uint32_t instanceIndex);
+
+	/// <summary>
+	/// 解放
+	/// </summary>
+	void Finalize();
 
 	/// <summary>
 	/// バッチを受け取る関数
@@ -203,5 +208,8 @@ private://メンバ変数
 	std::vector<Object3dGpuResource>objectResources_;
 	//バッチリソース
 	std::vector<BatchResource>batchResources_;
+
+	//解放待ちのリソース
+	std::vector<ComPtr<ID3D12Resource>> retiredResources_;
 };
 

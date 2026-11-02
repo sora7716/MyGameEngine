@@ -20,16 +20,16 @@ class LODController;
 /// <summary>
 /// 3Dオブジェクト
 /// </summary>
-class Object3d :public Component{
+class Object3d :public Component {
 public://構造体
 	//メッシュのインスタンス
-	struct NodeMeshInstance{
+	struct NodeMeshInstance {
 		uint32_t meshIndex = 0;
 		Matrix4x4 nodeMatrix = Matrix4x4::Identity4x4();
 	};
 
 	//ノードの情報
-	struct NodeInfo{
+	struct NodeInfo {
 		std::string name;
 		std::string path;
 	};
@@ -85,7 +85,7 @@ public://メンバ関数
 	/// <param name="parent">親</param>
 	/// <param name="parentNodePath">親となるノードのパス</param>
 	/// <returns>成功したか</returns>
-	bool AttachTo(Object3d* parent, const std::string& parentNodePath);
+	bool AttachTo(Object3d* parent , const std::string& parentNodePath);
 
 	/// <summary>
 	/// ワールド行列を作成
@@ -113,88 +113,18 @@ public://メンバ関数
 	void SetHysteresis(float hysteresis);
 
 	/// <summary>
-	/// uvスケールの設定
-	/// </summary>
-	/// <param name="index">マテリアルスロット番号の検索キー</param>
-	/// <param name="uvScale">スケール</param>
-	void SetUVScale(uint32_t index, const Vector2& uvScale);
-
-	/// <summary>
-	/// uv回転の設定
-	/// </summary>
-	/// <param name="index">マテリアルスロット番号の検索キー</param>
-	/// <param name="uvRotate">回転</param>
-	void SetUVRotate(uint32_t index, float uvRotate);
-
-	/// <summary>
-	/// uv平行移動の設定
-	/// </summary>
-	/// <param name="index">マテリアルスロット番号の検索キー</param>
-	/// <param name="uvTranslate">平行移動</param>
-	void SetUVTranslate(uint32_t index, const Vector2& uvTranslate);
-
-	/// <summary>
-	/// 色の設定
-	/// </summary>
-	/// <param name="index">マテリアルスロット番号の検索キー</param>
-	/// <param name="color">色</param>
-	void SetColor(uint32_t index, const Color& color);
-
-	/// <summary>
 	/// テクスチャの設定
 	/// </summary>
 	/// <param name="index">マテリアルスロット番号の検索キー</param>
 	/// <param name="imageFileName">画像のファイル名</param>
-	void SetTexture(uint32_t index, const std::string& imageFileName);
+	void SetTexture(uint32_t index , const std::string& imageFileName);
 
 	/// <summary>
 	/// 環境マップの設定
 	/// </summary>
 	/// <param name="index">マテリアルスロット番号の検索キー</param>
 	/// <param name="environmentMapFileName">環境マップのファイル名</param>
-	void SetEnvironmentMap(uint32_t index, const std::string& environmentMapFileName);
-
-	/// <summary>
-	/// ライティングをするか
-	/// </summary>
-	/// <param name="index">マテリアルスロット番号の検索キー</param>
-	/// <param name="enabledLighting">ライティングをするか</param>
-	void SetEnabledLighting(uint32_t index, bool enabledLighting);
-
-	/// <summary>
-	/// 輝度の設定
-	/// <param name="index">マテリアルスロット番号の検索キー</param>
-	/// </summary>
-	/// <param name="shininess">輝度</param>
-	void SetShininess(uint32_t index, float shininess);
-
-	/// <summary>
-	/// 環境マップの映り込み度を調整
-	/// </summary>
-	/// <param name="index">マテリアルスロット番号の検索キー</param>
-	/// <param name="environmentCoefficient">k環境マップの映り込み度</param>
-	void SetEnvironmentCoefficient(uint32_t index, float environmentCoefficient);
-
-	/// <summary>
-	/// 拡散反射モデルの切り替え
-	/// </summary>
-	/// <param name="index">検索キー</param>
-	/// <param name="diffuseModel">拡散反射モデルの切り替え</param>
-	void SetDiffuseModel(uint32_t index,DiffuseModel diffuseModel);
-
-	/// <summary>
-	/// 鏡面反射モデルの切り替え
-	/// </summary>
-	/// <param name="index">検索キー</param>
-	/// <param name="specularModel">鏡面反射モデルの切り替え</param>
-	void SetSpecularModel(uint32_t index, SpecularModel specularModel);
-
-	/// <summary>
-	/// UV座標の設定
-	/// </summary>マテリアルスロット番号の検索キー
-	/// <param name="index">マテリアルスロット番号の検索キー</param>
-	/// <param name="uvTransform">UV座標</param>
-	void SetUVTransform(uint32_t index, const RectTransform& uvTransform);
+	void SetEnvironmentMap(uint32_t index , const std::string& environmentMapFileName);
 
 	/// <summary>
 	/// ピクセルシェーダファイルパスの設定
@@ -232,7 +162,7 @@ public://メンバ関数
 	/// <param name="path">ノードのパス名</param>
 	/// <param name="localTransform">ローカルトランスフォーム</param>
 	/// <returns>Nodeの取得に成功したか</returns>
-	bool SetNodeLocalTransform(const std::string& path, const Transform& localTransform);
+	bool SetNodeLocalTransform(const std::string& path , const Transform& localTransform);
 
 	/// <summary>
 	/// コンポーネントのタイプ名を返す
@@ -337,7 +267,7 @@ public://メンバ関数
 	/// <param name="path">ノードのパス</param>
 	/// <param name="outMatrix">取得できた行列</param>
 	/// <returns>成功したか</returns>
-	bool TryGetNodeModelMatrix(const std::string& path, Matrix4x4& outMatrix);
+	bool TryGetNodeModelMatrix(const std::string& path , Matrix4x4& outMatrix);
 
 	/// <summary>
 	/// ノードを取得できるか試す
@@ -345,7 +275,7 @@ public://メンバ関数
 	/// <param name="path">ノードパス</param>
 	/// <param name="node">取得できたノード</param>
 	/// <returns>成功したか</returns>
-	bool TryGetNodeForPath(const std::string& path, Node& node);
+	bool TryGetNodeForPath(const std::string& path , Node& node);
 
 	/// <summary>
 	/// ノードの名前一覧を取得
@@ -371,7 +301,7 @@ private://メンバ関数
 	/// <param name="node">ノード</param>
 	/// <param name="parentPath">親のパス</param>
 	/// <param name="nodeInfos">ノードの情報を集める配列</param>
-	void CollectNodeNames(const Node& node, const std::string& parentPath, std::vector<NodeInfo>& nodeInfos)const;
+	void CollectNodeNames(const Node& node , const std::string& parentPath , std::vector<NodeInfo>& nodeInfos)const;
 
 	/// <summary>
 	/// ノードを探す
@@ -387,7 +317,7 @@ private://メンバ関数
 	/// <param name="parentPath">親のパス</param>
 	/// <param name="targetPath">対象のパス</param>
 	/// <returns>ノード</returns>
-	Node* FindNodeRecursive(Node& node, const std::string& parentPath, const std::string& targetPath);
+	Node* FindNodeRecursive(Node& node , const std::string& parentPath , const std::string& targetPath);
 
 	/// <summary>
 	/// ワールド行列を作成
@@ -400,11 +330,16 @@ private://メンバ関数
 	void EnsureUniqueMaterialInstance();
 
 	/// <summary>
+	/// マテリアルインスタンスを作成
+	/// </summary>
+	void CreateMaterialInstances();
+
+	/// <summary>
 	/// Nodeの行列を更新
 	/// </summary>
 	/// <param name="node">ノード</param>
 	/// <param name="parentMatrix">親行列</param>
-	void UpdateNodeMatrices(Node& node, const Matrix4x4& parentMatrix);
+	void UpdateNodeMatrices(Node& node , const Matrix4x4& parentMatrix);
 private://定数
 	//インスタンスの最大数
 	static const inline uint32_t kMaxInstanceCount_ = 1024;
@@ -422,7 +357,7 @@ private://メンバ変数
 	Model* baseModel_ = nullptr;
 
 	//このObject3dが使用するマテリアル
-	std::shared_ptr<MaterialInstance>materialInstance_ = nullptr;
+	std::vector<std::shared_ptr<MaterialInstance>>materialInstances_;
 
 	//今現在のLOD番号
 	uint32_t currentLOD_ = 0;

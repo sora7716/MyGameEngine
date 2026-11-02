@@ -184,6 +184,11 @@ void RenderSystem::Draw(){
 	cameraRenderer_->Reset();
 }
 
+//解放
+void RenderSystem::Finalize() {
+	object3dRenderer_->Finalize();
+}
+
 //描画に有効なObject3dを集める
 void RenderSystem::CollectActiveObject3ds(const std::vector<std::unique_ptr<GameObject>>& gameObjects){
 	//今回描画で使用するカメラ

@@ -106,6 +106,11 @@ public://メンバ関数
 	void Draw();
 
 	/// <summary>
+	/// 解放
+	/// </summary>
+	void Finalize();
+
+	/// <summary>
 	/// 描画に有効なObject3dを集める
 	/// </summary>
 	/// <param name="gameObjects">ゲームオブジェクトの配列</param>

@@ -14,7 +14,7 @@ using Object3dRenderHandle = uint32_t;
 constexpr Object3dRenderHandle kInvalidObject3dRenderHandle = UINT32_MAX;
 
 //メッシュの描画に必要なデータ
-struct MeshRenderData{
+struct MeshRenderData {
 	D3D12_VERTEX_BUFFER_VIEW vertexBufferView = {};
 	D3D12_INDEX_BUFFER_VIEW indexBufferView = {};
 	MeshData meshData = {};
@@ -22,22 +22,20 @@ struct MeshRenderData{
 
 
 //モデルの描画に必要なデータ
-struct ModelRenderData{
-	Microsoft::WRL::ComPtr<ID3D12Resource>rimLightResource = nullptr;
-	std::vector<Microsoft::WRL::ComPtr<ID3D12Resource>>materialResources;
+struct ModelRenderData {
 	ModelData modelData = {};
 	std::vector<MeshRenderData>meshRenderDatas;
 };
 
 //LODの描画に必要なデータ
-struct LODRenderData{
+struct LODRenderData {
 	std::vector<ModelRenderData>modelRendererDatas;
 	std::vector<std::vector<TransformationMatrix>>transformationData;
 	std::vector<uint32_t>matrixCounts = {};
 };
 
 //描画に必要なデータ
-struct Object3dRenderData{
+struct Object3dRenderData {
 	Object3dRenderHandle renderHandle = kInvalidObject3dRenderHandle;
 	uint32_t meshIndex = 0;
 	LODRenderData lodRenderData;
@@ -45,4 +43,7 @@ struct Object3dRenderData{
 	BlendMode blendMode = BlendMode::kNone;
 	rasterizerMode::CullingMode cullingMode = rasterizerMode::CullingMode::kNone;
 	rasterizerMode::FillMode fillMode = rasterizerMode::FillMode::kSolid;
+	Microsoft::WRL::ComPtr<ID3D12Resource>rimLightResource = nullptr;
+	Microsoft::WRL::ComPtr<ID3D12Resource>materialResource = nullptr;
+	MaterialTexturePaths textureFilePath = {};
 };

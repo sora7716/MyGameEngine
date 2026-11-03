@@ -91,13 +91,13 @@ void Object3d::UpdateLOD(float distance) {
 //プロパティ一覧を登録
 void Object3d::RegisterProperties(PropertyRegistry* registry) {
 	Component::RegisterProperties(registry);
-	//マテリアルインスタンスがNullなら
-	if (!materialInstances_) {
-		return;
-	}
+	////マテリアルインスタンスがNullなら
+	//if (!materialInstances_) {
+	//	return;
+	//}
 
-	//マテリアルを取得
-	MaterialInstance* material = materialInstances_.get();
+	////マテリアルを取得
+	//MaterialInstance* material = materialInstances_.get();
 
 	//ブレンドモードの切り替え
 	std::function<uint32_t()> blendModeGetter = [this]() -> uint32_t {
@@ -280,13 +280,24 @@ void Object3d::SetModel(const std::string& modelName) {
 		node_ = baseModel_->GetModelData().rootNode;
 
 		//マテリアルインスタンスを取得
-		materialInstances_ = baseModel_->GetDefaultMaterialInstance();
+		materialInstances_ = baseModel_->GetDefaultMaterialInstances();
 	} else {
 		//モデルがなければリセット
 		node_ = {};
 		node_.localMatrix = Matrix4x4::Identity4x4();
 
-		materialInstances_.reset();
+		materialInstances_.clear();
+	}
+
+	//マテリアルを個別化する
+	EnsureUniqueMaterialInstance();
+	//ピクセルシェーダを設定
+	for (std::shared_ptr<MaterialInstance>&materialInstance : materialInstances_) {
+		//マテリアルインスタンスがNullだった場合
+		if (!materialInstance) {
+			continue;
+		}
+		materialInstance->SetPixelShaderFileName(pixelShaderFilePath_ , "gMaterial");
 	}
 }
 
@@ -326,6 +337,16 @@ void Object3d::SetEnvironmentMap(uint32_t index , const std::string& environment
 //ピクセルシェーダファイルパスの設定
 void Object3d::SetPixelShaderFilePath(const std::string& pixelShaderFilePath) {
 	pixelShaderFilePath_ = pixelShaderFilePath;
+	//マテリアルを個別化する
+	EnsureUniqueMaterialInstance();
+	//ピクセルシェーダを設定
+	for (std::shared_ptr<MaterialInstance>& materialInstance : materialInstances_) {
+		//マテリアルインスタンスがNullだった場合
+		if (!materialInstance) {
+			continue;
+		}
+		materialInstance->SetPixelShaderFileName(pixelShaderFilePath_ , "gMaterial");
+	}
 }
 
 //ブレンドモードの設定
@@ -420,13 +441,8 @@ RenderTransformMode Object3d::GetRenderTransformMode()const {
 }
 
 //マテリアルインスタンスの取得
-MaterialInstance* Object3d::GetMaterialInstance() {
-	return materialInstances_.get();
-}
-
-//マテリアルインスタンスの取得
-const MaterialInstance* Object3d::GetMaterialInstance() const {
-	return materialInstances_.get();
+const std::vector<std::shared_ptr<MaterialInstance>>& Object3d::GetMaterialInstances()const {
+	return materialInstances_;
 }
 
 //現在のLODに対応した描画用モデルを取得
@@ -612,10 +628,10 @@ void Object3d::MakeWorldMatrix() {
 
 //マテリアルを個別化する
 void Object3d::EnsureUniqueMaterialInstance() {
-	for (std::shared_ptr<MaterialInstance>&materialInstance : materialInstances_) {
+	for (std::shared_ptr<MaterialInstance>& materialInstance : materialInstances_) {
 		//マテリアルインスタンスがなければ
 		if (!materialInstance) {
-			return;
+			continue;
 		}
 
 		//ModelやほかのObject3dと共有中なら個別コピー
@@ -623,10 +639,6 @@ void Object3d::EnsureUniqueMaterialInstance() {
 			materialInstance = std::make_shared<MaterialInstance>(*materialInstance);
 		}
 	}
-}
-
-//マテリアルインスタンスの生成
-void Object3d::CreateMaterialInstances() {
 }
 
 //Nodeの行列を更新

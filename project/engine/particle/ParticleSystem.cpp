@@ -57,7 +57,7 @@ std::unique_ptr<Component> ParticleSystem::Clone(GameObject* gameObject) const{
 	cloneInstance->fillMode_ = this->fillMode_;
 	cloneInstance->model_ = this->model_;
 	cloneInstance->node_ = this->node_;
-	cloneInstance->materialInstance_ = this->materialInstance_;
+	cloneInstance->materialInstances_ = this->materialInstances_;
 	return cloneInstance;
 }
 
@@ -151,79 +151,25 @@ void ParticleSystem::SetModel(const std::string& modelName){
 		node_ = model_->GetModelData().rootNode;
 
 		//マテリアルインスタンスを取得
-		materialInstance_ = model_->GetDefaultMaterialInstance();
+		materialInstances_ = model_->GetDefaultMaterialInstances();
 	} else{
 		//モデルがなければリセット
 		node_ = {};
 		node_.localMatrix = Matrix4x4::Identity4x4();
 
-		materialInstance_.reset();
+		materialInstances_.clear();
 	}
-}
-// uvスケールの設定
-void ParticleSystem::SetUVScale(uint32_t index, const Vector2& uvScale){
-	//マテリアルインスタンスがなければ
-	if (!materialInstance_){
-		return;
-	}
-	//マテリアルを個別化する
-	EnsureUniqueMaterialInstance();
-	materialInstance_->SetUVScale(index, uvScale);
-}
-
-// uv回転の設定
-void ParticleSystem::SetUVRotate(uint32_t index, float uvRotate){
-	//マテリアルインスタンスがなければ
-	if (!materialInstance_){
-		return;
-	}
-	//マテリアルを個別化する
-	EnsureUniqueMaterialInstance();
-	materialInstance_->SetUVRotate(index, uvRotate);
-}
-
-// uv平行移動の設定
-void ParticleSystem::SetUVTranslate(uint32_t index, const Vector2& uvTranslate){
-	//マテリアルインスタンスがなければ
-	if (!materialInstance_){
-		return;
-	}
-	//マテリアルを個別化する
-	EnsureUniqueMaterialInstance();
-	materialInstance_->SetUVTranslate(index, uvTranslate);
-}
-
-//色の設定
-void ParticleSystem::SetColor(uint32_t index, const Color& color){
-	//マテリアルインスタンスがなければ
-	if (!materialInstance_){
-		return;
-	}
-	//マテリアルを個別化する
-	EnsureUniqueMaterialInstance();
-	materialInstance_->SetColor(index, color);
 }
 
 //テクスチャの変更
 void ParticleSystem::SetTexture(uint32_t index, const std::string& imageFileName){
 	//マテリアルインスタンスがなければ
-	if (!materialInstance_){
+	if (!materialInstances_[index]) {
 		return;
 	}
 	//マテリアルを個別化する
 	EnsureUniqueMaterialInstance();
-	materialInstance_->SetTexture(index, "engine/resources/textures/" + imageFileName);
-}
-
-//UV座標の設定
-void ParticleSystem::SetUVTransform(uint32_t index, const RectTransform& uvTransform){
-	//マテリアルインスタンスがなければ
-	if (!materialInstance_){
-		return;
-	}
-	//マテリアルを個別化する
-	EnsureUniqueMaterialInstance();
-	materialInstance_->SetUVTransform(index, uvTransform);
+	materialInstances_[index]->SetTexture("engine/resources/textures/" + imageFileName);
 }
 
 //コンポーネントのタイプ名を取得
@@ -251,14 +197,16 @@ bool ParticleSystem::HasModel() const{
 
 //マテリアルを個別化する
 void ParticleSystem::EnsureUniqueMaterialInstance(){
-	//マテリアルインスタンスがなければ
-	if (!materialInstance_){
-		return;
-	}
+	for (std::shared_ptr<MaterialInstance>& materialInstance : materialInstances_) {
+		//マテリアルインスタンスがなければ
+		if (!materialInstance) {
+			return;
+		}
 
-	//ModelやほかのObject3dと共有中なら個別コピー
-	if (materialInstance_.use_count() > 1){
-		materialInstance_ = std::make_shared<MaterialInstance>(*materialInstance_);
+		//ModelやほかのObject3dと共有中なら個別コピー
+		if (materialInstance.use_count() > 1) {
+			materialInstance = std::make_shared<MaterialInstance>(*materialInstance);
+		}
 	}
 }
 
@@ -268,7 +216,7 @@ void ParticleSystem::SetupRenderData(){
 	renderData_.blendMode = blendMode_;
 	renderData_.cullingMode = cullingMode_;
 	renderData_.fillMode = fillMode_;
-	renderData_.materialInstance = materialInstance_.get();
+	renderData_.materialInstances = materialInstances_;
 	renderData_.model = model_;
 	renderData_.numInstance = emitter_->GetNumInstance();
 	renderData_.particles = &emitter_->GetParticles();

@@ -54,38 +54,38 @@ void ParticleRenderer::Draw(uint32_t instanceIndex, Camera* renderCamera){
 	//GPUリソースを取得
 	GpuResource& gpuResource = gpuResources_[instanceIndex];
 
-	//マテリアルインスタンスのスロットを取得
-	const std::vector <MaterialInstanceSlot>& slots = renderData.materialInstance->GetSlots();
-	//サイズを確認
-	assert(gpuResource.materialDatas.size() == slots.size());
-
-	for (uint32_t i = 0; i < gpuResource.materialDatas.size(); i++){
-		//マテリアルを適応
-		*gpuResource.materialDatas[i] = slots[i].material;
-	}
-
 	//インスタンスデータの適応
 	uint32_t drawCount = UpdateParticleInstance(gpuResource, renderData, renderCamera);
 
 	//ワールドトランスフォームの描画
 	directXBase_->GetCommandList()->SetGraphicsRootDescriptorTable(1, srvManager_->GetGPUDescriptorHandle(gpuResource.srvIndex));
 
-	for (uint32_t i = 0; i < renderData.model->GetMeshes().size(); i++){
-		//メッシュを取得
-		const std::unique_ptr<Mesh>& mesh = renderData.model->GetMeshes()[i];
+	//各メッシュにアクセス
+	for (const std::unique_ptr<Mesh>& mesh : renderData.model->GetMeshes()){
+		//メッシュがNullだった場合
+		if (!mesh) {
+			continue;
+		}
+
+		//マテリアルインデックスを取得
+		const uint32_t materialIndex = mesh->GetMaterialIndex();
+		//マテリアルインスタンスのサイズを確認
+		if (materialIndex >= renderData.materialInstances.size()) {
+			continue;
+		}
+
+		//マテリアルインスタンスを取得
+		const std::shared_ptr<MaterialInstance>& materialInstance = renderData.materialInstances[materialIndex];
+		//マテリアルインスタンスがNullだったら
+		if (!materialInstance) {
+			continue;
+		}
+
+		//テクスチャパスを取得
+		const MaterialTexturePaths& texturePaths = materialInstance->GetTextureFilePaths();
 
 		//メッシュの描画データ
 		const MeshRenderData& meshRenderData = mesh->GetMeshRenderData();
-
-		//マテリアルインデックス
-		uint32_t materialIndex = mesh->GetMaterialIndex();
-
-		//範囲の確認
-		assert(materialIndex < slots.size());
-		assert(materialIndex < gpuResource.materialResources.size());
-
-		//テクスチャパスを適応
-		const std::string& materialTexturePath = slots[materialIndex].texturePaths.textureFilePath;
 
 		//VertexBufferViewの設定
 		directXBase_->GetCommandList()->IASetVertexBuffers(0, 1, &meshRenderData.vertexBufferView);
@@ -97,7 +97,7 @@ void ParticleRenderer::Draw(uint32_t instanceIndex, Camera* renderCamera){
 		directXBase_->GetCommandList()->SetGraphicsRootConstantBufferView(0, gpuResource.materialResources[materialIndex]->GetGPUVirtualAddress());
 
 		//SRVのDescriptorTableの先頭を設定
-		directXBase_->GetCommandList()->SetGraphicsRootDescriptorTable(2, textureManager_->GetSRVHandleGPU(materialTexturePath.c_str()));
+		directXBase_->GetCommandList()->SetGraphicsRootDescriptorTable(2, textureManager_->GetSRVHandleGPU(texturePaths.textureFilePath.c_str()));
 
 		if (drawCount > 0){
 			//描画
@@ -115,7 +115,6 @@ void ParticleRenderer::Reset(){
 void ParticleRenderer::AddRenderData(const ParticleRenderData& renderData){
 	//Nullチェック
 	assert(renderData.model);
-	assert(renderData.materialInstance);
 
 	//レンダーデータの追加
 	renderDatas_.push_back(renderData);

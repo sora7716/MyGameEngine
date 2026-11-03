@@ -107,46 +107,11 @@ public://メンバ関数
 	void SetModel(const std::string& modelName);
 
 	/// <summary>
-	/// uvスケールの設定
-	/// </summary>
-	/// <param name="index">マテリアルスロット番号の検索キー</param>
-	/// <param name="uvScale">スケール</param>
-	void SetUVScale(uint32_t index, const Vector2& uvScale);
-
-	/// <summary>
-	/// uv回転の設定
-	/// </summary>
-	/// <param name="index">マテリアルスロット番号の検索キー</param>
-	/// <param name="uvRotate">回転</param>
-	void SetUVRotate(uint32_t index, float uvRotate);
-
-	/// <summary>
-	/// uv平行移動の設定
-	/// </summary>
-	/// <param name="index">マテリアルスロット番号の検索キー</param>
-	/// <param name="uvTranslate">平行移動</param>
-	void SetUVTranslate(uint32_t index, const Vector2& uvTranslate);
-
-	/// <summary>
-	/// 色の設定
-	/// </summary>
-	/// <param name="index">マテリアルスロット番号の検索キー</param>
-	/// <param name="color">色</param>
-	void SetColor(uint32_t index, const Color& color);
-
-	/// <summary>
 	/// テクスチャの設定
 	/// </summary>
 	/// <param name="index">マテリアルスロット番号の検索キー</param>
 	/// <param name="imageFileName">画像のファイル名</param>
 	void SetTexture(uint32_t index, const std::string& imageFileName);
-
-	/// <summary>
-	/// UV座標の設定
-	/// </summary>マテリアルスロット番号の検索キー
-	/// <param name="index">マテリアルスロット番号の検索キー</param>
-	/// <param name="uvTransform">UV座標</param>
-	void SetUVTransform(uint32_t index, const RectTransform& uvTransform);
 
 	/// <summary>
 	/// コンポーネントのタイプ名を取得
@@ -197,7 +162,7 @@ private://メンバ変数
 	//ノード
 	Node node_ = {};
 	//このObject3dが使用するマテリアル
-	std::shared_ptr<MaterialInstance>materialInstance_ = nullptr;
+	std::vector<std::shared_ptr<MaterialInstance>>materialInstances_;
 	//描画データ
 	ParticleRenderData renderData_ = {};
 };

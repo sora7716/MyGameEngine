@@ -13,13 +13,6 @@
 //前方宣言
 class ShaderManager;
 
-//スロット
-struct MaterialInstanceSlot {
-	Material material = {};
-	MaterialTexturePaths texturePaths = {};
-	RectTransform uvTransform = {};
-};
-
 //拡散反射の反射モデル
 enum DiffuseModel :uint32_t {
 	kLambert ,

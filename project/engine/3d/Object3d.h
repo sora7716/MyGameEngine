@@ -228,13 +228,7 @@ public://メンバ関数
 	/// マテリアルインスタンスの取得
 	/// </summary>
 	/// <returns>マテリアルインスタンス</returns>
-	MaterialInstance* GetMaterialInstance();
-
-	/// <summary>
-	/// マテリアルインスタンスの取得
-	/// </summary>
-	/// <returns>マテリアルインスタンス</returns>
-	const MaterialInstance* GetMaterialInstance()const;
+	const std::vector<std::shared_ptr<MaterialInstance>>& GetMaterialInstances()const;
 
 	/// <summary>
 	/// 現在のLODに対応した描画用モデルを取得
@@ -328,11 +322,6 @@ private://メンバ関数
 	/// マテリアルを個別化する
 	/// </summary>
 	void EnsureUniqueMaterialInstance();
-
-	/// <summary>
-	/// マテリアルインスタンスを作成
-	/// </summary>
-	void CreateMaterialInstances();
 
 	/// <summary>
 	/// Nodeの行列を更新

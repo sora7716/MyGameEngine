@@ -16,6 +16,7 @@ enum class ParameterType :uint32_t{
 	kColor,
 	kInt,
 	kUint,
+	kMatrix4x4
 };
 
 //パラメータの情報

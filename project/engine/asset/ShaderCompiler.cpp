@@ -139,7 +139,7 @@ void ShaderCompiler::ReflectionShader(ComPtr<IDxcResult> shaderResult) {
 			continue;
 		}
 		//コンスタントバッファの名前
-		std::string cBufferName = static_cast<std::string>( bufferDesc.Name );
+		std::string cBufferName = static_cast<std::string>(bufferDesc.Name);
 		//コンスタントバッファの情報
 		ConstantBufferInfo cBufferInfo_ = {};
 		cBufferInfo_.bufferSize = bufferDesc.Size;
@@ -162,14 +162,34 @@ void ShaderCompiler::ReflectionShader(ComPtr<IDxcResult> shaderResult) {
 			hr = variable->GetDesc(&variableDesc);
 			assert(SUCCEEDED(hr));
 
-			//値を追加
-			std::string name = static_cast<std::string>( variableDesc.Name );
-			ParameterType type = ConvertToParameterType(typeDesc);
-			uint32_t offset = static_cast<uint32_t>( variableDesc.StartOffset );
-			uint32_t size = static_cast<uint32_t>( variableDesc.Size );
-			if (!cBufferInfo_.parameters.contains(name)) {
-				ParameterInfo parameter = { type , offset , size };
-				cBufferInfo_.parameters.insert(std::make_pair(name , parameter));
+			//メンバ変数を取得
+			for (uint32_t k = 0; k < typeDesc.Members; k++) {
+				ID3D12ShaderReflectionType* memberType = reflectionType->GetMemberTypeByIndex(k);
+				D3D12_SHADER_TYPE_DESC memberDesc = {};
+				memberType->GetDesc(&memberDesc);
+				//値を追加
+				std::string name = static_cast<std::string>(reflectionType->GetMemberTypeName(k));
+				ParameterType type = ConvertToParameterType(memberDesc);
+				uint32_t offset = static_cast<uint32_t>(variableDesc.StartOffset + memberDesc.Offset);
+				uint32_t size = 0;
+				switch (memberDesc.Class) {
+					case D3D_SVC_SCALAR: {
+						size = 4;
+						break;
+					}
+					case D3D_SVC_VECTOR: {
+						size = memberDesc.Columns * 4;
+						break;
+					}
+					case D3D_SVC_MATRIX_ROWS: {
+						size = memberDesc.Rows * 16;
+						break;
+					}
+				}
+				if (!cBufferInfo_.parameters.contains(name)) {
+					ParameterInfo parameter = { type , offset , size };
+					cBufferInfo_.parameters.insert(std::make_pair(name , parameter));
+				}
 			}
 		}
 		//シェーダの情報に追加
@@ -179,35 +199,53 @@ void ShaderCompiler::ReflectionShader(ComPtr<IDxcResult> shaderResult) {
 
 //パラメータの型をDirectXの型からわかりやすいように変換
 ParameterType ShaderCompiler::ConvertToParameterType(const D3D12_SHADER_TYPE_DESC& desc) {
+	//クラス
+	D3D_SHADER_VARIABLE_CLASS classType = desc.Class;
 	//型
 	D3D_SHADER_VARIABLE_TYPE type = desc.Type;
 	//列
-	uint32_t col = static_cast<UINT>( desc.Columns );
+	uint32_t col = static_cast<UINT>(desc.Columns);
 
 	//パラメータタイプ
 	ParameterType parameterType = ParameterType::kUnknow;
-	//見やすい方へ変換
-	switch (type) {
-		case D3D_SVT_FLOAT: {
-				//浮動小数点の一覧
-				constexpr std::array<ParameterType , 4>floatTypes{
-					ParameterType::kFloat ,
-					ParameterType::kVector2 ,
-					ParameterType::kVector3 ,
-					ParameterType::kColor ,
-				};
-				parameterType = floatTypes[col - 1];
-				break;
-			}
-		case D3D_SVT_INT: {
-				parameterType = ParameterType::kInt;
-				break;
-			}
-		case D3D_SVT_UINT: {
-				parameterType = ParameterType::kUint;
-				break;
-			}
-	}
 
+	//クラスを確認
+	switch (classType) {
+		case D3D_SVC_MATRIX_ROWS: {
+			if (desc.Type == D3D_SVT_FLOAT) {
+				if (desc.Rows == 4 && desc.Columns == 4) {
+					parameterType = ParameterType::kMatrix4x4;
+				}
+			} else {
+				parameterType = ParameterType::kUnknow;
+			}
+			break;
+		}
+		default: {
+			//見やすい方へ変換
+			switch (type) {
+				case D3D_SVT_FLOAT: {
+					//浮動小数点の一覧
+					constexpr std::array<ParameterType , 4>floatTypes{
+						ParameterType::kFloat ,
+						ParameterType::kVector2 ,
+						ParameterType::kVector3 ,
+						ParameterType::kColor ,
+					};
+					parameterType = floatTypes[col - 1];
+					break;
+				}
+				case D3D_SVT_INT: {
+					parameterType = ParameterType::kInt;
+					break;
+				}
+				case D3D_SVT_UINT: {
+					parameterType = ParameterType::kUint;
+					break;
+				}
+			}
+			break;
+		}
+	}
 	return parameterType;
 }

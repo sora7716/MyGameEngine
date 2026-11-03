@@ -176,10 +176,16 @@ public://メンバ関数
 					}
 					break;
 				}
+			case ParameterType::kMatrix4x4: {
+				if (!std::same_as<T , Matrix4x4>) {
+					return;
+				}
+				break;
+			}
 			default: {
 					return;
 					break;
-				}
+			}
 		}
 		std::memcpy(parameterValue , &value , parameterInfo.size);
 

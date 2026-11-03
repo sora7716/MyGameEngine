@@ -156,6 +156,8 @@ GameObject* GameScene::CreatePlayerObject(){
 	//3Dオブジェクト
 	Object3d* object3d = gameObject->AddComponent<Object3d>();
 	object3d->SetModel("player");
+	object3d->SetMaterialParameter(0 , "color" , Color::GetWhite());
+	object3d->SetMaterialParameter(0 , "uvMatrix" , Matrix4x4::Identity4x4());
 
 	//リジットボディ
 	RigidBody* rigidBody = gameObject->AddComponent<RigidBody>();

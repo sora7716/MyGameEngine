@@ -165,6 +165,18 @@ public://メンバ関数
 	bool SetNodeLocalTransform(const std::string& path , const Transform& localTransform);
 
 	/// <summary>
+	/// パラメータの設定
+	/// </summary>
+	/// <typeparam name="T">型</typeparam>
+	/// <param name="materialIndex">マテリアルの検索キー</param>
+	/// <param name="name">変数名</param>
+	/// <param name="value">値</param>
+	template <typename T>
+	void SetMaterialParameter(uint32_t materialIndex , const std::string& name , T value) {
+		materialInstances_[materialIndex]->SetParameter(name , value);
+	}
+
+	/// <summary>
 	/// コンポーネントのタイプ名を返す
 	/// </summary>
 	/// <returns>コンポーネントのタイプ名</returns>

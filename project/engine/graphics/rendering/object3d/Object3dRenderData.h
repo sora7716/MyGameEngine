@@ -43,7 +43,6 @@ struct Object3dRenderData {
 	BlendMode blendMode = BlendMode::kNone;
 	rasterizerMode::CullingMode cullingMode = rasterizerMode::CullingMode::kNone;
 	rasterizerMode::FillMode fillMode = rasterizerMode::FillMode::kSolid;
-	Microsoft::WRL::ComPtr<ID3D12Resource>rimLightResource = nullptr;
 	Microsoft::WRL::ComPtr<ID3D12Resource>materialResource = nullptr;
 	MaterialTexturePaths textureFilePath = {};
 };

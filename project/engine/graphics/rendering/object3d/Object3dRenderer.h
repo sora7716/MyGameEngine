@@ -34,8 +34,6 @@ private://構造体など
 		ComPtr<ID3D12Resource>materialResource = nullptr;
 		std::byte* materialPtr = nullptr;
 		size_t allocatedSize = 0;
-		ComPtr<ID3D12Resource>rimLightResource = nullptr;
-		RimLight* rimLightPtr = nullptr;
 		uint64_t uploadedRevision = (std::numeric_limits<uint64_t>::max)();
 	};
 

@@ -1,20 +1,10 @@
 #include "Lighting.hlsli"
-//リムライト
-struct RimLight {
-    float4 color; //ライトの色
-    float power; //リムライトの強さ
-    float outLinePower; //リムライトの外側の強さ
-    float softness; //リムライトの柔らかさ
-    uint enableRimLighting; //リムライトを有効にするか
-};
-
 ConstantBuffer<Material> gMaterial : register(b0);
 Texture2D<float4> gTexture : register(t0);
 TextureCube<float4> gEnvironmentTexture : register(t3);
 SamplerState gSampler : register(s0);
 ConstantBuffer<DirectionalLight> gDirectionalLight : register(b1);
 ConstantBuffer<Camera> gCamera : register(b2);
-ConstantBuffer<RimLight> gRimLight : register(b3);
 StructuredBuffer<PointLight> gPointLight : register(t1);
 StructuredBuffer<SpotLight> gSpotLight : register(t2);
 
@@ -64,25 +54,6 @@ float3 SetLightingMode(VertexShaderOutput input, float4 textureColor, float3 toE
     return directionalRgb + pointLighting + spotLight;
 }
 
-//リムライト
-float4 RimLighting(VertexShaderOutput input, float3 toEye) {
-    //リムライト
-    float4 rimColor = { 0.0f, 0.0f, 0.0f, 0.0f };
-    if (!gRimLight.enableRimLighting) {
-        return rimColor;
-    }
-    
-    //カメラ基準
-    float rim = 1.0f - saturate(dot(toEye, input.normal));
-    
-    //合成
-    float rimValue = pow(rim, gRimLight.power);
-    rimValue = smoothstep(gRimLight.outLinePower - gRimLight.softness, gRimLight.outLinePower + gRimLight.softness, rimValue);
-    rimColor = gRimLight.color * rimValue;
-    
-    return rimColor;
-}
-
 PixelShaderOutput main(VertexShaderOutput input) {
     float4 transformedUV = mul(float4(input.texcoord, 0.0f, 1.0f), gMaterial.uvMatrix);
     float4 textureColor = gTexture.Sample(gSampler, transformedUV.xy);
@@ -93,14 +64,8 @@ PixelShaderOutput main(VertexShaderOutput input) {
         //カメラの視点を取得
         float3 toEye = normalize(gCamera.worldPosition - input.worldPosition);
         
-        //リムライト
-        float4 rimColor = RimLighting(input, toEye);
-        
         //ライティングをRGBに適応
         output.color.rgb = SetLightingMode(input, textureColor, toEye);
-        
-        //リムライトを加算
-        output.color.rgb += rimColor.rgb;
         
         //環境マップ
         float3 cameraToPosition = normalize(input.worldPosition - gCamera.worldPosition);

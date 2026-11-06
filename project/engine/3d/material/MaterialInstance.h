@@ -60,53 +60,6 @@ public://メンバ関数
 	void SetEnvironmentMap(const std::string& path);
 
 	/// <summary>
-	/// リムライトの色の設定
-	/// </summary>
-	/// <param name="index">検索キー</param>
-	/// <param name="color">リムライトの色</param>
-	void SetRimColor(const Color& color);
-
-	/// <summary>
-	/// リムライトの強さの設定
-	/// </summary>
-	/// <param name="index">検索キー</param>
-	/// <param name="power">リムライトの強さ</param>
-	void SetRimPower(float power);
-
-	/// <summary>
-	/// リムライトのアウトラインの強さの設定
-	/// </summary>
-	/// <param name="index">検索キー</param>
-	/// <param name="outLinePower">リムライトのアウトラインの強さ</param>
-	void SetRimOutLinePower(float outLinePower);
-
-	/// <summary>
-	/// リムライトの柔らかさの設定
-	/// </summary>
-	/// <param name="index">検索キー</param>
-	/// <param name="softness">リムライトの柔らかさ</param>
-	void SetRimSoftness(float softness);
-
-	/// <summary>
-	/// リムライトをするかの設定
-	/// </summary>
-	/// <param name="index">検索キー</param>
-	/// <param name="enabled">リムライトをするかのフラグ</param>
-	void SetIsRimLighting(bool enabled);
-
-	/// <summary>
-	/// リムライトの設定
-	/// </summary>
-	/// <param name="rimLight">リムライト</param>
-	void SetRimLight(const RimLight& rimLight);
-
-	/// <summary>
-	/// リムライトを取得
-	/// </summary>
-	/// <returns>リムライト</returns>
-	const RimLight& GetRimLight()const;
-
-	/// <summary>
 	/// ピクセルシェーダのファイルパスを取得
 	/// </summary>
 	/// <param name="pixelShaderFileName">ピクセルシェーダファイル名</param>
@@ -223,8 +176,6 @@ private://メンバ変数
 	std::string pixelShaderFileName_ = "";
 	//テクスチャのファイルパス
 	MaterialTexturePaths texturePaths_ = {};
-	//リムライト
-	RimLight rimLight_ = {};
 	//マテリアルが変更されたかを判断する変数
 	uint64_t revision_ = 0;
 

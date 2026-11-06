@@ -101,8 +101,6 @@ void GraphicsPipeline::CreateRootSignatureBlobForObject3d(){
 	builder->AddSRVTable(ShaderType::kPixel, 1);
 	//スポットライト
 	builder->AddSRVTable(ShaderType::kPixel, 2);
-	//リムライト
-	builder->AddCBV(ShaderType::kPixel, 3);
 	//環境マップ情報
 	builder->AddSRVTable(ShaderType::kPixel, 3);
 

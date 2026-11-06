@@ -22,13 +22,6 @@ void MaterialInstance::Initialize(const MaterialTexturePaths& texturePaths , Sha
 	//テクスチャファイルパスを保存
 	texturePaths_ = texturePaths;
 
-	//リムライトの初期化
-	rimLight_.color = Color::GetWhite();
-	rimLight_.power = 0.1f;
-	rimLight_.outLinePower = 0.1f;
-	rimLight_.softness = 5.0f;
-	rimLight_.enableRimLighting = 0;
-
 	//マテリアルが変更されたかを判断する変数を初期化
 	revision_ = 0;
 }
@@ -47,59 +40,6 @@ void MaterialInstance::SetEnvironmentMap(const std::string& path) {
 
 	//変更があったので加算
 	revision_++;
-}
-
-//リムライトの色の設定
-void MaterialInstance::SetRimColor(const Color& color) {
-	rimLight_.color = color;
-
-	//変更があったので加算
-	revision_++;
-}
-
-//リムライトの強さの設定
-void MaterialInstance::SetRimPower(float power) {
-	rimLight_.power = power;
-
-	//変更があったので加算
-	revision_++;
-}
-
-//リムライトのアウトラインの強さの設定
-void MaterialInstance::SetRimOutLinePower(float outLinePower) {
-	rimLight_.outLinePower = outLinePower;
-
-	//変更があったので加算
-	revision_++;
-}
-
-//リムライトの柔らかさの設定
-void MaterialInstance::SetRimSoftness(float softness) {
-	rimLight_.softness = softness;
-
-	//変更があったので加算
-	revision_++;
-}
-
-//リムライトをするかの設定
-void MaterialInstance::SetIsRimLighting(bool enabled) {
-	rimLight_.enableRimLighting = static_cast<int32_t>( enabled );
-
-	//変更があったので加算
-	revision_++;
-}
-
-//リムライトの設定
-void MaterialInstance::SetRimLight(const RimLight& rimLight) {
-	rimLight_ = rimLight;
-
-	//変更があったので加算
-	revision_++;
-}
-
-//リムライトを取得
-const RimLight& MaterialInstance::GetRimLight() const {
-	return rimLight_;
 }
 
 //ピクセルシェーダのファイルパスを設定

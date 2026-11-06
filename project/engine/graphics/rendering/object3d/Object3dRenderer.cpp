@@ -132,9 +132,6 @@ void Object3dRenderer::Draw(uint32_t instanceIndex) {
 		//LODごとのWVP SRVを設定
 		directXBase_->GetCommandList()->SetGraphicsRootDescriptorTable(1 , srvManager_->GetGPUDescriptorHandle(wvpSrvIndex));
 
-		//リムライトのCBufferの場所を設定
-		directXBase_->GetCommandList()->SetGraphicsRootConstantBufferView(7 , renderData.rimLightResource->GetGPUVirtualAddress());
-
 		//VertexBufferViewの設定
 		directXBase_->GetCommandList()->IASetVertexBuffers(0 , 1 , &meshRenderData.vertexBufferView);
 
@@ -150,7 +147,7 @@ void Object3dRenderer::Draw(uint32_t instanceIndex) {
 		directXBase_->GetCommandList()->SetGraphicsRootDescriptorTable(2 , textureManager_->GetSRVHandleGPU(materialTexturePath.textureFilePath));
 
 		//環境マップのセット
-		directXBase_->GetCommandList()->SetGraphicsRootDescriptorTable(8 , textureManager_->GetSRVHandleGPU(materialTexturePath.environmentMap));
+		directXBase_->GetCommandList()->SetGraphicsRootDescriptorTable(7 , textureManager_->GetSRVHandleGPU(materialTexturePath.environmentMap));
 
 		//オブジェクト数が0より大きければ
 		if (drawCount > 0) {
@@ -251,8 +248,6 @@ void Object3dRenderer::SubmitBatch(Model* model , uint32_t meshIndex , MaterialI
 	
 	//マテリアル用のGPUリソースを差し替え　
 	renderData.materialResource = currentBatchResource->materialResource;
-	//リムライト用のGPUリソースを差し替え
-	renderData.rimLightResource = currentBatchResource->rimLightResource;
 	//今回使うテクスチャ
 	renderData.textureFilePath = materialInstance->GetTextureFilePaths();
 	//描画データに追加
@@ -383,11 +378,6 @@ void Object3dRenderer::CreateMaterialInstanceResource(BatchResource& batchResour
 	//マテリアルのデータをPtrにコピー
 	std::memcpy(batchResource.materialPtr , parameterValues.data() , parameterValues.size());
 
-	//リムライトの生成
-	batchResource.rimLightResource = directXBase_->CreateBufferResource(sizeof(RimLight));
-	batchResource.rimLightResource->Map(0 , nullptr , reinterpret_cast<void**>(&batchResource.rimLightPtr));
-	*batchResource.rimLightPtr = batchResource.materialInstance->GetRimLight();
-
 	//マテリアルが変更されたかを判断する変数をコピー
 	batchResource.uploadedRevision = batchResource.materialInstance->GetRevision();
 }
@@ -435,9 +425,6 @@ void Object3dRenderer::UpdateMaterialInstanceResource(BatchResource& batchResour
 	//マテリアルを変更
 	const std::vector<std::byte>& parameterValues = batchResource.materialInstance->GetParameterValues();
 	std::memcpy(batchResource.materialPtr , parameterValues.data() , parameterValues.size());
-
-	//リムライトの変更
-	*batchResource.rimLightPtr = batchResource.materialInstance->GetRimLight();
 
 	//バージョンを更新
 	batchResource.uploadedRevision = revision;

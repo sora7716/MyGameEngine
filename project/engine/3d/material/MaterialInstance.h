@@ -49,19 +49,6 @@ public://メンバ関数
 	void Initialize(const MaterialTexturePaths& texturePaths , ShaderManager* shaderManager);
 
 	/// <summary>
-	/// プロパティ一覧を登録
-	/// </summary>
-	/// <typeparam name="T">型</typeparam>
-	/// <param name="registry">レジストリ</param>
-	template <typename T>
-	void RegisterProperties(PropertyRegistry* registry) {
-		registry->SetSeparator(cBufferName_);
-		for (const auto& parameterInfo : parameterInfos_) {
-			registry->Add(parameterInfo.first , )
-		}
-	}
-
-	/// <summary>
 	/// テクスチャの設定
 	/// </summary>
 	/// <param name="path">テクスチャパス</param>

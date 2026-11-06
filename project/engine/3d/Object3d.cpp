@@ -102,28 +102,28 @@ void Object3d::RegisterProperties(PropertyRegistry* registry) {
 	//ブレンドモードの切り替え
 	std::function<uint32_t()> blendModeGetter = [this]() -> uint32_t {
 		return static_cast<uint32_t>(this->GetBlendMode());
-		};
+	};
 	std::function<void(uint32_t)> blendModeSetter = [this](uint32_t value) {
 		this->SetBlendMode(static_cast<BlendMode>(value));
-		};
+	};
 	registry->Add("blendMode" , kBlendOptions , blendModeGetter , blendModeSetter);
 
 	//フィルモードの切り替え
 	std::function<uint32_t()> fillModeGetter = [this]() -> uint32_t {
 		return static_cast<uint32_t>(this->GetFillMode());
-		};
+	};
 	std::function<void(uint32_t)> fillModeSetter = [this](uint32_t value) {
 		this->SetFillMode(static_cast<rasterizerMode::FillMode>(value));
-		};
+	};
 	registry->Add("fillMode" , kFillOptions , fillModeGetter , fillModeSetter);
 
 	//カリングモードの切り替え
 	std::function<uint32_t()> cullingModeGetter = [this]() -> uint32_t {
 		return static_cast<uint32_t>(this->GetCullingMode());
-		};
+	};
 	std::function<void(uint32_t)> cullingModeSetter = [this](uint32_t value) {
 		this->SetCullingMode(static_cast<rasterizerMode::CullingMode>(value));
-		};
+	};
 	registry->Add("CullingMode" , kCullingOptions , cullingModeGetter , cullingModeSetter);
 
 	////登録
@@ -292,13 +292,15 @@ void Object3d::SetModel(const std::string& modelName) {
 	//マテリアルを個別化する
 	EnsureUniqueMaterialInstance();
 	//ピクセルシェーダを設定
-	for (std::shared_ptr<MaterialInstance>&materialInstance : materialInstances_) {
+	for (std::shared_ptr<MaterialInstance>& materialInstance : materialInstances_) {
 		//マテリアルインスタンスがNullだった場合
 		if (!materialInstance) {
 			continue;
 		}
 		materialInstance->SetPixelShaderFileName(pixelShaderFilePath_ , "gMaterial");
 	}
+	//マテリアルの初期化
+	InitializeMaterial();
 }
 
 //LODの切り替え距離
@@ -347,6 +349,9 @@ void Object3d::SetPixelShaderFilePath(const std::string& pixelShaderFilePath) {
 		}
 		materialInstance->SetPixelShaderFileName(pixelShaderFilePath_ , "gMaterial");
 	}
+
+	//マテリアルの設定
+	InitializeMaterial();
 }
 
 //ブレンドモードの設定
@@ -549,7 +554,7 @@ void Object3d::CollectNodeNames(const Node& node , const std::string& parentPath
 		nodeInfos.push_back({
 			.name = node.name ,
 			.path = currentPath ,
-		});
+			});
 	}
 
 	for (const Node& child : node.children) {
@@ -662,5 +667,21 @@ void Object3d::UpdateNodeMatrices(Node& node , const Matrix4x4& parentMatrix) {
 	//子の数分回す
 	for (Node& child : node.children) {
 		UpdateNodeMatrices(child , node.modelMatrix);
+	}
+}
+
+//マテリアルの初期化
+void Object3d::InitializeMaterial() {
+	//スタンダード
+	if (pixelShaderFilePath_ == "Standard.PS.hlsl") {
+		for (uint32_t i = 0; i < materialInstances_.size(); ++i) {
+			SetMaterialParameter(i , "color" , Color::GetWhite());
+			SetMaterialParameter(i , "enableLighring" , int32_t{ 1 });
+			SetMaterialParameter(i , "uvMatrix" , Matrix4x4::Identity4x4());
+			SetMaterialParameter(i , "shininess" , 10.0f);
+			SetMaterialParameter(i , "diffuseModel" , int32_t{ 1 });
+			SetMaterialParameter(i , "specularModel" , int32_t{ 1 });
+			SetMaterialParameter(i , "environmentCoefficient" , 0.0f);
+		}
 	}
 }

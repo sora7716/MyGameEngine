@@ -4,6 +4,7 @@
 #include "Vector2.h"
 #include "Vector3.h"
 #include "Color.h"
+#include "PropertyRegistry.h"
 #include <unordered_map>
 #include <string>
 #include <vector>
@@ -46,6 +47,19 @@ public://メンバ関数
 	/// <param name="texturePaths">テクスチャのパス</param>
 	/// <param name="shaderManager">シェーダの管理</param>
 	void Initialize(const MaterialTexturePaths& texturePaths , ShaderManager* shaderManager);
+
+	/// <summary>
+	/// プロパティ一覧を登録
+	/// </summary>
+	/// <typeparam name="T">型</typeparam>
+	/// <param name="registry">レジストリ</param>
+	template <typename T>
+	void RegisterProperties(PropertyRegistry* registry) {
+		registry->SetSeparator(cBufferName_);
+		for (const auto& parameterInfo : parameterInfos_) {
+			registry->Add(parameterInfo.first , )
+		}
+	}
 
 	/// <summary>
 	/// テクスチャの設定
@@ -94,41 +108,41 @@ public://メンバ関数
 		std::byte* parameterValue = parameterValues_.data() + parameterInfo.offset;
 		switch (parameterInfo.type) {
 			case ParameterType::kFloat: {
-					if (!std::same_as<T , float>) {
-						return;
-					}
-					break;
+				if (!std::same_as<T , float>) {
+					return;
 				}
+				break;
+			}
 			case ParameterType::kVector2: {
-					if (!std::same_as<T , Vector2>) {
-						return;
-					}
-					break;
+				if (!std::same_as<T , Vector2>) {
+					return;
 				}
+				break;
+			}
 			case ParameterType::kVector3: {
-					if (!std::same_as<T , Vector3>) {
-						return;
-					}
-					break;
+				if (!std::same_as<T , Vector3>) {
+					return;
 				}
+				break;
+			}
 			case ParameterType::kColor: {
-					if (!std::same_as<T , Color>) {
-						return;
-					}
-					break;
+				if (!std::same_as<T , Color>) {
+					return;
 				}
+				break;
+			}
 			case ParameterType::kInt: {
-					if (!std::same_as<T , int32_t>) {
-						return;
-					}
-					break;
+				if (!std::same_as<T , int32_t>) {
+					return;
 				}
+				break;
+			}
 			case ParameterType::kUint: {
-					if (!std::same_as<T , uint32_t>) {
-						return;
-					}
-					break;
+				if (!std::same_as<T , uint32_t>) {
+					return;
 				}
+				break;
+			}
 			case ParameterType::kMatrix4x4: {
 				if (!std::same_as<T , Matrix4x4>) {
 					return;
@@ -136,8 +150,8 @@ public://メンバ関数
 				break;
 			}
 			default: {
-					return;
-					break;
+				return;
+				break;
 			}
 		}
 		std::memcpy(parameterValue , &value , parameterInfo.size);
@@ -176,9 +190,12 @@ private://メンバ変数
 	std::string pixelShaderFileName_ = "";
 	//テクスチャのファイルパス
 	MaterialTexturePaths texturePaths_ = {};
+
 	//マテリアルが変更されたかを判断する変数
 	uint64_t revision_ = 0;
 
+	//コンスタントバッファの名前
+	std::string cBufferName_ = "";
 	//コンスタントバッファの情報を取得
 	ConstantBufferInfo cBuffer_ = {};
 	//パラメータの情報

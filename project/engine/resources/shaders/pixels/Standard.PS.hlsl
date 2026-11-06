@@ -1,4 +1,5 @@
 #include "Lighting.hlsli"
+
 ConstantBuffer<Material> gMaterial : register(b0);
 Texture2D<float4> gTexture : register(t0);
 TextureCube<float4> gEnvironmentTexture : register(t3);

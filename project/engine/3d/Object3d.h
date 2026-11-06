@@ -341,12 +341,17 @@ private://メンバ関数
 	/// <param name="node">ノード</param>
 	/// <param name="parentMatrix">親行列</param>
 	void UpdateNodeMatrices(Node& node , const Matrix4x4& parentMatrix);
+
+	/// <summary>
+	/// マテリアルの初期化
+	/// </summary>
+	void InitializeMaterial();
 private://定数
 	//インスタンスの最大数
 	static const inline uint32_t kMaxInstanceCount_ = 1024;
 private://メンバ変数
 	//ピクセルシェーダ
-	std::string pixelShaderFilePath_ = "Object3d.PS.hlsl";
+	std::string pixelShaderFilePath_ = "Standard.PS.hlsl";
 	//ブレンドモード
 	BlendMode blendMode_ = BlendMode::kNone;
 	//カリングモード

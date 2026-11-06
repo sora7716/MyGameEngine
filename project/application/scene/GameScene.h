@@ -1,11 +1,6 @@
 #pragma once
 #include "BaseScene.h"
-
-//前方宣言
-class BoxCollider;
-namespace wireframe{
-	class Cube;
-}
+#include <string>
 
 /// <summary>
 /// ゲームシーン
@@ -49,39 +44,10 @@ private://メンバ関数
 	GameObject* CreateSkyBox();
 
 	/// <summary>
-	/// ゲームカメラの生成
+	/// フィールドの生成
 	/// </summary>
-	/// <param name="playerObject">プレイヤー</param>
-	/// <returns>ゲームオブジェクト</returns>
-	GameObject* CreateGameCamera(GameObject* playerObject);
-
-	/// <summary>
-	/// プレイヤーの生成
-	/// </summary>
-	/// <returns>ゲームオブジェクト</returns>
-	GameObject* CreatePlayerObject();
-
-	/// <summary>
-	/// 地面の生成
-	/// </summary>
-	/// <returns>ゲームオブジェクト</returns>
-	GameObject* CreateGround();
-
-	/// <summary>
-	/// 敵の生成
-	/// </summary>
-	/// <returns>ゲームオブジェクト</returns>
-	GameObject* CreateEnemy();
-
-	/// <summary>
-	/// 剣の生成
-	/// </summary>
-	/// <returns>ゲームオブジェクト</returns>
-	GameObject* CreateSword();
+	void CreateField();
 private://メンバ変数
-	//プレイヤー
-	GameObject* playerObject_ = nullptr;
-
-	//ゲームカメラ
-	GameObject* gameCameraObject_ = nullptr;
+	//マップチップのCSVの名前
+	std::string mapChipCsvName_ = "Map_01.csv";
 };

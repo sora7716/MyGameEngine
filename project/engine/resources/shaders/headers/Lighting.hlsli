@@ -34,7 +34,7 @@ struct SpotLight {
 //マテリアル
 struct Material {
     float4 color;
-    int enableLighring;
+    uint enableLighring;
     float4x4 uvMatrix;
     float shininess;
     int diffuseModel;

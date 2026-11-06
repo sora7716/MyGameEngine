@@ -63,12 +63,12 @@ void Object3d::Update() {
 	GameObject* gameObject = GetOwner();
 
 	//もしリンクしているゲームオブジェクトがNullならば
-	if (!gameObject) {
+	if(!gameObject) {
 		return;
 	}
 
 	//もしリンクしているゲームオブジェクトが非Activeなら
-	if (!gameObject->IsActive()) {
+	if(!gameObject->IsActive()) {
 		return;
 	}
 
@@ -79,13 +79,13 @@ void Object3d::Update() {
 //カメラとの距離からLODを更新
 void Object3d::UpdateLOD(float distance) {
 	//元モデルまたはLODコントローラがNullの場合
-	if (!baseModel_ || !lodController_) {
+	if(!baseModel_ || !lodController_) {
 		currentLOD_ = 0;
 		return;
 	}
 
 	//距離からLODを選択
-	currentLOD_ = lodController_->SelectLOD(distance , currentLOD_ , baseModel_->GetLODCount());
+	currentLOD_ = lodController_->SelectLOD(distance,currentLOD_,baseModel_->GetLODCount());
 }
 
 //プロパティ一覧を登録
@@ -102,29 +102,29 @@ void Object3d::RegisterProperties(PropertyRegistry* registry) {
 	//ブレンドモードの切り替え
 	std::function<uint32_t()> blendModeGetter = [this]() -> uint32_t {
 		return static_cast<uint32_t>(this->GetBlendMode());
-		};
+	};
 	std::function<void(uint32_t)> blendModeSetter = [this](uint32_t value) {
 		this->SetBlendMode(static_cast<BlendMode>(value));
-		};
-	registry->Add("blendMode" , kBlendOptions , blendModeGetter , blendModeSetter);
+	};
+	registry->Add("blendMode",kBlendOptions,blendModeGetter,blendModeSetter);
 
 	//フィルモードの切り替え
 	std::function<uint32_t()> fillModeGetter = [this]() -> uint32_t {
 		return static_cast<uint32_t>(this->GetFillMode());
-		};
+	};
 	std::function<void(uint32_t)> fillModeSetter = [this](uint32_t value) {
 		this->SetFillMode(static_cast<rasterizerMode::FillMode>(value));
-		};
-	registry->Add("fillMode" , kFillOptions , fillModeGetter , fillModeSetter);
+	};
+	registry->Add("fillMode",kFillOptions,fillModeGetter,fillModeSetter);
 
 	//カリングモードの切り替え
 	std::function<uint32_t()> cullingModeGetter = [this]() -> uint32_t {
 		return static_cast<uint32_t>(this->GetCullingMode());
-		};
+	};
 	std::function<void(uint32_t)> cullingModeSetter = [this](uint32_t value) {
 		this->SetCullingMode(static_cast<rasterizerMode::CullingMode>(value));
-		};
-	registry->Add("CullingMode" , kCullingOptions , cullingModeGetter , cullingModeSetter);
+	};
+	registry->Add("CullingMode",kCullingOptions,cullingModeGetter,cullingModeSetter);
 
 	////登録
 	//for (uint32_t i = 0; i < material->GetSlots().size(); i++) {
@@ -177,7 +177,7 @@ void Object3d::RegisterProperties(PropertyRegistry* registry) {
 //親子付けを外す
 void Object3d::Detach() {
 	//親子付けのパスがなければ
-	if (!parentNode_) {
+	if(!parentNode_) {
 		return;
 	}
 
@@ -190,14 +190,14 @@ void Object3d::Detach() {
 }
 
 //親子付け
-bool Object3d::AttachTo(Object3d* parent , const std::string& parentNodePath) {
-	if (!parent) {
+bool Object3d::AttachTo(Object3d* parent,const std::string& parentNodePath) {
+	if(!parent) {
 		Logger::OutputLog("親子付けを行う際の親がnull参照しました");
 		return false;
 	}
 
 	Node* found = parent->FindNode(parentNodePath);
-	if (!found) {
+	if(!found) {
 		Logger::OutputLog("存在しないNodeのPathにアクセスしようとしました");
 		return false;
 	}
@@ -212,7 +212,7 @@ bool Object3d::AttachTo(Object3d* parent , const std::string& parentNodePath) {
 	//接続する
 	bool isAttachTo = GetOwner()->AttachTo(parent->GetOwner());
 	//接続が失敗したら
-	if (!isAttachTo) {
+	if(!isAttachTo) {
 		return false;
 	}
 
@@ -224,19 +224,19 @@ bool Object3d::AttachTo(Object3d* parent , const std::string& parentNodePath) {
 //ワールド行列を作成
 Matrix4x4 Object3d::MakeRenderWorldMatrix(const Matrix4x4& cameraWorldMatrix) const {
 	//Normalだった場合
-	if (renderTransformMode_ == RenderTransformMode::kNormal) {
+	if(renderTransformMode_ == RenderTransformMode::kNormal) {
 		return GetOwner()->GetWorldMatrix();
 	}
 
 	//もしBillboardだった場合
 	GameObject* gameObject = GetOwner();
 	//ゲームオブジェクトがない場合
-	if (!gameObject) {
+	if(!gameObject) {
 		return GetOwner()->GetWorldMatrix();
 	}
 
 	//ビルボードの作成
-	Matrix4x4 renderWorldMatrix = matrixUtility::MakeBillboardAffineMatrix(cameraWorldMatrix , gameObject->GetTransform());
+	Matrix4x4 renderWorldMatrix = matrixUtility::MakeBillboardAffineMatrix(cameraWorldMatrix,gameObject->GetTransform());
 
 	//一時的に作成したワールド行列を返す
 	return renderWorldMatrix;
@@ -247,21 +247,21 @@ void Object3d::SetModel(const std::string& modelName) {
 	//ゲームオブジェクトを取得
 	GameObject* gameObject = GetOwner();
 	//ゲームオブジェクトが無ければ
-	if (!gameObject) {
+	if(!gameObject) {
 		return;
 	}
 
 	//現在接続されているシーンを取得
 	BaseScene* currentScene_ = gameObject->GetCurrentScene();
 	//現在接続されているシーンがなければ
-	if (!currentScene_) {
+	if(!currentScene_) {
 		return;
 	}
 
 	//モデルマネージャを取得
 	ModelManager* modelManager = currentScene_->GetSceneContext().modelManager;
 	//モデルマネージャーがなければ
-	if (!modelManager) {
+	if(!modelManager) {
 		return;
 	}
 
@@ -272,7 +272,7 @@ void Object3d::SetModel(const std::string& modelName) {
 	currentLOD_ = 0;
 
 	//モデルが存在する場合
-	if (baseModel_) {
+	if(baseModel_) {
 		//メッシュのワールド行列のサイズ決定(要素数は確保しない)
 		nodeMeshInstance_.reserve(baseModel_->GetMeshes().size());
 
@@ -292,12 +292,16 @@ void Object3d::SetModel(const std::string& modelName) {
 	//マテリアルを個別化する
 	EnsureUniqueMaterialInstance();
 	//ピクセルシェーダを設定
-	for (std::shared_ptr<MaterialInstance>&materialInstance : materialInstances_) {
+	for(std::shared_ptr<MaterialInstance>& materialInstance : materialInstances_) {
 		//マテリアルインスタンスがNullだった場合
-		if (!materialInstance) {
+		if(!materialInstance) {
 			continue;
 		}
-		materialInstance->SetPixelShaderFileName(pixelShaderFilePath_ , "gMaterial");
+		materialInstance->SetPixelShaderFileName(pixelShaderFilePath_,"gMaterial");
+		materialInstance->SetParameter("color",Color::GetWhite());
+		materialInstance->SetParameter("enableLighring",uint32_t(1));
+		materialInstance->SetParameter("shininess",10.0f);
+		materialInstance->SetParameter("diffuseModel",int32_t{DiffuseModel::kHalfLambert});
 	}
 }
 
@@ -312,9 +316,9 @@ void Object3d::SetHysteresis(float hysteresis) {
 }
 
 //テクスチャの変更
-void Object3d::SetTexture(uint32_t index , const std::string& imageFileName) {
+void Object3d::SetTexture(uint32_t index,const std::string& imageFileName) {
 	//マテリアルインスタンスがなければ
-	if (!materialInstances_[index]) {
+	if(!materialInstances_[index]) {
 		return;
 	}
 	//マテリアルを個別化する
@@ -324,9 +328,9 @@ void Object3d::SetTexture(uint32_t index , const std::string& imageFileName) {
 }
 
 //環境マップの変更
-void Object3d::SetEnvironmentMap(uint32_t index , const std::string& environmentMapFileName) {
+void Object3d::SetEnvironmentMap(uint32_t index,const std::string& environmentMapFileName) {
 	//マテリアルインスタンスがなければ
-	if (!materialInstances_[index]) {
+	if(!materialInstances_[index]) {
 		return;
 	}
 	//マテリアルを個別化する
@@ -340,12 +344,12 @@ void Object3d::SetPixelShaderFilePath(const std::string& pixelShaderFilePath) {
 	//マテリアルを個別化する
 	EnsureUniqueMaterialInstance();
 	//ピクセルシェーダを設定
-	for (std::shared_ptr<MaterialInstance>& materialInstance : materialInstances_) {
+	for(std::shared_ptr<MaterialInstance>& materialInstance : materialInstances_) {
 		//マテリアルインスタンスがNullだった場合
-		if (!materialInstance) {
+		if(!materialInstance) {
 			continue;
 		}
-		materialInstance->SetPixelShaderFileName(pixelShaderFilePath_ , "gMaterial");
+		materialInstance->SetPixelShaderFileName(pixelShaderFilePath_,"gMaterial");
 	}
 }
 
@@ -370,12 +374,12 @@ void Object3d::SetRenderTransformMode(RenderTransformMode transformMode) {
 }
 
 //ノードのローカルトランスフォームの設定
-bool Object3d::SetNodeLocalTransform(const std::string& path , const Transform& localTransform) {
+bool Object3d::SetNodeLocalTransform(const std::string& path,const Transform& localTransform) {
 	//ノードがあるか探索
 	Node* found = FindNode(path);
 
 	//ノードが見つからなかった場合
-	if (!found) {
+	if(!found) {
 		return false;
 	}
 
@@ -391,7 +395,7 @@ std::string Object3d::GetTypeName() const {
 
 //メッシュのサイズの取得
 uint32_t Object3d::GetMeshDataSize() {
-	if (!baseModel_) {
+	if(!baseModel_) {
 		return 0;
 	}
 	return static_cast<uint32_t>(baseModel_->GetModelData().meshDatas.size());
@@ -409,7 +413,7 @@ const Model* Object3d::GetModel() const {
 
 //モデルが設定されているかどうか
 bool Object3d::HasModel()const {
-	if (baseModel_) {
+	if(baseModel_) {
 		return true;
 	}
 	return false;
@@ -448,7 +452,7 @@ const std::vector<std::shared_ptr<MaterialInstance>>& Object3d::GetMaterialInsta
 //現在のLODに対応した描画用モデルを取得
 Model* Object3d::GetRenderModel() {
 	//元モデルがNullの場合
-	if (!baseModel_) {
+	if(!baseModel_) {
 		return nullptr;
 	}
 
@@ -470,7 +474,7 @@ const Transform Object3d::GetNodeLocalTransform(const std::string& path) {
 	Node* found = FindNode(path);
 
 	//無かった場合
-	if (!found) {
+	if(!found) {
 		return {};
 	}
 
@@ -478,11 +482,11 @@ const Transform Object3d::GetNodeLocalTransform(const std::string& path) {
 }
 
 //ノードの行列を取得できるか試す
-bool Object3d::TryGetNodeModelMatrix(const std::string& path , Matrix4x4& outMatrix) {
+bool Object3d::TryGetNodeModelMatrix(const std::string& path,Matrix4x4& outMatrix) {
 	Node* found = FindNode(path);
 
 	//無かった場合
-	if (!found) {
+	if(!found) {
 		return false;
 	}
 
@@ -492,11 +496,11 @@ bool Object3d::TryGetNodeModelMatrix(const std::string& path , Matrix4x4& outMat
 }
 
 //ノードを取得できるか試す
-bool Object3d::TryGetNodeForPath(const std::string& path , Node& node) {
+bool Object3d::TryGetNodeForPath(const std::string& path,Node& node) {
 	Node* found = FindNode(path);
 
 	//無かった場合
-	if (!found) {
+	if(!found) {
 		return false;
 	}
 
@@ -510,12 +514,12 @@ std::vector<Object3d::NodeInfo> Object3d::GetNodeNames()const {
 	std::vector<NodeInfo>nodeInfos;
 
 	//モデルがなければ
-	if (!baseModel_) {
+	if(!baseModel_) {
 		return nodeInfos;
 	}
 
 	//ノードの名前を集める
-	CollectNodeNames(node_ , "" , nodeInfos);
+	CollectNodeNames(node_,"",nodeInfos);
 
 	return nodeInfos;
 }
@@ -531,14 +535,14 @@ const std::string& Object3d::GetAttachedNodePath() const {
 }
 
 //ノードの名前を集める
-void Object3d::CollectNodeNames(const Node& node , const std::string& parentPath , std::vector<NodeInfo>& nodeInfos)const {
+void Object3d::CollectNodeNames(const Node& node,const std::string& parentPath,std::vector<NodeInfo>& nodeInfos)const {
 	//現在のパス
 	std::string currentPath = parentPath;
 
 	//ノードの名前が空じゃなければ
-	if (!node.name.empty()) {
+	if(!node.name.empty()) {
 		//現在のパスが空じゃなければ
-		if (!currentPath.empty()) {
+		if(!currentPath.empty()) {
 			currentPath += "/";
 		}
 
@@ -547,35 +551,35 @@ void Object3d::CollectNodeNames(const Node& node , const std::string& parentPath
 
 		//ノードの情報に追加
 		nodeInfos.push_back({
-			.name = node.name ,
-			.path = currentPath ,
-		});
+			.name = node.name,
+			.path = currentPath,
+			});
 	}
 
-	for (const Node& child : node.children) {
-		CollectNodeNames(child , currentPath , nodeInfos);
+	for(const Node& child : node.children) {
+		CollectNodeNames(child,currentPath,nodeInfos);
 	}
 }
 
 //ノードを探す
 Node* Object3d::FindNode(const std::string& path) {
 	//名前が空だったら
-	if (path.empty()) {
+	if(path.empty()) {
 		return nullptr;
 	}
 
-	return FindNodeRecursive(node_ , "" , path);
+	return FindNodeRecursive(node_,"",path);
 }
 
 //ノードを再起関数で探す
-Node* Object3d::FindNodeRecursive(Node& node , const std::string& parentPath , const std::string& targetPath) {
+Node* Object3d::FindNodeRecursive(Node& node,const std::string& parentPath,const std::string& targetPath) {
 	//現在のパスを取得
 	std::string currentPath = parentPath;
 
 	//ノードの名前が空じゃなければ
-	if (!node.name.empty()) {
+	if(!node.name.empty()) {
 		//現在のパスが空じゃなければ
-		if (!currentPath.empty()) {
+		if(!currentPath.empty()) {
 			currentPath += "/";
 		}
 
@@ -584,15 +588,15 @@ Node* Object3d::FindNodeRecursive(Node& node , const std::string& parentPath , c
 	}
 
 	//path全体が一致した
-	if (currentPath == targetPath) {
+	if(currentPath == targetPath) {
 		return &node;
 	}
 
 	//子の方も探索
-	for (Node& child : node.children) {
-		Node* found = FindNodeRecursive(child , currentPath , targetPath);
+	for(Node& child : node.children) {
+		Node* found = FindNodeRecursive(child,currentPath,targetPath);
 
-		if (found) {
+		if(found) {
 			return found;
 		}
 	}
@@ -607,7 +611,7 @@ void Object3d::MakeWorldMatrix() {
 	assert(gameObject);
 
 	//親オブジェクトがある場合
-	if (parentNode_) {
+	if(parentNode_) {
 		gameObject->SetAttachedMatrix(parentNode_->modelMatrix);
 	}
 
@@ -618,31 +622,31 @@ void Object3d::MakeWorldMatrix() {
 	nodeMeshInstance_.clear();
 
 	//モデルがなければ
-	if (!baseModel_) {
+	if(!baseModel_) {
 		return;
 	}
 
 	//Nodeを含めてワールド行列を更新
-	UpdateNodeMatrices(node_ , Matrix4x4::Identity4x4());
+	UpdateNodeMatrices(node_,Matrix4x4::Identity4x4());
 }
 
 //マテリアルを個別化する
 void Object3d::EnsureUniqueMaterialInstance() {
-	for (std::shared_ptr<MaterialInstance>& materialInstance : materialInstances_) {
+	for(std::shared_ptr<MaterialInstance>& materialInstance : materialInstances_) {
 		//マテリアルインスタンスがなければ
-		if (!materialInstance) {
+		if(!materialInstance) {
 			continue;
 		}
 
 		//ModelやほかのObject3dと共有中なら個別コピー
-		if (materialInstance.use_count() > 1) {
+		if(materialInstance.use_count() > 1) {
 			materialInstance = std::make_shared<MaterialInstance>(*materialInstance);
 		}
 	}
 }
 
 //Nodeの行列を更新
-void Object3d::UpdateNodeMatrices(Node& node , const Matrix4x4& parentMatrix) {
+void Object3d::UpdateNodeMatrices(Node& node,const Matrix4x4& parentMatrix) {
 	//アニメーション用の行列
 	Matrix4x4 animationMatrix = matrixUtility::MakeAffineMatrix(node.localTransform);
 
@@ -653,14 +657,14 @@ void Object3d::UpdateNodeMatrices(Node& node , const Matrix4x4& parentMatrix) {
 	node.modelMatrix = node.localMatrix * parentMatrix;
 
 	//メッシュのインデックス分行列を計算
-	for (uint32_t meshIndex : node.meshIndices) {
+	for(uint32_t meshIndex : node.meshIndices) {
 		assert(baseModel_);
 		assert(meshIndex < static_cast<uint32_t>(baseModel_->GetMeshes().size()));
-		nodeMeshInstance_.push_back({ meshIndex , node.modelMatrix });
+		nodeMeshInstance_.push_back({meshIndex,node.modelMatrix});
 	}
 
 	//子の数分回す
-	for (Node& child : node.children) {
-		UpdateNodeMatrices(child , node.modelMatrix);
+	for(Node& child : node.children) {
+		UpdateNodeMatrices(child,node.modelMatrix);
 	}
 }

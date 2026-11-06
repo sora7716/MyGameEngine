@@ -16,6 +16,7 @@
     <ClCompile Include="application\actor\enemy\EnemyRecoverState.cpp" />
     <ClCompile Include="application\actor\enemy\EnemyNormalState.cpp" />
     <ClCompile Include="application\actor\enemy\IEnemyState.cpp" />
+    <ClCompile Include="application\actor\MapChipField.cpp" />
     <ClCompile Include="application\actor\OrbitCameraController.cpp" />
     <ClCompile Include="application\actor\player\IPlayerState.cpp" />
     <ClCompile Include="application\actor\player\Player.cpp" />
@@ -134,6 +135,7 @@
     <ClInclude Include="application\actor\enemy\EnemyRecoverState.h" />
     <ClInclude Include="application\actor\enemy\EnemyNormalState.h" />
     <ClInclude Include="application\actor\enemy\IEnemyState.h" />
+    <ClInclude Include="application\actor\MapChipField.h" />
     <ClInclude Include="application\actor\OrbitCameraController.h" />
     <ClInclude Include="application\actor\player\IPlayerState.h" />
     <ClInclude Include="application\actor\player\Player.h" />

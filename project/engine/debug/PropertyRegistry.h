@@ -10,71 +10,74 @@
 #include <functional>
 
 //プロパティ
-namespace inspector{
+namespace inspector {
 	//グループの開始
-	struct GroupBegin{
+	struct GroupBegin {
 		std::string displayName = "";
 	};
 	//グループの終了
-	struct GroupEnd{
+	struct GroupEnd {
 
 	};
-
+	//セパレータを設定
+	struct SeparatorSetting {
+		std::string displayName = "";
+	};
 	//浮動小数
-	struct FloatProperty{
+	struct FloatProperty {
 		std::string displayName = "";
 		std::function<float()>getter;
 		std::function<void(float)>setter;
 		float dragSpeed = 0.0f;
 	};
 	//フラグ
-	struct BoolProperty{
+	struct BoolProperty {
 		std::string displayName = "";
 		std::function<bool()>getter;
 		std::function<void(bool)>setter;
 	};
 	//整数
-	struct IntProperty{
+	struct IntProperty {
 		std::string displayName = "";
 		std::function<int32_t()>getter;
 		std::function<void(int32_t)>setter;
 		float dragSpeed = 0.0f;
 	};
 	//Vector2
-	struct Vector2Property{
+	struct Vector2Property {
 		std::string displayName = "";
 		std::function<Vector2()>getter;
 		std::function<void(const Vector2&)>setter;
 		float dragSpeed = 0.0f;
 	};
 	//Vector3
-	struct Vector3Property{
+	struct Vector3Property {
 		std::string displayName = "";
 		std::function<Vector3()>getter;
 		std::function<void(const Vector3&)>setter;
 		float dragSpeed = 0.0f;
 	};
 	//Vector4
-	struct Vector4Property{
+	struct Vector4Property {
 		std::string displayName = "";
 		std::function<Vector4()>getter;
 		std::function<void(const Vector4&)>setter;
 		float dragSpeed = 0.0f;
 	};
 	//Color
-	struct ColorProperty{
+	struct ColorProperty {
 		std::string displayName = "";
 		std::function<Color()>getter;
 		std::function<void(const Color&)>setter;
 	};
 	//文字列
-	struct StringProperty{
+	struct StringProperty {
 		std::string displayName = "";
 		std::function <std::string()>getter;
 		std::function<void(const std::string&)>setter;
 	};
 	//Enum
-	struct EnumProperty{
+	struct EnumProperty {
 		std::string displayName = "";
 		std::vector<std::string>options;
 		std::function <uint32_t()>getter;
@@ -83,21 +86,22 @@ namespace inspector{
 }
 
 using Property = std::variant<
-	inspector::GroupBegin,
-	inspector::GroupEnd,
-	inspector::FloatProperty,
-	inspector::BoolProperty,
-	inspector::IntProperty,
-	inspector::Vector2Property,
-	inspector::Vector3Property,
-	inspector::Vector4Property,
-	inspector::ColorProperty,
-	inspector::StringProperty,
+	inspector::GroupBegin ,
+	inspector::GroupEnd ,
+	inspector::SeparatorSetting ,
+	inspector::FloatProperty ,
+	inspector::BoolProperty ,
+	inspector::IntProperty ,
+	inspector::Vector2Property ,
+	inspector::Vector3Property ,
+	inspector::Vector4Property ,
+	inspector::ColorProperty ,
+	inspector::StringProperty ,
 	inspector::EnumProperty
 >;
 
 //プロパティをまとめる
-class PropertyRegistry{
+class PropertyRegistry {
 public://メンバ関数
 	/// <summary>
 	/// コンストラクタ
@@ -121,12 +125,18 @@ public://メンバ関数
 	void EndGroup();
 
 	/// <summary>
+	/// セパレータを設定
+	/// </summary>
+	/// <param name="displayName">表示名</param>
+	void SetSeparator(const std::string& displayName);
+
+	/// <summary>
 	/// 浮動小数の追加
 	/// </summary>
 	/// <param name="displayName">表示名</param>
 	/// <param name="value">浮動小数</param>
 	/// <param name="dragSpeed">ドラッグさせるスピード</param>
-	void Add(const std::string& displayName, float& value, float dragSpeed = 0.1f);
+	void Add(const std::string& displayName , float& value , float dragSpeed = 0.1f);
 
 	/// <summary>
 	/// 浮動小数の追加
@@ -134,14 +144,24 @@ public://メンバ関数
 	/// <param name="displayName">表示名</param>
 	/// <param name="getter">Getter</param>
 	/// <param name="setter">Setter</param>
-	void Add(const std::string& displayName, std::function<float()> getter, std::function<void(float)>setter, float dragSpeed = 0.1f);
+	/// <param name="dragSpeed">ドラッグさせるスピード</param>
+	void Add(const std::string& displayName , std::function<float()> getter , std::function<void(float)>setter , float dragSpeed = 0.1f);
+
+	/// <summary>
+	/// 浮動小数の追加
+	/// </summary>
+	/// <param name="displayName">表示名</param>
+	/// <param name="value">値</param>
+	/// <param name="setter">Setter</param>
+	/// <param name="dragSpeed">ドラッグさせるスピード</param>
+	void Add(const std::string& displayName , float value , std::function<void(float)>setter , float dragSpeed = 0.1f);
 
 	/// <summary>
 	/// フラグの追加
 	/// </summary>
 	/// <param name="displayName">表示名</param>
 	/// <param name="value">フラグ</param>
-	void Add(const std::string& displayName, bool& value);
+	void Add(const std::string& displayName , bool& value);
 
 	/// <summary>
 	/// フラグの追加
@@ -149,7 +169,15 @@ public://メンバ関数
 	/// <param name="displayName">表示名</param>
 	/// <param name="getter">Getter</param>
 	/// <param name="setter">Setter</param>
-	void Add(const std::string& displayName, std::function<bool()> getter, std::function<void(bool)>setter);
+	void Add(const std::string& displayName , std::function<bool()> getter , std::function<void(bool)>setter);
+
+	/// <summary>
+	/// フラグの追加
+	/// </summary>
+	/// <param name="displayName">表示名</param>
+	/// <param name="value">値</param>
+	/// <param name="setter">Setter</param>
+	void Add(const std::string& displayName , bool value , std::function<void(bool)>setter);
 
 	/// <summary>
 	/// 整数の追加
@@ -157,7 +185,7 @@ public://メンバ関数
 	/// <param name="displayName">表示名</param>
 	/// <param name="value">整数</param>
 	/// <param name="dragSpeed">ドラッグさせるスピード</param>
-	void Add(const std::string& displayName, int32_t& value, float dragSpeed = 0.1f);
+	void Add(const std::string& displayName , int32_t& value , float dragSpeed = 1.0f);
 
 	/// <summary>
 	/// 整数の追加
@@ -165,7 +193,17 @@ public://メンバ関数
 	/// <param name="displayName">表示名</param>
 	/// <param name="getter">Getter</param>
 	/// <param name="setter">Setter</param>
-	void Add(const std::string& displayName, std::function<int32_t()> getter, std::function<void(int32_t)>setter);
+	/// <param name="dragSpeed">ドラッグさせるスピード</param>
+	void Add(const std::string& displayName , std::function<int32_t()> getter , std::function<void(int32_t)>setter , float dragSpeed = 1.0f);
+
+	/// <summary>
+	/// 整数の追加
+	/// </summary>
+	/// <param name="displayName">表示名</param>
+	/// <param name="value">値</param>
+	/// <param name="setter">Setter</param>
+	/// <param name="dragSpeed">ドラッグさせるスピード</param>
+	void Add(const std::string& displayName , int32_t value , std::function<void(int32_t)>setter , float dragSpeed = 1.0f);
 
 	/// <summary>
 	/// Vector2の追加
@@ -173,7 +211,7 @@ public://メンバ関数
 	/// <param name="displayName">表示名</param>
 	/// <param name="value">Vector2</param>
 	/// <param name="dragSpeed">ドラッグさせるスピード</param>
-	void Add(const std::string& displayName, Vector2& value, float dragSpeed = 0.1f);
+	void Add(const std::string& displayName , Vector2& value , float dragSpeed = 0.1f);
 
 	/// <summary>
 	/// Vector2の追加
@@ -181,7 +219,16 @@ public://メンバ関数
 	/// <param name="displayName">表示名</param>
 	/// <param name="getter">Getter</param>
 	/// <param name="setter">Setter</param>
-	void Add(const std::string& displayName, std::function<Vector2()> getter, std::function<void(const Vector2&)>setter, float dragSpeed = 0.1f);
+	void Add(const std::string& displayName , std::function<Vector2()> getter , std::function<void(const Vector2&)>setter , float dragSpeed = 0.1f);
+
+	/// <summary>
+	/// Vector2の追加
+	/// </summary>
+	/// <param name="displayName">表示名</param>
+	/// <param name="value">値</param>
+	/// <param name="setter">Setter</param>
+	/// <param name="dragSpeed">ドラッグさせるスピード</param>
+	void Add(const std::string& displayName , const Vector2& value , std::function<void(const Vector2&)>setter , float dragSpeed = 0.1f);
 
 	/// <summary>
 	/// Vector3の追加
@@ -189,7 +236,7 @@ public://メンバ関数
 	/// <param name="displayName">表示名</param>
 	/// <param name="value">Vector3</param>
 	/// <param name="dragSpeed">ドラッグさせるスピード</param>
-	void Add(const std::string& displayName, Vector3& value, float dragSpeed = 0.1f);
+	void Add(const std::string& displayName , Vector3& value , float dragSpeed = 0.1f);
 
 	/// <summary>
 	/// Vector3の追加
@@ -197,7 +244,16 @@ public://メンバ関数
 	/// <param name="displayName">表示名</param>
 	/// <param name="getter">Getter</param>
 	/// <param name="setter">Setter</param>
-	void Add(const std::string& displayName, std::function<Vector3()> getter, std::function<void(const Vector3&)>setter);
+	void Add(const std::string& displayName , std::function<Vector3()> getter , std::function<void(const Vector3&)>setter);
+
+	/// <summary>
+	/// Vector3の追加
+	/// </summary>
+	/// <param name="displayName">表示名</param>
+	/// <param name="value">値</param>
+	/// <param name="setter">Setter</param>
+	/// <param name="dragSpeed">ドラッグさせるスピード</param>
+	void Add(const std::string& displayName , const Vector3& value , std::function<void(const Vector3&)>setter , float dragSpeed = 0.1f);
 
 	/// <summary>
 	/// Vector4の追加
@@ -205,7 +261,7 @@ public://メンバ関数
 	/// <param name="displayName">表示名</param>
 	/// <param name="value">Vector4</param>
 	/// <param name="dragSpeed">ドラッグさせるスピード</param>
-	void Add(const std::string& displayName, Vector4& value, float dragSpeed = 0.1f);
+	void Add(const std::string& displayName , Vector4& value , float dragSpeed = 0.1f);
 
 	/// <summary>
 	/// Vector4の追加
@@ -213,14 +269,23 @@ public://メンバ関数
 	/// <param name="displayName">表示名</param>
 	/// <param name="getter">Getter</param>
 	/// <param name="setter">Setter</param>
-	void Add(const std::string& displayName, std::function<Vector4()> getter, std::function<void(const Vector4&)>setter);
+	void Add(const std::string& displayName , std::function<Vector4()> getter , std::function<void(const Vector4&)>setter);
+
+	/// <summary>
+	/// Vector4の追加
+	/// </summary>
+	/// <param name="displayName">表示名</param>
+	/// <param name="value">値</param>
+	/// <param name="setter">Setter</param>
+	/// <param name="dragSpeed">ドラッグさせるスピード</param>
+	void Add(const std::string& displayName , const Vector4& value , std::function<void(const Vector4&)>setter , float dragSpeed = 0.1f);
 
 	/// <summary>
 	/// Colorの追加
 	/// </summary>
 	/// <param name="displayName">表示名</param>
 	/// <param name="value">Color</param>
-	void Add(const std::string& displayName, Color& value);
+	void Add(const std::string& displayName , Color& value);
 
 	/// <summary>
 	/// Colorの追加
@@ -228,14 +293,23 @@ public://メンバ関数
 	/// <param name="displayName">表示名</param>
 	/// <param name="getter">Getter</param>
 	/// <param name="setter">Setter</param>
-	void Add(const std::string& displayName, std::function<Color()> getter, std::function<void(const Color&)>setter);
+	void Add(const std::string& displayName , std::function<Color()> getter , std::function<void(const Color&)>setter);
+
+	/// <summary>
+	/// Colorの追加
+	/// </summary>
+	/// <param name="displayName">表示名</param>
+	/// <param name="value">値</param>
+	/// <param name="setter">Setter</param>
+	/// <param name="dragSpeed">ドラッグさせるスピード</param>
+	void Add(const std::string& displayName , const Color& value , std::function<void(const Color&)>setter);
 
 	/// <summary>
 	/// 文字列の追加
 	/// </summary>
 	/// <param name="displayName">表示名</param>
 	/// <param name="value">文字列</param>
-	void Add(const std::string& displayName, std::string& value);
+	void Add(const std::string& displayName , std::string& value);
 
 	/// <summary>
 	/// 文字列の追加
@@ -243,7 +317,15 @@ public://メンバ関数
 	/// <param name="displayName">表示名</param>
 	/// <param name="getter">Getter</param>
 	/// <param name="setter">Setter</param>
-	void Add(const std::string& displayName, std::function<std::string()> getter, std::function<void(const std::string&)>setter);
+	void Add(const std::string& displayName , std::function<std::string()> getter , std::function<void(const std::string&)>setter);
+
+	/// <summary>
+	/// 文字列の追加
+	/// </summary>
+	/// <param name="displayName">表示名</param>
+	/// <param name="value">値</param>
+	/// <param name="setter">Setter</param>
+	void Add(const std::string& displayName , const std::string& value , std::function<void(const std::string&)>setter);
 
 	/// <summary>
 	/// 列挙型の追加
@@ -252,16 +334,24 @@ public://メンバ関数
 	/// <param name="options">オプション</param>
 	/// <param name="getter">Getter</param>
 	/// <param name="setter">Setter</param>
-	void Add(const std::string& displayName, const std::vector<std::string>& options, std::function<uint32_t()> getter, std::function<void(uint32_t)>setter);
+	void Add(const std::string& displayName , const std::vector<std::string>& options , std::function<uint32_t()> getter , std::function<void(uint32_t)>setter);
 
 	/// <summary>
 	/// 列挙型の追加
 	/// </summary>
 	/// <param name="displayName">表示名</param>
 	/// <param name="options">オプション</param>
-	/// <param name="getter">Getter</param>
+	/// <param name="value">値</param>
+	void Add(const std::string& displayName , const std::vector<std::string>& options , uint32_t& value);
+
+	/// <summary>
+	/// 列挙型の追加
+	/// </summary>
+	/// <param name="displayName">表示名</param>
+	/// <param name="options">オプション</param>
+	/// <param name="value">値</param>
 	/// <param name="setter">Setter</param>
-	void Add(const std::string& displayName, const std::vector<std::string>& options, uint32_t& value);
+	void Add(const std::string& displayName , const std::vector<std::string>& options , uint32_t value , std::function<void(uint32_t)>setter);
 
 	/// <summary>
 	/// 追加
@@ -274,18 +364,18 @@ public://メンバ関数
 	/// <param name="object">オブジェクト</param>
 	/// <param name="index">検索キー</param>
 	/// <param name="setter">セッター</param>
-	template <typename T, typename Value, typename Setter>
+	template <typename T , typename Value , typename Setter>
 	void Add(
-		const std::string& displayName,
-		const Value& value,
-		T* object,
-		uint32_t index,
-		Setter setter){
+		const std::string& displayName ,
+		const Value& value ,
+		T* object ,
+		uint32_t index ,
+		Setter setter) {
 		const Value* valuePtr = &value;
-		std::function<Value()>getter = [valuePtr]()->Value{return *valuePtr; };
+		std::function<Value()>getter = [valuePtr]()->Value {return *valuePtr; };
 
-		std::function<void(const Value&)>setterFunc = [object, index, setter](const Value& value){(object->*setter)(index, value); };
-		Add(displayName, getter, setterFunc);
+		std::function<void(const Value&)>setterFunc = [object , index , setter](const Value& value) {(object->*setter)(index , value); };
+		Add(displayName , getter , setterFunc);
 	}
 
 	/// <summary>
@@ -300,19 +390,19 @@ public://メンバ関数
 	/// <param name="index">検索キー</param>
 	/// <param name="setter">セッターの関数ポインタ</param>
 	/// <param name="dragSpeed">ドラッグする速度</param>
-	template <typename T, typename Value, typename Setter>
+	template <typename T , typename Value , typename Setter>
 	void Add(
-		const std::string& displayName,
-		const Value& value,
-		T* object,
-		uint32_t index,
-		Setter setter,
-		float dragSpeed){
+		const std::string& displayName ,
+		const Value& value ,
+		T* object ,
+		uint32_t index ,
+		Setter setter ,
+		float dragSpeed) {
 		const Value* valuePtr = &value;
-		std::function<Value()>getter = [valuePtr]()->Value{return *valuePtr; };
+		std::function<Value()>getter = [valuePtr]()->Value {return *valuePtr; };
 
-		std::function<void(const Value&)>setterFunc = [object, index, setter](const Value& value){(object->*setter)(index, value); };
-		Add(displayName, getter, setterFunc, dragSpeed);
+		std::function<void(const Value&)>setterFunc = [object , index , setter](const Value& value) {(object->*setter)(index , value); };
+		Add(displayName , getter , setterFunc , dragSpeed);
 	}
 
 	/// <summary>

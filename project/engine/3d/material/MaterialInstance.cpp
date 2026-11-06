@@ -56,8 +56,10 @@ void MaterialInstance::SetPixelShaderFileName(const std::string& pixelShaderFile
 		Logger::OutputLog("コンスタントバッファ名が存在しませんでした");
 		return;
 	}
+	//コンスタントバッファの名前を記録
+	cBufferName_ = cBufferName;
 	//コンスタントバッファの情報を取得
-	cBuffer_ = shaderInfo->constantBuffers.at(cBufferName);
+	cBuffer_ = shaderInfo->constantBuffers.at(cBufferName_);
 
 	//ファイル名を取得
 	pixelShaderFileName_ = pixelShaderFileName;

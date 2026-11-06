@@ -901,7 +901,7 @@
     </None>
   </ItemGroup>
   <ItemGroup>
-    <FxCompile Include="engine\resources\shaders\pixels\Object3d.PS.hlsl">
+    <FxCompile Include="engine\resources\shaders\pixels\Standard.PS.hlsl">
       <Filter>shaders\pixels</Filter>
     </FxCompile>
     <FxCompile Include="engine\resources\shaders\pixels\Particle.PS.hlsl">

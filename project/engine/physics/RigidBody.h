@@ -1,6 +1,7 @@
 #pragma once
 #include "Component.h"
 #include "Vector3.h"
+#include <PropertyRegistry.h>
 
 /// <summary>
 /// 物理演算をするためのボディ
@@ -27,6 +28,12 @@ public://メンバ関数
 	/// 更新
 	/// </summary>
 	void Update()override;
+
+	/// <summary>
+	/// プロパティ一覧を登録
+	/// </summary>
+	/// <param name="registry">レジストリ</param>
+	void RegisterProperties(PropertyRegistry* registry);
 
 	/// <summary>
 	/// 複製

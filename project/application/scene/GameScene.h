@@ -47,6 +47,11 @@ private://メンバ関数
 	/// フィールドの生成
 	/// </summary>
 	void CreateField();
+
+	/// <summary>
+	/// プレイヤー作成
+	/// </summary>
+	void CreatePlayer();
 private://メンバ変数
 	//マップチップのCSVの名前
 	std::string mapChipCsvName_ = "Map_01.csv";

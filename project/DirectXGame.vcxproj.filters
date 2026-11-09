@@ -492,6 +492,15 @@
     <ClCompile Include="application\actor\MapChipField.cpp">
       <Filter>application\actor</Filter>
     </ClCompile>
+    <ClCompile Include="engine\command\ICommand.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="engine\command\MovementCommand.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="engine\input\InputComponent.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="application\scene\TestPlayScene.h">
@@ -862,6 +871,18 @@
     </ClInclude>
     <ClInclude Include="application\actor\MapChipField.h">
       <Filter>application\actor</Filter>
+    </ClInclude>
+    <ClInclude Include="engine\command\ICommand.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="engine\command\MovementCommand.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="engine\input\InputComponent.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="engine\input\InputType.h">
+      <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

@@ -5,6 +5,8 @@
 #include "Object3d.h"
 #include "DirectionalLight.h"
 #include "BoxCollider.h"
+#include "RigidBody.h"
+#include "Player.h"
 
 //コンストラクタ
 GameScene::GameScene() {
@@ -30,6 +32,9 @@ void GameScene::Initialize() {
 
 	//フィールドの生成
 	CreateField();
+
+	//プレイヤーの作成
+	CreatePlayer();
 }
 
 //更新のステート
@@ -100,8 +105,24 @@ void GameScene::CreateField() {
 				};
 				Object3d* object3d = gameObject->AddComponent<Object3d>();
 				object3d->SetModel("cube");
-				//gameObject->AddComponent<BoxCollider>();
 			}
 		}
 	}
+}
+
+//プレイヤーの作成
+void GameScene::CreatePlayer() {
+	//ゲームオブジェクトを生成
+	GameObject* gameObject = CreateGameObject();
+	gameObject->SetName("プレイヤー");
+	//オブジェクト3dを設定
+	Object3d*object3d = gameObject->AddComponent<Object3d>();
+	object3d->SetModel("player");
+	//リジッドボディを設定
+	RigidBody* rigidBody = gameObject->AddComponent<RigidBody>();
+	//プレイヤーの設定
+	Player* player = gameObject->AddComponent<Player>();
+	player->SetObject3d(object3d);
+	player->SetInput(GetSceneContext().input);
+	player->SetRigidBody(rigidBody);
 }

@@ -335,11 +335,21 @@ Vector2 Input::GetMousePosition() const {
 
 //Xboxが接続できたかどうか
 bool Input::IsXboxPadConnected(DWORD xBoxPadNumber) {
+	//範囲外チェック
+	if(xBoxPadNumber >= 4) {
+		return false;
+	}
+
 	return xboxPadDatas_[static_cast<uint32_t>(xBoxPadNumber)].isConnected;
 }
 
 //XboxPadのボタンの押下をチェック
 bool Input::PressXboxPad(DWORD xBoxPadNumber,XboxInput xboxButton) {
+	//範囲外チェック
+	if(xBoxPadNumber >= 4) {
+		return false;
+	}
+
 	if(xboxButton == XboxInput::kLT) {
 		//LT
 		xboxPadDatas_[static_cast<uint32_t>(xBoxPadNumber)].currButton.leftTriggerButton = xboxPadDatas_[static_cast<uint32_t>(xBoxPadNumber)].leftTrigger > 0.0f;
@@ -360,6 +370,11 @@ bool Input::PressXboxPad(DWORD xBoxPadNumber,XboxInput xboxButton) {
 
 //XboxPadのボタンの押下した瞬間をチェック
 bool Input::TriggerXboxPad(DWORD xBoxPadNumber,XboxInput xboxButton) {
+	//範囲外チェック
+	if(xBoxPadNumber >= 4) {
+		return false;
+	}
+
 	if(xboxButton == XboxInput::kLT) {
 		//LT
 		xboxPadDatas_[static_cast<uint32_t>(xBoxPadNumber)].currButton.leftTriggerButton = xboxPadDatas_[static_cast<uint32_t>(xBoxPadNumber)].leftTrigger > 0.0f;
@@ -382,6 +397,11 @@ bool Input::TriggerXboxPad(DWORD xBoxPadNumber,XboxInput xboxButton) {
 
 //XboxPadのボタンの離した瞬間をチェック
 bool Input::ReleaseTriggerXboxPad(DWORD xBoxPadNumber,XboxInput xboxButton) {
+	//範囲外チェック
+	if(xBoxPadNumber >= 4) {
+		return false;
+	}
+
 	if(xboxButton == XboxInput::kLT) {
 		//LT
 		xboxPadDatas_[static_cast<uint32_t>(xBoxPadNumber)].currButton.leftTriggerButton = xboxPadDatas_[static_cast<uint32_t>(xBoxPadNumber)].leftTrigger > 0.0f;
@@ -404,6 +424,11 @@ bool Input::ReleaseTriggerXboxPad(DWORD xBoxPadNumber,XboxInput xboxButton) {
 
 //Xboxの左スティックの取得
 const Vector2 Input::GetXboxPadLeftStick(DWORD xBoxPadNumber) {
+	//範囲外チェック
+	if(xBoxPadNumber >= 4) {
+		return{};
+	}
+
 	//横軸
 	xboxPadDatas_[static_cast<uint32_t>(xBoxPadNumber)].leftStick.x = static_cast<float>(xboxPadDatas_[static_cast<uint32_t>(xBoxPadNumber)].state.Gamepad.sThumbLX) / static_cast<float>(SHRT_MAX);
 
@@ -425,6 +450,11 @@ const Vector2 Input::GetXboxPadLeftStick(DWORD xBoxPadNumber) {
 
 //Xboxの右スティックの取得
 const Vector2 Input::GetXboxPadRightStick(DWORD xBoxPadNumber) {
+	//範囲外チェック
+	if(xBoxPadNumber >= 4) {
+		return {};
+	}
+
 	//横軸
 	xboxPadDatas_[static_cast<uint32_t>(xBoxPadNumber)].rightStick.x = static_cast<float>(xboxPadDatas_[static_cast<uint32_t>(xBoxPadNumber)].state.Gamepad.sThumbRX) / static_cast<float>(SHRT_MAX);
 
@@ -446,11 +476,21 @@ const Vector2 Input::GetXboxPadRightStick(DWORD xBoxPadNumber) {
 
 //XBoxのLTの沈み込み度の取得
 float Input::GetXboxPadLeftTrigger(DWORD xBoxPadNumber) {
+	//範囲外チェック
+	if(xBoxPadNumber >= 4) {
+		return 0.0f;
+	}
+
 	return xboxPadDatas_[xBoxPadNumber].leftTrigger;
 }
 
 //XBoxのRTの沈み込み度の取得
 float Input::GetXboxPadRightTrigger(DWORD xBoxPadNumber) {
+	//範囲外チェック
+	if(xBoxPadNumber >= 4) {
+		return 0.0f;
+	}
+
 	return  xboxPadDatas_[xBoxPadNumber].rightTrigger;
 }
 

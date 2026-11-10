@@ -55,14 +55,62 @@ void MapChipField::LoadMapChipCsv(const std::string& filePath) {
 			}
 			lines.push_back(status);
 		}
+		//マップの横幅を設定
+		horizontal_ = static_cast<uint32_t>(lines.size());
 		//マップチップのデータに追加
 		mapChipData_.data.push_back(lines);
 	}
+
+	//奥行も設定
+	longitudinal_ = static_cast<uint32_t>(mapChipData_.data.size());
 }
 
 //マップチップデータの取得
 const MapChipData& MapChipField::GetMapChipData() const {
 	return mapChipData_;
+}
+
+//マップのインデックスを取得
+MapChipField::IndexSet MapChipField::GetMapChipIndex(const Vector3& pos) {
+	IndexSet result = {
+		.x = static_cast<uint32_t>(pos.x - origin_.x) / kBlockWidth,
+		.z = static_cast<uint32_t>(pos.z - origin_.z) / kBlockDepth,
+	};
+	return result;
+}
+
+//マップからいる位置を取得
+Vector3 MapChipField::GetMapChipPosition(const IndexSet& indexSet) {
+	Vector3 result = {
+		.x = origin_.x + (static_cast<float>(indexSet.x) + 0.5f) * kBlockWidth,
+		.z = origin_.z + (static_cast<float>(indexSet.z) + 0.5f) * kBlockDepth,
+	};
+	return result;
+}
+
+//いる位置のマップのステータスを取得
+MapChipStatus MapChipField::GetMapChipStatus(const Vector3& pos) {
+	//現在いる位置のマップ番号を取得
+	IndexSet index = GetMapChipIndex(pos);
+	//マップステータス
+	MapChipStatus status = {.type = MapChipType::kBlank,.count = 1};
+	//もし範囲外なら
+	if(horizontal_ <= index.x || longitudinal_ <= index.z) {
+		return status;
+	}
+
+	return mapChipData_.data[index.z][index.x];
+}
+
+//いる位置のマップのステータスを取得
+MapChipStatus MapChipField::GetMapChipStatus(const IndexSet& indexSet) {
+	//マップステータス
+	MapChipStatus status = {.type = MapChipType::kBlank,.count = 1};
+	//もし範囲外なら
+	if(horizontal_ <= indexSet.x || longitudinal_ <= indexSet.z) {
+		return status;
+	}
+	return mapChipData_.data[indexSet.z][indexSet.x];
 }
 
 // マップチップデータのリセット

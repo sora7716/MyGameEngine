@@ -1,5 +1,6 @@
 #pragma once
 #include "MapChipData.h"
+#include "Vector3.h"
 
 //マップチップフィールド
 class MapChipField {
@@ -10,6 +11,12 @@ public://構造体
 		float right;//右端
 		float bottom;//下端
 		float top;//上端
+	};
+
+	//インデックスセット
+	struct IndexSet {
+		uint32_t x;
+		uint32_t z;
 	};
 public://メンバ関数
 	/// <summary>
@@ -23,6 +30,34 @@ public://メンバ関数
 	/// </summary>
 	/// <returns>マップチップデータ</returns>
 	const MapChipData& GetMapChipData()const;
+
+	/// <summary>
+	/// マップのインデックスを取得
+	/// </summary>
+	/// <param name="pos">位置</param>
+	/// <returns>マップのインデックス</returns>
+	IndexSet GetMapChipIndex(const Vector3& pos);
+
+	/// <summary>
+	/// マップからいる位置を取得
+	/// </summary>
+	/// <param name="indexSet">インデックス</param>
+	/// <returns>マップにいるの位置</returns>
+	Vector3 GetMapChipPosition(const IndexSet& indexSet);
+
+	/// <summary>
+	/// いる位置のマップのステータスを取得
+	/// </summary>
+	/// <param name="pos">位置</param>
+	/// <returns>マップのステータス</returns>
+	MapChipStatus GetMapChipStatus(const Vector3& pos);
+
+	/// <summary>
+	/// いる位置のマップのステータスを取得
+	/// </summary>
+	/// <param name="indexSet">インデックス</param>
+	/// <returns>マップのステータス</returns>
+	MapChipStatus GetMapChipStatus(const IndexSet& indexSet);
 private://メンバ関数
 	/// <summary>
 	/// マップチップのリセット
@@ -34,6 +69,12 @@ public://定数
 	static inline const float kBlockHeight = 1.0f;
 	static inline const float kBlockDepth = 1.0f;
 private://メンバ変数
+	//マップ全体の横幅
+	uint32_t horizontal_ = 0;
+	//マップ全体の奥行
+	uint32_t longitudinal_ = 0;
+	//マップの中心
+	Vector3 origin_ = {0.5f,0.0f,0.5f};
 	//ディレクトリパス
 	std::string directoryPath_ = "engine/resources/csv/";
 	//マップチップのデータ

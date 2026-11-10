@@ -1,6 +1,7 @@
 #include "InputComponent.h"
 #include "Input.h"
 #include "ICommand.h"
+#include "Logger.h"
 #include <cassert>
 //フェーズのビットフラグをOR演算
 InputPhase operator|(InputPhase phase1,InputPhase phase2) {
@@ -43,6 +44,7 @@ void InputComponent::Initialize() {
 void InputComponent::Update() {
 	//入力がNullなら
 	if(!input_) {
+		Logger::OutputLog("inputが設定されていません");
 		return;
 	}
 
@@ -70,7 +72,6 @@ std::unique_ptr<Component> InputComponent::Clone(GameObject* gameObject) const {
 	for(uint32_t i = 0; i < this->inputStates_.size(); i++) {
 		const InputState& inputState = this->inputStates_[i];
 		std::unique_ptr<ICommand> cloneCommand = inputState.command->Clone();
-		cloneCommand->Setup(gameObject);
 		cloneInstance->inputStates_.push_back({inputState.type,inputState.phase,std::move(cloneCommand),inputState.controllerIndex});
 	}
 

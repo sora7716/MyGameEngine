@@ -160,6 +160,9 @@
     <Filter Include="engine\graphics\shader">
       <UniqueIdentifier>{d899db8f-3bbb-49a4-847e-f9ecedd4ed84}</UniqueIdentifier>
     </Filter>
+    <Filter Include="engine\comand">
+      <UniqueIdentifier>{84e822a3-c7c9-4a2a-b2d1-e7cfa30391cb}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="engine\main.cpp">
@@ -492,14 +495,23 @@
     <ClCompile Include="application\actor\MapChipField.cpp">
       <Filter>application\actor</Filter>
     </ClCompile>
+    <ClCompile Include="engine\input\InputComponent.cpp">
+      <Filter>engine\input</Filter>
+    </ClCompile>
     <ClCompile Include="engine\command\ICommand.cpp">
-      <Filter>ソース ファイル</Filter>
+      <Filter>engine\comand</Filter>
     </ClCompile>
     <ClCompile Include="engine\command\MovementCommand.cpp">
-      <Filter>ソース ファイル</Filter>
+      <Filter>engine\comand</Filter>
     </ClCompile>
-    <ClCompile Include="engine\input\InputComponent.cpp">
-      <Filter>ソース ファイル</Filter>
+    <ClCompile Include="engine\physics\MovementComponent.cpp">
+      <Filter>engine\physics</Filter>
+    </ClCompile>
+    <ClCompile Include="engine\physics\JumpComponent.cpp">
+      <Filter>engine\physics</Filter>
+    </ClCompile>
+    <ClCompile Include="engine\command\JumpCommand.cpp">
+      <Filter>engine\comand</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -872,17 +884,26 @@
     <ClInclude Include="application\actor\MapChipField.h">
       <Filter>application\actor</Filter>
     </ClInclude>
+    <ClInclude Include="engine\input\InputComponent.h">
+      <Filter>engine\input</Filter>
+    </ClInclude>
     <ClInclude Include="engine\command\ICommand.h">
-      <Filter>ヘッダー ファイル</Filter>
+      <Filter>engine\comand</Filter>
     </ClInclude>
     <ClInclude Include="engine\command\MovementCommand.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="engine\input\InputComponent.h">
-      <Filter>ヘッダー ファイル</Filter>
+      <Filter>engine\comand</Filter>
     </ClInclude>
     <ClInclude Include="engine\input\InputType.h">
-      <Filter>ヘッダー ファイル</Filter>
+      <Filter>engine\input</Filter>
+    </ClInclude>
+    <ClInclude Include="engine\physics\MovementComponent.h">
+      <Filter>engine\physics</Filter>
+    </ClInclude>
+    <ClInclude Include="engine\physics\JumpComponent.h">
+      <Filter>engine\physics</Filter>
+    </ClInclude>
+    <ClInclude Include="engine\command\JumpCommand.h">
+      <Filter>engine\comand</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

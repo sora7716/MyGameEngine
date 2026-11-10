@@ -1,5 +1,5 @@
 #pragma once
-#include "GameObject.h"
+#include <memory>
 
 /// <summary>
 /// コマンドのインターフェース
@@ -17,12 +17,6 @@ public://メンバ関数
 	virtual ~ICommand();
 
 	/// <summary>
-	/// セットアップ
-	/// </summary>
-	/// <param name="gameObject">ゲームオブジェクト/param>
-	virtual void Setup(GameObject* gameObject);
-
-	/// <summary>
 	///　実行
 	/// </summary>
 	virtual void Execute() = 0;
@@ -31,8 +25,5 @@ public://メンバ関数
 	/// 複製
 	/// </summary>
 	virtual std::unique_ptr<ICommand> Clone()const = 0;
-protected://メンバ変数
-	//ゲームオブジェクト
-	GameObject* gameObject_ = nullptr;
 };
 

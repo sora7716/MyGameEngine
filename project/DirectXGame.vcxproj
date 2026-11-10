@@ -56,6 +56,7 @@
     <ClCompile Include="engine\collision\CollisionSystem.cpp" />
     <ClCompile Include="engine\collision\SphereCollider.cpp" />
     <ClCompile Include="engine\command\ICommand.cpp" />
+    <ClCompile Include="engine\command\JumpCommand.cpp" />
     <ClCompile Include="engine\command\MovementCommand.cpp" />
     <ClCompile Include="engine\debug\CrashHandler.cpp" />
     <ClCompile Include="engine\debug\DebugCameraController.cpp" />
@@ -114,6 +115,8 @@
     <ClCompile Include="engine\math\Vector4.cpp" />
     <ClCompile Include="engine\particle\ParticleEmitter.cpp" />
     <ClCompile Include="engine\particle\ParticleSystem.cpp" />
+    <ClCompile Include="engine\physics\JumpComponent.cpp" />
+    <ClCompile Include="engine\physics\MovementComponent.cpp" />
     <ClCompile Include="engine\physics\Physics.cpp" />
     <ClCompile Include="engine\physics\PhysicsData.cpp" />
     <ClCompile Include="engine\physics\RigidBody.cpp" />
@@ -179,6 +182,7 @@
     <ClInclude Include="engine\collision\CollisionSystem.h" />
     <ClInclude Include="engine\collision\SphereCollider.h" />
     <ClInclude Include="engine\command\ICommand.h" />
+    <ClInclude Include="engine\command\JumpCommand.h" />
     <ClInclude Include="engine\command\MovementCommand.h" />
     <ClInclude Include="engine\debug\CrashHandler.h" />
     <ClInclude Include="engine\debug\DebugCameraController.h" />
@@ -249,6 +253,8 @@
     <ClInclude Include="engine\particle\ParticleData.h" />
     <ClInclude Include="engine\particle\ParticleEmitter.h" />
     <ClInclude Include="engine\particle\ParticleSystem.h" />
+    <ClInclude Include="engine\physics\JumpComponent.h" />
+    <ClInclude Include="engine\physics\MovementComponent.h" />
     <ClInclude Include="engine\physics\Physics.h" />
     <ClInclude Include="engine\physics\PhysicsData.h" />
     <ClInclude Include="engine\physics\RigidBody.h" />

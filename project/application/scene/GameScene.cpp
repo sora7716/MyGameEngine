@@ -7,6 +7,12 @@
 #include "BoxCollider.h"
 #include "RigidBody.h"
 #include "Player.h"
+#include "InputComponent.h"
+#include "MovementCommand.h"
+#include "MovementComponent.h"
+#include "JumpCommand.h"
+#include "JumpComponent.h"
+#include <array>
 
 //コンストラクタ
 GameScene::GameScene() {
@@ -21,11 +27,36 @@ void GameScene::Initialize() {
 	//基底クラスの初期化
 	BaseScene::Initialize();
 
+	//コマンドの生成
+	movementCommands_.resize(static_cast<uint32_t>(MovementCommandMode::kCount));
+	for(std::unique_ptr<MovementCommand>& movementCommand : movementCommands_) {
+		movementCommand = std::make_unique<MovementCommand>();
+	}
+	//前へ移動
+	movementCommands_[static_cast<uint32_t>(MovementCommandMode::kMoveFowerd)]->Setup({0.0f,0.0f,1.0f});
+	//後ろへ移動
+	movementCommands_[static_cast<uint32_t>(MovementCommandMode::kMoveBack)]->Setup({0.0f,0.0f,-1.0f});
+	//右へ移動
+	movementCommands_[static_cast<uint32_t>(MovementCommandMode::kMoveRight)]->Setup({1.0f,0.0f,0.0f});
+	//左へ移動
+	movementCommands_[static_cast<uint32_t>(MovementCommandMode::kMoveLeft)]->Setup({-1.0f,0.0f,0.0f});
+
+	//ジャンプコマンドを生成
+	JumpCommand_ = std::make_unique<JumpCommand>();
+
 	//平行光源
 	GameObject* gameObject = CreateGameObject();
 	gameObject->AddComponent<DirectionalLight>();
 	gameObject->GetTransform().SetEulerAngleDegrees({-120.0f,0.0f,0.0f});
 	gameObject->SetName("平行光源");
+
+	GameObject* groundObject = CreateGameObject();
+	groundObject->GetTransform().scale = {50.0f,1.0f,50.0f};
+	groundObject->GetTransform().translate = {0.0f,-1.0f,0.0f};
+	Object3d* groundObject3d = groundObject->AddComponent<Object3d>();
+	groundObject3d->SetModel("cube");
+	groundObject3d->SetTexture(0,"uvChecker.png");
+	groundObject->AddComponent<BoxCollider>();
 
 	//SkyBoxの生成
 	CreateSkyBox();
@@ -116,13 +147,52 @@ void GameScene::CreatePlayer() {
 	GameObject* gameObject = CreateGameObject();
 	gameObject->SetName("プレイヤー");
 	//オブジェクト3dを設定
-	Object3d*object3d = gameObject->AddComponent<Object3d>();
+	Object3d* object3d = gameObject->AddComponent<Object3d>();
 	object3d->SetModel("player");
+
+	//インプットコンポーネントを設定
+	InputComponent* inputComponent = gameObject->AddComponent<InputComponent>();
+	inputComponent->Setup(GetSceneContext().input);
+
+	//移動用のコンポーネントを設定
+	MovementComponent* movementComponent = gameObject->AddComponent<MovementComponent>();
+	//ジャンプ用のコンポーネントを設定
+	JumpComponent* jumpComponent = gameObject->AddComponent<JumpComponent>();
 	//リジッドボディを設定
 	RigidBody* rigidBody = gameObject->AddComponent<RigidBody>();
+	//移動用のコンポーネントのセットアップ
+	movementComponent->Setup(rigidBody,10.0f,12.0f);
+	jumpComponent->Setup(rigidBody,15.0f);
+
+	//キーの一覧
+	std::array<const char,static_cast<uint32_t>(MovementCommandMode::kCount)>moveKeyList{
+		DIK_W,
+		DIK_S,
+		DIK_A,
+		DIK_D
+	};
+
+	//移動を設定
+	for(uint32_t i = 0; i < moveKeyList.size(); i++) {
+		//入力キーを取得
+		char key = moveKeyList[i];
+		//移動酔うコンポーネントを追加
+		movementCommands_[i]->SetMovementComponent(movementComponent);
+		//移動コマンドを設定
+		inputComponent->AddInputState(static_cast<BYTE>(key),InputPhase::kHeld,std::move(movementCommands_[i]));
+	}
+
+	//ジャンプコマンドを設定
+	JumpCommand_->SetJumpComponent(jumpComponent);
+	inputComponent->AddInputState(static_cast<BYTE>(DIK_SPACE),InputPhase::kHeld,std::move(JumpCommand_));
+
 	//プレイヤーの設定
 	Player* player = gameObject->AddComponent<Player>();
 	player->SetObject3d(object3d);
 	player->SetInput(GetSceneContext().input);
 	player->SetRigidBody(rigidBody);
+
+	//コライダーを設定
+	BoxCollider* boxCollider = gameObject->AddComponent<BoxCollider>();
+	boxCollider->SetBodyType(BodyType::kDynamic);
 }

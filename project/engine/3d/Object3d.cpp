@@ -106,7 +106,7 @@ void Object3d::RegisterProperties(PropertyRegistry* registry) {
 	std::function<void(uint32_t)> blendModeSetter = [this](uint32_t value) {
 		this->SetBlendMode(static_cast<BlendMode>(value));
 	};
-	registry->Add("blendMode" , kBlendOptions , blendModeGetter , blendModeSetter);
+	registry->Add("blendMode",kBlendOptions,blendModeGetter,blendModeSetter);
 
 	//フィルモードの切り替え
 	std::function<uint32_t()> fillModeGetter = [this]() -> uint32_t {
@@ -115,7 +115,7 @@ void Object3d::RegisterProperties(PropertyRegistry* registry) {
 	std::function<void(uint32_t)> fillModeSetter = [this](uint32_t value) {
 		this->SetFillMode(static_cast<rasterizerMode::FillMode>(value));
 	};
-	registry->Add("fillMode" , kFillOptions , fillModeGetter , fillModeSetter);
+	registry->Add("fillMode",kFillOptions,fillModeGetter,fillModeSetter);
 
 	//カリングモードの切り替え
 	std::function<uint32_t()> cullingModeGetter = [this]() -> uint32_t {
@@ -124,7 +124,7 @@ void Object3d::RegisterProperties(PropertyRegistry* registry) {
 	std::function<void(uint32_t)> cullingModeSetter = [this](uint32_t value) {
 		this->SetCullingMode(static_cast<rasterizerMode::CullingMode>(value));
 	};
-	registry->Add("CullingMode" , kCullingOptions , cullingModeGetter , cullingModeSetter);
+	registry->Add("CullingMode",kCullingOptions,cullingModeGetter,cullingModeSetter);
 
 	////登録
 	//for (uint32_t i = 0; i < material->GetSlots().size(); i++) {
@@ -288,23 +288,6 @@ void Object3d::SetModel(const std::string& modelName) {
 
 		materialInstances_.clear();
 	}
-
-	//マテリアルを個別化する
-	EnsureUniqueMaterialInstance();
-	//ピクセルシェーダを設定
-	for (std::shared_ptr<MaterialInstance>& materialInstance : materialInstances_) {
-		//マテリアルインスタンスがNullだった場合
-		if(!materialInstance) {
-			continue;
-		}
-		materialInstance->SetPixelShaderFileName(pixelShaderFilePath_,"gMaterial");
-		materialInstance->SetParameter("color",Color::GetWhite());
-		materialInstance->SetParameter("enableLighring",uint32_t(1));
-		materialInstance->SetParameter("shininess",10.0f);
-		materialInstance->SetParameter("diffuseModel",int32_t{DiffuseModel::kHalfLambert});
-	}
-	//マテリアルの初期化
-	InitializeMaterial();
 }
 
 //LODの切り替え距離
@@ -342,20 +325,15 @@ void Object3d::SetEnvironmentMap(uint32_t index,const std::string& environmentMa
 
 //ピクセルシェーダファイルパスの設定
 void Object3d::SetPixelShaderFilePath(const std::string& pixelShaderFilePath) {
+	if(!baseModel_) {
+		Logger::OutputLog("Object3dにModelが設定されていません");
+		return;
+	}
 	pixelShaderFilePath_ = pixelShaderFilePath;
 	//マテリアルを個別化する
 	EnsureUniqueMaterialInstance();
-	//ピクセルシェーダを設定
-	for(std::shared_ptr<MaterialInstance>& materialInstance : materialInstances_) {
-		//マテリアルインスタンスがNullだった場合
-		if(!materialInstance) {
-			continue;
-		}
-		materialInstance->SetPixelShaderFileName(pixelShaderFilePath_,"gMaterial");
-	}
-
-	//マテリアルの設定
-	InitializeMaterial();
+	//ピクセルシェーダをモデルに設定
+	baseModel_->SetPixelShaderFileName(pixelShaderFilePath_);
 }
 
 //ブレンドモードの設定
@@ -556,8 +534,8 @@ void Object3d::CollectNodeNames(const Node& node,const std::string& parentPath,s
 
 		//ノードの情報に追加
 		nodeInfos.push_back({
-			.name = node.name ,
-			.path = currentPath ,
+			.name = node.name,
+			.path = currentPath,
 			});
 	}
 
@@ -620,9 +598,6 @@ void Object3d::MakeWorldMatrix() {
 		gameObject->SetAttachedMatrix(parentNode_->modelMatrix);
 	}
 
-	//ワールド行列を求める
-	//worldMatrix_ = localMatrix_ * parentMatrix_;
-
 	//ノードのメッシュインスタンスをクリア
 	nodeMeshInstance_.clear();
 
@@ -671,21 +646,5 @@ void Object3d::UpdateNodeMatrices(Node& node,const Matrix4x4& parentMatrix) {
 	//子の数分回す
 	for(Node& child : node.children) {
 		UpdateNodeMatrices(child,node.modelMatrix);
-	}
-}
-
-//マテリアルの初期化
-void Object3d::InitializeMaterial() {
-	//スタンダード
-	if (pixelShaderFilePath_ == "Standard.PS.hlsl") {
-		for (uint32_t i = 0; i < materialInstances_.size(); ++i) {
-			SetMaterialParameter(i , "color" , Color::GetWhite());
-			SetMaterialParameter(i , "enableLighring" , int32_t{ 1 });
-			SetMaterialParameter(i , "uvMatrix" , Matrix4x4::Identity4x4());
-			SetMaterialParameter(i , "shininess" , 10.0f);
-			SetMaterialParameter(i , "diffuseModel" , int32_t{ 1 });
-			SetMaterialParameter(i , "specularModel" , int32_t{ 1 });
-			SetMaterialParameter(i , "environmentCoefficient" , 0.0f);
-		}
 	}
 }

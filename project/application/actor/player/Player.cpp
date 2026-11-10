@@ -108,7 +108,6 @@ std::unique_ptr<Component> Player::Clone(GameObject* gameObject) const {
 	//初期化
 	cloneInstance->Initialize();
 	cloneInstance->SetInput(input_);
-	cloneInstance->SetRigidBody(rigidBody_);
 
 	//Playerが持つ設定だけ複製
 	cloneInstance->SetEnabled(this->IsEnabled());
@@ -119,14 +118,6 @@ std::unique_ptr<Component> Player::Clone(GameObject* gameObject) const {
 void Player::OnGameObjectRemoving(GameObject* target) {
 	if(cameraObject_ == target) {
 		cameraObject_ = nullptr;
-	}
-}
-
-//衝突したら
-void Player::OnCollisionStay(const CollisionInfo& info) {
-	//リジッドボディと衝突対象のコライダーのどちらかが沿うん材していない場合
-	if(!rigidBody_ || !info.other) {
-		return;
 	}
 }
 
@@ -150,12 +141,6 @@ void Player::SetObject3d(Object3d* object3d) {
 void Player::SetInput(Input* input) {
 	assert(input);
 	input_ = input;
-}
-
-//リジッドボディの設定
-void Player::SetRigidBody(RigidBody* rigidBody) {
-	assert(rigidBody);
-	rigidBody_ = rigidBody;
 }
 
 //コンポーネントのタイプ名を取得

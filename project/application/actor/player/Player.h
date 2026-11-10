@@ -7,7 +7,6 @@
 
 //前方宣言
 class Input;
-class RigidBody;
 class Object3d;
 class IPlayerState;
 
@@ -64,12 +63,6 @@ public://メンバ関数
 	void OnGameObjectRemoving(GameObject* target);
 
 	/// <summary>
-	/// 衝突したら
-	/// </summary>
-	/// <param name="info">衝突情報</param>
-	void OnCollisionStay(const CollisionInfo& info);
-
-	/// <summary>
 	/// カメラのオブジェクトの設定
 	/// </summary>
 	/// <param name="cameraObject">カメラのオブジェクト</param>
@@ -94,12 +87,6 @@ public://メンバ関数
 	void SetInput(Input* input);
 
 	/// <summary>
-	/// リジッドボディの設定
-	/// </summary>
-	/// <param name="rigidBody">リジッドボディ</param>
-	void SetRigidBody(RigidBody* rigidBody);
-
-	/// <summary>
 	/// コンポーネントのタイプ名を取得
 	/// </summary>
 	/// <returns>コンポーネントのタイプ名</returns>
@@ -121,9 +108,6 @@ private://メンバ変数
 	GameObject* gameObject_ = nullptr;
 	//オブジェクト3d
 	Object3d* object3d_ = nullptr;
-
-	//リジットボディ
-	RigidBody* rigidBody_ = nullptr;
 
 	//入力されて移動方向ベクトル
 	Vector3 inputDirection_ = {};

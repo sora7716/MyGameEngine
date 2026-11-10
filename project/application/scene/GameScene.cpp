@@ -52,10 +52,7 @@ void GameScene::Initialize() {
 
 	GameObject* groundObject = CreateGameObject();
 	groundObject->GetTransform().scale = {50.0f,1.0f,50.0f};
-	groundObject->GetTransform().translate = {0.0f,-1.0f,0.0f};
-	Object3d* groundObject3d = groundObject->AddComponent<Object3d>();
-	groundObject3d->SetModel("cube");
-	groundObject3d->SetTexture(0,"uvChecker.png");
+	groundObject->GetTransform().translate = {0.0f,0.0f,0.0f};
 	groundObject->AddComponent<BoxCollider>();
 
 	//SkyBoxの生成
@@ -145,6 +142,7 @@ void GameScene::CreateField() {
 void GameScene::CreatePlayer() {
 	//ゲームオブジェクトを生成
 	GameObject* gameObject = CreateGameObject();
+	gameObject->GetTransform().translate.y = 1.0f;
 	gameObject->SetName("プレイヤー");
 	//オブジェクト3dを設定
 	Object3d* object3d = gameObject->AddComponent<Object3d>();
@@ -190,7 +188,6 @@ void GameScene::CreatePlayer() {
 	Player* player = gameObject->AddComponent<Player>();
 	player->SetObject3d(object3d);
 	player->SetInput(GetSceneContext().input);
-	player->SetRigidBody(rigidBody);
 
 	//コライダーを設定
 	BoxCollider* boxCollider = gameObject->AddComponent<BoxCollider>();

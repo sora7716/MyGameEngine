@@ -25,11 +25,11 @@
 using namespace rasterizerMode;
 
 //生成
-std::unique_ptr<RenderSystem> RenderSystem::Create(ConstructorKey key , DirectXBase* directXBase , SRVManager* srvManager , TextureManager* textureManager , PipelineManager* pipelineManager , LightingManager* lightingManager) {
+std::unique_ptr<RenderSystem> RenderSystem::Create(ConstructorKey key,DirectXBase* directXBase,SRVManager* srvManager,TextureManager* textureManager,PipelineManager* pipelineManager,LightingManager* lightingManager) {
 	//生成
 	std::unique_ptr<RenderSystem>instance = std::make_unique<RenderSystem>(key);
 	//初期化
-	instance->Initialize(directXBase , srvManager , textureManager , pipelineManager , lightingManager);
+	instance->Initialize(directXBase,srvManager,textureManager,pipelineManager,lightingManager);
 
 	return instance;
 }
@@ -43,7 +43,7 @@ RenderSystem::~RenderSystem() {
 }
 
 //初期化
-void RenderSystem::Initialize(DirectXBase* directXBase , SRVManager* srvManager , TextureManager* textureManager , PipelineManager* pipelineManager , LightingManager* lightingManager) {
+void RenderSystem::Initialize(DirectXBase* directXBase,SRVManager* srvManager,TextureManager* textureManager,PipelineManager* pipelineManager,LightingManager* lightingManager) {
 	//DirectXの基盤部分の記録
 	assert(directXBase);
 	directXBase_ = directXBase;
@@ -54,37 +54,37 @@ void RenderSystem::Initialize(DirectXBase* directXBase , SRVManager* srvManager 
 	assert(lightingManager);
 	lightingManager_ = lightingManager;
 	//スプライトのレンダラー
-	spriteRenderer_ = SpriteRenderer::Create(SpriteRenderer::ConstructorKey{} , directXBase , textureManager);
+	spriteRenderer_ = SpriteRenderer::Create(SpriteRenderer::ConstructorKey{},directXBase,textureManager);
 	//Object3dのレンダラー
-	object3dRenderer_ = Object3dRenderer::Create(Object3dRenderer::ConstructorKey{} , directXBase , srvManager , textureManager);
+	object3dRenderer_ = Object3dRenderer::Create(Object3dRenderer::ConstructorKey{},directXBase,srvManager,textureManager);
 	//スカイボックスのレンダラー
-	skyBoxRenderer_ = SkyBoxRenderer::Create(SkyBoxRenderer::ConstructorKey{} , directXBase , textureManager);
+	skyBoxRenderer_ = SkyBoxRenderer::Create(SkyBoxRenderer::ConstructorKey{},directXBase,textureManager);
 	//デバッグ描画のレンダラー
-	wireframeRenderer_ = WireframeRenderer::Create(WireframeRenderer::ConstructorKey{} , directXBase);
+	wireframeRenderer_ = WireframeRenderer::Create(WireframeRenderer::ConstructorKey{},directXBase);
 	//パーティクルのレンダラー
-	particleRenderer_ = ParticleRenderer::Create(ParticleRenderer::ConstructorKey{} , directXBase , srvManager , textureManager);
+	particleRenderer_ = ParticleRenderer::Create(ParticleRenderer::ConstructorKey{},directXBase,srvManager,textureManager);
 	//カメラのレンダラー
-	cameraRenderer_ = CameraRenderer::Create(CameraRenderer::ConstructorKey{} , directXBase);
+	cameraRenderer_ = CameraRenderer::Create(CameraRenderer::ConstructorKey{},directXBase);
 }
 
 //描画
 void RenderSystem::Draw() {
 	//スカイボックス
-	for (uint32_t i = 0; i < skyBoxRenderer_->GetRenderDataSize(); i++) {
+	for(uint32_t i = 0; i < skyBoxRenderer_->GetRenderDataSize(); i++) {
 		//描画開始
-		bool isSuccess = PreDraw(PipelineType::kSkyBox ,
-			skyBoxRenderer_->GetPixelShaderFilePath(i) ,
-			skyBoxRenderer_->GetBlendMode(i) ,
-			skyBoxRenderer_->GetCullingMode(i) ,
+		bool isSuccess = PreDraw(PipelineType::kSkyBox,
+			skyBoxRenderer_->GetPixelShaderFilePath(i),
+			skyBoxRenderer_->GetBlendMode(i),
+			skyBoxRenderer_->GetCullingMode(i),
 			skyBoxRenderer_->GetFillMode(i));
 		//失敗したら
-		if (!isSuccess) {
+		if(!isSuccess) {
 			Logger::OutputLog("SkyBoxの描画設定が失敗しました");
 			continue;
 		}
 
 		//カメラの設定
-		cameraRenderer_->Bind(selectCamera_.index , 3);
+		cameraRenderer_->Bind(selectCamera_.index,3);
 		//スカイボックスの描画
 		skyBoxRenderer_->Draw(i);
 	}
@@ -92,15 +92,15 @@ void RenderSystem::Draw() {
 	skyBoxRenderer_->Reset();
 
 	//Object3d
-	for (uint32_t i = 0; i < object3dRenderer_->GetRenderDataSize(); i++) {
+	for(uint32_t i = 0; i < object3dRenderer_->GetRenderDataSize(); i++) {
 		//描画開始
-		bool isSuccess = PreDraw(PipelineType::kObject3d ,
-			object3dRenderer_->GetPixelShaderFilePath(i) ,
-			object3dRenderer_->GetBlendMode(i) ,
-			object3dRenderer_->GetCullingMode(i) ,
+		bool isSuccess = PreDraw(PipelineType::kObject3d,
+			object3dRenderer_->GetPixelShaderFilePath(i),
+			object3dRenderer_->GetBlendMode(i),
+			object3dRenderer_->GetCullingMode(i),
 			object3dRenderer_->GetFillMode(i));
 		//失敗したら
-		if (!isSuccess) {
+		if(!isSuccess) {
 			Logger::OutputLog("Object3dの描画設定が失敗しました");
 			continue;
 		}
@@ -108,7 +108,7 @@ void RenderSystem::Draw() {
 		//ライティングの設定
 		lightingManager_->Bind();
 		//カメラの設定
-		cameraRenderer_->Bind(selectCamera_.index , 4);
+		cameraRenderer_->Bind(selectCamera_.index,4);
 		//Object3dの描画
 		object3dRenderer_->Draw(i);
 	}
@@ -116,43 +116,43 @@ void RenderSystem::Draw() {
 	object3dRenderer_->Reset();
 
 	//Particle
-	for (uint32_t i = 0; i < particleRenderer_->GetRenderDataSize(); i++) {
+	for(uint32_t i = 0; i < particleRenderer_->GetRenderDataSize(); i++) {
 		//描画の開始
-		bool isSuccess = PreDraw(PipelineType::kParticle ,
-			particleRenderer_->GetPixelShaderFilePath(i) ,
-			particleRenderer_->GetBlendMode(i) ,
-			particleRenderer_->GetCullingMode(i) ,
+		bool isSuccess = PreDraw(PipelineType::kParticle,
+			particleRenderer_->GetPixelShaderFilePath(i),
+			particleRenderer_->GetBlendMode(i),
+			particleRenderer_->GetCullingMode(i),
 			particleRenderer_->GetFillMode(i));
 		//失敗したら
-		if (!isSuccess) {
+		if(!isSuccess) {
 			Logger::OutputLog("Particleの描画設定が失敗しました");
 			continue;
 		}
 
 		//カメラの設定
-		cameraRenderer_->Bind(selectCamera_.index , 3);
+		cameraRenderer_->Bind(selectCamera_.index,3);
 		//Particleの描画
-		particleRenderer_->Draw(i , selectCamera_.camera);
+		particleRenderer_->Draw(i,selectCamera_.camera);
 	}
 	//描画オブジェクトのリセット
 	particleRenderer_->Reset();
 
 #ifdef _DEBUG
 	//Wireframe
-	for (uint32_t i = 0; i < wireframeRenderer_->GetRenderDataSize(); i++) {
+	for(uint32_t i = 0; i < wireframeRenderer_->GetRenderDataSize(); i++) {
 		//描画開始
-		bool isSuccess = PreDraw(wireframeRenderer_->GetPixelShaderFilePath(i) ,
-			wireframeRenderer_->GetBlendMode(i) ,
-			wireframeRenderer_->GetCullingMode(i) ,
+		bool isSuccess = PreDraw(wireframeRenderer_->GetPixelShaderFilePath(i),
+			wireframeRenderer_->GetBlendMode(i),
+			wireframeRenderer_->GetCullingMode(i),
 			wireframeRenderer_->GetFillMode(i));
 		//失敗したら
-		if (!isSuccess) {
+		if(!isSuccess) {
 			Logger::OutputLog("Wireframeの描画設定が失敗しました");
 			continue;
 		}
 
 		//カメラの設定
-		cameraRenderer_->Bind(selectCamera_.index , 2);
+		cameraRenderer_->Bind(selectCamera_.index,2);
 		//DebugDrawの描画
 		wireframeRenderer_->Draw(i);
 	}
@@ -161,15 +161,15 @@ void RenderSystem::Draw() {
 #endif // _DEBUG
 
 	//スプライト
-	for (uint32_t i = 0; i < spriteRenderer_->GetRenderDataSize(); i++) {
+	for(uint32_t i = 0; i < spriteRenderer_->GetRenderDataSize(); i++) {
 		//描画開始
-		bool isSuccess = PreDraw(PipelineType::kSprite ,
-			spriteRenderer_->GetPixelShaderFilePath(i) ,
-			spriteRenderer_->GetBlendMode(i) ,
-			spriteRenderer_->GetCullingMode(i) ,
+		bool isSuccess = PreDraw(PipelineType::kSprite,
+			spriteRenderer_->GetPixelShaderFilePath(i),
+			spriteRenderer_->GetBlendMode(i),
+			spriteRenderer_->GetCullingMode(i),
 			spriteRenderer_->GetFillMode(i));
 		//失敗したら
-		if (!isSuccess) {
+		if(!isSuccess) {
 			Logger::OutputLog("Spriteの描画設定が失敗しました");
 			continue;
 		}
@@ -198,7 +198,7 @@ void RenderSystem::CollectActiveObject3ds(const std::vector<std::unique_ptr<Game
 	activeObject3ds_.clear();
 
 	//描画で使用するカメラがなければ
-	if (!renderCamera) {
+	if(!renderCamera) {
 		object3dBatches_.clear();
 		return;
 	}
@@ -209,73 +209,76 @@ void RenderSystem::CollectActiveObject3ds(const std::vector<std::unique_ptr<Game
 	std::unique_ptr<Culling> culling = Culling::Create(renderCamera);
 
 	//探索開始
-	for (const std::unique_ptr<GameObject>& gameObject : gameObjects) {
+	for(const std::unique_ptr<GameObject>& gameObject : gameObjects) {
 		//ゲームオブジェクトがNullじゃないか
-		if (!gameObject) {
+		if(!gameObject) {
 			continue;
 		}
 
 		//ゲームオブジェクトが有効状態か
-		if (!gameObject->IsActive()) {
+		if(!gameObject->IsActive()) {
 			continue;
 		}
 
 		//object3dを取得
-		Object3d* object3d = gameObject->GetComponent<Object3d>();
+		std::vector<Object3d*> object3ds = gameObject->GetComponents<Object3d>();
 
-		//object3dがNullか
-		if (!object3d) {
-			continue;
-		}
-
-		//object3dが有効状態か
-		if (!object3d->IsEnabled()) {
-			continue;
-		}
-
-		//モデルが設定されているか
-		if (!object3d->HasModel()) {
-			continue;
-		}
-
-
-		//LODを更新
-		//object3dのワールド座標を取得
-		Vector3 worldPos = gameObject->GetWorldPos();
-		object3d->UpdateLOD((worldPos - cameraWorldPos).Length());
-
-		//モデルを取得
-		Model* model = object3d->GetRenderModel();
-
-		//モデルがなければ
-		if (!model) {
-			continue;
-		}
-
-		//視錐台カリング
-		bool isVisible = false;
-		const Matrix4x4 renderWorld = object3d->MakeRenderWorldMatrix(renderCamera->GetWorldMatrix());
-		//メッシュごと
-		for (const std::unique_ptr<Mesh>& mesh : model->GetMeshes()) {
-			//メッシュがなければ
-			if (!mesh) {
+		//取得した各Object3dにアクセス
+		for(Object3d* object3d : object3ds) {
+			//object3dがNullか
+			if(!object3d) {
 				continue;
 			}
 
-			//カリングを行う
-			if (culling->IsVisibleInFrustum(mesh->GetAABB() , renderWorld)) {
-				isVisible = true;
-				break;
+			//object3dが有効状態か
+			if(!object3d->IsEnabled()) {
+				continue;
 			}
-		}
 
-		//isVisibleがfalseなら
-		if (!isVisible) {
-			continue;
-		}
+			//モデルが設定されているか
+			if(!object3d->HasModel()) {
+				continue;
+			}
 
-		//Object3dsに追加
-		activeObject3ds_.push_back(object3d);
+
+			//LODを更新
+			//object3dのワールド座標を取得
+			Vector3 worldPos = gameObject->GetWorldPos();
+			object3d->UpdateLOD((worldPos - cameraWorldPos).Length());
+
+			//モデルを取得
+			Model* model = object3d->GetRenderModel();
+
+			//モデルがなければ
+			if(!model) {
+				continue;
+			}
+
+			//視錐台カリング
+			bool isVisible = false;
+			const Matrix4x4 renderWorld = object3d->MakeRenderWorldMatrix(renderCamera->GetWorldMatrix());
+			//メッシュごと
+			for(const std::unique_ptr<Mesh>& mesh : model->GetMeshes()) {
+				//メッシュがなければ
+				if(!mesh) {
+					continue;
+				}
+
+				//カリングを行う
+				if(culling->IsVisibleInFrustum(mesh->GetAABB(),renderWorld)) {
+					isVisible = true;
+					break;
+				}
+			}
+
+			//isVisibleがfalseなら
+			if(!isVisible) {
+				continue;
+			}
+
+			//Object3dsに追加
+			activeObject3ds_.push_back(object3d);
+		}
 	}
 
 	//収集したObject3dをグループ分け
@@ -294,19 +297,19 @@ void RenderSystem::CollectActiveSkyBox(const std::vector<std::unique_ptr<GameObj
 	activeSkyBox_ = nullptr;
 
 	//描画カメラがNullだったら
-	if (!renderCamera) {
+	if(!renderCamera) {
 		return;
 	}
 
 	//探索開始
-	for (const std::unique_ptr<GameObject>& gameObject : gameObjects) {
+	for(const std::unique_ptr<GameObject>& gameObject : gameObjects) {
 		//ゲームオブジェクトがNullじゃないか
-		if (!gameObject) {
+		if(!gameObject) {
 			continue;
 		}
 
 		//ゲームオブジェクトが有効状態か
-		if (!gameObject->IsActive()) {
+		if(!gameObject->IsActive()) {
 			continue;
 		}
 
@@ -314,12 +317,12 @@ void RenderSystem::CollectActiveSkyBox(const std::vector<std::unique_ptr<GameObj
 		SkyBox* skyBox = gameObject->GetComponent<SkyBox>();
 
 		//SkyBoxがNullか
-		if (!skyBox) {
+		if(!skyBox) {
 			continue;
 		}
 
 		//SkyBoxが有効状態か
-		if (!skyBox->IsEnabled()) {
+		if(!skyBox->IsEnabled()) {
 			continue;
 		}
 
@@ -328,7 +331,7 @@ void RenderSystem::CollectActiveSkyBox(const std::vector<std::unique_ptr<GameObj
 		break;
 	}
 
-	if (activeSkyBox_) {
+	if(activeSkyBox_) {
 		skyBoxRenderer_->AddRenderData(activeSkyBox_->GetRenderData());
 	}
 }
@@ -339,14 +342,14 @@ void RenderSystem::CollectActiveSprites(const std::vector<std::unique_ptr<GameOb
 	activeSprites_.clear();
 
 	//探索開始
-	for (const std::unique_ptr<GameObject>& gameObject : gameObjects) {
+	for(const std::unique_ptr<GameObject>& gameObject : gameObjects) {
 		//ゲームオブジェクトがNullじゃないか
-		if (!gameObject) {
+		if(!gameObject) {
 			continue;
 		}
 
 		//ゲームオブジェクトが有効状態か
-		if (!gameObject->IsActive()) {
+		if(!gameObject->IsActive()) {
 			continue;
 		}
 
@@ -354,12 +357,12 @@ void RenderSystem::CollectActiveSprites(const std::vector<std::unique_ptr<GameOb
 		Sprite* sprite = gameObject->GetComponent<Sprite>();
 
 		//オブジェクト3dがNullか
-		if (!sprite) {
+		if(!sprite) {
 			continue;
 		}
 
 		//オブジェクト3dが有効状態か
-		if (!sprite->IsEnabled()) {
+		if(!sprite->IsEnabled()) {
 			continue;
 		}
 
@@ -368,7 +371,7 @@ void RenderSystem::CollectActiveSprites(const std::vector<std::unique_ptr<GameOb
 	}
 
 	//レンダラーに追加
-	for (Sprite* sprite : activeSprites_) {
+	for(Sprite* sprite : activeSprites_) {
 		spriteRenderer_->AddRenderData(sprite->GetRenderData());
 	}
 }
@@ -376,12 +379,12 @@ void RenderSystem::CollectActiveSprites(const std::vector<std::unique_ptr<GameOb
 //描画に有効なワイヤーフレームをを集める
 void RenderSystem::CollectActiveWireframe(const std::vector<WireframeRenderData>& wireframes) {
 	//受け取った配列が空だったら
-	if (wireframes.empty()) {
+	if(wireframes.empty()) {
 		return;
 	}
 
 	//探索開始
-	for (const WireframeRenderData& wireframe : wireframes) {
+	for(const WireframeRenderData& wireframe : wireframes) {
 		//レンダラーに追加
 		wireframeRenderer_->AddRenderData(wireframe);
 	}
@@ -396,7 +399,7 @@ void RenderSystem::CollectActiveParticleSystems(const std::vector<std::unique_pt
 	activeParticleSystems_.clear();
 
 	//描画で使用するカメラがなければ
-	if (!renderCamera) {
+	if(!renderCamera) {
 		return;
 	}
 
@@ -407,14 +410,14 @@ void RenderSystem::CollectActiveParticleSystems(const std::vector<std::unique_pt
 	std::unique_ptr<Culling> culling = Culling::Create(renderCamera);
 
 	//探索開始
-	for (const std::unique_ptr<GameObject>& gameObject : gameObjects) {
+	for(const std::unique_ptr<GameObject>& gameObject : gameObjects) {
 		//ゲームオブジェクトがNullじゃないか
-		if (!gameObject) {
+		if(!gameObject) {
 			continue;
 		}
 
 		//ゲームオブジェクトが有効状態か
-		if (!gameObject->IsActive()) {
+		if(!gameObject->IsActive()) {
 			continue;
 		}
 
@@ -422,23 +425,23 @@ void RenderSystem::CollectActiveParticleSystems(const std::vector<std::unique_pt
 		ParticleSystem* particleSystem = gameObject->GetComponent<ParticleSystem>();
 
 		//object3dがNullか
-		if (!particleSystem) {
+		if(!particleSystem) {
 			continue;
 		}
 
 		//object3dが有効状態か
-		if (!particleSystem->IsEnabled()) {
+		if(!particleSystem->IsEnabled()) {
 			continue;
 		}
 
 		//モデルが設定されているか
-		if (!particleSystem->HasModel()) {
+		if(!particleSystem->HasModel()) {
 			continue;
 		}
 
 		//モデルの取得
 		Model* model = particleSystem->GetModel();
-		if (!model) {
+		if(!model) {
 			continue;
 		}
 
@@ -447,7 +450,7 @@ void RenderSystem::CollectActiveParticleSystems(const std::vector<std::unique_pt
 	}
 
 	//レンダラーに追加
-	for (ParticleSystem* particleSystem : activeParticleSystems_) {
+	for(ParticleSystem* particleSystem : activeParticleSystems_) {
 		particleRenderer_->AddRenderData(particleSystem->GetRenderData());
 	}
 }
@@ -458,14 +461,14 @@ void RenderSystem::CollectActiveCameras(const std::vector<std::unique_ptr<GameOb
 	activeCameras_.clear();
 
 	//探索開始
-	for (const std::unique_ptr<GameObject>& gameObject : gameObjects) {
+	for(const std::unique_ptr<GameObject>& gameObject : gameObjects) {
 		//ゲームオブジェクトがNullじゃないか
-		if (!gameObject) {
+		if(!gameObject) {
 			continue;
 		}
 
 		//ゲームオブジェクトが有効状態か
-		if (!gameObject->IsActive()) {
+		if(!gameObject->IsActive()) {
 			continue;
 		}
 
@@ -473,12 +476,12 @@ void RenderSystem::CollectActiveCameras(const std::vector<std::unique_ptr<GameOb
 		Camera* camera = gameObject->GetComponent<Camera>();
 
 		//オブジェクト3dがNullか
-		if (!camera) {
+		if(!camera) {
 			continue;
 		}
 
 		//オブジェクト3dが有効状態か
-		if (!camera->IsEnabled()) {
+		if(!camera->IsEnabled()) {
 			continue;
 		}
 
@@ -487,7 +490,7 @@ void RenderSystem::CollectActiveCameras(const std::vector<std::unique_ptr<GameOb
 	}
 
 	//レンダラーに追加
-	for (Camera* camera : activeCameras_) {
+	for(Camera* camera : activeCameras_) {
 		cameraRenderer_->AddRenderData(camera->GetRenderData());
 	}
 }
@@ -499,7 +502,7 @@ bool RenderSystem::SetCameraMode(CameraMode cameraMode) {
 }
 
 //描画開始
-bool RenderSystem::PreDraw(PipelineType pipelineType , std::string pixelShaderPath , BlendMode blendMode , rasterizerMode::CullingMode cullingMode , rasterizerMode::FillMode fillMode) {
+bool RenderSystem::PreDraw(PipelineType pipelineType,std::string pixelShaderPath,BlendMode blendMode,rasterizerMode::CullingMode cullingMode,rasterizerMode::FillMode fillMode) {
 	//PSOの検索キーを作成
 	PipelineKey key{};
 	key.pixelShaderFilePath = pixelShaderPath;
@@ -510,7 +513,7 @@ bool RenderSystem::PreDraw(PipelineType pipelineType , std::string pixelShaderPa
 	//パイプラインのセットを取得
 	PipelineSet* pipelineSet = pipelineManager_->GetPSO(key);
 	//パイプラインセットがNullなら
-	if (!pipelineSet) {
+	if(!pipelineSet) {
 		return false;
 	}
 
@@ -527,7 +530,7 @@ bool RenderSystem::PreDraw(PipelineType pipelineType , std::string pixelShaderPa
 }
 
 //描画開始
-bool RenderSystem::PreDraw(std::string pixelShaderPath , BlendMode blendMode , rasterizerMode::CullingMode cullingMode , rasterizerMode::FillMode fillMode) {
+bool RenderSystem::PreDraw(std::string pixelShaderPath,BlendMode blendMode,rasterizerMode::CullingMode cullingMode,rasterizerMode::FillMode fillMode) {
 	//PSOの検索キーを作成
 	PipelineKey key{};
 	key.pixelShaderFilePath = pixelShaderPath;
@@ -538,7 +541,7 @@ bool RenderSystem::PreDraw(std::string pixelShaderPath , BlendMode blendMode , r
 	//パイプラインのセットを取得
 	PipelineSet* pipelineSet = pipelineManager_->GetPSO(key);
 	//パイプラインセットがNullなら
-	if (!pipelineSet) {
+	if(!pipelineSet) {
 		return false;
 	}
 
@@ -560,9 +563,9 @@ void RenderSystem::BuildObject3dBatches() {
 	object3dBatches_.clear();
 
 	//先頭からアクセス
-	for (Object3d* object3d : activeObject3ds_) {
+	for(Object3d* object3d : activeObject3ds_) {
 		//オブジェクト3dがNullだった場合
-		if (!object3d) {
+		if(!object3d) {
 			continue;
 		}
 
@@ -580,71 +583,71 @@ void RenderSystem::BuildObject3dBatches() {
 		FillMode fillMode = object3d->GetFillMode();
 
 		//モデル、またはマテリアルインスタンスがなければスキップ
-		if (!model) {
+		if(!model) {
 			continue;
-		} else if (materialInstances.empty()) {
+		} else if(materialInstances.empty()) {
 			continue;
 		}
 
-		for (const Object3d::NodeMeshInstance& nodeMesh : object3d->GetNodeMeshInstance()) {
+		for(const Object3d::NodeMeshInstance& nodeMesh : object3d->GetNodeMeshInstance()) {
 			//メッシュインデックスを取得
 			const uint32_t meshIndex = nodeMesh.meshIndex;
 			//メッシュのサイズを確認
-			if (meshIndex >= model->GetMeshes().size()) {
+			if(meshIndex >= model->GetMeshes().size()) {
 				continue;
 			}
 
 			//メッシュの取得
 			const std::unique_ptr<Mesh>& mesh = model->GetMeshes()[meshIndex];
 			//メッシュがNullか確認
-			if (!mesh) {
+			if(!mesh) {
 				continue;
 			}
 
 			//マテリアルインデックスを取得
 			uint32_t materialIndex = mesh->GetMaterialIndex();
 			//マテリアルインスタンスのサイズを確認
-			if (materialIndex >= materialInstances.size()) {
+			if(materialIndex >= materialInstances.size()) {
 				continue;
 			}
 
 			//マテリアルインスタンスを取得
 			MaterialInstance* materialInstance = materialInstances[materialIndex].get();
 			//マテリアルインスタンスがなかった場合
-			if (!materialInstance) {
+			if(!materialInstance) {
 				continue;
 			}
 
 			//同じModel*とBlendModeのバッチを探す
 			auto batchIt = std::find_if(
-				object3dBatches_.begin() ,
-				object3dBatches_.end() ,
-				[model , materialInstance , pixelShaderFilePath , blendMode , cullingMode , fillMode , meshIndex](const Object3dBatch& batch) {
-					return batch.model == model &&
-						batch.materialInstance == materialInstance &&
-						batch.pixelShaderFilePath == pixelShaderFilePath &&
-						batch.blendMode == blendMode &&
-						batch.cullingMode == cullingMode &&
-						batch.fillMode == fillMode &&
-						meshIndex == batch.meshIndex;
-				}
+				object3dBatches_.begin(),
+				object3dBatches_.end(),
+				[model,materialInstance,pixelShaderFilePath,blendMode,cullingMode,fillMode,meshIndex](const Object3dBatch& batch) {
+				return batch.model == model &&
+					batch.materialInstance == materialInstance &&
+					batch.pixelShaderFilePath == pixelShaderFilePath &&
+					batch.blendMode == blendMode &&
+					batch.cullingMode == cullingMode &&
+					batch.fillMode == fillMode &&
+					meshIndex == batch.meshIndex;
+			}
 			);
 
-			if (batchIt != object3dBatches_.end()) {
+			if(batchIt != object3dBatches_.end()) {
 				//見つかった場合instancesに追加
-				batchIt->meshDrawInstance.push_back({ object3d , nodeMesh.nodeMatrix });
+				batchIt->meshDrawInstance.push_back({object3d,nodeMesh.nodeMatrix});
 			} else {
 				//見つからなかった場合新しくバッチを作成
 				Object3dBatch newBatch = {
-					.model = model ,
-					.materialInstance = materialInstance ,
-					.pixelShaderFilePath = pixelShaderFilePath ,
-					.blendMode = blendMode ,
-					.cullingMode = cullingMode ,
-					.fillMode = fillMode ,
+					.model = model,
+					.materialInstance = materialInstance,
+					.pixelShaderFilePath = pixelShaderFilePath,
+					.blendMode = blendMode,
+					.cullingMode = cullingMode,
+					.fillMode = fillMode,
 					.meshIndex = meshIndex
 				};
-				newBatch.meshDrawInstance.push_back({ object3d , nodeMesh.nodeMatrix });
+				newBatch.meshDrawInstance.push_back({object3d,nodeMesh.nodeMatrix});
 
 				//オブジェクト3dのバッチに追加
 				object3dBatches_.push_back(std::move(newBatch));
@@ -656,16 +659,16 @@ void RenderSystem::BuildObject3dBatches() {
 //トランスフォーメーションデータの構築
 void RenderSystem::BuildTransformationData() {
 	//もしカメラがなければ
-	if (!selectCamera_.camera) {
+	if(!selectCamera_.camera) {
 		return;
 	}
 
-	for (Object3dBatch& batch : object3dBatches_) {
+	for(Object3dBatch& batch : object3dBatches_) {
 		//配列クリア
 		batch.transformations.clear();
 		//サイズを確保
 		batch.transformations.reserve(batch.meshDrawInstance.size());
-		for (const MeshDrawInstance& meshDraw : batch.meshDrawInstance) {
+		for(const MeshDrawInstance& meshDraw : batch.meshDrawInstance) {
 			//Objectのワールド行列を作成
 			Matrix4x4 objectWorldMatrix = meshDraw.object3d->MakeRenderWorldMatrix(selectCamera_.camera->GetWorldMatrix());
 
@@ -685,13 +688,13 @@ void RenderSystem::BuildTransformationData() {
 
 //オブジェクト3dのバッチをレンダラーの送る
 void RenderSystem::SubmitObject3dBatches() {
-	if (!object3dRenderer_) {
+	if(!object3dRenderer_) {
 		return;
 	}
 
 	//レンダラーにバッチを送信
-	for (const Object3dBatch& batch : object3dBatches_) {
-		object3dRenderer_->SubmitBatch(batch.model , batch.meshIndex , batch.materialInstance , batch.pixelShaderFilePath , batch.blendMode , batch.cullingMode , batch.fillMode , batch.transformations);
+	for(const Object3dBatch& batch : object3dBatches_) {
+		object3dRenderer_->SubmitBatch(batch.model,batch.meshIndex,batch.materialInstance,batch.pixelShaderFilePath,batch.blendMode,batch.cullingMode,batch.fillMode,batch.transformations);
 	}
 }
 
@@ -699,21 +702,21 @@ void RenderSystem::SubmitObject3dBatches() {
 bool RenderSystem::FindSelectCamera(CameraMode cameraMode) {
 	selectCamera_ = {};
 
-	for (uint32_t i = 0; i < activeCameras_.size(); i++) {
+	for(uint32_t i = 0; i < activeCameras_.size(); i++) {
 		//カメラ
 		Camera* camera = activeCameras_[i];
 
 		//ゲームオブジェクトを取得
 		GameObject* gameObject = camera->GetOwner();
 		//カメラがないまたはゲームオブジェクトが無い場合
-		if (!camera || !gameObject) {
+		if(!camera || !gameObject) {
 			continue;
 		}
 
 		//デバッグカメラを取得
 		DebugCameraController* debugCamera = camera->GetOwner()->GetComponent<DebugCameraController>();
-		if (debugCamera) {
-			if (cameraMode == CameraMode::kDebug) {
+		if(debugCamera) {
+			if(cameraMode == CameraMode::kDebug) {
 				selectCamera_.camera = camera;
 				selectCamera_.index = i;
 				return true;
@@ -721,8 +724,8 @@ bool RenderSystem::FindSelectCamera(CameraMode cameraMode) {
 		}
 
 		//メインカメラの場合
-		if (cameraMode == CameraMode::kMain) {
-			if (!debugCamera) {
+		if(cameraMode == CameraMode::kMain) {
+			if(!debugCamera) {
 				selectCamera_.camera = camera;
 				selectCamera_.index = i;
 				return true;

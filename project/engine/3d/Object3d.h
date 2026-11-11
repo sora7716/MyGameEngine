@@ -173,6 +173,7 @@ public://メンバ関数
 	/// <param name="value">値</param>
 	template <typename T>
 	void SetMaterialParameter(uint32_t materialIndex , const std::string& name , T value) {
+		EnsureUniqueMaterialInstance();
 		materialInstances_[materialIndex]->SetParameter(name , value);
 	}
 

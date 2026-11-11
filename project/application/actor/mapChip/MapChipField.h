@@ -1,9 +1,17 @@
 #pragma once
 #include "MapChipData.h"
 #include "Vector3.h"
+#include <memory>
 
 //マップチップフィールド
 class MapChipField {
+public://静的メンバ関数
+	/// <summary>
+	/// 生成
+	/// </summary>
+	/// <param name="fileName">ファイル名</param>
+	/// <returns>インスタンス</returns>
+	static std::unique_ptr<MapChipField> Create(const std::string& fileName);
 public://構造体
 	//範囲矩形
 	struct Rect {
@@ -15,15 +23,25 @@ public://構造体
 
 	//インデックスセット
 	struct IndexSet {
-		uint32_t x;
-		uint32_t z;
+		int32_t x;
+		int32_t z;
 	};
 public://メンバ関数
 	/// <summary>
-	/// マップチップの読み込み
+	/// コンストラクタ
 	/// </summary>
-	/// <param name="filePath">ファイル名</param>
-	void LoadMapChipCsv(const std::string& filePath);
+	MapChipField();
+
+	/// <summary>
+	/// デストラクタ
+	/// </summary>
+	~MapChipField();
+
+	/// <summary>
+	/// 初期化
+	/// </summary>
+	/// <param name="fileName">ファイル名</param>
+	void Initialize(const std::string& fileName);
 
 	/// <summary>
 	/// マップチップのデータを取得
@@ -50,19 +68,18 @@ public://メンバ関数
 	/// </summary>
 	/// <param name="pos">位置</param>
 	/// <returns>マップのステータス</returns>
-	MapChipStatus GetMapChipStatus(const Vector3& pos);
-
-	/// <summary>
-	/// いる位置のマップのステータスを取得
-	/// </summary>
-	/// <param name="indexSet">インデックス</param>
-	/// <returns>マップのステータス</returns>
-	MapChipStatus GetMapChipStatus(const IndexSet& indexSet);
+	MapChipStatus GetMapChipStatus(const Vector3& pos,float size);
 private://メンバ関数
 	/// <summary>
 	/// マップチップのリセット
 	/// </summary>
 	void ResetMapChipData();
+
+	/// <summary>
+	/// マップチップの読み込み
+	/// </summary>
+	/// <param name="filePath">ファイル名</param>
+	void LoadMapChipCsv(const std::string& filePath);
 public://定数
 	// 1ブロックのサイズ
 	static inline const float kBlockWidth = 1.0f;
@@ -70,11 +87,13 @@ public://定数
 	static inline const float kBlockDepth = 1.0f;
 private://メンバ変数
 	//マップ全体の横幅
-	uint32_t horizontal_ = 0;
+	int32_t horizontal_ = 0;
 	//マップ全体の奥行
-	uint32_t longitudinal_ = 0;
+	int32_t longitudinal_ = 0;
 	//マップの中心
-	Vector3 origin_ = {0.5f,0.0f,0.5f};
+	Vector3 origin_ = {0.0f,0.0f,0.0f};
+	//半径
+	Vector3 mapRadius = {};
 	//ディレクトリパス
 	std::string directoryPath_ = "engine/resources/csv/";
 	//マップチップのデータ

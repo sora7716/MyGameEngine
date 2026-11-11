@@ -1,7 +1,6 @@
 #include "GameScene.h"
 #include "GameObject.h"
 #include "SkyBox.h"
-#include "MapChipField.h"
 #include "Object3d.h"
 #include "DirectionalLight.h"
 #include "BoxCollider.h"
@@ -12,6 +11,8 @@
 #include "MovementComponent.h"
 #include "JumpCommand.h"
 #include "JumpComponent.h"
+#include "ImGuiManager.h"
+#include "Color.h"
 #include <array>
 
 //コンストラクタ
@@ -62,17 +63,25 @@ void GameScene::Initialize() {
 	CreateField();
 
 	//プレイヤーの作成
-	CreatePlayer();
+	playerObject = CreatePlayer();
 }
 
 //更新のステート
 void GameScene::UpdateState() {
+	//プレイヤーの位置からマップ番号を取得
+	indexSet_ = mapChipField_->GetMapChipIndex(playerObject->GetTransform().translate);
+	//プレイヤーの位置からブロックのステータスを取得
+	statusForPos_ = mapChipField_->GetMapChipStatus(playerObject->GetTransform().translate,1.0f);
 }
 
 //デバッグ
 void GameScene::Debug() {
 	//基底クラスのデバッグ
 	BaseScene::Debug();
+	ImGui::Begin("マップチップに関する物");
+	ImGui::Text("x:%d,z:%d",indexSet_.x,indexSet_.z);
+	ImGui::Text("pos:status = %s,count = %d",statusForPos_.type != MapChipType::kBlank ? "ブロック" : "空気",statusForPos_.count);
+	ImGui::End();
 }
 
 //解放処理
@@ -97,10 +106,9 @@ GameObject* GameScene::CreateSkyBox() {
 
 //フィールドの生成
 void GameScene::CreateField() {
-	std::unique_ptr<MapChipField> mapChipField = std::make_unique<MapChipField>();
-	mapChipField->LoadMapChipCsv(mapChipCsvName_);
+	mapChipField_ = MapChipField::Create(mapChipCsvName_);
 	//マップチップのデータ
-	MapChipData mapChipData = mapChipField->GetMapChipData();
+	MapChipData mapChipData = mapChipField_->GetMapChipData();
 
 	//フィールド
 	GameObject* field = CreateGameObject();
@@ -139,7 +147,7 @@ void GameScene::CreateField() {
 }
 
 //プレイヤーの作成
-void GameScene::CreatePlayer() {
+GameObject* GameScene::CreatePlayer() {
 	//ゲームオブジェクトを生成
 	GameObject* gameObject = CreateGameObject();
 	gameObject->GetTransform().translate.y = 1.0f;
@@ -147,6 +155,14 @@ void GameScene::CreatePlayer() {
 	//オブジェクト3dを設定
 	Object3d* object3d = gameObject->AddComponent<Object3d>();
 	object3d->SetModel("player");
+
+#ifdef _DEBUG
+	//ワイヤーフレーム
+	Object3d* wireFrame = gameObject->AddComponent<Object3d>();
+	wireFrame->SetModel("cube");
+	wireFrame->SetFillMode(rasterizerMode::FillMode::kWireframe);
+	wireFrame->SetMaterialParameter(0,"color",Color::GetRed());
+#endif // _DEBUG
 
 	//インプットコンポーネントを設定
 	InputComponent* inputComponent = gameObject->AddComponent<InputComponent>();
@@ -192,4 +208,6 @@ void GameScene::CreatePlayer() {
 	//コライダーを設定
 	BoxCollider* boxCollider = gameObject->AddComponent<BoxCollider>();
 	boxCollider->SetBodyType(BodyType::kDynamic);
+
+	return gameObject;
 }

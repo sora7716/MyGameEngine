@@ -1,5 +1,7 @@
 #pragma once
 #include "BaseScene.h"
+#include "MapChipData.h"
+#include "MapChipField.h"
 #include <string>
 #include <vector>
 
@@ -65,12 +67,18 @@ private://メンバ関数
 	/// <summary>
 	/// プレイヤー作成
 	/// </summary>
-	void CreatePlayer();
+	GameObject* CreatePlayer();
 private://メンバ変数
+	//マップチップフィールド
+	std::unique_ptr<MapChipField> mapChipField_ = nullptr;
 	//マップチップのCSVの名前
 	std::string mapChipCsvName_ = "map_01.csv";
 	//移動用のコマンド
 	std::vector<std::unique_ptr<MovementCommand>> movementCommands_;
 	//ジャンプ用のコマンド
 	std::unique_ptr<JumpCommand>JumpCommand_ = nullptr;
+	
+	GameObject* playerObject = nullptr;
+	MapChipStatus statusForPos_ = {};
+	MapChipField::IndexSet indexSet_ = {};
 };

@@ -3,6 +3,99 @@
 #include <fstream>
 #include <sstream>
 #include <cassert>
+//生成
+std::unique_ptr<MapChipField> MapChipField::Create(const std::string& fileName) {
+	std::unique_ptr<MapChipField>instance = std::make_unique<MapChipField>();
+	instance->Initialize(fileName);
+	return instance;
+}
+
+//コンストラクタ
+MapChipField::MapChipField() {
+}
+
+//デストラクタ
+MapChipField::~MapChipField() {
+}
+
+//初期化
+void MapChipField::Initialize(const std::string& fileName) {
+	//ファイルの読み込み
+	LoadMapChipCsv(fileName);
+
+	//マップ全体の半径を求める
+	mapRadius = {
+		static_cast<float>(horizontal_) * kBlockWidth / 2.0f,
+		kBlockHeight,
+		static_cast<float>(longitudinal_) * kBlockDepth / 2.0f,
+	};
+
+	//オリジンを設定
+	origin_.x = -mapRadius.x - kBlockWidth / 2.0f;
+	origin_.z = -mapRadius.z - kBlockDepth / 2.0f;
+}
+
+//マップチップデータの取得
+const MapChipData& MapChipField::GetMapChipData() const {
+	return mapChipData_;
+}
+
+//マップのインデックスを取得
+MapChipField::IndexSet MapChipField::GetMapChipIndex(const Vector3& pos) {
+	IndexSet result = {
+		.x = static_cast<int32_t>((pos.x - origin_.x) / kBlockWidth),
+		.z = static_cast<int32_t>((pos.z - origin_.z) / kBlockDepth),
+	};
+
+	//範囲外があるか確認
+	if(result.x < 0) {
+		result.x = 0;
+	}
+	if(result.z < 0) {
+		result.z = 0;
+	}
+
+	return result;
+}
+
+//マップからいる位置を取得
+Vector3 MapChipField::GetMapChipPosition(const IndexSet& indexSet) {
+	Vector3 result = {
+		.x = origin_.x + (static_cast<float>(indexSet.x) + 0.5f) * kBlockWidth,
+		.z = origin_.z + (static_cast<float>(indexSet.z) + 0.5f) * kBlockDepth,
+	};
+	return result;
+}
+
+//いる位置のマップのステータスを取得
+MapChipStatus MapChipField::GetMapChipStatus(const Vector3& pos,float size) {
+	//現在いる位置のマップ番号を取得
+	IndexSet index = GetMapChipIndex(pos);
+	//マップステータス
+	MapChipStatus status = {.type = MapChipType::kBlank,.count = 1};
+	//もし範囲外なら
+	if(horizontal_ <= index.x || longitudinal_ <= index.z) {
+		return status;
+	}
+	//ステータスを変更
+	status = mapChipData_.data[index.z][index.x];
+	//プレイヤーの位置
+	int32_t playerIndexY = static_cast<int32_t>(pos.y / size);
+
+	//位置がステータスより上を指していたら
+	if(static_cast<uint32_t>(playerIndexY) >= status.count) {
+		status = {.type = MapChipType::kBlank,.count = 1};
+		return status;
+	}
+
+	return status;
+}
+
+// マップチップデータのリセット
+void MapChipField::ResetMapChipData() {
+	mapChipData_.data.clear();
+}
+
 //マップチップの読み込み
 void MapChipField::LoadMapChipCsv(const std::string& filePath) {
 	//マップチップデータのリセット
@@ -63,57 +156,4 @@ void MapChipField::LoadMapChipCsv(const std::string& filePath) {
 
 	//奥行も設定
 	longitudinal_ = static_cast<uint32_t>(mapChipData_.data.size());
-}
-
-//マップチップデータの取得
-const MapChipData& MapChipField::GetMapChipData() const {
-	return mapChipData_;
-}
-
-//マップのインデックスを取得
-MapChipField::IndexSet MapChipField::GetMapChipIndex(const Vector3& pos) {
-	IndexSet result = {
-		.x = static_cast<uint32_t>(pos.x - origin_.x) / kBlockWidth,
-		.z = static_cast<uint32_t>(pos.z - origin_.z) / kBlockDepth,
-	};
-	return result;
-}
-
-//マップからいる位置を取得
-Vector3 MapChipField::GetMapChipPosition(const IndexSet& indexSet) {
-	Vector3 result = {
-		.x = origin_.x + (static_cast<float>(indexSet.x) + 0.5f) * kBlockWidth,
-		.z = origin_.z + (static_cast<float>(indexSet.z) + 0.5f) * kBlockDepth,
-	};
-	return result;
-}
-
-//いる位置のマップのステータスを取得
-MapChipStatus MapChipField::GetMapChipStatus(const Vector3& pos) {
-	//現在いる位置のマップ番号を取得
-	IndexSet index = GetMapChipIndex(pos);
-	//マップステータス
-	MapChipStatus status = {.type = MapChipType::kBlank,.count = 1};
-	//もし範囲外なら
-	if(horizontal_ <= index.x || longitudinal_ <= index.z) {
-		return status;
-	}
-
-	return mapChipData_.data[index.z][index.x];
-}
-
-//いる位置のマップのステータスを取得
-MapChipStatus MapChipField::GetMapChipStatus(const IndexSet& indexSet) {
-	//マップステータス
-	MapChipStatus status = {.type = MapChipType::kBlank,.count = 1};
-	//もし範囲外なら
-	if(horizontal_ <= indexSet.x || longitudinal_ <= indexSet.z) {
-		return status;
-	}
-	return mapChipData_.data[indexSet.z][indexSet.x];
-}
-
-// マップチップデータのリセット
-void MapChipField::ResetMapChipData() {
-	mapChipData_.data.clear();
 }

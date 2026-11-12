@@ -19,12 +19,8 @@ public://構造体
 		float right;//右端
 		float bottom;//下端
 		float top;//上端
-	};
-
-	//インデックスセット
-	struct IndexSet {
-		int32_t x;
-		int32_t z;
+		float front;//前端
+		float back;//後端
 	};
 public://メンバ関数
 	/// <summary>
@@ -54,21 +50,36 @@ public://メンバ関数
 	/// </summary>
 	/// <param name="pos">位置</param>
 	/// <returns>マップのインデックス</returns>
-	IndexSet GetMapChipIndex(const Vector3& pos);
+	Vector3Int GetMapChipIndexByPosition(const Vector3& pos);
 
 	/// <summary>
-	/// マップからいる位置を取得
+	/// マップから位置を取得
 	/// </summary>
-	/// <param name="indexSet">インデックス</param>
+	/// <param name="index">インデックス</param>
+	/// <param name="height">高さ</param>
 	/// <returns>マップにいるの位置</returns>
-	Vector3 GetMapChipPosition(const IndexSet& indexSet);
+	Vector3 GetMapChipPositionByIndex(const Vector3Int& index);
 
 	/// <summary>
-	/// いる位置のマップのステータスを取得
+	/// 位置のマップのステータスを取得
 	/// </summary>
 	/// <param name="pos">位置</param>
 	/// <returns>マップのステータス</returns>
-	MapChipStatus GetMapChipStatus(const Vector3& pos,float size);
+	MapChipStatus GetMapChipStatus(const Vector3& pos);
+
+	/// <summary>
+	/// インデックスからマップのタイプを取得
+	/// </summary>
+	/// <param name="index">インデックス</param>
+	/// <returns>マップの</returns>
+	MapChipType GetMapChipType(const Vector3Int& index);
+
+	/// <summary>
+	/// インデックスから範囲矩形を取得
+	/// </summary>
+	/// <param name="index"></param>
+	/// <returns></returns>
+	Rect GetRectByIndex(Vector3Int index);
 private://メンバ関数
 	/// <summary>
 	/// マップチップのリセット

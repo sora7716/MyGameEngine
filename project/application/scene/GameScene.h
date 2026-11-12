@@ -1,11 +1,12 @@
 #pragma once
 #include "BaseScene.h"
 #include "MapChipData.h"
-#include "MapChipField.h"
+#include "Vector3.h"
 #include <string>
 #include <vector>
 
 //前方宣言
+class MapChipField;
 class MovementCommand;
 class JumpCommand;
 
@@ -77,8 +78,8 @@ private://メンバ変数
 	std::vector<std::unique_ptr<MovementCommand>> movementCommands_;
 	//ジャンプ用のコマンド
 	std::unique_ptr<JumpCommand>JumpCommand_ = nullptr;
-	
+
 	GameObject* playerObject = nullptr;
 	MapChipStatus statusForPos_ = {};
-	MapChipField::IndexSet indexSet_ = {};
+	Vector3Int indexSet_ = {};
 };

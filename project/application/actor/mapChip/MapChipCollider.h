@@ -1,11 +1,35 @@
 #pragma once
 #include "Component.h"
 #include "MapChipData.h"
+#include "Vector3.h"
+
+//前方宣言
+class MapChipField;
+
+//衝突判定の情報
+struct CollisionMapChipInfo {
+	bool isHitWall = false;
+	bool isLanding = false;
+	Vector3 moveAmount = {};
+};
 
 /// <summary>
 /// マップチップのコライダー
 /// </summary>
 class MapChipCollider :public Component {
+public://構造体
+	//角
+	enum class Corner :uint32_t {
+		kRightBottomBack,//右下後
+		kLeftBottomBack,//左下後
+		kRightUpBack,//右上後
+		kLeftUpBack,//左下後
+		kRightBottomFront,//右下前
+		kLeftBottomFront,//左下前
+		kRightUpFront,//右上前
+		kLeftUpFront,//左下前
+		kNumConer//要素数
+	};
 public://メンバ関数
 	/// <summary>
 	/// コンストラクタ
@@ -21,8 +45,9 @@ public://メンバ関数
 	/// <summary>
 	/// セットアップ
 	/// </summary>
-	/// <param name="mapChip">マップチップのデータ</param>
-	void Setup(const MapChipData& mapChip);
+	/// <param name="mapChipField">マップチップのフィールド</param>
+	/// <param name="targetSize">ターゲットのサイズ</param>
+	void Setup(MapChipField* mapChipField,const Vector3& targetSize);
 
 	/// <summary>
 	/// 初期化
@@ -46,10 +71,39 @@ public://メンバ関数
 	/// </summary>
 	/// <returns>コンポーネントのタイプ名</returns>
 	std::string GetTypeName()const override;
+private://メンバ関数
+	/// <summary>
+	/// 衝突判定の確認
+	/// </summary>
+	/// <param name="info">衝突情報</param>
+	void CheckCollision(const CollisionMapChipInfo& info);
+
+	/// <summary>
+	/// 正面の衝突判定を確認
+	/// </summary>
+	/// <param name="info">衝突情報</param>
+	void CheckCollisionFront(CollisionMapChipInfo& info);
+
+	/// <summary>
+	/// 各角のポジションを取得
+	/// </summary>
+	/// <param name="center">中心</param>
+	/// <param name="corner">角</param>
+	/// <returns>位置</returns>
+	Vector3 GetCornerPosition(const Vector3& center,Corner corner);
+private://定数
+	//余白
+	static inline const float kBlank = 0.1f;
 private://メンバ変数
 	//ゲームオブジェクト
 	GameObject* gameObject_ = nullptr;
 	//マップのデータ
-	MapChipData mapChip_ = {};
+	MapChipData mapChipData_ = {};
+	//マップチップフィールド
+	MapChipField* mapChipField_ = nullptr;
+	//対象のサイズ
+	Vector3 targetSize_ = {};
+	//ハーフサイズ
+	Vector3 targetHalfSize_ = {};
 };
 

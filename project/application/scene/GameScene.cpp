@@ -12,6 +12,7 @@
 #include "JumpCommand.h"
 #include "JumpComponent.h"
 #include "ImGuiManager.h"
+#include "MapChipField.h"
 #include "Color.h"
 #include <array>
 
@@ -69,9 +70,9 @@ void GameScene::Initialize() {
 //更新のステート
 void GameScene::UpdateState() {
 	//プレイヤーの位置からマップ番号を取得
-	indexSet_ = mapChipField_->GetMapChipIndex(playerObject->GetTransform().translate);
+	indexSet_ = mapChipField_->GetMapChipIndexByPosition(playerObject->GetTransform().translate);
 	//プレイヤーの位置からブロックのステータスを取得
-	statusForPos_ = mapChipField_->GetMapChipStatus(playerObject->GetTransform().translate,1.0f);
+	statusForPos_ = mapChipField_->GetMapChipStatus(playerObject->GetTransform().translate);
 }
 
 //デバッグ
@@ -79,7 +80,7 @@ void GameScene::Debug() {
 	//基底クラスのデバッグ
 	BaseScene::Debug();
 	ImGui::Begin("マップチップに関する物");
-	ImGui::Text("x:%d,z:%d",indexSet_.x,indexSet_.z);
+	ImGui::Text("x:%d,y:%d,z:%d",indexSet_.x,indexSet_.y,indexSet_.z);
 	ImGui::Text("pos:status = %s,count = %d",statusForPos_.type != MapChipType::kBlank ? "ブロック" : "空気",statusForPos_.count);
 	ImGui::End();
 }

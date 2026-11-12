@@ -72,7 +72,7 @@ public://メンバ関数
 	/// </summary>
 	/// <param name="index">インデックス</param>
 	/// <returns>マップの</returns>
-	MapChipType GetMapChipType(const Vector3Int& index);
+	MapChipType GetMapChipTypeByIndex(const Vector3Int& index);
 
 	/// <summary>
 	/// インデックスから範囲矩形を取得

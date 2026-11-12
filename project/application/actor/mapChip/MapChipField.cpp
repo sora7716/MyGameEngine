@@ -32,7 +32,7 @@ void MapChipField::Initialize(const std::string& fileName) {
 
 	//オリジンを設定
 	origin_.x = -mapRadius.x - kBlockWidth / 2.0f;
-	origin_.y = 0.0f;
+	origin_.y = -kBlockHeight / 2.0f;
 	origin_.z = -mapRadius.z - kBlockDepth / 2.0f;
 }
 
@@ -95,7 +95,7 @@ MapChipStatus MapChipField::GetMapChipStatus(const Vector3& pos) {
 }
 
 //マップのステータス
-MapChipType MapChipField::GetMapChipType(const Vector3Int& index) {
+MapChipType MapChipField::GetMapChipTypeByIndex(const Vector3Int& index) {
 	//位置を取得
 	Vector3 pos = GetMapChipPositionByIndex(index);
 	//ステータスの取得

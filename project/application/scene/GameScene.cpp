@@ -13,6 +13,7 @@
 #include "JumpComponent.h"
 #include "ImGuiManager.h"
 #include "MapChipField.h"
+#include "MapChipCollider.h"
 #include "Color.h"
 #include <array>
 
@@ -205,6 +206,10 @@ GameObject* GameScene::CreatePlayer() {
 	Player* player = gameObject->AddComponent<Player>();
 	player->SetObject3d(object3d);
 	player->SetInput(GetSceneContext().input);
+
+	//マップチップのコライダーを設定
+	MapChipCollider* mapChipCollider = gameObject->AddComponent<MapChipCollider>();
+	mapChipCollider->Setup(mapChipField_.get(),rigidBody,{1.0f,1.0f,1.0f});
 
 	//コライダーを設定
 	BoxCollider* boxCollider = gameObject->AddComponent<BoxCollider>();

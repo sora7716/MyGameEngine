@@ -5,6 +5,7 @@
 
 //前方宣言
 class MapChipField;
+class RigidBody;
 
 //衝突判定の情報
 struct CollisionMapChipInfo {
@@ -46,8 +47,9 @@ public://メンバ関数
 	/// セットアップ
 	/// </summary>
 	/// <param name="mapChipField">マップチップのフィールド</param>
+	/// <param name="rigidBody">リジッドボディ</param>
 	/// <param name="targetSize">ターゲットのサイズ</param>
-	void Setup(MapChipField* mapChipField,const Vector3& targetSize);
+	void Setup(MapChipField* mapChipField,RigidBody* rigidBody,const Vector3& targetSize);
 
 	/// <summary>
 	/// 初期化
@@ -58,6 +60,11 @@ public://メンバ関数
 	/// 更新
 	/// </summary>
 	void Update()override;
+
+	/// <summary>
+	/// デバッグでImGuiを使えるようにする
+	/// </summary>
+	void DebugImGui()override;
 
 	/// <summary>
 	/// コピー
@@ -76,7 +83,7 @@ private://メンバ関数
 	/// 衝突判定の確認
 	/// </summary>
 	/// <param name="info">衝突情報</param>
-	void CheckCollision(const CollisionMapChipInfo& info);
+	void CheckCollision(CollisionMapChipInfo& info);
 
 	/// <summary>
 	/// 正面の衝突判定を確認
@@ -105,5 +112,9 @@ private://メンバ変数
 	Vector3 targetSize_ = {};
 	//ハーフサイズ
 	Vector3 targetHalfSize_ = {};
+	//リジッドボディ
+	RigidBody* rigidBody_ = nullptr;
+
+	bool isWall_ = false;
 };
 

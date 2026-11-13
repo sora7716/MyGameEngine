@@ -26,9 +26,6 @@ void Player::Initialize() {
 	//ゲームオブジェクトを取得
 	gameObject_ = GetOwner();
 
-	//SRTの調整
-	gameObject_->GetTransform().translate = {0.0f,1.0f,0.0f};
-
 	//ステートの初期化
 	states_[static_cast<uint32_t>(Behavior::kNormal)] = std::make_unique<PlayerNormalState>();
 	states_[static_cast<uint32_t>(Behavior::kMove)] = std::make_unique<PlayerMovementState>();

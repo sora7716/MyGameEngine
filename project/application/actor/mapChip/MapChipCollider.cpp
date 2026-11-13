@@ -42,12 +42,15 @@ void MapChipCollider::Initialize() {
 void MapChipCollider::Update() {
 	//衝突判定を行う
 	CollisionMapChipInfo collisionInfo = {};
-	collisionInfo.moveAmount = rigidBody_->GetVelocity() * mathUtility::kDeltaTime;
+	collisionInfo.moveAmount = rigidBody_->GetMoveAmount(mathUtility::kDeltaTime);
 	//衝突判定を確認
 	CheckCollision(collisionInfo);
 	isWall_ = collisionInfo.isHitWall;
 	//リジッドボディに反映
-	rigidBody_->GetVelocity() = collisionInfo.moveAmount;
+	rigidBody_->GetVelocity() = collisionInfo.moveAmount / mathUtility::kDeltaTime;
+
+	//壁に衝突しているとき
+	WallCollision(collisionInfo);
 }
 
 //デバッグでImGuiを使えるようにする
@@ -101,7 +104,6 @@ void MapChipCollider::CheckCollisionFront(CollisionMapChipInfo& info) {
 
 	//真正面の当たり判定を行う
 	MapChipType type = MapChipType::kBlank;
-	MapChipType typeNext = MapChipType::kBlank;
 	bool hit = false;
 	Vector3Int index = {};
 
@@ -122,16 +124,14 @@ void MapChipCollider::CheckCollisionFront(CollisionMapChipInfo& info) {
 	//右下前の判定
 	index = mapChipField_->GetMapChipIndexByPosition(positionNew[static_cast<uint32_t>(Corner::kRightBottomFront)]);
 	type = mapChipField_->GetMapChipTypeByIndex(index);
-	typeNext = mapChipField_->GetMapChipTypeByIndex({index.x,index.y,index.z - 1});
-	if(type != MapChipType::kBlank && typeNext != MapChipType::kBlock) {
+	if(type != MapChipType::kBlank) {
 		hit = true;
 	}
 
 	//左下前の判定
 	index = mapChipField_->GetMapChipIndexByPosition(positionNew[static_cast<uint32_t>(Corner::kLeftBottomFront)]);
 	type = mapChipField_->GetMapChipTypeByIndex(index);
-	typeNext = mapChipField_->GetMapChipTypeByIndex({index.x,index.y,index.z - 1});
-	if(type != MapChipType::kBlank && typeNext != MapChipType::kBlock) {
+	if(type != MapChipType::kBlank) {
 		hit = true;
 	}
 
@@ -145,16 +145,14 @@ void MapChipCollider::CheckCollisionFront(CollisionMapChipInfo& info) {
 			//めり込み先ブロックの矩形範囲
 			MapChipField::Rect rect = mapChipField_->GetRectByIndex(index);
 			//移動量を計算
-			info.moveAmount.z = std::min(0.0f,rect.back - (center.z + targetHalfSize_.z) + kBlank);
+			GetOwner()->GetTransform().translate.z = rect.back - (center.z + targetHalfSize_.z) - kBlank;
+			//速度をリセット
+			rigidBody_->GetVelocity().z = 0.0f;
 			//ブロックに当たった
 			info.isHitWall = true;
 		}
 		return;
 	}
-
-	//移動量をリセット
-	info.moveAmount = {};
-
 }
 
 //各角のポジションを取得
@@ -171,4 +169,12 @@ Vector3 MapChipCollider::GetCornerPosition(const Vector3& center,Corner corner) 
 		}};
 
 	return center + offsetTable[static_cast<uint32_t>(corner)];
+}
+
+//壁に衝突しているとき
+void MapChipCollider::WallCollision(const CollisionMapChipInfo& info) {
+	// 壁に接触による減速
+	if(info.isHitWall) {
+		rigidBody_->GetVelocity().z *= (1.0f - kAttenuationWall);
+	}
 }

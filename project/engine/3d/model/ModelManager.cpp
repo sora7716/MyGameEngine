@@ -43,10 +43,10 @@ void ModelManager::CreatePrimitiveModel(){
 
 	//Cubeモデルの生成(半径1.0)
 	model = Model::CreateModel(directXBase_, { primitiveMeshFactory::CreateCube() }, shaderManager_);
-	//Cubeモデルの追加(半径1.0)
+	//Cubeモデルの追加(半径0.5)
 	models_.insert(std::make_pair("cube", std::move(model)));
 
-	//Tileモデルの生成(半径0.5)
+	//Tileモデルの生成(半径0.25)
 	desc.size = { 0.5f,0.5f,0.5f };
 	model = Model::CreateModel(directXBase_, { primitiveMeshFactory::CreateCube(desc) }, shaderManager_);
 	//Tileモデルの追加(半径0.5)

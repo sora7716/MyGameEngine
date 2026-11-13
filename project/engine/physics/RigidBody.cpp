@@ -112,6 +112,11 @@ const Vector3& RigidBody::GetAcceleration() const {
 	return acceleration_;
 }
 
+//時間でどれくらいの移動量になるか取得
+Vector3 RigidBody::GetMoveAmount(float deltaTime) const {
+	return velocity_ * deltaTime;
+}
+
 //地面に接している閾値の取得
 float RigidBody::GetGroundThreshold() const {
 	return groundThreshold_;

@@ -47,6 +47,9 @@ void GameScene::Initialize() {
 	//ジャンプコマンドを生成
 	JumpCommand_ = std::make_unique<JumpCommand>();
 
+	//マップチップフィールドを生成
+	mapChipField_ = MapChipField::Create(mapChipCsvName_);
+
 	//平行光源
 	GameObject* gameObject = CreateGameObject();
 	gameObject->AddComponent<DirectionalLight>();
@@ -54,8 +57,8 @@ void GameScene::Initialize() {
 	gameObject->SetName("平行光源");
 
 	GameObject* groundObject = CreateGameObject();
-	groundObject->GetTransform().scale = {50.0f,1.0f,50.0f};
-	groundObject->GetTransform().translate = {0.0f,0.0f,0.0f};
+	groundObject->GetTransform().scale = {30.0f,1.0f,30.0f};
+	groundObject->GetTransform().translate = {0.0f,-0.5f,0.0f};
 	groundObject->AddComponent<BoxCollider>();
 
 	//SkyBoxの生成
@@ -108,7 +111,6 @@ GameObject* GameScene::CreateSkyBox() {
 
 //フィールドの生成
 void GameScene::CreateField() {
-	mapChipField_ = MapChipField::Create(mapChipCsvName_);
 	//マップチップのデータ
 	MapChipData mapChipData = mapChipField_->GetMapChipData();
 
@@ -128,19 +130,16 @@ void GameScene::CreateField() {
 					continue;
 				}
 
-				//フィールドの半径
-				float radiusX = static_cast<float>(mapChipData.data.size()) * MapChipField::kBlockWidth / 2.0f;
-				float radiusZ = static_cast<float>(mapChipStatusData.size()) * MapChipField::kBlockWidth / 2.0f;
-
 				//ゲームオブジェクトの生成
 				GameObject* gameObject = CreateGameObject();
 				gameObject->AttachTo(field);
 				gameObject->SetName("Block" + std::to_string(z) + "-" + std::to_string(x));
-				gameObject->GetTransform().translate = {
-					static_cast<float>(x) * MapChipField::kBlockWidth - radiusX,
-					static_cast<float>(y) * MapChipField::kBlockHeight,
-					static_cast<float>(z) * MapChipField::kBlockDepth - radiusZ
+				Vector3Int positionIndex = {
+					static_cast<int32_t>(x),
+					static_cast<int32_t>(y),
+					static_cast<int32_t>(z)
 				};
+				gameObject->GetTransform().translate = mapChipField_->GetMapChipPositionByIndex(positionIndex);
 				Object3d* object3d = gameObject->AddComponent<Object3d>();
 				object3d->SetModel("cube");
 			}
@@ -152,11 +151,14 @@ void GameScene::CreateField() {
 GameObject* GameScene::CreatePlayer() {
 	//ゲームオブジェクトを生成
 	GameObject* gameObject = CreateGameObject();
-	gameObject->GetTransform().translate.y = 1.0f;
+	Vector3Int playerPosIndex = {0,1,0};
+	gameObject->GetTransform().translate = mapChipField_->GetMapChipPositionByIndex(playerPosIndex);
 	gameObject->SetName("プレイヤー");
 	//オブジェクト3dを設定
 	Object3d* object3d = gameObject->AddComponent<Object3d>();
 	object3d->SetModel("player");
+	//マップチップのコライダーを設定
+	MapChipCollider* mapChipCollider = gameObject->AddComponent<MapChipCollider>();
 
 #ifdef _DEBUG
 	//ワイヤーフレーム
@@ -176,8 +178,11 @@ GameObject* GameScene::CreatePlayer() {
 	JumpComponent* jumpComponent = gameObject->AddComponent<JumpComponent>();
 	//リジッドボディを設定
 	RigidBody* rigidBody = gameObject->AddComponent<RigidBody>();
+	//マップチップコライダーのセットアップ
+	mapChipCollider->Setup(mapChipField_.get(),rigidBody,{0.5f,0.5f,0.5f});
 	//移動用のコンポーネントのセットアップ
 	movementComponent->Setup(rigidBody,10.0f,12.0f);
+	//ジャンプ用のコンポーネントのセットアップ
 	jumpComponent->Setup(rigidBody,15.0f);
 
 	//キーの一覧
@@ -206,10 +211,6 @@ GameObject* GameScene::CreatePlayer() {
 	Player* player = gameObject->AddComponent<Player>();
 	player->SetObject3d(object3d);
 	player->SetInput(GetSceneContext().input);
-
-	//マップチップのコライダーを設定
-	MapChipCollider* mapChipCollider = gameObject->AddComponent<MapChipCollider>();
-	mapChipCollider->Setup(mapChipField_.get(),rigidBody,{1.0f,1.0f,1.0f});
 
 	//コライダーを設定
 	BoxCollider* boxCollider = gameObject->AddComponent<BoxCollider>();

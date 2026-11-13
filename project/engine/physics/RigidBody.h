@@ -90,6 +90,13 @@ public://メンバ関数
 	const Vector3& GetAcceleration()const;
 
 	/// <summary>
+	/// 時間でどれくらいの移動量になるか取得
+	/// </summary>
+	/// <param name="deltaTime">デルタタイム</param>
+	/// <returns>移動量</returns>
+	Vector3 GetMoveAmount(float deltaTime)const;
+
+	/// <summary>
 	/// 地面に接している閾値の取得
 	/// </summary>
 	/// <returns>地面に接している閾値</returns>

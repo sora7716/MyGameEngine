@@ -98,9 +98,17 @@ private://メンバ関数
 	/// <param name="corner">角</param>
 	/// <returns>位置</returns>
 	Vector3 GetCornerPosition(const Vector3& center,Corner corner);
+
+	/// <summary>
+	/// 壁に衝突しているとき
+	/// </summary>
+	/// <param name="info">衝突情報</param>
+	void WallCollision(const CollisionMapChipInfo& info);
 private://定数
 	//余白
 	static inline const float kBlank = 0.1f;
+	// 壁に衝突時の速度減衰率
+	static inline const float kAttenuationWall = 0.45f;
 private://メンバ変数
 	//ゲームオブジェクト
 	GameObject* gameObject_ = nullptr;

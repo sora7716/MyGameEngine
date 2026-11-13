@@ -81,8 +81,6 @@ void SceneManager::Update(){
 		//デバッグカメラをDebugEditorに設定
 		debugEditor_->SetDebugCamera(scene_->GetDebugCamera());
 	}
-	//衝突判定システムの更新
-	collisionSystem_->Update(scene_->GetGameObjects());
 	//デバッグエディタの更新
 	debugEditor_->Update();
 	//Gizmoの見える情報の更新
@@ -94,6 +92,8 @@ void SceneManager::Update(){
 	scene_->SetIsDebugControlEnabled(debugEditor_->IsSceneViewHovered());
 	//アプリケーションが有効かを設定
 	scene_->SetIsAppInputEnabled(debugEditor_->IsPreviewHovered());
+	//衝突判定システムの更新
+	collisionSystem_->Update(scene_->GetGameObjects());
 }
 
 //デバッグ

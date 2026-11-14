@@ -16,6 +16,7 @@
 #include "MapChipCollider.h"
 #include "Color.h"
 #include <array>
+using namespace mapChipDesc;
 
 //コンストラクタ
 GameScene::GameScene() {
@@ -76,7 +77,7 @@ void GameScene::UpdateState() {
 	//プレイヤーの位置からマップ番号を取得
 	indexSet_ = mapChipField_->GetMapChipIndexByPosition(playerObject->GetTransform().translate);
 	//プレイヤーの位置からブロックのステータスを取得
-	statusForPos_ = mapChipField_->GetMapChipStatus(playerObject->GetTransform().translate);
+	statusForPos_ = mapChipField_->GetMapChipStatusByIndex(indexSet_);
 }
 
 //デバッグ
@@ -143,7 +144,7 @@ void GameScene::CreateField() {
 				};
 				gameObject->GetTransform().translate = mapChipField_->GetMapChipPositionByIndex(positionIndex);
 				Object3d* object3d = gameObject->AddComponent<Object3d>();
-				object3d->SetModel("cube");
+				object3d->SetModel("debugCube");
 			}
 		}
 	}
@@ -163,7 +164,7 @@ GameObject* GameScene::CreatePlayer() {
 #ifdef _DEBUG
 	//ワイヤーフレーム
 	Object3d* wireFrame = gameObject->AddComponent<Object3d>();
-	wireFrame->SetModel("cube");
+	wireFrame->SetModel("hitBox");
 	wireFrame->SetFillMode(rasterizerMode::FillMode::kWireframe);
 	wireFrame->SetMaterialParameter(0,"color",Color::GetRed());
 #endif // _DEBUG

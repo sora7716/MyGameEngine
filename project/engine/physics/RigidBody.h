@@ -60,6 +60,12 @@ public://メンバ関数
 	void SetGroundThreshold(float groundThreshold);
 
 	/// <summary>
+	/// コライダー以外による設置状態を設定
+	/// </summary>
+	/// <param name="isOnGround">地面に接しているか</param>
+	void SetExternalGround(bool isOnGround);
+
+	/// <summary>
 	/// コンポーネントのタイプ名を取得
 	/// </summary>
 	/// <returns>コンポーネントのタイプ名</returns>
@@ -130,4 +136,6 @@ private://メンバ変数
 	float groundThreshold_ = 0.0f;
 	//地面に接している
 	bool isOnGround_ = true;
+	//外部からの設置状態
+	bool isOnGroundForExternal = false;
 };

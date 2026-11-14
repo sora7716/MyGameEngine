@@ -80,6 +80,6 @@ private://メンバ変数
 	std::unique_ptr<JumpCommand>JumpCommand_ = nullptr;
 
 	GameObject* playerObject = nullptr;
-	MapChipStatus statusForPos_ = {};
+	mapChipDesc::MapChipStatus statusForPos_ = {};
 	Vector3Int indexSet_ = {};
 };

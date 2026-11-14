@@ -39,17 +39,23 @@ void ModelManager::CreatePrimitiveModel(){
 	//モデル
 	std::unique_ptr<Model>model = nullptr;
 	//設定項目
-	primitiveMeshFactory::Desc desc = {};
+	primitiveMeshFactory::Desc desc = {}; 
 
 	//Cubeモデルの生成(半径1.0)
 	model = Model::CreateModel(directXBase_, { primitiveMeshFactory::CreateCube() }, shaderManager_);
 	//Cubeモデルの追加(半径0.5)
 	models_.insert(std::make_pair("cube", std::move(model)));
 
+	//ヒットボックス用のモデルの生成(半径0.8)
+	desc.size = {0.8f,0.8f,0.8f};
+	model = Model::CreateModel(directXBase_,{primitiveMeshFactory::CreateCube(desc)},shaderManager_);
+	//Tileモデルの追加(半径0.8)
+	models_.insert(std::make_pair("hitBox",std::move(model)));
+
 	//Tileモデルの生成(半径0.25)
 	desc.size = { 0.5f,0.5f,0.5f };
 	model = Model::CreateModel(directXBase_, { primitiveMeshFactory::CreateCube(desc) }, shaderManager_);
-	//Tileモデルの追加(半径0.5)
+	//Tileモデルの追加(半径0.25)
 	models_.insert(std::make_pair("tile", std::move(model)));
 
 	//Sphereモデルの生成(分割数16)

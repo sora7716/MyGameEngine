@@ -3,6 +3,7 @@
 #include <fstream>
 #include <sstream>
 #include <cassert>
+using namespace  mapChipDesc;
 //生成
 std::unique_ptr<MapChipField> MapChipField::Create(const std::string& fileName) {
 	std::unique_ptr<MapChipField>instance = std::make_unique<MapChipField>();
@@ -32,7 +33,7 @@ void MapChipField::Initialize(const std::string& fileName) {
 
 	//オリジンを設定
 	origin_.x = -mapRadius.x - kBlockWidth / 2.0f;
-	origin_.y = -kBlockHeight / 2.0f;
+	origin_.y = -kBlockHeight;
 	origin_.z = -mapRadius.z - kBlockDepth / 2.0f;
 }
 
@@ -58,16 +59,24 @@ Vector3Int MapChipField::GetMapChipIndexByPosition(const Vector3& pos) {
 Vector3 MapChipField::GetMapChipPositionByIndex(const Vector3Int& index) {
 	Vector3 result = {
 		.x = origin_.x + (static_cast<float>(index.x) + 0.5f) * kBlockWidth,
-		.y = origin_.y + index.y * kBlockHeight,
+		.y = origin_.y + (static_cast<float>(index.y) + 0.5f) * kBlockHeight,
 		.z = origin_.z + (static_cast<float>(index.z) + 0.5f) * kBlockDepth,
 	};
 	return result;
 }
 
 //位置のマップのステータスを取得
-MapChipStatus MapChipField::GetMapChipStatus(const Vector3& pos) {
+MapChipStatus MapChipField::GetMapChipStatusByPosition(const Vector3& pos) {
 	//現在いる位置のマップ番号を取得
 	Vector3Int index = GetMapChipIndexByPosition(pos);
+	//ステータスを取得
+	MapChipStatus status = GetMapChipStatusByIndex(index);
+	
+	return status;
+}
+
+//インデックスからマップのステータスを取得
+MapChipStatus MapChipField::GetMapChipStatusByIndex(const Vector3Int& index) {
 	//マップステータス
 	MapChipStatus status = {.type = MapChipType::kBlank,.count = 1};
 	//範囲外なら何もしない
@@ -92,10 +101,8 @@ MapChipType MapChipField::GetMapChipTypeByIndex(const Vector3Int& index) {
 	if(index.x < 0 || index.y < 0 || index.z < 0 || index.x >= horizontal_ || index.z >= longitudinal_) {
 		return MapChipType::kBlank;
 	}
-	//位置を取得
-	Vector3 pos = GetMapChipPositionByIndex(index);
 	//ステータスの取得
-	MapChipStatus status = GetMapChipStatus(pos);
+	MapChipStatus status = GetMapChipStatusByIndex(index);
 	//積んである高さより上は何もない
 	if(status.count <= static_cast<uint32_t>(index.y)) {
 		return MapChipType::kBlank;
@@ -105,7 +112,7 @@ MapChipType MapChipField::GetMapChipTypeByIndex(const Vector3Int& index) {
 }
 
 // 範囲矩形を取得
-MapChipField::Rect MapChipField::GetRectByIndex(Vector3Int index) {
+Rect MapChipField::GetRectByIndex(Vector3Int index) {
 	// 指定したブロックを中心座標を取得する
 	Vector3 center = GetMapChipPositionByIndex(index);
 

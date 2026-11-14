@@ -87,6 +87,11 @@ void RigidBody::SetGroundThreshold(float groundThreshold) {
 	groundThreshold_ = groundThreshold;
 }
 
+//コライダー以外の設置状態を設定
+void RigidBody::SetExternalGround(bool isOnGround) {
+	isOnGroundForExternal = isOnGround;
+}
+
 //コンポーネントのタイプ名を取得
 std::string RigidBody::GetTypeName() const {
 	return "RigidBody";
@@ -124,7 +129,7 @@ float RigidBody::GetGroundThreshold() const {
 
 //地面に接しているか
 bool RigidBody::IsOnGround() const {
-	return isOnGround_;
+	return isOnGround_ || isOnGroundForExternal;
 }
 
 //速度と加速度を適応

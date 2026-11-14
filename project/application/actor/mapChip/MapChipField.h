@@ -12,16 +12,6 @@ public://静的メンバ関数
 	/// <param name="fileName">ファイル名</param>
 	/// <returns>インスタンス</returns>
 	static std::unique_ptr<MapChipField> Create(const std::string& fileName);
-public://構造体
-	//範囲矩形
-	struct Rect {
-		float left;//左端
-		float right;//右端
-		float bottom;//下端
-		float top;//上端
-		float front;//前端
-		float back;//後端
-	};
 public://メンバ関数
 	/// <summary>
 	/// コンストラクタ
@@ -43,7 +33,7 @@ public://メンバ関数
 	/// マップチップのデータを取得
 	/// </summary>
 	/// <returns>マップチップデータ</returns>
-	const MapChipData& GetMapChipData()const;
+	const mapChipDesc::MapChipData& GetMapChipData()const;
 
 	/// <summary>
 	/// マップのインデックスを取得
@@ -65,21 +55,28 @@ public://メンバ関数
 	/// </summary>
 	/// <param name="pos">位置</param>
 	/// <returns>マップのステータス</returns>
-	MapChipStatus GetMapChipStatus(const Vector3& pos);
+	mapChipDesc::MapChipStatus GetMapChipStatusByPosition(const Vector3& pos);
+
+	/// <summary>
+	/// インデックスからマップのステータスを取得
+	/// </summary>
+	/// <param name="index">インデックス</param>
+	/// <returns>マップのステータス</returns>
+	mapChipDesc::MapChipStatus GetMapChipStatusByIndex(const Vector3Int& index);
 
 	/// <summary>
 	/// インデックスからマップのタイプを取得
 	/// </summary>
 	/// <param name="index">インデックス</param>
 	/// <returns>マップの</returns>
-	MapChipType GetMapChipTypeByIndex(const Vector3Int& index);
+	mapChipDesc::MapChipType GetMapChipTypeByIndex(const Vector3Int& index);
 
 	/// <summary>
 	/// インデックスから範囲矩形を取得
 	/// </summary>
 	/// <param name="index"></param>
 	/// <returns></returns>
-	Rect GetRectByIndex(Vector3Int index);
+	mapChipDesc::Rect GetRectByIndex(Vector3Int index);
 private://メンバ関数
 	/// <summary>
 	/// マップチップのリセット
@@ -108,5 +105,5 @@ private://メンバ変数
 	//ディレクトリパス
 	std::string directoryPath_ = "engine/resources/csv/";
 	//マップチップのデータ
-	MapChipData mapChipData_;
+	mapChipDesc::MapChipData mapChipData_;
 };

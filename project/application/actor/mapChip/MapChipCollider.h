@@ -1,16 +1,19 @@
 #pragma once
 #include "Component.h"
 #include "MapChipData.h"
+#include "MapChipField.h"
 #include "Vector3.h"
+#include <array>
+#include <vector>
 
 //前方宣言
-class MapChipField;
 class RigidBody;
 
 //衝突判定の情報
 struct CollisionMapChipInfo {
-	bool isHitWall = false;
-	bool isLanding = false;
+	bool isCollisionX = false;//X軸(左右)で衝突した
+	bool isCollisionZ = false;//Z軸(前後)で衝突した
+	bool isOnGround = false;//着地している
 	Vector3 moveAmount = {};
 };
 
@@ -95,7 +98,36 @@ private://メンバ関数
 	/// 正面の衝突判定を確認
 	/// </summary>
 	/// <param name="info">衝突情報</param>
-	void CheckCollisionFront(CollisionMapChipInfo& info);
+	/// <param name="center">中心座標</param>
+	void CheckCollisionFront(CollisionMapChipInfo& info,Vector3& center);
+
+	/// <summary>
+	/// 背面の衝突判定を確認
+	/// </summary>
+	/// <param name="info">衝突情報</param>
+	/// <param name="center">中心座標</param>
+	void CheckCollisionBack(CollisionMapChipInfo& info,Vector3& center);
+
+	/// <summary>
+	/// 右面の衝突判定
+	/// </summary>
+	/// <param name="info">衝突情報</param>
+	/// <param name="center">中心座標</param>
+	void CheckCollisionRight(CollisionMapChipInfo& info,Vector3& center);
+
+	/// <summary>
+	/// 左面の衝突判定を確認
+	/// </summary>
+	/// <param name="info">衝突情報</param>
+	/// <param name="center">中心座標</param>
+	void CheckCollisionLeft(CollisionMapChipInfo& info,Vector3& center);
+
+	/// <summary>
+	/// 下面の衝突判定を確認
+	/// </summary>
+	/// <param name="info">衝突情報</param>
+	/// <param name="center">中心座標</param>
+	void CheckCollisionBottom(CollisionMapChipInfo& info,Vector3& center);
 
 	/// <summary>
 	/// 各角のポジションを取得
@@ -106,10 +138,18 @@ private://メンバ関数
 	Vector3 GetCornerPosition(const Vector3& center,Corner corner);
 
 	/// <summary>
-	/// 壁に衝突しているとき
+	/// 衝突したときの反応
 	/// </summary>
 	/// <param name="info">衝突情報</param>
-	void WallCollision(const CollisionMapChipInfo& info);
+	void ApplyCollisionResponse(const CollisionMapChipInfo& info);
+
+	/// <summary>
+	/// 衝突した範囲矩形の配列を取得
+	/// </summary>
+	/// <param name="center">中心座標</param>
+	/// <param name="corners">4頂点</param>
+	/// <returns>衝突した範囲矩形の配列</returns>
+	std::vector<mapChipDesc::Rect> GetCollisionRects(const Vector3& center,const std::array<Corner,4>& corners);
 private://定数
 	//余白
 	static inline const float kBlank = 0.01f;
@@ -119,7 +159,7 @@ private://メンバ変数
 	//ゲームオブジェクト
 	GameObject* gameObject_ = nullptr;
 	//マップのデータ
-	MapChipData mapChipData_ = {};
+	mapChipDesc::MapChipData mapChipData_ = {};
 	//マップチップフィールド
 	MapChipField* mapChipField_ = nullptr;
 	//対象のサイズ
@@ -128,7 +168,5 @@ private://メンバ変数
 	Vector3 targetHalfSize_ = {};
 	//リジッドボディ
 	RigidBody* rigidBody_ = nullptr;
-
-	bool isWall_ = false;
 };
 

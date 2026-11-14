@@ -81,12 +81,14 @@ void GameScene::UpdateState() {
 
 //デバッグ
 void GameScene::Debug() {
+#ifdef USE_IMGUI
 	//基底クラスのデバッグ
 	BaseScene::Debug();
 	ImGui::Begin("マップチップに関する物");
 	ImGui::Text("x:%d,y:%d,z:%d",indexSet_.x,indexSet_.y,indexSet_.z);
 	ImGui::Text("pos:status = %s,count = %d",statusForPos_.type != MapChipType::kBlank ? "ブロック" : "空気",statusForPos_.count);
 	ImGui::End();
+#endif // USE_IMGUI
 }
 
 //解放処理

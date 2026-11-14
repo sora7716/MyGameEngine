@@ -10,6 +10,7 @@
 //前方宣言
 class Input;
 class ICommand;
+class IAxisCommand;
 
 //入力したデバイスのタイプ
 using InputDeviceType = std::variant<Click,BYTE,XboxInput>;
@@ -20,6 +21,19 @@ enum class InputPhase :uint32_t {
 	kHeld = 1 << 1,//押しっぱなし
 	kReleased = 1 << 2,//離した瞬間
 	kIdle = 1 << 3//離しっぱなし
+};
+
+//スティックの種類
+enum class StickType :uint32_t {
+	kLeft,
+	kRight
+};
+
+//軸入力の情報
+struct AxisInputState {
+	StickType stick;
+	std::unique_ptr<IAxisCommand>command;
+	uint32_t controllerIndex;
 };
 
 /// <summary>
@@ -98,6 +112,14 @@ public://メンバ関数
 	/// <param name="command">コマンド</param>
 	/// <param name="controllerIndex">コントローラの検索キー</param>
 	void AddInputState(InputDeviceType inputDeviceType,InputPhase phase,std::unique_ptr<ICommand> command,uint32_t controllerIndex = 0);
+
+	/// <summary>
+	/// 軸入力を追加
+	/// </summary>
+	/// <param name="stick"></param>
+	/// <param name="command"></param>
+	/// <param name="controllerIndex"></param>
+	void AddAxisInput(StickType stick,std::unique_ptr<IAxisCommand>command,uint32_t controllerIndex = 0);
 private://メンバ関数
 	/// <summary>
 	/// 現在の入力フェーズを取得
@@ -111,5 +133,7 @@ private://メンバ変数
 
 	//入力情報
 	std::vector<InputState>inputStates_;
+	//軸入力の情報
+	std::vector<AxisInputState>axisInputStates_;
 };
 

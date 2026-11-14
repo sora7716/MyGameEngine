@@ -519,6 +519,12 @@
     <ClCompile Include="application\actor\mapChip\MapChipField.cpp">
       <Filter>application\actor\mapChip</Filter>
     </ClCompile>
+    <ClCompile Include="engine\command\StickMovementCommand.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="engine\command\IAxisCommand.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="application\scene\TestPlayScene.h">
@@ -916,6 +922,12 @@
     </ClInclude>
     <ClInclude Include="application\actor\mapChip\MapChipField.h">
       <Filter>application\actor\mapChip</Filter>
+    </ClInclude>
+    <ClInclude Include="engine\command\IAxisCommand.h">
+      <Filter>engine\comand</Filter>
+    </ClInclude>
+    <ClInclude Include="engine\command\StickMovementCommand.h">
+      <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

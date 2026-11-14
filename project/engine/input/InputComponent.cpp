@@ -100,6 +100,21 @@ void InputComponent::AddInputState(InputDeviceType inputDeviceType,InputPhase ph
 	inputStates_.push_back({inputDeviceType,phase,std::move(command),controllerIndex});
 }
 
+//軸入力を追加
+void InputComponent::AddAxisInput(StickType stick,std::unique_ptr<IAxisCommand> command,uint32_t controllerIndex) {
+	//コマンドがNullなら　
+	if(!command) {
+		return;
+	}
+
+	//コントローラの検索キーが範囲外なら
+	if(controllerIndex >= 4) {
+		return;
+	}
+
+	axisInputStates_.push_back({stick,std::move(command),controllerIndex});
+}
+
 //現在の入力フェーズを取得
 InputPhase InputComponent::GetCurrentPhase(InputDeviceType inputDeviceType,uint32_t controllerIndex) {
 

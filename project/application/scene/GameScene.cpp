@@ -69,13 +69,17 @@ void GameScene::Initialize() {
 	CreateField();
 
 	//プレイヤーの作成
-	playerObject = CreatePlayer();
+	playerObject_ = CreatePlayer();
+    //壁の作成
+    wallObject_ = CreateWall();
+    wallObject_->AttachTo(playerObject_);
+    wallObject_->GetTransform().translate.z = 1.0f;
 }
 
 //更新のステート
 void GameScene::UpdateState() {
 	//プレイヤーの位置からマップ番号を取得
-	indexSet_ = mapChipField_->GetMapChipIndexByPosition(playerObject->GetTransform().translate);
+	indexSet_ = mapChipField_->GetMapChipIndexByPosition(playerObject_->GetTransform().translate);
 	//プレイヤーの位置からブロックのステータスを取得
 	statusForPos_ = mapChipField_->GetMapChipStatusByIndex(indexSet_);
 }
@@ -148,6 +152,19 @@ void GameScene::CreateField() {
 			}
 		}
 	}
+}
+
+
+
+GameObject* GameScene::CreateWall() {
+    //Create gameobject
+    GameObject* gameObject = CreateGameObject();
+    gameObject->GetTransform().translate.z = 1.0f;
+    gameObject->SetName("wall");
+    Object3d* object3d = gameObject->AddComponent<Object3d>();
+    object3d->SetModel("wall");
+    object3d->SetBlendMode(BlendMode::kAdd);
+    return gameObject;
 }
 
 //プレイヤーの作成

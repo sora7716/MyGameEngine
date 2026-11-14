@@ -69,6 +69,12 @@ private://メンバ関数
 	/// プレイヤー作成
 	/// </summary>
 	GameObject* CreatePlayer();
+
+	/// <summary>
+	/// 壁の作成
+	/// </summary>
+	GameObject* CreateWall();
+    
 private://メンバ変数
 	//マップチップフィールド
 	std::unique_ptr<MapChipField> mapChipField_ = nullptr;
@@ -79,7 +85,8 @@ private://メンバ変数
 	//ジャンプ用のコマンド
 	std::unique_ptr<JumpCommand>JumpCommand_ = nullptr;
 
-	GameObject* playerObject = nullptr;
+	GameObject* playerObject_ = nullptr;
+	GameObject* wallObject_ = nullptr;
 	mapChipDesc::MapChipStatus statusForPos_ = {};
 	Vector3Int indexSet_ = {};
 };

@@ -10,33 +10,33 @@
 #include <functional>
 
 //モデルの生成(ファイルを読み込んでの)
-std::unique_ptr<Model>Model::CreateModel(DirectXBase* directXBase , const std::string& modelFileName , ShaderManager* shaderManager) {
+std::unique_ptr<Model>Model::CreateModel(DirectXBase* directXBase,const std::string& modelFileName,ShaderManager* shaderManager) {
 	//インスタンスの生成
 	std::unique_ptr<Model>instance = std::make_unique<Model>();
 	//初期化
-	instance->Initialize(directXBase , shaderManager);
+	instance->Initialize(directXBase,shaderManager);
 	//モデルの生成
 	instance->CreateModel(modelFileName);
 	return instance;
 }
 
 //モデルの生成(メッシュデータ)
-std::unique_ptr<Model> Model::CreateModel(DirectXBase* directXBase , const std::vector<MeshData>& meshDatas , ShaderManager* shaderManager) {
+std::unique_ptr<Model> Model::CreateModel(DirectXBase* directXBase,const std::vector<MeshData>& meshDatas,ShaderManager* shaderManager) {
 	//インスタンスの生成
 	std::unique_ptr<Model>instance = std::make_unique<Model>();
 	//初期化
-	instance->Initialize(directXBase , shaderManager);
+	instance->Initialize(directXBase,shaderManager);
 	//モデルの生成
 	instance->CreateModel(meshDatas);
 	return instance;
 }
 
 //モデルの生成(モデルデータ)
-std::unique_ptr<Model> Model::CreateModel(DirectXBase* directXBase , const ModelData& modelData , ShaderManager* shaderManager) {
+std::unique_ptr<Model> Model::CreateModel(DirectXBase* directXBase,const ModelData& modelData,ShaderManager* shaderManager) {
 	//インスタンスの生成
 	std::unique_ptr<Model>instance = std::make_unique<Model>();
 	//初期化
-	instance->Initialize(directXBase , shaderManager);
+	instance->Initialize(directXBase,shaderManager);
 	//モデルの生成
 	instance->CreateModel(modelData);
 	return instance;
@@ -51,7 +51,7 @@ Model::~Model() {
 }
 
 //初期化
-void Model::Initialize(DirectXBase* directXBase , ShaderManager* shaderManager) {
+void Model::Initialize(DirectXBase* directXBase,ShaderManager* shaderManager) {
 	//DirectXの基盤部分を記録
 	assert(directXBase);
 	directXBase_ = directXBase;
@@ -63,15 +63,15 @@ void Model::Initialize(DirectXBase* directXBase , ShaderManager* shaderManager) 
 //メッシュの再構成
 void Model::RebuildMeshes(const std::vector<MeshData>& meshes) {
 	//メッシュデータのクリア
-	if (!meshes_.empty()) {
+	if(!meshes_.empty()) {
 		meshes_.clear();
 	}
 	//受け取ったメッシュデータに書き換え
 	modelData_.meshDatas = meshes;
 	//マテリアルが存在するか
-	if (!modelData_.materialTexturePaths.empty()) {
-		for (uint32_t i = 0; i < modelData_.meshDatas.size(); i++) {
-			if (modelData_.meshDatas[i].materialIndex >= modelData_.materialTexturePaths.size()) {
+	if(!modelData_.materialTexturePaths.empty()) {
+		for(uint32_t i = 0; i < modelData_.meshDatas.size(); i++) {
+			if(modelData_.meshDatas[i].materialIndex >= modelData_.materialTexturePaths.size()) {
 				modelData_.meshDatas[i].materialIndex = 0;
 			}
 		}
@@ -88,9 +88,9 @@ void Model::RebuildMeshes(const std::vector<MeshData>& meshes) {
 	}
 
 	//テクスチャまたは環境マップのパスが空だった場合
-	for (MaterialTexturePaths& texturePath : modelData_.materialTexturePaths) {
+	for(MaterialTexturePaths& texturePath : modelData_.materialTexturePaths) {
 		//テクスチャ
-		if (texturePath.textureFilePath.empty()) {
+		if(texturePath.textureFilePath.empty()) {
 #ifdef _DEBUG
 			texturePath.textureFilePath = "engine/resources/textures/magenta1x1.png";
 #else
@@ -99,7 +99,7 @@ void Model::RebuildMeshes(const std::vector<MeshData>& meshes) {
 		}
 
 		//環境マップ
-		if (texturePath.environmentMap.empty()) {
+		if(texturePath.environmentMap.empty()) {
 			texturePath.environmentMap = "engine/resources/textures/skybox_cube.dds";
 		}
 	}
@@ -115,27 +115,27 @@ void Model::RebuildMeshes(const std::vector<MeshData>& meshes) {
 void Model::CreateLODModels(const std::vector<float>& keepRates) {
 	//LODモデルの生成
 	std::vector<float>lodRate;
-	for (float rate : keepRates) {
-		if (rate >= 1.0f) {
+	for(float rate : keepRates) {
+		if(rate >= 1.0f) {
 			continue;
 		}
 		lodRate.push_back(rate);
 	}
 	//ソート(降順)
-	std::sort(lodRate.begin() , lodRate.end() , std::greater<float>());
+	std::sort(lodRate.begin(),lodRate.end(),std::greater<float>());
 
 	//LODがもうすでに作られているのなら
-	if (isLODGenerated_) {
+	if(isLODGenerated_) {
 		//比較用のRateともともとのRateのサイズを比べて
-		if (lodRate.size() != generatedLODRates_.size()) {
+		if(lodRate.size() != generatedLODRates_.size()) {
 			Logger::OutputLog("LODの倍率が違う");
 			assert(false);
 			return;
 		}
 
 		//各要素に入っている値を比べて
-		for (uint32_t i = 0; i < static_cast<uint32_t>(generatedLODRates_.size()); i++) {
-			if (lodRate[i] != generatedLODRates_[i]) {
+		for(uint32_t i = 0; i < static_cast<uint32_t>(generatedLODRates_.size()); i++) {
+			if(lodRate[i] != generatedLODRates_[i]) {
 				Logger::OutputLog("LODの倍率が違う");
 				assert(false);
 				return;
@@ -154,7 +154,7 @@ void Model::CreateLODModels(const std::vector<float>& keepRates) {
 	//LODの倍率を保存
 	generatedLODRates_ = lodRate;
 
-	lodBuilder_->CreateLODModel(directXBase_ , shaderManager_ , this , lodRate);
+	lodBuilder_->CreateLODModel(directXBase_,shaderManager_,this,lodRate);
 
 	//LODを作成したらtrueにする
 	isLODGenerated_ = true;
@@ -163,17 +163,17 @@ void Model::CreateLODModels(const std::vector<float>& keepRates) {
 //LODモデルの取得
 Model* Model::GetLODModel(uint32_t lodIndex) {
 	//LODビルダーがNullなら
-	if (!lodBuilder_) {
+	if(!lodBuilder_) {
 		return this;
 	}
 
 	//LODの検索キーが0なら
-	if (lodIndex == 0) {
+	if(lodIndex == 0) {
 		return this;
 	}
 
 	//LODの検索キーがLODのサイズより多いなら
-	if (lodIndex >= GetLODCount()) {
+	if(lodIndex >= GetLODCount()) {
 		return this;
 	}
 
@@ -183,7 +183,7 @@ Model* Model::GetLODModel(uint32_t lodIndex) {
 //LODの数の取得
 uint32_t Model::GetLODCount() const {
 	//LODビルダーがNullなら
-	if (!lodBuilder_) {
+	if(!lodBuilder_) {
 		return 1;
 	}
 
@@ -194,11 +194,10 @@ uint32_t Model::GetLODCount() const {
 void Model::SetupRenderData() {
 	//描画に必要なデータ
 	modelRenderData_.meshRenderDatas.resize(meshes_.size());
-	for (uint32_t i = 0; i < meshes_.size(); i++) {
+	for(uint32_t i = 0; i < meshes_.size(); i++) {
 		modelRenderData_.meshRenderDatas[i] = meshes_[i]->GetMeshRenderData();
 	}
 	modelRenderData_.modelData = modelData_;
-	//modelRenderData_.rimLightResource = nullptr;
 }
 
 //モデルデータのゲッター
@@ -221,21 +220,26 @@ std::vector<std::shared_ptr<MaterialInstance>> Model::GetDefaultMaterialInstance
 	return defaultMaterialInstances_;
 }
 
+//ピクセルシェーダファイル名の設定
+void Model::SetPixelShaderFileName(const std::string& pixelShaderFilePath) {
+	pixelShaderFileName_ = pixelShaderFilePath;
+}
+
 //メッシュの構築
 void Model::BuildMesh() {
 	//メッシュの生成と初期化
 	meshes_.reserve(modelData_.meshDatas.size());
-	for (const MeshData& meshData : modelData_.meshDatas) {
+	for(const MeshData& meshData : modelData_.meshDatas) {
 		std::unique_ptr<Mesh>mesh = std::make_unique<Mesh>();
-		mesh->Initialize(directXBase_ , meshData);
+		mesh->Initialize(directXBase_,meshData);
 		meshes_.push_back(std::move(mesh));
 	}
 }
 
 //モデルの作成(メッシュデータから)
-void Model::CreateModel(const std::vector<MeshData>& meshDatas , const std::string& nodeName) {
+void Model::CreateModel(const std::vector<MeshData>& meshDatas,const std::string& nodeName) {
 	//モデルの読み込み
-	modelData_.meshDatas = { meshDatas };
+	modelData_.meshDatas = {meshDatas};
 	//メッシュの再構築
 	RebuildMeshes(modelData_.meshDatas);
 	//テクスチャの設定
@@ -249,10 +253,9 @@ void Model::CreateModel(const std::vector<MeshData>& meshDatas , const std::stri
 	node.baseMatrix = Matrix4x4::Identity4x4();
 	node.meshIndices.clear();
 	node.meshIndices.reserve(modelData_.meshDatas.size());
-	for (uint32_t meshIndex = 0; meshIndex < static_cast<uint32_t>(modelData_.meshDatas.size()); meshIndex++) {
+	for(uint32_t meshIndex = 0; meshIndex < static_cast<uint32_t>(modelData_.meshDatas.size()); meshIndex++) {
 		node.meshIndices.push_back(meshIndex);
 	}
-
 	//マテリアルインスタンスの生成と初期化
 	CreateMaterialInstances();
 	//描画データをまとめる
@@ -262,11 +265,11 @@ void Model::CreateModel(const std::vector<MeshData>& meshDatas , const std::stri
 //モデルの生成(モデルのファイルから)
 void Model::CreateModel(const std::string& objectFileName) {
 	//モデルの読み込み
-	modelData_ = modelLoader::LoadModelFile("engine/resources/models" , objectFileName);
+	modelData_ = modelLoader::LoadModelFile("engine/resources/models",objectFileName);
 	//メッシュの再構築
 	RebuildMeshes(modelData_.meshDatas);
 	//環境マップの設定
-	for (MaterialTexturePaths& environmentMap : modelData_.materialTexturePaths) {
+	for(MaterialTexturePaths& environmentMap : modelData_.materialTexturePaths) {
 		environmentMap.environmentMap = "engine/resources/textures/skybox_cube.dds";
 	}
 	//マテリアルインスタンスの生成と初期化
@@ -281,7 +284,7 @@ void Model::CreateModel(const ModelData& modelData) {
 	//メッシュの再構成
 	RebuildMeshes(modelData_.meshDatas);
 	//環境マップの設定
-	for (MaterialTexturePaths& environmentMap : modelData_.materialTexturePaths) {
+	for(MaterialTexturePaths& environmentMap : modelData_.materialTexturePaths) {
 		environmentMap.environmentMap = "engine/resources/textures/skybox_cube.dds";
 	}
 	//マテリアルインスタンスの生成と初期化
@@ -302,9 +305,21 @@ void Model::CreateMaterialInstances() {
 	defaultMaterialInstances_.resize(texturePaths.size());
 
 	//マテリアルを生成
-	for (uint32_t i = 0; i < static_cast<uint32_t>(texturePaths.size()); i++) {
+	for(uint32_t i = 0; i < static_cast<uint32_t>(texturePaths.size()); i++) {
 		std::shared_ptr<MaterialInstance>materialInstance = std::make_shared<MaterialInstance>();
-		materialInstance->Initialize(texturePaths[i] , shaderManager_);
+		materialInstance->Initialize(texturePaths[i],shaderManager_);
+
+		//ピクセルシェーダの設定
+		materialInstance->SetPixelShaderFileName(pixelShaderFileName_,"gMaterial");
+
+		//値の初期化
+		materialInstance->SetParameter("color",Color::GetWhite());
+		materialInstance->SetParameter("enableLighring",uint32_t{1});
+		materialInstance->SetParameter("uvMatrix",Matrix4x4::Identity4x4());
+		materialInstance->SetParameter("shininess",10.0f);
+		materialInstance->SetParameter("diffuseModel",int32_t{1});
+		materialInstance->SetParameter("specularModel",int32_t{1});
+		materialInstance->SetParameter("environmentCoefficient",0.0f);
 
 		//デフォルトに代入
 		defaultMaterialInstances_[i] = materialInstance;

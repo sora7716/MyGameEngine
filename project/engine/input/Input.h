@@ -1,53 +1,25 @@
 #pragma once
-#define DIRECTINPUT_VERSION 0x0800//DirectInputのバージョン指定
-#include <dinput.h>
-#include <memory>
-#include <wrl.h>
+#include "InputType.h"
 #include "Vector2.h"
 #include "Vector3.h"
-#include "Xinput.h"
+#include <memory>
+#include <wrl.h>
 #include <cstdint>
+#include <array>
 //前方宣言
 class WinApi;
 class Core;
 class Camera;
 
-//マウスのクリック位置
-enum class Click{
-	kLeft,
-	kRight,
-	kMiddle
-};
-
-//Xboxのボタンの位置
-enum class XboxInput :WORD{
-	kDPadUp = XINPUT_GAMEPAD_DPAD_UP,
-	kDPadRight = XINPUT_GAMEPAD_DPAD_RIGHT,
-	kDPadDown = XINPUT_GAMEPAD_DPAD_DOWN,
-	kDPadLeft = XINPUT_GAMEPAD_DPAD_LEFT,
-	kY = XINPUT_GAMEPAD_Y,
-	kB = XINPUT_GAMEPAD_B,
-	kA = XINPUT_GAMEPAD_A,
-	kX = XINPUT_GAMEPAD_X,
-	kRB = XINPUT_GAMEPAD_RIGHT_SHOULDER,
-	kLB = XINPUT_GAMEPAD_LEFT_SHOULDER,
-	kRTHUMB = XINPUT_GAMEPAD_RIGHT_THUMB,
-	kLTHUMB = XINPUT_GAMEPAD_LEFT_THUMB,
-	kStart = XINPUT_GAMEPAD_START,
-	kBack = XINPUT_GAMEPAD_BACK,
-	kRT,
-	kLT,
-};
-
 //Xboxのボタン用構造体
-struct XboxButton{
+struct XboxButton {
 	WORD button;
 	bool leftTriggerButton;
 	bool rightTriggerButton;
 };
 
 //XboxPadのデータ
-struct XboxPadData{
+struct XboxPadData {
 	XINPUT_STATE state;//ステータス
 	bool isConnected;//接続できたか
 	XboxButton currButton;//現在のボタン
@@ -62,12 +34,12 @@ struct XboxPadData{
 /// <summary>
 /// 入力
 /// </summary>
-class Input final{
+class Input final {
 public://エイリアステンプレート
 	//namespace省略
 	template <class T>using ComPtr = Microsoft::WRL::ComPtr<T>;
 public://PassKey
-	class ConstructorKey{
+	class ConstructorKey {
 	private:
 		ConstructorKey() = default;
 		friend class Core;
@@ -79,7 +51,7 @@ public://静的メンバ関数
 	/// <param name="key">コンストラクタのKey</param>
 	/// <param name="winApp">ウィンドウズアプリケーション</param>
 	/// <returns>インスタンス</returns>
-	static std::unique_ptr<Input>Create(ConstructorKey key, WinApi* winApi);
+	static std::unique_ptr<Input>Create(ConstructorKey key,WinApi* winApi);
 public://メンバ関数
 	/// <summary>
 	/// コンストラクタ
@@ -108,6 +80,13 @@ public://メンバ関数
 	/// </summary>
 	/// <param name="isAppInputEnabled">アプリケーションが動いているか</param>
 	void SetIsAppInputEnabled(bool isAppInputEnabled);
+
+	/// <summary>
+	/// Xboxのデッドゾーンの設定
+	/// </summary>
+	/// <param name="xBoxPadNumber">何番目(0~4)</param>
+	/// <param name="deadZone">デッドゾーン</param>
+	void SetDeadZone(DWORD xBoxPadNumber,float deadZone);
 
 	/// <summary>
 	/// キーの押下をチェック(エンジン用)
@@ -250,7 +229,7 @@ public://メンバ関数
 	/// <param name="xBoxPadNumber">何番目(0~4)</param>
 	/// <param name="xboxButton">Xboxのボタン</param>
 	/// <returns>押されてるか</returns>
-	bool PressXboxPad(DWORD xBoxPadNumber, XboxInput xboxButton);
+	bool PressXboxPad(DWORD xBoxPadNumber,XboxInput xboxButton);
 
 	/// <summary>
 	/// XboxPadのボタンの押下した瞬間をチェック
@@ -258,7 +237,7 @@ public://メンバ関数
 	/// <param name="xBoxPadNumber">何番目(0~4)</param>
 	/// <param name="xboxButton">Xboxのボタン</param>
 	/// <returns>押した瞬間</returns>
-	bool TriggerXboxPad(DWORD xBoxPadNumber, XboxInput xboxButton);
+	bool TriggerXboxPad(DWORD xBoxPadNumber,XboxInput xboxButton);
 
 	/// <summary>
 	/// XboxPadのボタンの離した瞬間をチェック
@@ -266,28 +245,35 @@ public://メンバ関数
 	/// <param name="xBoxPadNumber">何番目(0~4)</param>
 	/// <param name="xboxButton">Xboxのボタン</param>
 	/// <returns>離した瞬間</returns>
-	bool ReleaseTriggerXboxPad(DWORD xBoxPadNumber, XboxInput xboxButton);
+	bool ReleaseTriggerXboxPad(DWORD xBoxPadNumber,XboxInput xboxButton);
 
 	/// <summary>
-	/// Xboxの左スティックのゲッター
+	/// Xboxの左スティックの取得
 	/// </summary>
 	/// <param name="xBoxPadNumber">何番目(0~4)</param>
 	/// <returns>左スティック</returns>
 	const Vector2 GetXboxPadLeftStick(DWORD xBoxPadNumber);
 
 	/// <summary>
-	/// Xboxの右スティックのゲッター
+	/// Xboxの右スティックの取得
 	/// </summary>
 	/// <param name="xBoxPadNumber">何番目(0~4)</param>
 	/// <returns>右スティック</returns>
 	const Vector2 GetXboxPadRightStick(DWORD xBoxPadNumber);
 
 	/// <summary>
-	/// Xboxのデッドゾーン
+	/// XBoxのLTの沈み込み度の取得
 	/// </summary>
 	/// <param name="xBoxPadNumber">何番目(0~4)</param>
-	/// <param name="deadZone">デッドゾーン</param>
-	void SetDeadZone(DWORD xBoxPadNumber, float deadZone);
+	/// <returns>LTの沈み込み度</returns>
+	float GetXboxPadLeftTrigger(DWORD xBoxPadNumber);
+
+	/// <summary>
+	/// XBoxのRTの沈み込み度の取得
+	/// </summary>
+	/// <param name="xBoxPadNumber">何番目(0~4)</param>
+	/// <returns>RTの沈み込み度</returns>
+	float GetXboxPadRightTrigger(DWORD xBoxPadNumber);
 private://メンバ関数
 	//コピーコンストラクタを禁止
 	Input(const Input&) = delete;
@@ -332,7 +318,7 @@ private://メンバ変数
 	DIMOUSESTATE preMouseState_ = {};
 
 	//XboxPad
-	XboxPadData xboxPadDatas_[4] = {};
+	std::array<XboxPadData,4> xboxPadDatas_ = {};
 
 	//アプリケーションが動いているか
 	bool isAppInputEnabled_ = false;

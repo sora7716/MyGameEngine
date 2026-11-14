@@ -7,17 +7,16 @@
 
 //前方宣言
 class Input;
-class RigidBody;
 class Object3d;
 class IPlayerState;
 
 /// <summary>
 /// プレイヤー
 /// </summary>
-class Player :public Component{
+class Player :public Component {
 public://列挙型
 	//状態
-	enum class Behavior :uint32_t{
+	enum class Behavior :uint32_t {
 		kNormal,
 		kMove,
 		kAttack,
@@ -56,18 +55,12 @@ public://メンバ関数
 	/// <param name="gameObject">ゲームオブジェクト</param>
 	/// <returns>コンポーネント</returns>
 	std::unique_ptr<Component>Clone(GameObject* gameObject)const override;
-	
+
 	/// <summary>
 	/// ゲームオブジェクトから解除する
 	/// </summary>
 	/// <param name="target">対象</param>
 	void OnGameObjectRemoving(GameObject* target);
-
-	/// <summary>
-	/// 衝突したら
-	/// </summary>
-	/// <param name="info">衝突情報</param>
-	void OnCollisionStay(const CollisionInfo& info);
 
 	/// <summary>
 	/// カメラのオブジェクトの設定
@@ -91,13 +84,7 @@ public://メンバ関数
 	/// 入力の設定
 	/// </summary>
 	/// <param name="input">入力</param>
-	void SetInput(Input*input);
-
-	/// <summary>
-	/// リジッドボディの設定
-	/// </summary>
-	/// <param name="rigidBody">リジッドボディ</param>
-	void SetRigidBody(RigidBody* rigidBody);
+	void SetInput(Input* input);
 
 	/// <summary>
 	/// コンポーネントのタイプ名を取得
@@ -106,28 +93,10 @@ public://メンバ関数
 	std::string GetTypeName()const override;
 private://メンバ関数
 	/// <summary>
-	/// 移動の操作
-	/// </summary>
-	void MoveControl();
-
-	/// <summary>
-	/// ジャンプの操作
-	/// </summary>
-	void JumpControl();
-
-	/// <summary>
 	/// 移動方向に向かせる
 	/// </summary>
 	void LookAt();
 private://定数
-	//移動速度
-	static inline const float kMoveSpeed = 10.0f;
-	//移動の際のレスポンス
-	static inline const float kMoveResponse = 12.0f;
-	//ジャンプ速度
-	static inline const float kJumpSpeed = 15.0f;
-	//重力
-	static inline const float kGravity = -30.0f;
 	//向くスピード
 	static inline const float kLookAtSpeed = 8.0f;
 private://メンバ変数
@@ -140,9 +109,6 @@ private://メンバ変数
 	//オブジェクト3d
 	Object3d* object3d_ = nullptr;
 
-	//リジットボディ
-	RigidBody* rigidBody_ = nullptr;
-
 	//入力されて移動方向ベクトル
 	Vector3 inputDirection_ = {};
 	//World座標系での移動方向ベクトル
@@ -154,7 +120,7 @@ private://メンバ変数
 	Behavior behaviorRequest_ = Behavior::kNormal;
 
 	//プレイヤーのステート
-	std::array<std::unique_ptr<IPlayerState>, static_cast<uint32_t>(Behavior::kCount)>states_;
+	std::array<std::unique_ptr<IPlayerState>,static_cast<uint32_t>(Behavior::kCount)>states_;
 	//現在のステート
 	IPlayerState* currentState_ = nullptr;
 };

@@ -318,6 +318,7 @@ DirectXGame/imgui.ini
 # DirectXTex Compiled Shaders
 **/DirectXTex/Shaders/Compiled/
 
+*.obj
 # resource
 !resource/**/*.obj
 

@@ -173,6 +173,7 @@ public://メンバ関数
 	/// <param name="value">値</param>
 	template <typename T>
 	void SetMaterialParameter(uint32_t materialIndex , const std::string& name , T value) {
+		EnsureUniqueMaterialInstance();
 		materialInstances_[materialIndex]->SetParameter(name , value);
 	}
 
@@ -341,11 +342,6 @@ private://メンバ関数
 	/// <param name="node">ノード</param>
 	/// <param name="parentMatrix">親行列</param>
 	void UpdateNodeMatrices(Node& node , const Matrix4x4& parentMatrix);
-
-	/// <summary>
-	/// マテリアルの初期化
-	/// </summary>
-	void InitializeMaterial();
 private://定数
 	//インスタンスの最大数
 	static const inline uint32_t kMaxInstanceCount_ = 1024;

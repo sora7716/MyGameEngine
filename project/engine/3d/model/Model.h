@@ -119,6 +119,12 @@ public://メンバ関数
 	/// </summary>
 	/// <returns>デフォルトのマテリアルインスタンス</returns>
 	std::vector<std::shared_ptr<MaterialInstance>>GetDefaultMaterialInstances()const;
+
+	/// <summary>
+	/// ピクセルシェーダのファイル名を設定
+	/// </summary>
+	/// <param name="pixelShaderFilePath">ピクセルシェーダのファイル名</param>
+	void SetPixelShaderFileName(const std::string& pixelShaderFilePath);
 private://メンバ関数
 	/// <summary>
 	/// メッシュの構築
@@ -151,6 +157,9 @@ private://メンバ関数
 private://メンバ変数
 	//DirectXの基盤部分
 	DirectXBase* directXBase_ = nullptr;
+
+	//ピクセルシェーダ
+	std::string pixelShaderFileName_ = "Standard.PS.hlsl";
 
 	//シェーダの管理
 	ShaderManager* shaderManager_ = nullptr;

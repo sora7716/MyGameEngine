@@ -1,6 +1,7 @@
 #pragma once
 #include "Component.h"
 #include "Vector3.h"
+#include <PropertyRegistry.h>
 
 /// <summary>
 /// 物理演算をするためのボディ
@@ -29,6 +30,12 @@ public://メンバ関数
 	void Update()override;
 
 	/// <summary>
+	/// プロパティ一覧を登録
+	/// </summary>
+	/// <param name="registry">レジストリ</param>
+	void RegisterProperties(PropertyRegistry* registry);
+
+	/// <summary>
 	/// 複製
 	/// </summary>
 	/// <param name="gameObject">ゲームオブジェクト</param>
@@ -51,6 +58,12 @@ public://メンバ関数
 	/// </summary>
 	/// <param name="groundThreshold">地面に接している閾値</param>
 	void SetGroundThreshold(float groundThreshold);
+
+	/// <summary>
+	/// コライダー以外による設置状態を設定
+	/// </summary>
+	/// <param name="isOnGround">地面に接しているか</param>
+	void SetExternalGround(bool isOnGround);
 
 	/// <summary>
 	/// コンポーネントのタイプ名を取得
@@ -81,6 +94,13 @@ public://メンバ関数
 	/// </summary>
 	/// <returns>加速度</returns>
 	const Vector3& GetAcceleration()const;
+
+	/// <summary>
+	/// 時間でどれくらいの移動量になるか取得
+	/// </summary>
+	/// <param name="deltaTime">デルタタイム</param>
+	/// <returns>移動量</returns>
+	Vector3 GetMoveAmount(float deltaTime)const;
 
 	/// <summary>
 	/// 地面に接している閾値の取得
@@ -116,4 +136,6 @@ private://メンバ変数
 	float groundThreshold_ = 0.0f;
 	//地面に接している
 	bool isOnGround_ = true;
+	//外部からの設置状態
+	bool isOnGroundForExternal = false;
 };

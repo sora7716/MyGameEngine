@@ -1,11 +1,28 @@
 #pragma once
 #include "BaseScene.h"
+#include "MapChipData.h"
+#include "Vector3.h"
 #include <string>
+#include <vector>
+
+//前方宣言
+class MapChipField;
+class MovementCommand;
+class JumpCommand;
+
+//移動用のコマンドモード
+enum class MovementCommandMode : uint32_t {
+	kMoveFowerd,
+	kMoveBack,
+	kMoveLeft,
+	kMoveRight,
+	kCount
+};
 
 /// <summary>
 /// ゲームシーン
 /// </summary>
-class GameScene :public BaseScene{
+class GameScene :public BaseScene {
 public://メンバ関数
 	/// <summary>
 	/// コンストラクタ
@@ -47,7 +64,22 @@ private://メンバ関数
 	/// フィールドの生成
 	/// </summary>
 	void CreateField();
+
+	/// <summary>
+	/// プレイヤー作成
+	/// </summary>
+	GameObject* CreatePlayer();
 private://メンバ変数
+	//マップチップフィールド
+	std::unique_ptr<MapChipField> mapChipField_ = nullptr;
 	//マップチップのCSVの名前
-	std::string mapChipCsvName_ = "Map_01.csv";
+	std::string mapChipCsvName_ = "map_01.csv";
+	//移動用のコマンド
+	std::vector<std::unique_ptr<MovementCommand>> movementCommands_;
+	//ジャンプ用のコマンド
+	std::unique_ptr<JumpCommand>JumpCommand_ = nullptr;
+
+	GameObject* playerObject = nullptr;
+	mapChipDesc::MapChipStatus statusForPos_ = {};
+	Vector3Int indexSet_ = {};
 };

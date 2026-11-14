@@ -160,6 +160,12 @@
     <Filter Include="engine\graphics\shader">
       <UniqueIdentifier>{d899db8f-3bbb-49a4-847e-f9ecedd4ed84}</UniqueIdentifier>
     </Filter>
+    <Filter Include="engine\comand">
+      <UniqueIdentifier>{84e822a3-c7c9-4a2a-b2d1-e7cfa30391cb}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="application\actor\mapChip">
+      <UniqueIdentifier>{8fa35010-bbc9-49fc-8ea6-67638d97dbba}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="engine\main.cpp">
@@ -489,8 +495,29 @@
     <ClCompile Include="engine\graphics\shader\ShaderManager.cpp">
       <Filter>engine\graphics\shader</Filter>
     </ClCompile>
-    <ClCompile Include="application\actor\MapChipField.cpp">
-      <Filter>application\actor</Filter>
+    <ClCompile Include="engine\input\InputComponent.cpp">
+      <Filter>engine\input</Filter>
+    </ClCompile>
+    <ClCompile Include="engine\command\ICommand.cpp">
+      <Filter>engine\comand</Filter>
+    </ClCompile>
+    <ClCompile Include="engine\command\MovementCommand.cpp">
+      <Filter>engine\comand</Filter>
+    </ClCompile>
+    <ClCompile Include="engine\physics\MovementComponent.cpp">
+      <Filter>engine\physics</Filter>
+    </ClCompile>
+    <ClCompile Include="engine\physics\JumpComponent.cpp">
+      <Filter>engine\physics</Filter>
+    </ClCompile>
+    <ClCompile Include="engine\command\JumpCommand.cpp">
+      <Filter>engine\comand</Filter>
+    </ClCompile>
+    <ClCompile Include="application\actor\mapChip\MapChipCollider.cpp">
+      <Filter>application\actor\mapChip</Filter>
+    </ClCompile>
+    <ClCompile Include="application\actor\mapChip\MapChipField.cpp">
+      <Filter>application\actor\mapChip</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -860,8 +887,35 @@
     <ClInclude Include="engine\graphics\shader\ShaderInfo.h">
       <Filter>engine\graphics\shader</Filter>
     </ClInclude>
-    <ClInclude Include="application\actor\MapChipField.h">
-      <Filter>application\actor</Filter>
+    <ClInclude Include="engine\input\InputComponent.h">
+      <Filter>engine\input</Filter>
+    </ClInclude>
+    <ClInclude Include="engine\command\ICommand.h">
+      <Filter>engine\comand</Filter>
+    </ClInclude>
+    <ClInclude Include="engine\command\MovementCommand.h">
+      <Filter>engine\comand</Filter>
+    </ClInclude>
+    <ClInclude Include="engine\input\InputType.h">
+      <Filter>engine\input</Filter>
+    </ClInclude>
+    <ClInclude Include="engine\physics\MovementComponent.h">
+      <Filter>engine\physics</Filter>
+    </ClInclude>
+    <ClInclude Include="engine\physics\JumpComponent.h">
+      <Filter>engine\physics</Filter>
+    </ClInclude>
+    <ClInclude Include="engine\command\JumpCommand.h">
+      <Filter>engine\comand</Filter>
+    </ClInclude>
+    <ClInclude Include="application\actor\mapChip\MapChipCollider.h">
+      <Filter>application\actor\mapChip</Filter>
+    </ClInclude>
+    <ClInclude Include="application\actor\mapChip\MapChipData.h">
+      <Filter>application\actor\mapChip</Filter>
+    </ClInclude>
+    <ClInclude Include="application\actor\mapChip\MapChipField.h">
+      <Filter>application\actor\mapChip</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

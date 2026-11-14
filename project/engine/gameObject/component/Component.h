@@ -13,6 +13,7 @@ struct CollisionInfo;
 /// </summary>
 enum class UpdatePhase{
 	kMain,
+	kLate,
 	kDebug
 };
 

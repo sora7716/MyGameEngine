@@ -43,22 +43,13 @@ const MapChipData& MapChipField::GetMapChipData() const {
 
 //マップのインデックスを取得
 Vector3Int MapChipField::GetMapChipIndexByPosition(const Vector3& pos) {
+	//切り捨てを行った値
+	Vector3 roundDown = (pos - origin_).Floor();
 	Vector3Int result = {
-		.x = static_cast<int32_t>((pos.x - origin_.x) / kBlockWidth),
-		.y = static_cast<int32_t>((pos.y - origin_.y) / kBlockHeight),
-		.z = static_cast<int32_t>((pos.z - origin_.z) / kBlockDepth),
+		.x = static_cast<int32_t>(roundDown.x / kBlockWidth),
+		.y = static_cast<int32_t>(roundDown.y / kBlockHeight),
+		.z = static_cast<int32_t>(roundDown.z / kBlockDepth),
 	};
-
-	//範囲外があるか確認
-	if(result.x < 0) {
-		result.x = 0;
-	}
-	if(result.y < 0) {
-		result.y = 0;
-	}
-	if(result.z < 0) {
-		result.z = 0;
-	}
 
 	return result;
 }
@@ -79,14 +70,15 @@ MapChipStatus MapChipField::GetMapChipStatus(const Vector3& pos) {
 	Vector3Int index = GetMapChipIndexByPosition(pos);
 	//マップステータス
 	MapChipStatus status = {.type = MapChipType::kBlank,.count = 1};
-	//もし範囲外なら
-	if(horizontal_ <= index.x || longitudinal_ <= index.z) {
+	//範囲外なら何もしない
+	if(index.x < 0 || index.y < 0 || index.z < 0 || index.x >= horizontal_ || index.z >= longitudinal_) {
 		return status;
 	}
+
 	//現在のステータスを取得
 	status = mapChipData_.data[index.z][index.x];
 	//位置がステータスより上を指していたら
-	if(static_cast<uint32_t>(index.y) >= status.count) {
+	if(status.count <= static_cast<uint32_t>(index.y)) {
 		status = {.type = MapChipType::kBlank,.count = 1};
 		return status;
 	}
@@ -96,10 +88,18 @@ MapChipStatus MapChipField::GetMapChipStatus(const Vector3& pos) {
 
 //マップのステータス
 MapChipType MapChipField::GetMapChipTypeByIndex(const Vector3Int& index) {
+	//範囲外なら何もしない
+	if(index.x < 0 || index.y < 0 || index.z < 0 || index.x >= horizontal_ || index.z >= longitudinal_) {
+		return MapChipType::kBlank;
+	}
 	//位置を取得
 	Vector3 pos = GetMapChipPositionByIndex(index);
 	//ステータスの取得
 	MapChipStatus status = GetMapChipStatus(pos);
+	//積んである高さより上は何もない
+	if(status.count <= static_cast<uint32_t>(index.y)) {
+		return MapChipType::kBlank;
+	}
 
 	return status.type;
 }

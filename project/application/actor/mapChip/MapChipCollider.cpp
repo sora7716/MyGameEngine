@@ -46,8 +46,6 @@ void MapChipCollider::Update() {
 	//衝突判定を確認
 	CheckCollision(collisionInfo);
 	isWall_ = collisionInfo.isHitWall;
-	//リジッドボディに反映
-	rigidBody_->GetVelocity() = collisionInfo.moveAmount / mathUtility::kDeltaTime;
 
 	//壁に衝突しているとき
 	WallCollision(collisionInfo);
@@ -80,6 +78,11 @@ std::string MapChipCollider::GetTypeName() const {
 	return "MapChipCollider";
 }
 
+//更新のフェーズ
+UpdatePhase MapChipCollider::GetUpdatePhase() {
+	return UpdatePhase::kLate;
+}
+
 //衝突判定の確認
 void MapChipCollider::CheckCollision(CollisionMapChipInfo& info) {
 	//正面の衝突判定
@@ -99,7 +102,7 @@ void MapChipCollider::CheckCollisionFront(CollisionMapChipInfo& info) {
 	//各角の計算
 	std::array<Vector3,static_cast<uint32_t>(Corner::kNumConer)>positionNew = {};
 	for(uint32_t i = 0; i < positionNew.size(); i++) {
-		positionNew[i] = GetCornerPosition(center + info.moveAmount,static_cast<Corner>(i));
+		positionNew[i] = GetCornerPosition(center,static_cast<Corner>(i));
 	}
 
 	//真正面の当たり判定を行う
@@ -138,19 +141,17 @@ void MapChipCollider::CheckCollisionFront(CollisionMapChipInfo& info) {
 	//衝突していたら
 	if(hit) {
 		//めり込みを排除する移動量を設定
-		index = mapChipField_->GetMapChipIndexByPosition(center + Vector3(0.0f,0.0f,targetHalfSize_.z) + info.moveAmount);
-		//現在の座標がオブジェクトの外か判定
-		Vector3Int indexNow = mapChipField_->GetMapChipIndexByPosition((center + Vector3(0.0f,0.0f,targetHalfSize_.z)));
-		if(indexNow.z != index.z) {
-			//めり込み先ブロックの矩形範囲
-			MapChipField::Rect rect = mapChipField_->GetRectByIndex(index);
-			//移動量を計算
-			GetOwner()->GetTransform().translate.z = rect.back - (center.z + targetHalfSize_.z) - kBlank;
-			//速度をリセット
-			rigidBody_->GetVelocity().z = 0.0f;
-			//ブロックに当たった
-			info.isHitWall = true;
-		}
+		index = mapChipField_->GetMapChipIndexByPosition(center + Vector3(0.0f,0.0f,targetHalfSize_.z));
+		//めり込み先ブロックの矩形範囲
+		MapChipField::Rect rect = mapChipField_->GetRectByIndex(index);
+		//Transform
+		Transform& transform = GetOwner()->GetTransform();
+		//移動量を計算
+		transform.translate.z += rect.back - (center.z + targetHalfSize_.z) - kBlank;
+		//速度をリセット
+		rigidBody_->GetVelocity().z = 0.0f;
+		//ブロックに当たった
+		info.isHitWall = true;
 		return;
 	}
 }

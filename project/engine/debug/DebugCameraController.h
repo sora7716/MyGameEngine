@@ -87,6 +87,16 @@ private://メンバ関数
 	/// 平行移動の更新
 	/// </summary>
 	void TranslateUpdate();
+
+	/// <summary>
+	/// マウスで平行移動を操作する
+	/// </summary>
+	void MouseTranslateControl();
+
+	/// <summary>
+	/// キーボードでの平行移動を操作する
+	/// </summary>
+	void KeyboardTranslateControl();
 public://定数
 	//カメラ回転時のマウスの移動量に対する回転角の倍率
 	static inline const float kLookRadPerCount = 1.0f / 300.0f;

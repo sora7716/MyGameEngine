@@ -157,8 +157,6 @@ GameObject* GameScene::CreatePlayer() {
 	//オブジェクト3dを設定
 	Object3d* object3d = gameObject->AddComponent<Object3d>();
 	object3d->SetModel("player");
-	//マップチップのコライダーを設定
-	MapChipCollider* mapChipCollider = gameObject->AddComponent<MapChipCollider>();
 
 #ifdef _DEBUG
 	//ワイヤーフレーム
@@ -178,8 +176,6 @@ GameObject* GameScene::CreatePlayer() {
 	JumpComponent* jumpComponent = gameObject->AddComponent<JumpComponent>();
 	//リジッドボディを設定
 	RigidBody* rigidBody = gameObject->AddComponent<RigidBody>();
-	//マップチップコライダーのセットアップ
-	mapChipCollider->Setup(mapChipField_.get(),rigidBody,{0.5f,0.5f,0.5f});
 	//移動用のコンポーネントのセットアップ
 	movementComponent->Setup(rigidBody,10.0f,12.0f);
 	//ジャンプ用のコンポーネントのセットアップ
@@ -211,6 +207,11 @@ GameObject* GameScene::CreatePlayer() {
 	Player* player = gameObject->AddComponent<Player>();
 	player->SetObject3d(object3d);
 	player->SetInput(GetSceneContext().input);
+
+	//マップチップのコライダーを設定
+	MapChipCollider* mapChipCollider = gameObject->AddComponent<MapChipCollider>();
+	//マップチップコライダーのセットアップ
+	mapChipCollider->Setup(mapChipField_.get(),rigidBody,{0.8f,0.8f,0.8f});
 
 	//コライダーを設定
 	BoxCollider* boxCollider = gameObject->AddComponent<BoxCollider>();

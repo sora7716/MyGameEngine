@@ -78,6 +78,12 @@ public://メンバ関数
 	/// </summary>
 	/// <returns>コンポーネントのタイプ名</returns>
 	std::string GetTypeName()const override;
+
+	/// <summary>
+	/// 更新のフェーズの取得
+	/// </summary>
+	/// <returns>更新のフェーズ</returns>
+	UpdatePhase GetUpdatePhase();
 private://メンバ関数
 	/// <summary>
 	/// 衝突判定の確認
@@ -106,7 +112,7 @@ private://メンバ関数
 	void WallCollision(const CollisionMapChipInfo& info);
 private://定数
 	//余白
-	static inline const float kBlank = 0.1f;
+	static inline const float kBlank = 0.01f;
 	// 壁に衝突時の速度減衰率
 	static inline const float kAttenuationWall = 0.45f;
 private://メンバ変数

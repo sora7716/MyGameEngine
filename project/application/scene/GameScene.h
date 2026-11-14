@@ -79,7 +79,5 @@ private://メンバ変数
 	//ジャンプ用のコマンド
 	std::unique_ptr<JumpCommand>JumpCommand_ = nullptr;
 
-	GameObject* playerObject = nullptr;
-	mapChipDesc::MapChipStatus statusForPos_ = {};
-	Vector3Int indexSet_ = {};
+	GameObject* playerObject_ = nullptr;
 };

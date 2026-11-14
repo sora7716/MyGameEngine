@@ -18,7 +18,7 @@ std::vector<GameObject::NotifyOnTrigger> GameObject::onTriggerTable = {
 };
 
 //ゲームオブジェトの生成
-std::unique_ptr<GameObject> GameObject::Create(const std::string& name){
+std::unique_ptr<GameObject> GameObject::Create(const std::string& name) {
 	//インスタンスの生成
 	std::unique_ptr<GameObject>instance = std::make_unique<GameObject>();
 	//初期化
@@ -27,7 +27,7 @@ std::unique_ptr<GameObject> GameObject::Create(const std::string& name){
 }
 
 //コンストラクタ
-GameObject::GameObject(){
+GameObject::GameObject() {
 }
 
 //コピーコンストラクタ
@@ -35,24 +35,24 @@ GameObject::GameObject(const GameObject& gameObject)
 	:name_(gameObject.name_),
 	transform_(gameObject.transform_),
 	isActive_(gameObject.isActive_),
-	tag_(gameObject.tag_){
-	for (const std::unique_ptr<Component>& component : gameObject.components_){
+	tag_(gameObject.tag_) {
+	for(const std::unique_ptr<Component>& component : gameObject.components_) {
 		components_.push_back(std::move(component->Clone(this)));
 	}
 }
 
 //デストラクタ
-GameObject::~GameObject(){
+GameObject::~GameObject() {
 }
 
 //複製
-std::unique_ptr<GameObject> GameObject::Clone() const{
+std::unique_ptr<GameObject> GameObject::Clone() const {
 	std::unique_ptr<GameObject>cloneInstance = std::make_unique<GameObject>(*this);
 	return cloneInstance;
 }
 
 //初期化
-void GameObject::Initialize(const std::string& name){
+void GameObject::Initialize(const std::string& name) {
 	name_ = name;
 	transform_ = {};
 	isActive_ = true;
@@ -60,7 +60,7 @@ void GameObject::Initialize(const std::string& name){
 }
 
 //更新
-void GameObject::Update(UpdatePhase phase){
+void GameObject::Update(UpdatePhase phase) {
 	//コンポーネントの更新
 	UpdateComponents(phase);
 
@@ -69,21 +69,21 @@ void GameObject::Update(UpdatePhase phase){
 }
 
 //親子付け
-bool GameObject::AttachTo(GameObject* parentObject){
-	if (!parentObject){
+bool GameObject::AttachTo(GameObject* parentObject) {
+	if(!parentObject) {
 		Logger::OutputLog("親子付けを行う際の親がnull参照しました");
 		return false;
 	}
 
-	if (parentObject == this){
+	if(parentObject == this) {
 		Logger::OutputLog("親子付けを行う際に自分のポインタを参照しました");
 		return false;
 	}
 
 	//自分に親子付けしないようにする
 	const GameObject* ancestor = parentObject;
-	while (ancestor){
-		if (ancestor == this){
+	while(ancestor) {
+		if(ancestor == this) {
 			Logger::OutputLog("循環する親子付けはできません");
 			return false;
 		}
@@ -94,25 +94,25 @@ bool GameObject::AttachTo(GameObject* parentObject){
 
 	//メンバ変数に記録
 	parentObject_ = parentObject;
-	parentMatrix_ = parentObject_->GetWorldMatrix();
+	parentMatrix_ = matrixUtility::MakeAffineMatrix(parentObject_->GetTransform());
 
 	//接続行列
 	Matrix4x4 incidenceMatrix = attachedMatrix_ * parentMatrix_;
 	Matrix4x4 newLocalMatrix = worldMatrix_ * incidenceMatrix.Inverse();
-	Transform newLocalTransform = matrixUtility::DecomposeMatrix(newLocalMatrix, transform_.scale);
+	Transform newLocalTransform = matrixUtility::DecomposeMatrix(newLocalMatrix,transform_.scale);
 	transform_ = newLocalTransform;
 	return true;
 }
 
 //親子付けを外す
-void GameObject::Detach(){
+void GameObject::Detach() {
 	//そもそも親がなければ
-	if (!parentObject_){
+	if(!parentObject_) {
 		return;
 	}
 
 	//Transformを抽出
-	transform_ = matrixUtility::DecomposeMatrix(worldMatrix_, transform_.scale);
+	transform_ = matrixUtility::DecomposeMatrix(worldMatrix_,transform_.scale);
 
 	//親を解除
 	parentObject_ = nullptr;
@@ -121,109 +121,109 @@ void GameObject::Detach(){
 }
 
 //トランスフォームの取得
-Transform& GameObject::GetTransform(){
+Transform& GameObject::GetTransform() {
 	return transform_;
 }
 
 //ワールドの位置の取得
-Vector3 GameObject::GetWorldPos(){
-	return { worldMatrix_.m[3][0],worldMatrix_.m[3][1],worldMatrix_.m[3][2] };
+Vector3 GameObject::GetWorldPos() {
+	return {worldMatrix_.m[3][0],worldMatrix_.m[3][1],worldMatrix_.m[3][2]};
 }
 
 //トランスフォームの取得
-const Transform& GameObject::GetTransform() const{
+const Transform& GameObject::GetTransform() const {
 	return transform_;
 }
 
 //アクティブかどうかを設定
-void GameObject::SetIsActive(bool isActive){
+void GameObject::SetIsActive(bool isActive) {
 	isActive_ = isActive;
 }
 
 //接続する行列の設定
-void GameObject::SetAttachedMatrix(const Matrix4x4& attachedMatrix){
+void GameObject::SetAttachedMatrix(const Matrix4x4& attachedMatrix) {
 	attachedMatrix_ = attachedMatrix;
 }
 
 //アクティブかどうかを取得
-bool GameObject::IsActive() const{
+bool GameObject::IsActive() const {
 	return isActive_;
 }
 
 //名前の設定
-void GameObject::SetName(const std::string& name){
+void GameObject::SetName(const std::string& name) {
 	name_ = name;
 }
 
 //現在の接続シーンの設定
-void GameObject::SetCurrentScene(BaseScene* currentScene){
+void GameObject::SetCurrentScene(BaseScene* currentScene) {
 	currentScene_ = currentScene;
 }
 
 //名前を取得
-const std::string& GameObject::GetName() const{
+const std::string& GameObject::GetName() const {
 	return name_;
 }
 
 //タグの設定
-void GameObject::SetTag(const std::string& tag){
+void GameObject::SetTag(const std::string& tag) {
 	tag_ = tag;
 }
 
 //タグの取得
-const std::string& GameObject::GetTag() const{
+const std::string& GameObject::GetTag() const {
 	return tag_;
 }
 
 //現在の接続シーンの取得
-BaseScene* GameObject::GetCurrentScene(){
+BaseScene* GameObject::GetCurrentScene() {
 	return currentScene_;
 }
 
 //ワールド行列の取得
-const Matrix4x4& GameObject::GetWorldMatrix() const{
+const Matrix4x4& GameObject::GetWorldMatrix() const {
 	return worldMatrix_;
 }
 
 //ローカル行列の取得
-const Matrix4x4& GameObject::GetLocalMatrix() const{
+const Matrix4x4& GameObject::GetLocalMatrix() const {
 	return localMatrix_;
 }
 
 //親オブジェクトの取得
-const GameObject* GameObject::GetParentObject() const{
+const GameObject* GameObject::GetParentObject() const {
 	return parentObject_;
 }
 
 //接続行列の取得
-const Matrix4x4& GameObject::GetAttachedMatrix() const{
+const Matrix4x4& GameObject::GetAttachedMatrix() const {
 	return attachedMatrix_;
 }
 
 //親のワールド行列を取得
-const Matrix4x4& GameObject::GetParentMatrix() const{
+const Matrix4x4& GameObject::GetParentMatrix() const {
 	return parentMatrix_;
 }
 
 //すべてのコンポーネントを取得
-const std::vector<std::unique_ptr<Component>>& GameObject::GetAllComponents()const{
+const std::vector<std::unique_ptr<Component>>& GameObject::GetAllComponents()const {
 	return components_;
 }
 
 //デバッグでImGuiを使用できるようにする
-void GameObject::DebugImGui(){
+void GameObject::DebugImGui() {
 	//ゲームオブジェクトが有効か
-	if (!isActive_){
+	if(!isActive_) {
 		return;
 	}
 
 	//各コンポーネントごとに
-	for (const std::unique_ptr<Component>& component : components_){
-		if (!component){
+	for(const std::unique_ptr<Component>& component : components_) {
+		if(!component) {
 			//コンポーネントが存在しているか	
 			continue;
 
-		} else if (!component->IsEnabled()){
+		} else if(!component->IsEnabled()) {
 			//コンポーネントが有効か
 			continue;
 		}
@@ -234,32 +234,32 @@ void GameObject::DebugImGui(){
 }
 
 //衝突判定のイベントを呼び出す
-void GameObject::InvokeCollisionEvent(uint32_t index, const CollisionInfo& info){
+void GameObject::InvokeCollisionEvent(uint32_t index,const CollisionInfo& info) {
 	(this->*onCollisionTable[index])(info);
 }
 
 //衝突判定のイベントを呼び出す
-void GameObject::InvokeTriggerEvent(uint32_t index, BaseCollider* other){
+void GameObject::InvokeTriggerEvent(uint32_t index,BaseCollider* other) {
 	(this->*onTriggerTable[index])(other);
 }
 
 //ゲームオブジェクトから解除すると通知
-void GameObject::NotifyGameObjectRemoving(GameObject* target){
-	for (const std::unique_ptr<Component>& component : components_){
-		if (component){
+void GameObject::NotifyGameObjectRemoving(GameObject* target) {
+	for(const std::unique_ptr<Component>& component : components_) {
+		if(component) {
 			component->OnGameObjectRemoving(target);
 		}
 	}
 }
 
 //接触した瞬間ということを各コンポーネントに通知する
-void GameObject::NotifyOnCollisionEnter(const CollisionInfo& info){
+void GameObject::NotifyOnCollisionEnter(const CollisionInfo& info) {
 	//各コンポーネントごとに
-	for (const std::unique_ptr<Component>& component : components_){
-		if (!component){
+	for(const std::unique_ptr<Component>& component : components_) {
+		if(!component) {
 			//コンポーネントが存在しているか	
 			continue;
-		} else if (!component->IsEnabled()){
+		} else if(!component->IsEnabled()) {
 			//コンポーネントが有効か
 			continue;
 		}
@@ -270,13 +270,13 @@ void GameObject::NotifyOnCollisionEnter(const CollisionInfo& info){
 }
 
 //衝突したことを各コンポーネントに通知する
-void GameObject::NotifyOnCollisionStay(const CollisionInfo& info){
+void GameObject::NotifyOnCollisionStay(const CollisionInfo& info) {
 	//各コンポーネントごとに
-	for (const std::unique_ptr<Component>& component : components_){
-		if (!component){
+	for(const std::unique_ptr<Component>& component : components_) {
+		if(!component) {
 			//コンポーネントが存在しているか	
 			continue;
-		} else if (!component->IsEnabled()){
+		} else if(!component->IsEnabled()) {
 			//コンポーネントが有効か
 			continue;
 		}
@@ -287,13 +287,13 @@ void GameObject::NotifyOnCollisionStay(const CollisionInfo& info){
 }
 
 //離れた瞬間ということを各コンポーネントに通知する
-void GameObject::NotifyOnCollisionExit(const CollisionInfo& info){
+void GameObject::NotifyOnCollisionExit(const CollisionInfo& info) {
 	//各コンポーネントごとに
-	for (const std::unique_ptr<Component>& component : components_){
-		if (!component){
+	for(const std::unique_ptr<Component>& component : components_) {
+		if(!component) {
 			//コンポーネントが存在しているか	
 			continue;
-		} else if (!component->IsEnabled()){
+		} else if(!component->IsEnabled()) {
 			//コンポーネントが有効か
 			continue;
 		}
@@ -304,13 +304,13 @@ void GameObject::NotifyOnCollisionExit(const CollisionInfo& info){
 }
 
 //接触した瞬間ということを各コンポーネントに通知する
-void GameObject::NotifyOnTriggerEnter(BaseCollider* other){
+void GameObject::NotifyOnTriggerEnter(BaseCollider* other) {
 	//各コンポーネントごとに
-	for (const std::unique_ptr<Component>& component : components_){
-		if (!component){
+	for(const std::unique_ptr<Component>& component : components_) {
+		if(!component) {
 			//コンポーネントが存在しているか	
 			continue;
-		} else if (!component->IsEnabled()){
+		} else if(!component->IsEnabled()) {
 			//コンポーネントが有効か
 			continue;
 		}
@@ -321,13 +321,13 @@ void GameObject::NotifyOnTriggerEnter(BaseCollider* other){
 }
 
 //衝突したことを各コンポーネントに通知する
-void GameObject::NotifyOnTriggerStay(BaseCollider* other){
+void GameObject::NotifyOnTriggerStay(BaseCollider* other) {
 	//各コンポーネントごとに
-	for (const std::unique_ptr<Component>& component : components_){
-		if (!component){
+	for(const std::unique_ptr<Component>& component : components_) {
+		if(!component) {
 			//コンポーネントが存在しているか	
 			continue;
-		} else if (!component->IsEnabled()){
+		} else if(!component->IsEnabled()) {
 			//コンポーネントが有効か
 			continue;
 		}
@@ -338,13 +338,13 @@ void GameObject::NotifyOnTriggerStay(BaseCollider* other){
 }
 
 //離れた瞬間ということを各コンポーネントに通知する
-void GameObject::NotifyOnTriggerExit(BaseCollider* other){
+void GameObject::NotifyOnTriggerExit(BaseCollider* other) {
 	//各コンポーネントごとに
-	for (const std::unique_ptr<Component>& component : components_){
-		if (!component){
+	for(const std::unique_ptr<Component>& component : components_) {
+		if(!component) {
 			//コンポーネントが存在しているか	
 			continue;
-		} else if (!component->IsEnabled()){
+		} else if(!component->IsEnabled()) {
 			//コンポーネントが有効か
 			continue;
 		}
@@ -355,22 +355,22 @@ void GameObject::NotifyOnTriggerExit(BaseCollider* other){
 }
 
 //コンポーネントの更新
-void GameObject::UpdateComponents(UpdatePhase phase){
+void GameObject::UpdateComponents(UpdatePhase phase) {
 	//ゲームオブジェクトが有効か
-	if (!isActive_){
+	if(!isActive_) {
 		return;
 	}
 
 	//各コンポーネントごとに
-	for (const std::unique_ptr<Component>& component : components_){
-		if (!component){
+	for(const std::unique_ptr<Component>& component : components_) {
+		if(!component) {
 			//コンポーネントが存在しているか	
 			continue;
 
-		} else if (!component->IsEnabled()){
+		} else if(!component->IsEnabled()) {
 			//コンポーネントが有効か
 			continue;
-		} else if (component->GetUpdatePhase() != phase){
+		} else if(component->GetUpdatePhase() != phase) {
 			//設定したフェーズか
 			continue;
 		}
@@ -381,14 +381,14 @@ void GameObject::UpdateComponents(UpdatePhase phase){
 }
 
 //行列の更新
-void GameObject::UpdateMatrices(){
+void GameObject::UpdateMatrices() {
 	//このオブジェクト本来のワールド行列を求める
 	localMatrix_ = matrixUtility::MakeAffineMatrix(transform_);
 
 	//親子付けする行列の計算
-	if (parentObject_){
+	if(parentObject_) {
 		parentMatrix_ = parentObject_->GetWorldMatrix();
-	} else{
+	} else {
 		parentMatrix_ = Matrix4x4::Identity4x4();
 	}
 

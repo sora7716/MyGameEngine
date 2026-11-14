@@ -6,6 +6,7 @@
 #include <string>
 #include <cstdint>
 #include <vector>
+#include <memory>
 
 //前方宣言
 class Input;

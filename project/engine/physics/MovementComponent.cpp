@@ -43,6 +43,9 @@ void MovementComponent::Update() {
 			rotMat = matrixUtility::MakeRotateMatrix(cameraObject_->GetTransform().rotate);
 		}
 
+		//入力の強さが1を超えないようにする
+		float inputStrength = std::min(direction_.Length(),1.0f);
+
 		//カメラの向いてる方向を正にする(XとZ軸限定)
 		Vector3 worldDirection = mathUtility::TransformNormal(direction_,rotMat);
 		//Y軸は考えない
@@ -50,7 +53,7 @@ void MovementComponent::Update() {
 
 		//長さが0より大きければ
 		if(worldDirection.LengthSquared() > 0.0f) {
-			worldDirection = worldDirection.Normalize();
+			worldDirection = worldDirection.Normalize() * inputStrength;
 		}
 
 		//目標速度を決定

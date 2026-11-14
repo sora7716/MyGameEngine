@@ -1,6 +1,7 @@
 #include "InputComponent.h"
 #include "Input.h"
 #include "ICommand.h"
+#include "IAxisCommand.h"
 #include "Logger.h"
 #include <cassert>
 //フェーズのビットフラグをOR演算
@@ -48,7 +49,7 @@ void InputComponent::Update() {
 		return;
 	}
 
-	//ステートを更新
+	//ボタンの入力のステートを更新
 	for(InputState& inputState : inputStates_) {
 		//現在のフェーズを取得
 		InputPhase currentPhase = GetCurrentPhase(inputState.type,inputState.controllerIndex);
@@ -59,6 +60,30 @@ void InputComponent::Update() {
 			//コマンドの実行
 			inputState.command->Execute();
 		}
+	}
+
+	//軸の入力のステートの更新
+	for(AxisInputState& axisState : axisInputStates_) {
+		//controllerにつながっていなければ
+		if(!input_->IsXboxPadConnected(axisState.controllerIndex)) {
+			continue;
+		}
+
+		//スティックの値を取得
+		Vector2 axis = {};
+		if(axisState.stick == StickType::kLeft) {
+			axis = input_->GetXboxPadLeftStick(axisState.controllerIndex);
+		} else {
+			axis = input_->GetXboxPadRightStick(axisState.controllerIndex);
+		}
+
+		//軸が何も値の変更がなければ
+		if(axis.x == 0.0f && axis.y == 0.0f) {
+			continue;
+		}
+
+		//ステートを実行
+		axisState.command->Execute({axis.x,0.0f,axis.y});
 	}
 }
 

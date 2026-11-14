@@ -79,6 +79,7 @@ void DefaultResourceLoader::LoadModel(){
 	modelManager_->AddModel("shield", "shield/shield.gltf");
 	//デバッグキューブ
 	modelManager_->AddModel("debugCube", "debugCube/debugCube.gltf");
+	modelManager_->AddModel("wall", "wall/wall.gltf");
 	//デカヌ
 	//core_->GetModelManager()->AddModel("dekanu", "dekanu/dekanu.gltf");
 	//人

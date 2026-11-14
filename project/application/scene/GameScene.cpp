@@ -14,6 +14,7 @@
 #include "ImGuiManager.h"
 #include "MapChipField.h"
 #include "MapChipCollider.h"
+#include "StickMovementCommand.h"
 #include "Color.h"
 #include <array>
 using namespace mapChipDesc;
@@ -69,15 +70,11 @@ void GameScene::Initialize() {
 	CreateField();
 
 	//プレイヤーの作成
-	playerObject = CreatePlayer();
+	playerObject_ = CreatePlayer();
 }
 
 //更新のステート
 void GameScene::UpdateState() {
-	//プレイヤーの位置からマップ番号を取得
-	indexSet_ = mapChipField_->GetMapChipIndexByPosition(playerObject->GetTransform().translate);
-	//プレイヤーの位置からブロックのステータスを取得
-	statusForPos_ = mapChipField_->GetMapChipStatusByIndex(indexSet_);
 }
 
 //デバッグ
@@ -86,8 +83,6 @@ void GameScene::Debug() {
 	//基底クラスのデバッグ
 	BaseScene::Debug();
 	ImGui::Begin("マップチップに関する物");
-	ImGui::Text("x:%d,y:%d,z:%d",indexSet_.x,indexSet_.y,indexSet_.z);
-	ImGui::Text("pos:status = %s,count = %d",statusForPos_.type != MapChipType::kBlank ? "ブロック" : "空気",statusForPos_.count);
 	ImGui::End();
 #endif // USE_IMGUI
 }
@@ -184,6 +179,11 @@ GameObject* GameScene::CreatePlayer() {
 	//ジャンプ用のコンポーネントのセットアップ
 	jumpComponent->Setup(rigidBody,15.0f);
 
+	//スティックのコマンドを追加
+	std::unique_ptr<StickMovementCommand>stickMove = std::make_unique<StickMovementCommand>();
+	stickMove->Setup(movementComponent);
+	inputComponent->AddAxisInput(StickType::kLeft,std::move(stickMove));
+
 	//キーの一覧
 	std::array<const char,static_cast<uint32_t>(MovementCommandMode::kCount)>moveKeyList{
 		DIK_W,
@@ -205,6 +205,7 @@ GameObject* GameScene::CreatePlayer() {
 	//ジャンプコマンドを設定
 	JumpCommand_->SetJumpComponent(jumpComponent);
 	inputComponent->AddInputState(static_cast<BYTE>(DIK_SPACE),InputPhase::kHeld,std::move(JumpCommand_));
+	inputComponent->AddInputState(XboxInput::kA,InputPhase::kHeld,std::move(JumpCommand_));
 
 	//プレイヤーの設定
 	Player* player = gameObject->AddComponent<Player>();

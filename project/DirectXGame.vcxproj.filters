@@ -519,10 +519,10 @@
     <ClCompile Include="application\actor\mapChip\MapChipField.cpp">
       <Filter>application\actor\mapChip</Filter>
     </ClCompile>
-    <ClCompile Include="engine\command\IAxisCommand.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
     <ClCompile Include="engine\command\StickMovementCommand.cpp">
+      <Filter>engine\comand</Filter>
+    </ClCompile>
+    <ClCompile Include="engine\command\IAxisCommand.cpp">
       <Filter>engine\comand</Filter>
     </ClCompile>
   </ItemGroup>

@@ -25,6 +25,7 @@ void StickMovementCommand::Execute(const Vector3& axis) {
 //複製
 std::unique_ptr<IAxisCommand> StickMovementCommand::Clone() const {
 	std::unique_ptr<StickMovementCommand>cloneInstance = std::make_unique<StickMovementCommand>();
+	cloneInstance->SetMovementComponent(movementComponent_);
 	return cloneInstance;
 }
 

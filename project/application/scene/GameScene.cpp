@@ -189,7 +189,7 @@ GameObject* GameScene::CreatePlayer() {
 
 	//スティックのコマンドを追加	
 	stickMoveCommand_->SetMovementComponent(movementComponent);
-	inputComponent->AddAxisInput(StickType::kLeft,std::move(stickMoveCommand_));
+	inputComponent->AddAxisInput(StickType::kLeft,std::move(stickMoveCommand_->Clone()));
 
 	//キーの一覧
 	std::array<const char,static_cast<uint32_t>(MovementCommandMode::kCount)>moveKeyList{
@@ -206,13 +206,13 @@ GameObject* GameScene::CreatePlayer() {
 		//移動酔うコンポーネントを追加
 		movementCommands_[i]->SetMovementComponent(movementComponent);
 		//移動コマンドを設定
-		inputComponent->AddInputState(static_cast<BYTE>(key),InputPhase::kHeld,std::move(movementCommands_[i]));
+		inputComponent->AddInputState(static_cast<BYTE>(key),InputPhase::kHeld,std::move(movementCommands_[i]->Clone()));
 	}
 
 	//ジャンプコマンドを設定
 	JumpCommand_->SetJumpComponent(jumpComponent);
-	inputComponent->AddInputState(static_cast<BYTE>(DIK_SPACE),InputPhase::kHeld,std::move(JumpCommand_));
-	inputComponent->AddInputState(XboxInput::kA,InputPhase::kHeld,std::move(JumpCommand_));
+	inputComponent->AddInputState(static_cast<BYTE>(DIK_SPACE),InputPhase::kPressed,std::move(JumpCommand_->Clone()));
+	inputComponent->AddInputState(XboxInput::kA,InputPhase::kPressed,std::move(JumpCommand_->Clone()));
 
 	//プレイヤーの設定
 	Player* player = gameObject->AddComponent<Player>();

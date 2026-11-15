@@ -24,6 +24,7 @@ void JumpCommand::Execute() {
 //複製
 std::unique_ptr<ICommand> JumpCommand::Clone() const {
 	std::unique_ptr<JumpCommand>cloneInstance = std::make_unique<JumpCommand>();
+	cloneInstance->SetJumpComponent(jumpComponent_);
 	return cloneInstance;
 }
 

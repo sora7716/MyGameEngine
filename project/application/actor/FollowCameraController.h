@@ -1,5 +1,6 @@
 #pragma once
 #include "Component.h"
+#include "MathUtility.h"
 
 /// <summary>
 ///	追従カメラ
@@ -46,5 +47,7 @@ public://メンバ関数
 	/// <param name="registry">レジストリ</param>
 	void RegisterProperties(PropertyRegistry* registry);
 private://メンバ変数
+	//球面座標系
+	mathUtility::Spherical spherical = {};
 };
 

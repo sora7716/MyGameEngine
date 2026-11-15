@@ -10,6 +10,9 @@ FollowCameraController::~FollowCameraController() {
 
 //初期化
 void FollowCameraController::Initialize() {
+	spherical.radius = 6.0f;
+	spherical.theta = 0.0f;
+	spherical.phi = -mathUtility::kPi/2.0f;
 }
 
 //更新

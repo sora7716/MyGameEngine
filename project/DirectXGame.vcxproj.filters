@@ -525,6 +525,9 @@
     <ClCompile Include="engine\command\IAxisCommand.cpp">
       <Filter>engine\comand</Filter>
     </ClCompile>
+    <ClCompile Include="application\actor\FollowCameraController.cpp">
+      <Filter>application\actor</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="application\scene\TestPlayScene.h">
@@ -928,6 +931,9 @@
     </ClInclude>
     <ClInclude Include="engine\command\StickMovementCommand.h">
       <Filter>engine\comand</Filter>
+    </ClInclude>
+    <ClInclude Include="application\actor\FollowCameraController.h">
+      <Filter>application\actor</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

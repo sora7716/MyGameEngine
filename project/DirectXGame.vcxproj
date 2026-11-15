@@ -20,6 +20,7 @@
     <ClCompile Include="application\actor\enemy\EnemyRecoverState.cpp" />
     <ClCompile Include="application\actor\enemy\EnemyNormalState.cpp" />
     <ClCompile Include="application\actor\enemy\IEnemyState.cpp" />
+    <ClCompile Include="application\actor\FollowCameraController.cpp" />
     <ClCompile Include="application\actor\mapChip\MapChipCollider.cpp" />
     <ClCompile Include="application\actor\mapChip\MapChipField.cpp" />
     <ClCompile Include="application\actor\OrbitCameraController.cpp" />
@@ -452,6 +453,7 @@
     <ClInclude Include="application\actor\enemy\EnemyRecoverState.h" />
     <ClInclude Include="application\actor\enemy\EnemyNormalState.h" />
     <ClInclude Include="application\actor\enemy\IEnemyState.h" />
+    <ClInclude Include="application\actor\FollowCameraController.h" />
     <ClInclude Include="application\actor\mapChip\MapChipCollider.h" />
     <ClInclude Include="application\actor\mapChip\MapChipData.h" />
     <ClInclude Include="application\actor\mapChip\MapChipField.h" />

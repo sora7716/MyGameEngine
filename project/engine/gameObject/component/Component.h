@@ -98,6 +98,12 @@ public://メンバ関数
 	virtual std::unique_ptr<Component> Clone(GameObject* gameObject)const = 0;
 
 	/// <summary>
+	/// コンポーネントのタイプ名を返す
+	/// </summary>
+	/// <returns>コンポーネントのタイプ名</returns>
+	virtual std::string GetTypeName()const = 0;
+
+	/// <summary>
 	/// プロパティ一覧を登録
 	/// </summary>
 	/// <param name="registry">レジストリ</param>
@@ -108,12 +114,6 @@ public://メンバ関数
 	/// </summary>
 	/// <returns>取り付け先</returns>
 	GameObject* GetOwner()const;
-
-	/// <summary>
-	/// コンポーネントのタイプ名を返す
-	/// </summary>
-	/// <returns>コンポーネントのタイプ名</returns>
-	virtual std::string GetTypeName()const = 0;
 
 	/// <summary>
 	/// 有効状態の設定

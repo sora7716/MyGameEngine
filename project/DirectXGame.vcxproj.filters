@@ -519,11 +519,11 @@
     <ClCompile Include="application\actor\mapChip\MapChipField.cpp">
       <Filter>application\actor\mapChip</Filter>
     </ClCompile>
-    <ClCompile Include="engine\command\StickMovementCommand.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
     <ClCompile Include="engine\command\IAxisCommand.cpp">
       <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="engine\command\StickMovementCommand.cpp">
+      <Filter>engine\comand</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -927,7 +927,7 @@
       <Filter>engine\comand</Filter>
     </ClInclude>
     <ClInclude Include="engine\command\StickMovementCommand.h">
-      <Filter>ヘッダー ファイル</Filter>
+      <Filter>engine\comand</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

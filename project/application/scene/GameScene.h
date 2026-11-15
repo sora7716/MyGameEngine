@@ -9,6 +9,7 @@
 class MapChipField;
 class MovementCommand;
 class JumpCommand;
+class StickMovementCommand;
 
 //移動用のコマンドモード
 enum class MovementCommandMode : uint32_t {
@@ -76,6 +77,7 @@ private://メンバ変数
 	std::string mapChipCsvName_ = "map_01.csv";
 	//移動用のコマンド
 	std::vector<std::unique_ptr<MovementCommand>> movementCommands_;
+	std::unique_ptr<StickMovementCommand>stickMoveCommand_ = nullptr;
 	//ジャンプ用のコマンド
 	std::unique_ptr<JumpCommand>JumpCommand_ = nullptr;
 

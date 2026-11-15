@@ -20,12 +20,6 @@ public://メンバ関数
 	~StickMovementCommand()override;
 
 	/// <summary>
-	/// セットアップ
-	/// </summary>
-	/// <param name="movementComponent">移動用のコンポーネント</param>
-	void Setup(MovementComponent* movementComponent);
-
-	/// <summary>
 	/// 実行
 	/// </summary>
 	/// <param name="axis">入力値(-1~1)</param>
@@ -36,6 +30,12 @@ public://メンバ関数
 	/// </summary>
 	/// <returns></returns>
 	std::unique_ptr<IAxisCommand>Clone()const; 
+
+	/// <summary>
+	/// 移動用コンポーネントの設定
+	/// </summary>
+	/// <param name="movementComponent">移動用のコンポーネント</param>
+	void SetMovementComponent(MovementComponent* movementComponent);
 private://メンバ変数
 	//移動用のコンポーネント
 	MovementComponent* movementComponent_ = nullptr;

@@ -8,13 +8,13 @@
 #include "Player.h"
 #include "InputComponent.h"
 #include "MovementCommand.h"
-#include "MovementComponent.h"
-#include "JumpCommand.h"
 #include "JumpComponent.h"
+#include "JumpCommand.h"
+#include "StickMovementCommand.h"
+#include "MovementComponent.h"
 #include "ImGuiManager.h"
 #include "MapChipField.h"
 #include "MapChipCollider.h"
-#include "StickMovementCommand.h"
 #include "Color.h"
 #include <array>
 using namespace mapChipDesc;
@@ -45,6 +45,8 @@ void GameScene::Initialize() {
 	movementCommands_[static_cast<uint32_t>(MovementCommandMode::kMoveRight)]->Setup({1.0f,0.0f,0.0f});
 	//左へ移動
 	movementCommands_[static_cast<uint32_t>(MovementCommandMode::kMoveLeft)]->Setup({-1.0f,0.0f,0.0f});
+	//スティックの移動用コマンドを生成
+	stickMoveCommand_ = std::make_unique<StickMovementCommand>();
 
 	//ジャンプコマンドを生成
 	JumpCommand_ = std::make_unique<JumpCommand>();
@@ -71,6 +73,12 @@ void GameScene::Initialize() {
 
 	//プレイヤーの作成
 	playerObject_ = CreatePlayer();
+
+	GameObject* wallObjecrt = CreateGameObject();
+	wallObjecrt->GetTransform().translate.z = 1.0f;
+	wallObjecrt->AttachTo(playerObject_);
+	Object3d* object3d = wallObjecrt->AddComponent<Object3d>();
+	object3d->SetModel("wall");
 }
 
 //更新のステート
@@ -179,10 +187,9 @@ GameObject* GameScene::CreatePlayer() {
 	//ジャンプ用のコンポーネントのセットアップ
 	jumpComponent->Setup(rigidBody,15.0f);
 
-	//スティックのコマンドを追加
-	std::unique_ptr<StickMovementCommand>stickMove = std::make_unique<StickMovementCommand>();
-	stickMove->Setup(movementComponent);
-	inputComponent->AddAxisInput(StickType::kLeft,std::move(stickMove));
+	//スティックのコマンドを追加	
+	stickMoveCommand_->SetMovementComponent(movementComponent);
+	inputComponent->AddAxisInput(StickType::kLeft,std::move(stickMoveCommand_));
 
 	//キーの一覧
 	std::array<const char,static_cast<uint32_t>(MovementCommandMode::kCount)>moveKeyList{

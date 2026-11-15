@@ -11,13 +11,6 @@ StickMovementCommand::StickMovementCommand() {
 StickMovementCommand::~StickMovementCommand() {
 }
 
-//セットアップ
-void StickMovementCommand::Setup(MovementComponent* movementComponent) {
-	//移動用のコンポーネントを記録
-	assert(movementComponent);
-	movementComponent_ = movementComponent;
-}
-
 //実行
 void StickMovementCommand::Execute(const Vector3& axis) {
 	if(!movementComponent_) {
@@ -33,4 +26,11 @@ void StickMovementCommand::Execute(const Vector3& axis) {
 std::unique_ptr<IAxisCommand> StickMovementCommand::Clone() const {
 	std::unique_ptr<StickMovementCommand>cloneInstance = std::make_unique<StickMovementCommand>();
 	return cloneInstance;
+}
+
+//移動用コンポーネントの設定
+void StickMovementCommand::SetMovementComponent(MovementComponent* movementComponent) {
+	//移動用のコンポーネントを記録
+	assert(movementComponent);
+	movementComponent_ = movementComponent;
 }

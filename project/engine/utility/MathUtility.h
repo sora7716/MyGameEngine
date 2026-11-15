@@ -23,6 +23,13 @@ namespace mathUtility {
 	};
 
 	/// <summary>
+	/// 球面座標系から直交座標系に変換
+	/// </summary>
+	/// <param name="spherical">球面座標系</param>
+	/// <returns>直交座標系</returns>
+	Vector3 ToCartesian(const Spherical& spherical);
+
+	/// <summary>
 	/// トランスフォームノーマル
 	/// </summary>
 	/// <param name="v">ベクトル</param>

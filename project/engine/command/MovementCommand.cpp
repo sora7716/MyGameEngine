@@ -30,6 +30,8 @@ void MovementCommand::Execute() {
 //複製
 std::unique_ptr<ICommand> MovementCommand::Clone() const {
 	std::unique_ptr<MovementCommand>cloneInstance = std::make_unique<MovementCommand>();
+	cloneInstance->Setup(direction_);
+	cloneInstance->SetMovementComponent(movementComponent_);
 	return cloneInstance;
 }
 

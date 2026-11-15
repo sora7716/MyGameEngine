@@ -12,7 +12,7 @@
 class BaseScene;
 
 //ゲームオブジェクト
-class GameObject{
+class GameObject {
 public://静的メンバ関数
 	/// <summary>
 	/// ゲームオブジェクトの生成
@@ -59,8 +59,24 @@ public://メンバ関数
 	/// 親子付け
 	/// </summary>
 	/// <param name="parentObject">親のオブジェクト</param>
+	/// <param name="worldPositionStays">trueならワールドの見た目を保つ,falseならローカルのあt来をそのまま使う</param>
 	/// <returns>成功したか</returns>
-	bool AttachTo(GameObject* parentObject);
+	bool AttachTo(GameObject* parentObject,bool worldPositionStays = true);
+
+	/// <summary>
+	/// 接続行列を指定して親子付け
+	/// </summary>
+	/// <param name="parentObject">親</param>
+	/// <param name="attachedMatrix">接続行列</param>
+	/// <param name="worldPositionStays">trueならワールドの見た目を保つ,falseならローカルのあt来をそのまま使う</param>
+	/// <returns></returns>
+	bool AttachTo(GameObject* parentObject,const Matrix4x4& attachedMatrix,bool worldPositionStays);
+
+	/// <summary>
+	/// 最新のワールド行列を計算する(worldMatrix_の更新を持たない)
+	/// </summary>
+	/// <returns>最新のワールド行列</returns>
+	Matrix4x4 CalculateWorldMatrix()const;
 
 	/// <summary>
 	/// 親子付けを外す
@@ -174,15 +190,15 @@ public://メンバ関数
 	/// </summary>
 	/// <typeparam name="T">コンポーネントの型</typeparam>
 	/// <returns>コンポーネントのポインタ</returns>
-	template<class T, class... Args >
-	T* AddComponent(Args&&... args){
+	template<class T,class... Args >
+	T* AddComponent(Args&&... args) {
 		static_assert(
-			std::is_base_of_v<Component, T>,
+			std::is_base_of_v<Component,T>,
 			"TはComponentを継承している必要があります"
-		);
+			);
 
 		//Componentを生成
-		std::unique_ptr<T>component = std::make_unique<T>(this, std::forward<Args>(args)...);
+		std::unique_ptr<T>component = std::make_unique<T>(this,std::forward<Args>(args)...);
 
 		//返却値のポインタを保存する
 		T* componentPtr = component.get();
@@ -202,16 +218,16 @@ public://メンバ関数
 	/// <typeparam name="T">コンポーネントの型</typeparam>
 	/// <returns>コンポーネントのポインタ</returns>
 	template <class T>
-	T* GetComponent(){
+	T* GetComponent() {
 		static_assert(
-			std::is_base_of_v<Component, T>,
+			std::is_base_of_v<Component,T>,
 			"TはComponentを継承している必要があります"
-		);
+			);
 
-		for (const std::unique_ptr<Component>& component : components_){
+		for(const std::unique_ptr<Component>& component : components_) {
 			T* target = dynamic_cast<T*>(component.get());
 
-			if (target){
+			if(target) {
 				return target;
 			}
 		}
@@ -226,19 +242,19 @@ public://メンバ関数
 	/// <typeparam name="T">コンポーネントの型</typeparam>
 	/// <returns>コンポーネントのポインタ</returns>
 	template <class T>
-	std::vector<T*> GetComponents(){
+	std::vector<T*> GetComponents() {
 		static_assert(
-			std::is_base_of_v<Component, T>,
+			std::is_base_of_v<Component,T>,
 			"TはComponentを継承している必要があります"
-		);
+			);
 
 		//対象の配列
 		std::vector<T*>targets;
 
-		for (const std::unique_ptr<Component>& component : components_){
+		for(const std::unique_ptr<Component>& component : components_) {
 			T* target = dynamic_cast<T*>(component.get());
 
-			if (target){
+			if(target) {
 				targets.push_back(target);
 			}
 		}
@@ -263,14 +279,14 @@ public://メンバ関数
 	/// </summary>
 	/// <param name="index">検索キー</param>
 	/// <param name="info">衝突判定の情報</param>
-	void InvokeCollisionEvent(uint32_t index, const CollisionInfo& info);
+	void InvokeCollisionEvent(uint32_t index,const CollisionInfo& info);
 
 	/// <summary>
 	/// 衝突判定のイベントを呼び出す
 	/// </summary>
 	/// <param name="index">検索キー</param>
 	/// <param name="other">衝突対象のコライダー</param>
-	void InvokeTriggerEvent(uint32_t index, BaseCollider* other);
+	void InvokeTriggerEvent(uint32_t index,BaseCollider* other);
 
 	/// <summary>
 	/// ゲームオブジェクトから解除すると通知

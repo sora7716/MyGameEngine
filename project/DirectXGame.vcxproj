@@ -150,6 +150,7 @@
       <Optimization Condition="'$(Configuration)|$(Platform)'=='Development|x64'">MaxSpeed</Optimization>
       <WholeProgramOptimization Condition="'$(Configuration)|$(Platform)'=='Development|x64'">true</WholeProgramOptimization>
     </ClCompile>
+    <ClCompile Include="engine\command\IAxisCommand.cpp" />
     <ClCompile Include="engine\command\ICommand.cpp">
       <Optimization Condition="'$(Configuration)|$(Platform)'=='Development|x64'">MaxSpeed</Optimization>
       <WholeProgramOptimization Condition="'$(Configuration)|$(Platform)'=='Development|x64'">true</WholeProgramOptimization>
@@ -162,6 +163,7 @@
       <Optimization Condition="'$(Configuration)|$(Platform)'=='Development|x64'">MaxSpeed</Optimization>
       <WholeProgramOptimization Condition="'$(Configuration)|$(Platform)'=='Development|x64'">true</WholeProgramOptimization>
     </ClCompile>
+    <ClCompile Include="engine\command\StickMovementCommand.cpp" />
     <ClCompile Include="engine\debug\CrashHandler.cpp">
       <Optimization Condition="'$(Configuration)|$(Platform)'=='Development|x64'">MaxSpeed</Optimization>
       <WholeProgramOptimization Condition="'$(Configuration)|$(Platform)'=='Development|x64'">true</WholeProgramOptimization>
@@ -492,9 +494,11 @@
     <ClInclude Include="engine\collision\Collision.h" />
     <ClInclude Include="engine\collision\CollisionSystem.h" />
     <ClInclude Include="engine\collision\SphereCollider.h" />
+    <ClInclude Include="engine\command\IAxisCommand.h" />
     <ClInclude Include="engine\command\ICommand.h" />
     <ClInclude Include="engine\command\JumpCommand.h" />
     <ClInclude Include="engine\command\MovementCommand.h" />
+    <ClInclude Include="engine\command\StickMovementCommand.h" />
     <ClInclude Include="engine\debug\CrashHandler.h" />
     <ClInclude Include="engine\debug\DebugCameraController.h" />
     <ClInclude Include="engine\debug\DebugEditor.h" />

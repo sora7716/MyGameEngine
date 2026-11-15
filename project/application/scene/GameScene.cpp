@@ -8,9 +8,10 @@
 #include "Player.h"
 #include "InputComponent.h"
 #include "MovementCommand.h"
-#include "MovementComponent.h"
-#include "JumpCommand.h"
 #include "JumpComponent.h"
+#include "JumpCommand.h"
+#include "StickMovementCommand.h"
+#include "MovementComponent.h"
 #include "ImGuiManager.h"
 #include "MapChipField.h"
 #include "MapChipCollider.h"
@@ -44,6 +45,8 @@ void GameScene::Initialize() {
 	movementCommands_[static_cast<uint32_t>(MovementCommandMode::kMoveRight)]->Setup({1.0f,0.0f,0.0f});
 	//左へ移動
 	movementCommands_[static_cast<uint32_t>(MovementCommandMode::kMoveLeft)]->Setup({-1.0f,0.0f,0.0f});
+	//スティックの移動用コマンドを生成
+	stickMoveCommand_ = std::make_unique<StickMovementCommand>();
 
 	//ジャンプコマンドを生成
 	JumpCommand_ = std::make_unique<JumpCommand>();
@@ -69,15 +72,17 @@ void GameScene::Initialize() {
 	CreateField();
 
 	//プレイヤーの作成
-	playerObject = CreatePlayer();
+	playerObject_ = CreatePlayer();
+
+	GameObject* wallObject = CreateGameObject();
+	wallObject->GetTransform().translate.z = 1.0f;
+	wallObject->AttachTo(playerObject_,false);
+	Object3d* object3d = wallObject->AddComponent<Object3d>();
+	object3d->SetModel("wall");
 }
 
 //更新のステート
 void GameScene::UpdateState() {
-	//プレイヤーの位置からマップ番号を取得
-	indexSet_ = mapChipField_->GetMapChipIndexByPosition(playerObject->GetTransform().translate);
-	//プレイヤーの位置からブロックのステータスを取得
-	statusForPos_ = mapChipField_->GetMapChipStatusByIndex(indexSet_);
 }
 
 //デバッグ
@@ -86,8 +91,6 @@ void GameScene::Debug() {
 	//基底クラスのデバッグ
 	BaseScene::Debug();
 	ImGui::Begin("マップチップに関する物");
-	ImGui::Text("x:%d,y:%d,z:%d",indexSet_.x,indexSet_.y,indexSet_.z);
-	ImGui::Text("pos:status = %s,count = %d",statusForPos_.type != MapChipType::kBlank ? "ブロック" : "空気",statusForPos_.count);
 	ImGui::End();
 #endif // USE_IMGUI
 }
@@ -184,6 +187,10 @@ GameObject* GameScene::CreatePlayer() {
 	//ジャンプ用のコンポーネントのセットアップ
 	jumpComponent->Setup(rigidBody,15.0f);
 
+	//スティックのコマンドを追加	
+	stickMoveCommand_->SetMovementComponent(movementComponent);
+	inputComponent->AddAxisInput(StickType::kLeft,std::move(stickMoveCommand_->Clone()));
+
 	//キーの一覧
 	std::array<const char,static_cast<uint32_t>(MovementCommandMode::kCount)>moveKeyList{
 		DIK_W,
@@ -199,12 +206,13 @@ GameObject* GameScene::CreatePlayer() {
 		//移動酔うコンポーネントを追加
 		movementCommands_[i]->SetMovementComponent(movementComponent);
 		//移動コマンドを設定
-		inputComponent->AddInputState(static_cast<BYTE>(key),InputPhase::kHeld,std::move(movementCommands_[i]));
+		inputComponent->AddInputState(static_cast<BYTE>(key),InputPhase::kHeld,std::move(movementCommands_[i]->Clone()));
 	}
 
 	//ジャンプコマンドを設定
 	JumpCommand_->SetJumpComponent(jumpComponent);
-	inputComponent->AddInputState(static_cast<BYTE>(DIK_SPACE),InputPhase::kHeld,std::move(JumpCommand_));
+	inputComponent->AddInputState(static_cast<BYTE>(DIK_SPACE),InputPhase::kPressed,std::move(JumpCommand_->Clone()));
+	inputComponent->AddInputState(XboxInput::kA,InputPhase::kPressed,std::move(JumpCommand_->Clone()));
 
 	//プレイヤーの設定
 	Player* player = gameObject->AddComponent<Player>();

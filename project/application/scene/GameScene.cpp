@@ -74,10 +74,10 @@ void GameScene::Initialize() {
 	//プレイヤーの作成
 	playerObject_ = CreatePlayer();
 
-	GameObject* wallObjecrt = CreateGameObject();
-	wallObjecrt->GetTransform().translate.z = 1.0f;
-	wallObjecrt->AttachTo(playerObject_);
-	Object3d* object3d = wallObjecrt->AddComponent<Object3d>();
+	GameObject* wallObject = CreateGameObject();
+	wallObject->GetTransform().translate.z = 1.0f;
+	wallObject->AttachTo(playerObject_,false);
+	Object3d* object3d = wallObject->AddComponent<Object3d>();
 	object3d->SetModel("wall");
 }
 

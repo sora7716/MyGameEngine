@@ -69,12 +69,20 @@ void GameObject::Update(UpdatePhase phase) {
 }
 
 //親子付け
-bool GameObject::AttachTo(GameObject* parentObject) {
+bool GameObject::AttachTo(GameObject* parentObject,bool worldPositionStays) {
+	//接続行列なしで親子付け
+	return AttachTo(parentObject,Matrix4x4::Identity4x4(),worldPositionStays);
+}
+
+//接続行列を指定して親子付け
+bool GameObject::AttachTo(GameObject* parentObject,const Matrix4x4& attachedMatrix,bool worldPositionStays) {
+	//親オブジェクトがない場合
 	if(!parentObject) {
-		Logger::OutputLog("親子付けを行う際の親がnull参照しました");
+		Logger::OutputLog("親子付けを行う際がNull参照しました");
 		return false;
 	}
 
+	//親オブジェクトが自分と同じだった場合
 	if(parentObject == this) {
 		Logger::OutputLog("親子付けを行う際に自分のポインタを参照しました");
 		return false;
@@ -87,24 +95,42 @@ bool GameObject::AttachTo(GameObject* parentObject) {
 			Logger::OutputLog("循環する親子付けはできません");
 			return false;
 		}
-
 		//次の親へ
 		ancestor = ancestor->GetParentObject();
 	}
 
+	//親子付けする前のワールド行列
+	Matrix4x4 currentWorldMatrix = CalculateWorldMatrix();
+
 	//メンバ変数に記録
 	parentObject_ = parentObject;
-	parentMatrix_ = matrixUtility::MakeAffineMatrix(parentObject_->GetTransform());
+	attachedMatrix_ = attachedMatrix;
+	parentMatrix_ = parentObject_->CalculateWorldMatrix();
 
-	//現在のワールド行列
-	Matrix4x4 currentMatrix = matrixUtility::MakeAffineMatrix(transform_);
+	//ワールドの見た目を保つ場合はローカルを作り直す
+	if(worldPositionStays) {
+		Matrix4x4 incidenceMatrix = attachedMatrix * parentMatrix_;
+		Matrix4x4 newLocalMatrix = currentWorldMatrix * incidenceMatrix.Inverse();
+		transform_ = matrixUtility::DecomposeMatrix(newLocalMatrix,transform_.scale);
+	}
 
-	//接続行列
-	Matrix4x4 incidenceMatrix = attachedMatrix_ * parentMatrix_;
-	Matrix4x4 newLocalMatrix = currentMatrix * incidenceMatrix.Inverse();
-	Transform newLocalTransform = matrixUtility::DecomposeMatrix(newLocalMatrix,transform_.scale);
-	transform_ = newLocalTransform;
+	//ワールド業レtるをすぐに更新
+	UpdateMatrices();
 	return true;
+}
+
+//最新のワールド行列を計算する(worldMatrix_の更新を持たない)
+Matrix4x4 GameObject::CalculateWorldMatrix() const {
+	//ローカル行列を求める
+	Matrix4x4 localMatrix = matrixUtility::MakeAffineMatrix(transform_);
+
+	//親がいなければローカルがそのままワールド
+	if(!parentObject_) {
+		return localMatrix;
+	}
+
+	//親のワールド行列も最新のものを求める
+	return localMatrix * attachedMatrix_ * parentObject_->CalculateWorldMatrix();
 }
 
 //親子付けを外す

@@ -1,6 +1,7 @@
 #pragma once
 #include "Component.h"
 #include "Spherical.h"
+#include <chrono>
 
 /// <summary>
 ///	追従カメラ
@@ -81,5 +82,8 @@ private://メンバ変数
 	Spherical spherical_ = {};
 	//ターゲット
 	GameObject* target_ = nullptr;
+	//過去の時間
+	std::chrono::steady_clock::time_point prevTime_ = {};
+	float speed_ = 0.1f;
 };
 

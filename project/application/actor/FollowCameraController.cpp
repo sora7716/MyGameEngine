@@ -18,10 +18,19 @@ void FollowCameraController::Initialize() {
 	spherical_.radius = 6.0f;
 	spherical_.theta = 0.0f;
 	spherical_.phi = -mathUtility::kPi / 2.0f;
+	//前回のフレームの開始時間
+	prevTime_ = std::chrono::steady_clock::now();
+
 }
 
 //更新
 void FollowCameraController::Update() {
+	//今回の先頭時刻から秒(float)を算出
+	std::chrono::steady_clock::time_point now = std::chrono::steady_clock::now();
+	std::chrono::duration<float>elapsed = now - prevTime_;
+	//デルタタイム
+	float deltaTime = elapsed.count();
+	(void)deltaTime;
 	//ターゲットがなければ
 	if(!target_) {
 		return;
@@ -54,6 +63,13 @@ void FollowCameraController::Update() {
 		{eye.x,eye.y,eye.z,1.0f},
 		}
 	};
+
+	////目標の位置
+	//Transform& transform = GetOwner()->GetTransform();
+	//Transform targetCameraTransform = matrixUtility::DecomposeMatrix(cameraMatrix,transform.scale);
+
+	////目標の位置へ補間
+	//transform.translate += (speed_ * deltaTime) * target_->GetWorldPos() - targetCameraTransform.translate;
 
 	//Transformにカメラのワールド行列を反映
 	Transform& transform = GetOwner()->GetTransform();

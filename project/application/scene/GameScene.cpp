@@ -6,12 +6,14 @@
 #include "BoxCollider.h"
 #include "RigidBody.h"
 #include "Player.h"
-#include "InputComponent.h"
 #include "MovementCommand.h"
-#include "JumpComponent.h"
 #include "JumpCommand.h"
 #include "StickMovementCommand.h"
+#include "StickCameraControlCommand.h"
+#include "InputComponent.h"
 #include "MovementComponent.h"
+#include "JumpComponent.h"
+#include "CameraControlComponent.h"
 #include "ImGuiManager.h"
 #include "MapChipField.h"
 #include "MapChipCollider.h"
@@ -53,6 +55,9 @@ void GameScene::Initialize() {
 	//ジャンプコマンドを生成
 	JumpCommand_ = std::make_unique<JumpCommand>();
 
+	//カメラコントロール用のコマンド
+	stickCameraControlCommand_ = std::make_unique<StickCameraControlCommand>();
+
 	//マップチップフィールドを生成
 	mapChipField_ = MapChipField::Create(mapChipCsvName_);
 
@@ -66,9 +71,9 @@ void GameScene::Initialize() {
 	GameObject* cameraObject = CreateGameObject();
 	cameraObject->SetName("ゲームカメラ");
 	cameraObject->AddComponent<Camera>();
-	FollowCameraController* followCamera = cameraObject->AddComponent<FollowCameraController>();
-	followCamera->SetRadius(9.0f);
-	followCamera->SetTheta(0.5f);
+	followCamera_ = cameraObject->AddComponent<FollowCameraController>();
+	followCamera_->SetRadius(9.0f);
+	followCamera_->SetTheta(0.5f);
 
 	//SkyBoxの生成
 	CreateSkyBox();
@@ -79,7 +84,7 @@ void GameScene::Initialize() {
 	//プレイヤーの作成
 	playerObject_ = CreatePlayer();
 	//カメラのターゲットを設定
-	followCamera->SetTarget(playerObject_);
+	followCamera_->SetTarget(playerObject_);
 
 	GameObject* wallObject = CreateGameObject();
 	wallObject->GetTransform().translate.z = 1.0f;
@@ -187,16 +192,24 @@ GameObject* GameScene::CreatePlayer() {
 	MovementComponent* movementComponent = gameObject->AddComponent<MovementComponent>();
 	//ジャンプ用のコンポーネントを設定
 	JumpComponent* jumpComponent = gameObject->AddComponent<JumpComponent>();
+	//カメラ操作用のコンポーネントを設定
+	CameraControlComponent* cameraControlComponent = gameObject->AddComponent<CameraControlComponent>();
 	//リジッドボディを設定
 	RigidBody* rigidBody = gameObject->AddComponent<RigidBody>();
 	//移動用のコンポーネントのセットアップ
 	movementComponent->Setup(rigidBody,10.0f,12.0f);
 	//ジャンプ用のコンポーネントのセットアップ
 	jumpComponent->Setup(rigidBody,15.0f);
+	//カメラさ操作用のコンポーネントのセットアップ
+	cameraControlComponent->Setup(followCamera_,3.0f);
 
 	//スティックのコマンドを追加	
 	stickMoveCommand_->SetMovementComponent(movementComponent);
 	inputComponent->AddAxisInput(StickType::kLeft,std::move(stickMoveCommand_->Clone()));
+
+	//カメラ操作用のコマンドを追加
+	stickCameraControlCommand_->SetCameraControlComponent(cameraControlComponent);
+	inputComponent->AddAxisInput(StickType::kRight,std::move(stickCameraControlCommand_->Clone()));
 
 	//キーの一覧
 	std::array<const char,static_cast<uint32_t>(MovementCommandMode::kCount)>moveKeyList{

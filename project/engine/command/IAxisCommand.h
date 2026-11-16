@@ -1,5 +1,5 @@
 #pragma once
-#include "Vector3.h"
+#include "Vector2.h"
 #include <memory>
 
 /// <summary>
@@ -21,7 +21,7 @@ public://メンバ関数
 	/// 実行
 	/// </summary>
 	/// <param name="axis">入力値(-1~1)</param>
-	virtual void Execute(const Vector3& axis) = 0;
+	virtual void Execute(const Vector2& axis) = 0;
 
 	/// <summary>
 	/// 複製

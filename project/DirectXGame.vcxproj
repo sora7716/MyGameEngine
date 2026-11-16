@@ -15,12 +15,19 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="application\actor\action\JumpComponent.cpp" />
+    <ClCompile Include="application\actor\action\MovementComponent.cpp" />
+    <ClCompile Include="application\actor\camera\CameraControlComponent.cpp" />
+    <ClCompile Include="application\actor\camera\FollowCameraController.cpp" />
+    <ClCompile Include="application\actor\command\JumpCommand.cpp" />
+    <ClCompile Include="application\actor\command\MovementCommand.cpp" />
+    <ClCompile Include="application\actor\command\StickCameraControlCommand.cpp" />
+    <ClCompile Include="application\actor\command\StickMovementCommand.cpp" />
     <ClCompile Include="application\actor\enemy\Enemy.cpp" />
     <ClCompile Include="application\actor\enemy\EnemyDamageState.cpp" />
     <ClCompile Include="application\actor\enemy\EnemyRecoverState.cpp" />
     <ClCompile Include="application\actor\enemy\EnemyNormalState.cpp" />
     <ClCompile Include="application\actor\enemy\IEnemyState.cpp" />
-    <ClCompile Include="application\actor\FollowCameraController.cpp" />
     <ClCompile Include="application\actor\mapChip\MapChipCollider.cpp" />
     <ClCompile Include="application\actor\mapChip\MapChipField.cpp" />
     <ClCompile Include="application\actor\player\IPlayerState.cpp" />
@@ -155,18 +162,6 @@
       <WholeProgramOptimization Condition="'$(Configuration)|$(Platform)'=='Development|x64'">true</WholeProgramOptimization>
     </ClCompile>
     <ClCompile Include="engine\command\ICommand.cpp">
-      <Optimization Condition="'$(Configuration)|$(Platform)'=='Development|x64'">MaxSpeed</Optimization>
-      <WholeProgramOptimization Condition="'$(Configuration)|$(Platform)'=='Development|x64'">true</WholeProgramOptimization>
-    </ClCompile>
-    <ClCompile Include="engine\command\JumpCommand.cpp">
-      <Optimization Condition="'$(Configuration)|$(Platform)'=='Development|x64'">MaxSpeed</Optimization>
-      <WholeProgramOptimization Condition="'$(Configuration)|$(Platform)'=='Development|x64'">true</WholeProgramOptimization>
-    </ClCompile>
-    <ClCompile Include="engine\command\MovementCommand.cpp">
-      <Optimization Condition="'$(Configuration)|$(Platform)'=='Development|x64'">MaxSpeed</Optimization>
-      <WholeProgramOptimization Condition="'$(Configuration)|$(Platform)'=='Development|x64'">true</WholeProgramOptimization>
-    </ClCompile>
-    <ClCompile Include="engine\command\StickMovementCommand.cpp">
       <Optimization Condition="'$(Configuration)|$(Platform)'=='Development|x64'">MaxSpeed</Optimization>
       <WholeProgramOptimization Condition="'$(Configuration)|$(Platform)'=='Development|x64'">true</WholeProgramOptimization>
     </ClCompile>
@@ -390,14 +385,6 @@
       <Optimization Condition="'$(Configuration)|$(Platform)'=='Development|x64'">MaxSpeed</Optimization>
       <WholeProgramOptimization Condition="'$(Configuration)|$(Platform)'=='Development|x64'">true</WholeProgramOptimization>
     </ClCompile>
-    <ClCompile Include="engine\physics\JumpComponent.cpp">
-      <Optimization Condition="'$(Configuration)|$(Platform)'=='Development|x64'">MaxSpeed</Optimization>
-      <WholeProgramOptimization Condition="'$(Configuration)|$(Platform)'=='Development|x64'">true</WholeProgramOptimization>
-    </ClCompile>
-    <ClCompile Include="engine\physics\MovementComponent.cpp">
-      <Optimization Condition="'$(Configuration)|$(Platform)'=='Development|x64'">MaxSpeed</Optimization>
-      <WholeProgramOptimization Condition="'$(Configuration)|$(Platform)'=='Development|x64'">true</WholeProgramOptimization>
-    </ClCompile>
     <ClCompile Include="engine\physics\Physics.cpp">
       <Optimization Condition="'$(Configuration)|$(Platform)'=='Development|x64'">MaxSpeed</Optimization>
       <WholeProgramOptimization Condition="'$(Configuration)|$(Platform)'=='Development|x64'">true</WholeProgramOptimization>
@@ -453,12 +440,19 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="application\actor\action\JumpComponent.h" />
+    <ClInclude Include="application\actor\action\MovementComponent.h" />
+    <ClInclude Include="application\actor\camera\CameraControlComponent.h" />
+    <ClInclude Include="application\actor\camera\FollowCameraController.h" />
+    <ClInclude Include="application\actor\command\JumpCommand.h" />
+    <ClInclude Include="application\actor\command\MovementCommand.h" />
+    <ClInclude Include="application\actor\command\StickCameraControlCommand.h" />
+    <ClInclude Include="application\actor\command\StickMovementCommand.h" />
     <ClInclude Include="application\actor\enemy\Enemy.h" />
     <ClInclude Include="application\actor\enemy\EnemyDamageState.h" />
     <ClInclude Include="application\actor\enemy\EnemyRecoverState.h" />
     <ClInclude Include="application\actor\enemy\EnemyNormalState.h" />
     <ClInclude Include="application\actor\enemy\IEnemyState.h" />
-    <ClInclude Include="application\actor\FollowCameraController.h" />
     <ClInclude Include="application\actor\mapChip\MapChipCollider.h" />
     <ClInclude Include="application\actor\mapChip\MapChipData.h" />
     <ClInclude Include="application\actor\mapChip\MapChipField.h" />
@@ -502,9 +496,6 @@
     <ClInclude Include="engine\collision\SphereCollider.h" />
     <ClInclude Include="engine\command\IAxisCommand.h" />
     <ClInclude Include="engine\command\ICommand.h" />
-    <ClInclude Include="engine\command\JumpCommand.h" />
-    <ClInclude Include="engine\command\MovementCommand.h" />
-    <ClInclude Include="engine\command\StickMovementCommand.h" />
     <ClInclude Include="engine\debug\CrashHandler.h" />
     <ClInclude Include="engine\debug\DebugCameraController.h" />
     <ClInclude Include="engine\debug\DebugEditor.h" />
@@ -577,8 +568,6 @@
     <ClInclude Include="engine\particle\ParticleData.h" />
     <ClInclude Include="engine\particle\ParticleEmitter.h" />
     <ClInclude Include="engine\particle\ParticleSystem.h" />
-    <ClInclude Include="engine\physics\JumpComponent.h" />
-    <ClInclude Include="engine\physics\MovementComponent.h" />
     <ClInclude Include="engine\physics\Physics.h" />
     <ClInclude Include="engine\physics\PhysicsData.h" />
     <ClInclude Include="engine\physics\RigidBody.h" />
@@ -806,7 +795,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
       <AdditionalOptions>/utf-8 %(AdditionalOptions)</AdditionalOptions>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
-      <AdditionalIncludeDirectories>$(ProjectDir);$(ProjectDir)engine\2d;$(ProjectDir)engine\3d;$(ProjectDir)engine\audio;$(ProjectDir)engine\base;$(ProjectDir)engine\camera;$(ProjectDir)engine\collision;$(ProjectDir)engine\debug;$(ProjectDir)engine\debug\wireframes;$(ProjectDir)engine\framework;$(ProjectDir)engine\gameObject;$(ProjectDir)engine\geometry;$(ProjectDir)engine\graphics;$(ProjectDir)engine\graphics\data;$(ProjectDir)engine\graphics\descriptor;$(ProjectDir)engine\graphics\pipeline;$(ProjectDir)engine\graphics\texture;$(ProjectDir)engine\input;$(ProjectDir)engine\math;$(ProjectDir)engine\particle;$(ProjectDir)engine\physics;$(ProjectDir)engine\resources;$(ProjectDir)engine\scene;$(ProjectDir)engine\utility;$(ProjectDir)engine\worldTransform;$(SolutionDir)DirectXTex;$(SolutionDir)imgui;$(ProjectDir)externals;$(ProjectDir)externals\assimp\include;%(AdditionalIncludeDirectories);$(ProjectDir)application\actor;$(ProjectDir)application\scene;$(ProjectDir)engine\gameObject\component;$(ProjectDir)engine\asset;$(ProjectDir)engine\graphics\rendering;$(ProjectDir)engine\graphics\rendering\object3d;$(ProjectDir)engine\graphics\rendering\skyBox;$(ProjectDir)engine\graphics\rendering\particle;$(ProjectDir)engine\graphics\rendering\wireframe;$(ProjectDir)engine\graphics\rendering\sprite;$(ProjectDir)engine\graphics\rendering\camera;$(ProjectDir)application\actor\enemy;$(ProjectDir)engine\3d\model;$(ProjectDir)engine\3d\lod;$(ProjectDir)engine\3d\lighting;$(ProjectDir)engine\3d\material;$(ProjectDir)application\actor\player;$(ProjectDir)engine\graphics\resource;$(ProjectDir)externals\imguizmo;$(ProjectDir)engine\graphics\shader;$(ProjectDir)engine\command;$(ProjectDir)application\actor\mapChip</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir);$(ProjectDir)engine\2d;$(ProjectDir)engine\3d;$(ProjectDir)engine\audio;$(ProjectDir)engine\base;$(ProjectDir)engine\camera;$(ProjectDir)engine\collision;$(ProjectDir)engine\debug;$(ProjectDir)engine\debug\wireframes;$(ProjectDir)engine\framework;$(ProjectDir)engine\gameObject;$(ProjectDir)engine\geometry;$(ProjectDir)engine\graphics;$(ProjectDir)engine\graphics\data;$(ProjectDir)engine\graphics\descriptor;$(ProjectDir)engine\graphics\pipeline;$(ProjectDir)engine\graphics\texture;$(ProjectDir)engine\input;$(ProjectDir)engine\math;$(ProjectDir)engine\particle;$(ProjectDir)engine\physics;$(ProjectDir)engine\resources;$(ProjectDir)engine\scene;$(ProjectDir)engine\utility;$(ProjectDir)engine\worldTransform;$(SolutionDir)DirectXTex;$(SolutionDir)imgui;$(ProjectDir)externals;$(ProjectDir)externals\assimp\include;%(AdditionalIncludeDirectories);$(ProjectDir)application\actor;$(ProjectDir)application\scene;$(ProjectDir)engine\gameObject\component;$(ProjectDir)engine\asset;$(ProjectDir)engine\graphics\rendering;$(ProjectDir)engine\graphics\rendering\object3d;$(ProjectDir)engine\graphics\rendering\skyBox;$(ProjectDir)engine\graphics\rendering\particle;$(ProjectDir)engine\graphics\rendering\wireframe;$(ProjectDir)engine\graphics\rendering\sprite;$(ProjectDir)engine\graphics\rendering\camera;$(ProjectDir)application\actor\enemy;$(ProjectDir)engine\3d\model;$(ProjectDir)engine\3d\lod;$(ProjectDir)engine\3d\lighting;$(ProjectDir)engine\3d\material;$(ProjectDir)application\actor\player;$(ProjectDir)engine\graphics\resource;$(ProjectDir)externals\imguizmo;$(ProjectDir)engine\graphics\shader;$(ProjectDir)engine\command;$(ProjectDir)application\actor\mapChip;$(ProjectDir)application\actor\camera;$(ProjectDir)application\actor\command;$(ProjectDir)application\actor\action</AdditionalIncludeDirectories>
       <Optimization>Disabled</Optimization>
       <TreatWarningAsError>true</TreatWarningAsError>
       <WholeProgramOptimization>false</WholeProgramOptimization>

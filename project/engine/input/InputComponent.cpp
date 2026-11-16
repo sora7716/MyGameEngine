@@ -83,7 +83,7 @@ void InputComponent::Update() {
 		}
 
 		//ステートを実行
-		axisState.command->Execute({axis.x,0.0f,axis.y});
+		axisState.command->Execute(axis);
 	}
 }
 

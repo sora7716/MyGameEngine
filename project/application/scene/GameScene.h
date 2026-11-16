@@ -7,9 +7,11 @@
 
 //前方宣言
 class MapChipField;
+class FollowCameraController;
 class MovementCommand;
 class JumpCommand;
 class StickMovementCommand;
+class StickCameraControlCommand;
 
 //移動用のコマンドモード
 enum class MovementCommandMode : uint32_t {
@@ -80,6 +82,11 @@ private://メンバ変数
 	std::unique_ptr<StickMovementCommand>stickMoveCommand_ = nullptr;
 	//ジャンプ用のコマンド
 	std::unique_ptr<JumpCommand>JumpCommand_ = nullptr;
+	//カメラ操作用のコマンド
+	std::unique_ptr<StickCameraControlCommand>stickCameraControlCommand_ = nullptr;
 
 	GameObject* playerObject_ = nullptr;
+
+	//追従カメラ
+	FollowCameraController* followCamera_ = nullptr;
 };

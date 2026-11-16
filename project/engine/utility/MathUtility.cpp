@@ -1,5 +1,6 @@
 #define NOMINMAX
 #include "MathUtility.h"
+#include "FixFPS.h"
 #include <cassert>
 
 //球面座標系から直交座標系に変換
@@ -45,6 +46,11 @@ Spherical mathUtility::ToSpherical(const Vector3& cartesian) {
 	}
 
 	return {radius,std::acos(sinTheta),phi};
+}
+
+//デルタタイムの取得
+float mathUtility::GetDeltaTime() {
+	return FixFPS::GetInstance()->GetDeltaTime();
 }
 
 // トランスフォームノーマル

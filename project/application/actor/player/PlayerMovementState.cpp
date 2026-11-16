@@ -44,7 +44,7 @@ void PlayerMovementState::InitializeMoving(){
 //移動状態の更新
 void PlayerMovementState::UpdateMoving(){
 	//時間を計測
-	movingTimer_ += mathUtility::kDeltaTime;
+	movingTimer_ += mathUtility::GetDeltaTime();
 
 	//プレイヤーの目標ポーズ
 	PlayerPose targetPose = currentPose_;

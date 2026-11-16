@@ -75,7 +75,7 @@ void PlayerAttackState::UpdateWindup(){
 	targetPose.root.SetEulerAngleDegrees({ 0.0f,60.0f,0.0f });
 
 	//切り替え用のタイマー
-	windupTimer_ += mathUtility::kDeltaTime;
+	windupTimer_ += mathUtility::GetDeltaTime();
 	//係数
 	float t = std::clamp(windupTimer_ / kWindupDuration, 0.0f, 1.0f);
 	//目標の位置まで補間
@@ -100,7 +100,7 @@ void PlayerAttackState::UpdateSwing(){
 	//プレイヤーの目標ポーズ
 	PlayerPose targetPose = currentPose_;
 	//切り替え用のタイマー
-	swingTimer_ += mathUtility::kDeltaTime;
+	swingTimer_ += mathUtility::GetDeltaTime();
 
 	//左手を振り上げる
 	targetPose.leftArm.SetEulerAngleDegrees({ 220.0f, -60.0f, 0.0f });

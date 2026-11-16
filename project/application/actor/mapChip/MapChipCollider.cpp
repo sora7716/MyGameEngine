@@ -41,7 +41,7 @@ void MapChipCollider::Initialize() {
 void MapChipCollider::Update() {
 	//衝突判定を行う
 	CollisionMapChipInfo collisionInfo = {};
-	collisionInfo.moveAmount = rigidBody_->GetMoveAmount(mathUtility::kDeltaTime);
+	collisionInfo.moveAmount = rigidBody_->GetMoveAmount(mathUtility::GetDeltaTime());
 	//衝突判定を確認
 	CheckCollision(collisionInfo);
 
@@ -130,12 +130,10 @@ void MapChipCollider::CheckCollisionFront(CollisionMapChipInfo& info,Vector3& ce
 	bool isHit = false;
 	//限界
 	float limitZ = 0.0f;
-	//微小な値
-	constexpr float epsilon = 0.001f;
 	//範囲矩形にアクセス
 	for(const Rect& rect : rects) {
 		//動く前からブロックより後ろにいたら
-		if(prevFront > rect.back + epsilon) {
+		if(prevFront > rect.back + mathUtility::kEpsilon) {
 			continue;
 		}
 

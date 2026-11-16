@@ -62,11 +62,6 @@ void GameScene::Initialize() {
 	gameObject->GetTransform().SetEulerAngleDegrees({-120.0f,0.0f,0.0f});
 	gameObject->SetName("平行光源");
 
-	GameObject* groundObject = CreateGameObject();
-	groundObject->GetTransform().scale = {30.0f,1.0f,30.0f};
-	groundObject->GetTransform().translate = {0.0f,-0.5f,0.0f};
-	groundObject->AddComponent<BoxCollider>();
-
 	//カメラ
 	GameObject* cameraObject = CreateGameObject();
 	cameraObject->SetName("ゲームカメラ");
@@ -235,10 +230,6 @@ GameObject* GameScene::CreatePlayer() {
 	MapChipCollider* mapChipCollider = gameObject->AddComponent<MapChipCollider>();
 	//マップチップコライダーのセットアップ
 	mapChipCollider->Setup(mapChipField_.get(),rigidBody,{0.8f,0.8f,0.8f});
-
-	//コライダーを設定
-	BoxCollider* boxCollider = gameObject->AddComponent<BoxCollider>();
-	boxCollider->SetBodyType(BodyType::kDynamic);
 
 	return gameObject;
 }

@@ -45,7 +45,7 @@ void PlayerNormalState::InitializeNormal(){
 //通常状態の更新
 void PlayerNormalState::UpdateNormal(){
 	//時間を計測
-	bobTimer_ += mathUtility::kDeltaTime;
+	bobTimer_ += mathUtility::GetDeltaTime();
 
 	//プレイヤーの目標ポーズ
 	PlayerPose targetPose = currentPose_;

@@ -161,5 +161,5 @@ void Player::LookAt() {
 	Quaternion targetQuaternion = Quaternion::EulerAngleToQuaternion({0.0f,yaw,0.0f});
 
 	//目標のクォータニオンの方向に向かせる
-	transform.rotate = Quaternion::Slerp(transform.rotate,targetQuaternion,kLookAtSpeed * mathUtility::kDeltaTime);
+	transform.rotate = Quaternion::Slerp(transform.rotate,targetQuaternion,kLookAtSpeed * mathUtility::GetDeltaTime());
 }

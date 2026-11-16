@@ -1,7 +1,6 @@
 #pragma once
 #include "Component.h"
 #include "Spherical.h"
-#include <chrono>
 
 /// <summary>
 ///	追従カメラ
@@ -77,13 +76,25 @@ public://メンバ関数
 	/// </summary>
 	/// <param name="spherical">球面座標</param>
 	void SetSpherical(const Spherical& spherical);
+
+	/// <summary>
+	/// 追従する速度を設定
+	/// </summary>
+	/// <param name="followSpeed">追従する速度</param>
+	void SetFollowSpeed(float followSpeed);
+
+	/// <summary>
+	/// カメラ行列の作成
+	/// </summary>
+	/// <returns>カメラ行列</returns>
+	Matrix4x4 MakeCameraMatrix();
 private://メンバ変数
 	//球面座標系
 	Spherical spherical_ = {};
 	//ターゲット
 	GameObject* target_ = nullptr;
-	//過去の時間
-	std::chrono::steady_clock::time_point prevTime_ = {};
-	float speed_ = 0.1f;
+
+	//追従する速さ
+	float followSpeed_ = 3.0f;
 };
 

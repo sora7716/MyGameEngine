@@ -53,7 +53,7 @@ void EnemyRecoverState::InitializeRecover(){
 //浮き上がるときの更新
 void EnemyRecoverState::UpdateRecover(){
 	//タイマーの加算
-	recoverTimer_ += mathUtility::kDeltaTime;
+	recoverTimer_ += mathUtility::GetDeltaTime();
 
 	//係数を求める
 	float t = recoverTimer_ / kRecoverDuration;

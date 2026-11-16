@@ -45,9 +45,28 @@ void FixFPS::Update() {
 
 	//現在の時間を記録する
 	reference_ = end;
+
+	//デルタタイムを記録する
+	deltaTime_ = static_cast<float>(frameTime.count()) / 1000000.0f;
+	//値がブレークポイントとかで大きくなりすぎないようにする
+	const float kMaxDeltaTime = 0.1f;
+	deltaTime_ = std::min(deltaTime_,kMaxDeltaTime);
 }
 
 //FPSの取得
 float FixFPS::GetFPS() const {
 	return fps_;
+}
+
+//デルタタイムの取得
+float FixFPS::GetDeltaTime() const {
+	return deltaTime_;
+}
+
+//コンストラクタ
+FixFPS::FixFPS() {
+}
+
+//デストラクタ
+FixFPS::~FixFPS() {
 }

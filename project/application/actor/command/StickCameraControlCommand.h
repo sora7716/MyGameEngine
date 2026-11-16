@@ -40,4 +40,6 @@ private://メンバ変数
 	float pitch_ = 0.0f;
 	//ヨー
 	float yaw_ = 0.0f;
+	//回転速度
+	float rotSpeed_ = 3.0f;
 };

@@ -36,6 +36,11 @@ bool Culling::IsVisibleInFrustum(const primitiveData::AABB& aabb, const Matrix4x
 		return false;
 	}
 
+	//フラスタムかリングを行わない場合
+	if(!camera_->IsFrustumCulling()) {
+		return true;
+	}
+
 	//表示するかのフラグ
 	bool isVisible = false;
 

@@ -1,6 +1,7 @@
 #pragma once
 #include "MapChipData.h"
 #include "Vector3.h"
+#include <string>
 #include <memory>
 
 //マップチップフィールド

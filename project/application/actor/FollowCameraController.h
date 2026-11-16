@@ -1,6 +1,6 @@
 #pragma once
 #include "Component.h"
-#include "MathUtility.h"
+#include "Spherical.h"
 
 /// <summary>
 ///	追従カメラ
@@ -46,8 +46,40 @@ public://メンバ関数
 	/// </summary>
 	/// <param name="registry">レジストリ</param>
 	void RegisterProperties(PropertyRegistry* registry);
+
+	/// <summary>
+	/// ターゲットの設定
+	/// </summary>
+	/// <param name="target">ターゲット</param>
+	void SetTarget(GameObject* target);
+
+	/// <summary>
+	/// 動径の設定
+	/// </summary>
+	/// <param name="radius">動径</param>
+	void SetRadius(float radius);
+
+	/// <summary>
+	/// 仰角の設定
+	/// </summary>
+	/// <param name="theta">仰角</param>
+	void SetTheta(float theta);
+
+	/// <summary>
+	/// 方位角の設定
+	/// </summary>
+	/// <param name="phi">方位角</param>
+	void SetPhi(float phi);
+
+	/// <summary>
+	/// 球面座標の設定
+	/// </summary>
+	/// <param name="spherical">球面座標</param>
+	void SetSpherical(const Spherical& spherical);
 private://メンバ変数
 	//球面座標系
-	mathUtility::Spherical spherical = {};
+	Spherical spherical_ = {};
+	//ターゲット
+	GameObject* target_ = nullptr;
 };
 

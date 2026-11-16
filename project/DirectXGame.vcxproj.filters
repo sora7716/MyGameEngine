@@ -360,9 +360,6 @@
     <ClCompile Include="engine\graphics\rendering\camera\CameraRenderer.cpp">
       <Filter>engine\graphics\rendering\camera</Filter>
     </ClCompile>
-    <ClCompile Include="application\actor\OrbitCameraController.cpp">
-      <Filter>application\actor</Filter>
-    </ClCompile>
     <ClCompile Include="engine\collision\BoxCollider.cpp">
       <Filter>engine\collision</Filter>
     </ClCompile>
@@ -746,9 +743,6 @@
     <ClInclude Include="engine\graphics\rendering\camera\CameraRenderData.h">
       <Filter>engine\graphics\rendering\camera</Filter>
     </ClInclude>
-    <ClInclude Include="application\actor\OrbitCameraController.h">
-      <Filter>application\actor</Filter>
-    </ClInclude>
     <ClInclude Include="engine\collision\BoxCollider.h">
       <Filter>engine\collision</Filter>
     </ClInclude>
@@ -934,6 +928,9 @@
     </ClInclude>
     <ClInclude Include="application\actor\FollowCameraController.h">
       <Filter>application\actor</Filter>
+    </ClInclude>
+    <ClInclude Include="engine\math\Spherical.h">
+      <Filter>engine\math</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

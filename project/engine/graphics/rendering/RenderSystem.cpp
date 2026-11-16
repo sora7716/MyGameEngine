@@ -56,7 +56,7 @@ void RenderSystem::Initialize(DirectXBase* directXBase,SRVManager* srvManager,Te
 	//スプライトのレンダラー
 	spriteRenderer_ = SpriteRenderer::Create(SpriteRenderer::ConstructorKey{},directXBase,textureManager);
 	//Object3dのレンダラー
-	object3dRenderer_ = Object3dRenderer::Create(Object3dRenderer::ConstructorKey{},directXBase,srvManager,textureManager);
+	object3dRenderer_ = Object3dRenderer::Create(Object3dRenderer::ConstructorKey{},directXBase,srvManager,textureManager,65536);
 	//スカイボックスのレンダラー
 	skyBoxRenderer_ = SkyBoxRenderer::Create(SkyBoxRenderer::ConstructorKey{},directXBase,textureManager);
 	//デバッグ描画のレンダラー
@@ -203,10 +203,13 @@ void RenderSystem::CollectActiveObject3ds(const std::vector<std::unique_ptr<Game
 		return;
 	}
 	//カメラのワールド座標を取得
-	Vector3 cameraWorldPos = renderCamera->GetWorldPos();
+	Vector3 cameraWorldPos = renderCamera->GetOwner()->GetWorldPos();
 
 	//カリングの生成
-	std::unique_ptr<Culling> culling = Culling::Create(renderCamera);
+	std::unique_ptr<Culling> culling = nullptr;
+	if(cullingCamera_) {
+		culling = Culling::Create(cullingCamera_);
+	}
 
 	//探索開始
 	for(const std::unique_ptr<GameObject>& gameObject : gameObjects) {
@@ -256,7 +259,7 @@ void RenderSystem::CollectActiveObject3ds(const std::vector<std::unique_ptr<Game
 
 			//視錐台カリング
 			bool isVisible = false;
-			const Matrix4x4 renderWorld = object3d->MakeRenderWorldMatrix(renderCamera->GetWorldMatrix());
+			const Matrix4x4 renderWorld = object3d->MakeRenderWorldMatrix(renderCamera->GetOwner()->GetWorldMatrix());
 			//メッシュごと
 			for(const std::unique_ptr<Mesh>& mesh : model->GetMeshes()) {
 				//メッシュがなければ
@@ -264,7 +267,13 @@ void RenderSystem::CollectActiveObject3ds(const std::vector<std::unique_ptr<Game
 					continue;
 				}
 
-				//カリングを行う
+				//カリングがなければ
+				if(!culling) {
+					isVisible = true;
+					break;
+				}
+
+				//カリングを行い表示される場合
 				if(culling->IsVisibleInFrustum(mesh->GetAABB(),renderWorld)) {
 					isVisible = true;
 					break;
@@ -404,7 +413,7 @@ void RenderSystem::CollectActiveParticleSystems(const std::vector<std::unique_pt
 	}
 
 	//カメラのワールド座標を取得
-	Vector3 cameraWorldPos = renderCamera->GetWorldPos();
+	Vector3 cameraWorldPos = renderCamera->GetOwner()->GetWorldPos();
 
 	//カリングの生成
 	std::unique_ptr<Culling> culling = Culling::Create(renderCamera);
@@ -498,6 +507,13 @@ void RenderSystem::CollectActiveCameras(const std::vector<std::unique_ptr<GameOb
 //カメラモードの設定
 bool RenderSystem::SetCameraMode(CameraMode cameraMode) {
 	cameraMode_ = cameraMode;
+	//カリング用のカメラを探す
+	cullingCamera_ = nullptr;
+	if(FindSelectCamera(CameraMode::kMain)) {
+		cullingCamera_ = selectCamera_.camera;
+	}
+
+	//描画用カメラを探す
 	return FindSelectCamera(cameraMode_);
 }
 
@@ -670,7 +686,7 @@ void RenderSystem::BuildTransformationData() {
 		batch.transformations.reserve(batch.meshDrawInstance.size());
 		for(const MeshDrawInstance& meshDraw : batch.meshDrawInstance) {
 			//Objectのワールド行列を作成
-			Matrix4x4 objectWorldMatrix = meshDraw.object3d->MakeRenderWorldMatrix(selectCamera_.camera->GetWorldMatrix());
+			Matrix4x4 objectWorldMatrix = meshDraw.object3d->MakeRenderWorldMatrix(selectCamera_.camera->GetOwner()->GetWorldMatrix());
 
 			//ワールド行列を求める
 			Matrix4x4 world = meshDraw.nodeMatrix * objectWorldMatrix;

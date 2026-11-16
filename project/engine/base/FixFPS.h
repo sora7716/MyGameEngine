@@ -18,6 +18,12 @@ public://メンバ関数
 	/// </summary>
 	void Update();
 
+	/// <summary>
+	/// FPSの取得
+	/// </summary>
+	/// <returns>FPS</returns>
+	float GetFPS()const;
+
 	//コピーコンストラクタ禁止
 	FixFPS(const FixFPS&) = delete;
 	//代入演算子を禁止
@@ -32,8 +38,9 @@ private://メンバ関数
 	/// デストラクタ
 	/// </summary>
 	~FixFPS() = default;
-
 private://メンバ変数
 	std::chrono::steady_clock::time_point reference_;//記録時間(FPS固定用)
+	//現在のFPS
+	float fps_ = 0.0f;
 };
 

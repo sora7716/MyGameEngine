@@ -8,29 +8,30 @@
 #include "ParticleEmitter.h"
 #include "Camera.h"
 #include "Object3dRenderData.h"
+#include "GameObject.h"
 #include <cassert>
 
 //生成
-std::unique_ptr<ParticleRenderer> ParticleRenderer::Create(ConstructorKey key, DirectXBase* directXBase, SRVManager* srvManager, TextureManager* textureManager){
+std::unique_ptr<ParticleRenderer> ParticleRenderer::Create(ConstructorKey key,DirectXBase* directXBase,SRVManager* srvManager,TextureManager* textureManager) {
 	std::unique_ptr<ParticleRenderer>instance = std::make_unique<ParticleRenderer>(key);
-	instance->Initialize(directXBase, srvManager, textureManager);
+	instance->Initialize(directXBase,srvManager,textureManager);
 	return instance;
 }
 
 //コンストラクタ
-ParticleRenderer::ParticleRenderer(ConstructorKey){
+ParticleRenderer::ParticleRenderer(ConstructorKey) {
 }
 
 //デストラクタ
-ParticleRenderer::~ParticleRenderer(){
+ParticleRenderer::~ParticleRenderer() {
 	//SRVの解放
-	for (const GpuResource& gpuResource : gpuResources_){
+	for(const GpuResource& gpuResource : gpuResources_) {
 		srvManager_->Free(gpuResource.srvIndex);
 	}
 }
 
 //初期化
-void ParticleRenderer::Initialize(DirectXBase* directXBase, SRVManager* srvManager, TextureManager* textureManager){
+void ParticleRenderer::Initialize(DirectXBase* directXBase,SRVManager* srvManager,TextureManager* textureManager) {
 	//DirectXの基盤部分の記録
 	assert(directXBase);
 	directXBase_ = directXBase;
@@ -43,7 +44,7 @@ void ParticleRenderer::Initialize(DirectXBase* directXBase, SRVManager* srvManag
 }
 
 //描画
-void ParticleRenderer::Draw(uint32_t instanceIndex, Camera* renderCamera){
+void ParticleRenderer::Draw(uint32_t instanceIndex,Camera* renderCamera) {
 	//インスタンスの検索キーを確認
 	assert(renderDatas_.size() > instanceIndex);
 	assert(gpuResources_.size() > instanceIndex);
@@ -55,29 +56,29 @@ void ParticleRenderer::Draw(uint32_t instanceIndex, Camera* renderCamera){
 	GpuResource& gpuResource = gpuResources_[instanceIndex];
 
 	//インスタンスデータの適応
-	uint32_t drawCount = UpdateParticleInstance(gpuResource, renderData, renderCamera);
+	uint32_t drawCount = UpdateParticleInstance(gpuResource,renderData,renderCamera);
 
 	//ワールドトランスフォームの描画
-	directXBase_->GetCommandList()->SetGraphicsRootDescriptorTable(1, srvManager_->GetGPUDescriptorHandle(gpuResource.srvIndex));
+	directXBase_->GetCommandList()->SetGraphicsRootDescriptorTable(1,srvManager_->GetGPUDescriptorHandle(gpuResource.srvIndex));
 
 	//各メッシュにアクセス
-	for (const std::unique_ptr<Mesh>& mesh : renderData.model->GetMeshes()){
+	for(const std::unique_ptr<Mesh>& mesh : renderData.model->GetMeshes()) {
 		//メッシュがNullだった場合
-		if (!mesh) {
+		if(!mesh) {
 			continue;
 		}
 
 		//マテリアルインデックスを取得
 		const uint32_t materialIndex = mesh->GetMaterialIndex();
 		//マテリアルインスタンスのサイズを確認
-		if (materialIndex >= renderData.materialInstances.size()) {
+		if(materialIndex >= renderData.materialInstances.size()) {
 			continue;
 		}
 
 		//マテリアルインスタンスを取得
 		const std::shared_ptr<MaterialInstance>& materialInstance = renderData.materialInstances[materialIndex];
 		//マテリアルインスタンスがNullだったら
-		if (!materialInstance) {
+		if(!materialInstance) {
 			continue;
 		}
 
@@ -88,31 +89,31 @@ void ParticleRenderer::Draw(uint32_t instanceIndex, Camera* renderCamera){
 		const MeshRenderData& meshRenderData = mesh->GetMeshRenderData();
 
 		//VertexBufferViewの設定
-		directXBase_->GetCommandList()->IASetVertexBuffers(0, 1, &meshRenderData.vertexBufferView);
+		directXBase_->GetCommandList()->IASetVertexBuffers(0,1,&meshRenderData.vertexBufferView);
 
 		//IndexBufferViewの設定
 		directXBase_->GetCommandList()->IASetIndexBuffer(&meshRenderData.indexBufferView);
 
 		//マテリアルCBufferの場所を設定
-		directXBase_->GetCommandList()->SetGraphicsRootConstantBufferView(0, gpuResource.materialResources[materialIndex]->GetGPUVirtualAddress());
+		directXBase_->GetCommandList()->SetGraphicsRootConstantBufferView(0,gpuResource.materialResources[materialIndex]->GetGPUVirtualAddress());
 
 		//SRVのDescriptorTableの先頭を設定
-		directXBase_->GetCommandList()->SetGraphicsRootDescriptorTable(2, textureManager_->GetSRVHandleGPU(texturePaths.textureFilePath.c_str()));
+		directXBase_->GetCommandList()->SetGraphicsRootDescriptorTable(2,textureManager_->GetSRVHandleGPU(texturePaths.textureFilePath.c_str()));
 
-		if (drawCount > 0){
+		if(drawCount > 0) {
 			//描画
-			directXBase_->GetCommandList()->DrawIndexedInstanced(static_cast<uint32_t>(meshRenderData.meshData.indices.size()), drawCount, 0, 0, 0);
+			directXBase_->GetCommandList()->DrawIndexedInstanced(static_cast<uint32_t>(meshRenderData.meshData.indices.size()),drawCount,0,0,0);
 		}
 	}
 }
 
 //リセット
-void ParticleRenderer::Reset(){
+void ParticleRenderer::Reset() {
 	renderDatas_.clear();
 }
 
 //描画データの追加
-void ParticleRenderer::AddRenderData(const ParticleRenderData& renderData){
+void ParticleRenderer::AddRenderData(const ParticleRenderData& renderData) {
 	//Nullチェック
 	assert(renderData.model);
 
@@ -123,7 +124,7 @@ void ParticleRenderer::AddRenderData(const ParticleRenderData& renderData){
 	const uint32_t instanceIndex = static_cast<uint32_t>(renderDatas_.size() - 1);
 
 	//描画データとGPUデータのサイズを比べる
-	if (gpuResources_.size() <= instanceIndex){
+	if(gpuResources_.size() <= instanceIndex) {
 		GpuResource& gpuResource = gpuResources_.emplace_back();
 
 		//パーティクルのキャパシティを設定
@@ -132,51 +133,51 @@ void ParticleRenderer::AddRenderData(const ParticleRenderData& renderData){
 		//リソースの生成
 		CreateTransformationMatrixResource(gpuResource);
 		CreateStructuredBufferForParticleGpu(gpuResource);
-		CreateMaterialResources(gpuResource, static_cast<uint32_t>(renderData.model->GetModelData().materialTexturePaths.size()));
+		CreateMaterialResources(gpuResource,static_cast<uint32_t>(renderData.model->GetModelData().materialTexturePaths.size()));
 	}
 }
 
 //描画データのサイズを取得
-uint32_t ParticleRenderer::GetRenderDataSize(){
+uint32_t ParticleRenderer::GetRenderDataSize() {
 	return static_cast<uint32_t>(renderDatas_.size());
 }
 
 //ブレンドモードの取得
-BlendMode ParticleRenderer::GetBlendMode(uint32_t instanceIndex){
+BlendMode ParticleRenderer::GetBlendMode(uint32_t instanceIndex) {
 	return renderDatas_[instanceIndex].blendMode;
 }
 
 //ピクセルシェーダのファイルパスを取得
-const std::string& ParticleRenderer::GetPixelShaderFilePath(uint32_t instanceIndex){
+const std::string& ParticleRenderer::GetPixelShaderFilePath(uint32_t instanceIndex) {
 	return renderDatas_[instanceIndex].pixelShaderFilePath;
 }
 
 //カリングモードの取得
-rasterizerMode::CullingMode ParticleRenderer::GetCullingMode(uint32_t instanceIndex){
+rasterizerMode::CullingMode ParticleRenderer::GetCullingMode(uint32_t instanceIndex) {
 	return renderDatas_[instanceIndex].cullingMode;
 }
 
 //フィルモードの取得
-rasterizerMode::FillMode ParticleRenderer::GetFillMode(uint32_t instanceIndex){
+rasterizerMode::FillMode ParticleRenderer::GetFillMode(uint32_t instanceIndex) {
 	return renderDatas_[instanceIndex].fillMode;
 }
 
 //座標変換行列リソースの生成
-void ParticleRenderer::CreateTransformationMatrixResource(GpuResource& gpuResource){
+void ParticleRenderer::CreateTransformationMatrixResource(GpuResource& gpuResource) {
 	//座標変換行列リソースを作成する	
 	gpuResource.instancingResource = directXBase_->CreateBufferResource(sizeof(ParticleForGPU) * gpuResource.capacity);
 	//座標変換行列リソースにデータを書き込むためのアドレスを取得してtransformationMatrixDataに割り当てる
 	//書き込むためのアドレス
-	gpuResource.instancingResource->Map(0, nullptr, reinterpret_cast<void**>(&gpuResource.instanceData));
-	for (uint32_t i = 0; i < gpuResource.capacity; i++){
+	gpuResource.instancingResource->Map(0,nullptr,reinterpret_cast<void**>(&gpuResource.instanceData));
+	for(uint32_t i = 0; i < gpuResource.capacity; i++) {
 		//単位行列を書き込んでおく
 		gpuResource.instanceData[i].world = Matrix4x4::Identity4x4();
-		gpuResource.instanceData[i].color = Color(1.0f, 1.0f, 1.0f, 1.0f); // 初期色を白に設定
+		gpuResource.instanceData[i].color = Color(1.0f,1.0f,1.0f,1.0f); // 初期色を白に設定
 	}
 }
 
 //インスタンシングリソースのストラクチャバッファの生成
-void ParticleRenderer::CreateStructuredBufferForParticleGpu(GpuResource& gpuResource){
+void ParticleRenderer::CreateStructuredBufferForParticleGpu(GpuResource& gpuResource) {
 	//ストラクチャバッファを生成
 	gpuResource.srvIndex = srvManager_->Allocate() + TextureManager::kSRVIndexTop;
 	srvManager_->CreateSRVForStructuredBuffer(
@@ -188,16 +189,16 @@ void ParticleRenderer::CreateStructuredBufferForParticleGpu(GpuResource& gpuReso
 }
 
 //マテリアルリソースの生成
-void ParticleRenderer::CreateMaterialResources(GpuResource& gpuResource, uint32_t materialCount){
+void ParticleRenderer::CreateMaterialResources(GpuResource& gpuResource,uint32_t materialCount) {
 	//マテリアルのサイズ設定
 	gpuResource.materialDatas.resize(materialCount);
 	gpuResource.materialResources.resize(materialCount);
 
-	for (uint32_t i = 0; i < materialCount; i++){
+	for(uint32_t i = 0; i < materialCount; i++) {
 		//マテリアル用のリソースを作る
 		gpuResource.materialResources[i] = directXBase_->CreateBufferResource(sizeof(Material));
 		//書き込むためのアドレスを取得
-		gpuResource.materialResources[i]->Map(0, nullptr, reinterpret_cast<void**>(&gpuResource.materialDatas[i]));
+		gpuResource.materialResources[i]->Map(0,nullptr,reinterpret_cast<void**>(&gpuResource.materialDatas[i]));
 		//色を書き込む
 		gpuResource.materialDatas[i]->color = Color::GetWhite();
 		gpuResource.materialDatas[i]->enableLighting = true;
@@ -208,25 +209,25 @@ void ParticleRenderer::CreateMaterialResources(GpuResource& gpuResource, uint32_
 }
 
 //パーティクルのインスタンスの更新
-uint32_t ParticleRenderer::UpdateParticleInstance(GpuResource& gpuResource, const ParticleRenderData& renderData, Camera* renderCamera){
+uint32_t ParticleRenderer::UpdateParticleInstance(GpuResource& gpuResource,const ParticleRenderData& renderData,Camera* renderCamera) {
 	//パーティクルがあるか確認
 	assert(renderData.particles);
 
 	//描画する数
 	uint32_t drawCount = 0;
-	for (const Particle& particle : *renderData.particles){
+	for(const Particle& particle : *renderData.particles) {
 		//パーティクルが表示されてなければ
-		if (!particle.isEnabled){
+		if(!particle.isEnabled) {
 			continue;
 		}
 
 		//インスタンスの検索キーがGPUの配列を超えないようにする
-		if (drawCount >= gpuResource.capacity){
+		if(drawCount >= gpuResource.capacity) {
 			break;
 		}
 
 		//ワールド行列の作成
-		Matrix4x4 worldMatrix = matrixUtility::MakeBillboardAffineMatrix(renderCamera->GetWorldMatrix(), particle.transform);
+		Matrix4x4 worldMatrix = matrixUtility::MakeBillboardAffineMatrix(renderCamera->GetOwner()->GetWorldMatrix(),particle.transform);
 
 		//Gpuリソースに反映
 		gpuResource.instanceData[drawCount].world = worldMatrix;

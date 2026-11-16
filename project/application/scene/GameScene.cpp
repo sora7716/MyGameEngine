@@ -15,6 +15,8 @@
 #include "ImGuiManager.h"
 #include "MapChipField.h"
 #include "MapChipCollider.h"
+#include "Camera.h"
+#include "FollowCameraController.h"
 #include "Color.h"
 #include <array>
 using namespace mapChipDesc;
@@ -65,6 +67,14 @@ void GameScene::Initialize() {
 	groundObject->GetTransform().translate = {0.0f,-0.5f,0.0f};
 	groundObject->AddComponent<BoxCollider>();
 
+	//カメラ
+	GameObject* cameraObject = CreateGameObject();
+	cameraObject->SetName("ゲームカメラ");
+	cameraObject->AddComponent<Camera>();
+	FollowCameraController* followCamera = cameraObject->AddComponent<FollowCameraController>();
+	followCamera->SetRadius(9.0f);
+	followCamera->SetTheta(0.5f);
+
 	//SkyBoxの生成
 	CreateSkyBox();
 
@@ -73,6 +83,8 @@ void GameScene::Initialize() {
 
 	//プレイヤーの作成
 	playerObject_ = CreatePlayer();
+	//カメラのターゲットを設定
+	followCamera->SetTarget(playerObject_);
 
 	GameObject* wallObject = CreateGameObject();
 	wallObject->GetTransform().translate.z = 1.0f;
@@ -130,7 +142,7 @@ void GameScene::CreateField() {
 		for(uint32_t x = 0; x < mapChipStatusData.size(); x++) {
 			//ステータス
 			MapChipStatus status = mapChipStatusData[x];
-			for(uint32_t y = 0; y < status.count; y++) {
+			for(uint32_t y = 0; y < status.height; y++) {
 				//空白だった場合
 				if(status.type == MapChipType::kBlank) {
 					continue;
@@ -157,7 +169,7 @@ void GameScene::CreateField() {
 GameObject* GameScene::CreatePlayer() {
 	//ゲームオブジェクトを生成
 	GameObject* gameObject = CreateGameObject();
-	Vector3Int playerPosIndex = {0,1,0};
+	Vector3Int playerPosIndex = mapChipField_->GetMapChipData().playerIndex;
 	gameObject->GetTransform().translate = mapChipField_->GetMapChipPositionByIndex(playerPosIndex);
 	gameObject->SetName("プレイヤー");
 	//オブジェクト3dを設定

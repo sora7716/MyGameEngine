@@ -3,6 +3,7 @@
 #include "Matrix4x4.h"
 #include "Vector2.h"
 #include "Vector4.h"
+#include "Spherical.h"
 #include "PrimitiveData.h"
 #include <vector>
 #include <cmath>
@@ -15,19 +16,19 @@
 /// 数学的な計算
 /// </summary>
 namespace mathUtility {
-	//球面座標系
-	struct Spherical {
-		float radius;//動径r
-		float theta;//仰角θ
-		float phi;//方位角φ
-	};
-
 	/// <summary>
 	/// 球面座標系から直交座標系に変換
 	/// </summary>
 	/// <param name="spherical">球面座標系</param>
 	/// <returns>直交座標系</returns>
 	Vector3 ToCartesian(const Spherical& spherical);
+
+	/// <summary>
+	/// 直交座標系から球面座標系に変換
+	/// </summary>
+	/// <param name="cartesian">直交座標系</param>
+	/// <returns>球面座標系</returns>
+	Spherical ToSpherical(const Vector3& cartesian);
 
 	/// <summary>
 	/// トランスフォームノーマル
@@ -176,4 +177,6 @@ namespace mathUtility {
 	inline constexpr float kPi = std::numbers::pi_v<float>;
 	//ラジアン変換用定数
 	inline constexpr float kRad = kPi / 180.0f;
+	//凄くわずかな値
+	inline constexpr float kEpsilon = 0.01f;
 };

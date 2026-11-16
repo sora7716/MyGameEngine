@@ -18,6 +18,16 @@ Color Color::GetWhite(){
 	return Color(1.0f, 1.0f, 1.0f, 1.0f);
 }
 
+//マゼンタの取得
+Color Color::GetMagenta() {
+	return Color(1.0f,0.0f,1.0f,1.0f);
+}
+
+//オレンジの取得
+Color Color::GetOrange() {
+	return Color(1.0f,0.5f,0.0f,1.0f);
+}
+
 //赤の取得
 Color Color::GetRed(){
 	return Color(1.0f, 0.0f, 0.0f, 1.0f);

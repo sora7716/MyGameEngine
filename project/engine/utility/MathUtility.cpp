@@ -1,19 +1,50 @@
 #define NOMINMAX
 #include "MathUtility.h"
 #include <cassert>
-using namespace std;
 
 //球面座標系から直交座標系に変換
 Vector3 mathUtility::ToCartesian(const Spherical& spherical) {
-	//Y座標
-	float y = spherical.radius * sin(spherical.theta);
+	//球面座標系
+	Spherical s = spherical;
+
 	//ロー
-	float roll = spherical.radius * cos(spherical.theta);
+	float roll = s.radius * std::cos(s.theta);
+
 	//X座標
-	float x = roll * cos(spherical.phi);
+	float x = roll * std::cos(s.phi);
+
+	//Y座標
+	float y = s.radius * std::sin(s.theta);
+
 	//Z座標
-	float z = roll * sin(spherical.phi);
+	float z = roll * std::sin(s.phi);
+
 	return {x,y,z};
+}
+
+//直交座標系から球面座標系に変換
+Spherical mathUtility::ToSpherical(const Vector3& cartesian) {
+	//直交座標
+	Vector3 c = cartesian;
+
+	//動径
+	float radius = c.Length();
+
+	//半径がもし0.0fだった場合
+	if(radius == 0.0f) {
+		return {0.0f,0.0f,0.0f};
+	}
+
+	//仰角
+	float sinTheta = std::clamp(c.y / radius,-1.0f,1.0f);
+
+	//方位角
+	float phi = 0.0f;
+	if(c.x != 0.0f || c.z != 0.0f) {
+		phi = std::atan2(c.z,c.x);
+	}
+
+	return {radius,std::acos(sinTheta),phi};
 }
 
 // トランスフォームノーマル
@@ -160,24 +191,24 @@ Vector3 mathUtility::BezierS(const Vector3* points,float t) {
 // リサージュ曲線
 Vector3 mathUtility::LissajousCurve(const Vector3& theta,const Vector3& center,const Vector3& scalar) {
 	Vector3 result{};
-	result.x = scalar.x * sin(theta.x) + center.x;
-	result.y = scalar.y * sin(theta.y) + center.y;
-	result.z = scalar.z * sin(theta.z) + center.z;
+	result.x = scalar.x * std::sin(theta.x) + center.x;
+	result.y = scalar.y * std::sin(theta.y) + center.y;
+	result.z = scalar.z * std::sin(theta.z) + center.z;
 	return result;
 }
 
 //逆正接関数のcotangent
 float mathUtility::Cont(float theta) {
-	return (1.0f / tanf(theta));
+	return (1.0f / std::tan(theta));
 }
 
 // 円運動XZ
 Vector3 mathUtility::CircularMoveXZ(const Vector3& center,const Vector2& radius,float theta) {
 	Vector3 result{};
 	//円運動させる
-	result.x = center.x + cos(theta) * radius.x;
+	result.x = center.x + std::cos(theta) * radius.x;
 	result.y = center.y;
-	result.z = center.z + sin(theta) * radius.y;
+	result.z = center.z + std::sin(theta) * radius.y;
 	return result;
 }
 

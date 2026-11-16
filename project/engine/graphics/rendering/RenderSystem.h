@@ -29,13 +29,13 @@ class Camera;
 class CameraRenderer;
 
 //メッシュの描画データインスタンス
-struct MeshDrawInstance{
+struct MeshDrawInstance {
 	Object3d* object3d = nullptr;
 	Matrix4x4 nodeMatrix = Matrix4x4::Identity4x4();
 };
 
 //描画グループごとにObject3dを分ける
-struct Object3dBatch{
+struct Object3dBatch {
 	Model* model = nullptr;
 	MaterialInstance* materialInstance = nullptr;
 	std::string pixelShaderFilePath = "";
@@ -53,15 +53,15 @@ struct Object3dBatch{
 /// <summary>
 /// 描画のシステム
 /// </summary>
-class RenderSystem{
+class RenderSystem {
 private://構造体
 	//選択するカメラ
-	struct SelectCamera{
+	struct SelectCamera {
 		Camera* camera = nullptr;
 		uint32_t index;
 	};
 public://PassKey
-	class ConstructorKey{
+	class ConstructorKey {
 	private:
 		ConstructorKey() = default;
 		friend class Core;
@@ -77,7 +77,7 @@ public://静的メンバ関数
 	/// <param name="pipelineManager">パイプラインの管理</param>
 	/// <param name="lightingManager">ライティングの管理</param>
 	/// <returns>インスタンス</returns>
-	static std::unique_ptr<RenderSystem>Create(ConstructorKey key, DirectXBase* directXBase, SRVManager* srvManager, TextureManager* textureManager, PipelineManager* pipelineManager, LightingManager* lightingManager);
+	static std::unique_ptr<RenderSystem>Create(ConstructorKey key,DirectXBase* directXBase,SRVManager* srvManager,TextureManager* textureManager,PipelineManager* pipelineManager,LightingManager* lightingManager);
 public://メンバ関数
 	/// <summary>
 	/// コンストラクタ
@@ -98,7 +98,7 @@ public://メンバ関数
 	/// <param name="textureManager">Textureの管理</param>
 	/// <param name="pipelineManager">パイプラインの管理</param>
 	/// <param name="lightingManager">ライティングの管理</param>
-	void Initialize(DirectXBase* directXBase, SRVManager* srvManager, TextureManager* textureManager, PipelineManager* pipelineManager, LightingManager* lightingManager);
+	void Initialize(DirectXBase* directXBase,SRVManager* srvManager,TextureManager* textureManager,PipelineManager* pipelineManager,LightingManager* lightingManager);
 
 	/// <summary>
 	/// 描画
@@ -167,7 +167,7 @@ private://メンバ関数
 	/// <param name="cullingMode">カリングモード</param>
 	/// <param name="fillMode">フィルモード</param>
 	/// <returns>成功したかどうか</returns>
-	bool PreDraw(PipelineType pipelineType, std::string pixelShaderPath, BlendMode blendMode, rasterizerMode::CullingMode cullingMode, rasterizerMode::FillMode fillMode);
+	bool PreDraw(PipelineType pipelineType,std::string pixelShaderPath,BlendMode blendMode,rasterizerMode::CullingMode cullingMode,rasterizerMode::FillMode fillMode);
 
 	/// <summary>
 	/// 描画開始
@@ -176,7 +176,7 @@ private://メンバ関数
 	/// <param name="blendMode">ブレンドモード</param>
 	/// <param name="cullingMode">カリングモード</param>
 	/// <param name="fillMode">フィルモード</param>
-	bool PreDraw(std::string pixelShaderPath, BlendMode blendMode, rasterizerMode::CullingMode cullingMode, rasterizerMode::FillMode fillMode);
+	bool PreDraw(std::string pixelShaderPath,BlendMode blendMode,rasterizerMode::CullingMode cullingMode,rasterizerMode::FillMode fillMode);
 
 	/// <summary>
 	/// オブジェクト3dの描画グループを構築
@@ -240,6 +240,9 @@ private://メンバ関数
 
 	//描画に有効なカメラ
 	std::vector<Camera*> activeCameras_;
+	//管理具する用のカメラ
+	Camera* cullingCamera_ = nullptr;
+
 	//カメラの描画レンダラー
 	std::unique_ptr<CameraRenderer>cameraRenderer_ = nullptr;
 };

@@ -23,7 +23,6 @@
     <ClCompile Include="application\actor\FollowCameraController.cpp" />
     <ClCompile Include="application\actor\mapChip\MapChipCollider.cpp" />
     <ClCompile Include="application\actor\mapChip\MapChipField.cpp" />
-    <ClCompile Include="application\actor\OrbitCameraController.cpp" />
     <ClCompile Include="application\actor\player\IPlayerState.cpp" />
     <ClCompile Include="application\actor\player\Player.cpp" />
     <ClCompile Include="application\actor\player\PlayerAttackState.cpp" />
@@ -151,7 +150,10 @@
       <Optimization Condition="'$(Configuration)|$(Platform)'=='Development|x64'">MaxSpeed</Optimization>
       <WholeProgramOptimization Condition="'$(Configuration)|$(Platform)'=='Development|x64'">true</WholeProgramOptimization>
     </ClCompile>
-    <ClCompile Include="engine\command\IAxisCommand.cpp" />
+    <ClCompile Include="engine\command\IAxisCommand.cpp">
+      <Optimization Condition="'$(Configuration)|$(Platform)'=='Development|x64'">MaxSpeed</Optimization>
+      <WholeProgramOptimization Condition="'$(Configuration)|$(Platform)'=='Development|x64'">true</WholeProgramOptimization>
+    </ClCompile>
     <ClCompile Include="engine\command\ICommand.cpp">
       <Optimization Condition="'$(Configuration)|$(Platform)'=='Development|x64'">MaxSpeed</Optimization>
       <WholeProgramOptimization Condition="'$(Configuration)|$(Platform)'=='Development|x64'">true</WholeProgramOptimization>
@@ -164,7 +166,10 @@
       <Optimization Condition="'$(Configuration)|$(Platform)'=='Development|x64'">MaxSpeed</Optimization>
       <WholeProgramOptimization Condition="'$(Configuration)|$(Platform)'=='Development|x64'">true</WholeProgramOptimization>
     </ClCompile>
-    <ClCompile Include="engine\command\StickMovementCommand.cpp" />
+    <ClCompile Include="engine\command\StickMovementCommand.cpp">
+      <Optimization Condition="'$(Configuration)|$(Platform)'=='Development|x64'">MaxSpeed</Optimization>
+      <WholeProgramOptimization Condition="'$(Configuration)|$(Platform)'=='Development|x64'">true</WholeProgramOptimization>
+    </ClCompile>
     <ClCompile Include="engine\debug\CrashHandler.cpp">
       <Optimization Condition="'$(Configuration)|$(Platform)'=='Development|x64'">MaxSpeed</Optimization>
       <WholeProgramOptimization Condition="'$(Configuration)|$(Platform)'=='Development|x64'">true</WholeProgramOptimization>
@@ -457,7 +462,6 @@
     <ClInclude Include="application\actor\mapChip\MapChipCollider.h" />
     <ClInclude Include="application\actor\mapChip\MapChipData.h" />
     <ClInclude Include="application\actor\mapChip\MapChipField.h" />
-    <ClInclude Include="application\actor\OrbitCameraController.h" />
     <ClInclude Include="application\actor\player\IPlayerState.h" />
     <ClInclude Include="application\actor\player\Player.h" />
     <ClInclude Include="application\actor\player\PlayerAttackState.h" />
@@ -566,6 +570,7 @@
     <ClInclude Include="engine\math\Matrix3x3.h" />
     <ClInclude Include="engine\math\Matrix4x4.h" />
     <ClInclude Include="engine\math\Quaternion.h" />
+    <ClInclude Include="engine\math\Spherical.h" />
     <ClInclude Include="engine\math\Vector2.h" />
     <ClInclude Include="engine\math\Vector3.h" />
     <ClInclude Include="engine\math\Vector4.h" />

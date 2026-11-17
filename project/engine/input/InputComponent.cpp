@@ -77,11 +77,6 @@ void InputComponent::Update() {
 			axis = input_->GetXboxPadRightStick(axisState.controllerIndex);
 		}
 
-		//軸が何も値の変更がなければ
-		if(axis.x == 0.0f && axis.y == 0.0f) {
-			continue;
-		}
-
 		//ステートを実行
 		axisState.command->Execute(axis);
 	}

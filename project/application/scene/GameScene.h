@@ -90,11 +90,12 @@ private://メンバ関数
 	GameObject* PlacementPreview();
 
 	/// <summary>
-	/// 足元のブロックを取得
+	/// オブジェクトのおける位置のインデックスを取得
 	/// </summary>
-	/// <param name="position">選択している位置</param>
-	GameObject* GetFootBlock(const Vector3& position);
-	
+	/// <param name="position">位置</param>
+	/// <returns>成功したか</returns>
+	bool TryGetPlacementIndex(const Vector3& position,Vector3Int& index);
+
 	/// <summary>
 	/// 守るオブジェクトの生成
 	/// </summary>
@@ -105,7 +106,7 @@ private://メンバ変数
 	std::unique_ptr<MapChipField> mapChipField_ = nullptr;
 	//フィールドに配置しているブロック
 	std::vector<std::vector<std::vector<GameObject*>>>fieldBlocks_;
-	
+
 	//マップチップのCSVの名前
 	std::string mapChipCsvName_ = "map_04.csv";
 	//移動用のコマンド
@@ -120,7 +121,8 @@ private://メンバ変数
 	GameObject* playerObject_ = nullptr;
 	//設置予定地のオブジェクト
 	GameObject* placementPreview = nullptr;
-	Vector3Int objectIndex = {};
+	Vector3Int objectIndex_ = {};
+	bool okeru = false;
 
 	//カメラのオブジェクト
 	GameObject* cameraObject_ = nullptr;

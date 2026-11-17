@@ -57,16 +57,10 @@ public://メンバ関数
 	std::string GetTypeName()const;
 
 	/// <summary>
-	/// ピッチの設定
+	/// 軸を設定
 	/// </summary>
-	/// <param name="pitch">ピッチ</param>
-	void SetPitch(float pitch);
-
-	/// <summary>
-	/// ヨーの設定
-	/// </summary>
-	/// <param name="yaw">ヨー</param>
-	void SetYaw(float yaw);
+	/// <param name="axis">軸</param>
+	void SetAxis(const Vector2& axis);
 private://メンバ変数
 	//仰角
 	float pitch_ = 0.0f;
@@ -76,5 +70,9 @@ private://メンバ変数
 	float followSpeed_ = 0.0f;
 	//追従カメラ
 	FollowCameraController* followCamera_ = nullptr;
+	//回転速度
+	float rotSpeed_ = 3.0f;
+	//軸を取得
+	Vector2 axis_ = {};
 };
 

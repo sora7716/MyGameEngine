@@ -88,14 +88,8 @@ void GameScene::Initialize() {
 
 //更新のステート
 void GameScene::UpdateState() {
-	////足元にあるブロックを取得
-	GameObject* footBlock = GetFootBlock(placementPreview->GetWorldPos());
-	if(footBlock) {
-		footBlock->GetComponent<Object3d>()->SetMaterialInstance(0,GetMaterialInstance("highLightBlock"));
-		objectIndex = mapChipField_->GetMapChipIndexByPosition(footBlock->GetWorldPos());
-		//ブロックの足元を見ているので上にあげる
-		objectIndex.y += 1;
-	}
+	//足元にあるブロックを取得
+	okeru = TryGetPlacementIndex(placementPreview->GetWorldPos(),objectIndex_);
 }
 
 //デバッグ
@@ -104,8 +98,8 @@ void GameScene::Debug() {
 	//基底クラスのデバッグ
 	BaseScene::Debug();
 	ImGui::Begin("マップチップに関する物");
-	if(ImGui::Button("オブジェクトの生成")) {
-		CreateDefenseObject(objectIndex);
+	if(ImGui::Button("オブジェクトの生成")&& okeru) {
+		CreateDefenseObject(objectIndex_);
 	}
 	ImGui::End();
 #endif // USE_IMGUI
@@ -331,25 +325,28 @@ GameObject* GameScene::PlacementPreview() {
 	return gameObject;
 }
 
-//足元のブロックを取得
-GameObject* GameScene::GetFootBlock(const Vector3& position) {
-	//位置から検索キーを取得
-	Vector3Int index = mapChipField_->GetMapChipIndexByPosition(position);
-	index.y -= 1;//足元を見るので1引く
-	if(index.z >= fieldBlocks_.size() ||
-		index.x >= fieldBlocks_[index.z].size() ||
-		index.y >= fieldBlocks_[index.z][index.x].size()) {
-		return nullptr;
+//オブジェクトのおける位置のインデックスを取得
+bool GameScene::TryGetPlacementIndex(const Vector3& position,Vector3Int& index) {
+	//今いるインデックスを取得
+	Vector3Int currentIndex = mapChipField_->GetMapChipIndexByPosition(position);
+	//足元のインデックスを取得
+	Vector3Int underIndex = {currentIndex.x,currentIndex.y - 1,currentIndex.z};
+	//足元のステータスを取得
+	mapChipDesc::MapChipStatus underBlockStatus = mapChipField_->GetMapChipStatusByIndex(underIndex);
+	//足元にブロックがなければ
+	if(underBlockStatus.type == MapChipType::kBlank) {
+		return false;
+	}
+	//現在のステータスを取得
+	mapChipDesc::MapChipStatus currentBlockStatus = mapChipField_->GetMapChipStatusByIndex(currentIndex);
+	if(currentBlockStatus.type == MapChipType::kBlock) {
+		return false;
 	}
 
-	//ゲームオブジェクトを取得
-	GameObject* gameObject = fieldBlocks_[index.z][index.x][index.y];
-	//ゲームオブジェクトがなければ
-	if(!gameObject) {
-		return nullptr;
-	}
+	//検索キーに値を代入
+	index = currentIndex;
 
-	return gameObject;
+	return true;
 }
 
 //守るオブジェクトの生成
@@ -357,7 +354,7 @@ void GameScene::CreateDefenseObject(const Vector3Int index) {
 	GameObject* gameObject = CreateGameObject();
 	gameObject->GetTransform().translate = mapChipField_->GetMapChipPositionByIndex(index);
 	gameObject->SetName("守るオブジェクト");
-	
+
 	Object3d* object3d = gameObject->AddComponent<Object3d>();
 	object3d->SetModel("wall");
 

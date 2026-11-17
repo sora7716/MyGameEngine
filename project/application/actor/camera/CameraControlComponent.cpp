@@ -1,6 +1,8 @@
 #include "CameraControlComponent.h"
 #include "FollowCameraController.h"
+#include "MathUtility.h"
 #include <cassert>
+#include <algorithm>
 
 //コンストラクタ
 CameraControlComponent::CameraControlComponent(GameObject* gameObject) :Component(gameObject) {
@@ -30,6 +32,16 @@ void CameraControlComponent::Initialize() {
 //更新
 void CameraControlComponent::Update() {
 	//追従カメラに値を送信
+	pitch_ += axis_.y * rotSpeed_ * mathUtility::GetDeltaTime();
+	yaw_ += axis_.x * rotSpeed_ * mathUtility::GetDeltaTime();
+	
+	//ピッチの最大値
+	constexpr float kMaxPitch = 90.0f * mathUtility::kRad;
+	//ピッチの最小値
+	constexpr float kMinPitch = -90.0f * mathUtility::kRad;
+	//ピッチを制限
+	pitch_ = std::clamp(pitch_,kMinPitch,kMaxPitch);
+	
 	followCamera_->SetTheta(pitch_);
 	followCamera_->SetPhi(yaw_);
 	followCamera_->SetFollowSpeed(followSpeed_);
@@ -38,8 +50,7 @@ void CameraControlComponent::Update() {
 //プロパティ一覧
 void CameraControlComponent::RegisterProperties(PropertyRegistry* registry) {
 	Component::RegisterProperties(registry);
-	registry->Add("ピッチ",pitch_);
-	registry->Add("ヨーー",yaw_);
+	registry->Add("回転速度",rotSpeed_);
 	registry->Add("追従速度",followSpeed_);
 }
 
@@ -58,12 +69,7 @@ std::string CameraControlComponent::GetTypeName() const {
 	return "CameraControlComponent";
 }
 
-//ピッチの設定
-void CameraControlComponent::SetPitch(float pitch) {
-	pitch_ = pitch;
-}
-
-//ヨーの設定
-void CameraControlComponent::SetYaw(float yaw) {
-	yaw_ = yaw;
+//軸を設定
+void CameraControlComponent::SetAxis(const Vector2& axis) {
+	axis_ = axis;
 }

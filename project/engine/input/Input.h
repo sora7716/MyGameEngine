@@ -29,6 +29,7 @@ struct XboxPadData {
 	Vector2 leftStick;//左スティック
 	Vector2 rightStick;//右スティック
 	float deadZone;//デッドゾーン
+	uint32_t reconnectWaitFrame;//未接続の時に、次に接続を確認するまでのフレーム数
 };
 
 /// <summary>
@@ -304,6 +305,9 @@ private://メンバ関数
 	/// XboxPadの更新
 	/// </summary>
 	void XboxPadUpdate();
+private://定数
+	//未接続のコントローラを確認する感覚
+	static inline const uint32_t kReconnectCheckInterval = 60;
 private://メンバ変数
 	//ウィンドウズAPI
 	WinApi* winApi_ = nullptr;

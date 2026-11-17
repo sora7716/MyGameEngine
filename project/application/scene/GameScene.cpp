@@ -49,14 +49,18 @@ void GameScene::Initialize() {
 	movementCommands_[static_cast<uint32_t>(MovementCommandMode::kMoveRight)]->Setup({1.0f,0.0f,0.0f});
 	//左へ移動
 	movementCommands_[static_cast<uint32_t>(MovementCommandMode::kMoveLeft)]->Setup({-1.0f,0.0f,0.0f});
-	//スティックの移動用コマンドを生成
-	stickMoveCommand_ = std::make_unique<StickMovementCommand>();
-
 	//ジャンプコマンドを生成
+	stickMoveCommand_ = std::make_unique<StickMovementCommand>();
+	//スティックの移動用コマンドを生成
 	JumpCommand_ = std::make_unique<JumpCommand>();
-
 	//カメラコントロール用のコマンド
 	stickCameraControlCommand_ = std::make_unique<StickCameraControlCommand>();
+
+	//マテリアルの生成
+	std::string environmentMap = "engine/resources/textures/skybox_cube.dds";
+	std::string blockTexture = "engine/resources/models/debugCube/MapChipDebugCube_BaseColor.png";
+	AddMaterialInstance("defaultBlock",{blockTexture,environmentMap});
+	AddMaterialInstance("highLightBlock",{blockTexture,environmentMap});
 
 	//マップチップフィールドを生成
 	mapChipField_ = MapChipField::Create(mapChipCsvName_);
@@ -84,10 +88,13 @@ void GameScene::Initialize() {
 
 //更新のステート
 void GameScene::UpdateState() {
-	//フィールドのブロックを選択
-	GameObject* selectedFieldBlock = GetFootBlock(placementPreview->GetWorldPos());
-	if(selectedFieldBlock) {
-		selectedFieldBlock->GetComponent<Object3d>()->SetMaterialParameter(0,"color",Color::GetRed());
+	////足元にあるブロックを取得
+	GameObject* footBlock = GetFootBlock(placementPreview->GetWorldPos());
+	if(footBlock) {
+		footBlock->GetComponent<Object3d>()->SetMaterialInstance(0,GetMaterialInstance("highLightBlock"));
+		objectIndex = mapChipField_->GetMapChipIndexByPosition(footBlock->GetWorldPos());
+		//ブロックの足元を見ているので上にあげる
+		objectIndex.y += 1;
 	}
 }
 
@@ -97,6 +104,9 @@ void GameScene::Debug() {
 	//基底クラスのデバッグ
 	BaseScene::Debug();
 	ImGui::Begin("マップチップに関する物");
+	if(ImGui::Button("オブジェクトの生成")) {
+		CreateDefenseObject(objectIndex);
+	}
 	ImGui::End();
 #endif // USE_IMGUI
 }
@@ -144,6 +154,10 @@ GameObject* GameScene::CreateSkyBox() {
 
 //フィールドの生成
 void GameScene::CreateField() {
+	//マテリアルの変更
+	MaterialInstance* highlightColor = FindMaterialInstance("highLightBlock");
+	highlightColor->SetParameter("color",Color::GetRed());
+
 	//マップチップのデータ
 	MapChipData mapChipData = mapChipField_->GetMapChipData();
 
@@ -182,6 +196,7 @@ void GameScene::CreateField() {
 				gameObject->GetTransform().translate = mapChipField_->GetMapChipPositionByIndex(positionIndex);
 				Object3d* object3d = gameObject->AddComponent<Object3d>();
 				object3d->SetModel("debugCube");
+				object3d->SetMaterialInstance(0,GetMaterialInstance("defaultBlock"));
 
 				fieldBlocks_[z][x][y] = gameObject;
 			}
@@ -240,8 +255,8 @@ GameObject* GameScene::CreatePlayer() {
 	inputComponent->AddAxisInput(StickType::kRight,std::move(stickCameraControlCommand_->Clone()));
 	//ジャンプコマンドを追加
 	inputComponent->AddInputState(XboxInput::kA,InputPhase::kPressed,std::move(JumpCommand_->Clone()));
-#ifdef _DEBUG
-	//キーの一覧
+	//#ifdef _DEBUG
+		//キーの一覧
 	std::array<const char,static_cast<uint32_t>(MovementCommandMode::kCount)>moveKeyList{
 		DIK_W,
 		DIK_S,
@@ -260,9 +275,9 @@ GameObject* GameScene::CreatePlayer() {
 	//ジャンプコマンドを設定
 	JumpCommand_->SetJumpComponent(jumpComponent);
 	inputComponent->AddInputState(static_cast<BYTE>(DIK_SPACE),InputPhase::kPressed,std::move(JumpCommand_->Clone()));
-#endif // _DEBUG
+	//#endif // _DEBUG
 
-	//プレイヤーの設定
+		//プレイヤーの設定
 	Player* player = gameObject->AddComponent<Player>();
 	player->SetObject3d(object3d);
 	player->SetInput(GetSceneContext().input);
@@ -335,4 +350,15 @@ GameObject* GameScene::GetFootBlock(const Vector3& position) {
 	}
 
 	return gameObject;
+}
+
+//守るオブジェクトの生成
+void GameScene::CreateDefenseObject(const Vector3Int index) {
+	GameObject* gameObject = CreateGameObject();
+	gameObject->GetTransform().translate = mapChipField_->GetMapChipPositionByIndex(index);
+	gameObject->SetName("守るオブジェクト");
+	
+	Object3d* object3d = gameObject->AddComponent<Object3d>();
+	object3d->SetModel("wall");
+
 }

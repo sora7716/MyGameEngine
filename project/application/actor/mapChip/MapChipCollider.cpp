@@ -435,6 +435,11 @@ Vector3 MapChipCollider::GetCornerPosition(const Vector3& center,Corner corner) 
 
 //衝突したときの反応
 void MapChipCollider::ApplyCollisionResponse(const CollisionMapChipInfo& info) {
+	//押し戻しをしない場合
+	if(isTrigger_) {
+		return;
+	}
+
 	//速度を取得
 	Vector3& velocity = rigidBody_->GetVelocity();
 

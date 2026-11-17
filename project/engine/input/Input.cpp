@@ -39,6 +39,14 @@ void Input::Initialize(WinApi* winApi) {
 	for(uint32_t i = 0; i < 4; i++) {
 		xboxPadDatas_[i].deadZone = 0.1f;
 	}
+
+	//コントローラの数を確認
+	for(uint32_t i = 0; i < 4; i++) {
+		XboxPadData& padData = xboxPadDatas_[i];
+		//最初のフレームですぐ接続を確認する
+		padData.isConnected = false;
+		padData.reconnectWaitFrame = 0;
+	}
 }
 
 //更新
@@ -553,14 +561,23 @@ void Input::MouseUpdate() {
 //XboxPadの更新
 void Input::XboxPadUpdate() {
 	//コントローラを接続したかどうか
-	for(uint32_t i = 0; i < xboxPadDatas_.size(); i++) {
+	for(uint32_t i = 0; i < static_cast<uint32_t>(xboxPadDatas_.size()); i++) {
 		XboxPadData& padData = xboxPadDatas_[i];
+
+		//未接続のスロットは一定間隔でしか確認しない
+		if(!padData.isConnected) {
+			if(padData.reconnectWaitFrame > 0) {
+				padData.reconnectWaitFrame--;
+				continue;
+			}
+		}
 
 		DWORD result = XInputGetState(i,&padData.state);
 		padData.isConnected = result == ERROR_SUCCESS;
 
 		//接続されてなければ
 		if(!padData.isConnected) {
+			padData.reconnectWaitFrame = kReconnectCheckInterval;
 			continue;
 		}
 		//ステート

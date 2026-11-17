@@ -1246,7 +1246,9 @@ bool DebugEditor::SelectGameObjectOperation([[maybe_unused]] GameObject* selectG
 
 //パフォーマンスの描画
 void DebugEditor::DrawPerformance() {
+#ifdef USE_IMGUI
 	ImGui::Begin("パフォーマンス");
 	ImGui::Text("FPS:%.3f",FixFPS::GetInstance()->GetFPS());
 	ImGui::End();
+#endif // USE_IMGUI
 }

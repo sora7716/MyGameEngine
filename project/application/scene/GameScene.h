@@ -94,11 +94,18 @@ private://メンバ関数
 	/// </summary>
 	/// <param name="position">選択している位置</param>
 	GameObject* GetFootBlock(const Vector3& position);
+	
+	/// <summary>
+	/// 守るオブジェクトの生成
+	/// </summary>
+	/// <param name="index">検索キー</param>
+	void CreateDefenseObject(const Vector3Int index);
 private://メンバ変数
 	//マップチップフィールド
 	std::unique_ptr<MapChipField> mapChipField_ = nullptr;
 	//フィールドに配置しているブロック
 	std::vector<std::vector<std::vector<GameObject*>>>fieldBlocks_;
+	
 	//マップチップのCSVの名前
 	std::string mapChipCsvName_ = "map_04.csv";
 	//移動用のコマンド
@@ -113,6 +120,7 @@ private://メンバ変数
 	GameObject* playerObject_ = nullptr;
 	//設置予定地のオブジェクト
 	GameObject* placementPreview = nullptr;
+	Vector3Int objectIndex = {};
 
 	//カメラのオブジェクト
 	GameObject* cameraObject_ = nullptr;

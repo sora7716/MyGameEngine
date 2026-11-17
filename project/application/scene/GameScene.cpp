@@ -61,19 +61,11 @@ void GameScene::Initialize() {
 	//マップチップフィールドを生成
 	mapChipField_ = MapChipField::Create(mapChipCsvName_);
 
-	//平行光源
-	GameObject* gameObject = CreateGameObject();
-	gameObject->AddComponent<DirectionalLight>();
-	gameObject->GetTransform().SetEulerAngleDegrees({-120.0f,0.0f,0.0f});
-	gameObject->SetName("平行光源");
+	//カメラの生成
+	cameraObject_ = CreateCamera();
 
-	//カメラ
-	GameObject* cameraObject = CreateGameObject();
-	cameraObject->SetName("ゲームカメラ");
-	cameraObject->AddComponent<Camera>();
-	followCamera_ = cameraObject->AddComponent<FollowCameraController>();
-	followCamera_->SetRadius(9.0f);
-	followCamera_->SetTheta(0.5f);
+	//平行光源の生成
+	CreateDirectionalLight();
 
 	//SkyBoxの生成
 	CreateSkyBox();
@@ -86,15 +78,17 @@ void GameScene::Initialize() {
 	//カメラのターゲットを設定
 	followCamera_->SetTarget(playerObject_);
 
-	GameObject* wallObject = CreateGameObject();
-	wallObject->GetTransform().translate.z = 1.0f;
-	wallObject->AttachTo(playerObject_,false);
-	Object3d* object3d = wallObject->AddComponent<Object3d>();
-	object3d->SetModel("wall");
+	//オブジェクトの設置予定地
+	placementPreview = PlacementPreview();
 }
 
 //更新のステート
 void GameScene::UpdateState() {
+	//フィールドのブロックを選択
+	GameObject* selectedFieldBlock = GetFootBlock(placementPreview->GetWorldPos());
+	if(selectedFieldBlock) {
+		selectedFieldBlock->GetComponent<Object3d>()->SetMaterialParameter(0,"color",Color::GetRed());
+	}
 }
 
 //デバッグ
@@ -111,6 +105,27 @@ void GameScene::Debug() {
 void GameScene::Finalize() {
 	//基底クラスの解放
 	BaseScene::Finalize();
+}
+
+//平行光源の生成
+void GameScene::CreateDirectionalLight() {
+	//平行光源
+	GameObject* gameObject = CreateGameObject();
+	gameObject->AddComponent<DirectionalLight>();
+	gameObject->GetTransform().SetEulerAngleDegrees({-120.0f,0.0f,0.0f});
+	gameObject->SetName("平行光源");
+}
+
+//カメラの生成
+GameObject* GameScene::CreateCamera() {
+	//カメラ
+	GameObject* gameObject = CreateGameObject();
+	gameObject->SetName("ゲームカメラ");
+	gameObject->AddComponent<Camera>();
+	followCamera_ = gameObject->AddComponent<FollowCameraController>();
+	followCamera_->SetRadius(9.0f);
+	followCamera_->SetTheta(0.5f);
+	return gameObject;
 }
 
 //SkyBoxの生成
@@ -135,16 +150,23 @@ void GameScene::CreateField() {
 	//フィールド
 	GameObject* field = CreateGameObject();
 	field->SetName("フィールド");
-
+	//フィールドブロックの配列サイズを設定
+	fieldBlocks_.resize(mapChipData.data.size());
 	//各ブロックを生成
 	for(uint32_t z = 0; z < mapChipData.data.size(); z++) {
+		//フィールドブロックの配列サイズを設定
+		fieldBlocks_[z].resize(mapChipData.data[z].size());
+		//ステータスのデータを取得
 		std::vector<MapChipStatus>mapChipStatusData = mapChipData.data[z];
 		for(uint32_t x = 0; x < mapChipStatusData.size(); x++) {
 			//ステータス
 			MapChipStatus status = mapChipStatusData[x];
+			//フィールドブロックの配列サイズを設定
+			fieldBlocks_[z][x].resize(status.height);
 			for(uint32_t y = 0; y < status.height; y++) {
 				//空白だった場合
 				if(status.type == MapChipType::kBlank) {
+					fieldBlocks_[z][x][y] = nullptr;
 					continue;
 				}
 
@@ -160,6 +182,8 @@ void GameScene::CreateField() {
 				gameObject->GetTransform().translate = mapChipField_->GetMapChipPositionByIndex(positionIndex);
 				Object3d* object3d = gameObject->AddComponent<Object3d>();
 				object3d->SetModel("debugCube");
+
+				fieldBlocks_[z][x][y] = gameObject;
 			}
 		}
 	}
@@ -197,20 +221,26 @@ GameObject* GameScene::CreatePlayer() {
 	//リジッドボディを設定
 	RigidBody* rigidBody = gameObject->AddComponent<RigidBody>();
 	//移動用のコンポーネントのセットアップ
-	movementComponent->Setup(rigidBody,10.0f,12.0f);
+	float moveSpeed = 7.5f;//移動速度
+	float moveResponse = 6.0f;//移動した際のレスポンス
+	movementComponent->Setup(rigidBody,moveSpeed,moveResponse);
+	movementComponent->SetCameraObject(cameraObject_);
 	//ジャンプ用のコンポーネントのセットアップ
-	jumpComponent->Setup(rigidBody,15.0f);
+	float jumpSpeed = 7.0f;
+	jumpComponent->Setup(rigidBody,jumpSpeed);
 	//カメラさ操作用のコンポーネントのセットアップ
-	cameraControlComponent->Setup(followCamera_,3.0f);
+	float followSpeed = 5.0f;//追従カメラの補間速度
+	cameraControlComponent->Setup(followCamera_,followSpeed);
 
-	//スティックのコマンドを追加	
+	//スティックの移動コマンドを追加	
 	stickMoveCommand_->SetMovementComponent(movementComponent);
 	inputComponent->AddAxisInput(StickType::kLeft,std::move(stickMoveCommand_->Clone()));
-
-	//カメラ操作用のコマンドを追加
+	//スティックのカメラ操作用のコマンドを追加
 	stickCameraControlCommand_->SetCameraControlComponent(cameraControlComponent);
 	inputComponent->AddAxisInput(StickType::kRight,std::move(stickCameraControlCommand_->Clone()));
-
+	//ジャンプコマンドを追加
+	inputComponent->AddInputState(XboxInput::kA,InputPhase::kPressed,std::move(JumpCommand_->Clone()));
+#ifdef _DEBUG
 	//キーの一覧
 	std::array<const char,static_cast<uint32_t>(MovementCommandMode::kCount)>moveKeyList{
 		DIK_W,
@@ -218,7 +248,6 @@ GameObject* GameScene::CreatePlayer() {
 		DIK_A,
 		DIK_D
 	};
-
 	//移動を設定
 	for(uint32_t i = 0; i < moveKeyList.size(); i++) {
 		//入力キーを取得
@@ -228,11 +257,10 @@ GameObject* GameScene::CreatePlayer() {
 		//移動コマンドを設定
 		inputComponent->AddInputState(static_cast<BYTE>(key),InputPhase::kHeld,std::move(movementCommands_[i]->Clone()));
 	}
-
 	//ジャンプコマンドを設定
 	JumpCommand_->SetJumpComponent(jumpComponent);
 	inputComponent->AddInputState(static_cast<BYTE>(DIK_SPACE),InputPhase::kPressed,std::move(JumpCommand_->Clone()));
-	inputComponent->AddInputState(XboxInput::kA,InputPhase::kPressed,std::move(JumpCommand_->Clone()));
+#endif // _DEBUG
 
 	//プレイヤーの設定
 	Player* player = gameObject->AddComponent<Player>();
@@ -242,7 +270,69 @@ GameObject* GameScene::CreatePlayer() {
 	//マップチップのコライダーを設定
 	MapChipCollider* mapChipCollider = gameObject->AddComponent<MapChipCollider>();
 	//マップチップコライダーのセットアップ
-	mapChipCollider->Setup(mapChipField_.get(),rigidBody,{0.8f,0.8f,0.8f});
+	Vector3 hitBoxSize = {0.8f,0.8f,0.8f};
+	mapChipCollider->Setup(mapChipField_.get(),rigidBody,hitBoxSize);
+
+	return gameObject;
+}
+
+//オブジェクトの設置予定地
+GameObject* GameScene::PlacementPreview() {
+	//ゲームオブジェクトを生成
+	GameObject* gameObject = CreateGameObject();
+	Transform& transform = gameObject->GetTransform();
+	transform.translate.z = 1.0f;
+	gameObject->SetName("設置予定地");
+
+#ifdef _DEBUG
+	//モデルの追加
+	Object3d* object3d = gameObject->AddComponent<Object3d>();
+	object3d->SetModel("tile");
+	object3d->SetMaterialParameter(0,"color",Color::GetMagenta());
+
+	Object3d* wireframe = gameObject->AddComponent<Object3d>();
+	wireframe->SetModel("cube");
+	wireframe->SetFillMode(rasterizerMode::FillMode::kWireframe);
+	wireframe->SetMaterialParameter(0,"color",Color::GetBlack());
+#endif // _DEBUG
+
+	//プレイヤーに親子付け
+	gameObject->AttachTo(playerObject_,false);
+	//親のオブジェクト
+	const GameObject* parent = gameObject->GetParentObject();
+	//親のリジッドボディを取得
+	RigidBody* parentRigidBody = parent->GetComponent<RigidBody>();
+	//親のリジッドボディがない場合
+	if(!parentRigidBody) {
+		return gameObject;
+	}
+
+	//マップチップのコライダーを設定
+	MapChipCollider* mapChipCollider = gameObject->AddComponent<MapChipCollider>();
+	//マップチップコライダーのセットアップ
+	Vector3 hitBoxSize = Vector3::GetOne();
+	mapChipCollider->Setup(mapChipField_.get(),parentRigidBody,hitBoxSize,true);
+
+	return gameObject;
+}
+
+//足元のブロックを取得
+GameObject* GameScene::GetFootBlock(const Vector3& position) {
+	//位置から検索キーを取得
+	Vector3Int index = mapChipField_->GetMapChipIndexByPosition(position);
+	index.y -= 1;//足元を見るので1引く
+	if(index.z >= fieldBlocks_.size() ||
+		index.x >= fieldBlocks_[index.z].size() ||
+		index.y >= fieldBlocks_[index.z][index.x].size()) {
+		return nullptr;
+	}
+
+	//ゲームオブジェクトを取得
+	GameObject* gameObject = fieldBlocks_[index.z][index.x][index.y];
+	//ゲームオブジェクトがなければ
+	if(!gameObject) {
+		return nullptr;
+	}
 
 	return gameObject;
 }

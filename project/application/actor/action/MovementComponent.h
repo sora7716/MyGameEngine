@@ -69,6 +69,12 @@ public://メンバ関数
 	/// </summary>
 	/// <param name="cameraObject">カメラオブジェクト</param>
 	void SetCameraObject(GameObject* cameraObject);
+
+	/// <summary>
+	/// 方向ベクトルの取得
+	/// </summary>
+	/// <returns>方向ベクトル</returns>
+	const Vector3& GetDirection()const;
 private://メンバ変数
 	//移動の際のレスポンス
 	float moveResponse_ = 1.0f;

@@ -16,7 +16,7 @@ MapChipCollider::~MapChipCollider() {
 }
 
 //セットアップ
-void MapChipCollider::Setup(MapChipField* mapChipField,RigidBody* rigidBody,const Vector3& targetSize) {
+void MapChipCollider::Setup(MapChipField* mapChipField,RigidBody* rigidBody,const Vector3& targetSize,bool isTrigger) {
 	//マップチップフィールドの記録
 	assert(mapChipField);
 	mapChipField_ = mapChipField;
@@ -29,6 +29,8 @@ void MapChipCollider::Setup(MapChipField* mapChipField,RigidBody* rigidBody,cons
 	targetSize_ = targetSize;
 	//対象のハーフサイズ
 	targetHalfSize_ = targetSize_ / 2.0f;
+	//押し出しを行うかを保存
+	isTrigger_ = isTrigger;
 }
 
 //初期化
@@ -101,7 +103,12 @@ void MapChipCollider::CheckCollision(CollisionMapChipInfo& info) {
 	////背面の衝突判定
 	CheckCollisionBack(info,center);
 
-	//補正した分をまとめては寧
+	//押し出しを行わない場合
+	if(isTrigger_) {
+		return;
+	}
+
+	//補正した分をまとめて反映
 	Transform& transform = GetOwner()->GetTransform();
 	transform.translate += center - worldPos;//ワールド分は引いてローカルへ戻す
 }

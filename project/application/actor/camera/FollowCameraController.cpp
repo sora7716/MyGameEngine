@@ -135,3 +135,13 @@ Matrix4x4 FollowCameraController::MakeCameraMatrix() {
 
 	return cameraMatrix;
 }
+
+//仰角の取得
+float FollowCameraController::GetTheta() const {
+	return spherical_.theta;
+}
+
+//方位角の取得
+float FollowCameraController::GetPhi() const {
+	return spherical_.phi;
+}

@@ -21,8 +21,8 @@ void StickCameraControlCommand::Execute(const Vector2& axis) {
 	//スティックの倒し具合を移動方向へ設定
 	pitch_ += axis.y * rotSpeed_ * mathUtility::GetDeltaTime();
 	yaw_ += axis.x * rotSpeed_ * mathUtility::GetDeltaTime();
-	cameraControlComponent_->SetTheta(pitch_);
-	cameraControlComponent_->SetPhi(yaw_);
+	cameraControlComponent_->SetPitch(pitch_);
+	cameraControlComponent_->SetYaw(yaw_);
 }
 
 //複製

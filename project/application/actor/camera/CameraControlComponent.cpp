@@ -15,6 +15,10 @@ void CameraControlComponent::Setup(FollowCameraController* followCamera,float fo
 	//追従カメラの記録
 	assert(followCamera);
 	followCamera_ = followCamera;
+	//ピッチの記録
+	pitch_ = followCamera_->GetTheta();
+	//ヨーの記録
+	yaw_ = followCamera_->GetPhi();
 	//追従速度の記録
 	followSpeed_ = followSpeed;
 }
@@ -26,14 +30,17 @@ void CameraControlComponent::Initialize() {
 //更新
 void CameraControlComponent::Update() {
 	//追従カメラに値を送信
-	followCamera_->SetTheta(theta_);
-	followCamera_->SetPhi(phi_);
+	followCamera_->SetTheta(pitch_);
+	followCamera_->SetPhi(yaw_);
 	followCamera_->SetFollowSpeed(followSpeed_);
 }
 
 //プロパティ一覧
 void CameraControlComponent::RegisterProperties(PropertyRegistry* registry) {
 	Component::RegisterProperties(registry);
+	registry->Add("ピッチ",pitch_);
+	registry->Add("ヨーー",yaw_);
+	registry->Add("追従速度",followSpeed_);
 }
 
 //複製
@@ -41,8 +48,8 @@ std::unique_ptr<Component> CameraControlComponent::Clone(GameObject* gameObject)
 	std::unique_ptr<CameraControlComponent>cloneInstance = std::make_unique<CameraControlComponent>(gameObject);
 	cloneInstance->Setup(followCamera_,followSpeed_);
 	cloneInstance->Initialize();
-	cloneInstance->theta_ = this->theta_;
-	cloneInstance->phi_ = this->phi_;
+	cloneInstance->pitch_ = this->pitch_;
+	cloneInstance->yaw_ = this->yaw_;
 	return cloneInstance;
 }
 
@@ -51,12 +58,12 @@ std::string CameraControlComponent::GetTypeName() const {
 	return "CameraControlComponent";
 }
 
-//仰角の設定
-void CameraControlComponent::SetTheta(float theta) {
-	theta_ = theta;
+//ピッチの設定
+void CameraControlComponent::SetPitch(float pitch) {
+	pitch_ = pitch;
 }
 
-//方位角の設定
-void CameraControlComponent::SetPhi(float phi) {
-	phi_ = phi;
+//ヨーの設定
+void CameraControlComponent::SetYaw(float yaw) {
+	yaw_ = yaw;
 }

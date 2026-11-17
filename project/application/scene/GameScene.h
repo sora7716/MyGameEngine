@@ -58,6 +58,16 @@ public://メンバ関数
 	void Finalize()override;
 private://メンバ関数
 	/// <summary>
+	/// 平行光源の生成
+	/// </summary>
+	void CreateDirectionalLight();
+
+	/// <summary>
+	/// カメラの生成
+	/// </summary>
+	GameObject* CreateCamera();
+
+	/// <summary>
 	/// SkyBoxの生成
 	/// </summary>
 	/// <returns>ゲームオブジェクト</returns>
@@ -72,11 +82,25 @@ private://メンバ関数
 	/// プレイヤー作成
 	/// </summary>
 	GameObject* CreatePlayer();
+
+	/// <summary>
+	/// オブジェクトの設置予定地
+	/// </summary>
+	/// <returns>設置予定地</returns>
+	GameObject* PlacementPreview();
+
+	/// <summary>
+	/// 足元のブロックを取得
+	/// </summary>
+	/// <param name="position">選択している位置</param>
+	GameObject* GetFootBlock(const Vector3& position);
 private://メンバ変数
 	//マップチップフィールド
 	std::unique_ptr<MapChipField> mapChipField_ = nullptr;
+	//フィールドに配置しているブロック
+	std::vector<std::vector<std::vector<GameObject*>>>fieldBlocks_;
 	//マップチップのCSVの名前
-	std::string mapChipCsvName_ = "map_01.csv";
+	std::string mapChipCsvName_ = "map_04.csv";
 	//移動用のコマンド
 	std::vector<std::unique_ptr<MovementCommand>> movementCommands_;
 	std::unique_ptr<StickMovementCommand>stickMoveCommand_ = nullptr;
@@ -85,8 +109,13 @@ private://メンバ変数
 	//カメラ操作用のコマンド
 	std::unique_ptr<StickCameraControlCommand>stickCameraControlCommand_ = nullptr;
 
+	//プレイヤーのオブジェクト
 	GameObject* playerObject_ = nullptr;
+	//設置予定地のオブジェクト
+	GameObject* placementPreview = nullptr;
 
+	//カメラのオブジェクト
+	GameObject* cameraObject_ = nullptr;
 	//追従カメラ
 	FollowCameraController* followCamera_ = nullptr;
 };

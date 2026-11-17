@@ -88,6 +88,18 @@ public://メンバ関数
 	/// </summary>
 	/// <returns>カメラ行列</returns>
 	Matrix4x4 MakeCameraMatrix();
+
+	/// <summary>
+	/// 仰角の取得
+	/// </summary>
+	/// <returns>仰角</returns>
+	float GetTheta()const;
+
+	/// <summary>
+	/// 方位角の取得
+	/// </summary>
+	/// <returns>方位角</returns>
+	float GetPhi()const;
 private://メンバ変数
 	//球面座標系
 	Spherical spherical_ = {};

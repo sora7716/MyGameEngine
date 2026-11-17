@@ -110,3 +110,8 @@ void MovementComponent::AddDirection(const Vector3& direction) {
 void MovementComponent::SetCameraObject(GameObject* cameraObject) {
 	cameraObject_ = cameraObject;
 }
+
+//方向ベクトルの取得
+const Vector3& MovementComponent::GetDirection() const {
+	return direction_;
+}

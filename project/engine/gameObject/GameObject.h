@@ -212,7 +212,7 @@ public://メンバ関数
 	/// <typeparam name="T">コンポーネントの型</typeparam>
 	/// <returns>コンポーネントのポインタ</returns>
 	template <class T>
-	T* GetComponent() {
+	T* GetComponent()const {
 		static_assert(
 			std::is_base_of_v<Component,T>,
 			"TはComponentを継承している必要があります"

@@ -164,43 +164,34 @@ void MapChipField::LoadMapChipCsv(const std::string& filePath) {
 		int32_t xIndex = 0;
 		//','(区切り文字),word(1文字)
 		while(std::getline(line_stream,word,',')) {
-			MapChipStatus status = {};
-			if(word == "0") {
-				//空気だった場合
-				status.type = MapChipType::kBlank;
-				status.height = 1;
-				lines.push_back(status);
-				continue;
-			} else if(word == "B") {
-				//ブロックだった場合
-				status.type = MapChipType::kBlock;
-				status.height = 1;
-				lines.push_back(status);
-				continue;
+			//行末の改行や空白を取り除く
+			while(!word.empty() && (word.back() == '\r' || word.back() == ' ')) {
+				word.pop_back();
 			}
 
-			//数が設定されている場合
-			if(word.substr(0,1) == "B") {
-				//ブロックだった場合
-				status.type = MapChipType::kBlock;
-				int32_t height = static_cast<uint32_t>(std::stoi(word.substr(1)));
-				if(height < 0) {
-					status.height = 1;
-				} else {
-					status.height = height;
-				}
-			} else if(word.substr(0,1) == "P") {
-				//ブロックだった場合
-				status.type = MapChipType::kBlock;
-				int32_t height = static_cast<uint32_t>(std::stoi(word.substr(1))) - 1;
-				if(height < 0) {
-					status.height = 1;
-				} else {
-					status.height = height;
-				}
+			MapChipStatus status = {};
+			//頭の頭文字
+			std::string head = word.substr(0,1);
+			//高さ
+			int32_t height = 1;
+			if(word.size() > 1) {
+				height = static_cast<int32_t>(std::max(std::stoi(word.substr(1)),1));
+			}
 
+			if(head == "B") {
+				//Blockだった場合
+				status.type = MapChipType::kBlock;
+				status.height = height;
+			} else if(head == "P") {
+				//Playerだった場合
+				status.type = MapChipType::kBlock;
+				status.height = height;
 				//プレイヤーの位置を保存
 				mapChipData_.playerIndex = {xIndex,height + 1,zIndex};
+			} else {
+				//空気の場合
+				status.type = MapChipType::kBlank;
+				status.height = 1;
 			}
 			lines.push_back(status);
 

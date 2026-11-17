@@ -57,21 +57,21 @@ public://メンバ関数
 	std::string GetTypeName()const;
 
 	/// <summary>
-	/// 仰角の設定
+	/// ピッチの設定
 	/// </summary>
-	/// <param name="theta">仰角</param>
-	void SetTheta(float theta);
+	/// <param name="pitch">ピッチ</param>
+	void SetPitch(float pitch);
 
 	/// <summary>
-	/// 方位角の設定
+	/// ヨーの設定
 	/// </summary>
-	/// <param name="phi">方位角</param>
-	void SetPhi(float phi);
+	/// <param name="yaw">ヨー</param>
+	void SetYaw(float yaw);
 private://メンバ変数
 	//仰角
-	float theta_ = 0.0f;
+	float pitch_ = 0.0f;
 	//方位角
-	float phi_ = 0.0f;
+	float yaw_ = 0.0f;
 	//追従速度
 	float followSpeed_ = 0.0f;
 	//追従カメラ

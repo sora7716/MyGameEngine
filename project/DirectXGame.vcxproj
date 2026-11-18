@@ -15,6 +15,7 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="application\actor\action\DefensePlaceComponent.cpp" />
     <ClCompile Include="application\actor\action\DefenseRotationComponent.cpp" />
     <ClCompile Include="application\actor\action\JumpComponent.cpp" />
     <ClCompile Include="application\actor\action\MovementComponent.cpp" />
@@ -22,6 +23,7 @@
     <ClCompile Include="application\actor\action\PlacementSwitchComponent.cpp" />
     <ClCompile Include="application\actor\camera\CameraControlComponent.cpp" />
     <ClCompile Include="application\actor\camera\FollowCameraController.cpp" />
+    <ClCompile Include="application\actor\command\DefensePlaceCommand.cpp" />
     <ClCompile Include="application\actor\command\DefenseRotationCommand.cpp" />
     <ClCompile Include="application\actor\command\JumpCommand.cpp" />
     <ClCompile Include="application\actor\command\MovementCommand.cpp" />
@@ -447,6 +449,7 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="application\actor\action\DefensePlaceComponent.h" />
     <ClInclude Include="application\actor\action\DefenseRotationComponent.h" />
     <ClInclude Include="application\actor\action\JumpComponent.h" />
     <ClInclude Include="application\actor\action\MovementComponent.h" />
@@ -454,6 +457,7 @@
     <ClInclude Include="application\actor\action\PlacementSwitchComponent.h" />
     <ClInclude Include="application\actor\camera\CameraControlComponent.h" />
     <ClInclude Include="application\actor\camera\FollowCameraController.h" />
+    <ClInclude Include="application\actor\command\DefensePlaceCommand.h" />
     <ClInclude Include="application\actor\command\DefenseRotationCommand.h" />
     <ClInclude Include="application\actor\command\JumpCommand.h" />
     <ClInclude Include="application\actor\command\MovementCommand.h" />

@@ -15,6 +15,7 @@ class PlacementPreviewComponent;
 class DefenseRotationComponent;
 class PlacementSwitchComponent;
 class CameraControlComponent;
+class DefensePlaceComponent;
 class MovementCommand;
 class JumpCommand;
 class StickMovementCommand;
@@ -22,6 +23,7 @@ class StickCameraControlCommand;
 class PlacementPreviewCommand;
 class DefenseRotationCommand;
 class PlacementSwitchCommand;
+class DefensePlaceCommand;
 
 //移動用のコマンドモード
 enum class MovementCommandMode : uint32_t {
@@ -119,6 +121,11 @@ private://メンバ関数
 	/// オブジェクトの設置予定地の更新
 	/// </summary>
 	void UpdatePlacementPreviewObject();
+
+	/// <summary>
+	/// ディフェンス用のオブジェクトを生成
+	/// </summary>
+	void CreateDefenseObject();
 private://メンバ変数
 	//マップチップフィールド
 	std::unique_ptr<MapChipField> mapChipField_ = nullptr;
@@ -144,9 +151,12 @@ private://メンバ変数
 
 	//オブジェクトの回転用コマンド
 	std::vector<std::unique_ptr<DefenseRotationCommand>>defenseRotationCommands_;
-	
+
 	//設置するオブジェクトの切り替え用コマンド
 	std::vector<std::unique_ptr<PlacementSwitchCommand>>placementSwitchCommands_;
+
+	//オブジェクトを設置する用のコマンド
+	std::unique_ptr <DefensePlaceCommand> defensePlaceCommand_ = nullptr;
 
 	//守るオブジェクトのモデル名の一覧
 	std::vector<std::string>defenseObjectModelNameList_;
@@ -158,6 +168,7 @@ private://メンバ変数
 	PlacementPreviewComponent* placementPreviewComponent_ = nullptr;
 
 	//設置予定地のオブジェクト
+	GameObject* placementPreviewObject_ = nullptr;
 	Object3d* placementPreviewObject3d_ = nullptr;
 	Vector3Int placementPreviewIndex_ = {};
 	//設置できるか
@@ -168,6 +179,9 @@ private://メンバ変数
 
 	//設置オブジェクトの回転
 	DefenseRotationComponent* defenseRotationComponent_ = nullptr;
+
+	//オブジェクトの設置する機能
+	DefensePlaceComponent* defensePlaceComponent_ = nullptr;
 
 	//カメラのオブジェクト
 	GameObject* cameraObject_ = nullptr;

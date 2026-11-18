@@ -2,6 +2,7 @@
 #include "GameObject.h"
 #include "SkyBox.h"
 #include "Object3d.h"
+#include "Model.h"
 #include "DirectionalLight.h"
 #include "BoxCollider.h"
 #include "RigidBody.h"
@@ -13,6 +14,7 @@
 #include "PlacementPreviewCommand.h"
 #include "DefenseRotationCommand.h"
 #include "PlacementSwitchCommand.h"
+#include "DefensePlaceCommand.h"
 #include "InputComponent.h"
 #include "MovementComponent.h"
 #include "JumpComponent.h"
@@ -20,6 +22,7 @@
 #include "PlacementPreviewComponent.h"
 #include "DefenseRotationComponent.h"
 #include "PlacementSwitchComponent.h"
+#include "DefensePlaceComponent.h"
 #include "MapChipField.h"
 #include "MapChipCollider.h"
 #include "Camera.h"
@@ -64,7 +67,7 @@ void GameScene::Initialize() {
 	jumpCommand_ = std::make_unique<JumpCommand>();
 	//カメラコントロール用のコマンド
 	stickCameraControlCommand_ = std::make_unique<StickCameraControlCommand>();
-	//設置予定地をひょじする用のコマンド
+	//設置予定地を1表示する用のコマンド
 	placementPreviewCommand_ = std::make_unique<PlacementPreviewCommand>();
 	//ディフェンス用のオブジェクトの回転コマンドの生成
 	defenseRotationCommands_.resize(static_cast<uint32_t>(DirectionType::kCount));
@@ -85,6 +88,9 @@ void GameScene::Initialize() {
 	placementSwitchCommands_[static_cast<uint32_t>(DirectionType::kLeft)]->Setup(-1);
 	//右へ
 	placementSwitchCommands_[static_cast<uint32_t>(DirectionType::kRight)]->Setup(1);
+
+	//オブジェクトを設置する用のコマンドを生成
+	defensePlaceCommand_ = std::make_unique<DefensePlaceCommand>();
 
 	//マテリアルの生成
 	std::string environmentMap = "engine/resources/textures/skybox_cube.dds";
@@ -114,7 +120,7 @@ void GameScene::Initialize() {
 	defenseObjectModelNameList_.push_back("gameMine");
 
 	//オブジェクトの設置予定地の生成
-	CreatePlacementPreview();
+	placementPreviewObject_ = CreatePlacementPreview();
 
 	//プレイヤーの作成
 	playerObject_ = CreatePlayer();
@@ -131,6 +137,11 @@ void GameScene::UpdateState() {
 
 	//オブジェクトの設置予定地の更新
 	UpdatePlacementPreviewObject();
+
+	//ディフェンスオブジェクトの設置
+	if(placementPreviewComponent_->GetEnabledRequest()) {
+		CreateDefenseObject();
+	}
 }
 
 //デバッグ
@@ -168,9 +179,9 @@ GameObject* GameScene::CreateCamera() {
 	followCamera_->SetRadius(9.0f);
 	followCamera_->SetTheta(0.5f);
 
-	//カメラ操作用のコンポーネントを設定
+	//カメラ操作用の機能を追加
 	cameraControlComponent_ = gameObject->AddComponent<CameraControlComponent>();
-	//カメラさ操作用のコンポーネントのセットアップ
+	//カメラさ操作用の機能のセットアップ
 	float followSpeed = 5.0f;//追従カメラの補間速度
 	cameraControlComponent_->Setup(followSpeed);
 	return gameObject;
@@ -257,23 +268,23 @@ GameObject* GameScene::CreatePlayer() {
 	wireFrame->SetMaterialParameter(0,"color",Color::GetRed());
 #endif // _DEBUG
 
-	//インプットコンポーネントを設定
+	//インプット機能を追加
 	InputComponent* inputComponent = gameObject->AddComponent<InputComponent>();
 	inputComponent->Setup(GetSceneContext().input);
 
-	//移動用のコンポーネントを設定
+	//移動用の機能を追加
 	MovementComponent* movementComponent = gameObject->AddComponent<MovementComponent>();
-	//ジャンプ用のコンポーネントを設定
+	//ジャンプ用の機能を追加
 	JumpComponent* jumpComponent = gameObject->AddComponent<JumpComponent>();
 
 	//リジッドボディを設定
 	RigidBody* rigidBody = gameObject->AddComponent<RigidBody>();
-	//移動用のコンポーネントのセットアップ
+	//移動用の機能のセットアップ
 	float moveSpeed = 7.5f;//移動速度
 	float moveResponse = 6.0f;//移動した際のレスポンス
 	movementComponent->Setup(rigidBody,moveSpeed,moveResponse);
 	movementComponent->SetCameraObject(cameraObject_);
-	//ジャンプ用のコンポーネントのセットアップ
+	//ジャンプ用の機能のセットアップ
 	float jumpSpeed = 7.0f;
 	jumpComponent->Setup(rigidBody,jumpSpeed);
 
@@ -297,14 +308,13 @@ GameObject* GameScene::CreatePlayer() {
 
 	//設置オブジェクトの回転
 	for(uint32_t i = 0; i < static_cast<uint32_t>(DirectionType::kCount); i++) {
-		//オブジェクト回転用コンポーネントを設定
+		//オブジェクト回転用機能を追加
 		defenseRotationCommands_[i]->SetDefenseRotationComponent(defenseRotationComponent_);
 	}
 	//左回転
 	inputComponent->AddInputState(XboxInputType::kLB,InputPhase::kPressed,std::move(defenseRotationCommands_[static_cast<uint32_t>(DirectionType::kLeft)]));
 	//右回転
 	inputComponent->AddInputState(XboxInputType::kRB,InputPhase::kPressed,std::move(defenseRotationCommands_[static_cast<uint32_t>(DirectionType::kRight)]));
-
 
 	//設置オブジェクトの切り替え
 	for(uint32_t i = 0; i < static_cast<uint32_t>(DirectionType::kCount); i++) {
@@ -315,6 +325,10 @@ GameObject* GameScene::CreatePlayer() {
 	inputComponent->AddInputState(XboxInputType::kDPadLeft,InputPhase::kPressed,std::move(placementSwitchCommands_[static_cast<uint32_t>(DirectionType::kLeft)]));
 	//右回転
 	inputComponent->AddInputState(XboxInputType::kDPadRight,InputPhase::kPressed,std::move(placementSwitchCommands_[static_cast<uint32_t>(DirectionType::kRight)]));
+
+	//オブジェクトの設置
+	defensePlaceCommand_->SetDefensePlaceComponent(defensePlaceComponent_);
+	inputComponent->AddInputState(XboxInputType::kRT,InputPhase::kPressed,std::move(defensePlaceCommand_->Clone()));
 
 #ifdef _DEBUG
 	//キーの一覧
@@ -328,7 +342,7 @@ GameObject* GameScene::CreatePlayer() {
 	for(uint32_t i = 0; i < moveKeyList.size(); i++) {
 		//入力キーを取得
 		char key = moveKeyList[i];
-		//移動用コンポーネントを追加
+		//移動用機能を追加
 		movementCommands_[i]->SetMovementComponent(movementComponent);
 		//移動コマンドを設定
 		inputComponent->AddInputState(static_cast<BYTE>(key),InputPhase::kHeld,std::move(movementCommands_[i]->Clone()));
@@ -361,16 +375,19 @@ GameObject* GameScene::CreatePlacementPreview() {
 	//Object3dの設定
 	placementPreviewObject3d_ = gameObject->AddComponent<Object3d>();
 
-	//設置予定地の表示/非表示用のコンポーネントを設定
+	//設置予定地の表示/非表示用の機能を追加
 	placementPreviewComponent_ = gameObject->AddComponent<PlacementPreviewComponent>();
 
-	//設置物の回転用コンポーネントを設定
+	//設置物の回転用機能を追加
 	defenseRotationComponent_ = gameObject->AddComponent<DefenseRotationComponent>();
 
-	//設置物の切り替え用コンポーネントを設定
+	//設置物の切り替え用機能を追加
 	placementSwitchComponent_ = gameObject->AddComponent<PlacementSwitchComponent>();
-	//設置物の切り替え用コンポーネントのセットアップ
+	//設置物の切り替え用機能のセットアップ
 	placementSwitchComponent_->Setup(defenseObjectModelNameList_);
+
+	//オブジェクトの設置する機能を追加
+	defensePlaceComponent_ = gameObject->AddComponent<DefensePlaceComponent>();
 
 	return gameObject;
 }
@@ -418,7 +435,7 @@ void GameScene::UpdatePlacementPreviewObject() {
 	placementPreviewComponent_->SetModel(placementSwitchComponent_->GetCurrentModelName());
 
 	//ブロックのおけるワールド座標の取得
-	Vector3 placementPreviewWorldPos = mapChipField_->GetMapChipPositionByIndex(placementPreviewIndex_);
+	Vector3 placementPreviewPos = mapChipField_->GetMapChipPositionByIndex(placementPreviewIndex_);
 
 	//オブジェクトのBlendを切り替え
 	placementPreviewObject3d_->SetBlendMode(BlendMode::kAdd);
@@ -438,5 +455,35 @@ void GameScene::UpdatePlacementPreviewObject() {
 	}
 
 	//座標を設定
-	placementPreviewComponent_->SetPosition(placementPreviewWorldPos);
+	placementPreviewComponent_->SetPosition(placementPreviewPos);
+}
+
+//ディフェンス用のオブジェクトの生成
+void GameScene::CreateDefenseObject() {
+	//設置の要求がない場合
+	if(!defensePlaceComponent_->GetConfirmRequest()) {
+		return;
+	}
+
+	//設置要求をリセット
+	defensePlaceComponent_->SetConfirmRequest(false);
+
+	//おけない場合
+	if(!isPlacementEnabled_) {
+		return;
+	}
+
+	//ゲームオブジェクトの生成
+	GameObject* gameObject = CreateGameObject();
+	gameObject->SetName("ディフェンスオブジェクト");
+	//Transformをコピー
+	gameObject->GetTransform() = placementPreviewObject_->GetTransform();
+
+	//Object3dを追加
+	Object3d* object3d = gameObject->AddComponent<Object3d>();
+	object3d->SetModel(placementSwitchComponent_->GetCurrentModelName());
+	//LODモデルを作成
+	object3d->GetModel()->CreateLODModels({0.7f,0.5f,0.25f});
+	//LODの設定
+	object3d->SetLODDistances({5.0f,8.0f,15.0f});
 }

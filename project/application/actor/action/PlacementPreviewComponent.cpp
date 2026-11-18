@@ -1,11 +1,12 @@
 #include "PlacementPreviewComponent.h"
 #include "GameObject.h"
 #include "Object3d.h"
+#include "Model.h"
 #include "Logger.h"
 #include <cassert>
 
 //コンストラクタ
-PlacementPreviewComponent::PlacementPreviewComponent(GameObject* gameObject) :Component(gameObject){
+PlacementPreviewComponent::PlacementPreviewComponent(GameObject* gameObject) :Component(gameObject) {
 }
 
 //デストラクタ
@@ -30,7 +31,7 @@ void PlacementPreviewComponent::Update() {
 		object3d_->SetEnabled(false);
 		return;
 	}
-	
+
 	//現在のモデル名がなければ
 	if(currentModelName_.empty()) {
 		//オブジェクト3dを非表示

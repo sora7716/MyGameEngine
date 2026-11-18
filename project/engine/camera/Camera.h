@@ -92,12 +92,6 @@ public://メンバ関数
 	std::string GetTypeName()const override;
 
 	/// <summary>
-	/// ワールド行列の取得
-	/// </summary>
-	/// <returns>ワールド行列</returns>
-	const Matrix4x4& GetWorldMatrix()const;
-
-	/// <summary>
 	/// ビュー行列の取得
 	/// </summary>
 	/// <returns>ビュー行列</returns>
@@ -114,24 +108,6 @@ public://メンバ関数
 	/// </summary>
 	/// <returns>ビュープロジェクション行列</returns>
 	const Matrix4x4& GetViewProjectionMatrix()const;
-
-	/// <summary>
-	/// クォータニオンの取得
-	/// </summary>
-	/// <returns>回転</returns>
-	const Quaternion& GetQuaternion()const;
-
-	/// <summary>
-	/// 平行移動の取得
-	/// </summary>
-	/// <returns>平行移動</returns>
-	const Vector3& GetTranslate()const;
-
-	/// <summary>
-	/// ワールド座標の取得
-	/// </summary>
-	/// <returns>ワールド座標</returns>
-	Vector3 GetWorldPos()const;
 
 	/// <summary>
 	/// 視錐台の取得
@@ -168,11 +144,15 @@ public://メンバ関数
 	/// </summary>
 	/// <returns>描画データ</returns>
 	const CameraRenderData& GetRenderData();
+
+	/// <summary>
+	/// フラスタムかリングを行うかの取得
+	/// </summary>
+	/// <returns>フラスタムカリングを行うか</returns>
+	bool IsFrustumCulling()const;
 private://メンバ変数
 	//ゲームオブジェクト
 	GameObject* gameObject_ = nullptr;
-	//ワールド行列
-	Matrix4x4 worldMatrix_ = {};
 	//ビュー行列
 	Matrix4x4 viewMatrix_ = {};
 	//透視投影行列
@@ -191,5 +171,7 @@ private://メンバ変数
 	primitiveData::Frustum frustum_ = {};
 	//描画データ
 	CameraRenderData renderData_ = {};
+	//フラスタムかリングを行うかのフラグ
+	bool isFrustumCulling_ = true;
 };
 

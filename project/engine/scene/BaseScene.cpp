@@ -1,8 +1,10 @@
 #include "BaseScene.h"
 #include "AbstractSceneFactory.h"
 #include "WinApi.h"
+#include "Logger.h"
 #include "DebugCameraController.h"
 #include "GameObject.h"
+#include "MaterialInstance.h"
 #include "StringUtility.h"
 #include "TagManager.h"
 #include "Input.h"
@@ -215,6 +217,58 @@ GameObject* BaseScene::CreateGameObject() {
 	gameObjects_.push_back(std::move(gameObject));
 
 	return gameObjectPtr;
+}
+
+//マテリアルインスタンスの追加
+void BaseScene::AddMaterialInstance(const std::string& name,const MaterialTexturePaths& textureFilePaths,const std::string& pixelShaderName) {
+	std::string path = pixelShaderName + "/" + name;
+	//パスが存在しているか
+	if(materialInstances_.contains(path)) {
+		return;
+	}
+
+	//存在していない場合
+	std::shared_ptr<MaterialInstance>materialInstance = std::make_shared<MaterialInstance>();
+	materialInstance->Initialize(textureFilePaths,sceneContext_.shaderManager);
+
+	//値の初期化
+	materialInstance->SetPixelShaderFileName(pixelShaderName,"gMaterial");
+	materialInstance->SetParameter("color",Color::GetWhite());
+	materialInstance->SetParameter("enableLighring",uint32_t{1});
+	materialInstance->SetParameter("uvMatrix",Matrix4x4::Identity4x4());
+	materialInstance->SetParameter("shininess",10.0f);
+	materialInstance->SetParameter("diffuseModel",int32_t{1});
+	materialInstance->SetParameter("specularModel",int32_t{1});
+	materialInstance->SetParameter("environmentCoefficient",0.0f);
+
+	//配列に追加
+	materialInstances_.insert(std::pair(path,std::move(materialInstance)));
+}
+
+//マテリアルインスタンスを検索
+std::shared_ptr<MaterialInstance> BaseScene::GetMaterialInstance(const std::string& name,const std::string& pixelShaderName) {
+	std::string path = pixelShaderName + "/" + name;
+	//パスが存在しているか
+	if(materialInstances_.contains(path)) {
+		return materialInstances_.at(path);
+	}
+
+	//存在しない場合
+	Logger::OutputLog("未登録のマテリアルを参照しました");
+	return nullptr;
+}
+
+//マテリアルインスタンスを検索
+MaterialInstance* BaseScene::FindMaterialInstance(const std::string& name,const std::string& pixelShaderName) {
+	std::string path = pixelShaderName + "/" + name;
+	//パスが存在しているか
+	if(materialInstances_.contains(path)) {
+		return materialInstances_.at(path).get();
+	}
+
+	//存在しない場合
+	Logger::OutputLog("未登録のマテリアルを参照しました");
+	return nullptr;
 }
 
 //ゲームオブジェクトの取得

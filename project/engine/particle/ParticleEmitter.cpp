@@ -32,9 +32,9 @@ void ParticleEmitter::Update(){
 				continue;//削除したので次のループへ
 			}
 			//移動
-			(*it).transform.translate += (*it).velocity * mathUtility::kDeltaTime;
+			(*it).transform.translate += (*it).velocity * mathUtility::GetDeltaTime();
 			//経過時間を足す
-			(*it).currentTime += mathUtility::kDeltaTime;
+			(*it).currentTime += mathUtility::GetDeltaTime();
 			float alpha = 1.0f - ((*it).currentTime / (*it).lifeTime);
 			(*it).color.a = alpha;
 
@@ -52,13 +52,13 @@ void ParticleEmitter::Update(){
 	for (auto it = particles_.begin(); it != particles_.end();){
 		//Field内のParticleには加速度を適用する
 		if (IsCollision(accelerationField_.area, (*it).transform.translate)){
-			(*it).velocity += accelerationField_.acceleration * mathUtility::kDeltaTime;
+			(*it).velocity += accelerationField_.acceleration * mathUtility::GetDeltaTime();
 		}
 		it++;
 	}
 
 	//Emitterの更新
-	emitter_.frequencyTime += mathUtility::kDeltaTime;
+	emitter_.frequencyTime += mathUtility::GetDeltaTime();
 	if (emitter_.frequency <= emitter_.frequencyTime){
 		particles_.splice(particles_.end(), Emit());
 		emitter_.frequencyTime -= emitter_.frequency;//余計に過ぎた時間も加味して頻度を計算する

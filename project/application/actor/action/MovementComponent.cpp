@@ -86,7 +86,7 @@ std::unique_ptr<Component> MovementComponent::Clone(GameObject* gameObject) cons
 	//初期化
 	cloneInstance->Initialize();
 
-	//Playerが持つ設定だけ複製
+	//設定の複製
 	cloneInstance->SetEnabled(this->IsEnabled());
 	cloneInstance->rigidBody_ = this->rigidBody_;
 	cloneInstance->cameraObject_ = this->cameraObject_;
@@ -109,4 +109,9 @@ void MovementComponent::AddDirection(const Vector3& direction) {
 //カメラオブジェクトの設定
 void MovementComponent::SetCameraObject(GameObject* cameraObject) {
 	cameraObject_ = cameraObject;
+}
+
+//方向ベクトルの取得
+const Vector3& MovementComponent::GetDirection() const {
+	return direction_;
 }

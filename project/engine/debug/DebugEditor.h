@@ -256,6 +256,11 @@ private://メンバ関数
 	/// <param name="selectGameObject">選択したオブジェクト</param>
 	/// <returns>選択しているか</returns>
 	bool SelectGameObjectOperation(GameObject* selectGameObject);
+
+	/// <summary>
+	/// パフォーマンスの描画
+	/// </summary>
+	void DrawPerformance();
 private://定数
 	//ゲームオブジェクトをDragAndDropで動かす用のpayloadType
 	static inline const std::string kGameObjectPayloadType = "GameObjectPayload";

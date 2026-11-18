@@ -71,14 +71,14 @@ MapChipStatus MapChipField::GetMapChipStatusByPosition(const Vector3& pos) {
 	Vector3Int index = GetMapChipIndexByPosition(pos);
 	//ステータスを取得
 	MapChipStatus status = GetMapChipStatusByIndex(index);
-	
+
 	return status;
 }
 
 //インデックスからマップのステータスを取得
 MapChipStatus MapChipField::GetMapChipStatusByIndex(const Vector3Int& index) {
 	//マップステータス
-	MapChipStatus status = {.type = MapChipType::kBlank,.count = 1};
+	MapChipStatus status = {.type = MapChipType::kBlank,.height = 1};
 	//範囲外なら何もしない
 	if(index.x < 0 || index.y < 0 || index.z < 0 || index.x >= horizontal_ || index.z >= longitudinal_) {
 		return status;
@@ -87,8 +87,8 @@ MapChipStatus MapChipField::GetMapChipStatusByIndex(const Vector3Int& index) {
 	//現在のステータスを取得
 	status = mapChipData_.data[index.z][index.x];
 	//位置がステータスより上を指していたら
-	if(status.count <= static_cast<uint32_t>(index.y)) {
-		status = {.type = MapChipType::kBlank,.count = 1};
+	if(status.height <= static_cast<uint32_t>(index.y)) {
+		status = {.type = MapChipType::kBlank,.height = 1};
 		return status;
 	}
 
@@ -104,7 +104,7 @@ MapChipType MapChipField::GetMapChipTypeByIndex(const Vector3Int& index) {
 	//ステータスの取得
 	MapChipStatus status = GetMapChipStatusByIndex(index);
 	//積んである高さより上は何もない
-	if(status.count <= static_cast<uint32_t>(index.y)) {
+	if(status.height <= static_cast<uint32_t>(index.y)) {
 		return MapChipType::kBlank;
 	}
 
@@ -152,42 +152,58 @@ void MapChipField::LoadMapChipCsv(const std::string& filePath) {
 
 	//CSVからマップチップデータを読み込む
 	std::string line;
+	//Z軸の検索キー
+	int32_t zIndex = 0;
 	while(std::getline(mapChipCsv,line)) {
 		//1行分の文字列をストリームに変換して解析しやすくする
 		std::istringstream line_stream(line);//文字列のstream
 		//行を追加
 		std::vector<MapChipStatus> lines;
 		std::string word;
+		//X軸の詮索キー
+		int32_t xIndex = 0;
 		//','(区切り文字),word(1文字)
 		while(std::getline(line_stream,word,',')) {
-			MapChipStatus status = {};
-			//空気だった場合
-			if(word == "0") {
-				status.type = MapChipType::kBlank;
-				status.count = 1;
-				lines.push_back(status);
-				continue;
-			} else if(word == "B") {
-				//ブロックだった場合
-				status.type = MapChipType::kBlock;
-				status.count = 1;
-				lines.push_back(status);
-				continue;
+			//行末の改行や空白を取り除く
+			while(!word.empty() && (word.back() == '\r' || word.back() == ' ')) {
+				word.pop_back();
 			}
-			//ブロックだった場合
-			status.type = MapChipType::kBlock;
-			int32_t count = static_cast<uint32_t>(std::stoi(word.substr(1)));
-			if(count < 0) {
-				status.count = 1;
+
+			MapChipStatus status = {};
+			//頭の頭文字
+			std::string head = word.substr(0,1);
+			//高さ
+			int32_t height = 1;
+			if(word.size() > 1) {
+				height = static_cast<int32_t>(std::max(std::stoi(word.substr(1)),1));
+			}
+
+			if(head == "B") {
+				//Blockだった場合
+				status.type = MapChipType::kBlock;
+				status.height = height;
+			} else if(head == "P") {
+				//Playerだった場合
+				status.type = MapChipType::kBlock;
+				status.height = height;
+				//プレイヤーの位置を保存
+				mapChipData_.playerIndex = {xIndex,height + 1,zIndex};
 			} else {
-				status.count = count;
+				//空気の場合
+				status.type = MapChipType::kBlank;
+				status.height = 1;
 			}
 			lines.push_back(status);
+
+			//X軸の検索キーを加算
+			xIndex++;
 		}
 		//マップの横幅を設定
 		horizontal_ = static_cast<uint32_t>(lines.size());
 		//マップチップのデータに追加
 		mapChipData_.data.push_back(lines);
+		//Z軸の検索キーを加算
+		zIndex++;
 	}
 
 	//奥行も設定

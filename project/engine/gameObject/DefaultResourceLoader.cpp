@@ -67,8 +67,6 @@ void DefaultResourceLoader::LoadTexture(){
 void DefaultResourceLoader::LoadModel(){
 	//プリミティブなモデルの生成
 	modelManager_->CreatePrimitiveModel();
-	//カメラ
-	//core_->GetModelManager()->AddModel("camera", "camera/camera.obj");
 	//プレイヤー
 	modelManager_->AddModel("player", "player/player.gltf");
 	//敵
@@ -80,8 +78,4 @@ void DefaultResourceLoader::LoadModel(){
 	//デバッグキューブ
 	modelManager_->AddModel("debugCube", "debugCube/debugCube.gltf");
 	modelManager_->AddModel("wall", "wall/wall.gltf");
-	//デカヌ
-	//core_->GetModelManager()->AddModel("dekanu", "dekanu/dekanu.gltf");
-	//人
-	//core_->GetModelManager()->AddModel("sneakWalk", "human/sneakWalk.gltf");
 }

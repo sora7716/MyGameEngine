@@ -52,7 +52,8 @@ public://メンバ関数
 	/// <param name="mapChipField">マップチップのフィールド</param>
 	/// <param name="rigidBody">リジッドボディ</param>
 	/// <param name="targetSize">ターゲットのサイズ</param>
-	void Setup(MapChipField* mapChipField,RigidBody* rigidBody,const Vector3& targetSize);
+	/// <param name="isTrigger">押し出しを行うか</param>
+	void Setup(MapChipField* mapChipField,RigidBody* rigidBody,const Vector3& targetSize,bool isTrigger = false);
 
 	/// <summary>
 	/// 初期化
@@ -168,5 +169,7 @@ private://メンバ変数
 	Vector3 targetHalfSize_ = {};
 	//リジッドボディ
 	RigidBody* rigidBody_ = nullptr;
+	//押し出しを行うか
+	bool isTrigger_ = false;
 };
 

@@ -1,7 +1,7 @@
 #pragma once
 #include <cstdint>
 #include <vector>
-#include <string>
+#include "Vector3.h"
 
 //マップチップで使用するデスク
 namespace mapChipDesc {
@@ -9,17 +9,19 @@ namespace mapChipDesc {
 	enum class MapChipType :uint32_t {
 		kBlank, // 空白
 		kBlock,  // ブロック
+		kPlayer,//プレイヤー
 	};
 
 	//マップチップの状態
 	struct MapChipStatus {
 		MapChipType type = MapChipType::kBlank;
-		uint32_t count = 0;
+		uint32_t height = 0;
 	};
 
 	//マップチップデータ
 	struct MapChipData {
 		std::vector<std::vector<MapChipStatus>> data;
+		Vector3Int playerIndex;//プレイヤーの位置のマップ番号
 	};
 
 	//範囲矩形

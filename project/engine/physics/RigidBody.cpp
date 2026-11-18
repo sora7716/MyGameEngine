@@ -135,8 +135,8 @@ bool RigidBody::IsOnGround() const {
 //速度と加速度を適応
 void RigidBody::UpdateMotion() {
 	Transform& transform = gameObject_->GetTransform();
-	velocity_ += acceleration_ * mathUtility::kDeltaTime;
-	transform.translate += velocity_ * mathUtility::kDeltaTime;
+	velocity_ += acceleration_ * mathUtility::GetDeltaTime();
+	transform.translate += velocity_ * mathUtility::GetDeltaTime();
 }
 
 //重力を適応

@@ -80,7 +80,7 @@ void EnemyDamageState::UpdateFlinch(){
 	//のけぞる姿勢を適応(Slerp)
 	Quaternion& rotate = gameObject_->GetTransform().rotate;
 	//リアクションタイマーを加算
-	flinchTimer_ += mathUtility::kDeltaTime;
+	flinchTimer_ += mathUtility::GetDeltaTime();
 	//係数を取得
 	float t = flinchTimer_ / kFlinchDuration;
 
@@ -119,7 +119,7 @@ void EnemyDamageState::UpdateKnockback(){
 	}
 
 	//タイマーを計測
-	knockbackTimer_ += mathUtility::kDeltaTime;
+	knockbackTimer_ += mathUtility::GetDeltaTime();
 
 	//減速を求める
 	rigidBody_->GetAcceleration() = -hitDirection_ * (kKnockbackSpeed / kKnockbackDuration);

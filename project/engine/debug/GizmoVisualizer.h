@@ -46,6 +46,11 @@ private://メンバ関数
 	/// コライダーごとに適当なワイヤーフレームを決める
 	/// </summary>
 	void SelectColliderWireframe();
+
+	/// <summary>
+	/// カメラに適当なワイヤーフレームを決める
+	/// </summary>
+	void SelectCameraWireframe();
 private://メンバ変数
 	//選択されたゲームオブジェクト
 	GameObject* selectedGameObject_ = nullptr;

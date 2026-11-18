@@ -23,7 +23,7 @@ public://メンバ関数
 	/// 実行
 	/// </summary>
 	/// <param name="axis">入力値(-1~1)</param>
-	void Execute(const Vector3& axis);
+	void Execute(const Vector2& axis)override;
 
 	/// <summary>
 	/// 複製

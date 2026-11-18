@@ -18,6 +18,18 @@ public://メンバ関数
 	/// </summary>
 	void Update();
 
+	/// <summary>
+	/// FPSの取得
+	/// </summary>
+	/// <returns>FPS</returns>
+	float GetFPS()const;
+
+	/// <summary>
+	/// デルタタイムの取得
+	/// </summary>
+	/// <returns>デルタタイム</returns>
+	float GetDeltaTime()const;
+
 	//コピーコンストラクタ禁止
 	FixFPS(const FixFPS&) = delete;
 	//代入演算子を禁止
@@ -26,14 +38,17 @@ private://メンバ関数
 	/// <summary>
 	/// コンストラクタ
 	/// </summary>
-	FixFPS() = default;
+	FixFPS();
 
 	/// <summary>
 	/// デストラクタ
 	/// </summary>
-	~FixFPS() = default;
-
+	~FixFPS();
 private://メンバ変数
 	std::chrono::steady_clock::time_point reference_;//記録時間(FPS固定用)
+	//現在のFPS
+	float fps_ = 0.0f;
+	//デルタタイム
+	float deltaTime_ = 1.0f / 60.0f;
 };
 

@@ -50,7 +50,7 @@ void IPlayerState::InitializeTransition(){
 //モーション遷移の更新
 void IPlayerState::UpdateTransition(PlayerPose targetPose){
 	//切り替え用のタイマー
-	transitionTimer_ += mathUtility::kDeltaTime;
+	transitionTimer_ += mathUtility::GetDeltaTime();
 	//ブレンドする割合
 	float blendRate = std::clamp(transitionTimer_ / kTransitionDuration, 0.0f, 1.0f);
 	//目標の位置まで補間

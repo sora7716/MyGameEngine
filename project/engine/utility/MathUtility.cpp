@@ -1,10 +1,60 @@
 #define NOMINMAX
 #include "MathUtility.h"
+#include "FixFPS.h"
 #include <cassert>
-using namespace std;
+
+//球面座標系から直交座標系に変換
+Vector3 mathUtility::ToCartesian(const Spherical& spherical) {
+	//球面座標系
+	Spherical s = spherical;
+
+	//ロー
+	float roll = s.radius * std::cos(s.theta);
+
+	//X座標
+	float x = roll * std::cos(s.phi);
+
+	//Y座標
+	float y = s.radius * std::sin(s.theta);
+
+	//Z座標
+	float z = roll * std::sin(s.phi);
+
+	return {x,y,z};
+}
+
+//直交座標系から球面座標系に変換
+Spherical mathUtility::ToSpherical(const Vector3& cartesian) {
+	//直交座標
+	Vector3 c = cartesian;
+
+	//動径
+	float radius = c.Length();
+
+	//半径がもし0.0fだった場合
+	if(radius == 0.0f) {
+		return {0.0f,0.0f,0.0f};
+	}
+
+	//仰角
+	float sinTheta = std::clamp(c.y / radius,-1.0f,1.0f);
+
+	//方位角
+	float phi = 0.0f;
+	if(c.x != 0.0f || c.z != 0.0f) {
+		phi = std::atan2(c.z,c.x);
+	}
+
+	return {radius,std::acos(sinTheta),phi};
+}
+
+//デルタタイムの取得
+float mathUtility::GetDeltaTime() {
+	return FixFPS::GetInstance()->GetDeltaTime();
+}
 
 // トランスフォームノーマル
-Vector3 mathUtility::TransformNormal(const Vector3& v, const Matrix4x4& m) {
+Vector3 mathUtility::TransformNormal(const Vector3& v,const Matrix4x4& m) {
 	Vector3 result{
 		v.x * m.m[0][0] + v.y * m.m[1][0] + v.z * m.m[2][0],
 		v.x * m.m[0][1] + v.y * m.m[1][1] + v.z * m.m[2][1],
@@ -14,7 +64,7 @@ Vector3 mathUtility::TransformNormal(const Vector3& v, const Matrix4x4& m) {
 }
 
 // 線形補間
-Vector3 mathUtility::Lerp(const Vector3& v1, const Vector3& v2, float t) {
+Vector3 mathUtility::Lerp(const Vector3& v1,const Vector3& v2,float t) {
 	Vector3 result;
 	result.x = v1.x + t * (v2.x - v1.x);
 	result.y = v1.y + t * (v2.y - v1.y);
@@ -24,7 +74,7 @@ Vector3 mathUtility::Lerp(const Vector3& v1, const Vector3& v2, float t) {
 }
 
 // 球面線形補間
-Vector3 mathUtility::Slerp(const Vector3& v1, const Vector3& v2, float t) {
+Vector3 mathUtility::Slerp(const Vector3& v1,const Vector3& v2,float t) {
 	Vector3 nv1 = v1; // v1 の正規化ベクトル
 	nv1 = nv1.Normalize();
 	Vector3 nv2 = v2; // v2 の正規化ベクトル
@@ -32,7 +82,7 @@ Vector3 mathUtility::Slerp(const Vector3& v1, const Vector3& v2, float t) {
 	float dot = nv1.Dot(nv2);   // 正規化されたベクトル同士の内積
 
 	// 誤差により1.0fを超えるのを防ぐ
-	dot = std::clamp(dot, -1.0f, 1.0f);
+	dot = std::clamp(dot,-1.0f,1.0f);
 
 	// アークコサインでθの角度を求める
 	float theta = std::acos(dot);
@@ -40,7 +90,7 @@ Vector3 mathUtility::Slerp(const Vector3& v1, const Vector3& v2, float t) {
 
 	Vector3 normalizeVector;
 	// ゼロ除算を防ぐ
-	if (sinTheta < 1.0e-5) {
+	if(sinTheta < 1.0e-5) {
 		normalizeVector = nv1;
 	} else {
 		// 球面線形補間したベクトル(単位ベクトル)
@@ -55,13 +105,13 @@ Vector3 mathUtility::Slerp(const Vector3& v1, const Vector3& v2, float t) {
 	float length1 = tempV1.Length();
 	float length2 = tempV2.Length();
 	// Lerpで補間ベクトルの長さを求める
-	float length = std::lerp(length1, length2, t);
+	float length = std::lerp(length1,length2,t);
 
 	return normalizeVector * length;
 }
 
 // CatmullRom補間
-Vector3 mathUtility::CatmullRomInterpolation(const Vector3& p0, const Vector3& p1, const Vector3& p2, const Vector3& p3, float t) {
+Vector3 mathUtility::CatmullRomInterpolation(const Vector3& p0,const Vector3& p1,const Vector3& p2,const Vector3& p3,float t) {
 	const float s = 0.5f; // 1/2のこと
 
 	float t2 = t * t;  // tの2乗
@@ -76,7 +126,7 @@ Vector3 mathUtility::CatmullRomInterpolation(const Vector3& p0, const Vector3& p
 }
 
 // CatmullRomスプライン曲線上の座標を得る
-Vector3 mathUtility::CatmullRomPosition(const std::vector<Vector3>& points, float t) {
+Vector3 mathUtility::CatmullRomPosition(const std::vector<Vector3>& points,float t) {
 	assert(points.size() >= 4 && "制御点は4点以上必要です");
 	// 区間数は制御点の数-1
 	size_t division = points.size() - 1;
@@ -84,13 +134,13 @@ Vector3 mathUtility::CatmullRomPosition(const std::vector<Vector3>& points, floa
 	float areaWidth = 1.0f / division;
 
 	// 区間内の始点を0.0f、終点1.0fとしたときの現在位置
-	float t_2 = std::fmod(t, areaWidth) * division;
+	float t_2 = std::fmod(t,areaWidth) * division;
 	// 下限(0.0f)とz上限(1.0f)の範囲を収める
-	t_2 = std::clamp(t_2, 0.0f, 1.0f);
+	t_2 = std::clamp(t_2,0.0f,1.0f);
 	// 区間番号
 	size_t index = static_cast<size_t>(t / areaWidth);
 	// 区間番号が上限を超えないように収める
-	index = std::min(index, division - 1);
+	index = std::min(index,division - 1);
 
 	// 4点分のインデックス
 	size_t index0 = index - 1;
@@ -99,12 +149,12 @@ Vector3 mathUtility::CatmullRomPosition(const std::vector<Vector3>& points, floa
 	size_t index3 = index + 2;
 
 	// 最初の区間のp0はp1を重複使用する
-	if (index == 0) {
+	if(index == 0) {
 		index0 = index1;
 	}
 
 	// 最後の区間のp3はp2を重複使用する
-	if (index3 >= points.size()) {
+	if(index3 >= points.size()) {
 		index3 = index2;
 	}
 
@@ -115,61 +165,61 @@ Vector3 mathUtility::CatmullRomPosition(const std::vector<Vector3>& points, floa
 	const Vector3& p3 = points[index3];
 
 	// 4点を指定してCatmull-Rom補間
-	return CatmullRomInterpolation(p0, p1, p2, p3, t_2);
+	return CatmullRomInterpolation(p0,p1,p2,p3,t_2);
 }
 
 // 三次元のベジエ曲線
-Vector3 mathUtility::Bezier(const Vector3* points, float t) {
+Vector3 mathUtility::Bezier(const Vector3* points,float t) {
 	//制御点を分ける
 	Vector3 p0 = points[0];//始点
 	Vector3 p1 = points[1];//中点
 	Vector3 p2 = points[2];//終点
 
-	Vector3 p0p1 = Lerp(p0, p1, t);  // p0とp1の間を補間
-	Vector3 p1p2 = Lerp(p1, p2, t);  // p1とp2の間を補間
-	Vector3 p = Lerp(p0p1, p1p2, t); // 上記2つの補間結果をさらに補間
+	Vector3 p0p1 = Lerp(p0,p1,t);  // p0とp1の間を補間
+	Vector3 p1p2 = Lerp(p1,p2,t);  // p1とp2の間を補間
+	Vector3 p = Lerp(p0p1,p1p2,t); // 上記2つの補間結果をさらに補間
 	return p;
 }
 
 // 三次元ベジエ曲線(球面線形補間ver)
-Vector3 mathUtility::BezierS(const Vector3* points, float t) {
+Vector3 mathUtility::BezierS(const Vector3* points,float t) {
 	//制御点を分ける
 	Vector3 p0 = points[0];//始点
 	Vector3 p1 = points[1];//中点
 	Vector3 p2 = points[2];//終点
 
-	Vector3 p0p1 = Slerp(p0, p1, t);  // p0とp1の間を補間
-	Vector3 p1p2 = Slerp(p1, p2, t);  // p1とp2の間を補間
-	Vector3 p = Slerp(p0p1, p1p2, t); // 上記2つの補間結果をさらに補間
+	Vector3 p0p1 = Slerp(p0,p1,t);  // p0とp1の間を補間
+	Vector3 p1p2 = Slerp(p1,p2,t);  // p1とp2の間を補間
+	Vector3 p = Slerp(p0p1,p1p2,t); // 上記2つの補間結果をさらに補間
 	return p;
 }
 
 // リサージュ曲線
-Vector3 mathUtility::LissajousCurve(const Vector3& theta, const Vector3& center, const Vector3& scalar) {
+Vector3 mathUtility::LissajousCurve(const Vector3& theta,const Vector3& center,const Vector3& scalar) {
 	Vector3 result{};
-	result.x = scalar.x * sin(theta.x) + center.x;
-	result.y = scalar.y * sin(theta.y) + center.y;
-	result.z = scalar.z * sin(theta.z) + center.z;
+	result.x = scalar.x * std::sin(theta.x) + center.x;
+	result.y = scalar.y * std::sin(theta.y) + center.y;
+	result.z = scalar.z * std::sin(theta.z) + center.z;
 	return result;
 }
 
 //逆正接関数のcotangent
 float mathUtility::Cont(float theta) {
-	return (1.0f / tanf(theta));
+	return (1.0f / std::tan(theta));
 }
 
 // 円運動XZ
-Vector3 mathUtility::CircularMoveXZ(const Vector3& center, const Vector2& radius, float theta) {
+Vector3 mathUtility::CircularMoveXZ(const Vector3& center,const Vector2& radius,float theta) {
 	Vector3 result{};
 	//円運動させる
-	result.x = center.x + cos(theta) * radius.x;
+	result.x = center.x + std::cos(theta) * radius.x;
 	result.y = center.y;
-	result.z = center.z + sin(theta) * radius.y;
+	result.z = center.z + std::sin(theta) * radius.y;
 	return result;
 }
 
 //平面の作成(無限平面)
-primitiveData::Plane mathUtility::MakePlane(const Vector3& p0, const Vector3& p1, const Vector3& p2) {
+primitiveData::Plane mathUtility::MakePlane(const Vector3& p0,const Vector3& p1,const Vector3& p2) {
 	//平面
 	primitiveData::Plane plane = {};
 
@@ -187,8 +237,8 @@ primitiveData::Plane mathUtility::MakePlane(const Vector3& p0, const Vector3& p1
 }
 
 //視錐台の頂点の作成
-std::array<Vector3, 8> mathUtility::CreateFrustumVertex(float nearClip, float farClip, float fovY, float aspect) {
-	std::array<Vector3, 8>vertexes = {};
+std::array<Vector3,8> mathUtility::CreateFrustumVertex(float nearClip,float farClip,float fovY,float aspect) {
+	std::array<Vector3,8>vertexes = {};
 	float nearZ = nearClip;
 	float farZ = farClip;
 
@@ -199,25 +249,25 @@ std::array<Vector3, 8> mathUtility::CreateFrustumVertex(float nearClip, float fa
 	float farW = farH * aspect;
 
 	//near
-	vertexes[0] = { -nearW,-nearH,nearZ };
-	vertexes[1] = { -nearW,nearH,nearZ };
-	vertexes[2] = { nearW,nearH,nearZ };
-	vertexes[3] = { nearW,-nearH,nearZ };
+	vertexes[0] = {-nearW,-nearH,nearZ};
+	vertexes[1] = {-nearW,nearH,nearZ};
+	vertexes[2] = {nearW,nearH,nearZ};
+	vertexes[3] = {nearW,-nearH,nearZ};
 
 	//far
-	vertexes[4] = { -farW,-farH,farZ };
-	vertexes[5] = { -farW,farH,farZ };
-	vertexes[6] = { farW,farH,farZ };
-	vertexes[7] = { farW,-farH,farZ };
+	vertexes[4] = {-farW,-farH,farZ};
+	vertexes[5] = {-farW,farH,farZ};
+	vertexes[6] = {farW,farH,farZ};
+	vertexes[7] = {farW,-farH,farZ};
 
 	return vertexes;
 }
 
 //視錐台の作成
-primitiveData::Frustum mathUtility::CreateFrustumData(const std::array<Vector3, 8>& vertices, const Matrix4x4& worldMatrix) {
+primitiveData::Frustum mathUtility::CreateFrustumData(const std::array<Vector3,8>& vertices,const Matrix4x4& worldMatrix) {
 	primitiveData::Frustum frustum = {};
 	frustum.localCorners = vertices;
-	for (uint32_t i = 0; i < frustum.worldCorners.size(); i++) {
+	for(uint32_t i = 0; i < frustum.worldCorners.size(); i++) {
 		Vector3 local = vertices[i];
 
 		Vector3 world = local * worldMatrix;
@@ -227,23 +277,23 @@ primitiveData::Frustum mathUtility::CreateFrustumData(const std::array<Vector3, 
 
 	const auto& c = frustum.worldCorners;
 
-	frustum.planes[primitiveData::Frustum::kLeft] = mathUtility::MakePlane(c[0], c[1], c[4]);
+	frustum.planes[primitiveData::Frustum::kLeft] = mathUtility::MakePlane(c[0],c[1],c[4]);
 
-	frustum.planes[primitiveData::Frustum::kRight] = mathUtility::MakePlane(c[3], c[7], c[2]);
+	frustum.planes[primitiveData::Frustum::kRight] = mathUtility::MakePlane(c[3],c[7],c[2]);
 
-	frustum.planes[primitiveData::Frustum::kTop] = mathUtility::MakePlane(c[1], c[2], c[5]);
+	frustum.planes[primitiveData::Frustum::kTop] = mathUtility::MakePlane(c[1],c[2],c[5]);
 
-	frustum.planes[primitiveData::Frustum::kBottom] = mathUtility::MakePlane(c[0], c[4], c[3]);
+	frustum.planes[primitiveData::Frustum::kBottom] = mathUtility::MakePlane(c[0],c[4],c[3]);
 
-	frustum.planes[primitiveData::Frustum::kNear] = mathUtility::MakePlane(c[0], c[2], c[1]);
+	frustum.planes[primitiveData::Frustum::kNear] = mathUtility::MakePlane(c[0],c[2],c[1]);
 
-	frustum.planes[primitiveData::Frustum::kFar] = mathUtility::MakePlane(c[4], c[5], c[6]);
+	frustum.planes[primitiveData::Frustum::kFar] = mathUtility::MakePlane(c[4],c[5],c[6]);
 
 	return frustum;
 }
 
 //平行四辺形の面積を求める
-float mathUtility::CalcParallelogramArea(const std::array<Vector3, 3>& vertices) {
+float mathUtility::CalcParallelogramArea(const std::array<Vector3,3>& vertices) {
 	//各頂点を取得
 	Vector3 v0 = vertices[0];
 	Vector3 v1 = vertices[1];
@@ -262,12 +312,12 @@ float mathUtility::CalcParallelogramArea(const std::array<Vector3, 3>& vertices)
 }
 
 //三角形の面積を求める
-float mathUtility::CalcTriangleArea(const std::array<Vector3, 3>& vertices) {
+float mathUtility::CalcTriangleArea(const std::array<Vector3,3>& vertices) {
 	return CalcParallelogramArea(vertices) / 2.0f;
 }
 
 //平行四辺形の面積を処理を早くして(正確じゃない)
-float mathUtility::CalcParallelogramAreaSquared(const std::array<Vector3, 3>& vertices) {
+float mathUtility::CalcParallelogramAreaSquared(const std::array<Vector3,3>& vertices) {
 	//三角形の面積
 	Vector3 v0 = vertices[0];
 	Vector3 v1 = vertices[1];
@@ -293,15 +343,15 @@ Vector3 mathUtility::MakeEulerAngleForQuaternion(const Quaternion& quaternion) {
 	//X軸回転
 	float sinX = 2.0f * (q.w * q.x + q.y * q.z);
 	float cosX = 1.0f - 2.0f * (q.x * q.x + q.y * q.y);
-	eulerAngle.x = std::atan2(sinX, cosX);
+	eulerAngle.x = std::atan2(sinX,cosX);
 	//Y軸回転
 	float sinY = 2.0f * (q.w * q.y - q.z * q.x);
-	sinY = std::clamp(sinY, -1.0f, 1.0f);
+	sinY = std::clamp(sinY,-1.0f,1.0f);
 	eulerAngle.y = std::asin(sinY);
 	//Z軸回転
 	float sinZ = 2.0f * (q.w * q.z + q.x * q.y);
 	float cosZ = 1.0f - 2.0f * (q.y * q.y + q.z * q.z);
-	eulerAngle.z = std::atan2(sinZ, cosZ);
+	eulerAngle.z = std::atan2(sinZ,cosZ);
 
 	return eulerAngle;
 }

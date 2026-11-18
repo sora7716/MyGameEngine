@@ -1,33 +1,31 @@
 #pragma once
 #include "Component.h"
-#include "Vector3.h"
 
 //前方宣言
-class RigidBody;
+class FollowCameraController;
 
 /// <summary>
-/// 移動用のコンポーネント
+/// カメラコントロール用のコンポーネント
 /// </summary>
-class MovementComponent :public Component {
+class CameraControlComponent :public Component {
 public://メンバ関数
 	/// <summary>
 	/// コンストラクタ
 	/// </summary>
 	/// <param name="gameObject">ゲームオブジェクト</param>
-	explicit MovementComponent(GameObject* gameObject);
+	explicit CameraControlComponent(GameObject* gameObject);
 
 	/// <summary>
 	/// デストラクタ
 	/// </summary>
-	~MovementComponent()override;
+	~CameraControlComponent()override;
 
 	/// <summary>
 	/// セットアップ
 	/// </summary>
-	/// <param name="rigidBody">リジッドボディ</param>
-	/// <param name="moveSpeed">移動速度</param>
-	/// <param name="moveResponse">移動の際のレスポンスを設定</param>
-	void Setup(RigidBody* rigidBody,float moveSpeed,float moveResponse);
+	/// <param name="followCamera">追従カメラ</param>
+	/// <param name="followSpeed">追従速度</param>
+	void Setup(FollowCameraController* followCamera,float followSpeed);
 
 	/// <summary>
 	/// 初期化
@@ -59,26 +57,22 @@ public://メンバ関数
 	std::string GetTypeName()const;
 
 	/// <summary>
-	/// 方向ベクトルの追加
+	/// 軸を設定
 	/// </summary>
-	/// <param name="direction">方向ベクトル</param>
-	void AddDirection(const Vector3& direction);
-
-	/// <summary>
-	/// カメラオブジェクトの設定
-	/// </summary>
-	/// <param name="cameraObject">カメラオブジェクト</param>
-	void SetCameraObject(GameObject* cameraObject);
+	/// <param name="axis">軸</param>
+	void SetAxis(const Vector2& axis);
 private://メンバ変数
-	//移動の際のレスポンス
-	float moveResponse_ = 1.0f;
-	//移動速度
-	float moveSpeed_ = 0.0f;
-	//方向
-	Vector3 direction_ = {};
-	//リジッドボディ
-	RigidBody* rigidBody_ = nullptr;
-	//カメラオブジェクト
-	GameObject* cameraObject_ = nullptr;
+	//仰角
+	float pitch_ = 0.0f;
+	//方位角
+	float yaw_ = 0.0f;
+	//追従速度
+	float followSpeed_ = 0.0f;
+	//追従カメラ
+	FollowCameraController* followCamera_ = nullptr;
+	//回転速度
+	float rotSpeed_ = 3.0f;
+	//軸を取得
+	Vector2 axis_ = {};
 };
 

@@ -11,6 +11,8 @@
 #include "PlayerNormalState.h"
 #include "PlayerMovementState.h"
 #include "PlayerAttackState.h"
+#include "MovementComponent.h"
+#include "RigidBody.h"
 
 //コンストラクタ
 Player::Player(GameObject* gameObject)
@@ -26,6 +28,9 @@ void Player::Initialize() {
 	//ゲームオブジェクトを取得
 	gameObject_ = GetOwner();
 
+	//スポーン位置を保存
+	spawnPosition = gameObject_->GetTransform().translate;
+
 	//ステートの初期化
 	states_[static_cast<uint32_t>(Behavior::kNormal)] = std::make_unique<PlayerNormalState>();
 	states_[static_cast<uint32_t>(Behavior::kMove)] = std::make_unique<PlayerMovementState>();
@@ -34,6 +39,13 @@ void Player::Initialize() {
 
 //更新
 void Player::Update() {
+	//プレイヤーが下に行き過ぎた場合
+	Transform& transform = gameObject_->GetTransform();
+	if(transform.translate.y < kFallLimitY) {
+		//スポーンした位置に戻す
+		transform.translate = spawnPosition;
+	}
+
 	//移動方向に向かせる
 	LookAt();
 
@@ -59,7 +71,7 @@ void Player::Update() {
 	}
 
 	//攻撃キーが押されているか
-	bool isAttackInputActive = input_->TriggerMouseButton(Click::kLeft);
+	bool isAttackInputActive = input_->TriggerMouseButton(ClickType::kLeft);
 	if(isAttackInputActive) {
 		if(behavior_ != Behavior::kAttack) {
 			behaviorRequest_ = Behavior::kAttack;
@@ -111,18 +123,6 @@ std::unique_ptr<Component> Player::Clone(GameObject* gameObject) const {
 	return cloneInstance;
 }
 
-//ゲームオブジェクトから解除する
-void Player::OnGameObjectRemoving(GameObject* target) {
-	if(cameraObject_ == target) {
-		cameraObject_ = nullptr;
-	}
-}
-
-//カメラのオブジェクトの設定
-void Player::SetCameraObject(GameObject* cameraObject) {
-	cameraObject_ = cameraObject;
-}
-
 //振る舞いのリクエストの設定
 void Player::SetBehaviorRequest(Behavior request) {
 	behaviorRequest_ = request;
@@ -147,19 +147,29 @@ std::string Player::GetTypeName() const {
 
 //移動方向に向かせる
 void Player::LookAt() {
-	Transform& transform = gameObject_->GetTransform();
-
-	//長さが十分に大きくないと
-	if(worldDirection_.LengthSquared() < 0.001f) {
+	//リジッドボディを取得
+	RigidBody* rigidBody = gameObject_->GetComponent<RigidBody>();
+	//リジッドボディがなければ
+	if(!rigidBody) {
 		return;
 	}
 
-	//方向ベクトルからヨーを取得
-	float yaw = std::atan2(worldDirection_.x,worldDirection_.z);
+	//実際に動いている速度
+	Vector3 velocity = rigidBody->GetVelocity();
+	velocity.y = 0.0f;//縦方向には向かないので
+
+	//ほとんど止まっているときは向かない
+	if(velocity.LengthSquared() < mathUtility::kEpsilon) {
+		return;
+	}
+
+	//速度の方向からヨーを取得
+	float yaw = std::atan2(velocity.x,velocity.z);
 
 	//目標のクォータニオンを作成
 	Quaternion targetQuaternion = Quaternion::EulerAngleToQuaternion({0.0f,yaw,0.0f});
 
 	//目標のクォータニオンの方向に向かせる
-	transform.rotate = Quaternion::Slerp(transform.rotate,targetQuaternion,kLookAtSpeed * mathUtility::kDeltaTime);
+	Transform& transform = gameObject_->GetTransform();
+	transform.rotate = Quaternion::Slerp(transform.rotate,targetQuaternion,kLookAtSpeed * mathUtility::GetDeltaTime());
 }

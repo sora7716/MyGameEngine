@@ -57,18 +57,6 @@ public://メンバ関数
 	std::unique_ptr<Component>Clone(GameObject* gameObject)const override;
 
 	/// <summary>
-	/// ゲームオブジェクトから解除する
-	/// </summary>
-	/// <param name="target">対象</param>
-	void OnGameObjectRemoving(GameObject* target);
-
-	/// <summary>
-	/// カメラのオブジェクトの設定
-	/// </summary>
-	/// <param name="cameraObject">カメラのオブジェクト</param>
-	void SetCameraObject(GameObject* cameraObject);
-
-	/// <summary>
 	/// 振る舞いのリクエストの設定
 	/// </summary>
 	/// <param name="request">リクエスト</param>
@@ -99,20 +87,18 @@ private://メンバ関数
 private://定数
 	//向くスピード
 	static inline const float kLookAtSpeed = 8.0f;
+	//どこまで落ちれるか
+	static inline const float kFallLimitY = -20.0f;
 private://メンバ変数
 	//入力
 	Input* input_ = nullptr;
-	//カメラオブジェクト
-	GameObject* cameraObject_ = nullptr;
 	//ゲームオブジェクト
 	GameObject* gameObject_ = nullptr;
 	//オブジェクト3d
 	Object3d* object3d_ = nullptr;
-
-	//入力されて移動方向ベクトル
-	Vector3 inputDirection_ = {};
-	//World座標系での移動方向ベクトル
-	Vector3 worldDirection_ = {};
+	
+	//スポーン位置
+	Vector3 spawnPosition = {};
 
 	//振る舞い
 	Behavior behavior_ = Behavior::kCount;

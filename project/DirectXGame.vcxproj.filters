@@ -166,6 +166,15 @@
     <Filter Include="application\actor\mapChip">
       <UniqueIdentifier>{8fa35010-bbc9-49fc-8ea6-67638d97dbba}</UniqueIdentifier>
     </Filter>
+    <Filter Include="application\actor\camera">
+      <UniqueIdentifier>{03cce008-1384-4af1-9ee8-cb57c8621912}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="application\actor\command">
+      <UniqueIdentifier>{eea1d13a-ffcf-41d4-a856-b3562f24f364}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="application\actor\action">
+      <UniqueIdentifier>{d7980f1c-5455-4e66-912e-e989b0c572e0}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="engine\main.cpp">
@@ -360,9 +369,6 @@
     <ClCompile Include="engine\graphics\rendering\camera\CameraRenderer.cpp">
       <Filter>engine\graphics\rendering\camera</Filter>
     </ClCompile>
-    <ClCompile Include="application\actor\OrbitCameraController.cpp">
-      <Filter>application\actor</Filter>
-    </ClCompile>
     <ClCompile Include="engine\collision\BoxCollider.cpp">
       <Filter>engine\collision</Filter>
     </ClCompile>
@@ -501,29 +507,53 @@
     <ClCompile Include="engine\command\ICommand.cpp">
       <Filter>engine\comand</Filter>
     </ClCompile>
-    <ClCompile Include="engine\command\MovementCommand.cpp">
-      <Filter>engine\comand</Filter>
-    </ClCompile>
-    <ClCompile Include="engine\physics\MovementComponent.cpp">
-      <Filter>engine\physics</Filter>
-    </ClCompile>
-    <ClCompile Include="engine\physics\JumpComponent.cpp">
-      <Filter>engine\physics</Filter>
-    </ClCompile>
-    <ClCompile Include="engine\command\JumpCommand.cpp">
-      <Filter>engine\comand</Filter>
-    </ClCompile>
     <ClCompile Include="application\actor\mapChip\MapChipCollider.cpp">
       <Filter>application\actor\mapChip</Filter>
     </ClCompile>
     <ClCompile Include="application\actor\mapChip\MapChipField.cpp">
       <Filter>application\actor\mapChip</Filter>
     </ClCompile>
-    <ClCompile Include="engine\command\StickMovementCommand.cpp">
-      <Filter>engine\comand</Filter>
-    </ClCompile>
     <ClCompile Include="engine\command\IAxisCommand.cpp">
       <Filter>engine\comand</Filter>
+    </ClCompile>
+    <ClCompile Include="application\actor\command\JumpCommand.cpp">
+      <Filter>application\actor\command</Filter>
+    </ClCompile>
+    <ClCompile Include="application\actor\command\MovementCommand.cpp">
+      <Filter>application\actor\command</Filter>
+    </ClCompile>
+    <ClCompile Include="application\actor\command\StickCameraControlCommand.cpp">
+      <Filter>application\actor\command</Filter>
+    </ClCompile>
+    <ClCompile Include="application\actor\command\StickMovementCommand.cpp">
+      <Filter>application\actor\command</Filter>
+    </ClCompile>
+    <ClCompile Include="application\actor\camera\CameraControlComponent.cpp">
+      <Filter>application\actor\camera</Filter>
+    </ClCompile>
+    <ClCompile Include="application\actor\camera\FollowCameraController.cpp">
+      <Filter>application\actor\camera</Filter>
+    </ClCompile>
+    <ClCompile Include="application\actor\action\JumpComponent.cpp">
+      <Filter>application\actor\action</Filter>
+    </ClCompile>
+    <ClCompile Include="application\actor\action\MovementComponent.cpp">
+      <Filter>application\actor\action</Filter>
+    </ClCompile>
+    <ClCompile Include="application\actor\command\PlacementPreviewCommand.cpp">
+      <Filter>application\actor\command</Filter>
+    </ClCompile>
+    <ClCompile Include="application\actor\command\DefenseRotationCommand.cpp">
+      <Filter>application\actor\command</Filter>
+    </ClCompile>
+    <ClCompile Include="application\actor\action\DefenseRotationComponent.cpp">
+      <Filter>application\actor\action</Filter>
+    </ClCompile>
+    <ClCompile Include="application\actor\action\PlacementPreviewComponent.cpp">
+      <Filter>application\actor\action</Filter>
+    </ClCompile>
+    <ClCompile Include="engine\math\easing\Easing.cpp">
+      <Filter>ソース ファイル</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -743,9 +773,6 @@
     <ClInclude Include="engine\graphics\rendering\camera\CameraRenderData.h">
       <Filter>engine\graphics\rendering\camera</Filter>
     </ClInclude>
-    <ClInclude Include="application\actor\OrbitCameraController.h">
-      <Filter>application\actor</Filter>
-    </ClInclude>
     <ClInclude Include="engine\collision\BoxCollider.h">
       <Filter>engine\collision</Filter>
     </ClInclude>
@@ -899,20 +926,8 @@
     <ClInclude Include="engine\command\ICommand.h">
       <Filter>engine\comand</Filter>
     </ClInclude>
-    <ClInclude Include="engine\command\MovementCommand.h">
-      <Filter>engine\comand</Filter>
-    </ClInclude>
     <ClInclude Include="engine\input\InputType.h">
       <Filter>engine\input</Filter>
-    </ClInclude>
-    <ClInclude Include="engine\physics\MovementComponent.h">
-      <Filter>engine\physics</Filter>
-    </ClInclude>
-    <ClInclude Include="engine\physics\JumpComponent.h">
-      <Filter>engine\physics</Filter>
-    </ClInclude>
-    <ClInclude Include="engine\command\JumpCommand.h">
-      <Filter>engine\comand</Filter>
     </ClInclude>
     <ClInclude Include="application\actor\mapChip\MapChipCollider.h">
       <Filter>application\actor\mapChip</Filter>
@@ -926,8 +941,47 @@
     <ClInclude Include="engine\command\IAxisCommand.h">
       <Filter>engine\comand</Filter>
     </ClInclude>
-    <ClInclude Include="engine\command\StickMovementCommand.h">
-      <Filter>engine\comand</Filter>
+    <ClInclude Include="engine\math\Spherical.h">
+      <Filter>engine\math</Filter>
+    </ClInclude>
+    <ClInclude Include="application\actor\command\JumpCommand.h">
+      <Filter>application\actor\command</Filter>
+    </ClInclude>
+    <ClInclude Include="application\actor\command\MovementCommand.h">
+      <Filter>application\actor\command</Filter>
+    </ClInclude>
+    <ClInclude Include="application\actor\command\StickCameraControlCommand.h">
+      <Filter>application\actor\command</Filter>
+    </ClInclude>
+    <ClInclude Include="application\actor\command\StickMovementCommand.h">
+      <Filter>application\actor\command</Filter>
+    </ClInclude>
+    <ClInclude Include="application\actor\camera\CameraControlComponent.h">
+      <Filter>application\actor\camera</Filter>
+    </ClInclude>
+    <ClInclude Include="application\actor\camera\FollowCameraController.h">
+      <Filter>application\actor\camera</Filter>
+    </ClInclude>
+    <ClInclude Include="application\actor\action\JumpComponent.h">
+      <Filter>application\actor\action</Filter>
+    </ClInclude>
+    <ClInclude Include="application\actor\action\MovementComponent.h">
+      <Filter>application\actor\action</Filter>
+    </ClInclude>
+    <ClInclude Include="application\actor\command\PlacementPreviewCommand.h">
+      <Filter>application\actor\command</Filter>
+    </ClInclude>
+    <ClInclude Include="application\actor\command\DefenseRotationCommand.h">
+      <Filter>application\actor\command</Filter>
+    </ClInclude>
+    <ClInclude Include="application\actor\action\DefenseRotationComponent.h">
+      <Filter>application\actor\action</Filter>
+    </ClInclude>
+    <ClInclude Include="application\actor\action\PlacementPreviewComponent.h">
+      <Filter>application\actor\action</Filter>
+    </ClInclude>
+    <ClInclude Include="engine\math\easing\Easing.h">
+      <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

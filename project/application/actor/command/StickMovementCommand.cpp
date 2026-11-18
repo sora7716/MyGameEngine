@@ -12,14 +12,14 @@ StickMovementCommand::~StickMovementCommand() {
 }
 
 //実行
-void StickMovementCommand::Execute(const Vector3& axis) {
+void StickMovementCommand::Execute(const Vector2& axis) {
 	if(!movementComponent_) {
 		Logger::OutputLog("StickMovementCommandに移動用のコンポーネントが設定されていません");
 		return;
 	}
 
 	//スティックの倒し具合を移動方向へ設定
-	movementComponent_->AddDirection(axis);
+	movementComponent_->AddDirection({axis.x,0.0f,axis.y});
 }
 
 //複製

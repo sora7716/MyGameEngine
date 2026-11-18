@@ -159,13 +159,7 @@ public://メンバ関数
 	/// ワールド行列の取得
 	/// </summary>
 	/// <returns>ワールド行列</returns>
-	const Matrix4x4& GetWorldMatrix()const;
-
-	/// <summary>
-	/// ローカル行列の取得
-	/// </summary>
-	/// <returns>ローカル行列</returns>
-	const Matrix4x4& GetLocalMatrix()const;
+	Matrix4x4 GetWorldMatrix()const;
 
 	/// <summary>
 	/// 親オブジェクトの取得
@@ -218,7 +212,7 @@ public://メンバ関数
 	/// <typeparam name="T">コンポーネントの型</typeparam>
 	/// <returns>コンポーネントのポインタ</returns>
 	template <class T>
-	T* GetComponent() {
+	T* GetComponent()const {
 		static_assert(
 			std::is_base_of_v<Component,T>,
 			"TはComponentを継承している必要があります"

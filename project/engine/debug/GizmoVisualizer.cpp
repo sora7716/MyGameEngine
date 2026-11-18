@@ -3,56 +3,61 @@
 #include "BaseCollider.h"
 #include "BoxCollider.h"
 #include "SphereCollider.h"
+#include "Camera.h"
 #include "BaseShape.h"
 #include "Cube.h"
 #include "Sphere.h"
+#include "Frustum.h"
 #include "PrimitiveData.h"
 using namespace wireframe;
 
 //コンストラクタ
-GizmoVisualizer::GizmoVisualizer(){
+GizmoVisualizer::GizmoVisualizer() {
 }
 
 //デストラクタ
-GizmoVisualizer::~GizmoVisualizer(){
+GizmoVisualizer::~GizmoVisualizer() {
 }
 
 //初期化
-void GizmoVisualizer::Initialize(){
+void GizmoVisualizer::Initialize() {
 }
 
 //更新
-void GizmoVisualizer::Update(){
+void GizmoVisualizer::Update() {
 	//描画データのリセット
 	renderDatas_.clear();
 
 	//選択されたゲームオブジェクトがNullなら
-	if (!selectedGameObject_){
+	if(!selectedGameObject_) {
 		return;
 	}
 
 	//コライダーごとに適当なワイヤーフレームを決める
 	SelectColliderWireframe();
+
+	//カメラに適当なワイヤーフレームを決める
+	SelectCameraWireframe();
 }
 
 //選択されたゲームオブジェクトの設定
-void GizmoVisualizer::SetSelectedGameObject(GameObject* selectedGameObject){
+void GizmoVisualizer::SetSelectedGameObject(GameObject* selectedGameObject) {
 	selectedGameObject_ = selectedGameObject;
 }
 
 //ワイヤーフレームの描画データの配列の取得
-const std::vector<WireframeRenderData>& GizmoVisualizer::GetWireframeRenderDatas() const{
+const std::vector<WireframeRenderData>& GizmoVisualizer::GetWireframeRenderDatas() const {
 	return renderDatas_;
 }
 
 //コライダーごとに適当なワイヤーフレームを決める
-void GizmoVisualizer::SelectColliderWireframe(){
+void GizmoVisualizer::SelectColliderWireframe() {
 	//コライダーの配列を取得
 	std::vector<BaseCollider*>baseColliders = selectedGameObject_->GetComponents<BaseCollider>();
 	//コライダーの配列を探索
-	for (BaseCollider* baseCollider : baseColliders){
+	for(BaseCollider* baseCollider : baseColliders) {
 		//有効状態を確認
-		if (!baseCollider->IsEnabled()){
+		if(!baseCollider->IsEnabled()) {
 			continue;
 		}
 
@@ -60,8 +65,8 @@ void GizmoVisualizer::SelectColliderWireframe(){
 		ColliderType colliderType = baseCollider->GetColliderType();
 
 		//各コライダーごとにワイヤーフレームを生成
-		switch (colliderType){
-		case ColliderType::kBox:{
+		switch(colliderType) {
+			case ColliderType::kBox: {
 				//ワイヤーフレームの生成
 				std::unique_ptr<BaseShape> cube = Cube::Create<Cube>();
 
@@ -83,7 +88,7 @@ void GizmoVisualizer::SelectColliderWireframe(){
 				renderDatas_.push_back(cube->GetRenderData());
 				break;
 			}
-		case ColliderType::kSphere:{
+			case ColliderType::kSphere: {
 				std::unique_ptr<Sphere> sphere = Sphere::Create<Sphere>();
 
 				//Sphereコライダーにキャスト
@@ -103,5 +108,36 @@ void GizmoVisualizer::SelectColliderWireframe(){
 				break;
 			}
 		}
+	}
+}
+
+//カメラに適当なワイヤーフレームを決める
+void GizmoVisualizer::SelectCameraWireframe() {
+	//カメラの配列を取得
+	std::vector<Camera*>cameras = selectedGameObject_->GetComponents<Camera>();
+	//コライダーの配列を探索
+	for(Camera* camera : cameras) {
+		//有効状態を確認
+		if(!camera->IsEnabled()) {
+			continue;
+		}
+
+
+		//各カメラごとにワイヤーフレームを生成
+
+		//ワイヤーフレームの生成
+		std::unique_ptr<Frustum> frustum = Cube::Create<Frustum>();
+
+		//フラスタムの設定
+		frustum->SetTargetCamera(camera);
+		//色の変更
+		frustum->SetColor(Color::GetOrange());
+
+		//更新
+		frustum->Update();
+
+		//描画データを追加
+		renderDatas_.push_back(frustum->GetRenderData());
+
 	}
 }

@@ -156,7 +156,8 @@ Transform& GameObject::GetTransform() {
 
 //ワールドの位置の取得
 Vector3 GameObject::GetWorldPos() {
-	return {worldMatrix_.m[3][0],worldMatrix_.m[3][1],worldMatrix_.m[3][2]};
+	Matrix4x4 worldMatrix = CalculateWorldMatrix();
+	return {worldMatrix.m[3][0],worldMatrix.m[3][1],worldMatrix.m[3][2]};
 }
 
 //トランスフォームの取得
@@ -210,13 +211,9 @@ BaseScene* GameObject::GetCurrentScene() {
 }
 
 //ワールド行列の取得
-const Matrix4x4& GameObject::GetWorldMatrix() const {
-	return worldMatrix_;
-}
-
-//ローカル行列の取得
-const Matrix4x4& GameObject::GetLocalMatrix() const {
-	return localMatrix_;
+Matrix4x4 GameObject::GetWorldMatrix() const {
+	Matrix4x4 worldMatrix = CalculateWorldMatrix();
+	return worldMatrix;
 }
 
 //親オブジェクトの取得

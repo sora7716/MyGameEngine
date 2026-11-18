@@ -3,6 +3,7 @@
 #include "Input.h"
 #include "Camera.h"
 #include <memory>
+#include <unordered_map>
 
 // 前方宣言
 class DirectXBase;
@@ -12,11 +13,12 @@ class DebugCameraController;
 class Camera;
 class CollisionSystem;
 class TagManager;
+class MaterialInstance;
 
 /// <summary>
 /// シーンの基底クラス
 /// </summary>
-class BaseScene{
+class BaseScene {
 public://メンバ関数
 	/// <summary>
 	/// コンストラクタ
@@ -33,7 +35,7 @@ public://メンバ関数
 	/// </summary>
 	/// <param name="sceneContext">シーンに必要な情報</param>
 	/// <param name="tagManager">タグの管理</param>
-	void Setup(const SceneContext& sceneContext, TagManager* tagManager);
+	void Setup(const SceneContext& sceneContext,TagManager* tagManager);
 
 	/// <summary>
 	/// 初期化
@@ -65,7 +67,7 @@ public://メンバ関数
 	/// </summary>
 	/// <param name="target">対象となるゲームオブジェクト</param>
 	/// <param name="collisionSystem">衝突判定のシステム</param>
-	void DeleteGameObject(GameObject* target,CollisionSystem*collisionSystem);
+	void DeleteGameObject(GameObject* target,CollisionSystem* collisionSystem);
 
 	/// <summary>
 	/// ゲームオブジェトの複製
@@ -78,20 +80,45 @@ public://メンバ関数
 	/// </summary>
 	/// <param name="from">今いる場所</param>
 	/// <param name="to">最終的に置いておく場所</param>
-	void MoveGameObject(uint32_t from, uint32_t to);
+	void MoveGameObject(uint32_t from,uint32_t to);
 
 	/// <summary>
 	/// ゲームオブジェクトのタグを古いのから新しいのに変更
 	/// </summary>
 	/// <param name="oldTag">古い名前</param>
 	/// <param name="newTag">新しい名前</param>
-	void ReplaceGameObjectTag(const std::string& oldTag, const std::string& newTag);
+	void ReplaceGameObjectTag(const std::string& oldTag,const std::string& newTag);
 
 	/// <summary>
 	/// 空のゲームオブジェクトを生成
 	/// </summary>
 	/// <returns>空のゲームオブジェクト</returns>
 	GameObject* CreateGameObject();
+
+	/// <summary>
+	/// マテリアルインスタンスの追加
+	/// </summary>
+	/// <param name="name">名前</param>
+	/// <param name="textureFilePaths">使用するテクスチャのパス</param>
+	/// <param name="pixelShaderName">ピクセルシェーダ名</param>
+	void AddMaterialInstance(const std::string& name,const MaterialTexturePaths& textureFilePaths,const std::string& pixelShaderName = "Standard.PS.hlsl");
+
+	/// <summary>
+	/// マテリアルインスタンスを取得
+	/// </summary>
+	/// <param name="name">名前</param>
+	/// <param name="pixelShaderName">ピクセルシェーダ名</param>
+	/// <returns>マテリアルインスタンスの取得</returns>
+	std::shared_ptr<MaterialInstance> GetMaterialInstance(const std::string& name,const std::string& pixelShaderName = "Standard.PS.hlsl");
+
+
+	/// <summary>
+	/// マテリアルインスタンスを検索
+	/// </summary>
+	/// <param name="name">名前</param>
+	/// <param name="pixelShaderName">ピクセルシェーダ名</param>
+	/// <returns>マテリアルインスタンスの取得</returns>
+	MaterialInstance* FindMaterialInstance(const std::string& name,const std::string& pixelShaderName = "Standard.PS.hlsl");
 
 	/// <summary>
 	/// ゲームオブジェクトの一覧を取得
@@ -128,7 +155,7 @@ private://メンバ関数
 	/// </summary>
 	/// <param name="baseName">元の名前</param>
 	/// <param name="remove">省きたい部分</param>
-	std::string CreateUniqueGameObjectName(const std::string& baseName, std::string_view remove)const;
+	std::string CreateUniqueGameObjectName(const std::string& baseName,std::string_view remove)const;
 private://定数
 	//オブジェクトのメモリ確保数
 	static inline const uint32_t kGameObjectSize = 65536;
@@ -140,6 +167,8 @@ private://メンバ変数
 	std::unique_ptr<AbstractSceneFactory> sceneFactory_ = nullptr;
 	//ゲームオブジェクトの一覧
 	std::vector<std::unique_ptr<GameObject>> gameObjects_;
+	//マテリアルインスタンスの一覧
+	std::unordered_map<std::string,std::shared_ptr<MaterialInstance>>materialInstances_;
 	//シーンで必要なもの
 	SceneContext sceneContext_ = {};
 	//デバッグカメラの操作

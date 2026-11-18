@@ -239,6 +239,11 @@ Matrix4x4 Object3d::MakeRenderWorldMatrix(const Matrix4x4& cameraWorldMatrix) co
 	return renderWorldMatrix;
 }
 
+//マテリアルインスタンスの設定
+void Object3d::SetMaterialInstance(uint32_t index,const std::shared_ptr<MaterialInstance>& materialInstance) {
+	materialInstances_[index] = materialInstance;
+}
+
 //モデルの設定
 void Object3d::SetModel(const std::string& modelName) {
 	//ゲームオブジェクトを取得

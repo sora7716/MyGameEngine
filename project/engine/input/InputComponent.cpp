@@ -77,13 +77,8 @@ void InputComponent::Update() {
 			axis = input_->GetXboxPadRightStick(axisState.controllerIndex);
 		}
 
-		//軸が何も値の変更がなければ
-		if(axis.x == 0.0f && axis.y == 0.0f) {
-			continue;
-		}
-
 		//ステートを実行
-		axisState.command->Execute({axis.x,0.0f,axis.y});
+		axisState.command->Execute(axis);
 	}
 }
 
@@ -145,8 +140,8 @@ InputPhase InputComponent::GetCurrentPhase(InputDeviceType inputDeviceType,uint3
 
 	//各ポインタを取得
 	BYTE* bytePtr = std::get_if<BYTE>(&inputDeviceType);
-	Click* ClickPtr = std::get_if<Click>(&inputDeviceType);
-	XboxInput* xboxInputPtr = std::get_if<XboxInput>(&inputDeviceType);
+	ClickType* ClickPtr = std::get_if<ClickType>(&inputDeviceType);
+	XboxInputType* xboxInputPtr = std::get_if<XboxInputType>(&inputDeviceType);
 	//バイトのポインタがある場合
 	if(bytePtr) {
 		//押した瞬間

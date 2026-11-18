@@ -95,6 +95,13 @@ public://メンバ関数
 	Matrix4x4 MakeRenderWorldMatrix(const Matrix4x4& cameraWorldMatrix)const;
 
 	/// <summary>
+	/// マテリアルインスタンスの設定
+	/// </summary>
+	/// <param name="index">検索キー</param>
+	/// <param name="materialInstance">マテリアルインスタンス</param>
+	void SetMaterialInstance(uint32_t index,const std::shared_ptr<MaterialInstance>& materialInstance);
+
+	/// <summary>
 	/// モデルの設定
 	/// </summary>
 	/// <param name="modelName">モデル名</param>

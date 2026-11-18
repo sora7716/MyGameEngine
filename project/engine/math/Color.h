@@ -36,6 +36,18 @@ struct Color final{
 	static Color GetWhite();
 
 	/// <summary>
+	/// マゼンタの取得
+	/// </summary>
+	/// <returns>マゼンタ</returns>
+	static Color GetMagenta();
+
+	/// <summary>
+	/// オレンジの取得
+	/// </summary>
+	/// <returns>オレンジ</returns>
+	static Color GetOrange();
+
+	/// <summary>
 	/// 赤の取得
 	/// </summary>
 	/// <returns>赤</returns>

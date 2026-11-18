@@ -8,17 +8,20 @@
 #include "InputType.h"
 
 //前方宣言
+class Object3d;
 class MapChipField;
 class FollowCameraController;
+class PlacementPreviewComponent;
+class DefenseRotationComponent;
+class PlacementSwitchComponent;
+class CameraControlComponent;
 class MovementCommand;
 class JumpCommand;
 class StickMovementCommand;
 class StickCameraControlCommand;
 class PlacementPreviewCommand;
-class PlacementPreviewComponent;
-class Object3d;
 class DefenseRotationCommand;
-class DefenseRotationComponent;
+class PlacementSwitchCommand;
 
 //移動用のコマンドモード
 enum class MovementCommandMode : uint32_t {
@@ -29,8 +32,8 @@ enum class MovementCommandMode : uint32_t {
 	kCount
 };
 
-//オブジェクトの回転用コマンドモード
-enum class DefenseRotationCommandMode :uint32_t {
+//方向
+enum class DirectionType :uint32_t {
 	kLeft,
 	kRight,
 	kCount
@@ -113,12 +116,6 @@ private://メンバ関数
 	bool TryGetPlacementIndex(const Vector3& position,Vector3Int& index);
 
 	/// <summary>
-	/// 守るオブジェクトの生成
-	/// </summary>
-	/// <param name="index">検索キー</param>
-	void CreateDefenseObject(const Vector3Int index);
-
-	/// <summary>
 	/// オブジェクトの設置予定地の更新
 	/// </summary>
 	void UpdatePlacementPreviewObject();
@@ -135,28 +132,39 @@ private://メンバ変数
 	std::vector<std::unique_ptr<MovementCommand>> movementCommands_;
 #endif // _DEBUG
 	std::unique_ptr<StickMovementCommand>stickMoveCommand_ = nullptr;
+
 	//ジャンプ用のコマンド
 	std::unique_ptr<JumpCommand>jumpCommand_ = nullptr;
+
 	//カメラ操作用のコマンド
 	std::unique_ptr<StickCameraControlCommand>stickCameraControlCommand_ = nullptr;
-	//オブジェクトの設置予定地の表示のコマンド
+
+	//オブジェクトの設置予定地の表示/非表示のコマンド
 	std::unique_ptr<PlacementPreviewCommand>placementPreviewCommand_ = nullptr;
+
 	//オブジェクトの回転用コマンド
 	std::vector<std::unique_ptr<DefenseRotationCommand>>defenseRotationCommands_;
+	
+	//設置するオブジェクトの切り替え用コマンド
+	std::vector<std::unique_ptr<PlacementSwitchCommand>>placementSwitchCommands_;
 
 	//守るオブジェクトのモデル名の一覧
 	std::vector<std::string>defenseObjectModelNameList_;
-	//守るオブジェクトのモデルの数
-	uint32_t defenseObjectModelCount_ = 2;
 
 	//プレイヤーのオブジェクト
 	GameObject* playerObject_ = nullptr;
-	//設置予定地のオブジェクト
+
+	//設置予定を表示/非表示
 	PlacementPreviewComponent* placementPreviewComponent_ = nullptr;
-	GameObject* placementPreviewObject_ = nullptr;
+
+	//設置予定地のオブジェクト
 	Object3d* placementPreviewObject3d_ = nullptr;
 	Vector3Int placementPreviewIndex_ = {};
+	//設置できるか
 	bool isPlacementEnabled_ = false;
+
+	//設置するオブジェクトの切り替え
+	PlacementSwitchComponent* placementSwitchComponent_ = nullptr;
 
 	//設置オブジェクトの回転
 	DefenseRotationComponent* defenseRotationComponent_ = nullptr;
@@ -165,4 +173,5 @@ private://メンバ変数
 	GameObject* cameraObject_ = nullptr;
 	//追従カメラ
 	FollowCameraController* followCamera_ = nullptr;
+	CameraControlComponent* cameraControlComponent_ = nullptr;
 };

@@ -175,6 +175,9 @@
     <Filter Include="application\actor\action">
       <UniqueIdentifier>{d7980f1c-5455-4e66-912e-e989b0c572e0}</UniqueIdentifier>
     </Filter>
+    <Filter Include="engine\math\easing">
+      <UniqueIdentifier>{7b683fad-30db-4f2e-9fa0-9a1c7bbbf393}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="engine\main.cpp">
@@ -553,7 +556,13 @@
       <Filter>application\actor\action</Filter>
     </ClCompile>
     <ClCompile Include="engine\math\easing\Easing.cpp">
-      <Filter>ソース ファイル</Filter>
+      <Filter>engine\math\easing</Filter>
+    </ClCompile>
+    <ClCompile Include="application\actor\action\PlacementSwitchComponent.cpp">
+      <Filter>application\actor\action</Filter>
+    </ClCompile>
+    <ClCompile Include="application\actor\command\PlacementSwitchCommand.cpp">
+      <Filter>application\actor\command</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -981,7 +990,13 @@
       <Filter>application\actor\action</Filter>
     </ClInclude>
     <ClInclude Include="engine\math\easing\Easing.h">
-      <Filter>ヘッダー ファイル</Filter>
+      <Filter>engine\math\easing</Filter>
+    </ClInclude>
+    <ClInclude Include="application\actor\action\PlacementSwitchComponent.h">
+      <Filter>application\actor\action</Filter>
+    </ClInclude>
+    <ClInclude Include="application\actor\command\PlacementSwitchCommand.h">
+      <Filter>application\actor\command</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

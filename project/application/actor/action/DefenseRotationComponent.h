@@ -19,12 +19,6 @@ public://メンバ関数
 	~DefenseRotationComponent()override;
 
 	/// <summary>
-	/// セットアップ
-	/// </summary>
-	/// <param name="targetGameObject">回転させる対象のオブジェクト</param>
-	void Setup(GameObject* targetGameObject);
-
-	/// <summary>
 	/// 初期化
 	/// </summary>
 	void Initialize()override;
@@ -46,6 +40,11 @@ public://メンバ関数
 	/// <param name="gameObject">ゲームオブジェクト</param>
 	/// <returns>コピーしたインスタンス</returns>
 	std::unique_ptr<Component> Clone(GameObject* gameObject)const override;
+
+	/// <summary>
+	/// 回転のリセット
+	/// </summary>
+	void ResetRotation();
 
 	/// <summary>
 	/// コンポーネントのタイプ名を返す
@@ -74,8 +73,6 @@ private://定数
 	//回転する基準の角度(度)
 	static inline float kRotationStep = 90.0f;
 private://メンバ変数
-	//回転対象のGameObject
-	GameObject* targetGameObject_ = nullptr;
 	//回転方向
 	float rotateDir_ = 0.0f;
 	//角度(度)
@@ -91,7 +88,7 @@ private://メンバ変数
 	//実行するか
 	bool isRunning_ = true;
 	//回転の開始位置
-	float beginAngle_ = {};
+	float beginAngleY_ = {};
 	//イージングの鋭さ
 	float easingSharpness_ = 10.0f;
 };

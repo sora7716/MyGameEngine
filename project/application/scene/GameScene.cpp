@@ -12,19 +12,21 @@
 #include "StickCameraControlCommand.h"
 #include "PlacementPreviewCommand.h"
 #include "DefenseRotationCommand.h"
+#include "PlacementSwitchCommand.h"
 #include "InputComponent.h"
 #include "MovementComponent.h"
 #include "JumpComponent.h"
 #include "CameraControlComponent.h"
 #include "PlacementPreviewComponent.h"
 #include "DefenseRotationComponent.h"
-#include "ImGuiManager.h"
+#include "PlacementSwitchComponent.h"
 #include "MapChipField.h"
 #include "MapChipCollider.h"
 #include "Camera.h"
 #include "FollowCameraController.h"
-#include "Color.h"
+#include "ImGuiManager.h"
 #include "MathUtility.h"
+#include "Color.h"
 #include <array>
 using namespace mapChipDesc;
 
@@ -65,20 +67,29 @@ void GameScene::Initialize() {
 	//設置予定地をひょじする用のコマンド
 	placementPreviewCommand_ = std::make_unique<PlacementPreviewCommand>();
 	//ディフェンス用のオブジェクトの回転コマンドの生成
-	defenseRotationCommands_.resize(static_cast<uint32_t>(DefenseRotationCommandMode::kCount));
+	defenseRotationCommands_.resize(static_cast<uint32_t>(DirectionType::kCount));
 	for(std::unique_ptr<DefenseRotationCommand>& defenseRotationCommand : defenseRotationCommands_) {
 		defenseRotationCommand = std::make_unique<DefenseRotationCommand>();
 	}
 	//左回転
-	defenseRotationCommands_[static_cast<uint32_t>(DefenseRotationCommandMode::kLeft)]->Setup(-1.0f);
+	defenseRotationCommands_[static_cast<uint32_t>(DirectionType::kLeft)]->Setup(-1.0f);
 	//右回転
-	defenseRotationCommands_[static_cast<uint32_t>(DefenseRotationCommandMode::kRight)]->Setup(1.0f);
+	defenseRotationCommands_[static_cast<uint32_t>(DirectionType::kRight)]->Setup(1.0f);
+
+	//設置するオブジェクトの切り替え用コマンドの生成
+	placementSwitchCommands_.resize(static_cast<uint32_t>(DirectionType::kCount));
+	for(std::unique_ptr<PlacementSwitchCommand>& placementSwitchCommand : placementSwitchCommands_) {
+		placementSwitchCommand = std::make_unique<PlacementSwitchCommand>();
+	}
+	//左へ
+	placementSwitchCommands_[static_cast<uint32_t>(DirectionType::kLeft)]->Setup(-1);
+	//右へ
+	placementSwitchCommands_[static_cast<uint32_t>(DirectionType::kRight)]->Setup(1);
 
 	//マテリアルの生成
 	std::string environmentMap = "engine/resources/textures/skybox_cube.dds";
-	std::string blockTexture = "engine/resources/models/debugCube/MapChipDebugCube_BaseColor.png";
+	std::string blockTexture = "engine/resources/models/block/SimpleStoneBlock_BaseColor.png";
 	AddMaterialInstance("defaultBlock",{blockTexture,environmentMap});
-	AddMaterialInstance("highLightBlock",{blockTexture,environmentMap});
 
 	//マップチップフィールドを生成
 	mapChipField_ = MapChipField::Create(mapChipCsvName_);
@@ -96,12 +107,14 @@ void GameScene::Initialize() {
 	CreateField();
 
 	//守るオブジェクトモデル名のリストを設定
-	defenseObjectModelNameList_.resize(defenseObjectModelCount_);
-	defenseObjectModelNameList_[0] = "wall";
-	defenseObjectModelNameList_[1] = "sphere_16";
+	defenseObjectModelNameList_.push_back("wall");
+	defenseObjectModelNameList_.push_back("thunderTower");
+	defenseObjectModelNameList_.push_back("freezeTower");
+	defenseObjectModelNameList_.push_back("bowTower");
+	defenseObjectModelNameList_.push_back("gameMine");
 
 	//オブジェクトの設置予定地の生成
-	placementPreviewObject_ = CreatePlacementPreview();
+	CreatePlacementPreview();
 
 	//プレイヤーの作成
 	playerObject_ = CreatePlayer();
@@ -111,8 +124,10 @@ void GameScene::Initialize() {
 
 //更新のステート
 void GameScene::UpdateState() {
-	//設置オブジェクトの回転が行えるかを設定
-	defenseRotationComponent_->SetIsRunning(placementPreviewComponent_->GetEnabledRequest());
+	//モデルが切り替わったら回転をリセット
+	if(placementSwitchComponent_->IsSwitched()) {
+		defenseRotationComponent_->ResetRotation();
+	}
 
 	//オブジェクトの設置予定地の更新
 	UpdatePlacementPreviewObject();
@@ -124,9 +139,6 @@ void GameScene::Debug() {
 	//基底クラスのデバッグ
 	BaseScene::Debug();
 	ImGui::Begin("マップチップに関する物");
-	if(ImGui::Button("オブジェクトの生成") && isPlacementEnabled_) {
-		CreateDefenseObject(placementPreviewIndex_);
-	}
 	ImGui::End();
 #endif // USE_IMGUI
 }
@@ -155,6 +167,12 @@ GameObject* GameScene::CreateCamera() {
 	followCamera_ = gameObject->AddComponent<FollowCameraController>();
 	followCamera_->SetRadius(9.0f);
 	followCamera_->SetTheta(0.5f);
+
+	//カメラ操作用のコンポーネントを設定
+	cameraControlComponent_ = gameObject->AddComponent<CameraControlComponent>();
+	//カメラさ操作用のコンポーネントのセットアップ
+	float followSpeed = 5.0f;//追従カメラの補間速度
+	cameraControlComponent_->Setup(followSpeed);
 	return gameObject;
 }
 
@@ -174,10 +192,6 @@ GameObject* GameScene::CreateSkyBox() {
 
 //フィールドの生成
 void GameScene::CreateField() {
-	//マテリアルの変更
-	MaterialInstance* highlightColor = FindMaterialInstance("highLightBlock");
-	highlightColor->SetParameter("color",Color::GetRed());
-
 	//マップチップのデータ
 	MapChipData mapChipData = mapChipField_->GetMapChipData();
 
@@ -215,7 +229,7 @@ void GameScene::CreateField() {
 				};
 				gameObject->GetTransform().translate = mapChipField_->GetMapChipPositionByIndex(positionIndex);
 				Object3d* object3d = gameObject->AddComponent<Object3d>();
-				object3d->SetModel("debugCube");
+				object3d->SetModel("block");
 				object3d->SetMaterialInstance(0,GetMaterialInstance("defaultBlock"));
 
 				fieldBlocks_[z][x][y] = gameObject;
@@ -251,12 +265,6 @@ GameObject* GameScene::CreatePlayer() {
 	MovementComponent* movementComponent = gameObject->AddComponent<MovementComponent>();
 	//ジャンプ用のコンポーネントを設定
 	JumpComponent* jumpComponent = gameObject->AddComponent<JumpComponent>();
-	//カメラ操作用のコンポーネントを設定
-	CameraControlComponent* cameraControlComponent = gameObject->AddComponent<CameraControlComponent>();
-	//設置予定地の表示用のコンポーネントを設定
-	placementPreviewComponent_ = gameObject->AddComponent<PlacementPreviewComponent>();
-	//設置物の回転用コンポーネントを設定
-	defenseRotationComponent_ = gameObject->AddComponent<DefenseRotationComponent>();
 
 	//リジッドボディを設定
 	RigidBody* rigidBody = gameObject->AddComponent<RigidBody>();
@@ -268,20 +276,13 @@ GameObject* GameScene::CreatePlayer() {
 	//ジャンプ用のコンポーネントのセットアップ
 	float jumpSpeed = 7.0f;
 	jumpComponent->Setup(rigidBody,jumpSpeed);
-	//カメラさ操作用のコンポーネントのセットアップ
-	float followSpeed = 5.0f;//追従カメラの補間速度
-	cameraControlComponent->Setup(followCamera_,followSpeed);
-	//設置予定地の表示用のコンポーネントのセットアップ
-	placementPreviewComponent_->Setup(placementPreviewObject3d_,defenseObjectModelNameList_);
-	//設置物の回転用のコンポーネントのセットアップ
-	defenseRotationComponent_->Setup(placementPreviewObject_);
 
 	//スティックの移動コマンドを追加	
 	stickMoveCommand_->SetMovementComponent(movementComponent);
 	inputComponent->AddAxisInput(StickType::kLeft,std::move(stickMoveCommand_->Clone()));
 
 	//スティックのカメラ操作用のコマンドを追加
-	stickCameraControlCommand_->SetCameraControlComponent(cameraControlComponent);
+	stickCameraControlCommand_->SetCameraControlComponent(cameraControlComponent_);
 	inputComponent->AddAxisInput(StickType::kRight,std::move(stickCameraControlCommand_->Clone()));
 
 	//ジャンプコマンドを設定
@@ -295,14 +296,25 @@ GameObject* GameScene::CreatePlayer() {
 	inputComponent->AddInputState(XboxInputType::kB,InputPhase::kPressed,std::move(placementPreviewCommand_->Clone()));
 
 	//設置オブジェクトの回転
-	for(uint32_t i = 0; i < static_cast<uint32_t>(DefenseRotationCommandMode::kCount); i++) {
+	for(uint32_t i = 0; i < static_cast<uint32_t>(DirectionType::kCount); i++) {
 		//オブジェクト回転用コンポーネントを設定
 		defenseRotationCommands_[i]->SetDefenseRotationComponent(defenseRotationComponent_);
 	}
 	//左回転
-	inputComponent->AddInputState(XboxInputType::kLB,InputPhase::kPressed,std::move(defenseRotationCommands_[static_cast<uint32_t>(DefenseRotationCommandMode::kLeft)]));
+	inputComponent->AddInputState(XboxInputType::kLB,InputPhase::kPressed,std::move(defenseRotationCommands_[static_cast<uint32_t>(DirectionType::kLeft)]));
 	//右回転
-	inputComponent->AddInputState(XboxInputType::kRB,InputPhase::kPressed,std::move(defenseRotationCommands_[static_cast<uint32_t>(DefenseRotationCommandMode::kRight)]));
+	inputComponent->AddInputState(XboxInputType::kRB,InputPhase::kPressed,std::move(defenseRotationCommands_[static_cast<uint32_t>(DirectionType::kRight)]));
+
+
+	//設置オブジェクトの切り替え
+	for(uint32_t i = 0; i < static_cast<uint32_t>(DirectionType::kCount); i++) {
+		//設置オブジェクトの切り替えを設定
+		placementSwitchCommands_[i]->SetPlacementSwitchComponent(placementSwitchComponent_);
+	}
+	//左回転
+	inputComponent->AddInputState(XboxInputType::kDPadLeft,InputPhase::kPressed,std::move(placementSwitchCommands_[static_cast<uint32_t>(DirectionType::kLeft)]));
+	//右回転
+	inputComponent->AddInputState(XboxInputType::kDPadRight,InputPhase::kPressed,std::move(placementSwitchCommands_[static_cast<uint32_t>(DirectionType::kRight)]));
 
 #ifdef _DEBUG
 	//キーの一覧
@@ -349,6 +361,17 @@ GameObject* GameScene::CreatePlacementPreview() {
 	//Object3dの設定
 	placementPreviewObject3d_ = gameObject->AddComponent<Object3d>();
 
+	//設置予定地の表示/非表示用のコンポーネントを設定
+	placementPreviewComponent_ = gameObject->AddComponent<PlacementPreviewComponent>();
+
+	//設置物の回転用コンポーネントを設定
+	defenseRotationComponent_ = gameObject->AddComponent<DefenseRotationComponent>();
+
+	//設置物の切り替え用コンポーネントを設定
+	placementSwitchComponent_ = gameObject->AddComponent<PlacementSwitchComponent>();
+	//設置物の切り替え用コンポーネントのセットアップ
+	placementSwitchComponent_->Setup(defenseObjectModelNameList_);
+
 	return gameObject;
 }
 
@@ -375,22 +398,24 @@ bool GameScene::TryGetPlacementIndex(const Vector3& position,Vector3Int& index) 
 	return true;
 }
 
-//守るオブジェクトの生成
-void GameScene::CreateDefenseObject(const Vector3Int index) {
-	GameObject* gameObject = CreateGameObject();
-	gameObject->GetTransform().translate = mapChipField_->GetMapChipPositionByIndex(index);
-	gameObject->SetName("守るオブジェクト");
-
-	Object3d* object3d = gameObject->AddComponent<Object3d>();
-	object3d->SetModel("wall");
-
-}
-
 //オブジェクトの設置予定地の更新
 void GameScene::UpdatePlacementPreviewObject() {
+	//設置オブジェクトの回転が行えるかを設定
+	defenseRotationComponent_->SetIsRunning(placementPreviewComponent_->GetEnabledRequest());
+	//オブジェクトの切り替えが行えるかを設定
+	placementSwitchComponent_->SetIsRunning(placementPreviewComponent_->GetEnabledRequest());
+
+	//そもそも表示されて無ければ
+	if(!placementPreviewComponent_->GetEnabledRequest()) {
+		return;
+	}
+
 	//ブロックのおける位置を探す
 	Vector3 searchPos = Vector3::GetForward() * playerObject_->GetWorldMatrix();
 	isPlacementEnabled_ = TryGetPlacementIndex(searchPos,placementPreviewIndex_);
+
+	//モデルを設定
+	placementPreviewComponent_->SetModel(placementSwitchComponent_->GetCurrentModelName());
 
 	//ブロックのおけるワールド座標の取得
 	Vector3 placementPreviewWorldPos = mapChipField_->GetMapChipPositionByIndex(placementPreviewIndex_);
@@ -408,7 +433,7 @@ void GameScene::UpdatePlacementPreviewObject() {
 	}
 
 	//各メッシュにカラーを設定
-	for(uint32_t i = 0; i < placementPreviewObject3d_->GetMeshDataSize(); i++) {
+	for(uint32_t i = 0; i < placementPreviewObject3d_->GetMaterialInstances().size(); i++) {
 		placementPreviewObject3d_->SetMaterialParameter(i,"color",materialColor);
 	}
 

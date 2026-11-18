@@ -71,11 +71,11 @@ void DefaultResourceLoader::LoadModel(){
 	modelManager_->AddModel("player", "player/player.gltf");
 	//敵
 	modelManager_->AddModel("enemy", "enemy/enemy.gltf");
-	//剣
-	modelManager_->AddModel("sword", "sword/sword.gltf");
-	//盾
-	modelManager_->AddModel("shield", "shield/shield.gltf");
-	//デバッグキューブ
-	modelManager_->AddModel("debugCube", "debugCube/debugCube.gltf");
+	//ブロック
+	modelManager_->AddModel("block", "block/block.gltf");
 	modelManager_->AddModel("wall", "wall/wall.gltf");
+	modelManager_->AddModel("thunderTower", "thunderTower/thunderTower.gltf");
+	modelManager_->AddModel("freezeTower", "freezeTower/freezeTower.gltf");
+	modelManager_->AddModel("bowTower", "bowTower/bowTower.gltf");
+	modelManager_->AddModel("gameMine", "gameMine/gameMine.gltf");
 }

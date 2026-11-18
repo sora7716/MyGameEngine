@@ -31,6 +31,7 @@ void DefenseRotationCommand::Execute() {
 //複製
 std::unique_ptr<ICommand> DefenseRotationCommand::Clone() const {
 	std::unique_ptr<DefenseRotationCommand>cloneInstance = std::make_unique<DefenseRotationCommand>();
+	cloneInstance->Setup(rotateDir_);
 	cloneInstance->SetDefenseRotationComponent(defenseRotationComponent_);
 	return cloneInstance;
 }

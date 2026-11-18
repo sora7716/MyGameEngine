@@ -23,9 +23,8 @@ public://メンバ関数
 	/// <summary>
 	/// セットアップ
 	/// </summary>
-	/// <param name="followCamera">追従カメラ</param>
 	/// <param name="followSpeed">追従速度</param>
-	void Setup(FollowCameraController* followCamera,float followSpeed);
+	void Setup(float followSpeed);
 
 	/// <summary>
 	/// 初期化

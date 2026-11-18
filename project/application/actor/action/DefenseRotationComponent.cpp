@@ -14,13 +14,6 @@ DefenseRotationComponent::DefenseRotationComponent(GameObject* gameObject) :Comp
 DefenseRotationComponent::~DefenseRotationComponent() {
 }
 
-//セットアップ
-void DefenseRotationComponent::Setup(GameObject* targetGameObject) {
-	//対象のゲームオブジェクトを記録
-	assert(targetGameObject);
-	targetGameObject_ = targetGameObject;
-}
-
 //初期化
 void DefenseRotationComponent::Initialize() {
 }
@@ -32,12 +25,6 @@ void DefenseRotationComponent::Update() {
 		return;
 	}
 
-	//対象のゲームオブジェクトがない場合
-	if(!targetGameObject_) {
-		Logger::OutputLog("DefenseRotationComponentに対象となるGameObjectが設定されていません");
-		return;
-	}
-
 	//回転の要求がされる
 	if(rotationRequest_) {
 		//回転をしていない場合のみ
@@ -46,10 +33,10 @@ void DefenseRotationComponent::Update() {
 			isRotate_ = rotationRequest_;
 
 			//回転の開始位置(前回の位置から取得)
-			beginAngle_ = degreeAngleY_;
+			beginAngleY_ = degreeAngleY_;
 
 			//Y軸を回転させる
-			degreeAngleY_ = beginAngle_;
+			degreeAngleY_ = beginAngleY_;
 			degreeAngleY_ += kRotationStep * rotateDir_;
 		}
 
@@ -62,14 +49,14 @@ void DefenseRotationComponent::Update() {
 	//回転を行う
 	if(isRotate_) {
 		//回転を設定
-		Transform& transform = targetGameObject_->GetTransform();
+		Transform& transform = GetOwner()->GetTransform();
 		//回転の終了位置
 		float targetAngle = degreeAngleY_;
 
 		//現在の時間を取得
 		currentSecond_ += mathUtility::GetDeltaTime();
 		//終了位置まで線形補間
-		resultAngle = std::lerp(beginAngle_,targetAngle,easing::EaseInOutExpo(currentSecond_ / rotateEndSecond_,easingSharpness_));
+		resultAngle = std::lerp(beginAngleY_,targetAngle,easing::EaseInOutExpo(currentSecond_ / rotateEndSecond_,easingSharpness_));
 
 		//値を回転に反映
 		transform.SetEulerAngleDegrees({0.0f,resultAngle,0.0f});
@@ -103,8 +90,28 @@ std::unique_ptr<Component> DefenseRotationComponent::Clone(GameObject* gameObjec
 	cloneInstance->SetEnabled(this->IsEnabled());
 	cloneInstance->rotateDir_ = this->rotateDir_;
 	cloneInstance->degreeAngleY_ = this->degreeAngleY_;
+	cloneInstance->rotationRequest_ = this->rotationRequest_;
+	cloneInstance->isRotate_ = this->isRotate_;
+	cloneInstance->currentSecond_ = this->currentSecond_;
+	cloneInstance->rotateEndSecond_ = this->rotateEndSecond_;
+	cloneInstance->isRunning_ = this->isRunning_;
+	cloneInstance->beginAngleY_ = this->beginAngleY_;
+	cloneInstance->easingSharpness_ = this->easingSharpness_;
 
 	return cloneInstance;
+}
+
+//回転のリセット
+void DefenseRotationComponent::ResetRotation() {
+	//角度を戻す
+	degreeAngleY_ = 0.0f;
+	beginAngleY_ = 0.0f;
+	//回転の途中経過を消す
+	isRotate_ = false;
+	rotationRequest_ = false;
+	currentSecond_ = 0.0f;
+	//見た目の角度を戻す
+	GetOwner()->GetTransform().SetEulerAngleDegrees(Vector3::GetZero());
 }
 
 //コンポーネントのタイプ名を返す

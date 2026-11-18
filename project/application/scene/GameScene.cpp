@@ -11,11 +11,13 @@
 #include "StickMovementCommand.h"
 #include "StickCameraControlCommand.h"
 #include "PlacementPreviewCommand.h"
+#include "DefenseRotationCommand.h"
 #include "InputComponent.h"
 #include "MovementComponent.h"
 #include "JumpComponent.h"
 #include "CameraControlComponent.h"
 #include "PlacementPreviewComponent.h"
+#include "DefenseRotationComponent.h"
 #include "ImGuiManager.h"
 #include "MapChipField.h"
 #include "MapChipCollider.h"
@@ -39,7 +41,8 @@ void GameScene::Initialize() {
 	//基底クラスの初期化
 	BaseScene::Initialize();
 
-	//コマンドの生成
+#ifdef _DEBUG
+	//移動用コマンドの生成
 	movementCommands_.resize(static_cast<uint32_t>(MovementCommandMode::kCount));
 	for(std::unique_ptr<MovementCommand>& movementCommand : movementCommands_) {
 		movementCommand = std::make_unique<MovementCommand>();
@@ -52,6 +55,7 @@ void GameScene::Initialize() {
 	movementCommands_[static_cast<uint32_t>(MovementCommandMode::kMoveRight)]->Setup({1.0f,0.0f,0.0f});
 	//左へ移動
 	movementCommands_[static_cast<uint32_t>(MovementCommandMode::kMoveLeft)]->Setup({-1.0f,0.0f,0.0f});
+#endif // _DEBUG
 	//ジャンプコマンドを生成
 	stickMoveCommand_ = std::make_unique<StickMovementCommand>();
 	//スティックの移動用コマンドを生成
@@ -60,6 +64,15 @@ void GameScene::Initialize() {
 	stickCameraControlCommand_ = std::make_unique<StickCameraControlCommand>();
 	//設置予定地をひょじする用のコマンド
 	placementPreviewCommand_ = std::make_unique<PlacementPreviewCommand>();
+	//ディフェンス用のオブジェクトの回転コマンドの生成
+	defenseRotationCommands_.resize(static_cast<uint32_t>(DefenseRotationCommandMode::kCount));
+	for(std::unique_ptr<DefenseRotationCommand>& defenseRotationCommand : defenseRotationCommands_) {
+		defenseRotationCommand = std::make_unique<DefenseRotationCommand>();
+	}
+	//左回転
+	defenseRotationCommands_[static_cast<uint32_t>(DefenseRotationCommandMode::kLeft)]->Setup(-1.0f);
+	//右回転
+	defenseRotationCommands_[static_cast<uint32_t>(DefenseRotationCommandMode::kRight)]->Setup(1.0f);
 
 	//マテリアルの生成
 	std::string environmentMap = "engine/resources/textures/skybox_cube.dds";
@@ -88,7 +101,7 @@ void GameScene::Initialize() {
 	defenseObjectModelNameList_[1] = "sphere_16";
 
 	//オブジェクトの設置予定地の生成
-	CreatePlacementPreview();
+	placementPreviewObject_ = CreatePlacementPreview();
 
 	//プレイヤーの作成
 	playerObject_ = CreatePlayer();
@@ -98,6 +111,9 @@ void GameScene::Initialize() {
 
 //更新のステート
 void GameScene::UpdateState() {
+	//設置オブジェクトの回転が行えるかを設定
+	defenseRotationComponent_->SetIsRunning(placementPreviewComponent_->GetEnabledRequest());
+
 	//オブジェクトの設置予定地の更新
 	UpdatePlacementPreviewObject();
 }
@@ -239,6 +255,8 @@ GameObject* GameScene::CreatePlayer() {
 	CameraControlComponent* cameraControlComponent = gameObject->AddComponent<CameraControlComponent>();
 	//設置予定地の表示用のコンポーネントを設定
 	placementPreviewComponent_ = gameObject->AddComponent<PlacementPreviewComponent>();
+	//設置物の回転用コンポーネントを設定
+	defenseRotationComponent_ = gameObject->AddComponent<DefenseRotationComponent>();
 
 	//リジッドボディを設定
 	RigidBody* rigidBody = gameObject->AddComponent<RigidBody>();
@@ -255,6 +273,8 @@ GameObject* GameScene::CreatePlayer() {
 	cameraControlComponent->Setup(followCamera_,followSpeed);
 	//設置予定地の表示用のコンポーネントのセットアップ
 	placementPreviewComponent_->Setup(placementPreviewObject3d_,defenseObjectModelNameList_);
+	//設置物の回転用のコンポーネントのセットアップ
+	defenseRotationComponent_->Setup(placementPreviewObject_);
 
 	//スティックの移動コマンドを追加	
 	stickMoveCommand_->SetMovementComponent(movementComponent);
@@ -267,12 +287,22 @@ GameObject* GameScene::CreatePlayer() {
 	//ジャンプコマンドを設定
 	jumpCommand_->SetJumpComponent(jumpComponent);
 	//ジャンプコマンドを追加
-	inputComponent->AddInputState(XboxInput::kA,InputPhase::kPressed,std::move(jumpCommand_->Clone()));
+	inputComponent->AddInputState(XboxInputType::kA,InputPhase::kPressed,std::move(jumpCommand_->Clone()));
 
 	//設置予定地の表示/非表示コマンドを設定
 	placementPreviewCommand_->SetPlacementPreviewComponent(placementPreviewComponent_);
 	//設置予定地の表示/非表示コマンドを追加
-	inputComponent->AddInputState(XboxInput::kB,InputPhase::kPressed,std::move(placementPreviewCommand_->Clone()));
+	inputComponent->AddInputState(XboxInputType::kB,InputPhase::kPressed,std::move(placementPreviewCommand_->Clone()));
+
+	//設置オブジェクトの回転
+	for(uint32_t i = 0; i < static_cast<uint32_t>(DefenseRotationCommandMode::kCount); i++) {
+		//オブジェクト回転用コンポーネントを設定
+		defenseRotationCommands_[i]->SetDefenseRotationComponent(defenseRotationComponent_);
+	}
+	//左回転
+	inputComponent->AddInputState(XboxInputType::kLB,InputPhase::kPressed,std::move(defenseRotationCommands_[static_cast<uint32_t>(DefenseRotationCommandMode::kLeft)]));
+	//右回転
+	inputComponent->AddInputState(XboxInputType::kRB,InputPhase::kPressed,std::move(defenseRotationCommands_[static_cast<uint32_t>(DefenseRotationCommandMode::kRight)]));
 
 #ifdef _DEBUG
 	//キーの一覧
@@ -286,7 +316,7 @@ GameObject* GameScene::CreatePlayer() {
 	for(uint32_t i = 0; i < moveKeyList.size(); i++) {
 		//入力キーを取得
 		char key = moveKeyList[i];
-		//移動酔うコンポーネントを追加
+		//移動用コンポーネントを追加
 		movementCommands_[i]->SetMovementComponent(movementComponent);
 		//移動コマンドを設定
 		inputComponent->AddInputState(static_cast<BYTE>(key),InputPhase::kHeld,std::move(movementCommands_[i]->Clone()));
@@ -309,7 +339,7 @@ GameObject* GameScene::CreatePlayer() {
 }
 
 //オブジェクトの設置予定地の生成
-void GameScene::CreatePlacementPreview() {
+GameObject* GameScene::CreatePlacementPreview() {
 	//ゲームオブジェクトを生成
 	GameObject* gameObject = CreateGameObject();;
 	Transform& transform = gameObject->GetTransform();
@@ -318,6 +348,8 @@ void GameScene::CreatePlacementPreview() {
 
 	//Object3dの設定
 	placementPreviewObject3d_ = gameObject->AddComponent<Object3d>();
+
+	return gameObject;
 }
 
 //オブジェクトのおける位置のインデックスを取得

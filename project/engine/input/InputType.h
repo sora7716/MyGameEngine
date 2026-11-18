@@ -2,16 +2,17 @@
 #define DIRECTINPUT_VERSION 0x0800//DirectInputのバージョン指定
 #include <dinput.h>
 #include <Xinput.h>
+#include <cstdint>
 
 //マウスのクリック位置
-enum class Click {
+enum class ClickType {
 	kLeft,
 	kRight,
 	kMiddle
 };
 
 //Xboxのボタンの位置
-enum class XboxInput :WORD {
+enum class XboxInputType :WORD {
 	kDPadUp = XINPUT_GAMEPAD_DPAD_UP,
 	kDPadRight = XINPUT_GAMEPAD_DPAD_RIGHT,
 	kDPadDown = XINPUT_GAMEPAD_DPAD_DOWN,
@@ -28,4 +29,18 @@ enum class XboxInput :WORD {
 	kBack = XINPUT_GAMEPAD_BACK,
 	kRT,
 	kLT,
+};
+
+//ボタンの状態
+enum class InputPhase :uint32_t {
+	kPressed = 1 << 0,//押した瞬間「
+	kHeld = 1 << 1,//押しっぱなし
+	kReleased = 1 << 2,//離した瞬間
+	kIdle = 1 << 3//離しっぱなし
+};
+
+//スティックの種類
+enum class StickType :uint32_t {
+	kLeft,
+	kRight
 };

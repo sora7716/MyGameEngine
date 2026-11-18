@@ -14,21 +14,7 @@ class ICommand;
 class IAxisCommand;
 
 //入力したデバイスのタイプ
-using InputDeviceType = std::variant<Click,BYTE,XboxInput>;
-
-//ボタンの状態
-enum class InputPhase :uint32_t {
-	kPressed = 1 << 0,//押した瞬間「
-	kHeld = 1 << 1,//押しっぱなし
-	kReleased = 1 << 2,//離した瞬間
-	kIdle = 1 << 3//離しっぱなし
-};
-
-//スティックの種類
-enum class StickType :uint32_t {
-	kLeft,
-	kRight
-};
+using InputDeviceType = std::variant<ClickType,BYTE,XboxInputType>;
 
 //軸入力の情報
 struct AxisInputState {

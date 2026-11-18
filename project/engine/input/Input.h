@@ -108,14 +108,14 @@ public://メンバ関数
 	/// </summary>
 	/// <param name="mouseClick">マウスのボタン</param>
 	/// <returns>押されてるか</returns>
-	bool PressRawMouseButton(Click mouseClick);
+	bool PressRawMouseButton(ClickType mouseClick);
 
 	/// <summary>
 	/// マウスのボタンの押下した瞬間をチェック(エンジン用)
 	/// </summary>
 	/// <param name="mouseClick">マウスのボタン</param>
 	/// <returns>押した瞬間</returns>
-	bool TriggerRawMouseButton(Click mouseClick);
+	bool TriggerRawMouseButton(ClickType mouseClick);
 
 	/// <summary>
 	/// マウスの移動量の取得(エンジン用)
@@ -175,21 +175,21 @@ public://メンバ関数
 	/// </summary>
 	/// <param name="mouseClick">マウスのボタン</param>
 	/// <returns>押されてるか</returns>
-	bool PressMouseButton(Click mouseClick);
+	bool PressMouseButton(ClickType mouseClick);
 
 	/// <summary>
 	/// マウスのボタンの押下した瞬間をチェック(アプリ用)
 	/// </summary>
 	/// <param name="mouseClick">マウスのボタン</param>
 	/// <returns>押した瞬間</returns>
-	bool TriggerMouseButton(Click mousmouseClickeClickPos);
+	bool TriggerMouseButton(ClickType mousmouseClickeClickPos);
 
 	/// <summary>
 	/// マウスのボタンを離した瞬間をチェック
 	/// </summary>
 	/// <param name="mouseClick">マウスのボタン</param>
 	/// <returns>離した瞬間</returns>
-	bool ReleaseTriggerMouseButton(Click mouseClick);
+	bool ReleaseTriggerMouseButton(ClickType mouseClick);
 
 	/// <summary>
 	/// マウスの移動量の取得(アプリ用)
@@ -230,7 +230,7 @@ public://メンバ関数
 	/// <param name="xBoxPadNumber">何番目(0~4)</param>
 	/// <param name="xboxButton">Xboxのボタン</param>
 	/// <returns>押されてるか</returns>
-	bool PressXboxPad(DWORD xBoxPadNumber,XboxInput xboxButton);
+	bool PressXboxPad(DWORD xBoxPadNumber,XboxInputType xboxButton);
 
 	/// <summary>
 	/// XboxPadのボタンの押下した瞬間をチェック
@@ -238,7 +238,7 @@ public://メンバ関数
 	/// <param name="xBoxPadNumber">何番目(0~4)</param>
 	/// <param name="xboxButton">Xboxのボタン</param>
 	/// <returns>押した瞬間</returns>
-	bool TriggerXboxPad(DWORD xBoxPadNumber,XboxInput xboxButton);
+	bool TriggerXboxPad(DWORD xBoxPadNumber,XboxInputType xboxButton);
 
 	/// <summary>
 	/// XboxPadのボタンの離した瞬間をチェック
@@ -246,7 +246,7 @@ public://メンバ関数
 	/// <param name="xBoxPadNumber">何番目(0~4)</param>
 	/// <param name="xboxButton">Xboxのボタン</param>
 	/// <returns>離した瞬間</returns>
-	bool ReleaseTriggerXboxPad(DWORD xBoxPadNumber,XboxInput xboxButton);
+	bool ReleaseTriggerXboxPad(DWORD xBoxPadNumber,XboxInputType xboxButton);
 
 	/// <summary>
 	/// Xboxの左スティックの取得

@@ -71,7 +71,7 @@ void Player::Update() {
 	}
 
 	//攻撃キーが押されているか
-	bool isAttackInputActive = input_->TriggerMouseButton(Click::kLeft);
+	bool isAttackInputActive = input_->TriggerMouseButton(ClickType::kLeft);
 	if(isAttackInputActive) {
 		if(behavior_ != Behavior::kAttack) {
 			behaviorRequest_ = Behavior::kAttack;

@@ -90,7 +90,7 @@ bool Input::TriggerRawKey(BYTE keyNumber) {
 }
 
 //マウスのボタンの押下をチェック(エンジン用)
-bool Input::PressRawMouseButton(Click mouseClick) {
+bool Input::PressRawMouseButton(ClickType mouseClick) {
 	//マウスの押していればtrueを返す
 	if(mouseState_.rgbButtons[static_cast<uint32_t>(mouseClick)]) {
 		return true;
@@ -100,7 +100,7 @@ bool Input::PressRawMouseButton(Click mouseClick) {
 }
 
 //マウスのボタンの押下した瞬間をチェック(エンジン用)
-bool Input::TriggerRawMouseButton(Click mouseClick) {
+bool Input::TriggerRawMouseButton(ClickType mouseClick) {
 	//マウスの押していればtrueを返す
 	if(mouseState_.rgbButtons[static_cast<uint32_t>(mouseClick)] && !preMouseState_.rgbButtons[static_cast<uint32_t>(mouseClick)]) {
 		return true;
@@ -221,7 +221,7 @@ bool Input::ReleaseKey(BYTE keyNumber) {
 }
 
 //マウスのボタンの押下をチェック(アプリ用)
-bool Input::PressMouseButton(Click mouseClick) {
+bool Input::PressMouseButton(ClickType mouseClick) {
 	//アプリの入力がされて無ければ
 	if(!isAppInputEnabled_) {
 		return false;
@@ -236,7 +236,7 @@ bool Input::PressMouseButton(Click mouseClick) {
 }
 
 //マウスのボタンの押下した瞬間をチェック(アプリ用)
-bool Input::TriggerMouseButton(Click mouseClick) {
+bool Input::TriggerMouseButton(ClickType mouseClick) {
 	//アプリの入力がされて無ければ
 	if(!isAppInputEnabled_) {
 		return false;
@@ -251,7 +251,7 @@ bool Input::TriggerMouseButton(Click mouseClick) {
 }
 
 //マウスのボタンを話した瞬間をチェック
-bool Input::ReleaseTriggerMouseButton(Click mouseClick) {
+bool Input::ReleaseTriggerMouseButton(ClickType mouseClick) {
 	//マウスの押していればtrueを返す
 	if(!mouseState_.rgbButtons[static_cast<uint32_t>(mouseClick)] && preMouseState_.rgbButtons[static_cast<uint32_t>(mouseClick)]) {
 		return true;
@@ -352,17 +352,17 @@ bool Input::IsXboxPadConnected(DWORD xBoxPadNumber) {
 }
 
 //XboxPadのボタンの押下をチェック
-bool Input::PressXboxPad(DWORD xBoxPadNumber,XboxInput xboxButton) {
+bool Input::PressXboxPad(DWORD xBoxPadNumber,XboxInputType xboxButton) {
 	//範囲外チェック
 	if(xBoxPadNumber >= 4) {
 		return false;
 	}
 
-	if(xboxButton == XboxInput::kLT) {
+	if(xboxButton == XboxInputType::kLT) {
 		//LT
 		xboxPadDatas_[static_cast<uint32_t>(xBoxPadNumber)].currButton.leftTriggerButton = xboxPadDatas_[static_cast<uint32_t>(xBoxPadNumber)].leftTrigger > 0.0f;
 		return xboxPadDatas_[static_cast<uint32_t>(xBoxPadNumber)].currButton.leftTriggerButton;
-	} else if(xboxButton == XboxInput::kRT) {
+	} else if(xboxButton == XboxInputType::kRT) {
 		//RT
 		xboxPadDatas_[static_cast<uint32_t>(xBoxPadNumber)].currButton.rightTriggerButton = xboxPadDatas_[static_cast<uint32_t>(xBoxPadNumber)].rightTrigger > 0.0f;
 		return xboxPadDatas_[static_cast<uint32_t>(xBoxPadNumber)].currButton.rightTriggerButton;
@@ -377,17 +377,17 @@ bool Input::PressXboxPad(DWORD xBoxPadNumber,XboxInput xboxButton) {
 }
 
 //XboxPadのボタンの押下した瞬間をチェック
-bool Input::TriggerXboxPad(DWORD xBoxPadNumber,XboxInput xboxButton) {
+bool Input::TriggerXboxPad(DWORD xBoxPadNumber,XboxInputType xboxButton) {
 	//範囲外チェック
 	if(xBoxPadNumber >= 4) {
 		return false;
 	}
 
-	if(xboxButton == XboxInput::kLT) {
+	if(xboxButton == XboxInputType::kLT) {
 		//LT
 		xboxPadDatas_[static_cast<uint32_t>(xBoxPadNumber)].currButton.leftTriggerButton = xboxPadDatas_[static_cast<uint32_t>(xBoxPadNumber)].leftTrigger > 0.0f;
 		return xboxPadDatas_[static_cast<uint32_t>(xBoxPadNumber)].currButton.leftTriggerButton && !xboxPadDatas_[static_cast<uint32_t>(xBoxPadNumber)].preButton.leftTriggerButton;
-	} else if(xboxButton == XboxInput::kRT) {
+	} else if(xboxButton == XboxInputType::kRT) {
 		//RT
 		xboxPadDatas_[static_cast<uint32_t>(xBoxPadNumber)].currButton.rightTriggerButton = xboxPadDatas_[static_cast<uint32_t>(xBoxPadNumber)].rightTrigger > 0.0f;
 		return xboxPadDatas_[static_cast<uint32_t>(xBoxPadNumber)].currButton.rightTriggerButton && !xboxPadDatas_[static_cast<uint32_t>(xBoxPadNumber)].preButton.rightTriggerButton;
@@ -404,17 +404,17 @@ bool Input::TriggerXboxPad(DWORD xBoxPadNumber,XboxInput xboxButton) {
 }
 
 //XboxPadのボタンの離した瞬間をチェック
-bool Input::ReleaseTriggerXboxPad(DWORD xBoxPadNumber,XboxInput xboxButton) {
+bool Input::ReleaseTriggerXboxPad(DWORD xBoxPadNumber,XboxInputType xboxButton) {
 	//範囲外チェック
 	if(xBoxPadNumber >= 4) {
 		return false;
 	}
 
-	if(xboxButton == XboxInput::kLT) {
+	if(xboxButton == XboxInputType::kLT) {
 		//LT
 		xboxPadDatas_[static_cast<uint32_t>(xBoxPadNumber)].currButton.leftTriggerButton = xboxPadDatas_[static_cast<uint32_t>(xBoxPadNumber)].leftTrigger > 0.0f;
 		return !xboxPadDatas_[static_cast<uint32_t>(xBoxPadNumber)].currButton.leftTriggerButton && xboxPadDatas_[static_cast<uint32_t>(xBoxPadNumber)].preButton.leftTriggerButton;
-	} else if(xboxButton == XboxInput::kRT) {
+	} else if(xboxButton == XboxInputType::kRT) {
 		//RT
 		xboxPadDatas_[static_cast<uint32_t>(xBoxPadNumber)].currButton.rightTriggerButton = xboxPadDatas_[static_cast<uint32_t>(xBoxPadNumber)].rightTrigger > 0.0f;
 		return !xboxPadDatas_[static_cast<uint32_t>(xBoxPadNumber)].currButton.rightTriggerButton && xboxPadDatas_[static_cast<uint32_t>(xBoxPadNumber)].preButton.rightTriggerButton;

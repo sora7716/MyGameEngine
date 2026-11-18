@@ -13,16 +13,16 @@ PlacementPreviewComponent::~PlacementPreviewComponent() {
 }
 
 //セットアップ
-void PlacementPreviewComponent::Setup(Object3d* object3d,const std::vector<std::string>& modelList) {
+void PlacementPreviewComponent::Setup(Object3d* targetObject3d,const std::vector<std::string>& modelList) {
 	//Object3dの記録
-	assert(object3d);
-	object3d_ = object3d;
+	assert(targetObject3d);
+	targetObject3d_ = targetObject3d;
 	//モデル一覧の記録
 	modelList_ = modelList;
 	//モデル名を設定
 	modelName_ = modelList_[currentModelIndex_];
 	//モデルを設定
-	object3d->SetModel(modelName_);
+	targetObject3d->SetModel(modelName_);
 }
 
 //初期化
@@ -34,18 +34,18 @@ void PlacementPreviewComponent::Update() {
 	//表示要求がfalseなら
 	if(!enableRequest_) {
 		//オブジェクト3dを非表示
-		object3d_->SetEnabled(false);
+		targetObject3d_->SetEnabled(false);
 		return;
 	}
 	//位置を設定
-	Transform& transform = object3d_->GetOwner()->GetTransform();
+	Transform& transform = targetObject3d_->GetOwner()->GetTransform();
 	transform.translate = position_;
 
 	//表示をする
-	object3d_->SetEnabled(true);
+	targetObject3d_->SetEnabled(true);
 
 	//オブジェクト3dがなければ
-	if(!object3d_) {
+	if(!targetObject3d_) {
 		Logger::OutputLog("PlacementPreviewComponentにObject3dが設定されていません");
 		return;
 	}
@@ -61,7 +61,7 @@ void PlacementPreviewComponent::Update() {
 		//モデル名を取得
 		modelName_ = modelList_[currentModelIndex_];
 		//モデルを設定
-		object3d_->SetModel(modelName_);
+		targetObject3d_->SetModel(modelName_);
 	}
 }
 
@@ -105,4 +105,9 @@ void PlacementPreviewComponent::SetEnabledRequest(bool request) {
 //位置の設定
 void PlacementPreviewComponent::SetPosition(const Vector3& position) {
 	position_ = position;
+}
+
+//表示するかの要求を取得
+bool PlacementPreviewComponent::GetEnabledRequest() const {
+	return enableRequest_;
 }

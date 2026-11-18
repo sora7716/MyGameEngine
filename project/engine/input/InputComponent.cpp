@@ -140,8 +140,8 @@ InputPhase InputComponent::GetCurrentPhase(InputDeviceType inputDeviceType,uint3
 
 	//各ポインタを取得
 	BYTE* bytePtr = std::get_if<BYTE>(&inputDeviceType);
-	Click* ClickPtr = std::get_if<Click>(&inputDeviceType);
-	XboxInput* xboxInputPtr = std::get_if<XboxInput>(&inputDeviceType);
+	ClickType* ClickPtr = std::get_if<ClickType>(&inputDeviceType);
+	XboxInputType* xboxInputPtr = std::get_if<XboxInputType>(&inputDeviceType);
 	//バイトのポインタがある場合
 	if(bytePtr) {
 		//押した瞬間

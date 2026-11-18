@@ -26,9 +26,9 @@ public://メンバ関数
 	/// <summary>
 	/// セットアップ
 	/// </summary>
-	/// <param name="object3d">Object3d</param>
+	/// <param name="targetObject3d">設置対象のObject3d</param>
 	/// <param name="modelList">モデル一覧</param>
-	void Setup(Object3d* object3d,const std::vector<std::string>& modelList);
+	void Setup(Object3d* targetObject3d,const std::vector<std::string>& modelList);
 
 	/// <summary>
 	/// 初期化
@@ -76,11 +76,17 @@ public://メンバ関数
 	/// </summary>
 	/// <param name="position">位置</param>
 	void SetPosition(const Vector3& position);
+
+	/// <summary>
+	/// 表示するかの要求を取得
+	/// </summary>
+	/// <returns>要求</returns>
+	bool GetEnabledRequest()const;
 private://メンバ変数
 	//モデル名
 	std::string modelName_ = "";
-	//Object3d
-	Object3d* object3d_ = nullptr;
+	//置く対象のObject3d
+	Object3d* targetObject3d_ = nullptr;
 	//モデル一覧
 	std::vector<std::string>modelList_;
 	//現在のモデルの検索キー

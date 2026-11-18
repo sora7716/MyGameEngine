@@ -540,6 +540,12 @@
     <ClCompile Include="application\actor\action\MovementComponent.cpp">
       <Filter>application\actor\action</Filter>
     </ClCompile>
+    <ClCompile Include="application\actor\action\PlacementPreviewComponent.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="application\actor\command\PlacementPreviewCommand.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="application\scene\TestPlayScene.h">
@@ -952,6 +958,12 @@
     </ClInclude>
     <ClInclude Include="application\actor\action\MovementComponent.h">
       <Filter>application\actor\action</Filter>
+    </ClInclude>
+    <ClInclude Include="application\actor\action\PlacementPreviewComponent.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="application\actor\command\PlacementPreviewCommand.h">
+      <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

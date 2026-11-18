@@ -10,16 +10,19 @@
 #include "JumpCommand.h"
 #include "StickMovementCommand.h"
 #include "StickCameraControlCommand.h"
+#include "PlacementPreviewCommand.h"
 #include "InputComponent.h"
 #include "MovementComponent.h"
 #include "JumpComponent.h"
 #include "CameraControlComponent.h"
+#include "PlacementPreviewComponent.h"
 #include "ImGuiManager.h"
 #include "MapChipField.h"
 #include "MapChipCollider.h"
 #include "Camera.h"
 #include "FollowCameraController.h"
 #include "Color.h"
+#include "MathUtility.h"
 #include <array>
 using namespace mapChipDesc;
 
@@ -52,9 +55,11 @@ void GameScene::Initialize() {
 	//ジャンプコマンドを生成
 	stickMoveCommand_ = std::make_unique<StickMovementCommand>();
 	//スティックの移動用コマンドを生成
-	JumpCommand_ = std::make_unique<JumpCommand>();
+	jumpCommand_ = std::make_unique<JumpCommand>();
 	//カメラコントロール用のコマンド
 	stickCameraControlCommand_ = std::make_unique<StickCameraControlCommand>();
+	//設置予定地をひょじする用のコマンド
+	placementPreviewCommand_ = std::make_unique<PlacementPreviewCommand>();
 
 	//マテリアルの生成
 	std::string environmentMap = "engine/resources/textures/skybox_cube.dds";
@@ -77,19 +82,24 @@ void GameScene::Initialize() {
 	//フィールドの生成
 	CreateField();
 
+	//守るオブジェクトモデル名のリストを設定
+	defenseObjectModelNameList_.resize(defenseObjectModelCount_);
+	defenseObjectModelNameList_[0] = "wall";
+	defenseObjectModelNameList_[1] = "sphere_16";
+
+	//オブジェクトの設置予定地の生成
+	CreatePlacementPreview();
+
 	//プレイヤーの作成
 	playerObject_ = CreatePlayer();
 	//カメラのターゲットを設定
 	followCamera_->SetTarget(playerObject_);
-
-	//オブジェクトの設置予定地
-	placementPreview = PlacementPreview();
 }
 
 //更新のステート
 void GameScene::UpdateState() {
-	//足元にあるブロックを取得
-	okeru = TryGetPlacementIndex(placementPreview->GetWorldPos(),objectIndex_);
+	//オブジェクトの設置予定地の更新
+	UpdatePlacementPreviewObject();
 }
 
 //デバッグ
@@ -98,8 +108,8 @@ void GameScene::Debug() {
 	//基底クラスのデバッグ
 	BaseScene::Debug();
 	ImGui::Begin("マップチップに関する物");
-	if(ImGui::Button("オブジェクトの生成")&& okeru) {
-		CreateDefenseObject(objectIndex_);
+	if(ImGui::Button("オブジェクトの生成") && isPlacementEnabled_) {
+		CreateDefenseObject(placementPreviewIndex_);
 	}
 	ImGui::End();
 #endif // USE_IMGUI
@@ -227,6 +237,9 @@ GameObject* GameScene::CreatePlayer() {
 	JumpComponent* jumpComponent = gameObject->AddComponent<JumpComponent>();
 	//カメラ操作用のコンポーネントを設定
 	CameraControlComponent* cameraControlComponent = gameObject->AddComponent<CameraControlComponent>();
+	//設置予定地の表示用のコンポーネントを設定
+	placementPreviewComponent_ = gameObject->AddComponent<PlacementPreviewComponent>();
+
 	//リジッドボディを設定
 	RigidBody* rigidBody = gameObject->AddComponent<RigidBody>();
 	//移動用のコンポーネントのセットアップ
@@ -240,17 +253,29 @@ GameObject* GameScene::CreatePlayer() {
 	//カメラさ操作用のコンポーネントのセットアップ
 	float followSpeed = 5.0f;//追従カメラの補間速度
 	cameraControlComponent->Setup(followCamera_,followSpeed);
+	//設置予定地の表示用のコンポーネントのセットアップ
+	placementPreviewComponent_->Setup(placementPreviewObject3d_,defenseObjectModelNameList_);
 
 	//スティックの移動コマンドを追加	
 	stickMoveCommand_->SetMovementComponent(movementComponent);
 	inputComponent->AddAxisInput(StickType::kLeft,std::move(stickMoveCommand_->Clone()));
+
 	//スティックのカメラ操作用のコマンドを追加
 	stickCameraControlCommand_->SetCameraControlComponent(cameraControlComponent);
 	inputComponent->AddAxisInput(StickType::kRight,std::move(stickCameraControlCommand_->Clone()));
+
+	//ジャンプコマンドを設定
+	jumpCommand_->SetJumpComponent(jumpComponent);
 	//ジャンプコマンドを追加
-	inputComponent->AddInputState(XboxInput::kA,InputPhase::kPressed,std::move(JumpCommand_->Clone()));
-	//#ifdef _DEBUG
-		//キーの一覧
+	inputComponent->AddInputState(XboxInput::kA,InputPhase::kPressed,std::move(jumpCommand_->Clone()));
+
+	//設置予定地の表示/非表示コマンドを設定
+	placementPreviewCommand_->SetPlacementPreviewComponent(placementPreviewComponent_);
+	//設置予定地の表示/非表示コマンドを追加
+	inputComponent->AddInputState(XboxInput::kB,InputPhase::kPressed,std::move(placementPreviewCommand_->Clone()));
+
+#ifdef _DEBUG
+	//キーの一覧
 	std::array<const char,static_cast<uint32_t>(MovementCommandMode::kCount)>moveKeyList{
 		DIK_W,
 		DIK_S,
@@ -266,12 +291,10 @@ GameObject* GameScene::CreatePlayer() {
 		//移動コマンドを設定
 		inputComponent->AddInputState(static_cast<BYTE>(key),InputPhase::kHeld,std::move(movementCommands_[i]->Clone()));
 	}
-	//ジャンプコマンドを設定
-	JumpCommand_->SetJumpComponent(jumpComponent);
-	inputComponent->AddInputState(static_cast<BYTE>(DIK_SPACE),InputPhase::kPressed,std::move(JumpCommand_->Clone()));
-	//#endif // _DEBUG
+	inputComponent->AddInputState(static_cast<BYTE>(DIK_SPACE),InputPhase::kPressed,std::move(jumpCommand_->Clone()));
+#endif // _DEBUG
 
-		//プレイヤーの設定
+	//プレイヤーの設定
 	Player* player = gameObject->AddComponent<Player>();
 	player->SetObject3d(object3d);
 	player->SetInput(GetSceneContext().input);
@@ -285,44 +308,16 @@ GameObject* GameScene::CreatePlayer() {
 	return gameObject;
 }
 
-//オブジェクトの設置予定地
-GameObject* GameScene::PlacementPreview() {
+//オブジェクトの設置予定地の生成
+void GameScene::CreatePlacementPreview() {
 	//ゲームオブジェクトを生成
-	GameObject* gameObject = CreateGameObject();
+	GameObject* gameObject = CreateGameObject();;
 	Transform& transform = gameObject->GetTransform();
 	transform.translate.z = 1.0f;
 	gameObject->SetName("設置予定地");
 
-#ifdef _DEBUG
-	//モデルの追加
-	Object3d* object3d = gameObject->AddComponent<Object3d>();
-	object3d->SetModel("tile");
-	object3d->SetMaterialParameter(0,"color",Color::GetMagenta());
-
-	Object3d* wireframe = gameObject->AddComponent<Object3d>();
-	wireframe->SetModel("cube");
-	wireframe->SetFillMode(rasterizerMode::FillMode::kWireframe);
-	wireframe->SetMaterialParameter(0,"color",Color::GetBlack());
-#endif // _DEBUG
-
-	//プレイヤーに親子付け
-	gameObject->AttachTo(playerObject_,false);
-	//親のオブジェクト
-	const GameObject* parent = gameObject->GetParentObject();
-	//親のリジッドボディを取得
-	RigidBody* parentRigidBody = parent->GetComponent<RigidBody>();
-	//親のリジッドボディがない場合
-	if(!parentRigidBody) {
-		return gameObject;
-	}
-
-	//マップチップのコライダーを設定
-	MapChipCollider* mapChipCollider = gameObject->AddComponent<MapChipCollider>();
-	//マップチップコライダーのセットアップ
-	Vector3 hitBoxSize = Vector3::GetOne();
-	mapChipCollider->Setup(mapChipField_.get(),parentRigidBody,hitBoxSize,true);
-
-	return gameObject;
+	//Object3dの設定
+	placementPreviewObject3d_ = gameObject->AddComponent<Object3d>();
 }
 
 //オブジェクトのおける位置のインデックスを取得
@@ -333,6 +328,9 @@ bool GameScene::TryGetPlacementIndex(const Vector3& position,Vector3Int& index) 
 	Vector3Int underIndex = {currentIndex.x,currentIndex.y - 1,currentIndex.z};
 	//足元のステータスを取得
 	mapChipDesc::MapChipStatus underBlockStatus = mapChipField_->GetMapChipStatusByIndex(underIndex);
+	//検索キーに値を代入
+	index = currentIndex;
+
 	//足元にブロックがなければ
 	if(underBlockStatus.type == MapChipType::kBlank) {
 		return false;
@@ -342,10 +340,6 @@ bool GameScene::TryGetPlacementIndex(const Vector3& position,Vector3Int& index) 
 	if(currentBlockStatus.type == MapChipType::kBlock) {
 		return false;
 	}
-
-	//検索キーに値を代入
-	index = currentIndex;
-
 	return true;
 }
 
@@ -358,4 +352,34 @@ void GameScene::CreateDefenseObject(const Vector3Int index) {
 	Object3d* object3d = gameObject->AddComponent<Object3d>();
 	object3d->SetModel("wall");
 
+}
+
+//オブジェクトの設置予定地の更新
+void GameScene::UpdatePlacementPreviewObject() {
+	//ブロックのおける位置を探す
+	Vector3 searchPos = Vector3::GetForward() * playerObject_->GetWorldMatrix();
+	isPlacementEnabled_ = TryGetPlacementIndex(searchPos,placementPreviewIndex_);
+
+	//ブロックのおけるワールド座標の取得
+	Vector3 placementPreviewWorldPos = mapChipField_->GetMapChipPositionByIndex(placementPreviewIndex_);
+
+	//オブジェクトのBlendを切り替え
+	placementPreviewObject3d_->SetBlendMode(BlendMode::kAdd);
+
+	//マテリアルの色を設定
+	Color materialColor = Color::GetRed();
+
+	//おける位置煮る場合
+	if(isPlacementEnabled_) {
+		//おける位置にいた場合マテリアルを変更
+		materialColor = Color::GetGreen();
+	}
+
+	//各メッシュにカラーを設定
+	for(uint32_t i = 0; i < placementPreviewObject3d_->GetMeshDataSize(); i++) {
+		placementPreviewObject3d_->SetMaterialParameter(i,"color",materialColor);
+	}
+
+	//座標を設定
+	placementPreviewComponent_->SetPosition(placementPreviewWorldPos);
 }

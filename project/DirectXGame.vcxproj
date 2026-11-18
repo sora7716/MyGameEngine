@@ -17,10 +17,12 @@
   <ItemGroup>
     <ClCompile Include="application\actor\action\JumpComponent.cpp" />
     <ClCompile Include="application\actor\action\MovementComponent.cpp" />
+    <ClCompile Include="application\actor\action\PlacementPreviewComponent.cpp" />
     <ClCompile Include="application\actor\camera\CameraControlComponent.cpp" />
     <ClCompile Include="application\actor\camera\FollowCameraController.cpp" />
     <ClCompile Include="application\actor\command\JumpCommand.cpp" />
     <ClCompile Include="application\actor\command\MovementCommand.cpp" />
+    <ClCompile Include="application\actor\command\PlacementPreviewCommand.cpp" />
     <ClCompile Include="application\actor\command\StickCameraControlCommand.cpp" />
     <ClCompile Include="application\actor\command\StickMovementCommand.cpp" />
     <ClCompile Include="application\actor\enemy\Enemy.cpp" />
@@ -442,10 +444,12 @@
   <ItemGroup>
     <ClInclude Include="application\actor\action\JumpComponent.h" />
     <ClInclude Include="application\actor\action\MovementComponent.h" />
+    <ClInclude Include="application\actor\action\PlacementPreviewComponent.h" />
     <ClInclude Include="application\actor\camera\CameraControlComponent.h" />
     <ClInclude Include="application\actor\camera\FollowCameraController.h" />
     <ClInclude Include="application\actor\command\JumpCommand.h" />
     <ClInclude Include="application\actor\command\MovementCommand.h" />
+    <ClInclude Include="application\actor\command\PlacementPreviewCommand.h" />
     <ClInclude Include="application\actor\command\StickCameraControlCommand.h" />
     <ClInclude Include="application\actor\command\StickMovementCommand.h" />
     <ClInclude Include="application\actor\enemy\Enemy.h" />

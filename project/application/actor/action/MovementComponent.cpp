@@ -86,7 +86,7 @@ std::unique_ptr<Component> MovementComponent::Clone(GameObject* gameObject) cons
 	//初期化
 	cloneInstance->Initialize();
 
-	//Playerが持つ設定だけ複製
+	//設定の複製
 	cloneInstance->SetEnabled(this->IsEnabled());
 	cloneInstance->rigidBody_ = this->rigidBody_;
 	cloneInstance->cameraObject_ = this->cameraObject_;

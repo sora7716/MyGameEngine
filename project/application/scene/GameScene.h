@@ -4,6 +4,7 @@
 #include "Vector3.h"
 #include <string>
 #include <vector>
+#include <cstdint>
 
 //前方宣言
 class MapChipField;
@@ -12,6 +13,9 @@ class MovementCommand;
 class JumpCommand;
 class StickMovementCommand;
 class StickCameraControlCommand;
+class PlacementPreviewCommand;
+class PlacementPreviewComponent;
+class Object3d;
 
 //移動用のコマンドモード
 enum class MovementCommandMode : uint32_t {
@@ -84,10 +88,9 @@ private://メンバ関数
 	GameObject* CreatePlayer();
 
 	/// <summary>
-	/// オブジェクトの設置予定地
+	/// オブジェクトの設置予定地の生成
 	/// </summary>
-	/// <returns>設置予定地</returns>
-	GameObject* PlacementPreview();
+	void CreatePlacementPreview();
 
 	/// <summary>
 	/// オブジェクトのおける位置のインデックスを取得
@@ -101,6 +104,11 @@ private://メンバ関数
 	/// </summary>
 	/// <param name="index">検索キー</param>
 	void CreateDefenseObject(const Vector3Int index);
+
+	/// <summary>
+	/// オブジェクトの設置予定地の更新
+	/// </summary>
+	void UpdatePlacementPreviewObject();
 private://メンバ変数
 	//マップチップフィールド
 	std::unique_ptr<MapChipField> mapChipField_ = nullptr;
@@ -113,16 +121,24 @@ private://メンバ変数
 	std::vector<std::unique_ptr<MovementCommand>> movementCommands_;
 	std::unique_ptr<StickMovementCommand>stickMoveCommand_ = nullptr;
 	//ジャンプ用のコマンド
-	std::unique_ptr<JumpCommand>JumpCommand_ = nullptr;
+	std::unique_ptr<JumpCommand>jumpCommand_ = nullptr;
 	//カメラ操作用のコマンド
 	std::unique_ptr<StickCameraControlCommand>stickCameraControlCommand_ = nullptr;
+	//オブジェクトの設置予定地の表示のコマンド
+	std::unique_ptr<PlacementPreviewCommand>placementPreviewCommand_ = nullptr;
+
+	//守るオブジェクトのモデル名の一覧
+	std::vector<std::string>defenseObjectModelNameList_;
+	//守るオブジェクトのモデルの数
+	uint32_t defenseObjectModelCount_ = 2;
 
 	//プレイヤーのオブジェクト
 	GameObject* playerObject_ = nullptr;
 	//設置予定地のオブジェクト
-	GameObject* placementPreview = nullptr;
-	Vector3Int objectIndex_ = {};
-	bool okeru = false;
+	PlacementPreviewComponent* placementPreviewComponent_ = nullptr;
+	Object3d* placementPreviewObject3d_ = nullptr;
+	Vector3Int placementPreviewIndex_ = {};
+	bool isPlacementEnabled_ = false;
 
 	//カメラのオブジェクト
 	GameObject* cameraObject_ = nullptr;

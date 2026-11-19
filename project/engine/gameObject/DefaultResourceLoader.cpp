@@ -2,6 +2,7 @@
 #include "ModelManager.h"
 #include "TextureManager.h"
 #include "AudioManager.h"
+#include "Model.h"
 #include <string>
 #include <cassert>
 
@@ -78,4 +79,9 @@ void DefaultResourceLoader::LoadModel(){
 	modelManager_->AddModel("freezeTower", "freezeTower/freezeTower.gltf");
 	modelManager_->AddModel("bowTower", "bowTower/bowTower.gltf");
 	modelManager_->AddModel("gameMine", "gameMine/gameMine.gltf");
+
+	//LODモデルは読み込み時に作る
+	for(const std::string& name : {"wall","thunderTower","freezeTower","bowTower","gameMine"}) {
+		modelManager_->FindModel(name)->CreateLODModels({0.7f,0.5f,0.25f});
+	}
 }

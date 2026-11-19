@@ -1,6 +1,7 @@
 #include "BoxCollider.h"
 #include "GameObject.h"
 #include "MatrixUtility.h"
+#include <cmath>
 
 //コンストラクタ
 BoxCollider::BoxCollider(GameObject* gameObject) :BaseCollider(gameObject) {
@@ -70,9 +71,21 @@ const primitiveData::OBB& BoxCollider::GetOBB() {
 
 //AABBの取得
 primitiveData::AABB BoxCollider::GetAABB() {
+	//開店前の各軸の半分の長さ
+	const float sizes[3] = {obb_.size.x,obb_.size.y,obb_.size.z};
+
+	//開店後にワールドの各軸へ伸びる長さ
+	Vector3 extent = {};
+	for(uint32_t i = 0; i < 3; i++) {
+		const Vector3& axis = obb_.orientations[i];
+		extent.x += std::abs(axis.x) * sizes[i];
+		extent.y += std::abs(axis.y) * sizes[i];
+		extent.z += std::abs(axis.z) * sizes[i];
+	}
+
 	primitiveData::AABB aabb = {
-		.min = obb_.center - obb_.size,
-		.max = obb_.center + obb_.size
+		.min = obb_.center - extent,
+		.max = obb_.center + extent
 	};
 	return aabb;
 }

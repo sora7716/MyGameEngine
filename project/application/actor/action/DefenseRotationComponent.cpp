@@ -27,8 +27,6 @@ void DefenseRotationComponent::Update() {
 
 	//回転の要求がされる
 	if(rotationRequest_) {
-		//回転方向を保存
-		rotationIndex_ += static_cast<int32_t>(rotateDir_);
 		//回転をしていない場合のみ
 		if(!isRotate_) {
 			//回転のリクエストをコピー
@@ -138,8 +136,8 @@ void DefenseRotationComponent::SetIsRunning(bool isRunning) {
 
 //回転方向の取得
 DefenseOrientation DefenseRotationComponent::GetDefenseOrientation() {
-	int32_t currentDirValue = std::abs(rotationIndex_) % 2;
-	if(currentDirValue == 0 || currentDirValue == 2) {
+	int32_t currentDirValue = static_cast<int32_t>(std::lround(degreeAngleY_ / kRotationStep));
+	if(std::abs(currentDirValue) % 2 == 0) {
 		return DefenseOrientation::kHorizontal;
 	}
 	return DefenseOrientation::kVertical;

@@ -32,6 +32,7 @@
     <ClCompile Include="application\actor\command\StickCameraControlCommand.cpp" />
     <ClCompile Include="application\actor\command\StickMovementCommand.cpp" />
     <ClCompile Include="application\actor\defenseObject\BaseDefenseObject.cpp" />
+    <ClCompile Include="application\actor\DefensePlacementSystem.cpp" />
     <ClCompile Include="application\actor\enemy\Enemy.cpp" />
     <ClCompile Include="application\actor\enemy\EnemyDamageState.cpp" />
     <ClCompile Include="application\actor\enemy\EnemyRecoverState.cpp" />
@@ -467,6 +468,7 @@
     <ClInclude Include="application\actor\command\StickCameraControlCommand.h" />
     <ClInclude Include="application\actor\command\StickMovementCommand.h" />
     <ClInclude Include="application\actor\defenseObject\BaseDefenseObject.h" />
+    <ClInclude Include="application\actor\DefensePlacementSystem.h" />
     <ClInclude Include="application\actor\enemy\Enemy.h" />
     <ClInclude Include="application\actor\enemy\EnemyDamageState.h" />
     <ClInclude Include="application\actor\enemy\EnemyRecoverState.h" />

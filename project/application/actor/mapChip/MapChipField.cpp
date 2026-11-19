@@ -127,6 +127,19 @@ Rect MapChipField::GetRectByIndex(Vector3Int index) {
 	return rect;
 }
 
+//衝突しているのがブロックかを判定する
+bool MapChipField::CheckOnCollisionMapChipBlock(const Vector3Int& index) {
+	//足元のステータスを取得
+	mapChipDesc::MapChipStatus status = GetMapChipStatusByIndex(index);
+
+	//ブロックじゃなければ
+	if(status.type == MapChipType::kBlank) {
+		return false;
+	}
+
+	return true;
+}
+
 // マップチップデータのリセット
 void MapChipField::ResetMapChipData() {
 	mapChipData_.data.clear();

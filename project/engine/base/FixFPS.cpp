@@ -49,7 +49,7 @@ void FixFPS::Update() {
 	//デルタタイムを記録する
 	deltaTime_ = static_cast<float>(frameTime.count()) / 1000000.0f;
 	//値がブレークポイントとかで大きくなりすぎないようにする
-	const float kMaxDeltaTime = 0.1f;
+	const float kMaxDeltaTime = 1.0f / 30.0f;
 	deltaTime_ = std::min(deltaTime_,kMaxDeltaTime);
 }
 

@@ -103,6 +103,4 @@ private://メンバ変数
 	float beginAngleY_ = {};
 	//イージングの鋭さ
 	float easingSharpness_ = 10.0f;
-	//回転方向を保存
-	int32_t rotationIndex_ = 0;
 };

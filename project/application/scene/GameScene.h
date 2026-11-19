@@ -12,12 +12,8 @@ class Object3d;
 class MapChipField;
 class BoxCollider;
 class FollowCameraController;
-class BaseDefenseObject;
-class PlacementPreviewComponent;
-class DefenseRotationComponent;
-class PlacementSwitchComponent;
 class CameraControlComponent;
-class DefensePlaceComponent;
+class DefensePlacementSystem;
 class MovementCommand;
 class JumpCommand;
 class StickMovementCommand;
@@ -34,22 +30,6 @@ enum class MovementCommandMode : uint32_t {
 	kMoveLeft,
 	kMoveRight,
 	kCount
-};
-
-//方向
-enum class DirectionType :uint32_t {
-	kLeft,
-	kRight,
-	kCount
-};
-
-//ディフェンスモデルタイプ
-enum class DefenseModelType :uint32_t {
-	kWall,
-	kThunder,
-	kFreeze,
-	kBow,
-	kGameMine
 };
 
 /// <summary>
@@ -112,45 +92,13 @@ private://メンバ関数
 	/// <summary>
 	/// プレイヤーの生成
 	/// </summary>
-	/// <returns>オブジェクト</returns>
-	GameObject* CreatePlayer();
+	void CreatePlayer();
 
 	/// <summary>
-	/// オブジェクトの設置予定地の生成
+	/// 敵の生成
 	/// </summary>
-	/// <returns>オブジェクト</returns>
-	GameObject* CreatePlacementPreview();
-
-	/// <summary>
-	/// オブジェクトのおける位置のインデックスを取得
-	/// </summary>
-	/// <param name="position">位置</param>
-	/// <returns>成功したか</returns>
-	bool TryGetPlacementIndex(const Vector3& position,Vector3Int& index);
-
-	/// <summary>
-	/// 衝突しているのがブロックかを判定する
-	/// </summary>
-	/// <param name="index">インデックス</param>
-	/// <returns>衝突しているか</returns>
-	bool CheckOnCollisionMapChipBlock(const Vector3Int& index);
-
-	/// <summary>
-	/// オブジェクトの設置予定地の更新
-	/// </summary>
-	void UpdatePlacementPreviewObject();
-
-	/// <summary>
-	/// ディフェンス用のオブジェクトを生成
-	/// </summary>
-	void CreateDefenseObject();
-
-	/// <summary>
-	/// ディフェンス用のオブジェクトのタイプによってコライダーの形や位置を切り替え
-	/// </summary>
-	/// <param name="modelName">モデル名</param>
-	/// <param name="boxCollider">Boxコライダー</param>
-	void SwitchDefenseObjectCollider(const std::string& modelName,BoxCollider* boxCollider);
+	/// <returns>敵</returns>
+	GameObject* CreateEnemy();
 private://メンバ変数
 	//マップチップフィールド
 	std::unique_ptr<MapChipField> mapChipField_ = nullptr;
@@ -181,35 +129,13 @@ private://メンバ変数
 	std::vector<std::unique_ptr<PlacementSwitchCommand>>placementSwitchCommands_;
 
 	//オブジェクトを設置する用のコマンド
-	std::unique_ptr <DefensePlaceCommand> defensePlaceCommand_ = nullptr;
-
-	//守るオブジェクトのモデル名の一覧
-	std::vector<std::string>defenseObjectModelNameList_;
+	std::unique_ptr<DefensePlaceCommand> defensePlaceCommand_ = nullptr;
 
 	//プレイヤーのオブジェクト
 	GameObject* playerObject_ = nullptr;
 
-	//設置予定を表示/非表示
-	PlacementPreviewComponent* placementPreviewComponent_ = nullptr;
-
-	//設置予定地のオブジェクト
-	GameObject* placementPreviewObject_ = nullptr;
-	Object3d* placementPreviewObject3d_ = nullptr;
-	BoxCollider* placementPreviewBoxCollider_ = nullptr;
-	Vector3Int placementPreviewIndex_ = {};
-	//設置できるか
-	bool isPlacementEnabled_ = false;
-
-	//設置するオブジェクトの切り替え
-	PlacementSwitchComponent* placementSwitchComponent_ = nullptr;
-
-	//設置オブジェクトの回転
-	DefenseRotationComponent* defenseRotationComponent_ = nullptr;
-
-	//オブジェクトの設置する機能
-	DefensePlaceComponent* defensePlaceComponent_ = nullptr;
-	//基盤となるディフェンス用のオブジェクト
-	BaseDefenseObject* defenseObject_ = nullptr;
+	//防衛オブジェクトの配置システム
+	std::unique_ptr<DefensePlacementSystem> defensePlacementSystem_ = nullptr;
 
 	//カメラのオブジェクト
 	GameObject* cameraObject_ = nullptr;

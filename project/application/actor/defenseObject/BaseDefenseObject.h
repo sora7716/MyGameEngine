@@ -1,5 +1,6 @@
 #pragma once
 #include "Component.h"
+#include <cstdint>
 
 /// <summary>
 /// ディフェンス用のオブジェクト
@@ -30,10 +31,10 @@ public://メンバ関数
 	void Update()override;
 
 	/// <summary>
-	/// 接触中
+	/// 接触した瞬間
 	/// </summary>
 	/// <param name="other">コライダー</param>
-	void OnTriggerStay(BaseCollider* other)override;
+	void OnTriggerEnter(BaseCollider* other)override;
 
 	/// <summary>
 	/// 離れた瞬間
@@ -48,12 +49,12 @@ public://メンバ関数
 	std::string GetTypeName()const;
 
 	/// <summary>
-	/// 重なっていたらを取得
+	/// 設置物と重なっているを取得
 	/// </summary>
 	/// <returns>重なっていたら</returns>
-	bool IsOnTriggerStay()const;
+	bool IsOverlappingDefense()const;
 private://メンバ変数
-	//重なっていたら
-	bool isOnTriggerStay_ = false;
+	//重なっているかのカウント
+	uint32_t overlapCount_ = 0;
 };
 

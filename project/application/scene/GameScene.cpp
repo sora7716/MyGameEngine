@@ -7,7 +7,6 @@
 #include "BoxCollider.h"
 #include "RigidBody.h"
 #include "Player.h"
-#include "BaseDefenseObject.h"
 #include "MovementCommand.h"
 #include "JumpCommand.h"
 #include "StickMovementCommand.h"
@@ -20,16 +19,13 @@
 #include "MovementComponent.h"
 #include "JumpComponent.h"
 #include "CameraControlComponent.h"
-#include "PlacementPreviewComponent.h"
-#include "DefenseRotationComponent.h"
-#include "PlacementSwitchComponent.h"
-#include "DefensePlaceComponent.h"
 #include "MapChipField.h"
 #include "MapChipCollider.h"
 #include "Camera.h"
 #include "FollowCameraController.h"
 #include "ImGuiManager.h"
 #include "MathUtility.h"
+#include "DefensePlacementSystem.h"
 #include "Color.h"
 #include <array>
 using namespace mapChipDesc;
@@ -113,36 +109,25 @@ void GameScene::Initialize() {
 	//フィールドの生成
 	CreateField();
 
-	//守るオブジェクトモデル名のリストを設定
-	defenseObjectModelNameList_.push_back("wall");
-	defenseObjectModelNameList_.push_back("thunderTower");
-	defenseObjectModelNameList_.push_back("freezeTower");
-	defenseObjectModelNameList_.push_back("bowTower");
-	defenseObjectModelNameList_.push_back("gameMine");
+	//プレイヤーのゲームオブジェクトを生成
+	playerObject_ = CreateGameObject();
 
-	//オブジェクトの設置予定地の生成
-	placementPreviewObject_ = CreatePlacementPreview();
+	//防衛オブジェクトの設置システムの生成1
+	defensePlacementSystem_ = DefensePlacementSystem::Create(this,mapChipField_.get(),playerObject_);
 
 	//プレイヤーの作成
-	playerObject_ = CreatePlayer();
+	CreatePlayer();
 	//カメラのターゲットを設定
 	followCamera_->SetTarget(playerObject_);
+
+	//敵の生成
+	CreateEnemy();
 }
 
 //更新のステート
 void GameScene::UpdateState() {
-	//モデルが切り替わったら回転をリセット
-	if(placementSwitchComponent_->IsSwitched()) {
-		defenseRotationComponent_->ResetRotation();
-	}
-
-	//オブジェクトの設置予定地の更新
-	UpdatePlacementPreviewObject();
-
-	//ディフェンスオブジェクトの設置
-	if(placementPreviewComponent_->GetEnabledRequest()) {
-		CreateDefenseObject();
-	}
+	//防衛オブジェクトの設置システムの更新
+	defensePlacementSystem_->Update();
 }
 
 //デバッグ
@@ -250,9 +235,9 @@ void GameScene::CreateField() {
 }
 
 //プレイヤーの作成
-GameObject* GameScene::CreatePlayer() {
+void GameScene::CreatePlayer() {
 	//ゲームオブジェクトを生成
-	GameObject* gameObject = CreateGameObject();
+	GameObject* gameObject = playerObject_;
 	Vector3Int playerPosIndex = mapChipField_->GetMapChipData().playerIndex;
 	gameObject->GetTransform().translate = mapChipField_->GetMapChipPositionByIndex(playerPosIndex);
 	gameObject->SetName("プレイヤー");
@@ -302,32 +287,32 @@ GameObject* GameScene::CreatePlayer() {
 	inputComponent->AddInputState(XboxInputType::kA,InputPhase::kPressed,std::move(jumpCommand_->Clone()));
 
 	//設置予定地の表示/非表示コマンドを設定
-	placementPreviewCommand_->SetPlacementPreviewComponent(placementPreviewComponent_);
+	placementPreviewCommand_->SetPlacementPreviewComponent(defensePlacementSystem_->GetPlacementPreview());
 	//設置予定地の表示/非表示コマンドを追加
 	inputComponent->AddInputState(XboxInputType::kB,InputPhase::kPressed,std::move(placementPreviewCommand_->Clone()));
 
 	//設置オブジェクトの回転
 	for(uint32_t i = 0; i < static_cast<uint32_t>(DirectionType::kCount); i++) {
 		//オブジェクト回転用機能を追加
-		defenseRotationCommands_[i]->SetDefenseRotationComponent(defenseRotationComponent_);
+		defenseRotationCommands_[i]->SetDefenseRotationComponent(defensePlacementSystem_->GetDefenseRotation());
 	}
 	//左回転
-	inputComponent->AddInputState(XboxInputType::kLB,InputPhase::kPressed,std::move(defenseRotationCommands_[static_cast<uint32_t>(DirectionType::kLeft)]));
+	inputComponent->AddInputState(XboxInputType::kLB,InputPhase::kPressed,std::move(defenseRotationCommands_[static_cast<uint32_t>(DirectionType::kLeft)]->Clone()));
 	//右回転
-	inputComponent->AddInputState(XboxInputType::kRB,InputPhase::kPressed,std::move(defenseRotationCommands_[static_cast<uint32_t>(DirectionType::kRight)]));
+	inputComponent->AddInputState(XboxInputType::kRB,InputPhase::kPressed,std::move(defenseRotationCommands_[static_cast<uint32_t>(DirectionType::kRight)]->Clone()));
 
 	//設置オブジェクトの切り替え
 	for(uint32_t i = 0; i < static_cast<uint32_t>(DirectionType::kCount); i++) {
 		//設置オブジェクトの切り替えを設定
-		placementSwitchCommands_[i]->SetPlacementSwitchComponent(placementSwitchComponent_);
+		placementSwitchCommands_[i]->SetPlacementSwitchComponent(defensePlacementSystem_->GetPlacementSwitch());
 	}
 	//左回転
-	inputComponent->AddInputState(XboxInputType::kDPadLeft,InputPhase::kPressed,std::move(placementSwitchCommands_[static_cast<uint32_t>(DirectionType::kLeft)]));
+	inputComponent->AddInputState(XboxInputType::kDPadLeft,InputPhase::kPressed,std::move(placementSwitchCommands_[static_cast<uint32_t>(DirectionType::kLeft)]->Clone()));
 	//右回転
-	inputComponent->AddInputState(XboxInputType::kDPadRight,InputPhase::kPressed,std::move(placementSwitchCommands_[static_cast<uint32_t>(DirectionType::kRight)]));
+	inputComponent->AddInputState(XboxInputType::kDPadRight,InputPhase::kPressed,std::move(placementSwitchCommands_[static_cast<uint32_t>(DirectionType::kRight)]->Clone()));
 
 	//オブジェクトの設置
-	defensePlaceCommand_->SetDefensePlaceComponent(defensePlaceComponent_);
+	defensePlaceCommand_->SetDefensePlaceComponent(defensePlacementSystem_->GetDefensePlace());
 	inputComponent->AddInputState(XboxInputType::kRT,InputPhase::kPressed,std::move(defensePlaceCommand_->Clone()));
 
 #ifdef _DEBUG
@@ -365,246 +350,19 @@ GameObject* GameScene::CreatePlayer() {
 	BoxCollider* boxCollider = gameObject->AddComponent<BoxCollider>();
 	boxCollider->SetHalfSize(hitBoxSize / 2.0f);
 	boxCollider->SetBodyType(BodyType::kDynamic);
-
-	return gameObject;
 }
 
-//オブジェクトの設置予定地の生成
-GameObject* GameScene::CreatePlacementPreview() {
-	//ゲームオブジェクトを生成
-	GameObject* gameObject = CreateGameObject();;
-	Transform& transform = gameObject->GetTransform();
-	transform.translate.z = 1.0f;
-	gameObject->SetName("設置予定地");
-
-	//Object3dの設定
-	placementPreviewObject3d_ = gameObject->AddComponent<Object3d>();
-
-	//設置予定地の表示/非表示用の機能を追加
-	placementPreviewComponent_ = gameObject->AddComponent<PlacementPreviewComponent>();
-
-	//設置物の回転用機能を追加
-	defenseRotationComponent_ = gameObject->AddComponent<DefenseRotationComponent>();
-
-	//設置物の切り替え用機能を追加
-	placementSwitchComponent_ = gameObject->AddComponent<PlacementSwitchComponent>();
-	//設置物の切り替え用機能のセットアップ
-	placementSwitchComponent_->Setup(defenseObjectModelNameList_);
-
-	//オブジェクトの設置する機能を追加
-	defensePlaceComponent_ = gameObject->AddComponent<DefensePlaceComponent>();
-
-	//BaseDefenderObjectを追加
-	defenseObject_ = gameObject->AddComponent<BaseDefenseObject>();
-
-	//衝突判定を設定
-	placementPreviewBoxCollider_ = gameObject->AddComponent<BoxCollider>();
-	placementPreviewBoxCollider_->SetIsTrigger(true);
-
-	return gameObject;
-}
-
-//オブジェクトのおける位置のインデックスを取得
-bool GameScene::TryGetPlacementIndex(const Vector3& position,Vector3Int& index) {
-	//今いるインデックスを取得
-	Vector3Int currentIndex = mapChipField_->GetMapChipIndexByPosition(position);
-	//足元のインデックスを取得
-	Vector3Int underIndex = {currentIndex.x,currentIndex.y - 1,currentIndex.z};
-	//足元のステータスを取得
-	//検索キーに値を代入
-	index = currentIndex;
-
-	//足元にブロックがなければ
-	if(!CheckOnCollisionMapChipBlock(underIndex)) {
-		return false;
-	}
-
-	//現在のステータスを取得
-	if(CheckOnCollisionMapChipBlock(currentIndex)) {
-		return false;
-	}
-
-	//現在のモデルが壁だった場合
-	std::string modelName = placementSwitchComponent_->GetCurrentModelName();
-	if(modelName == defenseObjectModelNameList_[static_cast<uint32_t>(DefenseModelType::kWall)]) {
-		//モデルの向きを取得
-		DefenseOrientation orientation = defenseRotationComponent_->GetDefenseOrientation();
-		//横回転の場合
-		if(orientation == DefenseOrientation::kHorizontal) {
-			//右側にブロックがあるか
-			Vector3Int rightIndex = {currentIndex.x + 1,currentIndex.y,currentIndex.z};
-			if(CheckOnCollisionMapChipBlock(rightIndex)) {
-				return false;
-			}
-
-			//左側にブロックがあるか
-			Vector3Int leftIndex = {currentIndex.x - 1,currentIndex.y,currentIndex.z};
-			if(CheckOnCollisionMapChipBlock(leftIndex)) {
-				return false;
-			}
-
-			//右下側にブロックがあるか
-			Vector3Int rightUnderIndex = {currentIndex.x + 1,currentIndex.y - 1,currentIndex.z};
-			if(!CheckOnCollisionMapChipBlock(rightUnderIndex)) {
-				return false;
-			}
-
-			//左下側にブロックがあるか
-			Vector3Int leftUnderIndex = {currentIndex.x - 1,currentIndex.y - 1,currentIndex.z};
-			if(!CheckOnCollisionMapChipBlock(leftUnderIndex)) {
-				return false;
-			}
-		}
-
-		//縦回転の場合
-		if(orientation == DefenseOrientation::kVertical) {
-			//前側にブロックがあるか
-			Vector3Int frontIndex = {currentIndex.x,currentIndex.y,currentIndex.z + 1};
-			if(CheckOnCollisionMapChipBlock(frontIndex)) {
-				return false;
-			}
-
-			//後側にブロックがあるか
-			Vector3Int backIndex = {currentIndex.x,currentIndex.y,currentIndex.z - 1};
-			if(CheckOnCollisionMapChipBlock(backIndex)) {
-				return false;
-			}
-
-			//前下側にブロックがあるか
-			Vector3Int frontUnderIndex = {currentIndex.x,currentIndex.y - 1,currentIndex.z + 1};
-			if(!CheckOnCollisionMapChipBlock(frontUnderIndex)) {
-				return false;
-			}
-
-			//後下側にブロックがあるか
-			Vector3Int backUnderIndex = {currentIndex.x,currentIndex.y - 1,currentIndex.z - 1};
-			if(!CheckOnCollisionMapChipBlock(backUnderIndex)) {
-				return false;
-			}
-		}
-	}
-
-	return true;
-}
-
-//衝突しているのがブロックかを判定する
-bool GameScene::CheckOnCollisionMapChipBlock(const Vector3Int& index) {
-	//足元のステータスを取得
-	mapChipDesc::MapChipStatus status = mapChipField_->GetMapChipStatusByIndex(index);
-
-	//ブロックじゃなければ
-	if(status.type == MapChipType::kBlank) {
-		return false;
-	}
-
-	return true;
-}
-
-//オブジェクトの設置予定地の更新
-void GameScene::UpdatePlacementPreviewObject() {
-	//設置オブジェクトの回転が行えるかを設定
-	defenseRotationComponent_->SetIsRunning(placementPreviewComponent_->GetEnabledRequest());
-	//オブジェクトの切り替えが行えるかを設定
-	placementSwitchComponent_->SetIsRunning(placementPreviewComponent_->GetEnabledRequest());
-
-	//そもそも表示されて無ければ
-	if(!placementPreviewComponent_->GetEnabledRequest()) {
-		//衝突判定
-		placementPreviewBoxCollider_->SetEnabled(false);
-		return;
-	}
-
-	//衝突判定
-	placementPreviewBoxCollider_->SetEnabled(true);
-
-	//モデル名
-	std::string modelName = placementSwitchComponent_->GetCurrentModelName();
-	//モデル名によってコライダー形や位置を変更
-	SwitchDefenseObjectCollider(modelName,placementPreviewBoxCollider_);
-
-	//ブロックのおける位置を探す
-	Vector3 searchPos = Vector3::GetForward() * playerObject_->GetWorldMatrix();
-	isPlacementEnabled_ = TryGetPlacementIndex(searchPos,placementPreviewIndex_);
-
-	//モデルを設定
-	placementPreviewComponent_->SetModel(placementSwitchComponent_->GetCurrentModelName());
-
-	//ブロックのおけるワールド座標の取得
-	Vector3 placementPreviewPos = mapChipField_->GetMapChipPositionByIndex(placementPreviewIndex_);
-
-	//マテリアルの色を設定
-	Color materialColor = {1.0f,0.0f,0.0f,0.5f};
-
-	//おける位置にいる場合
-	if(isPlacementEnabled_ && !defenseObject_->IsOnTriggerStay()) {
-		//おける位置にいた場合マテリアルを変更
-		materialColor = {0.0f,1.0f,0.0f,0.5f};
-	}
-
-	//各メッシュにカラーを設定
-	for(uint32_t i = 0; i < placementPreviewObject3d_->GetMaterialInstances().size(); i++) {
-		placementPreviewObject3d_->SetMaterialParameter(i,"color",materialColor);
-		placementPreviewObject3d_->SetMaterialParameter(i,"enabledLighting",uint32_t(0));
-	}
-
-	//座標を設定
-	placementPreviewComponent_->SetPosition(placementPreviewPos);
-}
-
-//ディフェンス用のオブジェクトの生成
-void GameScene::CreateDefenseObject() {
-	//設置の要求がない場合
-	if(!defensePlaceComponent_->GetConfirmRequest()) {
-		return;
-	}
-
-	//設置要求をリセット
-	defensePlaceComponent_->SetConfirmRequest(false);
-
-	//おけない場合
-	if(!isPlacementEnabled_ || defenseObject_->IsOnTriggerStay()) {
-		return;
-	}
-
-	//ゲームオブジェクトの生成
+//敵の生成
+GameObject* GameScene::CreateEnemy() {
 	GameObject* gameObject = CreateGameObject();
-	gameObject->SetName("ディフェンスオブジェクト");
-	//タグを設定
-	gameObject->SetTag("DefenseObject");
-	//Transformをコピー
-	gameObject->GetTransform() = placementPreviewObject_->GetTransform();
-
-	//Object3dを追加
+	gameObject->SetName("敵");
+	//Object3d
 	Object3d* object3d = gameObject->AddComponent<Object3d>();
-	std::string modelName = placementSwitchComponent_->GetCurrentModelName();
-	object3d->SetModel(modelName);
-	//LODモデルを作成
-	object3d->GetModel()->CreateLODModels({0.7f,0.5f,0.25f});
-	//LODの設定
-	object3d->SetLODDistances({5.0f,8.0f,15.0f});
+	object3d->SetModel("enemy");
 
-	//衝突判定を設定
+	//BoxCollider
 	BoxCollider* boxCollider = gameObject->AddComponent<BoxCollider>();
-	//モデル名によってコライダー形や位置を変更
-	SwitchDefenseObjectCollider(modelName,boxCollider);
-}
+	boxCollider->SetBodyType(BodyType::kDynamic);
 
-//ディフェンス用のオブジェクトのタイプによってコライダーの形や位置を切り替え
-void GameScene::SwitchDefenseObjectCollider(const std::string& modelName,BoxCollider* boxCollider) {
-	//サイズのリセット
-	boxCollider->SetHalfSize(Vector3::GetOne() / 2.0f);
-	boxCollider->SetOffset(Vector3::GetZero());
-
-	//モデル名によってコライダー形や位置を変更
-	if(modelName == defenseObjectModelNameList_[static_cast<uint32_t>(DefenseModelType::kWall)]) {
-		boxCollider->SetHalfSize({1.45f,0.5f,0.45f});
-		boxCollider->SetOffset({0.0f,0.0f,0.0f});
-	} else if(modelName != defenseObjectModelNameList_[static_cast<uint32_t>(DefenseModelType::kGameMine)]) {
-		boxCollider->SetHalfSize({0.45f,1.0f,0.45f});
-		boxCollider->SetOffset({0.0f,0.5f,0.0f});
-	} else {
-		boxCollider->SetIsTrigger(true);
-		boxCollider->SetHalfSize({0.45f,0.15f,0.45f});
-		boxCollider->SetOffset({0.0f,-0.4f,0.0f});
-	}
+	return gameObject;
 }

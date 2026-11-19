@@ -183,7 +183,7 @@ GameObject* GameScene::CreateCamera() {
 	//カメラ操作用の機能を追加
 	cameraControlComponent_ = gameObject->AddComponent<CameraControlComponent>();
 	//カメラさ操作用の機能のセットアップ
-	float followSpeed = 5.0f;//追従カメラの補間速度
+	float followSpeed = 10.0f;//追従カメラの補間速度
 	cameraControlComponent_->Setup(followSpeed);
 	return gameObject;
 }

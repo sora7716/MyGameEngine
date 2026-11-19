@@ -113,6 +113,8 @@ void Model::RebuildMeshes(const std::vector<MeshData>& meshes) {
 
 //LODモデルの生成
 void Model::CreateLODModels(const std::vector<float>& keepRates) {
+	//LODを有効か
+	isEnabledLOD_ = true;
 	//LODモデルの生成
 	std::vector<float>lodRate;
 	for(float rate : keepRates) {
@@ -225,6 +227,11 @@ void Model::SetPixelShaderFileName(const std::string& pixelShaderFilePath) {
 	pixelShaderFileName_ = pixelShaderFilePath;
 }
 
+//LODが有効かの取得
+bool Model::IsEnabledLOD() const {
+	return isEnabledLOD_;
+}
+
 //メッシュの構築
 void Model::BuildMesh() {
 	//メッシュの生成と初期化
@@ -314,7 +321,7 @@ void Model::CreateMaterialInstances() {
 
 		//値の初期化
 		materialInstance->SetParameter("color",Color::GetWhite());
-		materialInstance->SetParameter("enableLighring",uint32_t{1});
+		materialInstance->SetParameter("enabledLighting",uint32_t{1});
 		materialInstance->SetParameter("uvMatrix",Matrix4x4::Identity4x4());
 		materialInstance->SetParameter("shininess",10.0f);
 		materialInstance->SetParameter("diffuseModel",int32_t{1});

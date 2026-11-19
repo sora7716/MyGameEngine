@@ -84,6 +84,12 @@ void Object3d::UpdateLOD(float distance) {
 		return;
 	}
 
+	//LODが有効でなければ
+	if(!baseModel_->IsEnabledLOD()) {
+		currentLOD_ = 0;
+		return;
+	}
+
 	//距離からLODを選択
 	currentLOD_ = lodController_->SelectLOD(distance,currentLOD_,baseModel_->GetLODCount());
 }
@@ -294,12 +300,16 @@ void Object3d::SetModel(const std::string& modelName) {
 
 //LODの切り替え距離
 void Object3d::SetLODDistances(const std::vector<float>& lodDistances) {
-	lodController_->SetLODDistances(lodDistances);
-}
+	//距離が何もなければ
+	if(lodDistances.empty()) {
+		return;
+	}
 
-//ヒステリシス幅の設定
-void Object3d::SetHysteresis(float hysteresis) {
-	lodController_->SetHysteresis(hysteresis);
+	//LODの切り替え距離を設定
+	lodController_->SetLODDistances(lodDistances);
+
+	//ヒステリシス幅の計算
+	lodController_->CalculateHysteresisWidth();
 }
 
 //テクスチャの変更

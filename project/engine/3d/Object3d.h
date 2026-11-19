@@ -114,12 +114,6 @@ public://メンバ関数
 	void SetLODDistances(const std::vector<float>& lodDistances);
 
 	/// <summary>
-	/// ヒステリシス幅の設定
-	/// </summary>
-	/// <param name="hysteresis">ヒステリシス幅</param>
-	void SetHysteresis(float hysteresis);
-
-	/// <summary>
 	/// テクスチャの設定
 	/// </summary>
 	/// <param name="index">マテリアルスロット番号の検索キー</param>

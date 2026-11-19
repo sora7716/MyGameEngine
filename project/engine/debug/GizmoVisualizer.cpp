@@ -56,6 +56,11 @@ void GizmoVisualizer::SelectColliderWireframe() {
 	std::vector<BaseCollider*>baseColliders = selectedGameObject_->GetComponents<BaseCollider>();
 	//コライダーの配列を探索
 	for(BaseCollider* baseCollider : baseColliders) {
+		//接続されているGameObjectがActiveじゃなけれな
+		if(!baseCollider->GetOwner()->IsActive()) {
+			continue;
+		}
+
 		//有効状態を確認
 		if(!baseCollider->IsEnabled()) {
 			continue;

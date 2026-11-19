@@ -125,6 +125,12 @@ public://メンバ関数
 	/// </summary>
 	/// <param name="pixelShaderFilePath">ピクセルシェーダのファイル名</param>
 	void SetPixelShaderFileName(const std::string& pixelShaderFilePath);
+
+	/// <summary>
+	/// LODが有効かの取得
+	/// </summary>
+	/// <returns>LODが有効か</returns>
+	bool IsEnabledLOD()const;
 private://メンバ関数
 	/// <summary>
 	/// メッシュの構築
@@ -184,5 +190,7 @@ private://メンバ変数
 
 	//LOD倍率を保存
 	std::vector<float>generatedLODRates_;
+	//LODが有効か
+	bool isEnabledLOD_ = false;
 };
 

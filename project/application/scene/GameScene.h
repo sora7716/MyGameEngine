@@ -10,7 +10,9 @@
 //前方宣言
 class Object3d;
 class MapChipField;
+class BoxCollider;
 class FollowCameraController;
+class BaseDefenseObject;
 class PlacementPreviewComponent;
 class DefenseRotationComponent;
 class PlacementSwitchComponent;
@@ -39,6 +41,15 @@ enum class DirectionType :uint32_t {
 	kLeft,
 	kRight,
 	kCount
+};
+
+//ディフェンスモデルタイプ
+enum class DefenseModelType :uint32_t {
+	kWall,
+	kThunder,
+	kFreeze,
+	kBow,
+	kGameMine
 };
 
 /// <summary>
@@ -118,6 +129,13 @@ private://メンバ関数
 	bool TryGetPlacementIndex(const Vector3& position,Vector3Int& index);
 
 	/// <summary>
+	/// 衝突しているのがブロックかを判定する
+	/// </summary>
+	/// <param name="index">インデックス</param>
+	/// <returns>衝突しているか</returns>
+	bool CheckOnCollisionMapChipBlock(const Vector3Int& index);
+
+	/// <summary>
 	/// オブジェクトの設置予定地の更新
 	/// </summary>
 	void UpdatePlacementPreviewObject();
@@ -126,6 +144,13 @@ private://メンバ関数
 	/// ディフェンス用のオブジェクトを生成
 	/// </summary>
 	void CreateDefenseObject();
+
+	/// <summary>
+	/// ディフェンス用のオブジェクトのタイプによってコライダーの形や位置を切り替え
+	/// </summary>
+	/// <param name="modelName">モデル名</param>
+	/// <param name="boxCollider">Boxコライダー</param>
+	void SwitchDefenseObjectCollider(const std::string& modelName,BoxCollider* boxCollider);
 private://メンバ変数
 	//マップチップフィールド
 	std::unique_ptr<MapChipField> mapChipField_ = nullptr;
@@ -170,6 +195,7 @@ private://メンバ変数
 	//設置予定地のオブジェクト
 	GameObject* placementPreviewObject_ = nullptr;
 	Object3d* placementPreviewObject3d_ = nullptr;
+	BoxCollider* placementPreviewBoxCollider_ = nullptr;
 	Vector3Int placementPreviewIndex_ = {};
 	//設置できるか
 	bool isPlacementEnabled_ = false;
@@ -182,6 +208,8 @@ private://メンバ変数
 
 	//オブジェクトの設置する機能
 	DefensePlaceComponent* defensePlaceComponent_ = nullptr;
+	//基盤となるディフェンス用のオブジェクト
+	BaseDefenseObject* defenseObject_ = nullptr;
 
 	//カメラのオブジェクト
 	GameObject* cameraObject_ = nullptr;

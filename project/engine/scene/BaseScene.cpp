@@ -234,7 +234,7 @@ void BaseScene::AddMaterialInstance(const std::string& name,const MaterialTextur
 	//値の初期化
 	materialInstance->SetPixelShaderFileName(pixelShaderName,"gMaterial");
 	materialInstance->SetParameter("color",Color::GetWhite());
-	materialInstance->SetParameter("enableLighring",uint32_t{1});
+	materialInstance->SetParameter("enabledLighting",uint32_t{1});
 	materialInstance->SetParameter("uvMatrix",Matrix4x4::Identity4x4());
 	materialInstance->SetParameter("shininess",10.0f);
 	materialInstance->SetParameter("diffuseModel",int32_t{1});

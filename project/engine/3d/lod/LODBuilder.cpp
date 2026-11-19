@@ -127,9 +127,6 @@ std::vector<MeshData> LODBuilder::EdgeCollapse(const std::vector<MeshData>& mesh
 				edgeList[MakeEdgeKey(c, a)]++;
 			}
 
-			//境界っぽい辺があるかを判断するフラグ
-			std::vector<uint8_t>isBoundaryVertices(baseMeshData.vertices.size(), false);
-
 			//共通近傍チェック用の配列作成
 			//各頂点ごとに隣り合う頂点を取得
 			std::vector<std::vector<uint32_t>>neighbors;
@@ -158,6 +155,8 @@ std::vector<MeshData> LODBuilder::EdgeCollapse(const std::vector<MeshData>& mesh
 				neighbor.erase(std::unique(neighbor.begin(), neighbor.end()), neighbor.end());
 			}
 
+			//境界っぽい辺があるかを判断するフラグ
+			std::vector<uint8_t>isBoundaryVertices(baseMeshData.vertices.size(),false);
 			//境界頂点をtrueにする
 			for (const auto& edge : edgeList){
 				//辺の検索キーを取得

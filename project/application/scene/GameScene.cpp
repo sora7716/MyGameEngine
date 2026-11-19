@@ -7,6 +7,7 @@
 #include "BoxCollider.h"
 #include "RigidBody.h"
 #include "Player.h"
+#include "BaseDefenseObject.h"
 #include "MovementCommand.h"
 #include "JumpCommand.h"
 #include "StickMovementCommand.h"
@@ -61,14 +62,19 @@ void GameScene::Initialize() {
 	//左へ移動
 	movementCommands_[static_cast<uint32_t>(MovementCommandMode::kMoveLeft)]->Setup({-1.0f,0.0f,0.0f});
 #endif // _DEBUG
+
 	//ジャンプコマンドを生成
 	stickMoveCommand_ = std::make_unique<StickMovementCommand>();
+
 	//スティックの移動用コマンドを生成
 	jumpCommand_ = std::make_unique<JumpCommand>();
+
 	//カメラコントロール用のコマンド
 	stickCameraControlCommand_ = std::make_unique<StickCameraControlCommand>();
+
 	//設置予定地を1表示する用のコマンド
 	placementPreviewCommand_ = std::make_unique<PlacementPreviewCommand>();
+
 	//ディフェンス用のオブジェクトの回転コマンドの生成
 	defenseRotationCommands_.resize(static_cast<uint32_t>(DirectionType::kCount));
 	for(std::unique_ptr<DefenseRotationCommand>& defenseRotationCommand : defenseRotationCommands_) {
@@ -91,11 +97,6 @@ void GameScene::Initialize() {
 
 	//オブジェクトを設置する用のコマンドを生成
 	defensePlaceCommand_ = std::make_unique<DefensePlaceCommand>();
-
-	//マテリアルの生成
-	std::string environmentMap = "engine/resources/textures/skybox_cube.dds";
-	std::string blockTexture = "engine/resources/models/block/SimpleStoneBlock_BaseColor.png";
-	AddMaterialInstance("defaultBlock",{blockTexture,environmentMap});
 
 	//マップチップフィールドを生成
 	mapChipField_ = MapChipField::Create(mapChipCsvName_);
@@ -241,7 +242,6 @@ void GameScene::CreateField() {
 				gameObject->GetTransform().translate = mapChipField_->GetMapChipPositionByIndex(positionIndex);
 				Object3d* object3d = gameObject->AddComponent<Object3d>();
 				object3d->SetModel("block");
-				object3d->SetMaterialInstance(0,GetMaterialInstance("defaultBlock"));
 
 				fieldBlocks_[z][x][y] = gameObject;
 			}
@@ -361,6 +361,11 @@ GameObject* GameScene::CreatePlayer() {
 	Vector3 hitBoxSize = {0.8f,0.8f,0.8f};
 	mapChipCollider->Setup(mapChipField_.get(),rigidBody,hitBoxSize);
 
+	//Boxコライダーを設定
+	BoxCollider* boxCollider = gameObject->AddComponent<BoxCollider>();
+	boxCollider->SetHalfSize(hitBoxSize / 2.0f);
+	boxCollider->SetBodyType(BodyType::kDynamic);
+
 	return gameObject;
 }
 
@@ -389,6 +394,13 @@ GameObject* GameScene::CreatePlacementPreview() {
 	//オブジェクトの設置する機能を追加
 	defensePlaceComponent_ = gameObject->AddComponent<DefensePlaceComponent>();
 
+	//BaseDefenderObjectを追加
+	defenseObject_ = gameObject->AddComponent<BaseDefenseObject>();
+
+	//衝突判定を設定
+	placementPreviewBoxCollider_ = gameObject->AddComponent<BoxCollider>();
+	placementPreviewBoxCollider_->SetIsTrigger(true);
+
 	return gameObject;
 }
 
@@ -399,19 +411,92 @@ bool GameScene::TryGetPlacementIndex(const Vector3& position,Vector3Int& index) 
 	//足元のインデックスを取得
 	Vector3Int underIndex = {currentIndex.x,currentIndex.y - 1,currentIndex.z};
 	//足元のステータスを取得
-	mapChipDesc::MapChipStatus underBlockStatus = mapChipField_->GetMapChipStatusByIndex(underIndex);
 	//検索キーに値を代入
 	index = currentIndex;
 
 	//足元にブロックがなければ
-	if(underBlockStatus.type == MapChipType::kBlank) {
+	if(!CheckOnCollisionMapChipBlock(underIndex)) {
 		return false;
 	}
+
 	//現在のステータスを取得
-	mapChipDesc::MapChipStatus currentBlockStatus = mapChipField_->GetMapChipStatusByIndex(currentIndex);
-	if(currentBlockStatus.type == MapChipType::kBlock) {
+	if(CheckOnCollisionMapChipBlock(currentIndex)) {
 		return false;
 	}
+
+	//現在のモデルが壁だった場合
+	std::string modelName = placementSwitchComponent_->GetCurrentModelName();
+	if(modelName == defenseObjectModelNameList_[static_cast<uint32_t>(DefenseModelType::kWall)]) {
+		//モデルの向きを取得
+		DefenseOrientation orientation = defenseRotationComponent_->GetDefenseOrientation();
+		//横回転の場合
+		if(orientation == DefenseOrientation::kHorizontal) {
+			//右側にブロックがあるか
+			Vector3Int rightIndex = {currentIndex.x + 1,currentIndex.y,currentIndex.z};
+			if(CheckOnCollisionMapChipBlock(rightIndex)) {
+				return false;
+			}
+
+			//左側にブロックがあるか
+			Vector3Int leftIndex = {currentIndex.x - 1,currentIndex.y,currentIndex.z};
+			if(CheckOnCollisionMapChipBlock(leftIndex)) {
+				return false;
+			}
+
+			//右下側にブロックがあるか
+			Vector3Int rightUnderIndex = {currentIndex.x + 1,currentIndex.y - 1,currentIndex.z};
+			if(!CheckOnCollisionMapChipBlock(rightUnderIndex)) {
+				return false;
+			}
+
+			//左下側にブロックがあるか
+			Vector3Int leftUnderIndex = {currentIndex.x - 1,currentIndex.y - 1,currentIndex.z};
+			if(!CheckOnCollisionMapChipBlock(leftUnderIndex)) {
+				return false;
+			}
+		}
+
+		//縦回転の場合
+		if(orientation == DefenseOrientation::kVertical) {
+			//前側にブロックがあるか
+			Vector3Int frontIndex = {currentIndex.x,currentIndex.y,currentIndex.z + 1};
+			if(CheckOnCollisionMapChipBlock(frontIndex)) {
+				return false;
+			}
+
+			//後側にブロックがあるか
+			Vector3Int backIndex = {currentIndex.x,currentIndex.y,currentIndex.z - 1};
+			if(CheckOnCollisionMapChipBlock(backIndex)) {
+				return false;
+			}
+
+			//前下側にブロックがあるか
+			Vector3Int frontUnderIndex = {currentIndex.x,currentIndex.y - 1,currentIndex.z + 1};
+			if(!CheckOnCollisionMapChipBlock(frontUnderIndex)) {
+				return false;
+			}
+
+			//後下側にブロックがあるか
+			Vector3Int backUnderIndex = {currentIndex.x,currentIndex.y - 1,currentIndex.z - 1};
+			if(!CheckOnCollisionMapChipBlock(backUnderIndex)) {
+				return false;
+			}
+		}
+	}
+
+	return true;
+}
+
+//衝突しているのがブロックかを判定する
+bool GameScene::CheckOnCollisionMapChipBlock(const Vector3Int& index) {
+	//足元のステータスを取得
+	mapChipDesc::MapChipStatus status = mapChipField_->GetMapChipStatusByIndex(index);
+
+	//ブロックじゃなければ
+	if(status.type == MapChipType::kBlank) {
+		return false;
+	}
+
 	return true;
 }
 
@@ -424,8 +509,18 @@ void GameScene::UpdatePlacementPreviewObject() {
 
 	//そもそも表示されて無ければ
 	if(!placementPreviewComponent_->GetEnabledRequest()) {
+		//衝突判定
+		placementPreviewBoxCollider_->SetEnabled(false);
 		return;
 	}
+
+	//衝突判定
+	placementPreviewBoxCollider_->SetEnabled(true);
+
+	//モデル名
+	std::string modelName = placementSwitchComponent_->GetCurrentModelName();
+	//モデル名によってコライダー形や位置を変更
+	SwitchDefenseObjectCollider(modelName,placementPreviewBoxCollider_);
 
 	//ブロックのおける位置を探す
 	Vector3 searchPos = Vector3::GetForward() * playerObject_->GetWorldMatrix();
@@ -437,21 +532,19 @@ void GameScene::UpdatePlacementPreviewObject() {
 	//ブロックのおけるワールド座標の取得
 	Vector3 placementPreviewPos = mapChipField_->GetMapChipPositionByIndex(placementPreviewIndex_);
 
-	//オブジェクトのBlendを切り替え
-	placementPreviewObject3d_->SetBlendMode(BlendMode::kAdd);
-
 	//マテリアルの色を設定
-	Color materialColor = Color::GetRed();
+	Color materialColor = {1.0f,0.0f,0.0f,0.5f};
 
-	//おける位置煮る場合
-	if(isPlacementEnabled_) {
+	//おける位置にいる場合
+	if(isPlacementEnabled_ && !defenseObject_->IsOnTriggerStay()) {
 		//おける位置にいた場合マテリアルを変更
-		materialColor = Color::GetGreen();
+		materialColor = {0.0f,1.0f,0.0f,0.5f};
 	}
 
 	//各メッシュにカラーを設定
 	for(uint32_t i = 0; i < placementPreviewObject3d_->GetMaterialInstances().size(); i++) {
 		placementPreviewObject3d_->SetMaterialParameter(i,"color",materialColor);
+		placementPreviewObject3d_->SetMaterialParameter(i,"enabledLighting",uint32_t(0));
 	}
 
 	//座標を設定
@@ -469,21 +562,49 @@ void GameScene::CreateDefenseObject() {
 	defensePlaceComponent_->SetConfirmRequest(false);
 
 	//おけない場合
-	if(!isPlacementEnabled_) {
+	if(!isPlacementEnabled_ || defenseObject_->IsOnTriggerStay()) {
 		return;
 	}
 
 	//ゲームオブジェクトの生成
 	GameObject* gameObject = CreateGameObject();
 	gameObject->SetName("ディフェンスオブジェクト");
+	//タグを設定
+	gameObject->SetTag("DefenseObject");
 	//Transformをコピー
 	gameObject->GetTransform() = placementPreviewObject_->GetTransform();
 
 	//Object3dを追加
 	Object3d* object3d = gameObject->AddComponent<Object3d>();
-	object3d->SetModel(placementSwitchComponent_->GetCurrentModelName());
+	std::string modelName = placementSwitchComponent_->GetCurrentModelName();
+	object3d->SetModel(modelName);
 	//LODモデルを作成
 	object3d->GetModel()->CreateLODModels({0.7f,0.5f,0.25f});
 	//LODの設定
 	object3d->SetLODDistances({5.0f,8.0f,15.0f});
+
+	//衝突判定を設定
+	BoxCollider* boxCollider = gameObject->AddComponent<BoxCollider>();
+	//モデル名によってコライダー形や位置を変更
+	SwitchDefenseObjectCollider(modelName,boxCollider);
+}
+
+//ディフェンス用のオブジェクトのタイプによってコライダーの形や位置を切り替え
+void GameScene::SwitchDefenseObjectCollider(const std::string& modelName,BoxCollider* boxCollider) {
+	//サイズのリセット
+	boxCollider->SetHalfSize(Vector3::GetOne() / 2.0f);
+	boxCollider->SetOffset(Vector3::GetZero());
+
+	//モデル名によってコライダー形や位置を変更
+	if(modelName == defenseObjectModelNameList_[static_cast<uint32_t>(DefenseModelType::kWall)]) {
+		boxCollider->SetHalfSize({1.45f,0.5f,0.45f});
+		boxCollider->SetOffset({0.0f,0.0f,0.0f});
+	} else if(modelName != defenseObjectModelNameList_[static_cast<uint32_t>(DefenseModelType::kGameMine)]) {
+		boxCollider->SetHalfSize({0.45f,1.0f,0.45f});
+		boxCollider->SetOffset({0.0f,0.5f,0.0f});
+	} else {
+		boxCollider->SetIsTrigger(true);
+		boxCollider->SetHalfSize({0.45f,0.15f,0.45f});
+		boxCollider->SetOffset({0.0f,-0.4f,0.0f});
+	}
 }

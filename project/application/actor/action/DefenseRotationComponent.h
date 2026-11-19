@@ -4,6 +4,12 @@
 //前方宣言
 class GameObject;
 
+//ディフェンス用のオブジェクトの回転向き
+enum class DefenseOrientation {
+	kHorizontal,
+	kVertical
+};
+
 //ディフェンス用のオブジェクトの回転させる
 class DefenseRotationComponent :public Component {
 public://メンバ関数
@@ -69,6 +75,12 @@ public://メンバ関数
 	/// </summary>
 	/// <param name="isRunning">実行するか</param>
 	void SetIsRunning(bool isRunning);
+
+	/// <summary>
+	/// 回転方向の取得
+	/// </summary>
+	/// <returns>回転方向</returns>
+	DefenseOrientation GetDefenseOrientation();
 private://定数
 	//回転する基準の角度(度)
 	static inline float kRotationStep = 90.0f;
@@ -91,4 +103,6 @@ private://メンバ変数
 	float beginAngleY_ = {};
 	//イージングの鋭さ
 	float easingSharpness_ = 10.0f;
+	//回転方向を保存
+	int32_t rotationIndex_ = 0;
 };

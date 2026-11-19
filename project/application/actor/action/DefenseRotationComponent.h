@@ -4,6 +4,12 @@
 //前方宣言
 class GameObject;
 
+//ディフェンス用のオブジェクトの回転向き
+enum class DefenseOrientation {
+	kHorizontal,
+	kVertical
+};
+
 //ディフェンス用のオブジェクトの回転させる
 class DefenseRotationComponent :public Component {
 public://メンバ関数
@@ -17,12 +23,6 @@ public://メンバ関数
 	/// デストラクタ
 	/// </summary>
 	~DefenseRotationComponent()override;
-
-	/// <summary>
-	/// セットアップ
-	/// </summary>
-	/// <param name="targetGameObject">回転させる対象のオブジェクト</param>
-	void Setup(GameObject* targetGameObject);
 
 	/// <summary>
 	/// 初期化
@@ -48,6 +48,11 @@ public://メンバ関数
 	std::unique_ptr<Component> Clone(GameObject* gameObject)const override;
 
 	/// <summary>
+	/// 回転のリセット
+	/// </summary>
+	void ResetRotation();
+
+	/// <summary>
 	/// コンポーネントのタイプ名を返す
 	/// </summary>
 	/// <returns>コンポーネントのタイプ名</returns>
@@ -70,12 +75,16 @@ public://メンバ関数
 	/// </summary>
 	/// <param name="isRunning">実行するか</param>
 	void SetIsRunning(bool isRunning);
+
+	/// <summary>
+	/// 回転方向の取得
+	/// </summary>
+	/// <returns>回転方向</returns>
+	DefenseOrientation GetDefenseOrientation();
 private://定数
 	//回転する基準の角度(度)
 	static inline float kRotationStep = 90.0f;
 private://メンバ変数
-	//回転対象のGameObject
-	GameObject* targetGameObject_ = nullptr;
 	//回転方向
 	float rotateDir_ = 0.0f;
 	//角度(度)
@@ -91,7 +100,9 @@ private://メンバ変数
 	//実行するか
 	bool isRunning_ = true;
 	//回転の開始位置
-	float beginAngle_ = {};
+	float beginAngleY_ = {};
 	//イージングの鋭さ
 	float easingSharpness_ = 10.0f;
+	//回転方向を保存
+	int32_t rotationIndex_ = 0;
 };

@@ -1,6 +1,8 @@
 #include "CameraControlComponent.h"
 #include "FollowCameraController.h"
 #include "MathUtility.h"
+#include "GameObject.h"
+#include "Logger.h"
 #include <cassert>
 #include <algorithm>
 
@@ -13,24 +15,33 @@ CameraControlComponent::~CameraControlComponent() {
 }
 
 //セットアップ
-void CameraControlComponent::Setup(FollowCameraController* followCamera,float followSpeed) {
-	//追従カメラの記録
-	assert(followCamera);
-	followCamera_ = followCamera;
-	//ピッチの記録
-	pitch_ = followCamera_->GetTheta();
-	//ヨーの記録
-	yaw_ = followCamera_->GetPhi();
+void CameraControlComponent::Setup(float followSpeed) {
 	//追従速度の記録
 	followSpeed_ = followSpeed;
 }
 
 //初期化
 void CameraControlComponent::Initialize() {
+	//フォローカメラがあるか
+	followCamera_ = GetOwner()->GetComponent<FollowCameraController>();
+	if(!followCamera_) {
+		Logger::OutputLog("CameraObjectにFollowCameraControllerがコンポーネントされていません");
+		return;
+	}
+
+		//ピッチの記録
+	pitch_ = followCamera_->GetTheta();
+	//ヨーの記録
+	yaw_ = followCamera_->GetPhi();
 }
 
 //更新
 void CameraControlComponent::Update() {
+	if(!followCamera_) {
+		Logger::OutputLog("CameraObjectにFollowCameraControllerがコンポーネントされていません");
+		return;
+	}
+
 	//追従カメラに値を送信
 	pitch_ += axis_.y * rotSpeed_ * mathUtility::GetDeltaTime();
 	yaw_ += axis_.x * rotSpeed_ * mathUtility::GetDeltaTime();
@@ -57,10 +68,12 @@ void CameraControlComponent::RegisterProperties(PropertyRegistry* registry) {
 //複製
 std::unique_ptr<Component> CameraControlComponent::Clone(GameObject* gameObject) const {
 	std::unique_ptr<CameraControlComponent>cloneInstance = std::make_unique<CameraControlComponent>(gameObject);
-	cloneInstance->Setup(followCamera_,followSpeed_);
+	cloneInstance->Setup(followSpeed_);
 	cloneInstance->Initialize();
 	cloneInstance->pitch_ = this->pitch_;
 	cloneInstance->yaw_ = this->yaw_;
+	cloneInstance->axis_ = this->axis_;
+	cloneInstance->rotSpeed_ = this->rotSpeed_;
 	return cloneInstance;
 }
 

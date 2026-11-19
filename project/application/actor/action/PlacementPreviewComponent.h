@@ -2,7 +2,6 @@
 #include "Component.h"
 #include "Vector3.h"
 #include <string>
-#include <vector>
 
 //前方宣言
 class Object3d;
@@ -22,13 +21,6 @@ public://メンバ関数
 	/// デストラクタ
 	/// </summary>
 	~PlacementPreviewComponent()override;
-
-	/// <summary>
-	/// セットアップ
-	/// </summary>
-	/// <param name="targetObject3d">設置対象のObject3d</param>
-	/// <param name="modelList">モデル一覧</param>
-	void Setup(Object3d* targetObject3d,const std::vector<std::string>& modelList);
 
 	/// <summary>
 	/// 初期化
@@ -60,12 +52,6 @@ public://メンバ関数
 	std::string GetTypeName()const;
 
 	/// <summary>
-	/// モデルの検索キーの設定
-	/// </summary>
-	/// <param name="modelIndex">モデルの検索キー</param>
-	void SetModelIndex(uint32_t modelIndex);
-
-	/// <summary>
 	/// 表示するかの要求を設定を設定
 	/// </summary>
 	/// <param name="request">要求</param>
@@ -82,17 +68,19 @@ public://メンバ関数
 	/// </summary>
 	/// <returns>要求</returns>
 	bool GetEnabledRequest()const;
+
+	/// <summary>
+	/// モデル名の設定
+	/// </summary>
+	/// <param name="modelName">モデル名</param>
+	void SetModel(const std::string& modelName);
 private://メンバ変数
-	//モデル名
-	std::string modelName_ = "";
-	//置く対象のObject3d
-	Object3d* targetObject3d_ = nullptr;
-	//モデル一覧
-	std::vector<std::string>modelList_;
-	//現在のモデルの検索キー
-	uint32_t currentModelIndex_ = 0;
-	//前回のモデルの検索キー
-	uint32_t prevModelIndex_ = 0;
+	//Object3d
+	Object3d* object3d_ = nullptr;
+	//現在のモデル名
+	std::string currentModelName_ = "";
+	//過去のモデル名
+	std::string prevModelName_ = "";
 	//表示を要求
 	bool enableRequest_ = false;
 	//表示位置を設定

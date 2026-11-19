@@ -27,6 +27,7 @@ void PlacementPreviewCommand::Execute() {
 std::unique_ptr<ICommand> PlacementPreviewCommand::Clone() const {
 	std::unique_ptr<PlacementPreviewCommand>cloneInstance = std::make_unique<PlacementPreviewCommand>();
 	cloneInstance->SetPlacementPreviewComponent(placementPreviewComponent_);
+	cloneInstance->isVisible_ = this->isVisible_;
 	return cloneInstance;
 }
 

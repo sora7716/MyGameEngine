@@ -26,6 +26,9 @@ void StickCameraControlCommand::Execute(const Vector2& axis) {
 std::unique_ptr<IAxisCommand> StickCameraControlCommand::Clone() const {
 	std::unique_ptr<StickCameraControlCommand>cloneInstance = std::make_unique<StickCameraControlCommand>();
 	cloneInstance->SetCameraControlComponent(cameraControlComponent_);
+	cloneInstance->pitch_ = this->pitch_;
+	cloneInstance->yaw_ = this->yaw_;
+	cloneInstance->rotSpeed_ = this->rotSpeed_;
 	return cloneInstance;
 }
 

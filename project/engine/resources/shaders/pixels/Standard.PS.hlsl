@@ -61,7 +61,7 @@ PixelShaderOutput main(VertexShaderOutput input) {
     PixelShaderOutput output;
     
     //Lightingする場合
-    if (gMaterial.enableLighring) {
+    if (gMaterial.enabledLighting) {
         //カメラの視点を取得
         float3 toEye = normalize(gCamera.worldPosition - input.worldPosition);
         

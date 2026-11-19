@@ -4,7 +4,7 @@
 /// <summary>
 /// 3次元ベクトル
 /// </summary>
-struct Vector3 final{
+struct Vector3 final {
 	float x = 0.0f;
 	float y = 0.0f;
 	float z = 0.0f;
@@ -63,7 +63,7 @@ struct Vector3 final{
 	/// <param name="min">最小値</param>
 	/// <param name="max">最大値</param>
 	/// <returns>クランプした値</returns>
-	Vector3 Clamp(float min, float max);
+	Vector3 Clamp(float min,float max);
 
 	/// <summary>
 	/// 最小値
@@ -78,7 +78,7 @@ struct Vector3 final{
 	/// <param name="v1">ベクトル1</param>
 	/// <param name="v2">ベクトル2</param>
 	/// <returns>最小値</returns>
-	Vector3 Min(const Vector3& v1, const Vector3& v2)const;
+	Vector3 Min(const Vector3& v1,const Vector3& v2)const;
 
 	/// <summary>
 	/// 最大値
@@ -93,7 +93,7 @@ struct Vector3 final{
 	/// <param name="v1">ベクトル1</param>
 	/// <param name="v2">ベクトル2</param>
 	/// <returns>最大値</returns>
-	Vector3 Max(const Vector3& v1, const Vector3& v2)const;
+	Vector3 Max(const Vector3& v1,const Vector3& v2)const;
 
 	/// <summary>
 	/// 最小値
@@ -123,7 +123,7 @@ struct Vector3 final{
 	/// 長さ(ノルム)
 	/// </summary>
 	/// <returns>長さ(ノルム)</returns>
-	float Length();
+	float Length()const;
 
 	/// <summary>
 	/// 長さ(平方根を使用しない)
@@ -158,7 +158,7 @@ struct Vector3 final{
 	/// <param name="end">最後のベクトル</param>
 	/// <param name="frame">フレーム</param>
 	/// <returns>現在のベクトル</returns>
-	static Vector3 Lerp(const Vector3& begin, const Vector3& end, float frame);
+	static Vector3 Lerp(const Vector3& begin,const Vector3& end,float frame);
 
 	//加法
 	Vector3 operator+(const Vector3& v)const;
@@ -199,12 +199,12 @@ struct Vector3 final{
 	bool operator<(const Vector3& v);
 };
 //float*Vector3
-const Vector3 operator*(float n, const Vector3& v);
+const Vector3 operator*(float n,const Vector3& v);
 
 /// <summary>
 /// 3次元ベクトルの整数型
 /// </summary>
-struct Vector3Int{
+struct Vector3Int {
 	int32_t x = 0;
 	int32_t y = 0;
 	int32_t z = 0;

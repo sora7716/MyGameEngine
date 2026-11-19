@@ -264,7 +264,7 @@ void MapChipCollider::CheckCollisionRight(CollisionMapChipInfo& info,Vector3& ce
 	//範囲矩形にアクセス
 	for(const Rect& rect : rects) {
 		//動く前からブロックより右にいたら
-		if(prevRight > rect.left + epsilon) {
+		if(prevRight > rect.left - epsilon) {
 			continue;
 		}
 

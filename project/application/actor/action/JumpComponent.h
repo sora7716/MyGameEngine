@@ -62,6 +62,12 @@ public://メンバ関数
 	/// </summary>
 	/// <param name="request">リクエスト</param>
 	void SetJumpRequest(bool request);
+
+	/// <summary>
+	/// リジッドボディの設定
+	/// </summary>
+	/// <param name="rigidBody">リジッドボディ</param>
+	void SetRigidBody(RigidBody* rigidBody);
 private://メンバ変数
 	//リジッドボディ
 	RigidBody* rigidBody_ = nullptr;

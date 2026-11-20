@@ -10,6 +10,11 @@
 #include "DefensePlaceComponent.h"
 #include "MapChipField.h"
 #include "Color.h"
+#include "Wall.h"
+#include "BowTower.h"
+#include "FreezeTower.h"
+#include "ThunderTower.h"
+#include "GameMine.h"
 #include <cassert>
 using namespace mapChipDesc;
 
@@ -234,6 +239,9 @@ void DefensePlacementSystem::CreateDefenseObject() {
 	//LODの設定
 	object3d->SetLODDistances({5.0f,8.0f,15.0f});
 
+	//モデルによってコンポーネントを変更する
+	AddComponentsByModelName(modelName,gameObject);
+
 	//衝突判定を設定
 	BoxCollider* boxCollider = gameObject->AddComponent<BoxCollider>();
 	//モデル名によってコライダー形や位置を変更
@@ -302,10 +310,10 @@ void DefensePlacementSystem::SwitchDefenseObjectCollider(const std::string& mode
 	boxCollider->SetOffset(Vector3::GetZero());
 
 	//モデル名によってコライダー形や位置を変更
-	if(modelName == defenseObjectModelNameList_[static_cast<uint32_t>(DefenseModelType::kWall)]) {
+	if(modelName == GetModelNameByModelType(DefenseModelType::kWall)) {
 		boxCollider->SetSize({2.9f,1.0f,0.95f});
 		boxCollider->SetOffset({0.0f,0.0f,0.0f});
-	} else if(modelName != defenseObjectModelNameList_[static_cast<uint32_t>(DefenseModelType::kGameMine)]) {
+	} else if(modelName != GetModelNameByModelType(DefenseModelType::kGameMine)) {
 		boxCollider->SetSize({0.95f,2.0f,0.95f});
 		boxCollider->SetOffset({0.0f,0.5f,0.0f});
 	} else {
@@ -313,4 +321,33 @@ void DefensePlacementSystem::SwitchDefenseObjectCollider(const std::string& mode
 		boxCollider->SetSize({0.95f,0.3f,0.95f});
 		boxCollider->SetOffset({0.0f,-0.4f,0.0f});
 	}
+}
+
+//モデル名によって追加するコンポーネントを変える
+void DefensePlacementSystem::AddComponentsByModelName(const std::string& modelName,GameObject* gameObject) {
+	//モデルが壁なら
+	if(modelName == GetModelNameByModelType(DefenseModelType::kWall)) {
+		gameObject->AddComponent<Wall>();
+	}
+	//モデルが弓タワーなら
+	if(modelName == GetModelNameByModelType(DefenseModelType::kBow)) {
+		gameObject->AddComponent<BowTower>();
+	}
+	//モデルが氷結タワーなら
+	if(modelName == GetModelNameByModelType(DefenseModelType::kFreeze)) {
+		gameObject->AddComponent<FreezeTower>();
+	}
+	//モデルが雷タワーなら
+	if(modelName == GetModelNameByModelType(DefenseModelType::kThunder)) {
+		gameObject->AddComponent<ThunderTower>();
+	}
+	//モデルが地雷なら
+	if(modelName == GetModelNameByModelType(DefenseModelType::kGameMine)) {
+		gameObject->AddComponent<GameMine>();
+	}
+}
+
+//モデル名をモデルタイプから取得
+std::string DefensePlacementSystem::GetModelNameByModelType(DefenseModelType modelType) {
+	return defenseObjectModelNameList_[static_cast<uint32_t>(modelType)];
 }

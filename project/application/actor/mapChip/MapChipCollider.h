@@ -14,7 +14,7 @@ struct CollisionMapChipInfo {
 	bool isCollisionX = false;//X軸(左右)で衝突した
 	bool isCollisionZ = false;//Z軸(前後)で衝突した
 	bool isOnGround = false;//着地している
-	Vector3 moveAmount = {};
+	Vector3 moveAmount = {};//移動量
 };
 
 /// <summary>

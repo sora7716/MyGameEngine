@@ -583,7 +583,22 @@
       <Filter>application\actor\system</Filter>
     </ClCompile>
     <ClCompile Include="application\actor\system\CreateFieldSystem.cpp">
-      <Filter>ソース ファイル</Filter>
+      <Filter>application\actor\system</Filter>
+    </ClCompile>
+    <ClCompile Include="application\actor\defenseObject\BowTower.cpp">
+      <Filter>application\actor\defenseObject</Filter>
+    </ClCompile>
+    <ClCompile Include="application\actor\defenseObject\FreezeTower.cpp">
+      <Filter>application\actor\defenseObject</Filter>
+    </ClCompile>
+    <ClCompile Include="application\actor\defenseObject\GameMine.cpp">
+      <Filter>application\actor\defenseObject</Filter>
+    </ClCompile>
+    <ClCompile Include="application\actor\defenseObject\ThunderTower.cpp">
+      <Filter>application\actor\defenseObject</Filter>
+    </ClCompile>
+    <ClCompile Include="application\actor\defenseObject\Wall.cpp">
+      <Filter>application\actor\defenseObject</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -1032,7 +1047,22 @@
       <Filter>application\actor\system</Filter>
     </ClInclude>
     <ClInclude Include="application\actor\system\CreateFieldSystem.h">
-      <Filter>ヘッダー ファイル</Filter>
+      <Filter>application\actor\system</Filter>
+    </ClInclude>
+    <ClInclude Include="application\actor\defenseObject\BowTower.h">
+      <Filter>application\actor\defenseObject</Filter>
+    </ClInclude>
+    <ClInclude Include="application\actor\defenseObject\FreezeTower.h">
+      <Filter>application\actor\defenseObject</Filter>
+    </ClInclude>
+    <ClInclude Include="application\actor\defenseObject\GameMine.h">
+      <Filter>application\actor\defenseObject</Filter>
+    </ClInclude>
+    <ClInclude Include="application\actor\defenseObject\ThunderTower.h">
+      <Filter>application\actor\defenseObject</Filter>
+    </ClInclude>
+    <ClInclude Include="application\actor\defenseObject\Wall.h">
+      <Filter>application\actor\defenseObject</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

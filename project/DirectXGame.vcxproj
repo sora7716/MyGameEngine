@@ -32,6 +32,11 @@
     <ClCompile Include="application\actor\command\StickCameraControlCommand.cpp" />
     <ClCompile Include="application\actor\command\StickMovementCommand.cpp" />
     <ClCompile Include="application\actor\defenseObject\BaseDefenseObject.cpp" />
+    <ClCompile Include="application\actor\defenseObject\BowTower.cpp" />
+    <ClCompile Include="application\actor\defenseObject\FreezeTower.cpp" />
+    <ClCompile Include="application\actor\defenseObject\GameMine.cpp" />
+    <ClCompile Include="application\actor\defenseObject\ThunderTower.cpp" />
+    <ClCompile Include="application\actor\defenseObject\Wall.cpp" />
     <ClCompile Include="application\actor\enemy\Enemy.cpp" />
     <ClCompile Include="application\actor\enemy\EnemyDamageState.cpp" />
     <ClCompile Include="application\actor\enemy\EnemyRecoverState.cpp" />
@@ -469,6 +474,11 @@
     <ClInclude Include="application\actor\command\StickCameraControlCommand.h" />
     <ClInclude Include="application\actor\command\StickMovementCommand.h" />
     <ClInclude Include="application\actor\defenseObject\BaseDefenseObject.h" />
+    <ClInclude Include="application\actor\defenseObject\BowTower.h" />
+    <ClInclude Include="application\actor\defenseObject\FreezeTower.h" />
+    <ClInclude Include="application\actor\defenseObject\GameMine.h" />
+    <ClInclude Include="application\actor\defenseObject\ThunderTower.h" />
+    <ClInclude Include="application\actor\defenseObject\Wall.h" />
     <ClInclude Include="application\actor\enemy\Enemy.h" />
     <ClInclude Include="application\actor\enemy\EnemyDamageState.h" />
     <ClInclude Include="application\actor\enemy\EnemyRecoverState.h" />

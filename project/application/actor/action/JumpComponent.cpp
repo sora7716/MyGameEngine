@@ -20,12 +20,6 @@ void JumpComponent::Setup(float jumpSpeed) {
 
 //初期化
 void JumpComponent::Initialize() {
-	//リジッドボディを取得
-	rigidBody_ = GetOwner()->GetComponent<RigidBody>();
-	if(!rigidBody_) {
-		Logger::OutputLog("リジッドボディが設定されていません");
-		assert(false);
-	}
 }
 
 //更新
@@ -79,4 +73,9 @@ std::string JumpComponent::GetTypeName() const {
 //ジャンプする要求を設定
 void JumpComponent::SetJumpRequest(bool request) {
 	jumpRequest_ = request;
+}
+
+//リジッドボディの設定
+void JumpComponent::SetRigidBody(RigidBody* rigidBody) {
+	rigidBody_ = rigidBody;
 }

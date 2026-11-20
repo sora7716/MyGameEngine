@@ -123,6 +123,20 @@ private://メンバ関数
 	/// <param name="modelName">モデル名</param>
 	/// <param name="boxCollider">Boxコライダー</param>
 	void SwitchDefenseObjectCollider(const std::string& modelName,BoxCollider* boxCollider);
+	
+	/// <summary>
+	/// モデル名によって追加するコンポーネントを変える
+	/// </summary>
+	/// <param name="modelName">モデル名</param>
+	/// <param name="gameObject">ゲームオブジェクト</param>
+	void AddComponentsByModelName(const std::string& modelName,GameObject* gameObject);
+
+	/// <summary>
+	/// モデル名をモデルタイプから取得
+	/// </summary>
+	/// <param name="modelType">モデルタイプ</param>
+	/// <returns>モデル名</returns>
+	std::string GetModelNameByModelType(DefenseModelType modelType);
 private://メンバ変数
 	//シーン
 	BaseScene* scene_ = nullptr;

@@ -27,12 +27,6 @@ void MovementComponent::Setup(float moveSpeed,float moveResponse) {
 
 //初期化
 void MovementComponent::Initialize() {
-	//リジッドボディを取得
-	rigidBody_ = GetOwner()->GetComponent<RigidBody>();
-	if(!rigidBody_) {
-		Logger::OutputLog("リジッドボディが設定されていません");
-		assert(false);
-	}
 }
 
 //更新
@@ -118,4 +112,9 @@ void MovementComponent::SetCameraObject(GameObject* cameraObject) {
 //方向ベクトルの取得
 const Vector3& MovementComponent::GetDirection() const {
 	return direction_;
+}
+
+//リジッドボディの設定
+void MovementComponent::SetRigidBody(RigidBody* rigidBody) {
+	rigidBody_ = rigidBody;
 }

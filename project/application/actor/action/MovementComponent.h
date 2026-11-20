@@ -74,6 +74,12 @@ public://メンバ関数
 	/// </summary>
 	/// <returns>方向ベクトル</returns>
 	const Vector3& GetDirection()const;
+
+	/// <summary>
+	/// リジッドボディの設定
+	/// </summary>
+	/// <param name="rigidBody">リジッドボディ</param>
+	void SetRigidBody(RigidBody*rigidBody);
 private://メンバ変数
 	//移動の際のレスポンス
 	float moveResponse_ = 1.0f;

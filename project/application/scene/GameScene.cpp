@@ -25,7 +25,6 @@
 #include "ImGuiManager.h"
 #include "CreateFieldSystem.h"
 #include "DefensePlacementSystem.h"
-#include "Color.h"
 #include <array>
 using namespace mapChipDesc;
 
@@ -194,9 +193,6 @@ void GameScene::CreatePlayer() {
 	InputComponent* inputComponent = gameObject->AddComponent<InputComponent>();
 	inputComponent->Setup(GetSceneContext().input);
 
-	//リジッドボディを追加
-	gameObject->AddComponent<RigidBody>();
-
 	//移動用の機能を追加
 	MovementComponent* movementComponent = gameObject->AddComponent<MovementComponent>();
 	//移動用の機能のセットアップ
@@ -210,6 +206,11 @@ void GameScene::CreatePlayer() {
 	//ジャンプ用の機能のセットアップ
 	float jumpSpeed = 7.0f;
 	jumpComponent->Setup(jumpSpeed);
+
+	//リジッドボディを追加
+	RigidBody* rigidBody = gameObject->AddComponent<RigidBody>();
+	movementComponent->SetRigidBody(rigidBody);
+	jumpComponent->SetRigidBody(rigidBody);
 
 	//スティックの移動コマンドを追加	
 	stickMoveCommand->SetMovementComponent(movementComponent);

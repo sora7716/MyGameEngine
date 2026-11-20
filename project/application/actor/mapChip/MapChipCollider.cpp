@@ -152,6 +152,7 @@ void MapChipCollider::CheckCollisionFront(CollisionMapChipInfo& info,Vector3& ce
 	for(const Rect& rect : rects) {
 		//動く前からブロックより後ろにいたら
 		if(prevFront > rect.back + epsilon) {
+			center.z -= ((center.z + targetHalfSize_.z) - rect.back) + kBlank;
 			continue;
 		}
 
@@ -213,6 +214,7 @@ void MapChipCollider::CheckCollisionBack(CollisionMapChipInfo& info,Vector3& cen
 	for(const Rect& rect : rects) {
 		//動く前からブロックより手前にいたら
 		if(prevBack < rect.front + epsilon) {
+			center.z -= ((center.z - targetHalfSize_.z) - rect.front) - kBlank;
 			continue;
 		}
 
@@ -274,6 +276,7 @@ void MapChipCollider::CheckCollisionRight(CollisionMapChipInfo& info,Vector3& ce
 	for(const Rect& rect : rects) {
 		//動く前からブロックより右にいたら
 		if(prevRight > rect.left - epsilon) {
+			center.x -= ((center.x + targetHalfSize_.x) - rect.left) + kBlank;
 			continue;
 		}
 
@@ -335,6 +338,7 @@ void MapChipCollider::CheckCollisionLeft(CollisionMapChipInfo& info,Vector3& cen
 	for(const Rect& rect : rects) {
 		//動く前からブロックより左にいたら
 		if(prevLeft < rect.right + epsilon) {
+			center.x -= ((center.x - targetHalfSize_.x) - rect.right) - kBlank;
 			continue;
 		}
 
@@ -396,6 +400,7 @@ void MapChipCollider::CheckCollisionBottom(CollisionMapChipInfo& info,Vector3& c
 	for(const Rect& rect : rects) {
 		//動く前からブロックの上面より下にいた
 		if(prevBottom < rect.top - epsilon) {
+			center.y -= ((center.y - targetHalfSize_.y) - rect.top) - kBlank;
 			continue;
 		}
 

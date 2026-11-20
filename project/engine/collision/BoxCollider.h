@@ -35,10 +35,10 @@ public://メンバ関数
 	void RegisterProperties(PropertyRegistry* registry);
 
 	/// <summary>
-	/// ハーフサイズの設定
+	/// サイズの設定
 	/// </summary>
-	/// <param name="halfSize">ハーフサイズ</param>
-	void SetHalfSize(const Vector3& halfSize);
+	/// <param name="size">サイズ</param>
+	void SetSize(const Vector3& size);
 
 	/// <summary>
 	/// オフセットを設定
@@ -85,6 +85,8 @@ public://メンバ関数
 private://メンバ変数
 	//OBB
 	primitiveData::OBB obb_ = {};
+	//サイズ
+	Vector3 size_ = {};
 	//ハーフサイズ
 	Vector3 halfSize_ = {};
 	//オフセット

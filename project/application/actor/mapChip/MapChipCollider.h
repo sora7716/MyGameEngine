@@ -50,10 +50,9 @@ public://メンバ関数
 	/// セットアップ
 	/// </summary>
 	/// <param name="mapChipField">マップチップのフィールド</param>
-	/// <param name="rigidBody">リジッドボディ</param>
 	/// <param name="targetSize">ターゲットのサイズ</param>
 	/// <param name="isTrigger">押し出しを行うか</param>
-	void Setup(MapChipField* mapChipField,RigidBody* rigidBody,const Vector3& targetSize,bool isTrigger = false);
+	void Setup(MapChipField* mapChipField,const Vector3& targetSize,bool isTrigger = false);
 
 	/// <summary>
 	/// 初期化
@@ -66,9 +65,10 @@ public://メンバ関数
 	void Update()override;
 
 	/// <summary>
-	/// デバッグでImGuiを使えるようにする
+	/// プロパティ一覧を登録
 	/// </summary>
-	void DebugImGui()override;
+	/// <param name="registry">レジストリ</param>
+	void RegisterProperties(PropertyRegistry* registry);
 
 	/// <summary>
 	/// コピー

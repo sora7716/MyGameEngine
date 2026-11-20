@@ -25,9 +25,8 @@ public://メンバ関数
 	/// <summary>
 	/// セットアップ
 	/// </summary>
-	/// <param name="rigidBody">リジッドボディ</param>
 	/// <param name="jumpSpeed">ジャンプの速度</param>
-	void Setup(RigidBody* rigidBody,float jumpSpeed);
+	void Setup(float jumpSpeed);
 
 	/// <summary>
 	/// 初期化

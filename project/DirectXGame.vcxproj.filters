@@ -178,6 +178,12 @@
     <Filter Include="engine\math\easing">
       <UniqueIdentifier>{7b683fad-30db-4f2e-9fa0-9a1c7bbbf393}</UniqueIdentifier>
     </Filter>
+    <Filter Include="application\actor\system">
+      <UniqueIdentifier>{f347f8f1-7199-485d-8c83-993da8646e23}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="application\actor\defenseObject">
+      <UniqueIdentifier>{3ed5306e-73da-443c-bbb2-41d4351ede43}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="engine\main.cpp">
@@ -564,16 +570,19 @@
     <ClCompile Include="application\actor\command\PlacementSwitchCommand.cpp">
       <Filter>application\actor\command</Filter>
     </ClCompile>
-    <ClCompile Include="application\actor\action\DefensePlaceComponent.cpp">
-      <Filter>ソース ファイル</Filter>
+    <ClCompile Include="application\actor\defenseObject\BaseDefenseObject.cpp">
+      <Filter>application\actor\defenseObject</Filter>
     </ClCompile>
     <ClCompile Include="application\actor\command\DefensePlaceCommand.cpp">
-      <Filter>ソース ファイル</Filter>
+      <Filter>application\actor\command</Filter>
     </ClCompile>
-    <ClCompile Include="application\actor\defenseObject\BaseDefenseObject.cpp">
-      <Filter>ソース ファイル</Filter>
+    <ClCompile Include="application\actor\action\DefensePlaceComponent.cpp">
+      <Filter>application\actor\action</Filter>
     </ClCompile>
-    <ClCompile Include="application\actor\DefensePlacementSystem.cpp">
+    <ClCompile Include="application\actor\system\DefensePlacementSystem.cpp">
+      <Filter>application\actor\system</Filter>
+    </ClCompile>
+    <ClCompile Include="application\actor\system\CreateFieldSystem.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
   </ItemGroup>
@@ -1010,16 +1019,19 @@
     <ClInclude Include="application\actor\command\PlacementSwitchCommand.h">
       <Filter>application\actor\command</Filter>
     </ClInclude>
-    <ClInclude Include="application\actor\action\DefensePlaceComponent.h">
-      <Filter>ヘッダー ファイル</Filter>
+    <ClInclude Include="application\actor\defenseObject\BaseDefenseObject.h">
+      <Filter>application\actor\defenseObject</Filter>
     </ClInclude>
     <ClInclude Include="application\actor\command\DefensePlaceCommand.h">
-      <Filter>ヘッダー ファイル</Filter>
+      <Filter>application\actor\command</Filter>
     </ClInclude>
-    <ClInclude Include="application\actor\defenseObject\BaseDefenseObject.h">
-      <Filter>ヘッダー ファイル</Filter>
+    <ClInclude Include="application\actor\action\DefensePlaceComponent.h">
+      <Filter>application\actor\action</Filter>
     </ClInclude>
-    <ClInclude Include="application\actor\DefensePlacementSystem.h">
+    <ClInclude Include="application\actor\system\DefensePlacementSystem.h">
+      <Filter>application\actor\system</Filter>
+    </ClInclude>
+    <ClInclude Include="application\actor\system\CreateFieldSystem.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
   </ItemGroup>

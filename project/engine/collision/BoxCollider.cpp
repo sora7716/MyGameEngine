@@ -15,7 +15,8 @@ BoxCollider::~BoxCollider() {
 void BoxCollider::Initialize() {
 	//基底クラスの初期化
 	BaseCollider::Initialize();
-	halfSize_ = Vector3::GetOne() / 2.0f;
+	size_ = Vector3::GetOne();
+	halfSize_ = size_ / 2.0f;
 
 	//OBBの初期化
 	obb_.Initialize();
@@ -23,6 +24,9 @@ void BoxCollider::Initialize() {
 
 //更新
 void BoxCollider::Update() {
+	//ハーフサイズを計算
+	halfSize_ = size_ / 2.0f;
+
 	//基底クラスの更新
 	BaseCollider::Update();
 	//中心座標
@@ -51,12 +55,12 @@ void BoxCollider::Update() {
 void BoxCollider::RegisterProperties(PropertyRegistry* registry) {
 	BaseCollider::RegisterProperties(registry);
 	registry->Add("offset",offset_);
-	registry->Add("halfSize",halfSize_);
+	registry->Add("size",size_);
 }
 
-//ハーフサイズの設定
-void BoxCollider::SetHalfSize(const Vector3& halfSize) {
-	halfSize_ = halfSize;
+//サイズの設定
+void BoxCollider::SetSize(const Vector3& size) {
+	size_ = size;
 }
 
 //オフセットの設定

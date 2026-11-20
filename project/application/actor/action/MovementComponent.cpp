@@ -4,6 +4,7 @@
 #include "MathUtility.h"
 #include "MatrixUtility.h"
 #include "GameObject.h"
+#include "Logger.h"
 #include <algorithm>
 #include <cassert>
 
@@ -16,10 +17,7 @@ MovementComponent::~MovementComponent() {
 }
 
 //セットアップ
-void MovementComponent::Setup(RigidBody* rigidBody,float moveSpeed,float moveResponse) {
-	//リジッドボディの記録
-	assert(rigidBody);
-	rigidBody_ = rigidBody;
+void MovementComponent::Setup(float moveSpeed,float moveResponse) {
 	//移動速度の記録
 	moveSpeed_ = moveSpeed;
 	//移動する際のレスポンスを設定
@@ -29,6 +27,12 @@ void MovementComponent::Setup(RigidBody* rigidBody,float moveSpeed,float moveRes
 
 //初期化
 void MovementComponent::Initialize() {
+	//リジッドボディを取得
+	rigidBody_ = GetOwner()->GetComponent<RigidBody>();
+	if(!rigidBody_) {
+		Logger::OutputLog("リジッドボディが設定されていません");
+		assert(false);
+	}
 }
 
 //更新

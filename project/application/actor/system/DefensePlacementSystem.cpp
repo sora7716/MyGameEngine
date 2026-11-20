@@ -2,7 +2,6 @@
 #include "BaseScene.h"
 #include "GameObject.h"
 #include "Object3d.h"
-#include "Model.h"
 #include "BoxCollider.h"
 #include "BaseDefenseObject.h"
 #include "PlacementPreviewComponent.h"
@@ -10,7 +9,6 @@
 #include "PlacementSwitchComponent.h"
 #include "DefensePlaceComponent.h"
 #include "MapChipField.h"
-#include "MathUtility.h"
 #include "Color.h"
 #include <cassert>
 using namespace mapChipDesc;
@@ -300,19 +298,19 @@ void DefensePlacementSystem::UpdatePlacementPreviewObject() {
 //ディフェンス用のオブジェクトのタイプによってコライダーの形や位置を切り替え
 void DefensePlacementSystem::SwitchDefenseObjectCollider(const std::string& modelName,BoxCollider* boxCollider) {
 	//サイズのリセット
-	boxCollider->SetHalfSize(Vector3::GetOne() / 2.0f);
+	boxCollider->SetSize(Vector3::GetOne() / 2.0f);
 	boxCollider->SetOffset(Vector3::GetZero());
 
 	//モデル名によってコライダー形や位置を変更
 	if(modelName == defenseObjectModelNameList_[static_cast<uint32_t>(DefenseModelType::kWall)]) {
-		boxCollider->SetHalfSize({1.45f,0.5f,0.45f});
+		boxCollider->SetSize({2.9f,1.0f,0.95f});
 		boxCollider->SetOffset({0.0f,0.0f,0.0f});
 	} else if(modelName != defenseObjectModelNameList_[static_cast<uint32_t>(DefenseModelType::kGameMine)]) {
-		boxCollider->SetHalfSize({0.35f,1.0f,0.35f});
+		boxCollider->SetSize({0.95f,2.0f,0.95f});
 		boxCollider->SetOffset({0.0f,0.5f,0.0f});
 	} else {
 		boxCollider->SetIsTrigger(true);
-		boxCollider->SetHalfSize({0.45f,0.15f,0.45f});
+		boxCollider->SetSize({0.95f,0.3f,0.95f});
 		boxCollider->SetOffset({0.0f,-0.4f,0.0f});
 	}
 }

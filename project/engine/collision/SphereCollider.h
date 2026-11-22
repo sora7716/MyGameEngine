@@ -55,6 +55,18 @@ public://メンバ関数
 	ColliderType GetColliderType()const override;
 
 	/// <summary>
+	/// 中心座標の設定
+	/// </summary>
+	/// <param name="center">中心座標</param>
+	void SetCenter(const Vector3& center);
+
+	/// <summary>
+	/// 半径の設定
+	/// </summary>
+	/// <param name="radius">半径</param>
+	void SetRadius(float radius);
+
+	/// <summary>
 	/// 球の取得
 	/// </summary>
 	/// <returns>球のデータ</returns>

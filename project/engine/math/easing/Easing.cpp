@@ -18,3 +18,11 @@ float easing::EaseInOutExpo(float t,float sharpness) {
 	//だんだん減速する
 	return (2.0f - std::pow(2.0f,-(sharpness * 2.0f) * t + sharpness)) / 2.0f;
 }
+
+//EaseInOutQuartの計算
+float easing::EaseInOutQuart(float t) {
+	if(t < 0.5f) {
+		return 8.0f * t * t * t * t;
+	}
+	return 1.0f - std::pow(-2.0f * t + 2.0f,4.0f) / 2.0f;
+}

@@ -15,6 +15,8 @@
 #include "FreezeTower.h"
 #include "ThunderTower.h"
 #include "GameMine.h"
+#include "Indicator.h"
+#include "SphereCollider.h"
 #include <cassert>
 using namespace mapChipDesc;
 
@@ -358,19 +360,47 @@ void DefensePlacementSystem::AddComponentsByModelName(const std::string& modelNa
 
 //ディフェンスオブジェクトごとにインジケーターの生成
 void DefensePlacementSystem::CreateRangeIndicator(const std::string& modelName,GameObject* defenseObject) {
+	//壁なら
+	if(modelName == GetModelNameByModelType(DefenseModelType::kWall)) {
+		return;
+	}
+	//インジケータのオブジェクトを追加
+	GameObject* sensor = scene_->CreateGameObject();
+	sensor->SetName("探索範囲");
+	//親子付け
+	sensor->AttachTo(defenseObject,false);
+	//球のコライダーを追加
+	SphereCollider* sphereCollider = sensor->AddComponent<SphereCollider>();
+	sphereCollider->SetBodyType(BodyType::kDynamic);
+	sphereCollider->SetIsTrigger(true);
+	sphereCollider->SetRadius(3.0f);
 	//弓モデルの場合
 	if(modelName == GetModelNameByModelType(DefenseModelType::kBow)) {
-		GameObject* indicator = scene_->CreateGameObject();
+		//扇形の表示だけを拡縮する
+		GameObject* visual = scene_->CreateGameObject();
+		visual->SetName("visual");
+		visual->AttachTo(sensor,false);
+
 		//インジケーターのTransform
-		Transform& indicatorTransform = indicator->GetTransform();
+		Transform& indicatorTransform = visual->GetTransform();
 		indicatorTransform.translate.y = -0.45f;
 		indicatorTransform.SetEulerAngleDegrees({0.0f,180.0f,0.0f});
-		//親子付け
-		indicator->AttachTo(defenseObject,false);
 
-		//Object3d
-		Object3d* object3d = indicator->AddComponent<Object3d>();
+		//モデルを設定
+		Object3d* object3d = visual->AddComponent<Object3d>();
 		object3d->SetModel("scanRange");
+
+		//弓のタワーを取得
+		BowTower* bowTower = defenseObject->GetComponent<BowTower>();
+		assert(bowTower);
+		float showTargetRadius = bowTower->GetScanRadius();
+
+		//インジケータの設定
+		Indicator* indicator = sensor->AddComponent<Indicator>();
+		//見た目だけのオブジェクトを設定
+		indicator->SetVisualObject(visual);
+		//表示する半径を設定
+		indicator->SetShowTargetRadius(showTargetRadius);
 	}
 }
 

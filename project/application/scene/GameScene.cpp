@@ -187,6 +187,7 @@ void GameScene::CreatePlayer() {
 	Vector3Int playerPosIndex = createFieldSystem_->GetMapChipField()->GetMapChipData().playerIndex;
 	gameObject->GetTransform().translate = createFieldSystem_->GetMapChipField()->GetMapChipPositionByIndex(playerPosIndex);
 	gameObject->SetName("プレイヤー");
+	gameObject->SetTag("Player");
 	//オブジェクト3dを追加
 	Object3d* object3d = gameObject->AddComponent<Object3d>();
 	object3d->SetModel("player");

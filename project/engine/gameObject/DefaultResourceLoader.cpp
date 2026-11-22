@@ -83,7 +83,6 @@ void DefaultResourceLoader::LoadModel() {
 	//弓タワーの探索範囲
 	primitiveMeshFactory::Desc sectorDesc = {};
 	sectorDesc.sweepAngleDegrees = 75.0f * 2.0f;
-	sectorDesc.radius = 3.0f;
 	modelManager_->AddModel("scanRange",primitiveMeshFactory::CreateSector(sectorDesc));
 
 	//LODモデルは読み込み時に作る

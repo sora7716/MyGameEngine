@@ -56,6 +56,12 @@ public://メンバ関数
 	/// </summary>
 	/// <param name="target">対象</param>
 	void SetTarget(GameObject* target);
+
+	/// <summary>
+	/// スキャンする半径の取得
+	/// </summary>
+	/// <returns>スキャンする半径</returns>
+	float GetScanRadius()const;
 private://メンバ関数
 	/// <summary>
 	/// 探しているときのアニメーションの初期化

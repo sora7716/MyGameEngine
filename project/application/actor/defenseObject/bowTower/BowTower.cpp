@@ -86,6 +86,11 @@ void BowTower::SetTarget(GameObject* target) {
 	target_ = target;
 }
 
+//スキャンする半径の取得
+float BowTower::GetScanRadius() const {
+	return scanRadius_;
+}
+
 //探しているときのアニメーションの初期化
 void BowTower::InitializeScanAnimation() {
 	//探索開始時に角度を取得

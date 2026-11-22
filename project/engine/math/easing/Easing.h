@@ -7,4 +7,11 @@ namespace easing {
 	/// <param name="sharpness">鋭さ</param>
 	/// <returns>EaseInOutExpo</returns>
 	float EaseInOutExpo(float t,float sharpness);
+
+	/// <summary>
+	/// EaseInOutQuartの計算
+	/// </summary>
+	/// <param name="t"></param>
+	/// <returns></returns>
+	float EaseInOutQuart(float t);
 }

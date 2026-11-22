@@ -1,26 +1,28 @@
 #pragma once
-#include "BaseDefenseObject.h"
+#include "Component.h"
 
 /// <summary>
-/// 弓タワー
+/// インディケータ
 /// </summary>
-class BowTower :public BaseDefenseObject{
+class Indicator :public Component {
+public://列挙型
+	//振る舞い
+	enum Behavior {
+		kNone,
+		kVisibility,//表示
+		kHidden//非表示
+	};
 public://メンバ関数
 	/// <summary>
 	/// コンストラクタ
 	/// </summary>
 	/// <param name="gameObject">ゲームオブジェクト</param>
-	explicit BowTower(GameObject* gameObject);
+	explicit Indicator(GameObject* gameObject);
 
 	/// <summary>
 	/// デストラクタ
 	/// </summary>
-	~BowTower()override;
-
-	/// <summary>
-	/// 初期化
-	/// </summary>
-	void Initialize()override;
+	~Indicator()override;
 
 	/// <summary>
 	/// 更新
@@ -28,10 +30,16 @@ public://メンバ関数
 	void Update()override;
 
 	/// <summary>
-	/// プロパティ一覧を登録
+	/// 接触した瞬間
 	/// </summary>
-	/// <param name="registry">レジストリ</param>
-	virtual void RegisterProperties(PropertyRegistry* registry);
+	/// <param name="other">コライダー</param>
+	void OnTriggerEnter(BaseCollider* other);
+
+	/// <summary>
+	/// 離れた瞬間
+	/// </summary>
+	/// <param name="other">コライダー</param>
+	void OnTriggerExit(BaseCollider* other);
 
 	/// <summary>
 	/// 複製
@@ -45,15 +53,12 @@ public://メンバ関数
 	/// </summary>
 	/// <returns>コンポーネントのタイプ名</returns>
 	std::string GetTypeName()const;
-private://メンバ関数
-	/// <summary>
-	/// 探しているときのアニメーション
-	/// </summary>
-	void UpdateSearchAnimation();
 private://メンバ変数
-	//頭の回転の最大角度(度)
-	float maxHeadRotate_ = 60.0f;
-	//頭の回転の最小角度(度)
-	float minHeadRotate_ = -60.0f;
-	float offset = {};
+	//振る舞いの要求
+	Behavior behaviorRequest_ = Behavior::kHidden;
+	//振る舞い
+	Behavior behavior_ = Behavior::kNone;
+	//ゲームオブジェクト
+	GameObject* gameObject_ = nullptr;
 };
+

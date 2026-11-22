@@ -98,6 +98,9 @@ private://メンバ変数
 	//プレイヤーのオブジェクト
 	GameObject* playerObject_ = nullptr;
 
+	//敵のオブジェクト
+	GameObject* enemyObject_ = nullptr;
+
 	//防衛オブジェクトの配置システム
 	std::unique_ptr<DefensePlacementSystem> defensePlacementSystem_ = nullptr;
 

@@ -84,13 +84,15 @@ void GameScene::Initialize() {
 	followCamera_->SetTarget(playerObject_);
 
 	//敵の生成
-	CreateEnemy();
+	enemyObject_ = CreateEnemy();
 }
 
 //更新のステート
 void GameScene::UpdateState() {
 	//防衛オブジェクトの設置システムの更新
 	defensePlacementSystem_->Update();
+	//敵の設定
+	defensePlacementSystem_->SetEnemy(enemyObject_);
 }
 
 //デバッグ

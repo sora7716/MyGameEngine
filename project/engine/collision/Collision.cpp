@@ -1,6 +1,7 @@
 #define NOMINMAX
 #include "Collision.h"
 #include "MatrixUtility.h"
+#include "MathUtility.h"
 #include "Logger.h"
 #include <format>
 #include <algorithm>
@@ -15,7 +16,7 @@ using namespace primitiveData;
 /// <param name="sphere1">球1</param>
 /// <param name="sphere2">球2</param>
 /// <returns>衝突したかどうか</returns>
-bool collision::IsCollision(const Sphere& sphere1, const Sphere& sphere2) {
+bool collision::IsCollision(const Sphere& sphere1,const Sphere& sphere2) {
 	//距離
 	float distance = (sphere2.center - sphere1.center).Length();
 	//距離と二つの球の半径を足した値と比べて
@@ -28,7 +29,7 @@ bool collision::IsCollision(const Sphere& sphere1, const Sphere& sphere2) {
 /// <param name="aabb1">aabb1</param>
 /// <param name="aabb2">aabb2</param>
 /// <returns>衝突したかのフラグ</returns>
-bool collision::IsCollision(const AABB& aabb1, const AABB& aabb2) {
+bool collision::IsCollision(const AABB& aabb1,const AABB& aabb2) {
 	return aabb1.min.x <= aabb2.max.x && aabb1.max.x >= aabb2.min.x &&
 		aabb1.min.y <= aabb2.max.y && aabb1.max.y >= aabb2.min.y &&
 		aabb1.min.z <= aabb2.max.z && aabb1.max.z >= aabb2.min.z;
@@ -40,17 +41,17 @@ bool collision::IsCollision(const AABB& aabb1, const AABB& aabb2) {
 /// <param name="aabb">aabb</param>
 /// <param name="sphere">球</param>
 /// <returns>衝突したかのフラグ</returns>
-bool collision::IsCollision(const AABB& aabb, const Sphere& sphere) {
+bool collision::IsCollision(const AABB& aabb,const Sphere& sphere) {
 	//MaxよりMinの方が大きくなった場合
-	if (aabb.min.x > aabb.max.x || aabb.min.y > aabb.max.y || aabb.min.z > aabb.max.z){
+	if(aabb.min.x > aabb.max.x || aabb.min.y > aabb.max.y || aabb.min.z > aabb.max.z) {
 		return false;
 	}
 
 	//最近接点を求める
 	Vector3 closestPoint{
-		std::clamp(sphere.center.x, aabb.min.x, aabb.max.x),
-		std::clamp(sphere.center.y, aabb.min.y, aabb.max.y),
-		std::clamp(sphere.center.z, aabb.min.z, aabb.max.z),
+		std::clamp(sphere.center.x,aabb.min.x,aabb.max.x),
+		std::clamp(sphere.center.y,aabb.min.y,aabb.max.y),
+		std::clamp(sphere.center.z,aabb.min.z,aabb.max.z),
 	};
 
 	//最近接点から球の中心との距離を求める
@@ -66,27 +67,27 @@ bool collision::IsCollision(const AABB& aabb, const Sphere& sphere) {
 /// <param name="obb">obb</param>
 /// <param name="sphere">球</param>
 /// <returns>衝突したかのフラグ</returns>
-bool collision::IsCollision(const OBB& obb, const Sphere& sphere) {
+bool collision::IsCollision(const OBB& obb,const Sphere& sphere) {
 	//OBBのワールド行列の逆行列を作成
-	Matrix4x4 obbWorldMatrixInverse = matrixUtility::MakeOBBWorldMatrix(obb.orientations, obb.center).Inverse();
+	Matrix4x4 obbWorldMatrixInverse = matrixUtility::MakeOBBWorldMatrix(obb.orientations,obb.center).Inverse();
 
 	//球の中心をOBB空間上に持っていく
 	Vector3 centerInOBBLocalSpace = sphere.center * obbWorldMatrixInverse;
 
 	//AABBをOBBのサイズをもとに作成
-	AABB aabbOBBLocal = { -obb.size,obb.size };
+	AABB aabbOBBLocal = {-obb.size,obb.size};
 
 	//OBB空間上に持って行った中心座標を元に球を作成
-	Sphere sphereOBBLocal = { centerInOBBLocalSpace,sphere.radius };
+	Sphere sphereOBBLocal = {centerInOBBLocalSpace,sphere.radius};
 
 	//AABBと球の衝突判定をする
-	return collision::IsCollision(aabbOBBLocal, sphereOBBLocal);
+	return collision::IsCollision(aabbOBBLocal,sphereOBBLocal);
 }
 
 // OBBとAABB/OBB
-bool collision::IsCollision(const OBB& obb1, const OBB& obb2) {
+bool collision::IsCollision(const OBB& obb1,const OBB& obb2) {
 	//分離軸
-	std::array<Vector3, 15> separationAxes;
+	std::array<Vector3,15> separationAxes;
 
 	//面の法線
 	//obb1
@@ -113,9 +114,9 @@ bool collision::IsCollision(const OBB& obb1, const OBB& obb2) {
 	separationAxes[14] = obb1.orientations[2].Cross(obb2.orientations[2]);
 
 	//obb1の各頂点
-	std::array<Vector3, 8> obb1Vertices;
+	std::array<Vector3,8> obb1Vertices;
 	//obb1のセンターからの長さ
-	std::array<Vector3, 3>obb1Length = {
+	std::array<Vector3,3>obb1Length = {
 		obb1.orientations[0] * obb1.size.x,
 		obb1.orientations[1] * obb1.size.y,
 		obb1.orientations[2] * obb1.size.z
@@ -141,9 +142,9 @@ bool collision::IsCollision(const OBB& obb1, const OBB& obb2) {
 	obb1Vertices[7] = obb1.center + obb1Length[0] - obb1Length[1] - obb1Length[2];
 
 	//obb2の各頂点
-	std::array<Vector3, 8> obb2Vertices;
+	std::array<Vector3,8> obb2Vertices;
 	//obb1のセンターからの長さ
-	std::array<Vector3, 3>obb2Length = {
+	std::array<Vector3,3>obb2Length = {
 		obb2.orientations[0] * obb2.size.x,
 		obb2.orientations[1] * obb2.size.y,
 		obb2.orientations[2] * obb2.size.z
@@ -168,10 +169,10 @@ bool collision::IsCollision(const OBB& obb1, const OBB& obb2) {
 	//右下
 	obb2Vertices[7] = obb2.center + obb2Length[0] - obb2Length[1] - obb2Length[2];
 
-	for (const Vector3& separationAxis : separationAxes) {
+	for(const Vector3& separationAxis : separationAxes) {
 		//ゼロ軸を無視
 		Vector3 axis = separationAxis;
-		if (axis.Length() < 1e-6f) {
+		if(axis.Length() < 1e-6f) {
 			continue;
 		}
 		axis = axis.Normalize();
@@ -183,29 +184,29 @@ bool collision::IsCollision(const OBB& obb1, const OBB& obb2) {
 		float obb2Min = obb1Min;
 
 		//obb1を分離軸で射影したときの最大値と最小値を求める
-		for (const Vector3& obb1Vertex : obb1Vertices) {
+		for(const Vector3& obb1Vertex : obb1Vertices) {
 			//すべての頂点を分離軸で射影する
 			float projected = obb1Vertex.Dot(axis);
 			//射影した点の最大値と最小値を求める
-			obb1Max = std::max(obb1Max, projected);
-			obb1Min = std::min(obb1Min, projected);
+			obb1Max = std::max(obb1Max,projected);
+			obb1Min = std::min(obb1Min,projected);
 		}
 
 		//obb2を分離軸で射影したときの最大値と最小値を求める
-		for (const Vector3& obb2Vertex : obb2Vertices) {
+		for(const Vector3& obb2Vertex : obb2Vertices) {
 			//すべての頂点を分離軸で射影する
 			float projected = obb2Vertex.Dot(axis);
 			//射影した点の最大値と最小値を求める
-			obb2Max = std::max(obb2Max, projected);
-			obb2Min = std::min(obb2Min, projected);
+			obb2Max = std::max(obb2Max,projected);
+			obb2Min = std::min(obb2Min,projected);
 		}
 
 		//差分が形状を分離軸に射影した長さ=L
 		float length = (obb1Max - obb1Min) + (obb2Max - obb2Min);
 
-		float longSpan = std::max(obb1Max, obb2Max) - std::min(obb1Min, obb2Min);
+		float longSpan = std::max(obb1Max,obb2Max) - std::min(obb1Min,obb2Min);
 
-		if (length < longSpan) {
+		if(length < longSpan) {
 			//分離軸が見つかったので衝突していない
 			return false;
 		}
@@ -215,7 +216,7 @@ bool collision::IsCollision(const OBB& obb1, const OBB& obb2) {
 }
 
 //平面と球の衝突判定
-bool collision::IsCollision(const primitiveData::Plane& plane, const primitiveData::Sphere& sphere) {
+bool collision::IsCollision(const primitiveData::Plane& plane,const primitiveData::Sphere& sphere) {
 	//球の中心点と平面との距離
 	float distance = std::abs(plane.normal.Dot(sphere.center) - plane.distance);
 
@@ -224,7 +225,7 @@ bool collision::IsCollision(const primitiveData::Plane& plane, const primitiveDa
 }
 
 //平面とAABBの衝突判定
-bool collision::IsCollision(const primitiveData::Plane& plane, const primitiveData::AABB& aabb) {
+bool collision::IsCollision(const primitiveData::Plane& plane,const primitiveData::AABB& aabb) {
 	//AABBの中心と半径を取得
 	Vector3 center = (aabb.min + aabb.max) / 2.0f;
 	Vector3 halfSize = (aabb.max - aabb.min) / 2.0f;
@@ -239,7 +240,7 @@ bool collision::IsCollision(const primitiveData::Plane& plane, const primitiveDa
 }
 
 //AABBが平面の外側に完全に出ているか
-bool IsOutsidePlaneAABB(const primitiveData::Plane& plane, const primitiveData::AABB& aabb) {
+bool IsOutsidePlaneAABB(const primitiveData::Plane& plane,const primitiveData::AABB& aabb) {
 	//AABBの中心
 	Vector3 center = (aabb.min + aabb.max) / 2.0f;
 
@@ -257,13 +258,53 @@ bool IsOutsidePlaneAABB(const primitiveData::Plane& plane, const primitiveData::
 }
 
 //視錐台と衝突判定
-bool collision::IsCollision(const primitiveData::Frustum& frustum, const primitiveData::AABB& aabb) {
-	for (const primitiveData::Plane& plane : frustum.planes) {
+bool collision::IsCollision(const primitiveData::Frustum& frustum,const primitiveData::AABB& aabb) {
+	for(const primitiveData::Plane& plane : frustum.planes) {
 		//平面の外にAABBがいた場合
-		if (IsOutsidePlaneAABB(plane, aabb)) {
+		if(IsOutsidePlaneAABB(plane,aabb)) {
 			return false;
 		}
 	}
 
+	return true;
+}
+
+//扇形と点の衝突判定
+bool collision::IsCollision(const primitiveData::Sector& sector,const Vector3& point) {
+	//扇形の先端からの差分ベクトル
+	Vector3 originToPoint = point - sector.origin;
+	//平面上の形なので高さを消す
+	originToPoint.y = 0.0f;
+	//差分ベクトルの長さ
+	float originToPointLength = originToPoint.Length();
+
+	//長さが0の場合
+	if(originToPointLength == 0.0f) {
+		return true;
+	}
+
+	//ベクトルの長さが半径を超えていたら
+	if(originToPointLength > sector.radius) {
+		return false;
+	}
+
+	//扇形が開いている方向
+	Vector3 forward = sector.forward;
+	//平面上の形なので高さを消す
+	forward.y = 0.0f;
+	//一応正規化
+	forward = forward.Normalize();
+
+	//扇形の向きと差分ベクトルで内積
+	float dot = forward.Dot(originToPoint.Normalize());
+	//左右の開きぐわいを取得
+	float edge = std::cos((sector.sweepAngleDegrees / 2.0f) * mathUtility::kRad);
+
+	//扇形の外側にいるなら
+	if(dot < edge) {
+		return false;
+	}
+
+	//内側にいるなら
 	return true;
 }

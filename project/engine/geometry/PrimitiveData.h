@@ -70,8 +70,16 @@ namespace primitiveData {
 			kFar,
 			kCount
 		};
-		std::array<Plane, kCount>planes = {};//面
-		std::array<Vector3, 8>localCorners = {};//ローカルの頂点
-		std::array<Vector3, 8>worldCorners = {};//ワールドの頂点
+		std::array<Plane,kCount>planes = {};//面
+		std::array<Vector3,8>localCorners = {};//ローカルの頂点
+		std::array<Vector3,8>worldCorners = {};//ワールドの頂点
+	};
+
+	//扇形
+	struct Sector {
+		Vector3 origin;//先端の座標
+		Vector3 forward;//向いていう方向
+		float radius;//先端から弧までの距離
+		float sweepAngleDegrees;//開き角(左右合わせた開き角)
 	};
 }

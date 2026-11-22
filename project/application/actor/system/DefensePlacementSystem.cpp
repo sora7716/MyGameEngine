@@ -72,6 +72,11 @@ void DefensePlacementSystem::Update() {
 	UpdatePlacementPreviewObject();
 }
 
+//敵の設定
+void DefensePlacementSystem::SetEnemy(GameObject* enemyObject) {
+	enemyObject_ = enemyObject;
+}
+
 //設置予定を表示/非表示の取得
 PlacementPreviewComponent* DefensePlacementSystem::GetPlacementPreview() const {
 	return placementPreviewComponent_;
@@ -242,6 +247,9 @@ void DefensePlacementSystem::CreateDefenseObject() {
 	//モデルによってコンポーネントを変更する
 	AddComponentsByModelName(modelName,gameObject);
 
+	//モデルごとにインジケーターを生成する
+	CreateRangeIndicator(modelName,gameObject);
+
 	//衝突判定を設定
 	BoxCollider* boxCollider = gameObject->AddComponent<BoxCollider>();
 	//モデル名によってコライダー形や位置を変更
@@ -331,7 +339,8 @@ void DefensePlacementSystem::AddComponentsByModelName(const std::string& modelNa
 	}
 	//モデルが弓タワーなら
 	if(modelName == GetModelNameByModelType(DefenseModelType::kBow)) {
-		gameObject->AddComponent<BowTower>();
+		BowTower* bowTower = gameObject->AddComponent<BowTower>();
+		bowTower->SetTarget(enemyObject_);
 	}
 	//モデルが氷結タワーなら
 	if(modelName == GetModelNameByModelType(DefenseModelType::kFreeze)) {
@@ -344,6 +353,24 @@ void DefensePlacementSystem::AddComponentsByModelName(const std::string& modelNa
 	//モデルが地雷なら
 	if(modelName == GetModelNameByModelType(DefenseModelType::kGameMine)) {
 		gameObject->AddComponent<GameMine>();
+	}
+}
+
+//ディフェンスオブジェクトごとにインジケーターの生成
+void DefensePlacementSystem::CreateRangeIndicator(const std::string& modelName,GameObject* defenseObject) {
+	//弓モデルの場合
+	if(modelName == GetModelNameByModelType(DefenseModelType::kBow)) {
+		GameObject* indicator = scene_->CreateGameObject();
+		//インジケーターのTransform
+		Transform& indicatorTransform = indicator->GetTransform();
+		indicatorTransform.translate.y = -0.45f;
+		indicatorTransform.SetEulerAngleDegrees({0.0f,180.0f,0.0f});
+		//親子付け
+		indicator->AttachTo(defenseObject,false);
+
+		//Object3d
+		Object3d* object3d = indicator->AddComponent<Object3d>();
+		object3d->SetModel("scanRange");
 	}
 }
 

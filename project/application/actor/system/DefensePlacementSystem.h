@@ -71,6 +71,12 @@ public:
 	void Update();
 
 	/// <summary>
+	/// 敵の設定
+	/// </summary>
+	/// <param name="enemyObject">敵</param>
+	void SetEnemy(GameObject* enemyObject);
+
+	/// <summary>
 	/// 設置予定を表示/非表示の取得
 	/// </summary>
 	/// <returns>設置予定を表示/非表示</returns>
@@ -132,6 +138,13 @@ private://メンバ関数
 	void AddComponentsByModelName(const std::string& modelName,GameObject* gameObject);
 
 	/// <summary>
+	/// ディフェンスオブジェクトごとにインジケーターの生成
+	/// </summary>
+	/// <param name="modelName">モデル名</param>
+	/// <param name="defenseObject">ゲームオブジェクト</param>
+	void CreateRangeIndicator(const std::string& modelName,GameObject*defenseObject);
+
+	/// <summary>
 	/// モデル名をモデルタイプから取得
 	/// </summary>
 	/// <param name="modelType">モデルタイプ</param>
@@ -146,6 +159,9 @@ private://メンバ変数
 
 	//プレイヤーのゲームオブジェクト
 	GameObject* playerObject_ = nullptr;
+
+	//敵のゲームオブジェクト
+	GameObject* enemyObject_ = nullptr;
 
 	//守るオブジェクトのモデル名の一覧
 	std::vector<std::string>defenseObjectModelNameList_;

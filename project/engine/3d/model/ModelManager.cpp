@@ -5,23 +5,23 @@
 #include <cassert>
 
 //生成
-std::unique_ptr<ModelManager> ModelManager::Create(ConstructorKey key, DirectXBase* directXBase, TextureManager* textureManager, ShaderManager* shaderManager){
+std::unique_ptr<ModelManager> ModelManager::Create(ConstructorKey key,DirectXBase* directXBase,TextureManager* textureManager,ShaderManager* shaderManager) {
 	//生成
 	std::unique_ptr<ModelManager>instance = std::make_unique<ModelManager>(key);
 	//初期化
-	instance->Initialize(directXBase, textureManager, shaderManager);
+	instance->Initialize(directXBase,textureManager,shaderManager);
 
 	return instance;
 }
 
 //コンストラクタ
-ModelManager::ModelManager(ConstructorKey){}
+ModelManager::ModelManager(ConstructorKey) {}
 
 //デストラクタ
-ModelManager::~ModelManager(){}
+ModelManager::~ModelManager() {}
 
 //初期化
-void ModelManager::Initialize(DirectXBase* directXBase, TextureManager* textureManager, ShaderManager* shaderManager){
+void ModelManager::Initialize(DirectXBase* directXBase,TextureManager* textureManager,ShaderManager* shaderManager) {
 	//DirectXの基盤部分の記録
 	assert(directXBase);
 	directXBase_ = directXBase;
@@ -35,16 +35,16 @@ void ModelManager::Initialize(DirectXBase* directXBase, TextureManager* textureM
 }
 
 //プリミティブなモデルの生成
-void ModelManager::CreatePrimitiveModel(){
+void ModelManager::CreatePrimitiveModel() {
 	//モデル
 	std::unique_ptr<Model>model = nullptr;
 	//設定項目
-	primitiveMeshFactory::Desc desc = {}; 
+	primitiveMeshFactory::Desc desc = {};
 
 	//Cubeモデルの生成(半径1.0)
-	model = Model::CreateModel(directXBase_, { primitiveMeshFactory::CreateCube() }, shaderManager_);
+	model = Model::CreateModel(directXBase_,{primitiveMeshFactory::CreateCube()},shaderManager_);
 	//Cubeモデルの追加(半径0.5)
-	models_.insert(std::make_pair("cube", std::move(model)));
+	models_.insert(std::make_pair("cube",std::move(model)));
 
 	//ヒットボックス用のモデルの生成(半径0.8)
 	desc.size = {0.8f,0.8f,0.8f};
@@ -53,58 +53,77 @@ void ModelManager::CreatePrimitiveModel(){
 	models_.insert(std::make_pair("hitBox",std::move(model)));
 
 	//Tileモデルの生成(半径0.25)
-	desc.size = { 0.5f,0.5f,0.5f };
-	model = Model::CreateModel(directXBase_, { primitiveMeshFactory::CreateCube(desc) }, shaderManager_);
+	desc.size = {0.5f,0.5f,0.5f};
+	model = Model::CreateModel(directXBase_,{primitiveMeshFactory::CreateCube(desc)},shaderManager_);
 	//Tileモデルの追加(半径0.25)
-	models_.insert(std::make_pair("tile", std::move(model)));
+	models_.insert(std::make_pair("tile",std::move(model)));
 
 	//Sphereモデルの生成(分割数16)
-	model = Model::CreateModel(directXBase_, { primitiveMeshFactory::CreateSphere() }, shaderManager_);
+	model = Model::CreateModel(directXBase_,{primitiveMeshFactory::CreateSphere()},shaderManager_);
 	//Sphereモデル(分割数16)の追加
-	models_.insert(std::make_pair("sphere_16", std::move(model)));
+	models_.insert(std::make_pair("sphere_16",std::move(model)));
 
 	//Sphereモデルの生成(分割数32)
 	desc.radialSubdivision = 32;
-	model = Model::CreateModel(directXBase_, { primitiveMeshFactory::CreateSphere(desc) }, shaderManager_);
+	model = Model::CreateModel(directXBase_,{primitiveMeshFactory::CreateSphere(desc)},shaderManager_);
 	//Sphereモデル(分割数32)の追加
-	models_.insert(std::make_pair("sphere_32", std::move(model)));
+	models_.insert(std::make_pair("sphere_32",std::move(model)));
 
 	//Planeモデルの生成
-	model = Model::CreateModel(directXBase_, { primitiveMeshFactory::CreatePlane() }, shaderManager_);
+	model = Model::CreateModel(directXBase_,{primitiveMeshFactory::CreatePlane()},shaderManager_);
 	//Planeモデルの追加
-	models_.insert(std::make_pair("plane", std::move(model)));
+	models_.insert(std::make_pair("plane",std::move(model)));
 
-	////Capsuleモデルの生成
-	//model = Model::CreateModel(directXBase_, { primitiveMeshFactory::CreateCapsule() });
-	////Capsuleモデルの追加
-	//models_.insert(std::make_pair("capsule", std::move(model)));
+	//Capsuleモデルの生成
+	model = Model::CreateModel(directXBase_,{primitiveMeshFactory::CreateCapsule()},shaderManager_);
+	//Capsuleモデルの追加
+	models_.insert(std::make_pair("capsule",std::move(model)));
 }
 
-//モデルの追加
-void ModelManager::AddModel(const std::string& name, const std::string& modelFileName){
+//モデルの追加(ファイル読み込み)
+void ModelManager::AddModel(const std::string& name,const std::string& modelFileName) {
 	//読み込み済みならモデルを検索
-	if (models_.contains(name)){
+	if(models_.contains(name)) {
 		//読み込み済みなら早期return
 		return;
 	}
 	//モデルの生成とファイル読み込み、初期化
-	std::unique_ptr<Model>model = Model::CreateModel(directXBase_, modelFileName, shaderManager_);
+	std::unique_ptr<Model>model = Model::CreateModel(directXBase_,modelFileName,shaderManager_);
 
 	//テクスチャの読み込み
-	for (const MaterialTexturePaths& textureFilePaths : model->GetModelData().materialTexturePaths){
+	for(const MaterialTexturePaths& textureFilePaths : model->GetModelData().materialTexturePaths) {
 		textureManager_->AddTexture(textureFilePaths.textureFilePath);
 	}
 
 	//モデルをmapコンテナに格納する
-	models_.insert(std::make_pair(name, std::move(model)));
+	models_.insert(std::make_pair(name,std::move(model)));
+}
+
+//モデルの追加(メッシュデータ)
+void ModelManager::AddModel(const std::string& name,const MeshData& meshData) {
+	//読み込み済みならモデルを検索
+	if(models_.contains(name)) {
+		//読み込み済みなら早期return
+		return;
+	}
+	//モデルの生成とファイル読み込み、初期化
+	std::unique_ptr<Model>model = Model::CreateModel(directXBase_,{meshData},shaderManager_);
+
+	//テクスチャの読み込み
+	for(const MaterialTexturePaths& textureFilePaths : model->GetModelData().materialTexturePaths) {
+		textureManager_->AddTexture(textureFilePaths.textureFilePath);
+	}
+
+	//モデルをmapコンテナに格納する
+	models_.insert(std::make_pair(name,std::move(model)));
 }
 
 //モデルの検索
-Model* ModelManager::FindModel(const std::string& name){
+Model* ModelManager::FindModel(const std::string& name) {
 	auto it = models_.find(name);
 
 	//モデルのイテレーターが末尾と一緒だった場合
-	if (it == models_.end()){
+	if(it == models_.end()) {
 		return nullptr;
 	}
 

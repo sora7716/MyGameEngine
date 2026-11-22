@@ -184,6 +184,21 @@
     <Filter Include="application\actor\defenseObject">
       <UniqueIdentifier>{3ed5306e-73da-443c-bbb2-41d4351ede43}</UniqueIdentifier>
     </Filter>
+    <Filter Include="application\actor\defenseObject\bowTower">
+      <UniqueIdentifier>{81bba1db-b897-45d8-a169-0194eb3551f2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="application\actor\defenseObject\freezeTower">
+      <UniqueIdentifier>{f32350c1-f467-416b-b8d9-8a9c847c1dfb}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="application\actor\defenseObject\wall">
+      <UniqueIdentifier>{1618b375-5147-402d-9895-79a44b5c509c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="application\actor\defenseObject\gameMine">
+      <UniqueIdentifier>{4be9072d-5664-4b6c-8f31-01aba52c4e7e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="application\actor\defenseObject\thunderTower">
+      <UniqueIdentifier>{2fa085b7-2099-4a79-b4e4-1f07f775ff16}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="engine\main.cpp">
@@ -585,19 +600,28 @@
     <ClCompile Include="application\actor\system\CreateFieldSystem.cpp">
       <Filter>application\actor\system</Filter>
     </ClCompile>
-    <ClCompile Include="application\actor\defenseObject\BowTower.cpp">
-      <Filter>application\actor\defenseObject</Filter>
+    <ClCompile Include="application\actor\defenseObject\bowTower\BowTower.cpp">
+      <Filter>application\actor\defenseObject\bowTower</Filter>
     </ClCompile>
-    <ClCompile Include="application\actor\defenseObject\FreezeTower.cpp">
-      <Filter>application\actor\defenseObject</Filter>
+    <ClCompile Include="application\actor\defenseObject\freezeTower\FreezeTower.cpp">
+      <Filter>application\actor\defenseObject\freezeTower</Filter>
     </ClCompile>
-    <ClCompile Include="application\actor\defenseObject\GameMine.cpp">
-      <Filter>application\actor\defenseObject</Filter>
+    <ClCompile Include="application\actor\defenseObject\gameMine\GameMine.cpp">
+      <Filter>application\actor\defenseObject\gameMine</Filter>
     </ClCompile>
-    <ClCompile Include="application\actor\defenseObject\ThunderTower.cpp">
-      <Filter>application\actor\defenseObject</Filter>
+    <ClCompile Include="application\actor\defenseObject\thunderTower\ThunderTower.cpp">
+      <Filter>application\actor\defenseObject\thunderTower</Filter>
     </ClCompile>
-    <ClCompile Include="application\actor\defenseObject\Wall.cpp">
+    <ClCompile Include="application\actor\defenseObject\wall\Wall.cpp">
+      <Filter>application\actor\defenseObject\wall</Filter>
+    </ClCompile>
+    <ClCompile Include="application\actor\IAnimation.cpp">
+      <Filter>application\actor</Filter>
+    </ClCompile>
+    <ClCompile Include="application\actor\defenseObject\bowTower\BowTowerScanAnimation.cpp">
+      <Filter>application\actor\defenseObject\bowTower</Filter>
+    </ClCompile>
+    <ClCompile Include="application\actor\defenseObject\Indicator.cpp">
       <Filter>application\actor\defenseObject</Filter>
     </ClCompile>
   </ItemGroup>
@@ -1049,19 +1073,28 @@
     <ClInclude Include="application\actor\system\CreateFieldSystem.h">
       <Filter>application\actor\system</Filter>
     </ClInclude>
-    <ClInclude Include="application\actor\defenseObject\BowTower.h">
-      <Filter>application\actor\defenseObject</Filter>
+    <ClInclude Include="application\actor\defenseObject\bowTower\BowTower.h">
+      <Filter>application\actor\defenseObject\bowTower</Filter>
     </ClInclude>
-    <ClInclude Include="application\actor\defenseObject\FreezeTower.h">
-      <Filter>application\actor\defenseObject</Filter>
+    <ClInclude Include="application\actor\defenseObject\freezeTower\FreezeTower.h">
+      <Filter>application\actor\defenseObject\freezeTower</Filter>
     </ClInclude>
-    <ClInclude Include="application\actor\defenseObject\GameMine.h">
-      <Filter>application\actor\defenseObject</Filter>
+    <ClInclude Include="application\actor\defenseObject\gameMine\GameMine.h">
+      <Filter>application\actor\defenseObject\gameMine</Filter>
     </ClInclude>
-    <ClInclude Include="application\actor\defenseObject\ThunderTower.h">
-      <Filter>application\actor\defenseObject</Filter>
+    <ClInclude Include="application\actor\defenseObject\thunderTower\ThunderTower.h">
+      <Filter>application\actor\defenseObject\thunderTower</Filter>
     </ClInclude>
-    <ClInclude Include="application\actor\defenseObject\Wall.h">
+    <ClInclude Include="application\actor\defenseObject\wall\Wall.h">
+      <Filter>application\actor\defenseObject\wall</Filter>
+    </ClInclude>
+    <ClInclude Include="application\actor\IAnimation.h">
+      <Filter>application\actor</Filter>
+    </ClInclude>
+    <ClInclude Include="application\actor\defenseObject\bowTower\BowTowerScanAnimation.h">
+      <Filter>application\actor\defenseObject\bowTower</Filter>
+    </ClInclude>
+    <ClInclude Include="application\actor\defenseObject\Indicator.h">
       <Filter>application\actor\defenseObject</Filter>
     </ClInclude>
   </ItemGroup>

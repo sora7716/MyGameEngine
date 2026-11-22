@@ -11,6 +11,7 @@ namespace primitiveMeshFactory {
 		Vector3 size = Vector3::GetOne();
 		uint32_t radialSubdivision = 16;
 		uint32_t verticalSubdivision = 16;
+		float sweepAngleDegrees = 360.0f;
 		float radius = 1.0f;
 	};
 	//関数ポインタの型定義
@@ -44,5 +45,12 @@ namespace primitiveMeshFactory {
 	/// <param name="desc">設定データ</param>
 	/// <returns>カプセルメッシュ</returns>
 	MeshData CreateCapsule(const Desc& desc = {});
+
+	/// <summary>
+	/// 扇形の生成
+	/// </summary>
+	/// <param name="desc">デスク</param>
+	/// <returns>扇形メッシュ</returns>
+	MeshData CreateSector(const Desc& desc = {});
 }
 

@@ -1,11 +1,11 @@
-#include "IAnimation.h"
+#include "IState.h"
 #include "GameObject.h"
 #include "Object3d.h"
 #include "Logger.h"
 #include <cassert>
 
 //セットアップ
-void IAnimation::Setup(GameObject* gameObject) {
+void IState::Setup(GameObject* gameObject) {
 	//ゲームオブジェクトの記録
 	assert(gameObject);
 	gameObject_ = gameObject;

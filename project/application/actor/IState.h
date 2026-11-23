@@ -5,18 +5,19 @@ class GameObject;
 class Object3d;
 
 /// <summary>
-/// アニメーションのインターフェース
+/// ステートのインターフェース
 /// </summary>
-class IAnimation {
+class IState {
+public://メンバ関数
 	/// <summary>
 	/// コンストラクタ
 	/// </summary>
-	IAnimation();
+	IState();
 
 	/// <summary>
 	/// デストラクタ
 	/// </summary>
-	virtual ~IAnimation();
+	virtual ~IState();
 
 	/// <summary>
 	/// セットアップ
@@ -25,7 +26,7 @@ class IAnimation {
 	virtual void Setup(GameObject* gameObject);
 
 	/// <summary>
-	/// 初期化
+	/// 入った瞬間
 	/// </summary>
 	virtual void Enter() = 0;
 
@@ -43,7 +44,7 @@ class IAnimation {
 	/// 複製
 	/// </summary>
 	/// <returns>複製</returns>
-	virtual std::unique_ptr<IAnimation>Clone() = 0;
+	virtual std::unique_ptr<IState>Clone() = 0;
 protected://メンバ変数
 	//ゲームオブジェクト
 	GameObject* gameObject_ = nullptr;

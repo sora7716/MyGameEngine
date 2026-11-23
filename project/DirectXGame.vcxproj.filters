@@ -615,14 +615,14 @@
     <ClCompile Include="application\actor\defenseObject\wall\Wall.cpp">
       <Filter>application\actor\defenseObject\wall</Filter>
     </ClCompile>
-    <ClCompile Include="application\actor\IAnimation.cpp">
+    <ClCompile Include="application\actor\IState.h.cpp">
       <Filter>application\actor</Filter>
-    </ClCompile>
-    <ClCompile Include="application\actor\defenseObject\bowTower\BowTowerScanAnimation.cpp">
-      <Filter>application\actor\defenseObject\bowTower</Filter>
     </ClCompile>
     <ClCompile Include="application\actor\defenseObject\Indicator.cpp">
       <Filter>application\actor\defenseObject</Filter>
+    </ClCompile>
+    <ClCompile Include="application\actor\defenseObject\bowTower\BowTowerScanState.cpp">
+      <Filter>ソース ファイル</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -1088,14 +1088,14 @@
     <ClInclude Include="application\actor\defenseObject\wall\Wall.h">
       <Filter>application\actor\defenseObject\wall</Filter>
     </ClInclude>
-    <ClInclude Include="application\actor\IAnimation.h">
+    <ClInclude Include="application\actor\IState.h">
       <Filter>application\actor</Filter>
-    </ClInclude>
-    <ClInclude Include="application\actor\defenseObject\bowTower\BowTowerScanAnimation.h">
-      <Filter>application\actor\defenseObject\bowTower</Filter>
     </ClInclude>
     <ClInclude Include="application\actor\defenseObject\Indicator.h">
       <Filter>application\actor\defenseObject</Filter>
+    </ClInclude>
+    <ClInclude Include="application\actor\defenseObject\bowTower\BowTowerScanState.h">
+      <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

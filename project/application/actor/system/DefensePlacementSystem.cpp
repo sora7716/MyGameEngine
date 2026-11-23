@@ -56,6 +56,18 @@ void DefensePlacementSystem::Initialize(BaseScene* scene,MapChipField* mapChipFi
 
 	//オブジェクトの設置予定地の生成
 	CreatePlacementPreview();
+
+	//テクスチャファイルパス
+	MaterialTexturePaths textureFilePaths = {
+		.textureFilePath = "textures/white1x1.png",
+		.environmentMap = "textures/skybox_cube.dds"
+	};
+
+	//弓のインジケータのマテリアルを作成
+	scene->AddMaterialInstance("BowIndicatorMaterial",textureFilePaths);
+	MaterialInstance* bowIndicatorMat = scene->FindMaterialInstance("BowIndicatorMaterial");
+	bowIndicatorMat->SetParameter("color",Color::ColorCodeTransform("#F5AD5580"));
+	bowIndicatorMat->SetParameter("enabledLighting",uint32_t{0});
 }
 
 //更新
@@ -389,6 +401,7 @@ void DefensePlacementSystem::CreateRangeIndicator(const std::string& modelName,G
 		//モデルを設定
 		Object3d* object3d = visual->AddComponent<Object3d>();
 		object3d->SetModel("scanRange");
+		object3d->SetMaterialInstance(0,scene_->GetMaterialInstance("BowIndicatorMaterial"));
 
 		//弓のタワーを取得
 		BowTower* bowTower = defenseObject->GetComponent<BowTower>();

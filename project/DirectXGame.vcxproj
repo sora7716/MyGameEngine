@@ -33,7 +33,7 @@
     <ClCompile Include="application\actor\command\StickMovementCommand.cpp" />
     <ClCompile Include="application\actor\defenseObject\BaseDefenseObject.cpp" />
     <ClCompile Include="application\actor\defenseObject\bowTower\BowTower.cpp" />
-    <ClCompile Include="application\actor\defenseObject\bowTower\BowTowerScanAnimation.cpp" />
+    <ClCompile Include="application\actor\defenseObject\bowTower\BowTowerScanState.cpp" />
     <ClCompile Include="application\actor\defenseObject\freezeTower\FreezeTower.cpp" />
     <ClCompile Include="application\actor\defenseObject\gameMine\GameMine.cpp" />
     <ClCompile Include="application\actor\defenseObject\Indicator.cpp" />
@@ -44,7 +44,7 @@
     <ClCompile Include="application\actor\enemy\EnemyRecoverState.cpp" />
     <ClCompile Include="application\actor\enemy\EnemyNormalState.cpp" />
     <ClCompile Include="application\actor\enemy\IEnemyState.cpp" />
-    <ClCompile Include="application\actor\IAnimation.cpp" />
+    <ClCompile Include="application\actor\IState.h.cpp" />
     <ClCompile Include="application\actor\mapChip\MapChipCollider.cpp" />
     <ClCompile Include="application\actor\mapChip\MapChipField.cpp" />
     <ClCompile Include="application\actor\player\IPlayerState.cpp" />
@@ -478,7 +478,7 @@
     <ClInclude Include="application\actor\command\StickMovementCommand.h" />
     <ClInclude Include="application\actor\defenseObject\BaseDefenseObject.h" />
     <ClInclude Include="application\actor\defenseObject\bowTower\BowTower.h" />
-    <ClInclude Include="application\actor\defenseObject\bowTower\BowTowerScanAnimation.h" />
+    <ClInclude Include="application\actor\defenseObject\bowTower\BowTowerScanState.h" />
     <ClInclude Include="application\actor\defenseObject\freezeTower\FreezeTower.h" />
     <ClInclude Include="application\actor\defenseObject\gameMine\GameMine.h" />
     <ClInclude Include="application\actor\defenseObject\Indicator.h" />
@@ -489,7 +489,7 @@
     <ClInclude Include="application\actor\enemy\EnemyRecoverState.h" />
     <ClInclude Include="application\actor\enemy\EnemyNormalState.h" />
     <ClInclude Include="application\actor\enemy\IEnemyState.h" />
-    <ClInclude Include="application\actor\IAnimation.h" />
+    <ClInclude Include="application\actor\IState.h" />
     <ClInclude Include="application\actor\mapChip\MapChipCollider.h" />
     <ClInclude Include="application\actor\mapChip\MapChipData.h" />
     <ClInclude Include="application\actor\mapChip\MapChipField.h" />

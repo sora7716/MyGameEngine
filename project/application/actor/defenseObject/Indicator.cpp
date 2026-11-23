@@ -139,7 +139,7 @@ void Indicator::HiddenAnimation() {
 		//現在の時間を計測
 		currentSecond_ += mathUtility::GetDeltaTime();
 		//線形補間
-		transform.scale = Vector3::Lerp(scaleAtCollisionExit_,scaleAtCollision_,currentSecond_ / endSecond_);
+		transform.scale = Vector3::Lerp(scaleAtCollisionExit_,scaleAtCollision_,easing::EaseInOutQuart(currentSecond_ / endSecond_));
 	} else {
 		//現在の時間が終わる時間以上なら
 		//時間を固定

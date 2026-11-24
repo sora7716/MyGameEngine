@@ -59,7 +59,7 @@ public://メンバ関数
 	/// 親子付け
 	/// </summary>
 	/// <param name="parentObject">親のオブジェクト</param>
-	/// <param name="worldPositionStays">trueならワールドの見た目を保つ,falseならローカルのあt来をそのまま使う</param>
+	/// <param name="worldPositionStays">trueならワールドの見た目を保つ,falseならローカルをそのまま使う</param>
 	/// <returns>成功したか</returns>
 	bool AttachTo(GameObject* parentObject,bool worldPositionStays = true);
 

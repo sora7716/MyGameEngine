@@ -13,10 +13,7 @@ JumpComponent::~JumpComponent() {
 }
 
 //セットアップ
-void JumpComponent::Setup(RigidBody* rigidBody,float jumpSpeed) {
-	//リジッドボディの記録
-	assert(rigidBody);
-	rigidBody_ = rigidBody;
+void JumpComponent::Setup(float jumpSpeed) {
 	//ジャンプの速度を記録
 	jumpSpeed_ = jumpSpeed;
 }
@@ -76,4 +73,9 @@ std::string JumpComponent::GetTypeName() const {
 //ジャンプする要求を設定
 void JumpComponent::SetJumpRequest(bool request) {
 	jumpRequest_ = request;
+}
+
+//リジッドボディの設定
+void JumpComponent::SetRigidBody(RigidBody* rigidBody) {
+	rigidBody_ = rigidBody;
 }

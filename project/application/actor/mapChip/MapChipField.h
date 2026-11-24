@@ -78,6 +78,13 @@ public://メンバ関数
 	/// <param name="index"></param>
 	/// <returns></returns>
 	mapChipDesc::Rect GetRectByIndex(Vector3Int index);
+
+	/// <summary>
+	/// 衝突しているのがブロックかを判定する
+	/// </summary>
+	/// <param name="index">インデックス</param>
+	/// <returns>衝突しているか</returns>
+	bool CheckOnCollisionMapChipBlock(const Vector3Int& index);
 private://メンバ関数
 	/// <summary>
 	/// マップチップのリセット

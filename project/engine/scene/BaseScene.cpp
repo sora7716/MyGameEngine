@@ -110,7 +110,7 @@ void BaseScene::DeleteGameObject(GameObject* target,CollisionSystem* collisionSy
 				gameObject->Detach();
 				//Object3dがあった場合
 				Object3d* object3d = gameObject->GetComponent<Object3d>();
-				if(!object3d) {
+				if(object3d) {
 					object3d->Detach();
 				}
 			}
@@ -229,7 +229,13 @@ void BaseScene::AddMaterialInstance(const std::string& name,const MaterialTextur
 
 	//存在していない場合
 	std::shared_ptr<MaterialInstance>materialInstance = std::make_shared<MaterialInstance>();
-	materialInstance->Initialize(textureFilePaths,sceneContext_.shaderManager);
+	//テクスチャファイルパスを作成
+	std::string directoryPath = "engine/resources";
+	MaterialTexturePaths paths = {
+		.textureFilePath = directoryPath + "/" + textureFilePaths.textureFilePath,
+		.environmentMap = directoryPath + "/" + textureFilePaths.environmentMap,
+	};
+	materialInstance->Initialize(paths,sceneContext_.shaderManager);
 
 	//値の初期化
 	materialInstance->SetPixelShaderFileName(pixelShaderName,"gMaterial");

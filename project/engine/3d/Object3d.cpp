@@ -239,7 +239,9 @@ Matrix4x4 Object3d::MakeRenderWorldMatrix(const Matrix4x4& cameraWorldMatrix) co
 	}
 
 	//ビルボードの作成
-	Matrix4x4 renderWorldMatrix = matrixUtility::MakeBillboardAffineMatrix(cameraWorldMatrix,gameObject->GetTransform());
+	Transform billboardTransform = gameObject->GetTransform();
+	billboardTransform.translate = gameObject->GetWorldPos();
+	Matrix4x4 renderWorldMatrix = matrixUtility::MakeBillboardAffineMatrix(cameraWorldMatrix,billboardTransform);
 
 	//一時的に作成したワールド行列を返す
 	return renderWorldMatrix;

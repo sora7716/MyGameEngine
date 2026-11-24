@@ -24,10 +24,9 @@ public://メンバ関数
 	/// <summary>
 	/// セットアップ
 	/// </summary>
-	/// <param name="rigidBody">リジッドボディ</param>
 	/// <param name="moveSpeed">移動速度</param>
 	/// <param name="moveResponse">移動の際のレスポンスを設定</param>
-	void Setup(RigidBody* rigidBody,float moveSpeed,float moveResponse);
+	void Setup(float moveSpeed,float moveResponse);
 
 	/// <summary>
 	/// 初期化
@@ -75,6 +74,12 @@ public://メンバ関数
 	/// </summary>
 	/// <returns>方向ベクトル</returns>
 	const Vector3& GetDirection()const;
+
+	/// <summary>
+	/// リジッドボディの設定
+	/// </summary>
+	/// <param name="rigidBody">リジッドボディ</param>
+	void SetRigidBody(RigidBody*rigidBody);
 private://メンバ変数
 	//移動の際のレスポンス
 	float moveResponse_ = 1.0f;

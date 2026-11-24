@@ -154,6 +154,9 @@ void CollisionSystem::CollectCollider(const std::vector<std::unique_ptr<GameObje
 				continue;
 			}
 
+			//形の更新
+			collider->UpdateGeometry();
+
 			//メンバ変数に追加
 			colliders_.push_back(collider);
 		}

@@ -1,6 +1,7 @@
 #include "BoxCollider.h"
 #include "GameObject.h"
 #include "MatrixUtility.h"
+#include <cmath>
 
 //コンストラクタ
 BoxCollider::BoxCollider(GameObject* gameObject) :BaseCollider(gameObject) {
@@ -14,18 +15,19 @@ BoxCollider::~BoxCollider() {
 void BoxCollider::Initialize() {
 	//基底クラスの初期化
 	BaseCollider::Initialize();
-	halfSize_ = Vector3::GetOne() / 2.0f;
+	size_ = Vector3::GetOne();
+	halfSize_ = size_ / 2.0f;
 
 	//OBBの初期化
 	obb_.Initialize();
 }
 
-//更新
-void BoxCollider::Update() {
-	//基底クラスの更新
-	BaseCollider::Update();
+//形の更新
+void BoxCollider::UpdateGeometry() {
+	//ハーフサイズを計算
+	halfSize_ = size_ / 2.0f;
 	//中心座標
-	obb_.center = gameObject_->GetTransform().translate + offset_;
+	obb_.center = gameObject_->GetWorldPos() + offset_;
 
 	//ハーフサイズのより0の方が大きくなったら
 	if(halfSize_.x <= 0.0f) {
@@ -46,16 +48,24 @@ void BoxCollider::Update() {
 	matrixUtility::MakeOBBRotateMatrix(obb_.orientations,gameObject_->GetTransform().rotate);
 }
 
+//更新
+void BoxCollider::Update() {
+	//基底クラスの更新
+	BaseCollider::Update();
+	//形の更新
+	UpdateGeometry();
+}
+
 //プロパティ一覧を登
 void BoxCollider::RegisterProperties(PropertyRegistry* registry) {
 	BaseCollider::RegisterProperties(registry);
 	registry->Add("offset",offset_);
-	registry->Add("halfSize",halfSize_);
+	registry->Add("size",size_);
 }
 
-//ハーフサイズの設定
-void BoxCollider::SetHalfSize(const Vector3& halfSize) {
-	halfSize_ = halfSize;
+//サイズの設定
+void BoxCollider::SetSize(const Vector3& size) {
+	size_ = size;
 }
 
 //オフセットの設定
@@ -70,9 +80,21 @@ const primitiveData::OBB& BoxCollider::GetOBB() {
 
 //AABBの取得
 primitiveData::AABB BoxCollider::GetAABB() {
+	//開店前の各軸の半分の長さ
+	const float sizes[3] = {obb_.size.x,obb_.size.y,obb_.size.z};
+
+	//開店後にワールドの各軸へ伸びる長さ
+	Vector3 extent = {};
+	for(uint32_t i = 0; i < 3; i++) {
+		const Vector3& axis = obb_.orientations[i];
+		extent.x += std::abs(axis.x) * sizes[i];
+		extent.y += std::abs(axis.y) * sizes[i];
+		extent.z += std::abs(axis.z) * sizes[i];
+	}
+
 	primitiveData::AABB aabb = {
-		.min = obb_.center - obb_.size,
-		.max = obb_.center + obb_.size
+		.min = obb_.center - extent,
+		.max = obb_.center + extent
 	};
 	return aabb;
 }

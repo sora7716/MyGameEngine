@@ -178,6 +178,27 @@
     <Filter Include="engine\math\easing">
       <UniqueIdentifier>{7b683fad-30db-4f2e-9fa0-9a1c7bbbf393}</UniqueIdentifier>
     </Filter>
+    <Filter Include="application\actor\system">
+      <UniqueIdentifier>{f347f8f1-7199-485d-8c83-993da8646e23}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="application\actor\defenseObject">
+      <UniqueIdentifier>{3ed5306e-73da-443c-bbb2-41d4351ede43}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="application\actor\defenseObject\bowTower">
+      <UniqueIdentifier>{81bba1db-b897-45d8-a169-0194eb3551f2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="application\actor\defenseObject\freezeTower">
+      <UniqueIdentifier>{f32350c1-f467-416b-b8d9-8a9c847c1dfb}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="application\actor\defenseObject\wall">
+      <UniqueIdentifier>{1618b375-5147-402d-9895-79a44b5c509c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="application\actor\defenseObject\gameMine">
+      <UniqueIdentifier>{4be9072d-5664-4b6c-8f31-01aba52c4e7e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="application\actor\defenseObject\thunderTower">
+      <UniqueIdentifier>{2fa085b7-2099-4a79-b4e4-1f07f775ff16}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="engine\main.cpp">
@@ -381,23 +402,8 @@
     <ClCompile Include="engine\collision\BaseCollider.cpp">
       <Filter>engine\collision</Filter>
     </ClCompile>
-    <ClCompile Include="application\actor\enemy\Enemy.cpp">
-      <Filter>application\actor\enemy</Filter>
-    </ClCompile>
-    <ClCompile Include="application\actor\enemy\EnemyDamageState.cpp">
-      <Filter>application\actor\enemy</Filter>
-    </ClCompile>
-    <ClCompile Include="application\actor\enemy\IEnemyState.cpp">
-      <Filter>application\actor\enemy</Filter>
-    </ClCompile>
     <ClCompile Include="engine\physics\RigidBody.cpp">
       <Filter>engine\physics</Filter>
-    </ClCompile>
-    <ClCompile Include="application\actor\enemy\EnemyNormalState.cpp">
-      <Filter>application\actor\enemy</Filter>
-    </ClCompile>
-    <ClCompile Include="application\actor\enemy\EnemyRecoverState.cpp">
-      <Filter>application\actor\enemy</Filter>
     </ClCompile>
     <ClCompile Include="engine\graphics\pipeline\Blend.cpp">
       <Filter>engine\graphics\pipeline</Filter>
@@ -564,13 +570,61 @@
     <ClCompile Include="application\actor\command\PlacementSwitchCommand.cpp">
       <Filter>application\actor\command</Filter>
     </ClCompile>
-    <ClCompile Include="application\actor\action\DefensePlaceComponent.cpp">
-      <Filter>ソース ファイル</Filter>
+    <ClCompile Include="application\actor\defenseObject\BaseDefenseObject.cpp">
+      <Filter>application\actor\defenseObject</Filter>
     </ClCompile>
     <ClCompile Include="application\actor\command\DefensePlaceCommand.cpp">
-      <Filter>ソース ファイル</Filter>
+      <Filter>application\actor\command</Filter>
     </ClCompile>
-    <ClCompile Include="application\actor\defenseObject\BaseDefenseObject.cpp">
+    <ClCompile Include="application\actor\action\DefensePlaceComponent.cpp">
+      <Filter>application\actor\action</Filter>
+    </ClCompile>
+    <ClCompile Include="application\actor\system\DefensePlacementSystem.cpp">
+      <Filter>application\actor\system</Filter>
+    </ClCompile>
+    <ClCompile Include="application\actor\system\CreateFieldSystem.cpp">
+      <Filter>application\actor\system</Filter>
+    </ClCompile>
+    <ClCompile Include="application\actor\defenseObject\bowTower\BowTower.cpp">
+      <Filter>application\actor\defenseObject\bowTower</Filter>
+    </ClCompile>
+    <ClCompile Include="application\actor\defenseObject\freezeTower\FreezeTower.cpp">
+      <Filter>application\actor\defenseObject\freezeTower</Filter>
+    </ClCompile>
+    <ClCompile Include="application\actor\defenseObject\gameMine\GameMine.cpp">
+      <Filter>application\actor\defenseObject\gameMine</Filter>
+    </ClCompile>
+    <ClCompile Include="application\actor\defenseObject\thunderTower\ThunderTower.cpp">
+      <Filter>application\actor\defenseObject\thunderTower</Filter>
+    </ClCompile>
+    <ClCompile Include="application\actor\defenseObject\wall\Wall.cpp">
+      <Filter>application\actor\defenseObject\wall</Filter>
+    </ClCompile>
+    <ClCompile Include="application\actor\IState.h.cpp">
+      <Filter>application\actor</Filter>
+    </ClCompile>
+    <ClCompile Include="application\actor\defenseObject\Indicator.cpp">
+      <Filter>application\actor\defenseObject</Filter>
+    </ClCompile>
+    <ClCompile Include="application\actor\defenseObject\bowTower\BowTowerScanState.cpp">
+      <Filter>application\actor\defenseObject\bowTower</Filter>
+    </ClCompile>
+    <ClCompile Include="application\actor\defenseObject\bowTower\BowTowerAttackState.cpp">
+      <Filter>application\actor\defenseObject\bowTower</Filter>
+    </ClCompile>
+    <ClCompile Include="application\actor\defenseObject\bowTower\Arrow.cpp">
+      <Filter>application\actor\defenseObject\bowTower</Filter>
+    </ClCompile>
+    <ClCompile Include="application\actor\system\ArrowSystem.cpp">
+      <Filter>application\actor\system</Filter>
+    </ClCompile>
+    <ClCompile Include="application\actor\Health.cpp">
+      <Filter>application\actor</Filter>
+    </ClCompile>
+    <ClCompile Include="application\actor\enemy\Enemy.cpp">
+      <Filter>application\actor\enemy</Filter>
+    </ClCompile>
+    <ClCompile Include="application\actor\enemy\HealthBar.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
   </ItemGroup>
@@ -800,23 +854,8 @@
     <ClInclude Include="engine\collision\BaseCollider.h">
       <Filter>engine\collision</Filter>
     </ClInclude>
-    <ClInclude Include="application\actor\enemy\Enemy.h">
-      <Filter>application\actor\enemy</Filter>
-    </ClInclude>
-    <ClInclude Include="application\actor\enemy\EnemyDamageState.h">
-      <Filter>application\actor\enemy</Filter>
-    </ClInclude>
-    <ClInclude Include="application\actor\enemy\IEnemyState.h">
-      <Filter>application\actor\enemy</Filter>
-    </ClInclude>
     <ClInclude Include="engine\physics\RigidBody.h">
       <Filter>engine\physics</Filter>
-    </ClInclude>
-    <ClInclude Include="application\actor\enemy\EnemyNormalState.h">
-      <Filter>application\actor\enemy</Filter>
-    </ClInclude>
-    <ClInclude Include="application\actor\enemy\EnemyRecoverState.h">
-      <Filter>application\actor\enemy</Filter>
     </ClInclude>
     <ClInclude Include="engine\graphics\pipeline\Blend.h">
       <Filter>engine\graphics\pipeline</Filter>
@@ -1007,13 +1046,61 @@
     <ClInclude Include="application\actor\command\PlacementSwitchCommand.h">
       <Filter>application\actor\command</Filter>
     </ClInclude>
-    <ClInclude Include="application\actor\action\DefensePlaceComponent.h">
-      <Filter>ヘッダー ファイル</Filter>
+    <ClInclude Include="application\actor\defenseObject\BaseDefenseObject.h">
+      <Filter>application\actor\defenseObject</Filter>
     </ClInclude>
     <ClInclude Include="application\actor\command\DefensePlaceCommand.h">
-      <Filter>ヘッダー ファイル</Filter>
+      <Filter>application\actor\command</Filter>
     </ClInclude>
-    <ClInclude Include="application\actor\defenseObject\BaseDefenseObject.h">
+    <ClInclude Include="application\actor\action\DefensePlaceComponent.h">
+      <Filter>application\actor\action</Filter>
+    </ClInclude>
+    <ClInclude Include="application\actor\system\DefensePlacementSystem.h">
+      <Filter>application\actor\system</Filter>
+    </ClInclude>
+    <ClInclude Include="application\actor\system\CreateFieldSystem.h">
+      <Filter>application\actor\system</Filter>
+    </ClInclude>
+    <ClInclude Include="application\actor\defenseObject\bowTower\BowTower.h">
+      <Filter>application\actor\defenseObject\bowTower</Filter>
+    </ClInclude>
+    <ClInclude Include="application\actor\defenseObject\freezeTower\FreezeTower.h">
+      <Filter>application\actor\defenseObject\freezeTower</Filter>
+    </ClInclude>
+    <ClInclude Include="application\actor\defenseObject\gameMine\GameMine.h">
+      <Filter>application\actor\defenseObject\gameMine</Filter>
+    </ClInclude>
+    <ClInclude Include="application\actor\defenseObject\thunderTower\ThunderTower.h">
+      <Filter>application\actor\defenseObject\thunderTower</Filter>
+    </ClInclude>
+    <ClInclude Include="application\actor\defenseObject\wall\Wall.h">
+      <Filter>application\actor\defenseObject\wall</Filter>
+    </ClInclude>
+    <ClInclude Include="application\actor\IState.h">
+      <Filter>application\actor</Filter>
+    </ClInclude>
+    <ClInclude Include="application\actor\defenseObject\Indicator.h">
+      <Filter>application\actor\defenseObject</Filter>
+    </ClInclude>
+    <ClInclude Include="application\actor\defenseObject\bowTower\BowTowerScanState.h">
+      <Filter>application\actor\defenseObject\bowTower</Filter>
+    </ClInclude>
+    <ClInclude Include="application\actor\defenseObject\bowTower\BowTowerAttackState.h">
+      <Filter>application\actor\defenseObject\bowTower</Filter>
+    </ClInclude>
+    <ClInclude Include="application\actor\defenseObject\bowTower\Arrow.h">
+      <Filter>application\actor\defenseObject\bowTower</Filter>
+    </ClInclude>
+    <ClInclude Include="application\actor\system\ArrowSystem.h">
+      <Filter>application\actor\system</Filter>
+    </ClInclude>
+    <ClInclude Include="application\actor\Health.h">
+      <Filter>application\actor</Filter>
+    </ClInclude>
+    <ClInclude Include="application\actor\enemy\Enemy.h">
+      <Filter>application\actor\enemy</Filter>
+    </ClInclude>
+    <ClInclude Include="application\actor\enemy\HealthBar.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
   </ItemGroup>

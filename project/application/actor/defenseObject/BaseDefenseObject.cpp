@@ -26,18 +26,22 @@ std::unique_ptr<Component> BaseDefenseObject::Clone(GameObject* gameObject) cons
 void BaseDefenseObject::Update() {
 }
 
-//接触中
-void BaseDefenseObject::OnTriggerStay(BaseCollider* other) {
+//接触した瞬間
+void BaseDefenseObject::OnTriggerEnter(BaseCollider* other) {
 	if(other->GetOwner()->GetTag() == "DefenseObject") {
-		isOnTriggerStay_ = true;
+		overlapCount_++;
 	}
 }
 
 //離れた瞬間
 void BaseDefenseObject::OnTriggerExit(BaseCollider* other) {
-	(void)other;
-	//重なっていたらのフラグのリセット
-	isOnTriggerStay_ = false;
+	if(other->GetOwner()->GetTag() == "DefenseObject") {
+		//カウントに値が入っていたら
+		if(overlapCount_ > 0) {
+			//衝突判定を抜けたら
+			overlapCount_--;
+		}
+	}
 }
 
 //コンポーネントのタイプ名を返す
@@ -45,7 +49,7 @@ std::string BaseDefenseObject::GetTypeName() const {
 	return "BaseDefenseObject";
 }
 
-//重なっていたらを取得
-bool BaseDefenseObject::IsOnTriggerStay() const {
-	return isOnTriggerStay_;
+//設置物と重なっているを取得
+bool BaseDefenseObject::IsOverlappingDefense() const {
+	return overlapCount_ > 0;
 }

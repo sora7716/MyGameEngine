@@ -68,4 +68,12 @@ namespace collision {
 	/// <param name="aabb">AABB</param>
 	/// <returns>衝突したかのフラグ</returns>
 	bool IsCollision(const primitiveData::Frustum& frustum, const primitiveData::AABB& aabb);
+
+	/// <summary>
+	/// 扇形と点の衝突判定
+	/// </summary>
+	/// <param name="sector">扇形</param>
+	/// <param name="point">点</param>
+	/// <returns>衝突したかのフラグ</returns>
+	bool IsCollision(const primitiveData::Sector& sector,const Vector3& point);
 };

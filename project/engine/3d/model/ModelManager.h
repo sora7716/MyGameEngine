@@ -3,6 +3,7 @@
 #include <string>
 #include <memory>
 #include <vector>
+#include "RenderData.h"
 
 //前方宣言
 class DirectXBase;
@@ -56,11 +57,18 @@ public://メンバ関数
 	void CreatePrimitiveModel();
 
 	/// <summary>
-	/// モデルの追加
+	/// モデルの追加(ファイル読み込み)
 	/// </summary>
 	/// <param name="name">名前</param>
 	/// <param name="modelFileName">モデルのファイル名</param>
 	void AddModel(const std::string& name, const std::string& modelFileName);
+
+	/// <summary>
+	/// モデルの追加(メッシュデータ)
+	/// </summary>
+	/// <param name="name">名前</param>
+	/// <param name="meshData">メッシュデータ</param>
+	void AddModel(const std::string& name,const MeshData& meshData);
 
 	/// <summary>
 	/// モデルの検索(.objはいらない)

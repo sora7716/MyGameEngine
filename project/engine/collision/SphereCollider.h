@@ -25,6 +25,11 @@ public://メンバ関数
 	void Initialize()override;
 
 	/// <summary>
+	/// 形の更新
+	/// </summary>
+	void UpdateGeometry()override;
+
+	/// <summary>
 	/// 更新
 	/// </summary>
 	void Update()override;
@@ -53,6 +58,18 @@ public://メンバ関数
 	/// </summary>
 	/// <returns>コライダータイプ</returns>
 	ColliderType GetColliderType()const override;
+
+	/// <summary>
+	/// 中心座標の設定
+	/// </summary>
+	/// <param name="center">中心座標</param>
+	void SetCenter(const Vector3& center);
+
+	/// <summary>
+	/// 半径の設定
+	/// </summary>
+	/// <param name="radius">半径</param>
+	void SetRadius(float radius);
 
 	/// <summary>
 	/// 球の取得

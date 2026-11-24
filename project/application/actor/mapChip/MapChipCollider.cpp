@@ -4,6 +4,7 @@
 #include "RigidBody.h"
 #include "ImGuiManager.h"
 #include "MathUtility.h"
+#include "Logger.h"
 #include <algorithm>
 #include <cassert>
 using namespace mapChipDesc;
@@ -16,13 +17,10 @@ MapChipCollider::~MapChipCollider() {
 }
 
 //セットアップ
-void MapChipCollider::Setup(MapChipField* mapChipField,RigidBody* rigidBody,const Vector3& targetSize,bool isTrigger) {
+void MapChipCollider::Setup(MapChipField* mapChipField,const Vector3& targetSize,bool isTrigger) {
 	//マップチップフィールドの記録
 	assert(mapChipField);
 	mapChipField_ = mapChipField;
-	//リジッドボディの記録
-	assert(rigidBody);
-	rigidBody_ = rigidBody;
 	//マップチップのデータを取得
 	mapChipData_ = mapChipField_->GetMapChipData();
 	//対象のサイズ
@@ -37,10 +35,18 @@ void MapChipCollider::Setup(MapChipField* mapChipField,RigidBody* rigidBody,cons
 void MapChipCollider::Initialize() {
 	//ゲームオブジェクトの取得
 	gameObject_ = GetOwner();
+	//リジッドボディの取得
+	rigidBody_ = gameObject_->GetComponent<RigidBody>();
+	if(!rigidBody_) {
+		Logger::OutputLog("リジッドボディが設定されていません");
+		assert(false);
+	}
 }
 
 //更新
 void MapChipCollider::Update() {
+	//対象のハーフサイズを計算
+	targetHalfSize_ = targetSize_ / 2.0f;
 	//衝突判定を行う
 	CollisionMapChipInfo collisionInfo = {};
 	collisionInfo.moveAmount = rigidBody_->GetMoveAmount(mathUtility::GetDeltaTime());
@@ -51,8 +57,11 @@ void MapChipCollider::Update() {
 	ApplyCollisionResponse(collisionInfo);
 }
 
-//デバッグでImGuiを使えるようにする
-void MapChipCollider::DebugImGui() {
+//プロパティ一覧
+void MapChipCollider::RegisterProperties(PropertyRegistry* registry) {
+	Component::RegisterProperties(registry);
+	registry->Add("ヒットボックスのサイズ",targetSize_);
+	registry->Add("isTrigger",isTrigger_);
 }
 
 //複製
@@ -137,10 +146,13 @@ void MapChipCollider::CheckCollisionFront(CollisionMapChipInfo& info,Vector3& ce
 	bool isHit = false;
 	//限界
 	float limitZ = 0.0f;
+	//微小な値
+	constexpr float epsilon = 0.001f;
 	//範囲矩形にアクセス
 	for(const Rect& rect : rects) {
 		//動く前からブロックより後ろにいたら
-		if(prevFront > rect.back + mathUtility::kEpsilon) {
+		if(prevFront > rect.back + epsilon) {
+			center.z -= ((center.z + targetHalfSize_.z) - rect.back) + kBlank;
 			continue;
 		}
 
@@ -202,6 +214,7 @@ void MapChipCollider::CheckCollisionBack(CollisionMapChipInfo& info,Vector3& cen
 	for(const Rect& rect : rects) {
 		//動く前からブロックより手前にいたら
 		if(prevBack < rect.front + epsilon) {
+			center.z -= ((center.z - targetHalfSize_.z) - rect.front) - kBlank;
 			continue;
 		}
 
@@ -262,7 +275,8 @@ void MapChipCollider::CheckCollisionRight(CollisionMapChipInfo& info,Vector3& ce
 	//範囲矩形にアクセス
 	for(const Rect& rect : rects) {
 		//動く前からブロックより右にいたら
-		if(prevRight > rect.left + epsilon) {
+		if(prevRight > rect.left - epsilon) {
+			center.x -= ((center.x + targetHalfSize_.x) - rect.left) + kBlank;
 			continue;
 		}
 
@@ -324,6 +338,7 @@ void MapChipCollider::CheckCollisionLeft(CollisionMapChipInfo& info,Vector3& cen
 	for(const Rect& rect : rects) {
 		//動く前からブロックより左にいたら
 		if(prevLeft < rect.right + epsilon) {
+			center.x -= ((center.x - targetHalfSize_.x) - rect.right) - kBlank;
 			continue;
 		}
 
@@ -385,6 +400,7 @@ void MapChipCollider::CheckCollisionBottom(CollisionMapChipInfo& info,Vector3& c
 	for(const Rect& rect : rects) {
 		//動く前からブロックの上面より下にいた
 		if(prevBottom < rect.top - epsilon) {
+			center.y -= ((center.y - targetHalfSize_.y) - rect.top) - kBlank;
 			continue;
 		}
 

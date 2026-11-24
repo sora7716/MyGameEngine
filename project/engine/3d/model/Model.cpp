@@ -323,7 +323,7 @@ void Model::CreateMaterialInstances() {
 		materialInstance->SetParameter("color",Color::GetWhite());
 		materialInstance->SetParameter("enabledLighting",uint32_t{1});
 		materialInstance->SetParameter("uvMatrix",Matrix4x4::Identity4x4());
-		materialInstance->SetParameter("shininess",10.0f);
+		materialInstance->SetParameter("shininess",64.0f);
 		materialInstance->SetParameter("diffuseModel",int32_t{1});
 		materialInstance->SetParameter("specularModel",int32_t{1});
 		materialInstance->SetParameter("environmentCoefficient",0.0f);

@@ -4,6 +4,7 @@
 #include "MathUtility.h"
 #include "MatrixUtility.h"
 #include "GameObject.h"
+#include "Logger.h"
 #include <algorithm>
 #include <cassert>
 
@@ -16,10 +17,7 @@ MovementComponent::~MovementComponent() {
 }
 
 //セットアップ
-void MovementComponent::Setup(RigidBody* rigidBody,float moveSpeed,float moveResponse) {
-	//リジッドボディの記録
-	assert(rigidBody);
-	rigidBody_ = rigidBody;
+void MovementComponent::Setup(float moveSpeed,float moveResponse) {
 	//移動速度の記録
 	moveSpeed_ = moveSpeed;
 	//移動する際のレスポンスを設定
@@ -114,4 +112,9 @@ void MovementComponent::SetCameraObject(GameObject* cameraObject) {
 //方向ベクトルの取得
 const Vector3& MovementComponent::GetDirection() const {
 	return direction_;
+}
+
+//リジッドボディの設定
+void MovementComponent::SetRigidBody(RigidBody* rigidBody) {
+	rigidBody_ = rigidBody;
 }

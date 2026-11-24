@@ -22,7 +22,7 @@ namespace primitiveMeshFactory {
 	/// </summary>
 	/// <returns>立方体メッシュ</returns>
 	/// <param name="desc">設定データ</param>
-	/// <returns></returns>
+	/// <returns>立方体メッシュ</returns>
 	MeshData CreateCube(const Desc& desc = {});
 
 	/// <summary>
@@ -47,10 +47,17 @@ namespace primitiveMeshFactory {
 	MeshData CreateCapsule(const Desc& desc = {});
 
 	/// <summary>
-	/// 扇形の生成
+	/// 扇形メッシュの生成
 	/// </summary>
 	/// <param name="desc">デスク</param>
 	/// <returns>扇形メッシュ</returns>
 	MeshData CreateSector(const Desc& desc = {});
+
+	/// <summary>
+	/// 左上が原点の矩形メッシュを作成
+	/// </summary>
+	/// <param name="desc">デスク</param>
+	/// <returns>左上が原点の矩形メッシュ</returns>
+	MeshData CreateTopLeftRect(const Desc& desc = {});
 }
 

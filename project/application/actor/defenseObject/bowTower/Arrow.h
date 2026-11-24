@@ -27,7 +27,8 @@ public://メンバ関数
 	/// </summary>
 	/// <param name="targetPos">目標地点</param>
 	/// <param name="position">初期位置</param>
-	void Setup(const Vector3& targetPos,const Vector3& position);
+	/// <param name="attackPower">攻撃力</param>
+	void Setup(const Vector3& targetPos,const Vector3& position,float attackPower);
 
 	/// <summary>
 	/// 初期化
@@ -79,7 +80,7 @@ private://メンバ変数
 	//最初の姿勢
 	Quaternion beginRotate_ = {};
 	//移動速度
-	float moveSpeed_ = 5.0f;
+	float moveSpeed_ = 7.0f;
 	//スピンする角度
 	float spinAngle_ = 0.0f;
 	//スピンする速度
@@ -88,5 +89,7 @@ private://メンバ変数
 	float lifeTime_ = 0.0f;
 	//最大で生存できる時間
 	float maxLifetime_ = 3.0f;
+	//攻撃力
+	float attackPower_ = 0.0f;
 };
 

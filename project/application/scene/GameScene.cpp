@@ -26,6 +26,9 @@
 #include "CreateFieldSystem.h"
 #include "DefensePlacementSystem.h"
 #include "ArrowSystem.h"
+#include "Health.h"
+#include "Enemy.h"
+#include "HealthBar.h"
 #include <array>
 using namespace mapChipDesc;
 
@@ -78,6 +81,8 @@ void GameScene::Initialize() {
 
 	//矢の管理すステムの生成
 	arrowSystem_ = ArrowSystem::Create(this);
+	//矢の攻撃力を設定
+	arrowSystem_->SetAttackPower(20.0f);
 
 	//防衛オブジェクトの設置システムの生成
 	defensePlacementSystem_ = DefensePlacementSystem::Create(this,createFieldSystem_->GetMapChipField(),playerObject_,arrowSystem_.get());
@@ -87,9 +92,24 @@ void GameScene::Initialize() {
 	//カメラのターゲットを追加
 	followCamera_->SetTarget(playerObject_);
 
+	//敵のHPバーのマテリアルを作成
+	MaterialTexturePaths enemyHpBarMatTexPaths = {
+		.textureFilePath = "textures/white1x1.png",
+		.environmentMap = "textures/skybox_cube.dds"
+	};
+	AddMaterialInstance("enemyHpBarMat",enemyHpBarMatTexPaths);
+	MaterialInstance* enemyHpBarMat = FindMaterialInstance("enemyHpBarMat");
+	enemyHpBarMat->SetParameter("color",Color::GetRed());
+
+	//敵のHPバーの背景のマテリアル
+	AddMaterialInstance("enemyHpBarBgMat",enemyHpBarMatTexPaths);
+	MaterialInstance* enemyHpBarBgMat = FindMaterialInstance("enemyHpBarBgMat");
+	enemyHpBarBgMat->SetParameter("color",Color::GetBlack());
+
 	//敵の生成
 	enemyObjects_.push_back(CreateEnemy({0.0f,2.0f,0.0f}));
 	enemyObjects_.push_back(CreateEnemy({1.0f,2.0f,0.0f}));
+	enemyObjects_.push_back(CreateEnemy({2.0f,2.0f,0.0f}));
 }
 
 //更新のステート
@@ -309,8 +329,15 @@ GameObject* GameScene::CreateEnemy(const Vector3& position) {
 	Object3d* object3d = gameObject->AddComponent<Object3d>();
 	object3d->SetModel("enemy");
 
+	//Enemyを追加
+	gameObject->AddComponent<Enemy>();
+
 	//リジッドボディを追加
 	gameObject->AddComponent<RigidBody>();
+
+	//HPを設定
+	Health* health = gameObject->AddComponent<Health>();
+	health->SetMaxHp(100.0f);
 
 	//マップチップのコライダーを追加
 	MapChipCollider* mapChipCollider = gameObject->AddComponent<MapChipCollider>();
@@ -322,6 +349,42 @@ GameObject* GameScene::CreateEnemy(const Vector3& position) {
 	BoxCollider* boxCollider = gameObject->AddComponent<BoxCollider>();
 	boxCollider->SetSize(hitBoxSize);
 	boxCollider->SetBodyType(BodyType::kDynamic);
+
+	//HPバーの子オブジェクトを作成
+	GameObject* healthObject = CreateGameObject();
+	healthObject->SetName("HPバー");
+	//親子付け
+	healthObject->AttachTo(gameObject,false);
+
+	//Object3dの追加
+	Object3d* healthBarObject3d = healthObject->AddComponent<Object3d>();
+	healthBarObject3d->SetModel("healthBar");
+	healthBarObject3d->SetRenderTransformMode(RenderTransformMode::kBillboard);
+	healthBarObject3d->SetMaterialInstance(0,GetMaterialInstance("enemyHpBarMat"));
+
+	//HealthBarを追加
+	HealthBar* healthBar = healthObject->AddComponent<HealthBar>();
+	healthBar->Setup(health);
+
+	//HealthBarの後ろ背景
+	GameObject* healthBarBgObject = CreateGameObject();
+	//Transformの調整
+	Transform& bgTransform = healthBarBgObject->GetTransform();
+	const Transform& barTransform = healthObject->GetTransform();
+	bgTransform.translate = barTransform.translate;
+	bgTransform.translate.z = 0.01f;
+	bgTransform.scale.x = healthBar->GetFullBarScale();
+	bgTransform.scale.y = barTransform.scale.y;
+	healthBarBgObject->SetName("HPバーの背景");
+
+	//親子付け
+	healthBarBgObject->AttachTo(gameObject,false);
+
+	//Object3dの追加
+	Object3d* healthBarBgObject3d = healthBarBgObject->AddComponent<Object3d>();
+	healthBarBgObject3d->SetModel("healthBar");
+	healthBarBgObject3d->SetRenderTransformMode(RenderTransformMode::kBillboard);
+	healthBarBgObject3d->SetMaterialInstance(0,GetMaterialInstance("enemyHpBarBgMat"));
 
 	return gameObject;
 }

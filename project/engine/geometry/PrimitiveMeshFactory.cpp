@@ -380,7 +380,7 @@ MeshData primitiveMeshFactory::CreateCapsule(const Desc& desc) {
 	return mesh;
 }
 
-//扇形の生成
+//扇形メッシュの生成
 MeshData primitiveMeshFactory::CreateSector(const Desc& desc) {
 	//メッシュ
 	MeshData mesh = {};
@@ -432,4 +432,56 @@ MeshData primitiveMeshFactory::CreateSector(const Desc& desc) {
 	}
 
 	return mesh;
+}
+
+//左上が原点の矩形メッシュを作成
+MeshData primitiveMeshFactory::CreateTopLeftRect(const Desc& desc) {
+	MeshData meshData = {};
+
+	Vector3 halfSize = desc.size / 2.0f;
+
+	//配列の要素数を決定
+	meshData.vertices.resize(4);
+	meshData.indices.resize(6);
+
+	//頂点
+	//左上
+	meshData.vertices[0] = {
+		.position = {0.0f,1.0f,0.0f,1.0f},
+		.texcoord = {0.0f,0.0f},
+		.normal = {0.0f,0.0f,-1.0f}
+	};
+	//右上
+	meshData.vertices[1] = {
+		.position = {1.0f,1.0f,0.0f,1.0f},
+		.texcoord = {1.0f,0.0f},
+		.normal = {0.0f,0.0f,-1.0f}
+	};
+	//右下
+	meshData.vertices[2] = {
+		.position = {1.0f,0.0f,0.0f,1.0f},
+		.texcoord = {1.0f,1.0f},
+		.normal = {0.0f,0.0f,-1.0f}
+	};
+	//左下
+	meshData.vertices[3] = {
+		.position = {0.0f,0.0f,0.0f,1.0f},
+		.texcoord = {0.0f,1.0f},
+		.normal = {0.0f,0.0f,-1.0f}
+	};
+
+	//サイズを適応
+	for(VertexData& vertexData : meshData.vertices) {
+		vertexData.position.SetVector3(vertexData.position.GetVector3() * halfSize);
+	}
+
+	//インデックス
+	meshData.indices[0] = 0;
+	meshData.indices[1] = 1;
+	meshData.indices[2] = 2;
+	meshData.indices[3] = 0;
+	meshData.indices[4] = 2;
+	meshData.indices[5] = 3;
+
+	return meshData;
 }

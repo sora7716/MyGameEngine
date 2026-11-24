@@ -55,7 +55,12 @@ void ArrowSystem::Fire(const Vector3& targetPos,const Matrix4x4& headWorldMatrix
 	//矢の追加
 	Arrow* arrow = arrowObject->GetComponent<Arrow>();
 	Vector3 arrowPosition = Vector3(0.0f,0.5f,0.0f) * headWorldMatrix;
-	arrow->Setup(targetPos,arrowPosition);//セットアップ
+	arrow->Setup(targetPos,arrowPosition,attackPower_);//セットアップ
+}
+
+//攻撃力
+void ArrowSystem::SetAttackPower(float power) {
+	attackPower_ = power;
 }
 
 //矢の生成

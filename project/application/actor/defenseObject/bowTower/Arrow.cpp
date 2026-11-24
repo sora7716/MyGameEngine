@@ -2,6 +2,8 @@
 #include "GameObject.h"
 #include "MathUtility.h"
 #include "BaseCollider.h"
+#include "Health.h"
+#include "Logger.h"
 #include <cassert>
 #include <cmath>
 #include <algorithm>
@@ -15,9 +17,12 @@ Arrow::~Arrow() {
 }
 
 //セットアップ
-void Arrow::Setup(const Vector3& targetPos,const Vector3& position) {
+void Arrow::Setup(const Vector3& targetPos,const Vector3& position,float attackPower) {
 	//生存タイマーの初期化
 	lifeTime_ = 0.0f;
+	
+	//攻撃力を記録
+	attackPower_ = attackPower;
 
 	//目標地点を記録
 	targetPos_ = targetPos;
@@ -116,6 +121,16 @@ void Arrow::OnTriggerEnter(BaseCollider* other) {
 	//敵に衝突したら
 	if(other->GetOwner()->GetTag() == "Enemy") {
 		gameObject_->SetIsActive(false);
+		//敵にダメージ
+		GameObject* enemyObject = other->GetOwner();
+		//HP管理を取得
+		Health* health = enemyObject->GetComponent<Health>();
+		if(!health) {
+			Logger::OutputLog("敵にHealthがコンポーネントされていません");
+			assert(false);
+		}
+		//ダメージを与える
+		health->ApplyDamage(attackPower_);
 	}
 }
 

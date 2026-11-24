@@ -87,6 +87,9 @@ void DefaultResourceLoader::LoadModel() {
 	sectorDesc.sweepAngleDegrees = 75.0f * 2.0f;
 	modelManager_->AddModel("scanRange",primitiveMeshFactory::CreateSector(sectorDesc));
 
+	//HPバー
+	modelManager_->AddModel("healthBar",primitiveMeshFactory::CreateTopLeftRect());
+
 	//LODモデルは読み込み時に作る
 	for(const std::string& name : {"wall","thunderTower","freezeTower","bowTower","gameMine"}) {
 		modelManager_->FindModel(name)->CreateLODModels({0.7f,0.5f,0.25f});

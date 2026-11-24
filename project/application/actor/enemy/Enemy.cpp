@@ -1,117 +1,57 @@
 #include "Enemy.h"
 #include "GameObject.h"
-#include "BaseCollider.h"
-#include "MathUtility.h"
-#include "RigidBody.h"
-#include "EnemyNormalState.h"
-#include "EnemyDamageState.h"
-#include "EnemyRecoverState.h"
+#include "Health.h"
+#include "Logger.h"
+#include <cassert>
 
 //コンストラクタ
-Enemy::Enemy(GameObject* gameObject) :Component(gameObject){
+Enemy::Enemy(GameObject* gameObject) :Component(gameObject) {
 }
 
 //デストラクタ
-Enemy::~Enemy(){
+Enemy::~Enemy() {
 }
 
 //初期化
-void Enemy::Initialize(){
+void Enemy::Initialize() {
 	//ゲームオブジェクトを取得
 	gameObject_ = GetOwner();
-	//リジッドボディを取得
-	rigidBody_ = gameObject_->GetComponent<RigidBody>();
-
-	//通常の回転を保存
-	normalRotate_ = gameObject_->GetTransform().rotate;
-
-	//ステートを取得
-	states_[static_cast<uint32_t>(Behavior::kNormal)] = std::make_unique<EnemyNormalState>();
-	states_[static_cast<uint32_t>(Behavior::kDamage)] = std::make_unique<EnemyDamageState>();
-	states_[static_cast<uint32_t>(Behavior::kRecover)] = std::make_unique <EnemyRecoverState>();
 }
 
 //更新
-void Enemy::Update(){
-	//振る舞いのリクエストがNoneじゃない場合
-	if (behaviorRequest_ != Behavior::kCount){
-		//リクエストをコピー
-		behavior_ = behaviorRequest_;
-		//リクエストをリセット
-		behaviorRequest_ = Behavior::kCount;
-
-		//ステートを切り替え
-		ChangeState(behavior_);
+void Enemy::Update() {
+	//自分のHPの状態を取得
+	Health* health = gameObject_->GetComponent<Health>();
+	if(!health) {
+		Logger::OutputLog("Healthのコンポーネントが取得できませんでした");
+		assert(false);
+		return;
 	}
-
-	//ステートの更新
-	currentState_->Update();
-}
-
-//衝突瞬間
-void Enemy::OnTriggerEnter(BaseCollider* other){
-	if (other->GetOwner()->GetTag() == "Player"){
-		//振る舞いを変更
-		behaviorRequest_ = Behavior::kDamage;
-
-		//自分の位置
-		const Vector3& myPosition = gameObject_->GetTransform().translate;
-		//衝突対象の位置
-		const Vector3& otherPosition = other->GetOwner()->GetTransform().translate;
-		//衝突した方向を取得
-		hitDirection_ = myPosition - otherPosition;
+	//自分の死亡フラグが立っていたら
+	if(health->IsDead()) {
+		gameObject_->SetIsActive(false);
 	}
 }
 
-//コピー
-std::unique_ptr<Component> Enemy::Clone(GameObject* gameObject) const{
+//プロパティ一覧を登録
+void Enemy::RegisterProperties(PropertyRegistry* registry) {
+	Component::RegisterProperties(registry);
+}
+
+//複製
+std::unique_ptr<Component> Enemy::Clone(GameObject* gameObject) const {
 	std::unique_ptr<Enemy>cloneInstance = std::make_unique<Enemy>(gameObject);
 
 	//初期化
 	cloneInstance->Initialize();
 
-	//Cameraが持つ設定だけ複製
+	//設定の複製
 	cloneInstance->SetEnabled(this->IsEnabled());
 
 	return cloneInstance;
 }
 
-//振る舞いのリクエストの設定
-void Enemy::SetBehaviorRequest(Behavior request){
-	behaviorRequest_ = request;
-}
-
-//コンポーネントのタイプ名を取得
-std::string Enemy::GetTypeName() const{
+//コンポーネントのタイプ名を返す
+std::string Enemy::GetTypeName() const {
 	return "Enemy";
-}
-
-//リジットボディの取得
-RigidBody* Enemy::GetRigidBody(){
-	return rigidBody_;
-}
-
-//衝突した方向ベクトルの取得
-const Vector3& Enemy::GetHitDirection() const{
-	return hitDirection_;
-}
-
-//ダメージを受けた瞬間の回転を取得
-const Quaternion& Enemy::GetNormalRotate() const{
-	return normalRotate_;
-}
-
-//ステートの切り替え
-void Enemy::ChangeState(Behavior behavior){
-	//次のステートを取得
-	IEnemyState* nextState = states_[static_cast<uint32_t>(behavior)].get();
-
-	//今のステートを終了
-	if (currentState_){
-		currentState_->Exit();
-	}
-
-	//今のステートを次にステートへ変更
-	currentState_ = nextState;
-	currentState_->Enter(this);
 }

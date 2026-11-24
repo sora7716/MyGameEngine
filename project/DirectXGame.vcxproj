@@ -42,10 +42,8 @@
     <ClCompile Include="application\actor\defenseObject\thunderTower\ThunderTower.cpp" />
     <ClCompile Include="application\actor\defenseObject\wall\Wall.cpp" />
     <ClCompile Include="application\actor\enemy\Enemy.cpp" />
-    <ClCompile Include="application\actor\enemy\EnemyDamageState.cpp" />
-    <ClCompile Include="application\actor\enemy\EnemyRecoverState.cpp" />
-    <ClCompile Include="application\actor\enemy\EnemyNormalState.cpp" />
-    <ClCompile Include="application\actor\enemy\IEnemyState.cpp" />
+    <ClCompile Include="application\actor\enemy\HealthBar.cpp" />
+    <ClCompile Include="application\actor\Health.cpp" />
     <ClCompile Include="application\actor\IState.h.cpp" />
     <ClCompile Include="application\actor\mapChip\MapChipCollider.cpp" />
     <ClCompile Include="application\actor\mapChip\MapChipField.cpp" />
@@ -490,10 +488,8 @@
     <ClInclude Include="application\actor\defenseObject\thunderTower\ThunderTower.h" />
     <ClInclude Include="application\actor\defenseObject\wall\Wall.h" />
     <ClInclude Include="application\actor\enemy\Enemy.h" />
-    <ClInclude Include="application\actor\enemy\EnemyDamageState.h" />
-    <ClInclude Include="application\actor\enemy\EnemyRecoverState.h" />
-    <ClInclude Include="application\actor\enemy\EnemyNormalState.h" />
-    <ClInclude Include="application\actor\enemy\IEnemyState.h" />
+    <ClInclude Include="application\actor\enemy\HealthBar.h" />
+    <ClInclude Include="application\actor\Health.h" />
     <ClInclude Include="application\actor\IState.h" />
     <ClInclude Include="application\actor\mapChip\MapChipCollider.h" />
     <ClInclude Include="application\actor\mapChip\MapChipData.h" />

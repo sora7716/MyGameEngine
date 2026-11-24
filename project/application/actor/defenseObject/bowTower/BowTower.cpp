@@ -78,6 +78,11 @@ void BowTower::Update() {
 				continue;
 			}
 
+			//ターゲットが非Activeだったら
+			if(!attackTarget->IsActive()) {
+				continue;
+			}
+
 			//探索範囲に入っているか
 			isInScanRange_ = collision::IsCollision(scanRange_,attackTarget->GetWorldPos());
 

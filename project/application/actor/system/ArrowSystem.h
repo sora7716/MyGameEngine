@@ -42,6 +42,12 @@ public://メンバ関数
 	/// <param name="targetPos">攻撃対象の位置</param>
 	/// <param name="headWorldMatrix">頭のワールド行列</param>
 	void Fire(const Vector3& targetPos,const Matrix4x4& headWorldMatrix);
+
+	/// <summary>
+	/// 攻撃力の設定
+	/// </summary>
+	/// <param name="power">攻撃力</param>
+	void SetAttackPower(float power);
 private://メンバ関数
 	/// <summary>
 	/// 矢の生成
@@ -50,11 +56,13 @@ private://メンバ関数
 	GameObject* CreateArrow();
 private://定数
 	//矢の最大数
-	static inline const uint32_t kArrowMaxCount = 1;
+	static inline const uint32_t kArrowMaxCount = 1024;
 private://メンバ変数
 	//シーン
 	BaseScene* scene_ = nullptr;
 	//矢のゲームオブジェクト
 	std::vector<GameObject*>arrowObjects_;
+	//矢の攻撃力
+	float attackPower_ = 0.0f;
 };
 

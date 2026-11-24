@@ -110,7 +110,7 @@ void BaseScene::DeleteGameObject(GameObject* target,CollisionSystem* collisionSy
 				gameObject->Detach();
 				//Object3dがあった場合
 				Object3d* object3d = gameObject->GetComponent<Object3d>();
-				if(!object3d) {
+				if(object3d) {
 					object3d->Detach();
 				}
 			}

@@ -622,6 +622,15 @@
       <Filter>application\actor\defenseObject</Filter>
     </ClCompile>
     <ClCompile Include="application\actor\defenseObject\bowTower\BowTowerScanState.cpp">
+      <Filter>application\actor\defenseObject\bowTower</Filter>
+    </ClCompile>
+    <ClCompile Include="application\actor\defenseObject\bowTower\BowTowerAttackState.cpp">
+      <Filter>application\actor\defenseObject\bowTower</Filter>
+    </ClCompile>
+    <ClCompile Include="application\actor\defenseObject\bowTower\Arrow.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="application\actor\system\ArrowSystem.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
   </ItemGroup>
@@ -1095,6 +1104,15 @@
       <Filter>application\actor\defenseObject</Filter>
     </ClInclude>
     <ClInclude Include="application\actor\defenseObject\bowTower\BowTowerScanState.h">
+      <Filter>application\actor\defenseObject\bowTower</Filter>
+    </ClInclude>
+    <ClInclude Include="application\actor\defenseObject\bowTower\BowTowerAttackState.h">
+      <Filter>application\actor\defenseObject\bowTower</Filter>
+    </ClInclude>
+    <ClInclude Include="application\actor\defenseObject\bowTower\Arrow.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="application\actor\system\ArrowSystem.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
   </ItemGroup>

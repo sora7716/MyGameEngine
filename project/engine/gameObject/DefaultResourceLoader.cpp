@@ -80,6 +80,8 @@ void DefaultResourceLoader::LoadModel() {
 	modelManager_->AddModel("freezeTower","freezeTower/freezeTower.gltf");
 	modelManager_->AddModel("bowTower","bowTower/bowTower.gltf");
 	modelManager_->AddModel("gameMine","gameMine/gameMine.gltf");
+	//矢
+	modelManager_->AddModel("arrow","arrow/arrow.gltf");
 	//弓タワーの探索範囲
 	primitiveMeshFactory::Desc sectorDesc = {};
 	sectorDesc.sweepAngleDegrees = 75.0f * 2.0f;

@@ -5,6 +5,7 @@
 
 //前方宣言
 class Object3d;
+class IState;
 
 /// <summary>
 /// 弓タワー
@@ -77,6 +78,30 @@ public://メンバ関数
 	float GetScanRadius()const;
 	
 	/// <summary>
+	/// 攻撃範囲の角度を取得
+	/// </summary>
+	/// <returns>攻撃範囲の角度</returns>
+	float GetAttackRangeDegrees()const;
+
+	/// <summary>
+	/// 頭のアニメーションのブレンド速度の取得
+	/// </summary>
+	/// <returns>頭のアニメーションのブレンド速度</returns>
+	float GetHeadTurnBlendSpeed()const;
+
+	/// <summary>
+	/// 攻撃範囲の取得
+	/// </summary>
+	/// <returns>攻撃範囲</returns>
+	const primitiveData::Sector& GetAttackRange()const;
+
+	/// <summary>
+	/// 攻撃対象の取得
+	/// </summary>
+	/// <returns>攻撃対象</returns>
+	GameObject* GetAttackTarget()const;
+
+	/// <summary>
 	/// 弓を発射するかを取得
 	/// </summary>
 	/// <returns>発射するか</returns>
@@ -93,36 +118,26 @@ private://メンバ関数
 	void SettingScanRange();
 
 	/// <summary>
-	/// 探しているときのアニメーションの初期化
+	/// 矢の生成
 	/// </summary>
-	void InitializeScanAnimation();
-
-	/// <summary>
-	/// 探しているときのアニメーションの更新
-	/// </summary>
-	void UpdateScanAnimation();
-
-	/// <summary>
-	/// 攻撃するときのアニメーションの初期化
-	/// </summary>
-	void InitializeAttackAnimation();
-
-	/// <summary>
-	///攻撃するときのアニメーションの更新
-	/// </summary>
-	void UpdateAttackAnimation();
+	void CreateArrow();
 private://メンバ変数
 	//ゲームオブジェクト
 	GameObject* gameObject_ = nullptr;
 	//Object3d
 	Object3d* object3d_ = nullptr;
 	//攻撃対象
-	GameObject* target_ = nullptr;
+	GameObject* attackTarget_ = nullptr;
 
 	//振る舞いの要求
 	Behavior behaviorRequest_ = Behavior::kScan;
 	//振る舞い
 	Behavior behavior_ = Behavior::kNone;
+
+	//ステートの配列
+	std::vector<std::unique_ptr<IState>>states_;
+	//現在のステート
+	IState* currentState_ = nullptr;
 
 	//頭の位置を補完する速度
 	float headTurnBlendSpeed_ = 12.0f;
@@ -132,16 +147,8 @@ private://メンバ変数
 
 	//弓の攻撃範囲
 	primitiveData::Sector attackRange_ = {};
-	//攻撃範囲
-	float attackRangeAngle_ = 30.0f;
-	//攻撃時間を管理するタイマー
-	float attackTimer_ = 0.0f;
-	//攻撃のインターバル
-	float attackInterval_ = 1.0f;
-	//反動を管理するタイマー
-	float recoilTimer_ = 0.0f;
-	//反動の最大角度
-	float recoilMaxDegrees = 20.0f;
+	//攻撃範囲の角度
+	float attackRangeDegrees_ = 30.0f;
 
 	//探索範囲
 	primitiveData::Sector scanRange_ = {};
@@ -149,18 +156,8 @@ private://メンバ変数
 	bool isInScanRange_ = false;
 	//探索をする最大角度(度)
 	float maxScanRotate_ = 75.0f;
-	//探索をする最小角度(度)
-	float minScanRotate_ = -75.0f;
-	//探索する際の回転オフセット
-	float scanRotOffset_ = {};
-	//探索する速度
-	float scanSpeed_ = 2.0f;
 	//探索している距離
 	float scanRadius_ = 3.0f;
-	//今探索している向き
-	float scanDir_ = 1.0f;
-	//スキャン開始位置
-	Vector3 scanBeginRotate = {};
 	//頭の行列
 	Matrix4x4 headModelMatrix_ = {};
 };

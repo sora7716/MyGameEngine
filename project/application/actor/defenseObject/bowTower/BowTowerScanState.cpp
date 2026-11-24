@@ -1,6 +1,8 @@
 #include "BowTowerScanState.h"
-#include "RenderingData.h"
+#include "GameObject.h"
 #include "Object3d.h"
+#include "BowTower.h"
+#include "RenderingData.h"
 #include "MathUtility.h"
 
 //コンストラクタ
@@ -11,12 +13,21 @@ BowTowerScanState::BowTowerScanState() {
 BowTowerScanState::~BowTowerScanState() {
 }
 
+//セットアップ
+void BowTowerScanState::Setup(GameObject* gameObject) {
+	IState::Setup(gameObject);
+	//弓のタワーを取得
+	bowTower_ = gameObject_->GetComponent<BowTower>();
+}
+
 //入った瞬間
 void BowTowerScanState::Enter() {
+	InitializeScanAnimation();
 }
 
 //更新
 void BowTowerScanState::Update() {
+	UpdateScanAnimation();
 }
 
 //終了
@@ -28,16 +39,6 @@ std::unique_ptr<IState> BowTowerScanState::Clone() {
 	std::unique_ptr<BowTowerScanState>instance = std::make_unique<BowTowerScanState>();
 	instance->Setup(gameObject_);
 	return instance;
-}
-
-//攻撃範囲の角度を設定
-void BowTowerScanState::SetAttackRangeDegrees(float attackRangeDegrees) {
-	attackRangeDegrees_ = attackRangeDegrees;
-}
-
-//頭のアニメーション補完する際の設定
-void BowTowerScanState::SetHeadTurnBlendSpeed(float headTurnBlendSpeed) {
-	headTurnBlendSpeed_ = headTurnBlendSpeed;
 }
 
 //探しているときのアニメーションの初期化
@@ -60,7 +61,7 @@ void BowTowerScanState::UpdateScanAnimation() {
 	nodeTransform.SetEulerAngleDegrees({scanBeginRotate.x,scanBeginRotate.y + scanRotOffset_,scanBeginRotate.z});
 
 	//ブレンド(補間数係数)を作成
-	const float blend = std::clamp(headTurnBlendSpeed_ * mathUtility::GetDeltaTime(),0.0f,1.0f);
+	const float blend = std::clamp(bowTower_->GetHeadTurnBlendSpeed() * mathUtility::GetDeltaTime(),0.0f,1.0f);
 
 	//補間
 	nodeTransform.rotate = Quaternion::Slerp(currentRotation,nodeTransform.rotate,blend);
@@ -69,7 +70,7 @@ void BowTowerScanState::UpdateScanAnimation() {
 	object3d_->SetNodeLocalTransform("BowTower/head",nodeTransform);
 
 	//攻撃範囲の半分
-	float halfAttackRange = attackRangeDegrees_ / 2.0f;
+	float halfAttackRange = bowTower_->GetAttackRangeDegrees() / 2.0f;
 	//向きの切り替え
 	if(scanRotOffset_ >= maxScanRotate_ - halfAttackRange) {
 		scanDir_ = -1.0f;

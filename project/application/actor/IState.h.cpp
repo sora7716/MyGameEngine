@@ -4,6 +4,14 @@
 #include "Logger.h"
 #include <cassert>
 
+//コンストラクタ
+IState::IState() {
+}
+
+//デストラクタ
+IState::~IState() {
+}
+
 //セットアップ
 void IState::Setup(GameObject* gameObject) {
 	//ゲームオブジェクトの記録

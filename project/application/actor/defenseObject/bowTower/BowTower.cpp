@@ -4,9 +4,10 @@
 #include "Object3d.h"
 #include "Logger.h"
 #include "Collision.h"
-#include "Quaternion.h"
-#include <cmath>
-#include <algorithm>
+#include "BowTowerScanState.h"
+#include "BowTowerAttackState.h"
+#include "BaseScene.h"
+#include "Arrow.h"
 
 //コンストラクタ
 BowTower::BowTower(GameObject* gameObject) :BaseDefenseObject(gameObject) {
@@ -26,12 +27,23 @@ void BowTower::Initialize() {
 		Logger::OutputLog("object3d_が取得できませんでした");
 		assert(false);
 	}
+
+	//ステートを生成
+	//探索ステート
+	std::unique_ptr<IState> state = nullptr;
+	state = std::make_unique<BowTowerScanState>();
+	state->Setup(gameObject_);
+	states_.push_back(std::move(state));
+	//攻撃ステート
+	state = std::make_unique<BowTowerAttackState>();
+	state->Setup(gameObject_);
+	states_.push_back(std::move(state));
 }
 
 //更新
 void BowTower::Update() {
 	//対象が設定されていなければ
-	if(!target_) {
+	if(!attackTarget_) {
 		Logger::OutputLog("BowTowerに攻撃対象が設定されていません");
 		return;
 	}
@@ -39,7 +51,7 @@ void BowTower::Update() {
 	//探索範囲を設定
 	SettingScanRange();
 	//探索範囲に入っているか
-	isInScanRange_ = collision::IsCollision(scanRange_,target_->GetWorldPos());
+	isInScanRange_ = collision::IsCollision(scanRange_,attackTarget_->GetWorldPos());
 
 	//攻撃範囲に入っているか
 	if(isInScanRange_) {
@@ -49,7 +61,7 @@ void BowTower::Update() {
 		//攻撃フェーズじゃなければ
 		if(behavior_ != Behavior::kAttack) {
 			//衝突判定
-			if(collision::IsCollision(attackRange_,target_->GetWorldPos())) {
+			if(collision::IsCollision(attackRange_,attackTarget_->GetWorldPos())) {
 				behaviorRequest_ = Behavior::kAttack;
 			}
 		}
@@ -68,46 +80,33 @@ void BowTower::Update() {
 		//要求をリセット
 		behaviorRequest_ = Behavior::kNone;
 
-		//初期化
-		switch(behavior_) {
-			case Behavior::kScan:
-				//探しているときの初期化
-				InitializeScanAnimation();
-				break;
-			case Behavior::kAttack:
-				//攻撃しているときの初期化
-				InitializeAttackAnimation();
-				break;
+		//新しいステートを作成
+		IState* newState = states_[static_cast<uint32_t>(behavior_) - 1].get();
+		newState->Enter();
+		//現在のステートがnullじゃなければ
+		if(currentState_) {
+			currentState_->Exit();
 		}
+		//現在のステートに代入
+		currentState_ = newState;
 	}
 
-	//動きの更新
-	switch(behavior_) {
-		case Behavior::kScan:
-			//探してる時のアニメーション
-			UpdateScanAnimation();
-			break;
-		case Behavior::kAttack:
-			//攻撃しているときのアニメーション
-			UpdateAttackAnimation();
-			break;
+	//現在のステートがnullじゃなければ
+	if(currentState_) {
+		currentState_->Update();
+	}
+
+	//矢の発射要求があったら
+	if(fireRequest_) {
+		//リクエストをリセット
+		fireRequest_ = false;
+		CreateArrow();
 	}
 }
 
 //プロパティ一覧
 void BowTower::RegisterProperties(PropertyRegistry* registry) {
 	Component::RegisterProperties(registry);
-	registry->BeginGroup("探索アニメーション");
-	registry->Add("探索範囲の最大角度",maxScanRotate_);
-	registry->Add("探索範囲の最小角度",minScanRotate_);
-	registry->Add("探索する速度",scanSpeed_);
-	registry->Add("探索する半径",scanRadius_);
-	registry->EndGroup();
-
-	registry->BeginGroup("攻撃アニメーション");
-	registry->Add("攻撃する感覚",attackInterval_);
-	registry->Add("反動の最大角度",recoilMaxDegrees);
-	registry->EndGroup();
 }
 
 //複製
@@ -130,7 +129,7 @@ std::string BowTower::GetTypeName() const {
 
 //攻撃対象を設定
 void BowTower::SetTarget(GameObject* target) {
-	target_ = target;
+	attackTarget_ = target;
 }
 
 //矢を発射の要求を設定
@@ -141,6 +140,26 @@ void BowTower::SetFireRequest(bool request) {
 //スキャンする半径の取得
 float BowTower::GetScanRadius() const {
 	return scanRadius_;
+}
+
+//攻撃範囲の角度を取得
+float BowTower::GetAttackRangeDegrees() const {
+	return attackRangeDegrees_;
+}
+
+//頭のアニメーションのブレンド速度の取得
+float BowTower::GetHeadTurnBlendSpeed() const {
+	return headTurnBlendSpeed_;
+}
+
+//攻撃範囲の取得
+const primitiveData::Sector& BowTower::GetAttackRange() const {
+	return attackRange_;
+}
+
+//攻撃対象の取得
+GameObject* BowTower::GetAttackTarget() const {
+	return attackTarget_;
 }
 
 //弓を発射するかを取得
@@ -161,7 +180,7 @@ void BowTower::SettingAttackRange() {
 	//頭のワールド行列から前方を取得
 	attackRange_.forward = mathUtility::TransformNormal(Vector3::GetBack(),headWorldMatrix);
 	//範囲の角度を設定
-	attackRange_.sweepAngleDegrees = attackRangeAngle_;
+	attackRange_.sweepAngleDegrees = attackRangeDegrees_;
 }
 
 //探索範囲を設定
@@ -176,113 +195,17 @@ void BowTower::SettingScanRange() {
 	scanRange_.sweepAngleDegrees = maxScanRotate_ * 2.0f;
 }
 
-//探しているときのアニメーションの初期化
-void BowTower::InitializeScanAnimation() {
-	scanRotOffset_ = 0.0f;
-	scanDir_ = 1.0f;
-}
+//矢の生成
+void BowTower::CreateArrow() {
+	//ゲームオブジェクトを生成
+	GameObject* gameObject = GetOwner()->GetCurrentScene()->CreateGameObject();
 
-//探してる時のアニメーション
-void BowTower::UpdateScanAnimation() {
-	//頭のTransformを取得
-	Transform nodeTransform = object3d_->GetNodeLocalTransform("BowTower/head");
+	//Object3dを追加
+	Object3d* object3d = gameObject->AddComponent<Object3d>();
+	object3d->SetModel("arrow");
 
-	//現在の回転を保存
-	const Quaternion currentRotation = nodeTransform.rotate;
-
-	//オフセットを補間
-	scanRotOffset_ += scanSpeed_ * scanDir_;
-	//目標姿勢を作成
-	nodeTransform.SetEulerAngleDegrees({scanBeginRotate.x,scanBeginRotate.y + scanRotOffset_,scanBeginRotate.z});
-
-	//ブレンド(補間数係数)を作成
-	const float blend = std::clamp(headTurnBlendSpeed_ * mathUtility::GetDeltaTime(),0.0f,1.0f);
-
-	//補間
-	nodeTransform.rotate = Quaternion::Slerp(currentRotation,nodeTransform.rotate,blend);
-
-	//取得したTransformを送信
-	object3d_->SetNodeLocalTransform("BowTower/head",nodeTransform);
-
-	//攻撃範囲の半分
-	float halfAttackRange = attackRangeAngle_ / 2.0f;
-	//向きの切り替え
-	if(scanRotOffset_ >= maxScanRotate_ - halfAttackRange) {
-		scanDir_ = -1.0f;
-	} else if(scanRotOffset_ <= minScanRotate_ + halfAttackRange) {
-		scanDir_ = 1.0f;
-	}
-}
-
-//攻撃するときのアニメーションの初期化
-void BowTower::InitializeAttackAnimation() {
-	//タイマーをリセット
-	attackTimer_ = 0.0f;
-	recoilTimer_ = 0.0f;
-}
-
-//攻撃するときのアニメーションの更新
-void BowTower::UpdateAttackAnimation() {
-	//頭のTransformを取得
-	Transform nodeTransform = object3d_->GetNodeLocalTransform("BowTower/head");
-	//現在の回転を保存
-	const Quaternion currentRotation = nodeTransform.rotate;
-
-	//デルタタイムを設定
-	const float deltaTime = mathUtility::GetDeltaTime();
-
-	//攻撃時間を管理するタイマーを計測
-	attackTimer_ += deltaTime;
-	//反動を管理するタイマーを計測
-	recoilTimer_ += deltaTime;
-
-	//インターバルが終了したら
-	if(attackTimer_ >= attackInterval_) {
-		//タイマーをリセット
-		attackTimer_ = 0.0f;
-		recoilTimer_ = 0.0f;
-		//矢の発射の要求
-		fireRequest_ = true;
-	}
-
-	//攻撃開始になったら
-	float recoilDegrees = 0.0f;//攻撃時の角度
-	//反動の最大時間
-	float recoilMaxSecond = 0.05f;
-	//立て直しの最大時間
-	float recoverMaxSecond = 0.2f;
-	if(recoilTimer_ < recoilMaxSecond) {
-		//反動
-		const float progress = recoilTimer_ / recoilMaxSecond;
-		recoilDegrees = std::lerp(0.0f,recoilMaxDegrees,progress);
-	} else if(recoilTimer_ < recoverMaxSecond) {
-		//立て直し
-		const float progress = (recoilTimer_ - recoilMaxSecond) / recoverMaxSecond - recoilMaxSecond;
-		recoilDegrees = std::lerp(recoilMaxDegrees,0.0f,progress);
-	}
-	//頭の角度
-	const Vector3 headDegrees = nodeTransform.GetDegreeAngle();
-	nodeTransform.SetEulerAngleDegrees({recoilDegrees,headDegrees.y,headDegrees.z});
-
-	//敵への方向を取得
-	Vector3 toEnemy = target_->GetWorldPos() - attackRange_.origin;
-	//横のずれ
-	float sizeOffset = attackRange_.forward.Cross(toEnemy).y;
-	//正面のずれ
-	float forwardDot = attackRange_.forward.Dot(toEnemy);
-	//符号付のずれ角
-	float signedOffsetAngle = std::atan2(sizeOffset,forwardDot);
-
-	//次の向く角度を設定
-	float nextHeadYAngle = nodeTransform.GetEulerAngle().y + signedOffsetAngle;
-	nodeTransform.SetEulerAngle({nodeTransform.GetEulerAngle().x,nextHeadYAngle,nodeTransform.GetEulerAngle().z});
-
-	//ブレンド(補間数係数)を作成
-	const float blend = std::clamp(headTurnBlendSpeed_ * mathUtility::GetDeltaTime(),0.0f,1.0f);
-
-	//補間
-	nodeTransform.rotate = Quaternion::Slerp(currentRotation,nodeTransform.rotate,blend);
-
-	//取得したTransformを送信
-	object3d_->SetNodeLocalTransform("BowTower/head",nodeTransform);
+	//矢の追加
+	Arrow* arrow = gameObject->AddComponent<Arrow>();
+	Vector3 arrowPosition = Vector3(0.0f,0.5f,0.0f) * (headModelMatrix_ * gameObject_->GetWorldMatrix());
+	arrow->Setup(attackTarget_,arrowPosition);
 }

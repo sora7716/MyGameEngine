@@ -32,7 +32,9 @@
     <ClCompile Include="application\actor\command\StickCameraControlCommand.cpp" />
     <ClCompile Include="application\actor\command\StickMovementCommand.cpp" />
     <ClCompile Include="application\actor\defenseObject\BaseDefenseObject.cpp" />
+    <ClCompile Include="application\actor\defenseObject\bowTower\Arrow.cpp" />
     <ClCompile Include="application\actor\defenseObject\bowTower\BowTower.cpp" />
+    <ClCompile Include="application\actor\defenseObject\bowTower\BowTowerAttackState.cpp" />
     <ClCompile Include="application\actor\defenseObject\bowTower\BowTowerScanState.cpp" />
     <ClCompile Include="application\actor\defenseObject\freezeTower\FreezeTower.cpp" />
     <ClCompile Include="application\actor\defenseObject\gameMine\GameMine.cpp" />
@@ -52,6 +54,7 @@
     <ClCompile Include="application\actor\player\PlayerAttackState.cpp" />
     <ClCompile Include="application\actor\player\PlayerMovementState.cpp" />
     <ClCompile Include="application\actor\player\PlayerNormalState.cpp" />
+    <ClCompile Include="application\actor\system\ArrowSystem.cpp" />
     <ClCompile Include="application\actor\system\DefensePlacementSystem.cpp" />
     <ClCompile Include="application\actor\system\CreateFieldSystem.cpp" />
     <ClCompile Include="application\scene\GameScene.cpp" />
@@ -477,7 +480,9 @@
     <ClInclude Include="application\actor\command\StickCameraControlCommand.h" />
     <ClInclude Include="application\actor\command\StickMovementCommand.h" />
     <ClInclude Include="application\actor\defenseObject\BaseDefenseObject.h" />
+    <ClInclude Include="application\actor\defenseObject\bowTower\Arrow.h" />
     <ClInclude Include="application\actor\defenseObject\bowTower\BowTower.h" />
+    <ClInclude Include="application\actor\defenseObject\bowTower\BowTowerAttackState.h" />
     <ClInclude Include="application\actor\defenseObject\bowTower\BowTowerScanState.h" />
     <ClInclude Include="application\actor\defenseObject\freezeTower\FreezeTower.h" />
     <ClInclude Include="application\actor\defenseObject\gameMine\GameMine.h" />
@@ -498,6 +503,7 @@
     <ClInclude Include="application\actor\player\PlayerAttackState.h" />
     <ClInclude Include="application\actor\player\PlayerMovementState.h" />
     <ClInclude Include="application\actor\player\PlayerNormalState.h" />
+    <ClInclude Include="application\actor\system\ArrowSystem.h" />
     <ClInclude Include="application\actor\system\DefensePlacementSystem.h" />
     <ClInclude Include="application\actor\system\CreateFieldSystem.h" />
     <ClInclude Include="application\scene\GameScene.h" />

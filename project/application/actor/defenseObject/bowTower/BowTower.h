@@ -2,6 +2,7 @@
 #include "BaseDefenseObject.h"
 #include "PrimitiveData.h"
 #include "Matrix4x4.h"
+#include <vector>
 
 //前方宣言
 class Object3d;
@@ -69,8 +70,8 @@ public://メンバ関数
 	/// <summary>
 	/// 攻撃対象を設定
 	/// </summary>
-	/// <param name="target">対象</param>
-	void SetTarget(GameObject* target);
+	/// <param name="targets">対象(配列)</param>
+	void SetTargets(const std::vector<GameObject*>& targets);
 
 	/// <summary>
 	/// 矢を発射の要求を設定
@@ -122,6 +123,8 @@ private://メンバ変数
 	GameObject* gameObject_ = nullptr;
 	//Object3d
 	Object3d* object3d_ = nullptr;
+	//攻撃対象(配列)
+	std::vector<GameObject*> attackTargets_;
 	//攻撃対象
 	GameObject* attackTarget_ = nullptr;
 	//矢の管理システム

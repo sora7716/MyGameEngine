@@ -34,7 +34,7 @@ void ArrowSystem::Initialize(BaseScene* scene) {
 }
 
 //撃つ
-void ArrowSystem::Fire(GameObject* attackTarget,const Matrix4x4& headWorldMatrix) {
+void ArrowSystem::Fire(const Vector3& targetPos,const Matrix4x4& headWorldMatrix) {
 	//使用できるゲームオブジェクトのインデックスを設定
 	uint32_t arrowIndex = 0;
 	for(uint32_t i = 0; i < arrowObjects_.size(); i++) {
@@ -55,7 +55,7 @@ void ArrowSystem::Fire(GameObject* attackTarget,const Matrix4x4& headWorldMatrix
 	//矢の追加
 	Arrow* arrow = arrowObject->GetComponent<Arrow>();
 	Vector3 arrowPosition = Vector3(0.0f,0.5f,0.0f) * headWorldMatrix;
-	arrow->Setup(attackTarget,arrowPosition);//セットアップ
+	arrow->Setup(targetPos,arrowPosition);//セットアップ
 }
 
 //矢の生成

@@ -15,27 +15,26 @@ Arrow::~Arrow() {
 }
 
 //セットアップ
-void Arrow::Setup(GameObject* target,const Vector3& position) {
+void Arrow::Setup(const Vector3& targetPos,const Vector3& position) {
 	//生存タイマーの初期化
 	lifeTime_ = 0.0f;
 
-	//ターゲットを記録
-	assert(target);
-	target_ = target;
+	//目標地点を記録
+	targetPos_ = targetPos;
 
 	//Transformを取得
 	Transform& transform = gameObject_->GetTransform();
 
 	//サイズを設定
-	transform.scale = Vector3::GetOne() / 2.0f;
+	transform.scale = Vector3::GetOne() / 1.5f;
 
 	//位置を設定
 	transform.translate = position;
 	initialPos_ = position;//最初の位置を取得
 
 	//向く方向を計算
-	initialDistance_ = (target_->GetWorldPos() - transform.translate).Length();//最初の距離を設定
-	dir_ = (target_->GetWorldPos() - transform.translate).Normalize();
+	initialDistance_ = (targetPos_ - transform.translate).Length();//最初の距離を設定
+	dir_ = (targetPos_ - transform.translate).Normalize();
 	//ヨー
 	float yaw = std::atan2(dir_.x,dir_.z);
 	//XとZの水平方向を取得
@@ -50,6 +49,9 @@ void Arrow::Setup(GameObject* target,const Vector3& position) {
 	transform.SetEulerAngle({0.0f,yaw,0.0f});
 	//最初の姿勢を取得
 	beginRotate_ = transform.rotate;
+
+	//スピンする角度を設定
+	spinAngle_ = transform.GetEulerAngle().z;
 }
 
 //初期化
@@ -82,9 +84,8 @@ void Arrow::Update() {
 	Quaternion correctedRotation = Quaternion::Slerp(beginRotate_,targetRotate_,t);
 
 	//常にZ軸にスピンする回転
-	float spinAngle = transform.GetEulerAngle().z;
-	spinAngle += spinSpeed_;
-	Quaternion spinRotation = Quaternion::EulerAngleToQuaternion({0.0f,0.0f,spinAngle});
+	spinAngle_ += spinSpeed_ * mathUtility::GetDeltaTime();
+	Quaternion spinRotation = Quaternion::EulerAngleToQuaternion({0.0f,0.0f,spinAngle_});
 
 	//Transformに設定
 	transform.rotate = correctedRotation * spinRotation;

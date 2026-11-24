@@ -25,9 +25,9 @@ public://メンバ関数
 	/// <summary>
 	/// セットアップ
 	/// </summary>
-	/// <param name="target">ターゲット</param>
+	/// <param name="targetPos">目標地点</param>
 	/// <param name="position">初期位置</param>
-	void Setup(GameObject* target,const Vector3& position);
+	void Setup(const Vector3& targetPos,const Vector3& position);
 
 	/// <summary>
 	/// 初期化
@@ -70,8 +70,8 @@ private://メンバ変数
 	Vector3 initialPos_ = {};
 	//最初の距離
 	float initialDistance_ = {};
-	//ターゲット
-	GameObject* target_ = nullptr;
+	//目標地点
+	Vector3 targetPos_ = {};
 	//進む方向
 	Vector3 dir_ = {};
 	//目標の姿勢
@@ -80,8 +80,10 @@ private://メンバ変数
 	Quaternion beginRotate_ = {};
 	//移動速度
 	float moveSpeed_ = 5.0f;
+	//スピンする角度
+	float spinAngle_ = 0.0f;
 	//スピンする速度
-	float spinSpeed_ = 3.0f;
+	float spinSpeed_ = 20.0f;
 	//生存時間
 	float lifeTime_ = 0.0f;
 	//最大で生存できる時間

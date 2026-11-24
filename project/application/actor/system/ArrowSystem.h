@@ -1,5 +1,6 @@
 #pragma once
 #include "Matrix4x4.h"
+#include "Vector3.h"
 #include <vector>
 #include <memory>
 
@@ -38,9 +39,9 @@ public://メンバ関数
 	/// <summary>
 	/// 撃つ
 	/// </summary>
-	/// <param name="attackTarget">攻撃対象</param>
+	/// <param name="targetPos">攻撃対象の位置</param>
 	/// <param name="headWorldMatrix">頭のワールド行列</param>
-	void Fire(GameObject* attackTarget,const Matrix4x4& headWorldMatrix);
+	void Fire(const Vector3& targetPos,const Matrix4x4& headWorldMatrix);
 private://メンバ関数
 	/// <summary>
 	/// 矢の生成
@@ -49,7 +50,7 @@ private://メンバ関数
 	GameObject* CreateArrow();
 private://定数
 	//矢の最大数
-	static inline const uint32_t kArrowMaxCount = 256;
+	static inline const uint32_t kArrowMaxCount = 1;
 private://メンバ変数
 	//シーン
 	BaseScene* scene_ = nullptr;

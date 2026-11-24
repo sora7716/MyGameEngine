@@ -79,12 +79,13 @@ private://メンバ関数
 	/// プレイヤーの生成
 	/// </summary>
 	void CreatePlayer();
-
+	
 	/// <summary>
 	/// 敵の生成
 	/// </summary>
+	/// <param name="position">位置</param>
 	/// <returns>敵</returns>
-	GameObject* CreateEnemy();
+	GameObject* CreateEnemy(const Vector3& position);
 private://メンバ変数
 	//移動用のコマンド
 #ifdef _DEBUG
@@ -100,7 +101,7 @@ private://メンバ変数
 	GameObject* playerObject_ = nullptr;
 
 	//敵のオブジェクト
-	GameObject* enemyObject_ = nullptr;
+	std::vector<GameObject*>enemyObjects_;
 
 	//防衛オブジェクトの配置システム
 	std::unique_ptr<DefensePlacementSystem> defensePlacementSystem_ = nullptr;

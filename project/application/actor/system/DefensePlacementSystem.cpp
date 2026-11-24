@@ -90,8 +90,8 @@ void DefensePlacementSystem::Update() {
 }
 
 //敵の設定
-void DefensePlacementSystem::SetEnemy(GameObject* enemyObject) {
-	enemyObject_ = enemyObject;
+void DefensePlacementSystem::SetEnemies(const std::vector<GameObject*>& enemyObjects) {
+	enemyObjects_ = enemyObjects;
 }
 
 //設置予定を表示/非表示の取得
@@ -358,7 +358,7 @@ void DefensePlacementSystem::AddComponentsByModelName(const std::string& modelNa
 	if(modelName == GetModelNameByModelType(DefenseModelType::kBow)) {
 		BowTower* bowTower = gameObject->AddComponent<BowTower>();
 		bowTower->Setup(arrowSystem_);
-		bowTower->SetTarget(enemyObject_);
+		bowTower->SetTargets(enemyObjects_);
 	}
 	//モデルが氷結タワーなら
 	if(modelName == GetModelNameByModelType(DefenseModelType::kFreeze)) {

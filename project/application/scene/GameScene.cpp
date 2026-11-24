@@ -88,7 +88,8 @@ void GameScene::Initialize() {
 	followCamera_->SetTarget(playerObject_);
 
 	//敵の生成
-	enemyObject_ = CreateEnemy();
+	enemyObjects_.push_back(CreateEnemy({0.0f,2.0f,0.0f}));
+	enemyObjects_.push_back(CreateEnemy({1.0f,2.0f,0.0f}));
 }
 
 //更新のステート
@@ -96,7 +97,7 @@ void GameScene::UpdateState() {
 	//防衛オブジェクトの設置システムの更新
 	defensePlacementSystem_->Update();
 	//敵の設定
-	defensePlacementSystem_->SetEnemy(enemyObject_);
+	defensePlacementSystem_->SetEnemies(enemyObjects_);
 }
 
 //デバッグ
@@ -299,9 +300,9 @@ void GameScene::CreatePlayer() {
 }
 
 //敵の生成
-GameObject* GameScene::CreateEnemy() {
+GameObject* GameScene::CreateEnemy(const Vector3& position) {
 	GameObject* gameObject = CreateGameObject();
-	gameObject->GetTransform().translate.y = 2.0f;
+	gameObject->GetTransform().translate = position;
 	gameObject->SetName("敵");
 	gameObject->SetTag("Enemy");
 	//Object3d

@@ -76,8 +76,8 @@ public:
 	/// <summary>
 	/// 敵の設定
 	/// </summary>
-	/// <param name="enemyObject">敵</param>
-	void SetEnemy(GameObject* enemyObject);
+	/// <param name="enemyObject">敵(配列)</param>
+	void SetEnemies(const std::vector<GameObject*>& enemyObjects);
 
 	/// <summary>
 	/// 設置予定を表示/非表示の取得
@@ -164,7 +164,7 @@ private://メンバ変数
 	GameObject* playerObject_ = nullptr;
 
 	//敵のゲームオブジェクト
-	GameObject* enemyObject_ = nullptr;
+	std::vector<GameObject*> enemyObjects_;
 
 	//矢の管理システム
 	ArrowSystem* arrowSystem_ = nullptr;

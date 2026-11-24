@@ -49,34 +49,62 @@ void BowTower::Initialize() {
 
 //更新
 void BowTower::Update() {
-	//対象が設定されていなければ
-	if(!attackTarget_) {
-		Logger::OutputLog("BowTowerに攻撃対象が設定されていません");
+	//対象の配列が設定されていなかったら
+	if(attackTargets_.empty()) {
+		Logger::OutputLog("BowTowerに攻撃対象(配列)が設定されていません");
 		return;
 	}
 
 	//探索範囲を設定
 	SettingScanRange();
-	//探索範囲に入っているか
-	isInScanRange_ = collision::IsCollision(scanRange_,attackTarget_->GetWorldPos());
+	//攻撃範囲を設定
+	SettingAttackRange();
 
-	//攻撃範囲に入っているか
-	if(isInScanRange_) {
-		//入っていた場合
-		//攻撃範囲を設定
-		SettingAttackRange();
-		//攻撃フェーズじゃなければ
-		if(behavior_ != Behavior::kAttack) {
-			//衝突判定
-			if(collision::IsCollision(attackRange_,attackTarget_->GetWorldPos())) {
-				behaviorRequest_ = Behavior::kAttack;
-			}
-		}
-	} else {
-		//現在の振る舞いが探索じゃなければ
-		if(behavior_ != Behavior::kScan) {
-			//入っていなかった場合
+	if(attackTarget_) {
+		//攻撃範囲にターゲットがいるか
+		isInScanRange_ = collision::IsCollision(scanRange_,attackTarget_->GetWorldPos());
+		//ターゲットが生存していないまたは探索範囲にいなければ
+		if(!attackTarget_->IsActive() || !isInScanRange_) {
+			//攻撃ステートから探索ステートへ変更
 			behaviorRequest_ = Behavior::kScan;
+			attackTarget_ = nullptr;
+		}
+
+	} else {
+		//各攻撃対象にアクセス
+		for(GameObject* attackTarget : attackTargets_) {
+			//攻撃対象がNullなら
+			if(!attackTarget) {
+				continue;
+			}
+
+			//探索範囲に入っているか
+			isInScanRange_ = collision::IsCollision(scanRange_,attackTarget->GetWorldPos());
+
+			//攻撃範囲に入っているか
+			if(isInScanRange_) {
+				//入っていた場合
+				//攻撃フェーズじゃなければ
+				if(behavior_ != Behavior::kAttack) {
+					//攻撃対象がNullじゃなければ
+					if(!attackTarget_) {
+						//衝突判定
+						if(collision::IsCollision(attackRange_,attackTarget->GetWorldPos())) {
+							behaviorRequest_ = Behavior::kAttack;
+							//現在の攻撃対象を設定
+							attackTarget_ = attackTarget;
+						}
+					}
+				}
+			} else {
+				//現在の振る舞いが探索じゃなければ
+				if(behavior_ != Behavior::kScan) {
+					//入っていなかった場合
+					behaviorRequest_ = Behavior::kScan;
+					//攻撃対象をリセット
+					attackTarget_ = nullptr;
+				}
+			}
 		}
 	}
 
@@ -108,7 +136,7 @@ void BowTower::Update() {
 		//リクエストをリセット
 		fireRequest_ = false;
 		//矢を発射
-		arrowSystem_->Fire(attackTarget_,headModelMatrix_ * gameObject_->GetWorldMatrix());
+		arrowSystem_->Fire(attackTarget_->GetWorldPos(),headModelMatrix_ * gameObject_->GetWorldMatrix());
 	}
 }
 
@@ -136,8 +164,8 @@ std::string BowTower::GetTypeName() const {
 }
 
 //攻撃対象を設定
-void BowTower::SetTarget(GameObject* target) {
-	attackTarget_ = target;
+void BowTower::SetTargets(const std::vector<GameObject*>& targets) {
+	attackTargets_ = targets;
 }
 
 //矢を発射の要求を設定

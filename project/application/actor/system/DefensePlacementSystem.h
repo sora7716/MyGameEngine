@@ -16,6 +16,7 @@ class PlacementPreviewComponent;
 class DefenseRotationComponent;
 class PlacementSwitchComponent;
 class DefensePlaceComponent;
+class ArrowSystem;
 
 //方向
 enum class DirectionType :uint32_t {
@@ -44,8 +45,9 @@ public://静的メンバ変数
 	/// <param name="scene">シーン</param>
 	/// <param name="mapChipField">マップチップフィールド</param>
 	/// <param name="playerObject">プレイヤーのゲームオブジェクト</param>
+	/// <param name="arrowSystem">矢の管理システム</param>
 	/// <returns>インスタンス</returns>
-	static std::unique_ptr<DefensePlacementSystem>Create(BaseScene* scene,MapChipField* mapChipField,GameObject* playerObject);
+	static std::unique_ptr<DefensePlacementSystem>Create(BaseScene* scene,MapChipField* mapChipField,GameObject* playerObject,ArrowSystem* arrowSystem);
 public:
 	/// <summary>
 	/// コンストラクタ
@@ -63,7 +65,8 @@ public:
 	/// <param name="scene">シーン</param>
 	/// <param name="mapChipField">マップチップフィールド</param>
 	/// <param name="playerObject">プレイヤーのゲームオブジェクト</param>
-	void Initialize(BaseScene* scene,MapChipField* mapChipField,GameObject* playerObject);
+	/// <param name="arrowSystem">矢の管理システム</param>
+	void Initialize(BaseScene* scene,MapChipField* mapChipField,GameObject* playerObject,ArrowSystem* arrowSystem);
 
 	/// <summary>
 	/// 更新
@@ -129,7 +132,7 @@ private://メンバ関数
 	/// <param name="modelName">モデル名</param>
 	/// <param name="boxCollider">Boxコライダー</param>
 	void SwitchDefenseObjectCollider(const std::string& modelName,BoxCollider* boxCollider);
-	
+
 	/// <summary>
 	/// モデル名によって追加するコンポーネントを変える
 	/// </summary>
@@ -142,7 +145,7 @@ private://メンバ関数
 	/// </summary>
 	/// <param name="modelName">モデル名</param>
 	/// <param name="defenseObject">ゲームオブジェクト</param>
-	void CreateRangeIndicator(const std::string& modelName,GameObject*defenseObject);
+	void CreateRangeIndicator(const std::string& modelName,GameObject* defenseObject);
 
 	/// <summary>
 	/// モデル名をモデルタイプから取得
@@ -162,6 +165,9 @@ private://メンバ変数
 
 	//敵のゲームオブジェクト
 	GameObject* enemyObject_ = nullptr;
+
+	//矢の管理システム
+	ArrowSystem* arrowSystem_ = nullptr;
 
 	//守るオブジェクトのモデル名の一覧
 	std::vector<std::string>defenseObjectModelNameList_;

@@ -6,6 +6,7 @@
 //前方宣言
 class Object3d;
 class IState;
+class ArrowSystem;
 
 /// <summary>
 /// 弓タワー
@@ -29,6 +30,12 @@ public://メンバ関数
 	/// デストラクタ
 	/// </summary>
 	~BowTower()override;
+
+	/// <summary>
+	/// セットアップ
+	/// </summary>
+	/// <param name="arrowSystem">矢の管理システム</param>
+	void Setup(ArrowSystem* arrowSystem);
 
 	/// <summary>
 	/// 初期化
@@ -76,7 +83,7 @@ public://メンバ関数
 	/// </summary>
 	/// <returns>スキャンする半径</returns>
 	float GetScanRadius()const;
-	
+
 	/// <summary>
 	/// 攻撃範囲の角度を取得
 	/// </summary>
@@ -100,12 +107,6 @@ public://メンバ関数
 	/// </summary>
 	/// <returns>攻撃対象</returns>
 	GameObject* GetAttackTarget()const;
-
-	/// <summary>
-	/// 弓を発射するかを取得
-	/// </summary>
-	/// <returns>発射するか</returns>
-	bool IsFire()const;
 private://メンバ関数
 	/// <summary>
 	/// 攻撃範囲を設定
@@ -116,11 +117,6 @@ private://メンバ関数
 	/// 探索範囲を設定
 	/// </summary>
 	void SettingScanRange();
-
-	/// <summary>
-	/// 矢の生成
-	/// </summary>
-	void CreateArrow();
 private://メンバ変数
 	//ゲームオブジェクト
 	GameObject* gameObject_ = nullptr;
@@ -128,6 +124,8 @@ private://メンバ変数
 	Object3d* object3d_ = nullptr;
 	//攻撃対象
 	GameObject* attackTarget_ = nullptr;
+	//矢の管理システム
+	ArrowSystem* arrowSystem_ = nullptr;
 
 	//振る舞いの要求
 	Behavior behaviorRequest_ = Behavior::kScan;

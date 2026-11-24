@@ -29,7 +29,9 @@ public://メンバ関数
 	/// <param name="position">初期位置</param>
 	void Setup(GameObject* target,const Vector3& position);
 
-	//初期化
+	/// <summary>
+	/// 初期化
+	/// </summary>
 	void Initialize()override;
 
 	/// <summary>
@@ -57,12 +59,6 @@ public://メンバ関数
 	void OnTriggerEnter(BaseCollider* other)override;
 
 	/// <summary>
-	/// 離れた瞬間
-	/// </summary>
-	/// <param name="other"></param>
-	void OnTriggerExit(BaseCollider* other)override;
-
-	/// <summary>
 	/// コンポーネントのタイプ名を返す
 	/// </summary>
 	/// <returns>コンポーネントのタイプ名</returns>
@@ -84,5 +80,11 @@ private://メンバ変数
 	Quaternion beginRotate_ = {};
 	//移動速度
 	float moveSpeed_ = 5.0f;
+	//スピンする速度
+	float spinSpeed_ = 3.0f;
+	//生存時間
+	float lifeTime_ = 0.0f;
+	//最大で生存できる時間
+	float maxLifetime_ = 3.0f;
 };
 

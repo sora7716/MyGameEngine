@@ -17,15 +17,21 @@ void SphereCollider::Initialize() {
 	radius_ = 1.0f;
 }
 
-//更新
-void SphereCollider::Update() {
-	//基底クラスの更新
-	BaseCollider::Update();
+//形の更新
+void SphereCollider::UpdateGeometry() {
 	//ゲームオブジェクトを取得
 	GameObject* gameObject = GetOwner();
 	//SphereとGameObjectをリンクさせる
 	sphere_.center = center_ + gameObject->GetWorldPos();
 	sphere_.radius = radius_ * gameObject_->GetTransform().scale.Abs().Max() + 0.01f;
+}
+
+//更新
+void SphereCollider::Update() {
+	//基底クラスの更新
+	BaseCollider::Update();
+	//形の更新
+	UpdateGeometry();
 }
 
 //プロパティ一覧の登録

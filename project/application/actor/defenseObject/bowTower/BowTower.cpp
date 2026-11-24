@@ -7,7 +7,7 @@
 #include "BowTowerScanState.h"
 #include "BowTowerAttackState.h"
 #include "BaseScene.h"
-#include "Arrow.h"
+#include "ArrowSystem.h"
 
 //コンストラクタ
 BowTower::BowTower(GameObject* gameObject) :BaseDefenseObject(gameObject) {
@@ -15,6 +15,13 @@ BowTower::BowTower(GameObject* gameObject) :BaseDefenseObject(gameObject) {
 
 //デストラクタ
 BowTower::~BowTower() {
+}
+
+//セットアップ
+void BowTower::Setup(ArrowSystem* arrowSystem) {
+	//矢の管理システムの記録
+	assert(arrowSystem);
+	arrowSystem_ = arrowSystem;
 }
 
 //初期化
@@ -100,7 +107,8 @@ void BowTower::Update() {
 	if(fireRequest_) {
 		//リクエストをリセット
 		fireRequest_ = false;
-		CreateArrow();
+		//矢を発射
+		arrowSystem_->Fire(attackTarget_,headModelMatrix_ * gameObject_->GetWorldMatrix());
 	}
 }
 
@@ -162,11 +170,6 @@ GameObject* BowTower::GetAttackTarget() const {
 	return attackTarget_;
 }
 
-//弓を発射するかを取得
-bool BowTower::IsFire() const {
-	return fireRequest_;
-}
-
 //攻撃範囲を設定
 void BowTower::SettingAttackRange() {
 	//範囲を設定
@@ -193,19 +196,4 @@ void BowTower::SettingScanRange() {
 	scanRange_.forward = mathUtility::TransformNormal(Vector3::GetBack(),gameObject_->GetWorldMatrix());
 	//範囲の角度を設定
 	scanRange_.sweepAngleDegrees = maxScanRotate_ * 2.0f;
-}
-
-//矢の生成
-void BowTower::CreateArrow() {
-	//ゲームオブジェクトを生成
-	GameObject* gameObject = GetOwner()->GetCurrentScene()->CreateGameObject();
-
-	//Object3dを追加
-	Object3d* object3d = gameObject->AddComponent<Object3d>();
-	object3d->SetModel("arrow");
-
-	//矢の追加
-	Arrow* arrow = gameObject->AddComponent<Arrow>();
-	Vector3 arrowPosition = Vector3(0.0f,0.5f,0.0f) * (headModelMatrix_ * gameObject_->GetWorldMatrix());
-	arrow->Setup(attackTarget_,arrowPosition);
 }

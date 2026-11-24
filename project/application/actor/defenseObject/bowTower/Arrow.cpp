@@ -1,6 +1,7 @@
 #include "Arrow.h"
 #include "GameObject.h"
 #include "MathUtility.h"
+#include "BaseCollider.h"
 #include <cassert>
 #include <cmath>
 #include <algorithm>
@@ -15,6 +16,9 @@ Arrow::~Arrow() {
 
 //セットアップ
 void Arrow::Setup(GameObject* target,const Vector3& position) {
+	//生存タイマーの初期化
+	lifeTime_ = 0.0f;
+
 	//ターゲットを記録
 	assert(target);
 	target_ = target;
@@ -56,6 +60,13 @@ void Arrow::Initialize() {
 
 //更新
 void Arrow::Update() {
+	//生存時間を計測
+	lifeTime_ += mathUtility::GetDeltaTime();
+	//最大で生存できる時間が過ぎたら
+	if(maxLifetime_ <= lifeTime_) {
+		gameObject_->SetIsActive(false);
+	}
+
 	//Transformを取得
 	Transform& transform = gameObject_->GetTransform();
 
@@ -67,14 +78,23 @@ void Arrow::Update() {
 
 	//回転の補完する際に使用する係数
 	float t = std::clamp(traveledDistance / initialDistance_,0.0f,1.0f);
-	//回転の補間
-	transform.rotate = Quaternion::Slerp(beginRotate_,targetRotate_,t);
+	//補正をした回転
+	Quaternion correctedRotation = Quaternion::Slerp(beginRotate_,targetRotate_,t);
+
+	//常にZ軸にスピンする回転
+	float spinAngle = transform.GetEulerAngle().z;
+	spinAngle += spinSpeed_;
+	Quaternion spinRotation = Quaternion::EulerAngleToQuaternion({0.0f,0.0f,spinAngle});
+
+	//Transformに設定
+	transform.rotate = correctedRotation * spinRotation;
 }
 
 //プロパティ一覧を登録
 void Arrow::RegisterProperties(PropertyRegistry* registry) {
 	Component::RegisterProperties(registry);
 	registry->Add("移動速度",moveSpeed_);
+	registry->Add("スピンする速度",spinSpeed_);
 }
 
 //複製
@@ -92,12 +112,10 @@ std::unique_ptr<Component> Arrow::Clone(GameObject* gameObject) const {
 
 //接触した瞬間
 void Arrow::OnTriggerEnter(BaseCollider* other) {
-	(void)other;
-}
-
-//離れた瞬間
-void Arrow::OnTriggerExit(BaseCollider* other) {
-	(void)other;
+	//敵に衝突したら
+	if(other->GetOwner()->GetTag() == "Enemy") {
+		gameObject_->SetIsActive(false);
+	}
 }
 
 //コンポーネントのタイプ名を返す

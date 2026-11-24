@@ -25,6 +25,7 @@
 #include "ImGuiManager.h"
 #include "CreateFieldSystem.h"
 #include "DefensePlacementSystem.h"
+#include "ArrowSystem.h"
 #include <array>
 using namespace mapChipDesc;
 
@@ -75,8 +76,11 @@ void GameScene::Initialize() {
 	//プレイヤーのゲームオブジェクトを生成
 	playerObject_ = CreateGameObject();
 
-	//防衛オブジェクトの設置システムの生成1
-	defensePlacementSystem_ = DefensePlacementSystem::Create(this,createFieldSystem_->GetMapChipField(),playerObject_);
+	//矢の管理すステムの生成
+	arrowSystem_ = ArrowSystem::Create(this);
+
+	//防衛オブジェクトの設置システムの生成
+	defensePlacementSystem_ = DefensePlacementSystem::Create(this,createFieldSystem_->GetMapChipField(),playerObject_,arrowSystem_.get());
 
 	//プレイヤーの作成
 	CreatePlayer();
@@ -299,6 +303,7 @@ GameObject* GameScene::CreateEnemy() {
 	GameObject* gameObject = CreateGameObject();
 	gameObject->GetTransform().translate.y = 2.0f;
 	gameObject->SetName("敵");
+	gameObject->SetTag("Enemy");
 	//Object3d
 	Object3d* object3d = gameObject->AddComponent<Object3d>();
 	object3d->SetModel("enemy");

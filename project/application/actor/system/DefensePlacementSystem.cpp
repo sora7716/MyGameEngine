@@ -21,9 +21,9 @@
 using namespace mapChipDesc;
 
 //生成
-std::unique_ptr<DefensePlacementSystem> DefensePlacementSystem::Create(BaseScene* scene,MapChipField* mapChipField,GameObject* playerObject) {
+std::unique_ptr<DefensePlacementSystem> DefensePlacementSystem::Create(BaseScene* scene,MapChipField* mapChipField,GameObject* playerObject,ArrowSystem* arrowSystem) {
 	std::unique_ptr<DefensePlacementSystem>instance = std::make_unique<DefensePlacementSystem>();
-	instance->Initialize(scene,mapChipField,playerObject);
+	instance->Initialize(scene,mapChipField,playerObject,arrowSystem);
 	return instance;
 }
 
@@ -36,16 +36,19 @@ DefensePlacementSystem::~DefensePlacementSystem() {
 }
 
 //初期化
-void DefensePlacementSystem::Initialize(BaseScene* scene,MapChipField* mapChipField,GameObject* playerObject) {
+void DefensePlacementSystem::Initialize(BaseScene* scene,MapChipField* mapChipField,GameObject* playerObject,ArrowSystem* arrowSystem) {
 	//シーンの記録
 	assert(scene);
 	scene_ = scene;
 	//マップチップフィールドの記録
 	assert(mapChipField);
 	mapChipField_ = mapChipField;
-	//プレイヤーのゲームオブジェクトを設定
+	//プレイヤーのゲームオブジェクトを記録
 	assert(playerObject);
 	playerObject_ = playerObject;
+	//矢の管理システムを記録
+	assert(arrowSystem);
+	arrowSystem_ = arrowSystem;
 
 	//モデル一覧を登録
 	defenseObjectModelNameList_.push_back("wall");
@@ -354,6 +357,7 @@ void DefensePlacementSystem::AddComponentsByModelName(const std::string& modelNa
 	//モデルが弓タワーなら
 	if(modelName == GetModelNameByModelType(DefenseModelType::kBow)) {
 		BowTower* bowTower = gameObject->AddComponent<BowTower>();
+		bowTower->Setup(arrowSystem_);
 		bowTower->SetTarget(enemyObject_);
 	}
 	//モデルが氷結タワーなら

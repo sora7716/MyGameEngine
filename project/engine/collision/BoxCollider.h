@@ -24,6 +24,11 @@ public://メンバ関数
 	void Initialize()override;
 
 	/// <summary>
+	/// 形の更新
+	/// </summary>
+	void UpdateGeometry()override;
+
+	/// <summary>
 	/// 更新
 	/// </summary>
 	void Update()override;

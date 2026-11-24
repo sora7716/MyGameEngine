@@ -3,7 +3,7 @@
 #include <GameObject.h>
 
 //衝突判定の情報
-struct CollisionInfo{
+struct CollisionInfo {
 	//衝突した対象
 	BaseCollider* other = nullptr;
 	//衝突したか
@@ -15,13 +15,13 @@ struct CollisionInfo{
 };
 
 //コライダータイプ
-enum class ColliderType :uint32_t{
+enum class ColliderType :uint32_t {
 	kBox,
 	kSphere,
 };
 
 //ボディタイプ
-enum class BodyType :uint32_t{
+enum class BodyType :uint32_t {
 	kStatic,//動かせない
 	kDynamic//動かせる
 };
@@ -29,7 +29,7 @@ enum class BodyType :uint32_t{
 /// <summary>
 /// コライダーの基底クラス
 /// </summary>
-class BaseCollider :public Component{
+class BaseCollider :public Component {
 public://メンバ関数
 	/// <summary>
 	/// コンストラクタ
@@ -46,6 +46,11 @@ public://メンバ関数
 	/// 初期化
 	/// </summary>
 	void Initialize()override;
+
+	/// <summary>
+	/// 形の更新
+	/// </summary>
+	virtual void UpdateGeometry() = 0;
 
 	/// <summary>
 	/// プロパティ一覧を登録

@@ -7,9 +7,10 @@
 class Object3d;
 class BoxCollider;
 class CreateFieldSystem;
+class DefensePlacementSystem;
+class ArrowSystem;
 class FollowCameraController;
 class CameraControlComponent;
-class DefensePlacementSystem;
 class MovementCommand;
 class JumpCommand;
 
@@ -109,4 +110,7 @@ private://メンバ変数
 	//追従カメラ
 	FollowCameraController* followCamera_ = nullptr;
 	CameraControlComponent* cameraControlComponent_ = nullptr;
+
+	//矢の管理システム
+	std::unique_ptr<ArrowSystem>arrowSystem_ = nullptr;
 };

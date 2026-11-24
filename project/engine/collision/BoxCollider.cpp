@@ -22,15 +22,12 @@ void BoxCollider::Initialize() {
 	obb_.Initialize();
 }
 
-//更新
-void BoxCollider::Update() {
+//形の更新
+void BoxCollider::UpdateGeometry() {
 	//ハーフサイズを計算
 	halfSize_ = size_ / 2.0f;
-
-	//基底クラスの更新
-	BaseCollider::Update();
 	//中心座標
-	obb_.center = gameObject_->GetTransform().translate + offset_;
+	obb_.center = gameObject_->GetWorldPos() + offset_;
 
 	//ハーフサイズのより0の方が大きくなったら
 	if(halfSize_.x <= 0.0f) {
@@ -49,6 +46,14 @@ void BoxCollider::Update() {
 
 	//回転の設定
 	matrixUtility::MakeOBBRotateMatrix(obb_.orientations,gameObject_->GetTransform().rotate);
+}
+
+//更新
+void BoxCollider::Update() {
+	//基底クラスの更新
+	BaseCollider::Update();
+	//形の更新
+	UpdateGeometry();
 }
 
 //プロパティ一覧を登

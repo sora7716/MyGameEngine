@@ -1,5 +1,6 @@
 #include "Object3d.h"
 #include "MatrixUtility.h"
+#include "MathUtility.h"
 #include "GameObject.h"
 #include "Model.h"
 #include "LODController.h"
@@ -241,6 +242,18 @@ Matrix4x4 Object3d::MakeRenderWorldMatrix(const Matrix4x4& cameraWorldMatrix) co
 	//ビルボードの作成
 	Transform billboardTransform = gameObject->GetTransform();
 	billboardTransform.translate = gameObject->GetWorldPos();
+
+	//カメラの正面
+	const Vector3 cameraForward = mathUtility::TransformNormal(Vector3::GetForward(),cameraWorldMatrix).Normalize();
+	//オフセット分平行移動成分をずらす
+	billboardTransform.translate += cameraForward * billboardDepthOffset_;
+
+	//カメラの右面
+	const Vector3 cameraRight = mathUtility::TransformNormal(Vector3::GetRight(),cameraWorldMatrix).Normalize();
+	//オフセット分平行移動成分をずらす
+	billboardTransform.translate += cameraRight * billboardHorizontalOffset_;
+
+	//描画用ワールド行列を作成
 	Matrix4x4 renderWorldMatrix = matrixUtility::MakeBillboardAffineMatrix(cameraWorldMatrix,billboardTransform);
 
 	//一時的に作成したワールド行列を返す
@@ -368,6 +381,16 @@ void Object3d::SetFillMode(rasterizerMode::FillMode fillMode) {
 //描画時のトランスフォームモードの設定
 void Object3d::SetRenderTransformMode(RenderTransformMode transformMode) {
 	renderTransformMode_ = transformMode;
+}
+
+//ビルボードの深度のオフセット
+void Object3d::SetBillboardDepthOffset(float offset) {
+	billboardDepthOffset_ = offset;
+}
+
+//ビルボードの水平方向のオフセット
+void Object3d::SetBillboardHorizontalOffset(float offset) {
+	billboardHorizontalOffset_ = offset;
 }
 
 //ノードのローカルトランスフォームの設定

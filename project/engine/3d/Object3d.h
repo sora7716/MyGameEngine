@@ -158,6 +158,18 @@ public://メンバ関数
 	void SetRenderTransformMode(RenderTransformMode transformMode);
 
 	/// <summary>
+	/// ビルボードの深度のオフセット
+	/// </summary>
+	/// <param name="offset">オフセット</param>
+	void SetBillboardDepthOffset(float offset);
+
+	/// <summary>
+	/// ビルボードの水平方向のオフセット
+	/// </summary>
+	/// <param name="offset">オフセット</param>
+	void SetBillboardHorizontalOffset(float offset);
+
+	/// <summary>
 	/// ノードのローカルトランスフォームの設定
 	/// </summary>
 	/// <param name="path">ノードのパス名</param>
@@ -383,4 +395,9 @@ private://メンバ変数
 
 	//ライティングするか
 	bool enabledLighting_ = true;
+	
+	//ビルボードの深度のオフセット
+	float billboardDepthOffset_ = 0.0f;
+	//ビルボードの水平方向のオフセット
+	float billboardHorizontalOffset_ = 0.0f;
 };

@@ -100,11 +100,13 @@ void GameScene::Initialize() {
 	AddMaterialInstance("enemyHpBarMat",enemyHpBarMatTexPaths);
 	MaterialInstance* enemyHpBarMat = FindMaterialInstance("enemyHpBarMat");
 	enemyHpBarMat->SetParameter("color",Color::GetRed());
+	enemyHpBarMat->SetParameter("enabledLighting",uint32_t{0});
 
 	//敵のHPバーの背景のマテリアル
 	AddMaterialInstance("enemyHpBarBgMat",enemyHpBarMatTexPaths);
 	MaterialInstance* enemyHpBarBgMat = FindMaterialInstance("enemyHpBarBgMat");
 	enemyHpBarBgMat->SetParameter("color",Color::GetBlack());
+	enemyHpBarBgMat->SetParameter("enabledLighting",uint32_t{0});
 
 	//敵の生成
 	enemyObjects_.push_back(CreateEnemy({0.0f,2.0f,0.0f}));
@@ -366,13 +368,17 @@ GameObject* GameScene::CreateEnemy(const Vector3& position) {
 	HealthBar* healthBar = healthObject->AddComponent<HealthBar>();
 	healthBar->Setup(health);
 
+	//HPが満タンのときの半分の横幅を取得
+	constexpr float kBarMeshWidth = 0.5f;
+	const float halfFullWidth = kBarMeshWidth * healthBar->GetFullBarScale() / 2.0f;
+	healthBarObject3d->SetBillboardHorizontalOffset(-halfFullWidth);
+
 	//HealthBarの後ろ背景
 	GameObject* healthBarBgObject = CreateGameObject();
 	//Transformの調整
 	Transform& bgTransform = healthBarBgObject->GetTransform();
 	const Transform& barTransform = healthObject->GetTransform();
 	bgTransform.translate = barTransform.translate;
-	bgTransform.translate.z = 0.01f;
 	bgTransform.scale.x = healthBar->GetFullBarScale();
 	bgTransform.scale.y = barTransform.scale.y;
 	healthBarBgObject->SetName("HPバーの背景");
@@ -385,6 +391,8 @@ GameObject* GameScene::CreateEnemy(const Vector3& position) {
 	healthBarBgObject3d->SetModel("healthBar");
 	healthBarBgObject3d->SetRenderTransformMode(RenderTransformMode::kBillboard);
 	healthBarBgObject3d->SetMaterialInstance(0,GetMaterialInstance("enemyHpBarBgMat"));
+	healthBarBgObject3d->SetBillboardDepthOffset(0.01f);
+	healthBarBgObject3d->SetBillboardHorizontalOffset(-halfFullWidth);
 
 	return gameObject;
 }

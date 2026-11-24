@@ -60,9 +60,6 @@ public://メンバ関数
 	/// </summary>
 	/// <returns>満タン時のスケール</returns>
 	float GetFullBarScale();
-private://定数
-	//メッシュの幅
-	static inline const float kBarMeshWidth = 0.5f;
 private://メンバ変数
 	//Health
 	Health* health_ = nullptr;

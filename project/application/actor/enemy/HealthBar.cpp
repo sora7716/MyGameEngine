@@ -25,7 +25,6 @@ void HealthBar::Initialize() {
 	transform.scale.y = 0.25f;
 
 	//位置を設定
-	transform.translate.x = -(kBarMeshWidth * fullBarScale) / 2.0f;
 	transform.translate.y = 0.5f;
 }
 

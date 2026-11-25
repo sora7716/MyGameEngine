@@ -1,6 +1,6 @@
 #pragma once
 #include "Component.h"
-#include <GameObject.h>
+#include "GameObject.h"
 
 //衝突判定の情報
 struct CollisionInfo {

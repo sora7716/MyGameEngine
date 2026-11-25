@@ -140,7 +140,7 @@ void CollisionSystem::CollectCollider(const std::vector<std::unique_ptr<GameObje
 		}
 
 		//ゲームオブジェクトが有効状態か
-		if (!gameObject->IsActive()){
+		if (!gameObject->IsActiveHierarchy()){
 			continue;
 		}
 

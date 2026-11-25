@@ -219,7 +219,7 @@ void RenderSystem::CollectActiveObject3ds(const std::vector<std::unique_ptr<Game
 		}
 
 		//ゲームオブジェクトが有効状態か
-		if(!gameObject->IsActive()) {
+		if(!gameObject->IsActiveHierarchy()) {
 			continue;
 		}
 
@@ -318,7 +318,7 @@ void RenderSystem::CollectActiveSkyBox(const std::vector<std::unique_ptr<GameObj
 		}
 
 		//ゲームオブジェクトが有効状態か
-		if(!gameObject->IsActive()) {
+		if(!gameObject->IsActiveHierarchy()) {
 			continue;
 		}
 
@@ -358,7 +358,7 @@ void RenderSystem::CollectActiveSprites(const std::vector<std::unique_ptr<GameOb
 		}
 
 		//ゲームオブジェクトが有効状態か
-		if(!gameObject->IsActive()) {
+		if(!gameObject->IsActiveHierarchy()) {
 			continue;
 		}
 
@@ -426,7 +426,7 @@ void RenderSystem::CollectActiveParticleSystems(const std::vector<std::unique_pt
 		}
 
 		//ゲームオブジェクトが有効状態か
-		if(!gameObject->IsActive()) {
+		if(!gameObject->IsActiveHierarchy()) {
 			continue;
 		}
 
@@ -477,7 +477,7 @@ void RenderSystem::CollectActiveCameras(const std::vector<std::unique_ptr<GameOb
 		}
 
 		//ゲームオブジェクトが有効状態か
-		if(!gameObject->IsActive()) {
+		if(!gameObject->IsActiveHierarchy()) {
 			continue;
 		}
 

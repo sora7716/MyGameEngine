@@ -26,10 +26,14 @@ void ArrowSystem::Initialize(BaseScene* scene) {
 	//シーンを記録
 	assert(scene);
 	scene_ = scene;
+	//弓をまとめる
+	GameObject* arrows = scene_->CreateGameObject();
+	arrows->SetName("arrows");
 	//弓を生成
 	arrowObjects_.reserve(kArrowMaxCount);
 	for(uint32_t i = 0; i < kArrowMaxCount; i++) {
 		arrowObjects_.push_back(CreateArrow());
+		arrowObjects_[i]->AttachTo(arrows);
 	}
 }
 

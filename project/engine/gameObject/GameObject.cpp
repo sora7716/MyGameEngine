@@ -180,6 +180,22 @@ bool GameObject::IsActive() const {
 	return isActive_;
 }
 
+//親のオブジェクトをたどってアクティブかどうかを取得
+bool GameObject::IsActiveHierarchy() const {
+	//自分がアクティブか確認
+	if(!isActive_) {
+		return false;
+	}
+
+	//親がいない場合
+	if(!parentObject_) {
+		return true;
+	}
+
+	//親がいたら
+	return parentObject_->IsActiveHierarchy();
+}
+
 //名前の設定
 void GameObject::SetName(const std::string& name) {
 	name_ = name;
@@ -383,7 +399,7 @@ void GameObject::NotifyOnTriggerExit(BaseCollider* other) {
 //コンポーネントの更新
 void GameObject::UpdateComponents(UpdatePhase phase) {
 	//ゲームオブジェクトが有効か
-	if(!isActive_) {
+	if(!IsActiveHierarchy()) {
 		return;
 	}
 

@@ -101,6 +101,7 @@ void Arrow::RegisterProperties(PropertyRegistry* registry) {
 	Component::RegisterProperties(registry);
 	registry->Add("移動速度",moveSpeed_);
 	registry->Add("スピンする速度",spinSpeed_);
+	registry->Add("矢の攻撃力",attackPower_);
 }
 
 //複製

@@ -34,6 +34,12 @@ public://メンバ関数
 	void RegisterProperties(PropertyRegistry* registry)override;
 
 	/// <summary>
+	/// 接触した瞬間
+	/// </summary>
+	/// <param name="info">衝突情報</param>
+	void OnCollisionEnter(const CollisionInfo& info);
+
+	/// <summary>
 	/// 複製
 	/// </summary>
 	/// <param name="gameObject">ゲームオブジェクト</param>
@@ -48,5 +54,7 @@ public://メンバ関数
 private://メンバ変数
 	//ゲームオブジェクト
 	GameObject* gameObject_ = nullptr;
+	//敵の攻撃力
+	float attackPower_ = 20.0f;
 };
 

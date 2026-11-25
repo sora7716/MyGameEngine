@@ -108,7 +108,7 @@ void SkyBox::SetupRenderData(){
 	renderData_.material = material_;
 	renderData_.worldMatrix = worldMatrix_;
 	if (gameObject){
-		renderData_.isActive = gameObject->IsActive();
+		renderData_.isActive = gameObject->IsActiveHierarchy();
 	} else{
 		renderData_.isActive = false;
 	}

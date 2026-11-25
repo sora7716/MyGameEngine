@@ -57,7 +57,7 @@ void GizmoVisualizer::SelectColliderWireframe() {
 	//コライダーの配列を探索
 	for(BaseCollider* baseCollider : baseColliders) {
 		//接続されているGameObjectがActiveじゃなけれな
-		if(!baseCollider->GetOwner()->IsActive()) {
+		if(!baseCollider->GetOwner()->IsActiveHierarchy()) {
 			continue;
 		}
 

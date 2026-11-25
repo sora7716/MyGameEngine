@@ -120,6 +120,12 @@ public://メンバ関数
 	bool IsActive()const;
 
 	/// <summary>
+	/// 親のオブジェクトをたどってアクティブかどうかを取得
+	/// </summary>
+	/// <returns>親のオブジェクトをたどってアクティブかどうか</returns>
+	bool IsActiveHierarchy()const;
+
+	/// <summary>
 	/// 名前の設定
 	/// </summary>
 	/// <param name="name">名前</param>

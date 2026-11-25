@@ -157,7 +157,7 @@ void Sprite::SetupRenderData(){
 	renderData_.blendMode = blendMode_;
 	renderData_.cullingMode = cullingMode_;
 	renderData_.fillMode = fillMode_;
-	renderData_.isActive = gameObject->IsActive();
+	renderData_.isActive = gameObject->IsActiveHierarchy();
 	renderData_.material = material_;
 	renderData_.transformationMatrix = transformationMatrix_;
 	renderData_.imageFileName = imageFileName_;

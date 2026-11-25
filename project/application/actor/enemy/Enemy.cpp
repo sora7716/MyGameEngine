@@ -2,6 +2,7 @@
 #include "GameObject.h"
 #include "Health.h"
 #include "Logger.h"
+#include "BaseCollider.h"
 #include <cassert>
 
 //コンストラクタ
@@ -36,6 +37,21 @@ void Enemy::Update() {
 //プロパティ一覧を登録
 void Enemy::RegisterProperties(PropertyRegistry* registry) {
 	Component::RegisterProperties(registry);
+	registry->Add("敵の攻撃力",attackPower_);
+}
+
+//接触した瞬間
+void Enemy::OnCollisionEnter(const CollisionInfo& info) {
+	//ゲームオブジェクト
+	GameObject* gameObject = info.other->GetOwner();
+	if(gameObject->GetTag() == "DefenseObject") {
+		//HPの管理を取得
+		Health* health = gameObject->GetComponent<Health>();
+		//HPを減らす
+		if(health) {
+			health->ApplyDamage(attackPower_);
+		}
+	}
 }
 
 //複製

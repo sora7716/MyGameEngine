@@ -69,7 +69,7 @@ void Object3d::Update() {
 	}
 
 	//もしリンクしているゲームオブジェクトが非Activeなら
-	if(!gameObject->IsActive()) {
+	if(!gameObject->IsActiveHierarchy()) {
 		return;
 	}
 

@@ -361,7 +361,7 @@ GameObject* GameScene::CreateEnemy(const Vector3& position) {
 	//Object3dの追加
 	Object3d* healthBarObject3d = healthObject->AddComponent<Object3d>();
 	healthBarObject3d->SetModel("healthBar");
-	healthBarObject3d->SetRenderTransformMode(RenderTransformMode::kBillboard);
+	healthBarObject3d->SetRenderTransformMode(RenderTransformMode::kScreenAlignedBillboard);
 	healthBarObject3d->SetMaterialInstance(0,GetMaterialInstance("enemyHpBarMat"));
 
 	//HealthBarを追加
@@ -389,7 +389,7 @@ GameObject* GameScene::CreateEnemy(const Vector3& position) {
 	//Object3dの追加
 	Object3d* healthBarBgObject3d = healthBarBgObject->AddComponent<Object3d>();
 	healthBarBgObject3d->SetModel("healthBar");
-	healthBarBgObject3d->SetRenderTransformMode(RenderTransformMode::kBillboard);
+	healthBarBgObject3d->SetRenderTransformMode(RenderTransformMode::kScreenAlignedBillboard);
 	healthBarBgObject3d->SetMaterialInstance(0,GetMaterialInstance("hpBarBgMat"));
 	healthBarBgObject3d->SetBillboardDepthOffset(0.01f);
 	healthBarBgObject3d->SetBillboardHorizontalOffset(-halfFullWidth);

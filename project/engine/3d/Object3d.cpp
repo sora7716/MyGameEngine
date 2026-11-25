@@ -225,7 +225,7 @@ bool Object3d::AttachTo(Object3d* parent,const std::string& parentNodePath) {
 	return true;
 }
 
-//ワールド行列を作成
+//描画用のワールド行列を作成
 Matrix4x4 Object3d::MakeRenderWorldMatrix(const Matrix4x4& cameraWorldMatrix) const {
 	//Normalだった場合
 	if(renderTransformMode_ == RenderTransformMode::kNormal) {
@@ -242,6 +242,11 @@ Matrix4x4 Object3d::MakeRenderWorldMatrix(const Matrix4x4& cameraWorldMatrix) co
 	//ビルボードの作成
 	Transform billboardTransform = gameObject->GetTransform();
 	billboardTransform.translate = gameObject->GetWorldPos();
+
+	//スクリーン整列ビルボードだったら
+	if(renderTransformMode_ == RenderTransformMode::kScreenAlignedBillboard) {
+		billboardTransform.rotate = Quaternion::IdentityQuaternion();
+	}
 
 	//カメラの正面
 	const Vector3 cameraForward = mathUtility::TransformNormal(Vector3::GetForward(),cameraWorldMatrix).Normalize();

@@ -79,6 +79,15 @@ struct Color final{
 	static Color ColorCodeTransform(const std::string& colorCode);
 
 	/// <summary>
+	/// 線形補間
+	/// </summary>
+	/// <param name="begin">開始</param>
+	/// <param name="end">終了</param>
+	/// <param name="t">係数</param>
+	/// <returns>補間後の色</returns>
+	static Color Lerp(const Color& begin,const Color& end,float t);
+
+	/// <summary>
 	/// 加法
 	/// </summary>
 	/// <param name="v">ベクトル</param>

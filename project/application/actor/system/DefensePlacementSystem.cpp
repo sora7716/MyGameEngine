@@ -62,17 +62,23 @@ void DefensePlacementSystem::Initialize(BaseScene* scene,MapChipField* mapChipFi
 	//オブジェクトの設置予定地の生成
 	CreatePlacementPreview();
 
-	//テクスチャファイルパス
-	MaterialTexturePaths textureFilePaths = {
-		.textureFilePath = "textures/white1x1.png",
-		.environmentMap = "textures/skybox_cube.dds"
-	};
-
 	//弓のインジケータのマテリアルを作成
-	scene->AddMaterialInstance("BowIndicatorMaterial",textureFilePaths);
-	MaterialInstance* bowIndicatorMat = scene->FindMaterialInstance("BowIndicatorMaterial");
+	scene_->AddMaterialInstance("bowIndicatorMat");
+	MaterialInstance* bowIndicatorMat = scene_->FindMaterialInstance("bowIndicatorMat");
 	bowIndicatorMat->SetParameter("color",Color::ColorCodeTransform("#F5AD5580"));
 	bowIndicatorMat->SetParameter("enabledLighting",uint32_t{0});
+
+	//雷のインジケータのマテリアルを作成
+	scene_->AddMaterialInstance("thunderIndicatorMat");
+	MaterialInstance* thunderIndicatorMat = scene_->FindMaterialInstance("thunderIndicatorMat");
+	thunderIndicatorMat->SetParameter("color",Color::ColorCodeTransform("#AE79F273"));
+	thunderIndicatorMat->SetParameter("enabledLighting",uint32_t{0});
+
+	//防衛オブジェクトのHPのマテリアル
+	scene_->AddMaterialInstance("defenseHPBarMat");
+	MaterialInstance* defenseHPBarMat = scene_->FindMaterialInstance("defenseHPBarMat");
+	defenseHPBarMat->SetParameter("color",Color::ColorCodeTransform("#0D7A1AFF"));
+	defenseHPBarMat->SetParameter("enabledLighting",uint32_t{0});
 }
 
 //更新
@@ -380,7 +386,8 @@ void DefensePlacementSystem::SwitchDefenseObjectCollider(const std::string& mode
 void DefensePlacementSystem::AddComponentsByModelName(const std::string& modelName,GameObject* gameObject) {
 	//モデルが壁なら
 	if(modelName == GetModelNameByModelType(DefenseModelType::kWall)) {
-		gameObject->AddComponent<Wall>();
+		Wall* wall = gameObject->AddComponent<Wall>();
+		wall->SetHealAmount(wallHealAmount_);
 	}
 	//モデルが弓タワーなら
 	if(modelName == GetModelNameByModelType(DefenseModelType::kBow)) {
@@ -395,6 +402,10 @@ void DefensePlacementSystem::AddComponentsByModelName(const std::string& modelNa
 	//モデルが雷タワーなら
 	if(modelName == GetModelNameByModelType(DefenseModelType::kThunder)) {
 		gameObject->AddComponent<ThunderTower>();
+		//衝突判定の追加
+		SphereCollider* sphereCollider = gameObject->AddComponent<SphereCollider>();
+		sphereCollider->SetRadius(thunderAttackRadius_);
+		sphereCollider->SetIsTrigger(true);
 	}
 	//モデルが地雷なら
 	if(modelName == GetModelNameByModelType(DefenseModelType::kGameMine)) {
@@ -418,8 +429,10 @@ void DefensePlacementSystem::CreateRangeIndicator(const std::string& modelName,G
 	sphereCollider->SetBodyType(BodyType::kDynamic);
 	sphereCollider->SetIsTrigger(true);
 	sphereCollider->SetRadius(3.0f);
-	//弓モデルの場合
+
+	//各モデルのインジケータを生成
 	if(modelName == GetModelNameByModelType(DefenseModelType::kBow)) {
+		//弓モデルの場合
 		//扇形の表示だけを拡縮する
 		GameObject* visual = scene_->CreateGameObject();
 		visual->SetName("visual");
@@ -433,19 +446,37 @@ void DefensePlacementSystem::CreateRangeIndicator(const std::string& modelName,G
 		//モデルを設定
 		Object3d* object3d = visual->AddComponent<Object3d>();
 		object3d->SetModel("scanRange");
-		object3d->SetMaterialInstance(0,scene_->GetMaterialInstance("BowIndicatorMaterial"));
-
-		//弓のタワーを取得
-		BowTower* bowTower = defenseObject->GetComponent<BowTower>();
-		assert(bowTower);
-		float showTargetRadius = bowTower->GetScanRadius();
+		object3d->SetMaterialInstance(0,scene_->GetMaterialInstance("bowIndicatorMat"));
 
 		//インジケータの設定
 		Indicator* indicator = sensor->AddComponent<Indicator>();
 		//見た目だけのオブジェクトを設定
 		indicator->SetVisualObject(visual);
 		//表示する半径を設定
-		indicator->SetShowTargetRadius(showTargetRadius);
+		indicator->SetShowTargetRadius(bowScanRadius_);
+	} else if(modelName == GetModelNameByModelType(DefenseModelType::kThunder)) {
+		//雷のタワーの場合
+		//扇形の表示だけを拡縮する
+		GameObject* visual = scene_->CreateGameObject();
+		visual->SetName("visual");
+		visual->AttachTo(sensor,false);
+
+		//インジケーターのTransform
+		Transform& indicatorTransform = visual->GetTransform();
+		indicatorTransform.translate.y = -0.45f;
+		indicatorTransform.SetEulerAngleDegrees({0.0f,180.0f,0.0f});
+
+		//モデルを設定
+		Object3d* object3d = visual->AddComponent<Object3d>();
+		object3d->SetModel("attackRange");
+		object3d->SetMaterialInstance(0,scene_->GetMaterialInstance("thunderIndicatorMat"));
+
+		//インジケータの設定
+		Indicator* indicator = sensor->AddComponent<Indicator>();
+		//見た目だけのオブジェクトを設定
+		indicator->SetVisualObject(visual);
+		//表示する半径を設定
+		indicator->SetShowTargetRadius(thunderAttackRadius_);
 	}
 }
 
@@ -476,6 +507,21 @@ void DefensePlacementSystem::SwitchPlacementIndicator(const std::string& modelNa
 		placementPreviewIndicatorObject3d_->SetModel("scanRange");
 		placementPreviewIndicatorObject3d_->SetMaterialInstance(0,materialInstance);
 	}
+
+	//雷のタワーなら
+	if(modelName == GetModelNameByModelType(DefenseModelType::kThunder)) {
+		//インジケータを表示
+		placementPreviewIndicatorObject3d_->SetEnabled(true);
+
+		//位置を設定
+		indicatorTransform.translate.y = -0.45f;
+		//サイズを設定
+		indicatorTransform.scale = {thunderAttackRadius_,thunderAttackRadius_,thunderAttackRadius_};
+
+		//モデルとマテリアルの設定
+		placementPreviewIndicatorObject3d_->SetModel("attackRange");
+		placementPreviewIndicatorObject3d_->SetMaterialInstance(0,materialInstance);
+	}
 }
 
 //モデル名をモデルタイプから取得
@@ -488,14 +534,14 @@ std::string DefensePlacementSystem::GetModelNameByModelType(DefenseModelType mod
 void DefensePlacementSystem::SetHPByModelName(const std::string& modelName,Health* health) {
 	//壁なら
 	if(modelName == GetModelNameByModelType(DefenseModelType::kWall)) {
-		health->SetMaxHp(wallInitialHP_);
+		health->SetMaxHp(wallHP_);
 		//HPバーの生成
-		CreateHealthBar(health);
+		CreateHealthBar(health,scene_->GetMaterialInstance("defenseHPBarMat"));
 	}
 }
 
 //HPバーの生成
-void DefensePlacementSystem::CreateHealthBar(Health* health) {
+void DefensePlacementSystem::CreateHealthBar(Health* health,const std::shared_ptr<MaterialInstance>& materialInstance) {
 	//接続されているGameObjectを取得
 	GameObject* gameObject = health->GetOwner();
 
@@ -508,8 +554,8 @@ void DefensePlacementSystem::CreateHealthBar(Health* health) {
 	//Object3dの追加
 	Object3d* healthBarObject3d = healthObject->AddComponent<Object3d>();
 	healthBarObject3d->SetModel("healthBar");
-	healthBarObject3d->SetRenderTransformMode(RenderTransformMode::kBillboard);
-	healthBarObject3d->SetMaterialInstance(0,scene_->GetMaterialInstance("enemyHpBarMat"));
+	healthBarObject3d->SetRenderTransformMode(RenderTransformMode::kScreenAlignedBillboard);
+	healthBarObject3d->SetMaterialInstance(0,materialInstance);
 	//HealthBarを追加
 	HealthBar* healthBar = healthObject->AddComponent<HealthBar>();
 	healthBar->Setup(health);
@@ -535,7 +581,7 @@ void DefensePlacementSystem::CreateHealthBar(Health* health) {
 	//Object3dの追加
 	Object3d* healthBarBgObject3d = healthBarBgObject->AddComponent<Object3d>();
 	healthBarBgObject3d->SetModel("healthBar");
-	healthBarBgObject3d->SetRenderTransformMode(RenderTransformMode::kBillboard);
+	healthBarBgObject3d->SetRenderTransformMode(RenderTransformMode::kScreenAlignedBillboard);
 	healthBarBgObject3d->SetMaterialInstance(0,scene_->GetMaterialInstance("hpBarBgMat"));
 	healthBarBgObject3d->SetBillboardDepthOffset(0.01f);
 	healthBarBgObject3d->SetBillboardHorizontalOffset(-halfFullWidth);

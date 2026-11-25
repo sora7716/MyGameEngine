@@ -20,7 +20,7 @@ Arrow::~Arrow() {
 void Arrow::Setup(const Vector3& targetPos,const Vector3& position,float attackPower) {
 	//生存タイマーの初期化
 	lifeTime_ = 0.0f;
-	
+
 	//攻撃力を記録
 	attackPower_ = attackPower;
 
@@ -113,7 +113,10 @@ std::unique_ptr<Component> Arrow::Clone(GameObject* gameObject) const {
 
 	//設定の複製
 	cloneInstance->SetEnabled(this->IsEnabled());
-
+	cloneInstance->Setup(targetPos_,initialPos_,attackPower_);
+	cloneInstance->moveSpeed_ = this->moveSpeed_;
+	cloneInstance->spinSpeed_ = this->spinSpeed_;
+	cloneInstance->maxLifetime_ = this->maxLifetime_;
 	return cloneInstance;
 }
 

@@ -82,10 +82,17 @@ void DefaultResourceLoader::LoadModel() {
 	modelManager_->AddModel("gameMine","gameMine/gameMine.gltf");
 	//矢
 	modelManager_->AddModel("arrow","arrow/arrow.gltf");
+	//落雷
+	modelManager_->AddModel("lightningStrike","lightningStrike/lightningStrike.gltf");
 	//弓タワーの探索範囲
 	primitiveMeshFactory::Desc sectorDesc = {};
 	sectorDesc.sweepAngleDegrees = 75.0f * 2.0f;
 	modelManager_->AddModel("scanRange",primitiveMeshFactory::CreateSector(sectorDesc));
+
+	//攻撃範囲(雷のタワーと氷のタワー)
+	primitiveMeshFactory::Desc circleDesc = {};
+	circleDesc.sweepAngleDegrees = 360.0f;
+	modelManager_->AddModel("attackRange",primitiveMeshFactory::CreateSector(circleDesc));
 
 	//HPバー
 	modelManager_->AddModel("healthBar",primitiveMeshFactory::CreateTopLeftRect());

@@ -39,6 +39,7 @@
     <ClCompile Include="application\actor\defenseObject\freezeTower\FreezeTower.cpp" />
     <ClCompile Include="application\actor\defenseObject\gameMine\GameMine.cpp" />
     <ClCompile Include="application\actor\defenseObject\Indicator.cpp" />
+    <ClCompile Include="application\actor\defenseObject\thunderTower\LightningStrike.cpp" />
     <ClCompile Include="application\actor\defenseObject\thunderTower\ThunderTower.cpp" />
     <ClCompile Include="application\actor\defenseObject\wall\Wall.cpp" />
     <ClCompile Include="application\actor\enemy\Enemy.cpp" />
@@ -485,6 +486,7 @@
     <ClInclude Include="application\actor\defenseObject\freezeTower\FreezeTower.h" />
     <ClInclude Include="application\actor\defenseObject\gameMine\GameMine.h" />
     <ClInclude Include="application\actor\defenseObject\Indicator.h" />
+    <ClInclude Include="application\actor\defenseObject\thunderTower\LightningStrike.h" />
     <ClInclude Include="application\actor\defenseObject\thunderTower\ThunderTower.h" />
     <ClInclude Include="application\actor\defenseObject\wall\Wall.h" />
     <ClInclude Include="application\actor\enemy\Enemy.h" />

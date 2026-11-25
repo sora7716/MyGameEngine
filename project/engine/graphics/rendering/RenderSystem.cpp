@@ -685,11 +685,16 @@ void RenderSystem::BuildTransformationData() {
 		//サイズを確保
 		batch.transformations.reserve(batch.meshDrawInstance.size());
 		for(const MeshDrawInstance& meshDraw : batch.meshDrawInstance) {
+			//カメラのワールド行列を取得
+			const Matrix4x4 cameraWorldMatrix = selectCamera_.camera->GetViewMatrix().Inverse();
 			//Objectのワールド行列を作成
-			Matrix4x4 objectWorldMatrix = meshDraw.object3d->MakeRenderWorldMatrix(selectCamera_.camera->GetOwner()->GetWorldMatrix());
+			Matrix4x4 objectWorldMatrix = meshDraw.object3d->MakeRenderWorldMatrix(cameraWorldMatrix);
 
 			//ワールド行列を求める
-			Matrix4x4 world = meshDraw.nodeMatrix * objectWorldMatrix;
+			Matrix4x4 world = objectWorldMatrix;
+			if(meshDraw.object3d->GetRenderTransformMode() != RenderTransformMode::kScreenAlignedBillboard) {
+				world = meshDraw.nodeMatrix * objectWorldMatrix;
+			}
 
 			//トランスフォーメーション行列
 			TransformationMatrix transformation = {};

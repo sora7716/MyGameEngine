@@ -175,7 +175,8 @@ private://メンバ関数
 	/// HPバーの生成
 	/// </summary>
 	/// <param name="health">HPの管理</param>
-	void CreateHealthBar(Health* health);
+	/// <param name="materialInstance">マテリアルインスタンス</param>
+	void CreateHealthBar(Health* health,const std::shared_ptr<MaterialInstance>& materialInstance);
 private://メンバ変数
 	//シーン
 	BaseScene* scene_ = nullptr;
@@ -221,8 +222,13 @@ private://メンバ変数
 
 	//弓の探索範囲
 	float bowScanRadius_ = 3.0f;
-	
-	//壁の値
-	float wallInitialHP_ = 200.0f;
+
+	//雷のタワーの攻撃範囲
+	float thunderAttackRadius_ = 2.5f;
+
+	//壁の耐久値
+	float wallHP_ = 200.0f;
+	//壁の回復値
+	float wallHealAmount_ = 20.0f;
 };
 

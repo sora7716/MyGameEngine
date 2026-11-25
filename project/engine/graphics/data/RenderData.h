@@ -79,6 +79,7 @@ struct RimLight{
 enum class RenderTransformMode :uint32_t{
 	kNormal,
 	kBillboard,
+	kScreenAlignedBillboard,
 };
 
 //テクスチャデータ

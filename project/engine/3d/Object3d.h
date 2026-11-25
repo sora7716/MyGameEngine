@@ -88,7 +88,7 @@ public://メンバ関数
 	bool AttachTo(Object3d* parent , const std::string& parentNodePath);
 
 	/// <summary>
-	/// ワールド行列を作成
+	/// 描画用のワールド行列を作成
 	/// </summary>
 	/// <param name="cameraWorldMatrix">カメラのワールド行列</param>
 	/// <returns>ワールド行列</returns>

@@ -1,5 +1,6 @@
 #include "Color.h"
 #include <cassert>
+#include <cmath>
 
 //RGBの取得
 const RGB Color::GetRGB()const{
@@ -55,6 +56,17 @@ Color Color::ColorCodeTransform(const std::string& colorCode){
 	int32_t b = std::stoi(colorCode.substr(5, 2), nullptr, 16);
 	int32_t alpha = (colorCode.size() == 9) ? std::stoi(colorCode.substr(7, 2), nullptr, 16) : 255;
 	return Color(r / 255.0f, g / 255.0f, b / 255.0f, alpha / 255.0f);
+}
+
+//線形補間
+Color Color::Lerp(const Color& begin,const Color& end,float t) {
+	Color result = {};
+	result.r = std::lerp(begin.r,end.r,t);
+	result.g = std::lerp(begin.g,end.g,t);
+	result.b = std::lerp(begin.b,end.b,t);
+	result.a = std::lerp(begin.a,end.a,t);
+
+	return result;
 }
 
 //加法

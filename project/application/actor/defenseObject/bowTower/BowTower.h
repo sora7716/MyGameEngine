@@ -36,7 +36,8 @@ public://メンバ関数
 	/// セットアップ
 	/// </summary>
 	/// <param name="arrowSystem">矢の管理システム</param>
-	void Setup(ArrowSystem* arrowSystem);
+	/// <param name="scanRadius">探索する範囲</param>
+	void Setup(ArrowSystem* arrowSystem,float scanRadius);
 
 	/// <summary>
 	/// 初期化
@@ -158,7 +159,7 @@ private://メンバ変数
 	//探索をする最大角度(度)
 	float maxScanRotate_ = 75.0f;
 	//探索している距離
-	float scanRadius_ = 3.0f;
+	float scanRadius_ = 0.0f;
 	//頭の行列
 	Matrix4x4 headModelMatrix_ = {};
 };

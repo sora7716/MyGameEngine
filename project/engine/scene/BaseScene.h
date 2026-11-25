@@ -104,6 +104,13 @@ public://メンバ関数
 	void AddMaterialInstance(const std::string& name,const MaterialTexturePaths& textureFilePaths,const std::string& pixelShaderName = "Standard.PS.hlsl");
 
 	/// <summary>
+	/// マテリアルインスタンスの追加
+	/// </summary>
+	/// <param name="name">名前</param>
+	/// <param name="pixelShaderName">ピクセルシェーダ名</param>
+	void AddMaterialInstance(const std::string& name,const std::string& pixelShaderName = "Standard.PS.hlsl");
+
+	/// <summary>
 	/// マテリアルインスタンスを取得
 	/// </summary>
 	/// <param name="name">名前</param>

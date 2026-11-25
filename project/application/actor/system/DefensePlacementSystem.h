@@ -17,6 +17,9 @@ class DefenseRotationComponent;
 class PlacementSwitchComponent;
 class DefensePlaceComponent;
 class ArrowSystem;
+class Indicator;
+class MaterialInstance;
+class Health;
 
 //方向
 enum class DirectionType :uint32_t {
@@ -148,11 +151,31 @@ private://メンバ関数
 	void CreateRangeIndicator(const std::string& modelName,GameObject* defenseObject);
 
 	/// <summary>
+	/// 設置予定のモデルによって表示するインジケータの切り替え
+	/// </summary>
+	/// <param name="modelName">モデル名</param>
+	/// <param name="materialInstance">マテリアルインスタンス</param>
+	void SwitchPlacementIndicator(const std::string& modelName,const std::shared_ptr<MaterialInstance>& materialInstance);
+
+	/// <summary>
 	/// モデル名をモデルタイプから取得
 	/// </summary>
 	/// <param name="modelType">モデルタイプ</param>
 	/// <returns>モデル名</returns>
 	std::string GetModelNameByModelType(DefenseModelType modelType);
+
+	/// <summary>
+	/// モデル名ごとにHPを設定
+	/// </summary>
+	/// <param name="modelName">モデル名</param>
+	/// <param name="health">HPの管理</param>
+	void SetHPByModelName(const std::string& modelName,Health* health);
+
+	/// <summary>
+	/// HPバーの生成
+	/// </summary>
+	/// <param name="health">HPの管理</param>
+	void CreateHealthBar(Health* health);
 private://メンバ変数
 	//シーン
 	BaseScene* scene_ = nullptr;
@@ -177,6 +200,10 @@ private://メンバ変数
 	Object3d* placementPreviewObject3d_ = nullptr;
 	BoxCollider* placementPreviewBoxCollider_ = nullptr;
 	Vector3Int placementPreviewIndex_ = {};
+	//設置予定地用のインジケータのオブジェクト
+	GameObject* placementPreviewIndicatorObject_ = nullptr;
+	Object3d* placementPreviewIndicatorObject3d_ = nullptr;
+	Indicator* placementPreviewIndicator_ = nullptr;
 
 	//設置できるか
 	bool isPlacementEnabled_ = false;
@@ -191,5 +218,11 @@ private://メンバ変数
 	DefensePlaceComponent* defensePlaceComponent_ = nullptr;
 	//基盤となるディフェンス用のオブジェクト
 	BaseDefenseObject* defenseObject_ = nullptr;
+
+	//弓の探索範囲
+	float bowScanRadius_ = 3.0f;
+	
+	//壁の値
+	float wallInitialHP_ = 200.0f;
 };
 

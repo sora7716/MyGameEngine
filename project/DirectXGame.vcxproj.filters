@@ -625,7 +625,7 @@
       <Filter>application\actor\enemy</Filter>
     </ClCompile>
     <ClCompile Include="application\actor\enemy\HealthBar.cpp">
-      <Filter>ソース ファイル</Filter>
+      <Filter>application\actor</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -1101,7 +1101,7 @@
       <Filter>application\actor\enemy</Filter>
     </ClInclude>
     <ClInclude Include="application\actor\enemy\HealthBar.h">
-      <Filter>ヘッダー ファイル</Filter>
+      <Filter>application\actor</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

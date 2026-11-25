@@ -1,5 +1,6 @@
 #define NOMINMAX
 #include "Health.h"
+#include "MathUtility.h"
 #include <algorithm>
 
 //コンストラクタ
@@ -12,22 +13,28 @@ Health::~Health() {
 
 //更新
 void Health::Update() {
+	//最終的なHPと今のHPの差分
+	float diff = targetHp_ - currentHp_;
+	//1フレームで動貸したい値
+	float stepAmount = (maxHp_ / hpDuration_) * mathUtility::GetDeltaTime();
+	//現在のHPを補間する
+	currentHp_ += std::clamp(diff,-stepAmount,stepAmount);
 }
 
 //HPからダメージ分減らす処理
 void Health::ApplyDamage(float damage) {
-	//現在のHPをダメージ分引く
-	currentHp_ -= damage;
-	//現在のHPがゼロに行かないようにする
-	currentHp_ = std::max(currentHp_,0.0f);
+	//最終的に減るHP
+	targetHp_ = targetHp_ - damage;
+	//最終的に減るHPがゼロに行かないようにする
+	targetHp_ = std::max(targetHp_,0.0f);
 }
 
 //HPを回復させる
 void Health::Heal(float heal) {
-	//現在のHPを回復させる
-	currentHp_ += heal;
+	//最終的に回復するHP
+	targetHp_ = targetHp_ + heal;
 	//現在のHPがHPの最大値を超えないようにする
-	currentHp_ = std::min(currentHp_,maxHp_);
+	targetHp_ = std::min(targetHp_,maxHp_);
 }
 
 //プロパティ一覧を登録
@@ -62,12 +69,19 @@ void Health::SetMaxHp(float maxHp) {
 	maxHp_ = std::max(maxHp,0.0f);
 	//現在のHPを満タンにする
 	currentHp_ = maxHp_;
+	//最終的はHPも満タンにする
+	targetHp_ = maxHp_;
+}
+
+//HPが減り切る秒数を設定
+void Health::SetHpDuration(float duration) {
+	hpDuration_ = std::max(duration,mathUtility::kEpsilon);
 }
 
 //死亡フラグの取得
 bool Health::IsDead() const {
 	//現在のHPが0以下だった場合
-	return currentHp_ <= 0.0f;
+	return currentHp_ <= 0.1f;
 }
 
 //現在のHPを取得

@@ -17,6 +17,8 @@
 #include "GameMine.h"
 #include "Indicator.h"
 #include "SphereCollider.h"
+#include "Health.h"
+#include "HealthBar.h"
 #include <cassert>
 using namespace mapChipDesc;
 
@@ -116,6 +118,9 @@ DefensePlaceComponent* DefensePlacementSystem::GetDefensePlace() const {
 
 //オブジェクトの設置予定地の生成
 void DefensePlacementSystem::CreatePlacementPreview() {
+	//マテリアルを生成
+	scene_->AddMaterialInstance("previewMat");
+
 	//ゲームオブジェクトを生成
 	placementPreviewObject_ = scene_->CreateGameObject();
 	GameObject* gameObject = placementPreviewObject_;
@@ -146,6 +151,12 @@ void DefensePlacementSystem::CreatePlacementPreview() {
 	//衝突判定を設定
 	placementPreviewBoxCollider_ = gameObject->AddComponent<BoxCollider>();
 	placementPreviewBoxCollider_->SetIsTrigger(true);
+
+	//インジケータを作成
+	placementPreviewIndicatorObject_ = scene_->CreateGameObject();
+	placementPreviewIndicatorObject_->AttachTo(gameObject,false);
+	//Object3dの追加
+	placementPreviewIndicatorObject3d_ = placementPreviewIndicatorObject_->AddComponent<Object3d>();
 }
 
 //オブジェクトのおける位置のインデックスを取得
@@ -261,6 +272,12 @@ void DefensePlacementSystem::CreateDefenseObject() {
 	//LODの設定
 	object3d->SetLODDistances({5.0f,8.0f,15.0f});
 
+	//HPの管理を追加
+	Health* health = gameObject->AddComponent<Health>();
+
+	//モデルごとにHPを設定
+	SetHPByModelName(modelName,health);
+
 	//モデルによってコンポーネントを変更する
 	AddComponentsByModelName(modelName,gameObject);
 
@@ -284,6 +301,8 @@ void DefensePlacementSystem::UpdatePlacementPreviewObject() {
 	if(!placementPreviewComponent_->GetEnabledRequest()) {
 		//衝突判定
 		placementPreviewBoxCollider_->SetEnabled(false);
+		//インジケータも非表示
+		placementPreviewIndicatorObject3d_->SetEnabled(false);
 		return;
 	}
 
@@ -309,6 +328,9 @@ void DefensePlacementSystem::UpdatePlacementPreviewObject() {
 	//ブロックのおけるワールド座標の取得
 	Vector3 placementPreviewPos = mapChipField_->GetMapChipPositionByIndex(placementPreviewIndex_);
 
+
+	//マテリアルインスタンスを取得
+	MaterialInstance* materialInstance = scene_->FindMaterialInstance("previewMat");
 	//マテリアルの色を設定
 	Color materialColor = {1.0f,0.0f,0.0f,0.5f};
 
@@ -317,12 +339,18 @@ void DefensePlacementSystem::UpdatePlacementPreviewObject() {
 		//おける位置にいた場合マテリアルを変更
 		materialColor = {0.0f,1.0f,0.0f,0.5f};
 	}
+	//色をマテリアルインスタンスに設定
+	materialInstance->SetParameter("color",materialColor);
+	//ライティングを切る
+	materialInstance->SetParameter("enabledLighting",uint32_t{0});
 
 	//各メッシュにカラーを設定
 	for(uint32_t i = 0; i < placementPreviewObject3d_->GetMaterialInstances().size(); i++) {
-		placementPreviewObject3d_->SetMaterialParameter(i,"color",materialColor);
-		placementPreviewObject3d_->SetMaterialParameter(i,"enabledLighting",uint32_t(0));
+		placementPreviewObject3d_->SetMaterialInstance(i,scene_->GetMaterialInstance("previewMat"));
 	}
+
+	//インジケータの生成
+	SwitchPlacementIndicator(modelName,scene_->GetMaterialInstance("previewMat"));
 
 	//座標を設定
 	placementPreviewComponent_->SetPosition(placementPreviewPos);
@@ -357,7 +385,7 @@ void DefensePlacementSystem::AddComponentsByModelName(const std::string& modelNa
 	//モデルが弓タワーなら
 	if(modelName == GetModelNameByModelType(DefenseModelType::kBow)) {
 		BowTower* bowTower = gameObject->AddComponent<BowTower>();
-		bowTower->Setup(arrowSystem_);
+		bowTower->Setup(arrowSystem_,bowScanRadius_);
 		bowTower->SetTargets(enemyObjects_);
 	}
 	//モデルが氷結タワーなら
@@ -421,7 +449,94 @@ void DefensePlacementSystem::CreateRangeIndicator(const std::string& modelName,G
 	}
 }
 
+//設置予定のモデルによって表示するインジケータの切り替え
+void DefensePlacementSystem::SwitchPlacementIndicator(const std::string& modelName,const std::shared_ptr<MaterialInstance>& materialInstance) {
+	//インジケータを非表示
+	placementPreviewIndicatorObject3d_->SetEnabled(false);
+	//壁なら
+	if(modelName == GetModelNameByModelType(DefenseModelType::kWall)) {
+		return;
+	}
+
+	//インジケーターのTransform
+	Transform& indicatorTransform = placementPreviewIndicatorObject_->GetTransform();
+	//弓のタワーなら
+	if(modelName == GetModelNameByModelType(DefenseModelType::kBow)) {
+		//インジケータを表示
+		placementPreviewIndicatorObject3d_->SetEnabled(true);
+
+		//位置を設定
+		indicatorTransform.translate.y = -0.45f;
+		//角度を設定
+		indicatorTransform.SetEulerAngleDegrees({0.0f,180.0f,0.0f});
+		//サイズを設定
+		indicatorTransform.scale = {bowScanRadius_,bowScanRadius_,bowScanRadius_};
+
+		//モデルとマテリアルの設定
+		placementPreviewIndicatorObject3d_->SetModel("scanRange");
+		placementPreviewIndicatorObject3d_->SetMaterialInstance(0,materialInstance);
+	}
+}
+
 //モデル名をモデルタイプから取得
 std::string DefensePlacementSystem::GetModelNameByModelType(DefenseModelType modelType) {
 	return defenseObjectModelNameList_[static_cast<uint32_t>(modelType)];
+}
+
+
+//モデル名ごとにHPを設定
+void DefensePlacementSystem::SetHPByModelName(const std::string& modelName,Health* health) {
+	//壁なら
+	if(modelName == GetModelNameByModelType(DefenseModelType::kWall)) {
+		health->SetMaxHp(wallInitialHP_);
+		//HPバーの生成
+		CreateHealthBar(health);
+	}
+}
+
+//HPバーの生成
+void DefensePlacementSystem::CreateHealthBar(Health* health) {
+	//接続されているGameObjectを取得
+	GameObject* gameObject = health->GetOwner();
+
+	//HPバーの子オブジェクトを作成
+	GameObject* healthObject = scene_->CreateGameObject();
+	healthObject->SetName("HPバー");
+	//親子付け
+	healthObject->AttachTo(gameObject,false);
+
+	//Object3dの追加
+	Object3d* healthBarObject3d = healthObject->AddComponent<Object3d>();
+	healthBarObject3d->SetModel("healthBar");
+	healthBarObject3d->SetRenderTransformMode(RenderTransformMode::kBillboard);
+	healthBarObject3d->SetMaterialInstance(0,scene_->GetMaterialInstance("enemyHpBarMat"));
+	//HealthBarを追加
+	HealthBar* healthBar = healthObject->AddComponent<HealthBar>();
+	healthBar->Setup(health);
+
+	//HPが満タンのときの半分の横幅を取得
+	constexpr float kBarMeshWidth = 0.5f;
+	const float halfFullWidth = kBarMeshWidth * healthBar->GetFullBarScale() / 2.0f;
+	healthBarObject3d->SetBillboardHorizontalOffset(-halfFullWidth);
+
+	//HealthBarの後ろ背景
+	GameObject* healthBarBgObject = scene_->CreateGameObject();
+	//Transformの調整
+	Transform& bgTransform = healthBarBgObject->GetTransform();
+	const Transform& barTransform = healthObject->GetTransform();
+	bgTransform.translate = barTransform.translate;
+	bgTransform.scale.x = healthBar->GetFullBarScale();
+	bgTransform.scale.y = barTransform.scale.y;
+	healthBarBgObject->SetName("HPバーの背景");
+
+	//親子付け
+	healthBarBgObject->AttachTo(gameObject,false);
+
+	//Object3dの追加
+	Object3d* healthBarBgObject3d = healthBarBgObject->AddComponent<Object3d>();
+	healthBarBgObject3d->SetModel("healthBar");
+	healthBarBgObject3d->SetRenderTransformMode(RenderTransformMode::kBillboard);
+	healthBarBgObject3d->SetMaterialInstance(0,scene_->GetMaterialInstance("hpBarBgMat"));
+	healthBarBgObject3d->SetBillboardDepthOffset(0.01f);
+	healthBarBgObject3d->SetBillboardHorizontalOffset(-halfFullWidth);
 }

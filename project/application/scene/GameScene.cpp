@@ -102,9 +102,9 @@ void GameScene::Initialize() {
 	enemyHpBarMat->SetParameter("color",Color::GetRed());
 	enemyHpBarMat->SetParameter("enabledLighting",uint32_t{0});
 
-	//敵のHPバーの背景のマテリアル
-	AddMaterialInstance("enemyHpBarBgMat",enemyHpBarMatTexPaths);
-	MaterialInstance* enemyHpBarBgMat = FindMaterialInstance("enemyHpBarBgMat");
+	//HPバーの背景のマテリアル
+	AddMaterialInstance("hpBarBgMat",enemyHpBarMatTexPaths);
+	MaterialInstance* enemyHpBarBgMat = FindMaterialInstance("hpBarBgMat");
 	enemyHpBarBgMat->SetParameter("color",Color::GetBlack());
 	enemyHpBarBgMat->SetParameter("enabledLighting",uint32_t{0});
 
@@ -390,7 +390,7 @@ GameObject* GameScene::CreateEnemy(const Vector3& position) {
 	Object3d* healthBarBgObject3d = healthBarBgObject->AddComponent<Object3d>();
 	healthBarBgObject3d->SetModel("healthBar");
 	healthBarBgObject3d->SetRenderTransformMode(RenderTransformMode::kBillboard);
-	healthBarBgObject3d->SetMaterialInstance(0,GetMaterialInstance("enemyHpBarBgMat"));
+	healthBarBgObject3d->SetMaterialInstance(0,GetMaterialInstance("hpBarBgMat"));
 	healthBarBgObject3d->SetBillboardDepthOffset(0.01f);
 	healthBarBgObject3d->SetBillboardHorizontalOffset(-halfFullWidth);
 

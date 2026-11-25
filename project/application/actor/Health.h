@@ -60,6 +60,12 @@ public://メンバ関数
 	void SetMaxHp(float maxHp);
 
 	/// <summary>
+	/// HPが減り切る秒数を設定
+	/// </summary>
+	/// <param name="duration">減り切る秒数</param>
+	void SetHpDuration(float duration);
+
+	/// <summary>
 	/// 死亡フラグの取得
 	/// </summary>
 	/// <returns>死亡フラグ</returns>
@@ -81,5 +87,9 @@ private://メンバ変数
 	float maxHp_ = 0.0f;
 	//現在のHP
 	float currentHp_ = 0.0f;
+	//補間先
+	float targetHp_ = 0.0f;
+	//HPが減り切る秒数
+	float hpDuration_ = 0.5f;
 };
 

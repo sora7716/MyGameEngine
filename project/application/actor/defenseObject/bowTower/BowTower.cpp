@@ -18,10 +18,12 @@ BowTower::~BowTower() {
 }
 
 //セットアップ
-void BowTower::Setup(ArrowSystem* arrowSystem) {
+void BowTower::Setup(ArrowSystem* arrowSystem,float scanRadius) {
 	//矢の管理システムの記録
 	assert(arrowSystem);
 	arrowSystem_ = arrowSystem;
+	//探索する範囲を設定
+	scanRadius_ = scanRadius;
 }
 
 //初期化

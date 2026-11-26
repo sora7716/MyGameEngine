@@ -43,6 +43,7 @@
     <ClCompile Include="application\actor\defenseObject\thunderTower\ThunderTower.cpp" />
     <ClCompile Include="application\actor\defenseObject\wall\Wall.cpp" />
     <ClCompile Include="application\actor\enemy\Enemy.cpp" />
+    <ClCompile Include="application\actor\enemy\EnemyData.cpp" />
     <ClCompile Include="application\actor\enemy\HealthBar.cpp" />
     <ClCompile Include="application\actor\Health.cpp" />
     <ClCompile Include="application\actor\IState.h.cpp" />
@@ -56,6 +57,7 @@
     <ClCompile Include="application\actor\system\ArrowSystem.cpp" />
     <ClCompile Include="application\actor\system\DefensePlacementSystem.cpp" />
     <ClCompile Include="application\actor\system\CreateFieldSystem.cpp" />
+    <ClCompile Include="application\actor\system\LightningStrikeSystem.cpp" />
     <ClCompile Include="application\scene\GameScene.cpp" />
     <ClCompile Include="application\scene\TestPlayScene.cpp" />
     <ClCompile Include="engine\2d\Sprite.cpp">
@@ -490,6 +492,7 @@
     <ClInclude Include="application\actor\defenseObject\thunderTower\ThunderTower.h" />
     <ClInclude Include="application\actor\defenseObject\wall\Wall.h" />
     <ClInclude Include="application\actor\enemy\Enemy.h" />
+    <ClInclude Include="application\actor\enemy\EnemyData.h" />
     <ClInclude Include="application\actor\enemy\HealthBar.h" />
     <ClInclude Include="application\actor\Health.h" />
     <ClInclude Include="application\actor\IState.h" />
@@ -504,6 +507,7 @@
     <ClInclude Include="application\actor\system\ArrowSystem.h" />
     <ClInclude Include="application\actor\system\DefensePlacementSystem.h" />
     <ClInclude Include="application\actor\system\CreateFieldSystem.h" />
+    <ClInclude Include="application\actor\system\LightningStrikeSystem.h" />
     <ClInclude Include="application\scene\GameScene.h" />
     <ClInclude Include="application\scene\TestPlayScene.h" />
     <ClInclude Include="engine\2d\Sprite.h" />

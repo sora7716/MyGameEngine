@@ -23,9 +23,9 @@
 using namespace mapChipDesc;
 
 //生成
-std::unique_ptr<DefensePlacementSystem> DefensePlacementSystem::Create(BaseScene* scene,MapChipField* mapChipField,GameObject* playerObject,ArrowSystem* arrowSystem) {
+std::unique_ptr<DefensePlacementSystem> DefensePlacementSystem::Create(BaseScene* scene,MapChipField* mapChipField,GameObject* playerObject,ArrowSystem* arrowSystem,LightningStrikeSystem* lightningStrikeSystem) {
 	std::unique_ptr<DefensePlacementSystem>instance = std::make_unique<DefensePlacementSystem>();
-	instance->Initialize(scene,mapChipField,playerObject,arrowSystem);
+	instance->Initialize(scene,mapChipField,playerObject,arrowSystem,lightningStrikeSystem);
 	return instance;
 }
 
@@ -38,7 +38,7 @@ DefensePlacementSystem::~DefensePlacementSystem() {
 }
 
 //初期化
-void DefensePlacementSystem::Initialize(BaseScene* scene,MapChipField* mapChipField,GameObject* playerObject,ArrowSystem* arrowSystem) {
+void DefensePlacementSystem::Initialize(BaseScene* scene,MapChipField* mapChipField,GameObject* playerObject,ArrowSystem* arrowSystem,LightningStrikeSystem* lightningStrikeSystem) {
 	//シーンの記録
 	assert(scene);
 	scene_ = scene;
@@ -51,6 +51,9 @@ void DefensePlacementSystem::Initialize(BaseScene* scene,MapChipField* mapChipFi
 	//矢の管理システムを記録
 	assert(arrowSystem);
 	arrowSystem_ = arrowSystem;
+	//落雷の管理システムを記録
+	assert(lightningStrikeSystem);
+	lightningStrikeSystem_ = lightningStrikeSystem;
 
 	//モデル一覧を登録
 	defenseObjectModelNameList_.push_back("wall");
@@ -401,7 +404,8 @@ void DefensePlacementSystem::AddComponentsByModelName(const std::string& modelNa
 	}
 	//モデルが雷タワーなら
 	if(modelName == GetModelNameByModelType(DefenseModelType::kThunder)) {
-		gameObject->AddComponent<ThunderTower>();
+		ThunderTower*thunderTower = gameObject->AddComponent<ThunderTower>();
+		thunderTower->Setup(lightningStrikeSystem_);
 		//衝突判定の追加
 		SphereCollider* sphereCollider = gameObject->AddComponent<SphereCollider>();
 		sphereCollider->SetRadius(thunderAttackRadius_);

@@ -29,6 +29,7 @@
 #include "Health.h"
 #include "Enemy.h"
 #include "HealthBar.h"
+#include "LightningStrikeSystem.h"
 #include <array>
 using namespace mapChipDesc;
 
@@ -84,8 +85,13 @@ void GameScene::Initialize() {
 	//矢の攻撃力を設定
 	arrowSystem_->SetAttackPower(20.0f);
 
+	//落雷のシステムを生成
+	lightningStrikeSystem_ = LightningStrikeSystem::Create(this);
+	ShockParameter shockParameter = {10.0f,2.0f,5.0f};
+	lightningStrikeSystem_->SetShockParameter(shockParameter);
+
 	//防衛オブジェクトの設置システムの生成
-	defensePlacementSystem_ = DefensePlacementSystem::Create(this,createFieldSystem_->GetMapChipField(),playerObject_,arrowSystem_.get());
+	defensePlacementSystem_ = DefensePlacementSystem::Create(this,createFieldSystem_->GetMapChipField(),playerObject_,arrowSystem_.get(),lightningStrikeSystem_.get());
 
 	//プレイヤーの作成
 	CreatePlayer();

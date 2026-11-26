@@ -4,6 +4,9 @@
 #include "BaseScene.h"
 #include "Object3d.h"
 #include "Logger.h"
+#include "BaseCollider.h"
+#include "Health.h"
+#include "Enemy.h"
 #include <cassert>
 
 //コンストラクタ
@@ -51,6 +54,8 @@ void LightningStrike::Update() {
 	//最大で生存できる時間を過ぎたら
 	if(lifeTimer_ >= maxLifetime_) {
 		gameObject_->SetIsActive(false);
+		//生存時間をリセット
+		lifeTimer_ = 0.0f;
 	}
 
 	//色の線形補間
@@ -61,6 +66,34 @@ void LightningStrike::Update() {
 	//Object3dにマテリアルをセット
 	for(uint32_t i = 0; i < object3d_->GetMaterialInstances().size(); i++) {
 		object3d_->SetMaterialInstance(i,lightningStrikeMat_);
+	}
+}
+
+//接触した瞬間
+void LightningStrike::OnTriggerEnter(BaseCollider* other) {
+	GameObject* otherObject = other->GetOwner();
+	if(otherObject->GetTag() == "Enemy") {
+		//接触したのが敵だったら
+		//HPの管理を取得
+		Health* health = otherObject->GetComponent<Health>();
+		if(!health) {
+			Logger::OutputLog("Healthが取得できませんでした");
+			assert(false);
+			return;
+		}
+		//ダメージを与える
+		health->ApplyDamage(parameter_.damage);
+
+		//敵を取得
+		Enemy* enemy = otherObject->GetComponent<Enemy>();
+		if(!enemy) {
+			Logger::OutputLog("Enemyが取得できませんでした");
+			assert(false);
+			return;
+		}
+		//敵にパラメータを設定
+		enemy->SetShockParameter(parameter_);
+
 	}
 }
 
@@ -87,4 +120,14 @@ std::unique_ptr<Component> LightningStrike::Clone(GameObject* gameObject) const 
 //コンポーネントのタイプ名を返す
 std::string LightningStrike::GetTypeName() const {
 	return "lightningStrike";
+}
+
+//ショックのパラメータを取得
+const ShockParameter& LightningStrike::GetShockParameter() const {
+	return parameter_;
+}
+
+//ショックパラメータを設定
+void LightningStrike::SetShockParameter(const ShockParameter& parameter) {
+	parameter_ = parameter;
 }

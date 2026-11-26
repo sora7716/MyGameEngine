@@ -1,6 +1,6 @@
 #pragma once
 #include "Component.h"
-#include "Vector3.h"
+#include "EnemyData.h"
 
 //前方宣言
 class Object3d;
@@ -33,6 +33,12 @@ public://メンバ関数
 	void Update()override;
 
 	/// <summary>
+	/// 接触した瞬間
+	/// </summary>
+	/// <param name="other">コライダー</param>
+	void OnTriggerEnter(BaseCollider* other)override;
+
+	/// <summary>
 	/// プロパティ一覧を登録
 	/// </summary>
 	/// <param name="registry">レジストリ</param>
@@ -50,6 +56,18 @@ public://メンバ関数
 	/// </summary>
 	/// <returns>コンポーネントのタイプ名</returns>
 	std::string GetTypeName()const;
+
+	/// <summary>
+	/// ショックのパラメータを取得
+	/// </summary>
+	/// <returns>ショックのパラメータ</returns>
+	const ShockParameter& GetShockParameter()const;
+
+	/// <summary>
+	/// ショックパラメータを設定
+	/// </summary>
+	/// <param name="parameter">ショックパラメータ</param>
+	void SetShockParameter(const ShockParameter& parameter);
 private://メンバ変数
 	//ゲームオブジェクト
 	GameObject* gameObject_ = nullptr;
@@ -65,5 +83,7 @@ private://メンバ変数
 	Color beginColor_ = {};
 	//最終的なカラー
 	Color targetColor_ = {};
+	//ショックステート
+	ShockParameter parameter_ = {};
 };
 

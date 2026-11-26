@@ -7,8 +7,9 @@
 #include "ImGuiManager.h"
 #include "MathUtility.h"
 #include "BaseCollider.h"
-#include "LightningStrike.h"
+#include "LightningStrikeSystem.h"
 #include <cassert>
+#include <array>
 
 //コンストラクタ
 ThunderTower::ThunderTower(GameObject* gameObject) :BaseDefenseObject(gameObject) {
@@ -16,6 +17,12 @@ ThunderTower::ThunderTower(GameObject* gameObject) :BaseDefenseObject(gameObject
 
 //デストラクタ
 ThunderTower::~ThunderTower() {
+}
+
+//セットアップ
+void ThunderTower::Setup(LightningStrikeSystem* lightningStrikeSystem) {
+	assert(lightningStrikeSystem);
+	lightningStrikeSystem_ = lightningStrikeSystem;
 }
 
 //初期化
@@ -150,24 +157,25 @@ void ThunderTower::UpdateAttack() {
 	//時間を計測
 	attackTimer_ += mathUtility::GetDeltaTime();
 
-	//ステップを計算
-	float step = attackInterval_ / static_cast<float>(ChargePart::kCount);
-
 	//光らせる場所
 	ChargePart flashPart = ChargePart::kCount;
 
+	//各チャージの重み
+	std::array<float,3>chargeWeights = {3.0f,1.5f,0.3f};
+	//重みの合計
+	float chargeSum = chargeWeights[0] + chargeWeights[1] + chargeWeights[2];
 	//下の光らせる時間
-	if(attackTimer_ < step) {
+	if(attackTimer_ < attackInterval_ * chargeWeights[0] / chargeSum) {
 		flashPart = ChargePart::kBottom;
-	} else if(attackTimer_ < step * 2.0f) {
+	} else if(attackTimer_ < attackInterval_ * (chargeWeights[0] + chargeWeights[1]) / chargeSum) {
 		flashPart = ChargePart::kMiddle;
-	} else if(attackTimer_ < step * 3.0f) {
+	} else if(attackTimer_ < attackInterval_ * (chargeSum) / chargeSum) {
 		flashPart = ChargePart::kTop;
 	} else {
 		//攻撃対象の配列すべてにアクセス
 		for(GameObject* target : targets_) {
 			//落雷を生成
-			CreateLightningStrike(target->GetWorldPos());
+			lightningStrikeSystem_->Strike(target->GetWorldPos());
 		}
 		//リクエストを待機状態に戻す
 		behaviorRequest_ = Behavior::kIdol;
@@ -180,28 +188,9 @@ void ThunderTower::UpdateAttack() {
 		if(isFlash) {
 			//光らせるマテリアルを適応
 			object3d_->SetMaterialInstance(i,flashMat_);
-			break;
+		} else {
+			//光らせないマテリアルを適応
+			object3d_->SetMaterialInstance(i,defaultMat_);
 		}
-		//光らせないマテリアルを適応
-		object3d_->SetMaterialInstance(i,defaultMat_);
 	}
-}
-
-//落雷の生成
-void ThunderTower::CreateLightningStrike(const Vector3& spawnPos) {
-	//シーンを取得
-	BaseScene* scene = gameObject_->GetCurrentScene();
-	//ゲームオブジェクトを生成
-	GameObject* gameObject = scene->CreateGameObject();
-	//位置を設定
-	gameObject->GetTransform().translate = spawnPos;
-	//名前を設定
-	gameObject->SetName("落雷");
-
-	//Object3dを追加
-	Object3d* object3d = gameObject->AddComponent<Object3d>();
-	object3d->SetModel("lightningStrike");
-
-	//落雷を追加
-	gameObject->AddComponent<LightningStrike>();
 }

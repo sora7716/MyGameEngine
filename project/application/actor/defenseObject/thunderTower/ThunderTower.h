@@ -5,6 +5,7 @@
 //前方宣言
 class Object3d;
 class MaterialInstance;
+class LightningStrikeSystem;
 
 /// <summary>
 /// 雷のタワー
@@ -36,6 +37,12 @@ public://メンバ関数
 	/// デストラクタ
 	/// </summary>
 	~ThunderTower()override;
+
+	/// <summary>
+	/// セットアップ
+	/// </summary>
+	/// <param name="lightningStrikeSystem">落雷の管理システム</param>
+	void Setup(LightningStrikeSystem* lightningStrikeSystem);
 
 	/// <summary>
 	/// 初期化
@@ -98,12 +105,6 @@ private://メンバ関数
 	/// 攻撃の更新
 	/// </summary>
 	void UpdateAttack();
-
-	/// <summary>
-	/// 落雷の生成
-	/// </summary>
-	/// <param name="spawnPos">スポーンする位置</param>
-	void CreateLightningStrike(const Vector3& spawnPos);
 private://メンバ変数
 	//ゲームオブジェクト
 	GameObject* gameObject_ = nullptr;
@@ -122,8 +123,11 @@ private://メンバ変数
 	//攻撃の計測タイマー
 	float attackTimer_ = 0.0f;
 	//攻撃のインターバル
-	float attackInterval_ = 0.5f;
+	float attackInterval_ = 2.0f;
 
 	//攻撃対象
 	std::vector<GameObject*> targets_ = {};
+
+	//落雷の管理システム
+	LightningStrikeSystem* lightningStrikeSystem_ = nullptr;
 };

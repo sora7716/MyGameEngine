@@ -28,7 +28,7 @@ void ArrowSystem::Initialize(BaseScene* scene) {
 	scene_ = scene;
 	//弓をまとめる
 	GameObject* arrows = scene_->CreateGameObject();
-	arrows->SetName("arrows");
+	arrows->SetName("矢の塊");
 	//弓を生成
 	arrowObjects_.reserve(kArrowMaxCount);
 	for(uint32_t i = 0; i < kArrowMaxCount; i++) {
@@ -72,6 +72,8 @@ GameObject* ArrowSystem::CreateArrow() {
 	//ゲームオブジェクトを生成
 	GameObject* gameObject = scene_->CreateGameObject();
 	gameObject->SetName("arrow");
+	//タグを設定
+	gameObject->SetTag("Arrow");
 	//生存フラグはすべてfalse
 	gameObject->SetIsActive(false);
 

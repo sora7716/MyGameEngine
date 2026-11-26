@@ -9,6 +9,7 @@ class BoxCollider;
 class CreateFieldSystem;
 class DefensePlacementSystem;
 class ArrowSystem;
+class LightningStrikeSystem;
 class FollowCameraController;
 class CameraControlComponent;
 class MovementCommand;
@@ -114,4 +115,7 @@ private://メンバ変数
 
 	//矢の管理システム
 	std::unique_ptr<ArrowSystem>arrowSystem_ = nullptr;
+
+	//落雷の管理システム
+	std::unique_ptr<LightningStrikeSystem>lightningStrikeSystem_ = nullptr;
 };

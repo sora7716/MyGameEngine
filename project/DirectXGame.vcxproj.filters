@@ -630,6 +630,12 @@
     <ClCompile Include="application\actor\defenseObject\thunderTower\LightningStrike.cpp">
       <Filter>application\actor\defenseObject\thunderTower</Filter>
     </ClCompile>
+    <ClCompile Include="application\actor\enemy\EnemyData.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="application\actor\system\LightningStrikeSystem.cpp">
+      <Filter>application\actor\system</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="application\scene\TestPlayScene.h">
@@ -1108,6 +1114,12 @@
     </ClInclude>
     <ClInclude Include="application\actor\defenseObject\thunderTower\LightningStrike.h">
       <Filter>application\actor\defenseObject\thunderTower</Filter>
+    </ClInclude>
+    <ClInclude Include="application\actor\enemy\EnemyData.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="application\actor\system\LightningStrikeSystem.h">
+      <Filter>application\actor\system</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

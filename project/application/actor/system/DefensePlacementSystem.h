@@ -17,6 +17,7 @@ class DefenseRotationComponent;
 class PlacementSwitchComponent;
 class DefensePlaceComponent;
 class ArrowSystem;
+class LightningStrikeSystem;
 class Indicator;
 class MaterialInstance;
 class Health;
@@ -49,8 +50,9 @@ public://静的メンバ変数
 	/// <param name="mapChipField">マップチップフィールド</param>
 	/// <param name="playerObject">プレイヤーのゲームオブジェクト</param>
 	/// <param name="arrowSystem">矢の管理システム</param>
+	/// <param name="lightningStrikeSystem">落雷の管理システム</param>
 	/// <returns>インスタンス</returns>
-	static std::unique_ptr<DefensePlacementSystem>Create(BaseScene* scene,MapChipField* mapChipField,GameObject* playerObject,ArrowSystem* arrowSystem);
+	static std::unique_ptr<DefensePlacementSystem>Create(BaseScene* scene,MapChipField* mapChipField,GameObject* playerObject,ArrowSystem* arrowSystem,LightningStrikeSystem* lightningStrikeSystem);
 public:
 	/// <summary>
 	/// コンストラクタ
@@ -69,7 +71,8 @@ public:
 	/// <param name="mapChipField">マップチップフィールド</param>
 	/// <param name="playerObject">プレイヤーのゲームオブジェクト</param>
 	/// <param name="arrowSystem">矢の管理システム</param>
-	void Initialize(BaseScene* scene,MapChipField* mapChipField,GameObject* playerObject,ArrowSystem* arrowSystem);
+	/// <param name="lightningStrikeSystem">落雷の管理システム</param>
+	void Initialize(BaseScene* scene,MapChipField* mapChipField,GameObject* playerObject,ArrowSystem* arrowSystem,LightningStrikeSystem* lightningStrikeSystem);
 
 	/// <summary>
 	/// 更新
@@ -192,6 +195,9 @@ private://メンバ変数
 
 	//矢の管理システム
 	ArrowSystem* arrowSystem_ = nullptr;
+
+	//落雷の管理システム
+	LightningStrikeSystem* lightningStrikeSystem_ = nullptr;
 
 	//守るオブジェクトのモデル名の一覧
 	std::vector<std::string>defenseObjectModelNameList_;

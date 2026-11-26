@@ -77,14 +77,14 @@ public://メンバ関数
 	/// </summary>
 	/// <param name="parameter">パラメータ</param>
 	void SetShockParameter(const ShockParameter& parameter);
-private://メンバ変数
+	
 	/// <summary>
 	/// ステータスが存在しいるか取得
 	/// </summary>
 	/// <param name="status">存在してほしいステータス</param>
 	/// <returns>ステータスが存在するか</returns>
 	bool HasStatus(EnemyStatus status);
-
+private://メンバ変数
 	/// <summary>
 	/// 死亡処理
 	/// </summary>

@@ -174,6 +174,8 @@ void ThunderTower::UpdateAttack() {
 	} else {
 		//攻撃対象の配列すべてにアクセス
 		for(GameObject* target : targets_) {
+			
+
 			//落雷を生成
 			lightningStrikeSystem_->Strike(target->GetWorldPos());
 		}
